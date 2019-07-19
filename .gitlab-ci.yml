@@ -217,6 +217,9 @@ deploy_on_cvmfs:
       - tags
     variables:
       - $CI_COMMIT_TAG =~ /.*-pre.*/
+  before_script:
+    - git config --global user.email "lhcbdirac@cern.ch"
+    - git config --global user.name "LHCbDIRAC"
   script:
     # Get the repository
     - cd $TMPDIR
