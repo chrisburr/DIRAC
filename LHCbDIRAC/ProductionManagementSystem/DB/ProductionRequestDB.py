@@ -69,8 +69,8 @@ class ProductionRequestDB(DB):
 # _insert use it, so I can't...
 
   def _fixedEscapeValues(self, inValues, escape=None):
-    '''This method used to insert null value to the db,
-       if the inserted value is None.
+    '''This method used to insert null value to the db, if the inserted value is None.
+
     :param list inValues: list of values
     :param int escape: the index of the value, which will be not escaped.
     '''
