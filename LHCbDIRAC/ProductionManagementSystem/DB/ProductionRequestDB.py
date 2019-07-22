@@ -64,7 +64,6 @@ class ProductionRequestDB(DB):
 
   historyFields = ['RequestID', 'RequestState', 'RequestUser', 'TimeStamp']
 
-
   # !!! current _escapeValues is buggy !!! None and not using connection...
   # _insert use it, so I can't...
   def _fixedEscapeValues(self, inValues, escape=None):
