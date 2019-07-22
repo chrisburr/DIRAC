@@ -67,6 +67,7 @@ class ProductionRequestDB(DB):
 
 # !!! current _escapeValues is buggy !!! None and not using connection...
 # _insert use it, so I can't...
+
   def _fixedEscapeValues(self, inValues, escape=None):
     '''This method used to insert null value to the db,
        if the inserted value is None.
