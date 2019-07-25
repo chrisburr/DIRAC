@@ -64,16 +64,22 @@ class ProductionRequestDB(DB):
 
   historyFields = ['RequestID', 'RequestState', 'RequestUser', 'TimeStamp']
 
+  # !!! current _escapeValues is buggy !!! None and not using connection...
+  # _insert use it, so I can't...
+  def _fixedEscapeValues(self, inValues, escape=None):
+    ''' This method used to insert null value to the db, if the inserted value is None.
 
-# !!! current _escapeValues is buggy !!! None and not using connection...
-# _insert use it, so I can't...
-  def _fixedEscapeValues(self, inValues):
+    :param list inValues: list of values
+    :param int escape: the index of the value, which will be not escaped.
+    '''
     result = self._escapeValues(inValues)
     if not result['OK']:
       return result
     outValues = result['Value']
     for i, x in enumerate(outValues):
       if x == 'None' or str(x) == '' or x == '"None"':
+        if escape and i == escape:
+          continue
         outValues[i] = 'NULL'
     return S_OK(outValues)
 
@@ -326,7 +332,7 @@ class ProductionRequestDB(DB):
 
   def getProductionRequest(self, requestIDList, subrequestsFor=0,
                            sortBy='', sortOrder='ASC',
-                           offset=0, limit=0, filterIn={}):
+                           offset=0, limit=0, filterIn=None):
     ''' Get the Production Request(s) details.
         If requestIDList is not empty, only productions from the list are returned.
         Otherwise master requests are returned (without subrequests) or
@@ -974,7 +980,8 @@ class ProductionRequestDB(DB):
     rec['RealNumberOfEvents'] = str(num)
 
     recl = [rec[x] for x in self.requestFields[1:-7]]
-    result = self._fixedEscapeValues(recl)
+    escapeIndex = self.requestFields[1:-7].index('FastSimulationType')
+    result = self._fixedEscapeValues(recl, escapeIndex)
     if not result['OK']:
       self.lock.release()
       return result
