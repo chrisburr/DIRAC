@@ -12,6 +12,7 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 import os.path
+import tempfile
 import time
 
 from DIRAC import gLogger
