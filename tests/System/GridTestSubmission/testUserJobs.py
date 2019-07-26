@@ -12,6 +12,7 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 import os.path
+import time
 
 from DIRAC import gLogger
 
@@ -30,6 +31,16 @@ except ImportError:
 gLogger.setLevel('DEBUG')
 
 cwd = os.path.realpath('.')
+
+
+def pad_test_file(in_name, out_fn):
+  test_fn = find_all(in_name, rootPath, '/tests/System/GridTestSubmission')[0]
+  with open(test_fn, 'rt') as fp:
+    test_data = fp.read()
+  test_data += str(time.time())
+  with open(out_fn, 'wt') as fp:
+    fp.write(test_data)
+
 
 ########################################################################################
 
@@ -109,18 +120,21 @@ gLogger.info("\n Submitting a job that uploads an output")
 helloJ = LHCbJob()
 dirac = DiracLHCb()
 
-helloJ.setName("upload-Output-test")
-helloJ.setInputSandbox([
-    find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
-    find_all('testFileUpload.txt', rootPath, '/tests/System/GridTestSubmission')[0],
-])
-helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
+with tempfile.NamedTemporaryFile() as tmp_file:
+  pad_test_file('testFileUpload.txt', tmp_file.name)
 
-helloJ.setCPUTime(17800)
+  helloJ.setName("upload-Output-test")
+  helloJ.setInputSandbox([
+      find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
+      tmp_file.name,
+  ])
+  helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
-helloJ.setOutputData(['testFileUpload.txt'])
+  helloJ.setCPUTime(17800)
 
-result = dirac.submitJob(helloJ)
+  helloJ.setOutputData([os.path.basename(tmp_file.name)])
+
+  result = dirac.submitJob(helloJ)
 gLogger.info("Hello world with output: ", result)
 
 ########################################################################################
@@ -130,18 +144,21 @@ gLogger.info("\n Submitting a job that uploads an output and replicates it")
 helloJ = LHCbJob()
 dirac = DiracLHCb()
 
-helloJ.setName("upload-Output-test-with-replication")
-helloJ.setInputSandbox([
-    find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
-    find_all('testFileReplication.txt', rootPath, '/tests/System/GridTestSubmission')[0],
-])
-helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
+with tempfile.NamedTemporaryFile() as tmp_file:
+  pad_test_file('testFileReplication.txt', tmp_file.name)
 
-helloJ.setCPUTime(17800)
+  helloJ.setName("upload-Output-test-with-replication")
+  helloJ.setInputSandbox([
+      find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
+      tmp_file.name,
+  ])
+  helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
-helloJ.setOutputData(['testFileReplication.txt'], replicate='True')
+  helloJ.setCPUTime(17800)
 
-result = dirac.submitJob(helloJ)
+  helloJ.setOutputData([os.path.basename(tmp_file.name)], replicate='True')
+
+  result = dirac.submitJob(helloJ)
 gLogger.info("Hello world with output and replication: ", result)
 
 ########################################################################################
