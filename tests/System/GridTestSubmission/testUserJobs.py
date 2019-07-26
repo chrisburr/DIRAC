@@ -110,7 +110,10 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("upload-Output-test")
-helloJ.setInputSandbox([find_all('testFileUpload.txt', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setInputSandbox([
+    find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
+    find_all('testFileUpload.txt', rootPath, '/tests/System/GridTestSubmission')[0],
+])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
@@ -128,7 +131,10 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("upload-Output-test-with-replication")
-helloJ.setInputSandbox([find_all('testFileReplication.txt', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setInputSandbox([
+    find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
+    find_all('testFileReplication.txt', rootPath, '/tests/System/GridTestSubmission')[0],
+])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
