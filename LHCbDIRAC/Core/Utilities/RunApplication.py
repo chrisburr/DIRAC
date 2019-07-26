@@ -204,8 +204,12 @@ class RunApplication(object):
 
     # multicore?
     if self.multicore:
-      if _multicoreWN():
-        nProcessors = getNumberOfProcessors()
+      siteName = gConfig.getValue('/LocalSite/Site')
+      gridCE = gConfig.getValue('/LocalSite/GridCE')
+      queue = gConfig.getValue('/LocalSite/CEQueue')
+
+      if _multicoreWN(siteName, gridCE, queue):
+        nProcessors = getNumberOfProcessors(siteName, gridCE, queue)
         command += ' --ncpus %d ' % nProcessors
       else:
         self.log.info("Would have run with option '--ncpus', but it is not allowed here")
@@ -263,13 +267,10 @@ class RunApplication(object):
             error.flush()
 
 
-def _multicoreWN():
+def _multicoreWN(siteName, gridCE, queue):
   """ Returns "True" if the CE, or the Queue is marked as one where multi-processing is allowed
       (by having Tag "MultiProcessor")
   """
-  siteName = gConfig.getValue('/LocalSite/Site')
-  gridCE = gConfig.getValue('/LocalSite/GridCE')
-  queue = gConfig.getValue('/LocalSite/CEQueue')
   # Tags of the CE
   tags = fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Tag' % (siteName.split('.')[0], siteName, gridCE),
                   ''))
