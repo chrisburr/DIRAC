@@ -17,6 +17,7 @@ import os
 import tarfile
 import zipfile
 import math
+import time
 
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers import Resources
@@ -62,6 +63,14 @@ def zipFiles(outputFile, files=None, directory=None, deleteInput=False):
   try:
     with zipfile.ZipFile(outputFile, 'w') as zipped:
       for fileIn in files:
+
+        # ZIP does not support timestamps before 1980, so for those we simply "touch"
+        st = os.stat(fileIn)
+        mtime = time.localtime(st.st_mtime)
+        dateTime = mtime[0:6]
+        if dateTime[0] < 1980:
+          os.utime(fileIn, None)  # same as "touch"
+
         if directory:
           zipped.write(fileIn, directory + '\\' + fileIn, zipfile.ZIP_DEFLATED)
         else:
