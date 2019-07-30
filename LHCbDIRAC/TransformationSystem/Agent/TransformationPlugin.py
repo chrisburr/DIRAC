@@ -983,7 +983,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                          "for runs %s : %s" % (','.join(sorted(runFileDict)), res['Message']))
       return res
     runSEDict = dict((runDict['RunNumber'], runDict['SelectedSite'])
-                      for runDict in res['Value'] if runDict['SelectedSite'])
+                     for runDict in res['Value'] if runDict['SelectedSite'])
 
     maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100)
     tasks = []
