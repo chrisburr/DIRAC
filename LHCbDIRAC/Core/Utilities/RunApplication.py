@@ -210,7 +210,7 @@ class RunApplication(object):
 
       if _multicoreWN(siteName, gridCE, queue):
         nProcessors = getNumberOfProcessors(siteName, gridCE, queue)
-        command += ' --ncpus %d ' % nProcessors
+        command += ' --ncpus %d ' % int(nProcessors)
       else:
         self.log.info("Would have run with option '--ncpus', but it is not allowed here")
 

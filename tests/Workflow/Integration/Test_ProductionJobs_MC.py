@@ -84,10 +84,10 @@ class MCSuccess(ProductionJobTestCase):
 
     options = "$APPCONFIGOPTS/Gauss/Beam6500GeV-mu100-2018-nu1.6.py;"
     options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
-    options += "$APPCONFIGOPTS/Gauss/DataType-2017.py"
-    options += "$APPCONFIGOPTS/Gauss/RICHRandomHits.py"
-    options += "$DECFILESROOT/options/10132060.py"
-    options += "$LBPYTHIA8ROOT/options/Pythia8.py"
+    options += "$APPCONFIGOPTS/Gauss/DataType-2017.py;"
+    options += "$APPCONFIGOPTS/Gauss/RICHRandomHits.py;"
+    options += "$DECFILESROOT/options/10132060.py;"
+    options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
     options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py"
 
     stepsInProd = [{'StepId': 139263, 'StepName': 'Sim09h', 'ApplicationName': 'Gauss', 'ApplicationVersion': 'v49r14',
@@ -111,7 +111,7 @@ class MCSuccess(ProductionJobTestCase):
     except (IndexError, KeyError):
       prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', rootPath)[0])
     prod.LHCbJob.setConfigArgs('pilot.cfg')
-    prod.setParameter('numberOfEvents', 'string', 8, 'Number of events to test')
+    prod.setParameter('numberOfEvents', 'string', 4, 'Number of events to test')
     # Then launch it
     res = self.diracProduction.launchProduction(prod, False, True, 0)
 
