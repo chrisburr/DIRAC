@@ -9,8 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+
 __RCSID__ = "$Id$"
-__VERSION__ = "$Revision: 69333 $"
+
 import DIRAC
 from DIRAC.Core.Base import Script
 

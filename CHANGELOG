@@ -1,3 +1,16 @@
+v9r4-pre4
+use DIRAC v6r22p3
+
+* using DIRAC's function getNumberOfProcessors
+* one more try
+* ident the comments
+* add empty space
+* try to fix the empty line
+* add empty line
+* allow to save None for FastSimulation
+* Fix getROOTFileGUID.py
+* CI: add name and email to git config for pushing on cvmfs dev(base)
+
 v9r4-pre3
 use DIRAC v6r22p2
 

@@ -32,7 +32,7 @@ def usage():
 
 if len(args) < 1:
   usage()
-  
+
 diracProd = DiracProduction()
 
 prodID = None

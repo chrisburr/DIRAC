@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 ###############################################################################
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
@@ -9,41 +9,26 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+""" Just importing stuff that should be present
+"""
+# pylint: disable=unused-import,import-error
 
-__RCSID__ = "$Id$"
-
-from DIRAC.Core.Base import Script
-Script.parseCommandLine(ignoreErrors=True)
-
-import DIRAC
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-
-args = Script.getPositionalArgs()
-
-
-def usage():
-  """ usage
-  Prints script usage
-
-  """
-
-  print 'Usage: %s <Production ID> <Number Of Jobs>' % Script.scriptName
-  DIRAC.exit(2)
+import pyparsing
+import GSI
+import XRootD
+import gfal2
+import stomp
+import requests
+# import futures
+import certifi
+import fts3
+import LbPlatformUtils
+import LbEnv
 
 
-if len(args) < 2 or len(args) > 2:
-  usage()
+from distutils.spawn import find_executable
 
-diracProd = DiracProduction()
-prodID = args[0]
-number = args[1]
-
-result = diracProd.extendProduction(prodID, number, printOutput=True)
-if result['OK']:
-  DIRAC.exit(0)
-elif 'Message' in result:
-  print 'Extending production failed with message:\n%s' % result['Message']
-  DIRAC.exit(2)
-else:
-  print 'Null result for extendProduction() call'
-  DIRAC.exit(2)
+for cmd in ['voms-proxy-init2', 'voms-proxy-info2', ]:
+  res = find_executable(cmd)
+  if not res:
+    raise RuntimeError()

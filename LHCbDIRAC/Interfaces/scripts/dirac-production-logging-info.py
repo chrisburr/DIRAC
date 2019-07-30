@@ -22,7 +22,6 @@ args = Script.getPositionalArgs()
 
 def usage():
   """ usage
-  
   Prints script usage 
   
   """
