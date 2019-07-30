@@ -1610,7 +1610,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
       else:
         missingRuns = runDict.keys()
       if missingRuns:
-        res = bk.getRunInformation({'RunNumber':missingRuns, 'Fields': ['TCK', 'CondDb', 'DDDB']})
+        res = bk.getRunInformation({'RunNumber': missingRuns, 'Fields': ['TCK', 'CondDb', 'DDDB']})
         if not res['OK']:
           gLogger.error("Error getting run information", res['Message'])
         else:
