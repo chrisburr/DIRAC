@@ -1604,9 +1604,9 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
       res = transClient.getRunsMetadata(runDict.keys())
       if res['OK']:
         missingRuns = []
-        for run, meta in res['Value']:
+        for runID, meta in res['Value']:
           if 'TCK' not in meta or 'CondDb' not in meta or 'DDDB' not in meta:
-            missingRuns.append(run)
+            missingRuns.append(runID)
       else:
         missingRuns = runDict.keys()
       if missingRuns:
@@ -1614,8 +1614,8 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
         if not res['OK']:
           gLogger.error("Error getting run information", res['Message'])
         else:
-          for run, meta in res['Value'].iteritems():
-            res = tr.addRunsMetadata(run, meta)
+          for runID, meta in res['Value'].iteritems():
+            res = transClient.addRunsMetadata(runID, meta)
             if not res['OK']:
               gLogger.error("Error setting run metadata in TS", res['Message'])
 
