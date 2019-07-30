@@ -24,7 +24,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery, makeBKPath
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
-from tests.Integration.ProductionXMLLogAnalysis.Test_XMLSummaryAnalysis import run
 
 __RCSID__ = "$Id$"
 
