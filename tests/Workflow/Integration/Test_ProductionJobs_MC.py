@@ -64,8 +64,10 @@ class MCSuccess(ProductionJobTestCase):
                     'visibilityFlag':[{'Visible': 'N', 'FileType': 'SIM'}]}]
 
     # First create the production object
-    prod = self.pr._buildProduction(prodType='MCSimulation', stepsInProd=stepsInProd, outputSE={'DIGI': 'Tier1_MC-DST'},
-                                    priority=0, cpu=100, outputFileMask='DIGI')
+    prod = self.pr._buildProduction(prodType='MCSimulation',
+                                    stepsInProd=stepsInProd,
+                                    outputSE={'SIM': 'Tier1_MC-DST'},
+                                    priority=0, cpu=100, outputFileMask='SIM')
     try:
       # This is the standard location in Jenkins
       prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', os.environ['WORKSPACE'] + '/PilotInstallDIR')[0])
@@ -73,6 +75,43 @@ class MCSuccess(ProductionJobTestCase):
       prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', rootPath)[0])
     prod.LHCbJob.setConfigArgs('pilot.cfg')
     prod.setParameter('numberOfEvents', 'string', 2, 'Number of events to test')
+    # Then launch it
+    res = self.diracProduction.launchProduction(prod, False, True, 0)
+
+    self.assertTrue(res['OK'])
+
+  def test_Integration_Production_MP(self):
+
+    options = "$APPCONFIGOPTS/Gauss/Beam6500GeV-mu100-2018-nu1.6.py;"
+    options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
+    options += "$APPCONFIGOPTS/Gauss/DataType-2017.py"
+    options += "$APPCONFIGOPTS/Gauss/RICHRandomHits.py"
+    options += "$DECFILESROOT/options/10132060.py"
+    options += "$LBPYTHIA8ROOT/options/Pythia8.py"
+    options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py"
+
+    stepsInProd = [{'StepId': 139263, 'StepName': 'Sim09h', 'ApplicationName': 'Gauss', 'ApplicationVersion': 'v49r14',
+                    'ExtraPackages': 'AppConfig.v3r383;Gen/DecFiles.v30r33',
+                    'ProcessingPass': 'Sim09h', 'Visible': 'Y', 'Usable': 'Yes',
+                    'DDDB': 'dddb-20170721-3', 'CONDDB': 'sim-20190430-vc-mu100', 'DQTag': '', 'OptionsFormat': '',
+                    'OptionFiles': options,
+                    'isMulticore': 'Y', 'SystemConfig': 'x86_64-slc6-gcc48-opt', 'mcTCK': '', 'ExtraOptions': '',
+                    'fileTypesIn': [],
+                    'fileTypesOut':['SIM'],
+                    'visibilityFlag':[{'Visible': 'N', 'FileType': 'SIM'}]}]
+
+    # First create the production object
+    prod = self.pr._buildProduction(prodType='MCSimulation',
+                                    stepsInProd=stepsInProd,
+                                    outputSE={'SIM': 'Tier1_MC-DST'},
+                                    priority=0, cpu=100, outputFileMask='SIM')
+    try:
+      # This is the standard location in Jenkins
+      prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', os.environ['WORKSPACE'] + '/PilotInstallDIR')[0])
+    except (IndexError, KeyError):
+      prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', rootPath)[0])
+    prod.LHCbJob.setConfigArgs('pilot.cfg')
+    prod.setParameter('numberOfEvents', 'string', 8, 'Number of events to test')
     # Then launch it
     res = self.diracProduction.launchProduction(prod, False, True, 0)
 
