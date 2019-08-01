@@ -1603,7 +1603,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
       res = transClient.getRunsMetadata(runDict.keys())
       if res['OK']:
         missingRuns = []
-        for runID, meta in res['Value']:
+        for runID, meta in res['Value'].iteritems():
           if 'TCK' not in meta or 'CondDb' not in meta or 'DDDB' not in meta:
             missingRuns.append(runID)
       else:
