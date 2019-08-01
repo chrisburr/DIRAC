@@ -2571,7 +2571,7 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
     self.assertEqual(retVal['Value'][0]['TotalRecords'], 0)
     self.assertTrue(retVal['Value'][1]['ParameterNames'])
     self.assertEqual(retVal['Value'][1]['ParameterNames'], ['EventType', 'Description'])
-    self.assertEqual(retVal['Value'][1]['TotalRecords'], 1)
+    self.assertLessEqual(retVal['Value'][1]['TotalRecords'], 1)
 
   def test_getConditions(self):
     bkQuery = {'ConfigName': 'Test', 'ConfigVersion': 'Test01'}
