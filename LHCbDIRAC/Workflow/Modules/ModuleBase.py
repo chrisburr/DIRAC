@@ -797,6 +797,12 @@ class ModuleBase(object):
         except KeyError:
           raise RuntimeError("Can't find output of step %s" % previousStep)
 
+      # outputDataName is always lower case but the job output can vary
+      # Fix it if the file only exists in the current directory with mixed case
+      filenameMap = {fn.lower(): fn for fn in os.listdir('.')}
+      stepInputData = [fn if fn in os.listdir('.') else filenameMap.get(fn, fn)
+                       for fn in stepInputData]
+
       return stepInputData
 
     return [x.strip('LFN:') for x in inputData.split(';')]
