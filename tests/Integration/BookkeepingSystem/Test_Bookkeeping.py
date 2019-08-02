@@ -2571,7 +2571,7 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
     self.assertEqual(retVal['Value'][0]['TotalRecords'], 0)
     self.assertTrue(retVal['Value'][1]['ParameterNames'])
     self.assertEqual(retVal['Value'][1]['ParameterNames'], ['EventType', 'Description'])
-    self.assertEqual(retVal['Value'][1]['TotalRecords'], 1)
+    self.assertLessEqual(retVal['Value'][1]['TotalRecords'], 1)
 
   def test_getConditions(self):
     bkQuery = {'ConfigName': 'Test', 'ConfigVersion': 'Test01'}
@@ -3012,6 +3012,8 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
 
 if __name__ == '__main__':
 
+  deleteTestSuite = unittest.defaultTestLoader.loadTestsFromTestCase(TestDestoryDataset)
+  unittest.TextTestRunner(verbosity=2, failfast=True).run(deleteTestSuite)
   mcTestSuite = unittest.defaultTestLoader.loadTestsFromTestCase(MCProductionRegistration)
   mcTestSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCXMLReportInsert))
   mcTestSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCProductionTest))
@@ -3020,6 +3022,5 @@ if __name__ == '__main__':
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMethods))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestBookkeepingUserInterface))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestRemoveFiles))
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestDestoryDataset))
   testResult = unittest.TextTestRunner(verbosity=2, failfast=True).run(suite)
   sys.exit(not testResult.wasSuccessful())
