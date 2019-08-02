@@ -1,3 +1,32 @@
+v9r4-pre5
+use DIRAC v6r22p4
+
+* Allow mixed case when getting input from the previous step
+* the nb of total records can be 0 as well
+* destroy the dataset before start the tests
+* fix bug
+* minor fixes
+* added GaussMP job
+* suppress spurious line introduced by Eclipse
+* fix var name
+* code style
+* code
+* Add run metadata in addFilesToTransformation if needed
+* Set transformation run site for ReplicateTORunDestination
+* just autopep8
+* removed unused pngs
+* removed old doc
+* ZIP does not support timestamps before 1980
+* fix: None is not iterable
+* Add missing import
+* Ensure GUID is always unique for test files
+* fix: None is not iterable
+* split test
+* Include exe-script.py in InputSandbox in testUserJobs.py
+* bug fix
+* add extension to master
+* added executable bit
+
 v9r4-pre4
 use DIRAC v6r22p3
 
