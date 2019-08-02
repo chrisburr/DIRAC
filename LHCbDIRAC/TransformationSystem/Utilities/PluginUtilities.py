@@ -531,7 +531,7 @@ get from BK" % (param, self.paramName))
     if not (se in self.freeSpace) or self.freeSpace[se]['LastCheckTime'] < cacheLimit:
       res = self.rmClient.getSEStorageSpace(se)
       if not res['OK']:
-        self.logError('Error when getting space for SE %s' % (se, ), res['Message'])
+        self.logError('Error when getting space for SE %s' % (se,), res['Message'])
         return 0
       self.freeSpace[se] = res['Value']
 
@@ -1492,7 +1492,7 @@ def getRemovalPlugins():
   return ("DestroyDataset", 'DestroyDatasetWhenProcessed', "RemoveDatasetFromDisk",
           'RemoveReplicasKeepDestination', "ReduceReplicasKeepDestination",
           "RemoveReplicas", 'RemoveReplicasWhenProcessed',
-          'RemoveReplicasWithAncestors', 'ReduceReplicas', )
+          'RemoveReplicasWithAncestors', 'ReduceReplicas',)
 
 
 def getReplicationPlugins():
@@ -1503,7 +1503,7 @@ def getReplicationPlugins():
           "ArchiveDataset", "ReplicateDataset",
           'RAWReplication', "ReplicateToRunDestination",
           'FakeReplication', 'ReplicateToLocalSE', 'ReplicateWithAncestors',
-          'Healing', )
+          'Healing',)
 
 
 def getShares(sType, normalise=False):
@@ -1565,7 +1565,7 @@ def groupByRun(files):
 def addFilesToTransformation(transID, lfns, addRunInfo=True):
   """
   Add files to a transformation, including the run number if required
-  As this is only used in the plugin to add ancestors, no need to add other metadata
+  As this is also used by the add-files script, we also add run metadata to the TS is not present
   """
   transClient = TransformationClient()
   bk = BookkeepingClient()
@@ -1609,6 +1609,24 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
           res = transClient.addTransformationRunFiles(transID, runID, list(runLfns))
           if not res['OK']:
             break
+      # Add run metadata if not present in TS
+      res = transClient.getRunsMetadata(runDict.keys())
+      if res['OK']:
+        missingRuns = []
+        for runID, meta in res['Value'].iteritems():
+          if 'TCK' not in meta or 'CondDb' not in meta or 'DDDB' not in meta:
+            missingRuns.append(runID)
+      else:
+        missingRuns = runDict.keys()
+      if missingRuns:
+        res = bk.getRunInformation({'RunNumber': missingRuns, 'Fields': ['TCK', 'CondDb', 'DDDB']})
+        if not res['OK']:
+          gLogger.error("Error getting run information", res['Message'])
+        else:
+          for runID, meta in res['Value'].iteritems():
+            res = transClient.addRunsMetadata(runID, meta)
+            if not res['OK']:
+              gLogger.error("Error setting run metadata in TS", res['Message'])
 
   if not res['OK']:
     return res

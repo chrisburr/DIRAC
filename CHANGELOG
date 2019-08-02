@@ -131,6 +131,9 @@ use DIRAC v6r22
 * Use LbPlatformUtils 3.1
 * CI: use DIRACOS in docker
 
+v9r3p9
+use DIRAC v6r21p14
+
 v9r3p8
 use DIRAC v6r21p11
 
