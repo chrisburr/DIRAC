@@ -46,27 +46,29 @@
 
 
 ##################################
-### EDIT HERE ###
+# ## EDIT HERE ###
 
-#Just put one file, or 2, or whatever you want to be in input of your test job
-lfns = ['/lhcb/data/2016/RAW/TURBO/LHCb/COLLISION16/173905/173905_0000000126.raw'] # a list of strings
+# Just put one file, or 2, or whatever you want to be in input of your test job
+lfns = ['/lhcb/data/2016/RAW/TURBO/LHCb/COLLISION16/173905/173905_0000000126.raw']  # a list of strings
 
-#Answer this: do you want to include the ancestors of the files above? If yes, then at which depth?
+# Answer this: do you want to include the ancestors of the files above? If yes, then at which depth?
 includeAncestors = False
 ancestorsDepth = 1
 
-#Answer also this: do you have already deployed steps (in the step manager web page)? (True/False) Then look at what's next
+# Answer also this: do you have already deployed steps (in the step manager web page)? (True/False)
+# Then look at what's next
 stepReady = True
 
-#And, one more question: is this a merging step that you are testing?
+# And, one more question: is this a merging step that you are testing?
 mergingStep = False
 
-if stepReady: #if this is True, please provide a step number
-  stepsList = [129889] # a list of stepIDs
-else: #you'll need to answer ALL the following (I'm just giving examples) NOTE: this works for ONLY 1 step, not for a list:
-  fileTypesIn = ['RAW'] # a list of strings
-  fileTypesOut = ['CHARM1.MDST','CHARM2.MDST','CHARM3PRESCALED.MDST','CHARM4PRESCALED.MDST',
-                  'CHARMSTRANGELFV.MDST','DIMUON.MDST','LAMBDAPRESCALED.MDST'] # a list of strings
+if stepReady:  # if this is True, please provide a step number
+  stepsList = [129889]  # a list of stepIDs
+else:  # you'll need to answer ALL the following (I'm just giving examples)
+  # NOTE: this works for ONLY 1 step, not for a list:
+  fileTypesIn = ['RAW']  # a list of strings
+  fileTypesOut = ['CHARM1.MDST', 'CHARM2.MDST', 'CHARM3PRESCALED.MDST', 'CHARM4PRESCALED.MDST',
+                  'CHARMSTRANGELFV.MDST', 'DIMUON.MDST', 'LAMBDAPRESCALED.MDST']  # a list of strings
   applicationName = 'DaVinci'
   applicationVersion = 'v41r1'
   systemConfig = 'x86_64-slc6-gcc48-opt'
@@ -79,10 +81,8 @@ else: #you'll need to answer ALL the following (I'm just giving examples) NOTE: 
 ##################################
 
 
-
-
 ##################################
-### DO NOT EDIT FROM HERE
+# ## DO NOT EDIT FROM HERE
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
@@ -112,10 +112,9 @@ else:
                   'OptionFiles': optionFiles,
                   'isMulticore': 'N',
                   'SystemConfig': systemConfig, 'mcTCK': '', 'ExtraOptions': '',
-                  'fileTypesIn':fileTypesIn,
-                  'fileTypesOut':fileTypesOut,
-                  'visibilityFlag': [{'Visible': 'Y', 'FileType': fileTypesOut}]
-                 }]
+                  'fileTypesIn': fileTypesIn,
+                  'fileTypesOut': fileTypesOut,
+                  'visibilityFlag': [{'Visible': 'Y', 'FileType': fileTypesOut}]}]
   pr.outputSEs = ['Tier1-DST']
   pr.specialOutputSEs = [{}]
   outDict = {t: 'Tier1-DST' for t in fileTypesOut}
@@ -126,9 +125,9 @@ if not includeAncestors:
 if mergingStep:
   jobType = 'Merge'
 else:
-  jobType = 'Turbo' #whatever...
-prod = pr._buildProduction( jobType, stepsInProd, outDict, 0, 100,
-                             inputDataPolicy = 'protocol', inputDataList = lfns,
-                             ancestorDepth = ancestorsDepth )
+  jobType = 'Turbo'  # whatever...
+prod = pr._buildProduction(jobType, stepsInProd, outDict, 0, 100,
+                           inputDataPolicy='protocol', inputDataList=lfns,
+                           ancestorDepth=ancestorsDepth)
 
-diracProduction.launchProduction( prod, False, True, 0 )
+diracProduction.launchProduction(prod, False, True, 0)

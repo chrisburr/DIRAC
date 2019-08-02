@@ -162,7 +162,7 @@ Manual procedure
 
 Login on lxplus, run ::
 
-  lb-run LHCbDirac/prod bash -norc
+  source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac
 
   git archive --remote ssh://git@gitlab.cern.ch:8443/lhcb-dirac/LHCbDIRAC.git devel LHCbDIRAC/releases.cfg  | tar -x -v -f - --transform 's|^LHCbDIRAC/||' LHCbDIRAC/releases.cfg
 
@@ -246,13 +246,13 @@ Open a JIRA task: https://its.cern.ch/jira/projects/LHCBDEP.
   https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Installation/make_release.html#new-procedure-for-installing-on-cvmfs-lhcb
 
 
-Once the client has been deployed, you should setup the correct environment (lb-run LHCbDIRAC/<version> bash --norc), preferably on a CERNVM, on lxplus otherwise, and run the following two scripts:
-  * Minimal test: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/tests/System/Client/basic-imports.py
+Once the client has been deployed, you should setup the correct environment (source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac), preferably on a CERNVM, on lxplus otherwise, and run the following two scripts:
+  * Minimal test: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/tests/System/Client/basic-imports_client.py
   * Bigger (certification like) test: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/tests/System/Client/client_test.sh
 
 
-new procedure for installing on cvmfs-lhcbdev
-`````````````````````````````````````````````
+Procedure for installing on cvmfs-lhcbdev
+`````````````````````````````````````````
 
 You should member of the e-group lhcb-cvmfs-librarians.
 you login to aivoadm.cern.ch and you follow the sequence::
@@ -336,7 +336,7 @@ The recommended way is the following::
 This command will create 6 files called "vobox_update_MyLetter" then you can run in 6 windows the recipe for one single machine like that::
 
       ssh lxplus
-      cd  DiracInstall ; lb-run LHCbDIRAC/prod bash -norc ; lhcb-proxy-init -g lhcb_admin; dirac-admin-sysadmin-cli
+      cd  DiracInstall ; source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac ; lhcb-proxy-init -g lhcb_admin; dirac-admin-sysadmin-cli
             and from the prompt ::
                [host] : execfile vobox_update_MyLetter
                [host] : quit

@@ -339,6 +339,8 @@ class ProductionRequestDB(DB):
         all subrequests of 'subrequestsFor' (when specified).
         Parameters with explicit types are assumed checked by service.
     '''
+    if filterIn is None:
+      filterIn = {}
     try:  # test parameters
       for x in requestIDList:
         y = long(x)
