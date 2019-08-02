@@ -976,6 +976,15 @@ class TransformationPlugin(DIRACTransformationPlugin):
     destSEs = list(maxFilesAtSE)
     runFileDict = self.util.getFilesGroupedByRun()
 
+    # Make a list of SEs already assigned to runs
+    res = self.util.getTransformationRuns(runFileDict)
+    if not res['OK']:
+      self.util.logError("Error when getting transformation runs",
+                         "for runs %s : %s" % (','.join(sorted(runFileDict)), res['Message']))
+      return res
+    runSEDict = dict((runDict['RunNumber'], runDict['SelectedSite'])
+                     for runDict in res['Value'] if runDict['SelectedSite'])
+
     maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100)
     tasks = []
     alreadyReplicated = set()
@@ -983,9 +992,14 @@ class TransformationPlugin(DIRACTransformationPlugin):
       lfns = set(runFileDict[runID]) & set(self.transReplicas)
       if not lfns:
         continue
-      runDestination = self.util.getSEForDestination(runID, destSEs)
-      if runDestination:
-        candidateSE = runDestination
+      candidateSE = runSEDict.get(runID, self.util.getSEForDestination(runID, destSEs))
+      if candidateSE:
+        # If necessary, set the run target in the TS
+        if runID not in runSEDict:
+          res = self.transClient.setTransformationRunsSite(self.transID, runID, candidateSE)
+          if not res['OK']:
+            self.util.logError("Failed to assign TransformationRun site", res['Message'])
+            return S_ERROR("Failed to assign TransformationRun site")
         freeSpace = self.util.getStorageFreeSpace([candidateSE])
         if freeSpace[candidateSE] < watermark:
           self.util.logInfo("No enough space (%s TB) found at %s" % (watermark, candidateSE))
