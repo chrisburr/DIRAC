@@ -149,6 +149,8 @@ BEGIN
 END;
 PROCEDURE updateProdOutputFiles IS
 exits number;
+err_num NUMBER;
+err_msg VARCHAR2(1000);
 BEGIN 
 	FOR c IN (select j.production from jobs j, files f WHERE 
 		f.inserttimestamp >= SYSTIMESTAMP - 1 AND 
@@ -171,6 +173,14 @@ BEGIN
 		END LOOP;
 		COMMIT;
 	END LOOP;
+	EXCEPTION
+    WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SUBSTR(SQLERRM, 1, 1000);
+    	utl_mail.send(sender => 'lhcb-geoc@cern.ch',
+                recipients => 'lhcb-bookkeeping@cern.ch',
+                subject    => 'Failed to update productionoutputfiles',
+                message    => 'ERROR number:'||err_num||' error message:'||err_msg||' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
 END;
 END;
 /
