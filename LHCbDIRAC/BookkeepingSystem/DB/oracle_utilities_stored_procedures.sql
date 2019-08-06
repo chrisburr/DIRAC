@@ -173,7 +173,7 @@ BEGIN
 		END LOOP;
 		COMMIT;
 	END LOOP;
-	EXCEPTION
+    EXCEPTION
     WHEN OTHERS THEN
         err_num := SQLCODE;
         err_msg := SUBSTR(SQLERRM, 1, 1000);
