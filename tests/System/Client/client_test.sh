@@ -83,9 +83,28 @@ if [ $? -ne 0 ]
 then
    exit $?
 fi
+
+# Comment it out because asking the accessURL of files on tape is not the best...
+
+# echo " "
+# echo "====== dirac-dms-lfn-accessURL /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw"
+# dirac-dms-lfn-accessURL /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw
+# if [ $? -ne 0 ]
+# then
+#    exit $?
+# fi
+# echo " "
+
 echo " "
-echo "====== dirac-dms-lfn-accessURL /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw"
-dirac-dms-lfn-accessURL /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw
+echo " "
+echo " ########################## BEGIN OF USER FILES TEST #############################"
+echo " "
+echo " "
+
+
+
+echo "lhcb-proxy-init"
+lhcb-proxy-init
 if [ $? -ne 0 ]
 then
    exit $?
