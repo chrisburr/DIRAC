@@ -149,6 +149,8 @@ BEGIN
 END;
 PROCEDURE updateProdOutputFiles IS
 exits number;
+err_num NUMBER;
+err_msg VARCHAR2(1000);
 BEGIN 
 	FOR c IN (select j.production from jobs j, files f WHERE 
 		f.inserttimestamp >= SYSTIMESTAMP - 1 AND 
@@ -165,12 +167,20 @@ BEGIN
 			IF exits>0 then
 				UPDATE productionoutputfiles SET visible=prod.visibilityflag, gotreplica=prod.gotreplica WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
 			ELSE
-				dbms_output.put_line('Inserting:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
+				dbms_output.put_line('Inserting -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
 				INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(prod.production,prod.stepid, prod.filetypeid, prod.visibilityflag,prod.eventtypeid, prod.gotreplica);
 			END IF;
 		END LOOP;
 		COMMIT;
 	END LOOP;
+    EXCEPTION
+    WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SUBSTR(SQLERRM, 1, 1000);
+    	utl_mail.send(sender => 'lhcb-geoc@cern.ch',
+                recipients => 'lhcb-bookkeeping@cern.ch',
+                subject    => 'Failed to update productionoutputfiles',
+                message    => 'ERROR number:'||err_num||' error message:'||err_msg||' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
 END;
 END;
 /

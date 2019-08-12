@@ -20,7 +20,7 @@ We are using 3 database accounts:
 
 The main account is always locked. Every time when you want to use it you have to unlock.
 
-Before login to the development db, you have to unlock the database:
+Before login to the production db, you have to unlock the database:
 
     https://cern.ch/service-db-actionmanagement
 
@@ -51,7 +51,7 @@ You have two ways to login:
 
  2. using sqlplus
 
-    source /afs/cern.ch/project/oracle/script/setoraenv.csh
+    source /afs/cern.ch/project/oracle/script/setoraenv.sh
 
     setoraenv -s 12101
 
@@ -329,6 +329,8 @@ use the following queries for debug:
 	f.gotreplica IS NOT NULL and
 	f.eventtypeid is NULL and
 	f.filetypeid NOT IN(9,17));
+	
+	commit;
 
 
 ====================
