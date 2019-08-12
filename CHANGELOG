@@ -1,6 +1,14 @@
-v9r4-pre5
+v9r4
 use DIRAC v6r22p4
 
+* update extjs version ext-6.2.0
+* update the bkk document
+* change tab to space
+* send an email in case of problem
+* don't try to register if there's nothing to register
+* just more log in test
+* tests: do not try to get URL of a file on tape
+* Use ROOT v6.16.00 to keep SLC6 support
 * Allow mixed case when getting input from the previous step
 * the nb of total records can be 0 as well
 * destroy the dataset before start the tests
@@ -26,10 +34,6 @@ use DIRAC v6r22p4
 * bug fix
 * add extension to master
 * added executable bit
-
-v9r4-pre4
-use DIRAC v6r22p3
-
 * using DIRAC's function getNumberOfProcessors
 * one more try
 * ident the comments
@@ -39,10 +43,6 @@ use DIRAC v6r22p3
 * allow to save None for FastSimulation
 * Fix getROOTFileGUID.py
 * CI: add name and email to git config for pushing on cvmfs dev(base)
-
-v9r4-pre3
-use DIRAC v6r22p2
-
 * fix pylint
 * Visibility flag can be yes and no as well
 * Tests: test LbPlatformUtils and LbEnv in the basic-import tests
@@ -58,10 +58,6 @@ use DIRAC v6r22p2
 * CI: automatically deploy pre releases to CVMFS dev
 * Tests: remove arc from the client basic-import test
 * trust python packages servers used by pip(base)
-
-v9r4-pre2
-use DIRAC v6r22p1
-
 * removed import of unicode_literals
 * install sencha cmd before compile
 * Exclude test XML files from copyright check
@@ -76,9 +72,6 @@ use DIRAC v6r22p1
 * only LHCbDIRAC tests
 * Fix indentation
 * Fallback to JSON file on CVMFS if XMLRPC fails
-
-v9r4-pre1
-use DIRAC v6r22
 * Workflow: AnalyzeFileAccess module done properly
 * added CreationDate
 * autopep8
