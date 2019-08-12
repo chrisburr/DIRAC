@@ -111,16 +111,37 @@ then
 fi
 echo " "
 
-echo "====== dirac-dms-list-directory /lhcb/user/$dir/Dirac_Scripts_Test_Directory/"
+echo " "
+echo " "
+echo " ########################## BEGIN OF USER FILES TEST #############################"
+echo " "
+echo " "
 
-echo "======  dirac-dms-storage-usage-summary"
+echo "====== dirac-dms-list-directory /lhcb/user/$dir/Dirac_Scripts_Test_Directory/"
+dirac-dms-list-directory /lhcb/user/$dir/Dirac_Scripts_Test_Directory/
+if [ $? -ne 0 ]
+then
+   exit $?
+fi
+echo " "
+
+echo "====== dirac-dms-remove-files /lhcb/user/$dir/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt"
+dirac-dms-remove-files /lhcb/user/$dir/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt
+if [ $? -ne 0 ]
+then
+   exit $?
+fi
+echo " "
+
+
+echo "======  dirac-dms-storage-usage-summary -S CERN-USER -D /lhcb/user/$dir/Dirac_Scripts_Test_Directory/"
 dirac-dms-storage-usage-summary -S CERN-USER -D /lhcb/user/$dir/Dirac_Scripts_Test_Directory/
 if [ $? -ne 0 ]
 then
    exit $?
 fi
 echo " "
-echo "====== dirac-dms-add-file /lhcb/user/$dir/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt CNAF-USER"
+echo "====== dirac-dms-add-file /lhcb/user/$dir/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt ./DMS_Scripts_Test_File.txt CNAF-USER"
 dirac-dms-add-file /lhcb/user/$dir/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt ./DMS_Scripts_Test_File.txt CNAF-USER
 if [ $? -ne 0 ]
 then

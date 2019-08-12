@@ -335,19 +335,20 @@ class UploadOutputData(ModuleBase):
         lfnsToRegisterInBKLater = list(lfnsToRegisterInBK - set(lfnsToRegisterInBKNow))
 
         # Registering what should be registering immediately, and handling failures
-        result = FileCatalog(catalogs=['BookkeepingDB']).addFile(lfnsToRegisterInBKNow)
-        self.log.verbose("BookkeepingDB.addFile: %s" % result)
-        if not result['OK']:
-          self.log.error(result)
-          return S_ERROR("Could Not Perform BK Registration")
-        if 'Failed' in result['Value'] and result['Value']['Failed']:
-          for lfn, error in result['Value']['Failed'].iteritems():
-            lfnMetadata = {}
-            for lfnMD in performBKRegistration:
-              if lfnMD['lfn'] == lfn:  # the lfn is indeed both at lfnMD['lfn'] and at lfnMD['filedict']['LFN']
-                lfnMetadata = lfnMD['filedict']
-                break
-            self.setBKRegistrationRequest(lfn, error=error, metaData=lfnMetadata)
+        if lfnsToRegisterInBKNow:
+          result = FileCatalog(catalogs=['BookkeepingDB']).addFile(lfnsToRegisterInBKNow)
+          self.log.verbose("BookkeepingDB.addFile: %s" % result)
+          if not result['OK']:
+            self.log.error(result)
+            return S_ERROR("Could Not Perform BK Registration")
+          if 'Failed' in result['Value'] and result['Value']['Failed']:
+            for lfn, error in result['Value']['Failed'].iteritems():
+              lfnMetadata = {}
+              for lfnMD in performBKRegistration:
+                if lfnMD['lfn'] == lfn:  # the lfn is indeed both at lfnMD['lfn'] and at lfnMD['filedict']['LFN']
+                  lfnMetadata = lfnMD['filedict']
+                  break
+              self.setBKRegistrationRequest(lfn, error=error, metaData=lfnMetadata)
 
         # Adding a registration request for what whould be registered later
         if lfnsToRegisterInBKLater:
