@@ -1,5 +1,5 @@
 #!/usr/bin/env lb-run
-# args: -r /cvmfs/lhcb.cern.ch/lib -c best ROOT/6.18.00 python
+# args: -r /cvmfs/lhcb.cern.ch/lib -c best ROOT/6.16.00 python
 ###############################################################################
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
