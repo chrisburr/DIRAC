@@ -3611,7 +3611,9 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     if tcks not in [None, default]:
       if isinstance(tcks, list):
-        if len(tcks) > 0:
+        if default in tcks:
+          tcks.remove(default)
+        if tcks:
           condition += ' and ( ' + ' or '.join([" j.tck='%s'" % i for i in tcks]) + ')'
       elif isinstance(tcks, basestring):
         condition += " and j.tck='%s'" % (tcks)
