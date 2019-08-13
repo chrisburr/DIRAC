@@ -512,7 +512,7 @@ class TestMethods(DataInsertTestCase):
                                "Visible": "All"})
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 10)
-    
+
     retVal = self.bk.getFiles({"ConfigName": "MC",
                                "ConfigVersion": "2012",
                                "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
@@ -523,7 +523,7 @@ class TestMethods(DataInsertTestCase):
                                'NbOfEvents': True})
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [180])
-    
+
   def test_getFiles1(self):
     """
     This is used to test the getFiles method.
@@ -577,7 +577,7 @@ class TestMethods(DataInsertTestCase):
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 301)
-    
+
     bkQuery['NbOfEvents'] = True
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
@@ -625,7 +625,7 @@ class TestMethods(DataInsertTestCase):
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value']['TotalRecords'], 1)
     self.assertEqual(retVal['Value']['Records'][0][0], 'DST')
-    
+
     bkQuery['NbOfEvents'] = True
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
