@@ -80,6 +80,40 @@ class MCSuccess(ProductionJobTestCase):
 
     self.assertTrue(res['OK'])
 
+  def test_Integration_Production_MP_Andrea(self):
+
+    options = "$GAUSSROOT/options/Gauss-2016.py;"
+    options += "$DECFILESROOT/options/30000000.py;"
+    options += "$LBPYTHIA8ROOT/options/Pythia8.py"
+    options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py"
+
+    stepsInProd = [{'StepId': 139263, 'StepName': 'Sim09h', 'ApplicationName': 'Gauss', 'ApplicationVersion': 'v51r0',
+                    'ExtraPackages': 'AppConfig.v3r355;Gen/DecFiles.v30r5',
+                    'ProcessingPass': 'Sim09h', 'Visible': 'Y', 'Usable': 'Yes',
+                    'DDDB': 'TOCOMPLETE', 'CONDDB': 'TOCOMPLETE', 'DQTag': '', 'OptionsFormat': '',
+                    'OptionFiles': options,
+                    'isMulticore': 'Y', 'SystemConfig': 'x86_64-slc6-gcc49-opt', 'mcTCK': '', 'ExtraOptions': '',
+                    'fileTypesIn': [],
+                    'fileTypesOut':['SIM'],
+                    'visibilityFlag':[{'Visible': 'N', 'FileType': 'SIM'}]}]
+
+    # First create the production object
+    prod = self.pr._buildProduction(prodType='MCSimulation',
+                                    stepsInProd=stepsInProd,
+                                    outputSE={'SIM': 'Tier1_MC-DST'},
+                                    priority=0, cpu=100, outputFileMask='SIM')
+    try:
+      # This is the standard location in Jenkins
+      prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', os.environ['WORKSPACE'] + '/PilotInstallDIR')[0])
+    except (IndexError, KeyError):
+      prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', rootPath)[0])
+    prod.LHCbJob.setConfigArgs('pilot.cfg')
+    prod.setParameter('numberOfEvents', 'string', 4, 'Number of events to test')
+    # Then launch it
+    res = self.diracProduction.launchProduction(prod, False, True, 0)
+
+    self.assertTrue(res['OK'])
+
   def test_Integration_Production_MP(self):
 
     options = "$APPCONFIGOPTS/Gauss/Beam6500GeV-mu100-2018-nu1.6.py;"
