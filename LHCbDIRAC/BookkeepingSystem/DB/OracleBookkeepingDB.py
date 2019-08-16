@@ -3713,14 +3713,16 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str tables: tables used by join
     :return: condition and tables
     """
-    table = 'prod'
+    table = 'prview'
+    tables += ' , prodrunview prview'
+    condition = ' and prview.production=prod.production '
     if useMainTables:
       table = 'j'
     cond = None
     if isinstance(runnumbers, (int, long)):
-      condition = ' and %s.runnumber=%s' % (table, str(runnumbers))
+      condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, basestring) and runnumbers.upper() != default:
-      condition = ' and %s.runnumber=%s' % (table, str(runnumbers))
+      condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, list) and len(runnumbers) > 0:
       cond = ' ( '
       for i in runnumbers:
