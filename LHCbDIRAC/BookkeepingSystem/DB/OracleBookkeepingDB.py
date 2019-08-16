@@ -3714,10 +3714,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: condition and tables
     """
     table = 'prview'
-    tables += ' , prodrunview prview'
-    condition = ' and prview.production=prod.production '
     if useMainTables:
       table = 'j'
+    if runnumbers and runnumbers != default:
+      condition += ' and prview.production=cont.production '
+      tables += ' , prodrunview prview'
     cond = None
     if isinstance(runnumbers, (int, long)):
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
@@ -4155,8 +4156,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     ft.filetypeid=prod.filetypeid and \
     f.filetypeid=prod.filetypeid and \
     f.gotreplica='Yes' and \
-    f.visibilityflag='Y' and \
-    cont.configurationid=c.configurationid  %s) where\
+    f.visibilityflag='Y' %s) where\
      rownum <=%d ) where r >%d" % (tables, condition, int(maxitems), int(startitem))
     return self.dbR_.query(command)
 

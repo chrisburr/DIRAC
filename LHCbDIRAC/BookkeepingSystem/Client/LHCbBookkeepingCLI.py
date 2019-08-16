@@ -418,13 +418,16 @@ class LHCbBookkeepingCLI(cmd.Cmd):
         if 'level' in i and i['level'] == 'FileTypes':
           path = self.currentPath
           retVal = self.bk.getLimitedFiles({'fullpath': str(path)}, ['nb'], -1, -1)
+          if not retVal['OK']:
+            print(retVal['Message'])
+            return
           print('The selected dataset is:')
-          for i in retVal['Extras']['Selection']:
-            print(''.ljust(5) + i + ' ' + str(retVal['Extras']['Selection'][i]))
+          for selected in retVal['Value']['Extras']['Selection']:
+            print(''.ljust(5) + selected + ' ' + str(retVal['Value']['Extras']['Selection'][selected]))
           print('Statistics:')
-          print(' '.ljust(5) + 'Number of files:' + str(retVal['TotalRecords']))
-          for i in retVal['Extras']['GlobalStatistics']:
-            print(''.ljust(5) + i + ' ' + str(retVal['Extras']['GlobalStatistics'][i]))
+          print(' '.ljust(5) + 'Number of files:' + str(retVal['Value']['TotalRecords']))
+          for selected in retVal['Value']['Extras']['GlobalStatistics']:
+            print(''.ljust(5) + selected + ' ' + str(retVal['Value']['Extras']['GlobalStatistics'][selected]))
           break
         if i['name'] == name[len(name) - 1]:
           for j in i:
