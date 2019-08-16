@@ -3611,7 +3611,9 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     if tcks not in [None, default]:
       if isinstance(tcks, list):
-        if len(tcks) > 0:
+        if default in tcks:
+          tcks.remove(default)
+        if tcks:
           condition += ' and ( ' + ' or '.join([" j.tck='%s'" % i for i in tcks]) + ')'
       elif isinstance(tcks, basestring):
         condition += " and j.tck='%s'" % (tcks)
@@ -3711,14 +3713,17 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str tables: tables used by join
     :return: condition and tables
     """
-    table = 'prod'
+    table = 'prview'
     if useMainTables:
       table = 'j'
+    if runnumbers and runnumbers != default:
+      condition += ' and prview.production=cont.production '
+      tables += ' , prodrunview prview'
     cond = None
     if isinstance(runnumbers, (int, long)):
-      condition = ' and %s.runnumber=%s' % (table, str(runnumbers))
+      condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, basestring) and runnumbers.upper() != default:
-      condition = ' and %s.runnumber=%s' % (table, str(runnumbers))
+      condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, list) and len(runnumbers) > 0:
       cond = ' ( '
       for i in runnumbers:
@@ -4151,8 +4156,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     ft.filetypeid=prod.filetypeid and \
     f.filetypeid=prod.filetypeid and \
     f.gotreplica='Yes' and \
-    f.visibilityflag='Y' and \
-    cont.configurationid=c.configurationid  %s) where\
+    f.visibilityflag='Y' %s) where\
      rownum <=%d ) where r >%d" % (tables, condition, int(maxitems), int(startitem))
     return self.dbR_.query(command)
 

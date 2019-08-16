@@ -8,6 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery
 """
 It tests the RAW data insert to the db.
 It requires an Oracle database
@@ -475,7 +476,7 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles({"ConfigName": "MC",
                                "ConfigVersion": "2012",
-                               "ConditionDescription": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
                                "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
                                "FileType": "ALLSTREAMS.DST"})
 
@@ -484,7 +485,7 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles({"ConfigName": "MC",
                                "ConfigVersion": "2012",
-                               "ConditionDescription": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
                                "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
                                "FileType": "ALLSTREAMS.DST",
                                "EventType": 12442001})
@@ -494,7 +495,7 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles({"ConfigName": "MC",
                                "ConfigVersion": "2012",
-                               "ConditionDescription": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
                                "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
                                "FileType": "ALLSTREAMS.DST",
                                "EventType": 12442001,
@@ -504,7 +505,7 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles({"ConfigName": "MC",
                                "ConfigVersion": "2012",
-                               "ConditionDescription": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
                                "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
                                "FileType": "ALLSTREAMS.DST",
                                "EventType": 12442001,
@@ -512,12 +513,23 @@ class TestMethods(DataInsertTestCase):
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 10)
 
+    retVal = self.bk.getFiles({"ConfigName": "MC",
+                               "ConfigVersion": "2012",
+                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+                               "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
+                               "FileType": "ALLSTREAMS.DST",
+                               "EventType": 12442001,
+                               "Visible": "All",
+                               'NbOfEvents': True})
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value'], [180])
+
   def test_getFiles1(self):
     """
     This is used to test the getFiles method.
     """
     bkQuery = {'ConfigName': 'MC',
-               'ConditionDescription': 'Beam3500GeV-May2010-MagOff-Fix1',
+               'SimulationConditions': 'Beam3500GeV-May2010-MagOff-Fix1',
                'EventType': '30000000',
                'FileType': 'DST',
                'ProcessingPass': '/Sim01/Reco08',
@@ -530,7 +542,7 @@ class TestMethods(DataInsertTestCase):
     self.assertEqual(len(retVal['Value']), 301)
 
     bkQuery = {'ConfigName': 'MC',
-               'ConditionDescription': 'Beam3500GeV-May2010-MagOff-Fix1',
+               'SimulationConditions': 'Beam3500GeV-May2010-MagOff-Fix1',
                'EventType': '30000000',
                'FileType': 'DST',
                'ProcessingPass': '/Sim01/Reco08',
@@ -541,6 +553,11 @@ class TestMethods(DataInsertTestCase):
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 301)
+
+    bkQuery['NbOfEvents'] = True
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value'], [6020000])
 
   def test_getFiles2(self):
     """
@@ -561,12 +578,17 @@ class TestMethods(DataInsertTestCase):
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 301)
 
+    bkQuery['NbOfEvents'] = True
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value'], [6020000])
+
   def test_getFiles3(self):
     """
     It is used to test the getFiles method
     """
     bkQuery = {'ConfigName': 'MC',
-               'ConditionDescription': 'Beam3500GeV-Oct2010-MagUp-Nu2.5',
+               'SimulationConditions': 'Beam3500GeV-Oct2010-MagUp-Nu2.5',
                'EventType': 28144012,
                'FileType': 'XGEN',
                'ProcessingPass': '/MC10Gen01',
@@ -575,25 +597,39 @@ class TestMethods(DataInsertTestCase):
                'DataQuality': 'ALL'}
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 200)
+    self.assertEqual(len(retVal['Value']), 100)
+
+    bkQuery['NbOfEvents'] = True
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value'], [1000000])
 
   def test_getFiles4(self):
 
     bkQuery = {'ConfigName': 'MC',
-               'ConditionDescription': 'Beam3500GeV-May2010-MagDown-Fix1',
+               'SimulationConditions': 'Beam3500GeV-May2010-MagDown-Fix1',
                'ProcessingPass': '/Sim01/Trig0x002e002aFlagged/Reco08-MINBIAS',
                'Visible': 'N',
                'ConfigVersion': 'MC10'}
 
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 605)
+    self.assertEqual(len(retVal['Value']), 393)
 
     bkQuery['Visible'] = 'Y'
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(len(retVal['Value']), 707)
+
     retVal = self.bk.getFileTypes(bkQuery)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value']['TotalRecords'], 1)
     self.assertEqual(retVal['Value']['Records'][0][0], 'DST')
+
+    bkQuery['NbOfEvents'] = True
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value'], [35002426])
 
   def test_getProductions2(self):
     bkQuery = {'ConfigName': 'MC',
@@ -617,7 +653,7 @@ class TestMethods(DataInsertTestCase):
     Get list of file types
     """
     bkQuery = {'ConfigName': 'MC',
-               'ConditionDescription': 'Beam3500GeV-Oct2010-MagUp-Nu2.5',
+               'SimulationConditions': 'Beam3500GeV-Oct2010-MagUp-Nu2.5',
                'EventType': 28144012,
                'ProcessingPass': '/MC10Gen01',
                'Visible': 'Y',
@@ -626,7 +662,7 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 200)
+    self.assertEqual(len(retVal['Value']), 100)
 
   def test_getProductions1(self):
     """
@@ -879,19 +915,18 @@ class TestMethods(DataInsertTestCase):
                'FileType': 'BHADRON.MDST',
                'Visible': 'Y',
                'EventType': 90000000,
-               'ConditionDescription': 'Beam4000GeV-VeloClosed-MagDown',
+               'DataTakingConditions': 'Beam4000GeV-VeloClosed-MagDown',
                'DataQuality': 'OK'}
 
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 439)
 
-    # now test the data datakingcondition
-    bkQuery.pop('ConditionDescription')
-    bkQuery['DataTakingConditions'] = 'Beam4000GeV-VeloClosed-MagDown'
+    bkQuery['NbOfEvents'] = True
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 439)
+    self.assertEqual(retVal['Value'], [68170375])
+    bkQuery.pop('NbOfEvents')
 
     bkQuery['RunNumber'] = [115055]
     retVal = self.bk.getFiles(bkQuery)
@@ -908,7 +943,7 @@ class TestMethods(DataInsertTestCase):
     Now test the run numbers
     """
     bkQuery = {'ConfigName': 'LHCb',
-               'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
+               'DataTakingConditions': 'Beam3500GeV-VeloClosed-MagDown',
                'EventType': 90000000,
                'FileType': 'EW.DST',
                'ProcessingPass': '/Real Data/Reco10/Stripping13b',
@@ -917,15 +952,20 @@ class TestMethods(DataInsertTestCase):
                'DataQuality': ['OK']}
 
     retVal = self.bk.getFiles(bkQuery)
-    self.assertEqual(len(retVal['Value']), 3221)
+    self.assertEqual(len(retVal['Value']), 2314)
+
+    bkQuery['NbOfEvents'] = True
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertEqual(retVal['Value'], [69542587])
+    bkQuery.pop('NbOfEvents')
 
     bkQuery['DataQuality'] = 'ALL'
     retVal = self.bk.getFiles(bkQuery)
-    self.assertEqual(len(retVal['Value']), 3223)
+    self.assertEqual(len(retVal['Value']), 2316)
 
     bkQuery['RunNumber'] = [90104, 92048, 87851]
     retVal = self.bk.getFiles(bkQuery)
-    self.assertEqual(len(retVal['Value']), 3)
+    self.assertEqual(len(retVal['Value']), 2)
 
     bkQuery.pop('RunNumber')
     bkQuery['StartRun'] = 93102
@@ -933,7 +973,7 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 187)
+    self.assertEqual(len(retVal['Value']), 178)
 
     bkQuery.pop('StartRun')
     bkQuery.pop('EndRun')
@@ -941,12 +981,12 @@ class TestMethods(DataInsertTestCase):
 
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 135)
+    self.assertEqual(len(retVal['Value']), 127)
 
     bkQuery['EndDate'] = "2011-06-16 19:15:25"
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 127)
+    self.assertEqual(len(retVal['Value']), 125)
 
   def test_getFiles8(self):
     """
@@ -954,7 +994,7 @@ class TestMethods(DataInsertTestCase):
     Now test the MC datasets
     """
     bkQuery = {'ConfigName': 'MC',
-               'ConditionDescription': 'Beam3500GeV-May2010-MagOff-Fix1',
+               'SimulationConditions': 'Beam3500GeV-May2010-MagOff-Fix1',
                'EventType': '30000000',
                'FileType': 'DST',
                'ProcessingPass': '/Sim01/Reco08',
@@ -2487,6 +2527,20 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 1)
+
+  def test_getFilesNbEvents(self):
+    bkQuery = {'ConfigName': 'LHCb',
+               'ConfigVersion': 'Collision10',
+               'DataQuality': ['OK'],
+               'DataTakingConditions': 'Beam3500GeV-VeloClosed-MagDown',
+               'EventType': '90000000',
+               'FileType': 'RAW',
+               'NbOfEvents': True,
+               'ProcessingPass': '/Real Data',
+               'ReplicaFlag': 'Yes'}
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value'], [5868758])
 
   def test_getProductions(self):
     bkQuery = {'ConditionDescription': 'Beam4000GeV-2012-MagUp-Nu2.5-Pythia8',

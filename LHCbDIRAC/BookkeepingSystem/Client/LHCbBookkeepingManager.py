@@ -1600,13 +1600,13 @@ class LHCbBookkeepingManager(BaseESManager):
         gLogger.error(result['Message'])
         return result
 
-    return {'TotalRecords': totalrecords,
+    return S_OK({'TotalRecords': totalrecords,
             'ParameterNames': parametersNames,
             'Records': records,
             'Extras': {'Selection': selection,
                        'GlobalStatistics': {'Number of Events': nbOfEvents,
                                             'Files Size': filesSize,
-                                            'Luminosity': lumi}}}
+                                            'Luminosity': lumi}}})
 
   #############################################################################
   def getAncestors(self, files, depth):
