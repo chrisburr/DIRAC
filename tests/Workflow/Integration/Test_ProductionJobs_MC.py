@@ -90,7 +90,7 @@ class MCSuccess(ProductionJobTestCase):
     stepsInProd = [{'StepId': 139263, 'StepName': 'Sim09h', 'ApplicationName': 'Gauss', 'ApplicationVersion': 'v51r0',
                     'ExtraPackages': 'AppConfig.v3r355;Gen/DecFiles.v30r5',
                     'ProcessingPass': 'Sim09h', 'Visible': 'Y', 'Usable': 'Yes',
-                    'DDDB': 'TOCOMPLETE', 'CONDDB': 'TOCOMPLETE', 'DQTag': '', 'OptionsFormat': '',
+                    'DDDB': 'dddb-20170721-3', 'DQTag': '', 'OptionsFormat': '',
                     'OptionFiles': options,
                     'isMulticore': 'Y', 'SystemConfig': 'x86_64-slc6-gcc49-opt', 'mcTCK': '', 'ExtraOptions': '',
                     'fileTypesIn': [],
