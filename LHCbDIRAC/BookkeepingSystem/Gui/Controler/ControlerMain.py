@@ -341,7 +341,7 @@ class ControlerMain(ControlerAbstract):
       return result['Value']
     else:
       gLogger.error(result['Message'])
-      return result
+      return result['Message']
 
   #############################################################################
   def __handleStandardQuery(self):
