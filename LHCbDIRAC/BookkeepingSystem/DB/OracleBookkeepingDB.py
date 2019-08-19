@@ -4979,7 +4979,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         result = retVal
       else:
         productions = tuple([i[0] for i in retVal['Value']])
-        gLogger.debug('Productions:', "%s" % productions)
+        gLogger.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
         for production in productions:
           retVal = self.getSteps(production)
