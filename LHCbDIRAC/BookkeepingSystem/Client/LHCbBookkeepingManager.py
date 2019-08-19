@@ -1809,7 +1809,7 @@ class LHCbBookkeepingManager(BaseESManager):
       if evtType:
         try:
           stat = int(metadata['EventStat'])
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, TypeError):
           stat = 0
 
         info = evtTypes.setdefault(int(evtType), [0, 0, 0.])
