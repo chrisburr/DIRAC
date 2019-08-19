@@ -1,3 +1,15 @@
+v9r4p1
+use DIRAC v6r22p6
+
+* added tag
+* fix the run lookup
+* handle run numbers correctly
+* added test used by Andrea
+* fix code style
+* add more tests
+* correct integration tests
+* remove ALL from the list of TCKS
+
 v9r4
 use DIRAC v6r22p4
 
