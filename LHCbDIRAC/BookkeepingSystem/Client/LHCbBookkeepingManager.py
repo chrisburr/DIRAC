@@ -1635,10 +1635,10 @@ class LHCbBookkeepingManager(BaseESManager):
     elif self.parameter_ == self.__bookkeepingParameters[3]:
       result = self._getLimitedFilesRuns({'fullpath': path}, {}, startItem, maxitems)
       dataset = self._getDataSetTree4({'fullpath': path})
-
-    if 'TotalRecords' in result and result['TotalRecords'] > 0:
-      records = result['Records']
-      params = result['ParameterNames']
+    
+    if 'TotalRecords' in result['Value'] and result['Value']['TotalRecords'] > 0:
+      records = result['Value']['Records']
+      params = result['Value']['ParameterNames']
       # The list has to be converted to dictionary
       nameIndex = params.index('Name')
       files = {}
@@ -1664,12 +1664,12 @@ class LHCbBookkeepingManager(BaseESManager):
     elif self.parameter_ == self.__bookkeepingParameters[3]:
       result = self._getLimitedFilesRuns({'fullpath': path}, {'need': 0}, startItem, maxitems)
 
-    if 'TotalRecords' in result and result['TotalRecords'] > 0:
+    if 'TotalRecords' in result['Value'] and result['Value']['TotalRecords'] > 0:
       nbe = 0
       fsize = 0
       nbfiles = 0
-      params = result['ParameterNames']
-      for lfn in result['Records']:
+      params = result['Value']['ParameterNames']
+      for lfn in result['Value']['Records']:
         nbfiles += 1
         if lfn[params.index('EventStat')] is not None:
           nbe += int(lfn[params.index('EventStat')])
