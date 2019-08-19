@@ -1635,7 +1635,7 @@ class LHCbBookkeepingManager(BaseESManager):
     elif self.parameter_ == self.__bookkeepingParameters[3]:
       result = self._getLimitedFilesRuns({'fullpath': path}, {}, startItem, maxitems)
       dataset = self._getDataSetTree4({'fullpath': path})
-    
+
     if 'TotalRecords' in result['Value'] and result['Value']['TotalRecords'] > 0:
       records = result['Value']['Records']
       params = result['Value']['ParameterNames']
