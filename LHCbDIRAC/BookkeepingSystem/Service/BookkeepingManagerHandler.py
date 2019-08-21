@@ -1453,29 +1453,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK(result)
 
   #############################################################################
-  types_getProductionInformationsFromView = [long]
-
-  @staticmethod
-  def export_getProductionInformationsFromView(prodid):
-    """
-    It is exactly same as getProductionInformations, but it much faster. The result is in the materialized view.
-    """
-
-    result = S_ERROR()
-    value = dataMGMT_.getProductionInformationsFromView(prodid)
-    parameters = []
-    infos = []
-    if value['OK']:
-      records = value['Value']
-      parameters = ['Production', 'EventType', 'FileType', 'NumberOfEvents', 'NumberOfFiles']
-      for record in records:
-        infos += [[record[0], record[1], record[2], record[3], record[4]]]
-      result = S_OK({'ParameterNames': parameters, 'Records': infos})
-    else:
-      result = value
-    return result
-
-  #############################################################################
   types_getFileHistory = [basestring]
 
   @staticmethod

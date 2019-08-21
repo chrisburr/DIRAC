@@ -3054,18 +3054,6 @@ and files.qualityid= dataquality.qualityid" % lfn
     return res
 
   #############################################################################
-  def getProductionInformationsFromView(self, prodid):
-    """
-    production statistics from the view
-
-    :param long prodid: production  number
-    :return: production statistics
-    """
-    command = 'select * from productioninformations where production=' + str(prodid)
-    res = self.dbR_.query(command)
-    return res
-
-  #############################################################################
   #
   #          MONITORING
   #############################################################################

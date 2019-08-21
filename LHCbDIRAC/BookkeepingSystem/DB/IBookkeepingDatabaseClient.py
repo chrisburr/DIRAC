@@ -358,11 +358,6 @@ class IBookkeepingDatabaseClient(object):
     return self.getManager().getFileHistory(lfn)
 
   #############################################################################
-  def getProductionInformationsFromView(self, prodid):
-    "more info in the BookkeepingClient.py"
-    return self.getManager().getProductionInformationsFromView(prodid)
-
-  #############################################################################
   def getProductionNbOfJobs(self, prodid):
     "more info in the BookkeepingClient.py"
     return self.getManager().getProductionNbOfJobs(prodid)
