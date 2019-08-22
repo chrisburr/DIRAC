@@ -72,7 +72,7 @@ def zipFiles(outputFile, files=None, directory=None, deleteInput=False):
           os.utime(fileIn, None)  # same as "touch"
 
         if directory:
-          zipped.write(fileIn, directory + '\\' + fileIn, zipfile.ZIP_DEFLATED)
+          zipped.write(fileIn, directory + '/' + fileIn, zipfile.ZIP_DEFLATED)
         else:
           zipped.write(fileIn)
   except zipfile.LargeZipFile as zlz:
