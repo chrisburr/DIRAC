@@ -3054,18 +3054,6 @@ and files.qualityid= dataquality.qualityid" % lfn
     return res
 
   #############################################################################
-  def getProductionInformationsFromView(self, prodid):
-    """
-    production statistics from the view
-
-    :param long prodid: production  number
-    :return: production statistics
-    """
-    command = 'select * from productioninformations where production=' + str(prodid)
-    res = self.dbR_.query(command)
-    return res
-
-  #############################################################################
   #
   #          MONITORING
   #############################################################################
@@ -4979,7 +4967,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         result = retVal
       else:
         productions = tuple([i[0] for i in retVal['Value']])
-        gLogger.debug('Productions:', "%s" % productions)
+        gLogger.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
         for production in productions:
           retVal = self.getSteps(production)

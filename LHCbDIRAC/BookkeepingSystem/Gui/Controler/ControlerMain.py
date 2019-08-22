@@ -337,7 +337,11 @@ class ControlerMain(ControlerAbstract):
     """
     path = message['node']
     result = self.__bkClient.getLimitedFiles({'fullpath':str(path)}, ['nb'], -1, -1)
-    return result
+    if result['OK']:
+      return result['Value']
+    else:
+      gLogger.error(result['Message'])
+      return result['Message']
 
   #############################################################################
   def __handleStandardQuery(self):
