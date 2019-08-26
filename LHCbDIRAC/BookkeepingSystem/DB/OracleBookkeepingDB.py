@@ -3548,7 +3548,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         condition += " and prod.visible='Y'"
       elif visible.upper().startswith('N'):
         condition += " and prod.visible='N'"
-    if replicaFlag != default:
+    if replicaFlag.upper() != default:
       condition += " and prod.gotreplica='%s'" % replicaFlag
 
     return condition
