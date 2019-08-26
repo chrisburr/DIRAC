@@ -1,3 +1,16 @@
+v9r4p2
+uses DIRAC v6r22p7
+
+* correct the replica flag default value
+* remove not used view
+* Histograms event type most of the time is None. None can not converted to int
+* return the error message instead of S_ERROR
+* convert tuple to string
+* remove white space
+* fix name of zip
+* the getFiles return value has changed
+
+
 v9r4p1
 use DIRAC v6r22p6
 
