@@ -51,7 +51,7 @@ Verify what is the last tag of DIRAC::
 
 
 A tarball containing it is should be already
-uploaded `here <http://lhcbproject.web.cern.ch/lhcbproject/dist/Dirac_project/installSource/>`_
+uploaded `here <http://diracproject.web.cern.ch/diracproject/tars/>`_
 
 You may also look inside the .cfg file for the DIRAC release you're looking for: it will contain an "Externals" version number,
 that should also be a tarball uploaded in the same location as above.
@@ -241,7 +241,7 @@ release for client
 
 Open a JIRA task: https://its.cern.ch/jira/projects/LHCBDEP.
 
-* JIRA task: Summary:LHCbDirac vArBpC;  Description: Please release  LHCbDirac by following the instructions:: 
+* JIRA task: Summary:LHCbDirac vArBpC;  Description: Please release  LHCbDirac by following the instructions::
 
   https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Installation/make_release.html#new-procedure-for-installing-on-cvmfs-lhcb
 
@@ -302,7 +302,7 @@ The version to be deployed is vArBpC. Login on aivoadm.cern.ch and follow the se
   cd /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/
   cvmfs_server transaction lhcb.cern.ch
   source lhcbdirac pro (pro is the actual version)
-  export DIRAC=/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/pro 
+  export DIRAC=/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/pro
   dirac-install -v -r vArBpC -t server -l LHCb -e LHCb --createLink
   source lhcbdirac vArBpC
   pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip
@@ -316,6 +316,21 @@ The version to be deployed is vArBpC. Login on aivoadm.cern.ch and follow the se
 Server
 ``````
 
+````````````````````````````````
+Method 1 (preferred): web portal
+````````````````````````````````
+
+
+Using the web portal:
+  * You cannot do all the machines at once. Select a bunch of them (between 5 and 10). Fill in the version number and click update.
+  * Repeate until you have them all.
+  * Start again selecting them by block, but this time, click on "restart" to restart the components.
+
+
+``````````````````````````````````````
+Method 2: interactive via sysadmin cli
+``````````````````````````````````````
+
 To install it on the VOBOXes from lxplus::
 
   lhcb-proxy-init -g lhcb_admin
@@ -323,7 +338,11 @@ To install it on the VOBOXes from lxplus::
   > update LHCbDIRAC v9r3p3
   > restart *
 
-The (better) alternative is using the web portal or using the following script: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/devel/dist-tools/create_vobox_update.py
+
+`````````````````````
+Method 3: from lxplus
+`````````````````````
+
 
 
 The recommended way is the following::
@@ -369,11 +388,6 @@ Specify that this error can be ignored (but should be fixed ! )::
 
       2016-05-17 12:00:00 UTC dirac-install [ERROR] Requirements installation script /opt/dirac/versions/v8r2p42_1463486162/scripts/dirac-externals-requirements failed. Check /opt/dirac/versions/v8r2p42_1463486162/scripts/dirac-externals-requirements.err
 
-Using the web portal:
-  * You cannot do all the machines at once. Select a bunch of them (between 5 and 10). Fill in the version number and click update.
-  * Repeate until you have them all.
-  * Start again selecting them by block, but this time, click on "restart" to restart the components.
-
 
 WebPortal
 `````````
@@ -384,7 +398,7 @@ When the web portal machine is updated then you have to compile the WebApp::
     sudo su - dirac
     #  (for example: dirac-install -r v9r3p3 -t server -l LHCb -e LHCb,LHCbWeb,WebAppDIRAC /opt/dirac/etc/dirac.cfg)
     dirac-install -r VERSIONTOBEINSTALLED -t server -l LHCb -e LHCb,LHCbWeb,WebAppDIRAC /opt/dirac/etc/dirac.cfg
-    
+
 
 When the compilation is finished::
 
@@ -438,7 +452,7 @@ After, you can merge devel to master (the following does it in a new directory, 
 After when you merged devel to master, the 2 branches will be strictly equivalent.
 You can make the tag for the new release starting from the master branch. You have to
 merge devel to master for LHCbWebDIRAC as well::
-	
+
     mkdir $(date +20%y%m%d) && cd $(date +20%y%m%d)
     git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbWebDIRAC.git
     cd LHCbWebDIRAC/

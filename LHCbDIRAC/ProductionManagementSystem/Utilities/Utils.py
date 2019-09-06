@@ -59,12 +59,11 @@ def _aggregate(reqId, reqType, reqWG, reqName, SimCondition, ProPath, groups, in
       gLogger.error('Email cache database is locked')
 
     for group in groups:
-      columns = "reqId, reqType, reqWG, reqName, SimCondition, ProPath, thegroup, reqInform"
       conn.execute(
-          "INSERT INTO ProductionManagementCache (?)"
+          "INSERT INTO ProductionManagementCache (reqId, reqType, reqWG, reqName,\
+             SimCondition, ProPath, thegroup, reqInform)"
           " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-          (columns,
-           reqId,
+          (reqId,
            reqType,
            reqWG,
            reqName,

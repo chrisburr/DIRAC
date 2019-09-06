@@ -51,7 +51,7 @@ Verify what is the last tag of DIRAC::
   git describe --tags $(git rev-list --tags --max-count=10)
 
 A tarball containing it is should be already
-uploaded `here <http://lhcbproject.web.cern.ch/lhcbproject/dist/Dirac_project/installSource/>`_
+uploaded `here <http://diracproject.web.cern.ch/diracproject/tars/>`_
 
 You may also look inside the .cfg file for the DIRAC release you're looking for: it will contain an "Externals" version number,
 that should also be a tarball uploaded in the same location as above.
