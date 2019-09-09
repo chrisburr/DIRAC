@@ -3705,6 +3705,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     if useMainTables:
       table = 'j'
     if runnumbers and runnumbers != default:
+      if useMainTables:
+        condition += ' and prview.runnumber=j.runnumber '
       condition += ' and prview.production=cont.production '
       tables += ' , prodrunview prview'
     cond = None
