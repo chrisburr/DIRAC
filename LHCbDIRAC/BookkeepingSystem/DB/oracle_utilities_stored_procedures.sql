@@ -148,7 +148,8 @@ BEGIN
 	COMMIT;
 END;
 PROCEDURE updateProdOutputFiles IS
-exits number;
+nbrows number;
+duplrows number;
 err_num NUMBER;
 err_msg VARCHAR2(1000);
 BEGIN 
@@ -163,9 +164,30 @@ BEGIN
 			j.production=c.production and
 			f.gotreplica IS NOT NULL and
 			f.filetypeid NOT IN(9,17) GROUP BY j.production, J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag Order by f.gotreplica,f.visibilityflag asc) LOOP
-			SELECT count(*) INTO exits FROM  productionoutputfiles WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
-			IF exits>0 then
-				UPDATE productionoutputfiles SET visible=prod.visibilityflag, gotreplica=prod.gotreplica WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
+			SELECT count(*) INTO nbrows FROM  productionoutputfiles WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
+			IF nbrows>0 then --if the production already exists in the table
+			select count(*) into duplrows from (select  j.production,J.STEPID, f.eventtypeid, f.filetypeid,f.gotreplica, f.visibilityflag from jobs j, files f WHERE 
+                j.jobid = f.jobid AND 
+                j.production=prod.production and
+                f.eventtypeid=prod.eventtypeid and
+                f.filetypeid=prod.filetypeid and
+                j.stepid=prod.stepid
+                group by j.production, J.STEPID, f.eventtypeid, f.filetypeid,f.gotreplica, f.visibilityflag);
+                if duplrows> nbrows then -- we check if the productionoutputfiles table does not contains one dataset 
+                    dbms_output.put_line('Inserting dupl -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
+                    INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(prod.production,prod.stepid, prod.filetypeid, prod.visibilityflag,prod.eventtypeid, prod.gotreplica);
+                else
+                    if nbrows = 2 and duplrows = 1 then -- the productionoutputfiles table contains more rows 
+                        dbms_output.put_line('Deleting duplicated rows -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
+                        delete productionoutputfiles where production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid and rownum=1;
+                    elsif nbrows>1 and nbrows = duplrows then
+                       UPDATE productionoutputfiles SET gotreplica=prod.gotreplica WHERE visible=prod.visibilityflag and production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
+                       dbms_output.put_line('Update two rows -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica); 
+                    else
+                        dbms_output.put_line('Update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica); 
+                        UPDATE productionoutputfiles SET visible=prod.visibilityflag, gotreplica=prod.gotreplica WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
+                    end if;
+			    end if;
 			ELSE
 				dbms_output.put_line('Inserting -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
 				INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(prod.production,prod.stepid, prod.filetypeid, prod.visibilityflag,prod.eventtypeid, prod.gotreplica);
