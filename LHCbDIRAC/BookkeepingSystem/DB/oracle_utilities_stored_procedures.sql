@@ -198,7 +198,7 @@ err_msg VARCHAR2(1000);
 BEGIN 
 	FOR c IN (select j.production from jobs j, files f WHERE 
 		f.inserttimestamp >= SYSTIMESTAMP - 1 AND 
-		j.jobid = f.jobid AND 
+		j.jobid = f.jobid AND
 		f.gotreplica IS NOT NULL and
 		f.filetypeid NOT IN(9,17) group by j.production) LOOP
 		SELECT count(*) INTO nbrows FROM  productionoutputfiles WHERE production=c.production;

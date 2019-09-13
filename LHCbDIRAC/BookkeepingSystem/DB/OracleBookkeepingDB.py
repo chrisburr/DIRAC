@@ -4054,8 +4054,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     condition, tables = retVal['Value']
 
     command = "select count(distinct fileid),\
-    SUM(distinct f.EventStat), SUM(distinct f.FILESIZE), \
-    SUM(distinct f.luminosity),SUM(distinct f.instLuminosity) from  %s  where \
+    SUM(f.EventStat), SUM(f.FILESIZE), \
+    SUM(f.luminosity),SUM(f.instLuminosity) from  %s  where \
     j.jobid=f.jobid and \
     prod.production=cont.production and prod.filetypeid=f.filetypeid %s" % (tables, condition)
     return self.dbR_.query(command)
