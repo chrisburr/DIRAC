@@ -196,9 +196,11 @@ nb number;
 err_num NUMBER;
 err_msg VARCHAR2(1000);
 BEGIN 
+--FOR toprod in (select distinct j.production from jobs j, files f where f.jobid=j.jobid and j.production<0 and f.gotreplica='Yes') LOOP
 	FOR c IN (select j.production from jobs j, files f WHERE 
 		f.inserttimestamp >= SYSTIMESTAMP - 1 AND 
 		j.jobid = f.jobid AND
+		--j.production=toprod.production and
 		f.gotreplica IS NOT NULL and
 		f.filetypeid NOT IN(9,17) group by j.production) LOOP
 		SELECT count(*) INTO nbrows FROM  productionoutputfiles WHERE production=c.production;
@@ -238,6 +240,7 @@ BEGIN
         end if;
 		COMMIT;
 	END LOOP;
+--END LOOP;
     EXCEPTION
     WHEN OTHERS THEN
         err_num := SQLCODE;
