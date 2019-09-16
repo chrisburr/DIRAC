@@ -1,3 +1,15 @@
+v9r4p3
+uses DIRAC v6r22p9
+
+* remove distinct
+* dataset with no replica must be in the view and non visible files too
+* add the row to the productionoutputfiles table, if it is not exists
+* join the runview table to the jobs table
+* Production Utilities: specify column names in sqlite query
+* Docs: update release docs
+* SLSAgent: supports SE with multiple protocols
+* use new parameter for SBStore
+
 v9r4p2
 uses DIRAC v6r22p7
 

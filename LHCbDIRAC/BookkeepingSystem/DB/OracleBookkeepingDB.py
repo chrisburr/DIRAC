@@ -3705,6 +3705,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     if useMainTables:
       table = 'j'
     if runnumbers and runnumbers != default:
+      if useMainTables:
+        condition += ' and prview.runnumber=j.runnumber '
       condition += ' and prview.production=cont.production '
       tables += ' , prodrunview prview'
     cond = None
@@ -4051,7 +4053,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    command = "select count(*),\
+    command = "select count(distinct fileid),\
     SUM(f.EventStat), SUM(f.FILESIZE), \
     SUM(f.luminosity),SUM(f.instLuminosity) from  %s  where \
     j.jobid=f.jobid and \

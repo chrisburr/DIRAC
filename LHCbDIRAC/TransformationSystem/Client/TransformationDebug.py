@@ -267,16 +267,15 @@ def _getSandbox(job, logFile, debug=False):
   """
   Get a sandox and return its content
   """
-  from DIRAC.WorkloadManagementSystem.Client.SandboxStoreClient import SandboxStoreClient
-  sbClient = SandboxStoreClient()
-  tmpDir = os.path.join(tempfile.gettempdir(), "sandBoxes/")
-  mkDir(tmpDir)
   fd = None
   files = []
   try:
+    tmpDir = os.path.join(tempfile.gettempdir(), "sandBoxes/")
+    mkDir(tmpDir)
     if debug:
       print 'Job', job, ': sandbox being retrieved in', tmpDir
-    res = sbClient.downloadSandboxForJob(job, 'Output', tmpDir)
+    from DIRAC.WorkloadManagementSystem.Client.SandboxStoreClient import SandboxStoreClient
+    res = SandboxStoreClient(smdb=False).downloadSandboxForJob(job, 'Output', tmpDir)
     if res['OK']:
       if debug:
         print 'Sandbox successfully retrieved'
@@ -971,6 +970,7 @@ class TransformationDebug(object):
     # gLogger.setLevel( 'FATAL' )
     lfnCheckSum = {}
     badChecksum = {}
+    error = {}
     for se in problematicReplicas:
       lfns.update(problematicReplicas[se])
       if se:
@@ -987,13 +987,21 @@ class TransformationDebug(object):
             checkSum = res['Value']['Successful'][lfn]['Checksum']
             if not checkSum or not compareAdler(checkSum, lfnCheckSum[lfn]):
               badChecksum.setdefault(lfn, []).append(se)
+        else:
+          error[se] = res['Message']
     nbProblematic = len(lfns) - len(existingReplicas)
     nbExistingReplicas = {}
     for lfn in existingReplicas:
       nbReplicas = len(existingReplicas[lfn])
       nbExistingReplicas[nbReplicas] = nbExistingReplicas.setdefault(nbReplicas, 0) + 1
     nonExistingReplicas = {}
-    if nbProblematic == len(lfns):
+    if error:
+      gLogger.notice("Could not get information for some problematic files from SEs:")
+      for se, err in error.iteritems():
+        gLogger.notice("\t%s: %s" % (se, err))
+      gLogger.notice("This check may be totally meaningless, thus no report is made")
+      return
+    elif nbProblematic == len(lfns):
       gLogger.notice("None of the %d problematic files actually have an active replica" % len(lfns))
     else:
       strMsg = "Out of %d problematic files" % len(lfns)

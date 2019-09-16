@@ -149,7 +149,7 @@ class SpaceTokenOccupancyTest(TestBase):
       if not res['OK']:
         continue
 
-      if endpoint == res['Value'][0]:
+      if endpoint in res['Value']:
         # HACK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if 'RAL-HEP' in se:
           site = 'RAL-HEP'
