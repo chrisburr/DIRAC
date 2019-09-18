@@ -153,6 +153,7 @@ create_tarball:
     # Sencha Cmd needs to be depoyed using the installer from cvmfs
     - /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/Sencha/SenchaCmd-6.7.0.63-linux-amd64.sh -q -dir /tmp/extjs
     - export PATH=/tmp/extjs:$PATH
+    - set -o pipefail
   stage: release
   tags:
     # We need a runner with CVMFS
