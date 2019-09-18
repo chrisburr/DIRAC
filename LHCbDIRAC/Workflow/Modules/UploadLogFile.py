@@ -184,7 +184,7 @@ class UploadLogFile(ModuleBase):
                        "with message '%s', now uploading to failover SE" % res['Message'])
         self._uploadLogToFailoverSE(zipFileName)
 
-      self.setJobParameter('Log URL', '<a href="%s">Log file directory</a>' % logHttpsURL)
+      self.setJobParameter('Log URL', '<a href="%s">Log file directory</a>' % logHttpsURL.rstrip(zipFileName))
 
       self.workflow_commons['Request'] = self.request
 
