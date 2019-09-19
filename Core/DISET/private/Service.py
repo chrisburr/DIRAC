@@ -539,6 +539,8 @@ class Service(object):
     # Generate the client params
     clientParams = {'serviceStartTime': self._startTime}
     if proposalTuple:
+      # The 4th element is the client version
+      clientParams['clientVersion'] = proposalTuple[3] if len(proposalTuple) > 3 else None
       clientParams['clientSetup'] = proposalTuple[0][1]
       if len(proposalTuple[0]) < 3:
         clientParams['clientVO'] = gConfig.getValue("/DIRAC/VirtualOrganization", "unknown")
