@@ -1,8 +1,8 @@
-.. _online_steps:
+.. _pit_export:
 
-============
-ONLINE steps
-============
+==========
+Pit export
+==========
 
 Installation of LHCbDirac
 -------------------------
@@ -62,7 +62,7 @@ Instructions to install or update a new version of LHCbDirac ::
     ln -s ../../$i
   endif
   end
-  
+
 
 Workflow
 --------
@@ -88,13 +88,3 @@ This removal Request sends a signal to the DataMover, which will mark the file f
 
 If the removal fails, the file status is set to 'Registered' in the DB, and will be reattempted from there at the next loop.
 If the removal works, the file is set to 'Done' in the DB.
-
-
-HLTFram
--------
-
-The Productions, Monte Carlo or Other, are run under the ONLINE account lhcbprod.
-Under its home directory, a sub-directory called production contains all the scripts and tools to start the agent launch by PVSS.
-PVSS called the script `/home/lhcbprod/production/launch_agent.sh`. which will call the DIRAC Pilot (`/home/lhcbprod/production/dirac-pilot-3.sh`).
-The code for the Pilot itself is store in `/home/lhcbprod/production/Pilot3`. The content of this directory is updated every day by a cron run on the machine cron01 as lhcbprod.
-The script which update it is `/home/lhcbprod/production/dirac-pilot3-cron.sh`.
