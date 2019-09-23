@@ -62,7 +62,7 @@ class DataInsertTestCase(unittest.TestCase):
 """
     self.xmlFile = """
 <Quality Group="Production Manager" Flag="Not Checked"/>
-  <OutputFile Name="%filename%" TypeName="RAW" TypeVersion="1">
+  <OutputFile Name="%filename%" TypeName="RAW" TypeVersion="MDF">
    <Parameter Name="MD5Sum" Value="24F71879BA006B91FB8ADC529ACB7CC6"/>
    <Parameter Name="EventTypeId" Value="30000000"/>
    <Parameter Name="EventStat" Value="9000"/>

@@ -158,33 +158,35 @@ class UploadLogFile(ModuleBase):
       if not self.failoverTransfer:
         self.failoverTransfer = FailoverTransfer(self.request)
 
-      # Attempt to uplaod logs to the LogSE
-      self.log.info('Transferring log files', 'to the %s' % self.logSE)
+      # Attempt to uplaod the zippped logs to the LogSE
+      self.log.info('Transferring zipped log files', 'to the %s' % self.logSE)
 
       if not self._enableModule():
-        self.log.info("Would have attempted to upload log files, but there's not JobID")
+        self.log.info("Would have attempted to upload the zipped log files, but there's not JobID")
         return S_OK()
 
-      res = returnSingleResult(StorageElement(self.logSE).getURL(self.logFilePath, protocol='https'))
+      zipPath = os.path.join(self.logFilePath, zipFileName)
+      res = returnSingleResult(StorageElement(self.logSE).getURL(zipPath, protocol='https'))
       if not res['OK']:
         self.log.warn("Could not get dynamic URL for log", res)
-        logHttpsURL = "https://lhcb-dirac-logse.web.cern.ch/lhcb-dirac-logse/%s" % self.logFilePath
+        logHttpsURL = "https://lhcb-dirac-logse.web.cern.ch/lhcb-dirac-logse/%s" % zipPath
       else:
         logHttpsURL = res['Value']
 
-      logURL = '<a href="%s">Log file directory</a>' % logHttpsURL
-      self.log.info('Logs for this job may be retrieved', 'from %s' % logURL)
       self.log.info('putFile %s %s' % (zipFileName, self.logSE))
-
-      self.setJobParameter('Log URL', logURL)
-      res = returnSingleResult(StorageElement(self.logSE).putFile({self.logFilePath: zipFileName}))
+      res = returnSingleResult(StorageElement(self.logSE).putFile({zipPath: zipFileName}))
       if res['OK']:
         self.log.info('Successfully upload log file',
                       'to %s' % self.logSE)
+        self.log.info('Logs for this job may be retrieved', 'from %s' % logHttpsURL)
       else:
         self.log.error("Failed to upload log files",
-                       "with message '%s', uploading to failover SE" % res['Message'])
+                       "with message '%s', now uploading to failover SE" % res['Message'])
         self._uploadLogToFailoverSE(zipFileName)
+
+      # While it's the zip file that is uploaded, we set in job parameters its directory,
+      # as the .zip is deflated automatically
+      self.setJobParameter('Log URL', '<a href="%s">Log file directory</a>' % logHttpsURL.rstrip(zipFileName))
 
       self.workflow_commons['Request'] = self.request
 

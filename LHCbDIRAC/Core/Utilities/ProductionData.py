@@ -360,5 +360,3 @@ def _getLFNRoot(lfn, namespace='', configVersion=0, bkClient=None, quick=False):
     LFN_ROOT = (os.path.sep).join(tmpLfnRoot, )
 
   return LFN_ROOT
-
-#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#
