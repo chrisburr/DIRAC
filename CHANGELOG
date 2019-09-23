@@ -1,3 +1,14 @@
+
+v9r4p4
+uses DIRAC v6r22p11
+
+* Docs: better documentation of onlineDIRAC
+* some info
+* the error code must be properly handled
+* removed the filename from the job parameters
+* fixing URL of log file uploaded
+* chnage the file format in the test
+
 v9r4p3
 uses DIRAC v6r22p9
 
