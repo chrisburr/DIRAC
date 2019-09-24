@@ -11,9 +11,10 @@
 """ Module holding MCStatsClient class
 """
 
-from DIRAC.Core.Base.Client import Client
+from DIRAC.Core.Base.Client import Client, createClient
 
 
+@createClient('ProductionManagement/MCStatsElasticDB')
 class MCStatsClient(Client):
   """ Client for MCStatsElasticDB. Can be specialized client by setting MCStatsClient().indexName
   """

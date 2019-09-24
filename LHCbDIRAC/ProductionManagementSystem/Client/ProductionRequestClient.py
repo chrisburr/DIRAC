@@ -11,11 +11,12 @@
 """ Module holding ProductionRequestClient class
 """
 
-from DIRAC.Core.Base.Client import Client
+from DIRAC.Core.Base.Client import Client, createClient
 
 __RCSID__ = "$Id$"
 
 
+@createClient('ProductionManagement/ProductionRequest')
 class ProductionRequestClient(Client):
   """ This class expose the methods of the Production Request Service"""
 
@@ -24,7 +25,7 @@ class ProductionRequestClient(Client):
     c'tor
     :param str url: can specify a specific URL
     """
-    Client.__init__(self, **kwargs)
+    super(ProductionRequestClient, self).__init__(**kwargs)
     self.setServer('ProductionManagement/ProductionRequest')
     if url:
       self.setServer(url)
