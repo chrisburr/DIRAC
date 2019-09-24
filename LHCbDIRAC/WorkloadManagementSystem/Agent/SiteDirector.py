@@ -13,9 +13,7 @@
 
 __RCSID__ = "$Id$"
 
-import os
-
-from DIRAC import S_OK, rootPath
+from DIRAC import S_OK
 from DIRAC.WorkloadManagementSystem.Agent.SiteDirector import SiteDirector as DIRACSiteDirector
 
 
@@ -30,16 +28,6 @@ class SiteDirector(DIRACSiteDirector):
     if not res['OK']:
       return res
 
-    if not self.pilot3:
-      self.pilotFiles = [os.path.join(rootPath,
-                                      'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'dirac-pilot.py'),
-                         os.path.join(rootPath,
-                                      'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'pilotCommands.py'),
-                         os.path.join(rootPath,
-                                      'DIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'pilotTools.py'),
-                         os.path.join(rootPath,
-                                      'LHCbDIRAC', 'WorkloadManagementSystem', 'PilotAgent', 'LHCbPilotCommands.py')]
-
     self.lbRunOnly = self.am_getOption('lbRunOnly', False)
 
     return S_OK()
@@ -49,19 +37,6 @@ class SiteDirector(DIRACSiteDirector):
     """
     pilotOptions, newPilotsToSubmit = DIRACSiteDirector._getPilotOptions(self, queue, pilotsToSubmit)
 
-    lhcbPilotCommands = ['LHCbGetPilotVersion',
-                         'CheckWorkerNode',
-                         'LHCbInstallDIRAC',
-                         'LHCbConfigureBasics',
-                         'CheckCECapabilities',
-                         'CheckWNCapabilities',
-                         'LHCbConfigureSite',
-                         'LHCbConfigureArchitecture',
-                         'LHCbConfigureCPURequirements',
-                         'LaunchAgent']
-
-    pilotOptions.append('-E LHCbPilot')
-    pilotOptions.append('-X %s' % ','.join(lhcbPilotCommands))
     if self.lbRunOnly:
       pilotOptions.append('-o lbRunOnly')
 
