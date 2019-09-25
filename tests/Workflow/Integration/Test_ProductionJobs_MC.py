@@ -83,7 +83,7 @@ class MCSuccess(ProductionJobTestCase):
   def test_Integration_Production_MP(self):
     # From step 139522
 
-    options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py"
+    options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py;"
     options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
     options += "$DECFILESROOT/options/12143001.py;"
     options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
