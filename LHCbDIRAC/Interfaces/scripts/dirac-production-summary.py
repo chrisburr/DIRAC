@@ -13,22 +13,24 @@
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
-Script.parseCommandLine( ignoreErrors = True )
+Script.parseCommandLine(ignoreErrors=True)
 
 import DIRAC
 from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
 args = Script.getPositionalArgs()
 
+
 def usage():
   """ usage
-  
-  Prints script usage 
-  
+
+  Prints script usage
+
   """
-    
+
   print 'Usage: %s [<Production ID>]' % Script.scriptName
   DIRAC.exit(2)
+
 
 if len(args) < 1:
   usage()
@@ -39,10 +41,10 @@ prodID = None
 if len(args) > 0:
   prodID = args[0]
 
-result = diracProd.getProductionSummary( prodID, printOutput = True )
+result = diracProd.getProductionSummary(prodID, printOutput=True)
 if result['OK']:
   DIRAC.exit(0)
-elif result.has_key('Message'):
+elif 'Message' in result:
   print 'Listing production summary failed with message:\n%s' % result['Message']
   DIRAC.exit(2)
 else:

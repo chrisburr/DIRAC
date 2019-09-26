@@ -13,21 +13,23 @@
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
-Script.parseCommandLine( ignoreErrors = True )
+Script.parseCommandLine(ignoreErrors=True)
 
 import DIRAC
 from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
 args = Script.getPositionalArgs()
 
+
 def usage():
   """ usage
-  Prints script usage 
-  
+  Prints script usage
+
   """
-  
+
   print 'Usage: %s <Production ID> |<Production ID>' % Script.scriptName
   DIRAC.exit(2)
+
 
 if len(args) < 1:
   usage()
@@ -37,12 +39,12 @@ exitCode = 0
 errorList = []
 
 for prodID in args:
-  result = diracProd.getProduction( prodID, printOutput = True )
-  if result.has_key('Message'):
-    errorList.append( (prodID, result['Message']) )
+  result = diracProd.getProduction(prodID, printOutput=True)
+  if 'Message' in result:
+    errorList.append((prodID, result['Message']))
     exitCode = 2
   elif not result:
-    errorList.append( (prodID, 'Null result for getProduction() call' ) )
+    errorList.append((prodID, 'Null result for getProduction() call'))
     exitCode = 2
   else:
     exitCode = 0

@@ -21,13 +21,15 @@ in_dict = {'EventTypeId': 93000000,
 import tempfile
 
 from DIRAC import S_OK, S_ERROR
-from DIRAC.Core.Base.Client import Client
+from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.DISET.TransferClient import TransferClient
+
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 
 __RCSID__ = "$Id$"
 
 
+@createClient('Bookkeeping/BookkeepingManager')
 class BookkeepingClient(Client):
   """ This class expose the methods of the Bookkeeping Service"""
 
@@ -36,7 +38,7 @@ class BookkeepingClient(Client):
     c'tor
     :param str url: can specify a specific URL
     """
-    Client.__init__(self, **kwargs)
+    super(BookkeepingClient, self).__init__(**kwargs)
     self.setServer('Bookkeeping/BookkeepingManager')
     if url:
       self.setServer(url)

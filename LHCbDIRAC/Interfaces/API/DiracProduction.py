@@ -692,7 +692,7 @@ class DiracProduction(DiracLHCb):
   def getWMSProdJobID(self, jobID, printOutput=False):
     """This method takes the DIRAC WMS JobID and returns the Production JobID information.
     """
-    result = self.attributes(jobID)
+    result = self.getJobAttributes(jobID)
     if not result['OK']:
       return result
     if 'JobName' not in result['Value']:
@@ -770,7 +770,7 @@ class DiracProduction(DiracLHCb):
       return result
 
     jobsList = result['Value']
-    return self.status(jobsList)
+    return self.getJobStatus(jobsList)
 
   def launchProduction(self, prod, publishFlag, testFlag, requestID,
                        extend=0, tracking=0, MCsimflag=False):

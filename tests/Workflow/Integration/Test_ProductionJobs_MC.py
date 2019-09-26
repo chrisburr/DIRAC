@@ -80,56 +80,35 @@ class MCSuccess(ProductionJobTestCase):
 
     self.assertTrue(res['OK'])
 
-  def test_Integration_Production_MP_Andrea(self):
-
-    options = "$GAUSSROOT/options/Gauss-2016.py;"
-    options += "$DECFILESROOT/options/30000000.py;"
-    options += "$LBPYTHIA8ROOT/options/Pythia8.py"
-    options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py"
-
-    stepsInProd = [{'StepId': 139263, 'StepName': 'Sim09h', 'ApplicationName': 'Gauss', 'ApplicationVersion': 'v51r0',
-                    'ExtraPackages': 'AppConfig.v3r355;Gen/DecFiles.v30r5',
-                    'ProcessingPass': 'Sim09h', 'Visible': 'Y', 'Usable': 'Yes',
-                    'DDDB': 'dddb-20170721-3', 'DQTag': '', 'OptionsFormat': '',
-                    'OptionFiles': options,
-                    'isMulticore': 'Y', 'SystemConfig': 'x86_64-slc6-gcc49-opt', 'mcTCK': '', 'ExtraOptions': '',
-                    'fileTypesIn': [],
-                    'fileTypesOut':['SIM'],
-                    'visibilityFlag':[{'Visible': 'N', 'FileType': 'SIM'}]}]
-
-    # First create the production object
-    prod = self.pr._buildProduction(prodType='MCSimulation',
-                                    stepsInProd=stepsInProd,
-                                    outputSE={'SIM': 'Tier1_MC-DST'},
-                                    priority=0, cpu=100, outputFileMask='SIM')
-    try:
-      # This is the standard location in Jenkins
-      prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', os.environ['WORKSPACE'] + '/PilotInstallDIR')[0])
-    except (IndexError, KeyError):
-      prod.LHCbJob.setInputSandbox(find_all('pilot.cfg', rootPath)[0])
-    prod.LHCbJob.setConfigArgs('pilot.cfg')
-    prod.setParameter('numberOfEvents', 'string', 4, 'Number of events to test')
-    # Then launch it
-    res = self.diracProduction.launchProduction(prod, False, True, 0)
-
-    self.assertTrue(res['OK'])
-
   def test_Integration_Production_MP(self):
+    # From step 139522
 
-    options = "$APPCONFIGOPTS/Gauss/Beam6500GeV-mu100-2018-nu1.6.py;"
+    options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py;"
     options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
-    options += "$APPCONFIGOPTS/Gauss/DataType-2017.py;"
-    options += "$APPCONFIGOPTS/Gauss/RICHRandomHits.py;"
-    options += "$DECFILESROOT/options/10132060.py;"
+    options += "$DECFILESROOT/options/12143001.py;"
     options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
-    options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py"
+    options += "$APPCONFIGOPTS/Gauss/TuningPythia8_Sim09.py;"
+    options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py;"
+    options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py;"
+    options += "$APPCONFIGOPTS/Gauss/GaussMPpatch.py"
 
-    stepsInProd = [{'StepId': 139263, 'StepName': 'Sim09h', 'ApplicationName': 'Gauss', 'ApplicationVersion': 'v49r14',
-                    'ExtraPackages': 'AppConfig.v3r383;Gen/DecFiles.v30r33',
-                    'ProcessingPass': 'Sim09h', 'Visible': 'Y', 'Usable': 'Yes',
-                    'DDDB': 'dddb-20170721-3', 'CONDDB': 'sim-20190430-vc-mu100', 'DQTag': '', 'OptionsFormat': '',
+    stepsInProd = [{'StepId': 139522,
+                    'StepName': 'Sim10Dev01',
+                    'ApplicationName': 'Gauss',
+                    'ApplicationVersion': 'v53r1',
+                    'ExtraPackages': 'AppConfig.v3r389;Gen/DecFiles.v30r35',
+                    'ProcessingPass': 'Sim10-Up02-OldP8Tuning',
+                    'Visible': 'Y',
+                    'Usable': 'Yes',
+                    'DDDB': 'dddb-20190223',
+                    'CONDDB': 'sim-20180530-vc-mu100',
+                    'DQTag': '',
+                    'OptionsFormat': '',
                     'OptionFiles': options,
-                    'isMulticore': 'Y', 'SystemConfig': 'x86_64-slc6-gcc48-opt', 'mcTCK': '', 'ExtraOptions': '',
+                    'isMulticore': 'Y',
+                    'SystemConfig': 'x86_64-slc6-gcc7-opt',
+                    'mcTCK': '',
+                    'ExtraOptions': '',
                     'fileTypesIn': [],
                     'fileTypesOut':['SIM'],
                     'visibilityFlag':[{'Visible': 'N', 'FileType': 'SIM'}]}]
