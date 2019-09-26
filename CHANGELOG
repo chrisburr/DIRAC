@@ -1,3 +1,16 @@
+v10r0-pre1
+use DIRAC v7r0p1
+
+* typo
+* ProductionSystem is new within DIRAC v7r0
+* Gauss MP test using step 139522
+* removed deprecated methods
+* v10r0-pre1
+* autopep8
+* moved scripts to vanilla DIRAC
+* removed Pilot 2
+* added createClient decorator
+* Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
 v9r4p4
 uses DIRAC v6r22p11
