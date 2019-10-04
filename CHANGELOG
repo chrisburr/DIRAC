@@ -1,3 +1,8 @@
+v9r4p6
+uses DIRAC v6r22p12
+
+* Fix LFN generation for root files
+
 v9r4p5
 uses DIRAC v6r22p11
 
