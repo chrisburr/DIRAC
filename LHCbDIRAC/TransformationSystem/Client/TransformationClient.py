@@ -45,6 +45,8 @@ class TransformationClient( DIRACTransformationClient ):
                          maxTasks = 0,
                          eventsPerTask = 0,
                          addFiles = True,
+                         inputMetaQuery=None,
+                         outputMetaQuery=None,
                          bkQuery = None,
                          timeout = 1800 ):
     res = super( TransformationClient, self ).addTransformation( transName, description, longDescription,
@@ -56,6 +58,8 @@ class TransformationClient( DIRACTransformationClient ):
                                                                  maxTasks = maxTasks,
                                                                  eventsPerTask = eventsPerTask,
                                                                  addFiles = addFiles,
+                                                                 inputMetaQuery=inputMetaQuery,
+                                                                 outputMetaQuery=outputMetaQuery,
                                                                  timeout = timeout )
     if not res['OK']:
       return res
