@@ -555,10 +555,6 @@ class BookkeepingReport(ModuleBase):
     except KeyError as e:
       self.log.warn("Could not find output LFN in XML summary object",
                     repr(e))
-      if ('hist' in outputtype.lower()) or ('.root' in outputtype.lower()):
-        self.log.warn("HIST file not found in XML summary, event stats set to 'Unknown'",
-                      "HIST not found = %s" % output)
-        return 'Unknown', output
 
       # here starting to look if by chance the file has been produced with a different case
       for outputFileInXML in self.xf_o.outputsEvents:
@@ -566,6 +562,11 @@ class BookkeepingReport(ModuleBase):
           self.log.info("Found output LFN in XML summary object with different case",
                         "%s -> %s" % (output, outputFileInXML))
           return str(self.xf_o.outputsEvents[outputFileInXML]), outputFileInXML
+
+      if ('hist' in outputtype.lower()) or ('.root' in outputtype.lower()):
+        self.log.warn("HIST file not found in XML summary, event stats set to 'Unknown'",
+                      "HIST not found = %s" % output)
+        return 'Unknown', output
 
       raise KeyError("Could not find output LFN in XML summary object")
 
