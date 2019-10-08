@@ -321,6 +321,7 @@ class BookkeepingReport(ModuleBase):
     # Trick to know that the value is obtained from MJF: # from diracPower
     if mjfPower != diracPower:
       typedParams.append(("WNMJFHS06", mjfPower))
+    typedParams.append(("NumberOfProcessors", self.numberOfProcessors))
     typedParams.append(("Production", self.production_id))
     typedParams.append(("DiracJobId", str(self.jobID)))
     typedParams.append(("Name", self.step_id))
