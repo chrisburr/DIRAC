@@ -4143,7 +4143,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                   f.CreationDate fcreation, j.JobStart jstat, j.JobEnd jend, j.WorkerNode jnode, \
                   ft.Name ftypen, f.eventtypeid evttypeid, j.runnumber jrun, j.fillnumber jfill,\
                    f.fullstat ffull, d.dataqualityflag dflag,j.eventinputstat jevent, j.totalluminosity jtotal,\
-                           f.luminosity flum, f.instLuminosity finst, j.tck jtck, j.WNMJFHS06,j.HLT2TCK, j.NumberOfProcessors from %s where \
+                           f.luminosity flum, f.instLuminosity finst, j.tck jtck, j.WNMJFHS06,j.HLT2TCK,\
+                           j.NumberOfProcessors from %s where \
     j.jobid=f.jobid and \
     ft.filetypeid=prod.filetypeid and \
     f.filetypeid=prod.filetypeid and \
