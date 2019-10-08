@@ -2129,7 +2129,7 @@ class OracleBookkeepingDB(object):
                 'StepID': None,
                 'WNMJFHS06': 0,
                 'HLT2Tck': 'None',
-                'NumberOfProcessors': None}
+                'NumberOfProcessors': 1}
 
     for param in job:
       if not attrList.__contains__(param):
