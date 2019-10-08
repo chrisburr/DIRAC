@@ -146,3 +146,5 @@ DROP INDEX JOBS_DIRACJOBID_JOBID; --it was a composite index on DIRACJOBID and J
 CREATE INDEX DIRACJOBID ON jobs(diracjobid) LOCAL;
 
 create index prodcont_config_id on productionscontainer(configurationid);
+
+ALTER TABLE jobs ADD NumberOfProcessors number default 1;
