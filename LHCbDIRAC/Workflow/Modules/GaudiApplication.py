@@ -52,8 +52,6 @@ class GaudiApplication(ModuleBase):
     self.extraOptionsLine = ''
     self.extraPackages = ''
     self.jobType = ''
-    self.multicoreJob = True
-    self.multicoreStep = False
 
   def _resolveInputVariables(self):
     """ Resolve all input variables for the module here.

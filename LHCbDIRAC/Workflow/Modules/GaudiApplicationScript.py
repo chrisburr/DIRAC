@@ -48,8 +48,6 @@ class GaudiApplicationScript(ModuleBase):
     self.applicationName = ''
     self.applicationVersion = ''
     self.poolXMLCatName = 'pool_xml_catalog.xml'
-    self.multicoreJob = True
-    self.multicoreStep = False
 
   #############################################################################
 

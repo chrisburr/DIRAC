@@ -39,8 +39,6 @@ class RootApplication(ModuleBase):
     self.rootType = ''
     self.arguments = ''
     self.systemConfig = ''
-    self.multicoreJob = True
-    self.multicoreStep = False
 
   #############################################################################
   def _resolveInputVariables(self):
