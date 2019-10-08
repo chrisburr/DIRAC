@@ -18,11 +18,9 @@ import sys
 import os
 import shlex
 
-from DIRAC import gConfig, gLogger
+from DIRAC import gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
-from DIRAC.Core.Utilities.List import fromChar
 from DIRAC.Core.Utilities.Subprocess import systemCall
-from DIRAC.WorkloadManagementSystem.Utilities.JobParameters import getNumberOfJobProcessors
 
 
 class LbRunError(RuntimeError):
@@ -64,7 +62,6 @@ class RunApplication(object):
     self.runTimeProject = ''
     self.runTimeProjectVersion = ''
     self.site = ''
-    self.jobID = None
 
     # What to run and how
     self.command = 'gaudirun.py'
@@ -73,7 +70,7 @@ class RunApplication(object):
     self.prodConfFileName = 'prodConf.py'
     self.step_number = 0
     self.extraOptionsLine = ''
-    self.multicore = False
+    self.numberOfProcessors = 1
 
     self.applicationLog = 'applicationLog.txt'
     self.stdError = 'applicationError.txt'
@@ -204,16 +201,8 @@ class RunApplication(object):
     command = self.opsH.getValue('/GaudiExecution/gaudirunFlags', 'gaudirun.py')
 
     # multicore?
-    if self.multicore:
-      siteName = gConfig.getValue('/LocalSite/Site')
-      gridCE = gConfig.getValue('/LocalSite/GridCE')
-      queue = gConfig.getValue('/LocalSite/CEQueue')
-
-      if _multicoreWN(siteName, gridCE, queue):
-        nProcessors = getNumberOfJobProcessors(self.jobID)
-        command += ' --ncpus %d ' % int(nProcessors)
-      else:
-        self.log.info("Would have run with option '--ncpus', but it is not allowed here")
+    if self.numberOfProcessors > 1:
+      command += ' --ncpus %d ' % int(self.numberOfProcessors)
 
     if self.commandOptions:
       command += ' '
@@ -266,18 +255,3 @@ class RunApplication(object):
           with open(self.stdError, 'a') as error:
             error.write(message + '\n')
             error.flush()
-
-
-def _multicoreWN(siteName, gridCE, queue):
-  """ Returns "True" if the CE, or the Queue is marked as one where multi-processing is allowed
-      (by having Tag "MultiProcessor")
-  """
-  # Tags of the CE
-  tags = fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Tag' % (siteName.split('.')[0], siteName, gridCE),
-                  ''))
-  # Tags of the Queue
-  tags += fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Queues/%s/Tag' % (siteName.split('.')[0], siteName,
-                                                                                     gridCE, queue),
-                   ''))
-
-  return bool(tags and 'MultiProcessor' in tags)

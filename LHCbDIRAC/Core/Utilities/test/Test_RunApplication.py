@@ -42,8 +42,6 @@ def test_lbRunCommand():
 def test__gaudirunCommand(mocker):
   """ Testing what is run (the gaudirun command, for example)
   """
-  mocker.patch("LHCbDIRAC.Core.Utilities.RunApplication.gConfig.getValue", return_value='LCG.Manchester.uk')
-
   ra = RunApplication()
   ra.opsH = MagicMock()
   ra.opsH.getValue.return_value = 'gaudirun.py'
@@ -72,15 +70,17 @@ def test__gaudirunCommand(mocker):
 
   # productions style /2 (multicore)
   ra.optFile = ''
-  ra.multicore = True
+  ra.numberOfProcessors = 2
   res = str(ra._gaudirunCommand())
+  expected = 'gaudirun.py --ncpus 2  prodConf.py'
   assert res == expected  # it won't be allowed on this "CE"
 
   # productions style /3 (multicore and opts)
   ra.optFile = ''
+  ra.numberOfProcessors = 2
   ra.extraOptionsLine = 'bla bla'
   res = str(ra._gaudirunCommand())
-  expected = 'gaudirun.py prodConf.py gaudi_extra_options.py'
+  expected = 'gaudirun.py --ncpus 2  prodConf.py gaudi_extra_options.py'
   assert res == expected  # it won't be allowed on this "CE"
 
   # productions style /4
@@ -88,5 +88,5 @@ def test__gaudirunCommand(mocker):
   ra.commandOptions = ['$APP/1.py',
                        '$APP/2.py']
   res = str(ra._gaudirunCommand())
-  expected = r'gaudirun.py $APP/1.py $APP/2.py prodConf.py'
+  expected = r'gaudirun.py --ncpus 2  $APP/1.py $APP/2.py prodConf.py'
   assert res == expected

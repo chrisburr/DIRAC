@@ -119,8 +119,8 @@ class ModuleBase(object):
     self.maxNumberOfEvents = None
     self.TCK = None
     self.mcTCK = None
-    self.multicoreJob = None
-    self.multicoreStep = None
+    self.multicoreJob = True
+    self.multicoreStep = False
     self.poolXMLCatName = 'pool_xml_catalog.xml'
     self.persistency = ''
     self.processingPass = None
@@ -298,7 +298,14 @@ class ModuleBase(object):
     if 'CPUe' in self.workflow_commons:
       self.CPUe = int(round(float(self.workflow_commons['CPUe'])))
 
-    self.multicoreJob = self.workflow_commons.get('multicore', self.multicoreJob)
+    multicoreJob = self.workflow_commons.get('multicore', self.multicoreJob)
+    if isinstance(multicoreJob, bool):
+      self.multicoreJob = multicoreJob
+    else:
+      if isinstance(multicoreJob, str) and multicoreJob.lower() in ('true', 'y', 'yes'):
+        self.multicoreJob = True
+      else:
+        self.multicoreJob = False
 
     self.processingPass = self.workflow_commons.get('processingPass', self.processingPass)
 
@@ -420,7 +427,14 @@ class ModuleBase(object):
 
     self.optionsFormat = self.step_commons.get('optionsFormat', self.optionsFormat)
 
-    self.multicoreStep = self.step_commons.get('multiCore', self.multicoreStep)
+    multicoreStep = self.step_commons.get('multiCore', self.multicoreStep)
+    if isinstance(multicoreStep, bool):
+      self.multicoreStep = multicoreStep
+    else:
+      if isinstance(multicoreStep, str) and multicoreStep.lower() in ('true', 'y', 'yes'):
+        self.multicoreStep = True
+      else:
+        self.multicoreStep = False
 
     self.systemConfig = self.step_commons.get('SystemConfig', self.systemConfig)
 
