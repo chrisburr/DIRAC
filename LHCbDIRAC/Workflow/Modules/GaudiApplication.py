@@ -171,6 +171,8 @@ class GaudiApplication(ModuleBase):
       if self.applicationLog:
         ra.applicationLog = self.applicationLog
       ra.stdError = self.stdError
+      # env
+      ra.jobID = self.jobID
 
       # Now really running
       try:

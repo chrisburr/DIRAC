@@ -145,6 +145,8 @@ class RootApplication(ModuleBase):
       # actual stuff to run
       ra.command = rootCmd
       ra.applicationLog = self.applicationLog
+      # env
+      ra.jobID = self.jobID
 
       # Now really running
       ra.run()  # This would trigger an exception in case of failure, or application status != 0

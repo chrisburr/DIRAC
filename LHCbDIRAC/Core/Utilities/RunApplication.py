@@ -22,7 +22,7 @@ from DIRAC import gConfig, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.Core.Utilities.List import fromChar
 from DIRAC.Core.Utilities.Subprocess import systemCall
-from DIRAC.WorkloadManagementSystem.Utilities.JobParameters import getNumberOfProcessors
+from DIRAC.WorkloadManagementSystem.Utilities.JobParameters import getNumberOfJobProcessors
 
 
 class LbRunError(RuntimeError):
@@ -64,6 +64,7 @@ class RunApplication(object):
     self.runTimeProject = ''
     self.runTimeProjectVersion = ''
     self.site = ''
+    self.jobID = None
 
     # What to run and how
     self.command = 'gaudirun.py'
@@ -209,7 +210,7 @@ class RunApplication(object):
       queue = gConfig.getValue('/LocalSite/CEQueue')
 
       if _multicoreWN(siteName, gridCE, queue):
-        nProcessors = getNumberOfProcessors(siteName, gridCE, queue)
+        nProcessors = getNumberOfJobProcessors(self.jobID)
         command += ' --ncpus %d ' % int(nProcessors)
       else:
         self.log.info("Would have run with option '--ncpus', but it is not allowed here")

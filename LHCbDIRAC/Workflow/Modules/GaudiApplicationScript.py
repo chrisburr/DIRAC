@@ -121,6 +121,8 @@ class GaudiApplicationScript(ModuleBase):
       # actual stuff to run
       ra.command = command
       ra.applicationLog = self.applicationLog
+      # env
+      ra.jobID = self.jobID
 
       # Now really running
       self.setApplicationStatus(self.applicationName)
