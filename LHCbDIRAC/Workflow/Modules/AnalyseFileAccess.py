@@ -12,7 +12,6 @@
     We send data to the accounting (Site -> SE : fail/success)
 """
 
-import datetime
 from collections import defaultdict
 
 from DIRAC import S_OK, gLogger

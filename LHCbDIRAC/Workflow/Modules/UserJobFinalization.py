@@ -19,7 +19,6 @@ import re
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities.File import getGlobbedFiles
 from DIRAC.DataManagementSystem.Client.FailoverTransfer import FailoverTransfer
-from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 
 from LHCbDIRAC.Core.Utilities.ProductionData import constructUserLFNs
@@ -137,7 +136,8 @@ class UserJobFinalization(ModuleBase):
 
       self.log.info("Final list of files to upload are: %s" % (', '.join(self.userOutputData)))
 
-      # Determine the final list of possible output files for the workflow and all the parameters needed to upload them.
+      # Determine the final list of possible output files for the workflow
+      # and all the parameters needed to upload them.
       outputList = []
       for i in self.userOutputData:
         outputList.append({'outputDataType': ('.'.split(i)[-1]).upper(),
@@ -323,6 +323,3 @@ class UserJobFinalization(ModuleBase):
     orderedSEs += otherSEs
 
     return orderedSEs
-
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#
