@@ -27,7 +27,6 @@ from DIRAC.Core.Utilities import DErrno
 from LHCbDIRAC.Core.Utilities.ProductionOptions import getDataOptions, getModuleOptions
 from LHCbDIRAC.Core.Utilities.RunApplication import RunApplication, LbRunError, LHCbApplicationError, LHCbDIRACError
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
-from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getNumberOfProcessorsToUse
 
 
 class GaudiApplication(ModuleBase):
@@ -166,8 +165,7 @@ class GaudiApplication(ModuleBase):
       ra.command = self.executable
       ra.extraOptionsLine = self.extraOptionsLine
       ra.commandOptions = commandOptions
-      if self.multicoreJob and self.multicoreStep:
-        ra.numberOfProcessors = getNumberOfProcessorsToUse(self.jobID)
+      ra.numberOfProcessors = self.numberOfProcessors
       ra.prodConfFileName = prodConfFileName
       if self.applicationLog:
         ra.applicationLog = self.applicationLog

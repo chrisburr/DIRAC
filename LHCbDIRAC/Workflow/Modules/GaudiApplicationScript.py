@@ -29,7 +29,6 @@ from DIRAC.Core.Utilities import DErrno
 
 from LHCbDIRAC.Core.Utilities.RunApplication import RunApplication, LbRunError, LHCbApplicationError, LHCbDIRACError
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
-from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getNumberOfProcessorsToUse
 
 
 class GaudiApplicationScript(ModuleBase):
@@ -124,8 +123,7 @@ class GaudiApplicationScript(ModuleBase):
       # actual stuff to run
       ra.command = command
       ra.applicationLog = self.applicationLog
-      if self.multicoreJob and self.multicoreStep:
-        ra.numberOfProcessors = getNumberOfProcessorsToUse(self.jobID)
+      ra.numberOfProcessors = self.numberOfProcessors
 
       # Now really running
       self.setApplicationStatus(self.applicationName)

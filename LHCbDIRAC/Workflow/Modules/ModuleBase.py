@@ -34,7 +34,7 @@ from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.Core.Utilities.ProductionData import getLogPath, constructProductionLFNs
 from LHCbDIRAC.Core.Utilities.ProdConf import ProdConf
-from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getEventsToProduce
+from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getEventsToProduce, getNumberOfProcessorsToUse
 
 
 class ModuleBase(object):
@@ -121,6 +121,7 @@ class ModuleBase(object):
     self.mcTCK = None
     self.multicoreJob = True
     self.multicoreStep = False
+    self.numberOfProcessors = 1
     self.poolXMLCatName = 'pool_xml_catalog.xml'
     self.persistency = ''
     self.processingPass = None
@@ -435,6 +436,9 @@ class ModuleBase(object):
         self.multicoreStep = True
       else:
         self.multicoreStep = False
+
+    if self.multicoreJob and self.multicoreStep:
+      self.numberOfProcessors = getNumberOfProcessorsToUse(jobID)
 
     self.systemConfig = self.step_commons.get('SystemConfig', self.systemConfig)
 
