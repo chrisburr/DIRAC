@@ -38,7 +38,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.test.mock_BookkeepingClient import bkc_m
 # sut
 from LHCbDIRAC.Workflow.Modules.FailoverRequest import FailoverRequest
 from LHCbDIRAC.Workflow.Modules.RemoveInputData import RemoveInputData
-from LHCbDIRAC.Workflow.Modules.SendBookkeeping import SendBookkeeping
 from LHCbDIRAC.Workflow.Modules.UserJobFinalization import UserJobFinalization
 from LHCbDIRAC.Workflow.Modules.StepAccounting import StepAccounting
 from LHCbDIRAC.Workflow.Modules.UploadLogFile import UploadLogFile
@@ -187,27 +186,6 @@ class RemoveInputDataSuccess(ModulesTestCase):
                                     workflowStatus, stepStatus,
                                     wf_cs, s_cs,
                                     step_number, step_id)['OK'])
-
-
-##############################################################################
-# # SendBookkeeping.py
-##############################################################################
-
-@patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
-class SendBookkeepingSuccess(ModulesTestCase):
-
-  #################################################
-
-  def test_execute(self, _patch):
-
-    # no errors, no input data
-    for wf_cs in copy.deepcopy(wf_commons):
-      for s_cs in step_commons:
-        sb = SendBookkeeping(bkClient=bkc_mock, dm=dm_mock)
-        self.assertTrue(sb.execute(prod_id, prod_job_id, wms_job_id,
-                                   workflowStatus, stepStatus,
-                                   wf_cs, s_cs,
-                                   step_number, step_id)['OK'])
 
 #############################################################################
 # StepAccounting.py
