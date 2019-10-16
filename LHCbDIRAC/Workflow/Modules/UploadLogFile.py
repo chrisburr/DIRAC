@@ -165,6 +165,8 @@ class UploadLogFile(ModuleBase):
         self.log.info("Would have attempted to upload the zipped log files, but there's not JobID")
         return S_OK()
 
+      # self.logFilePath is something like /lhcb/MC/2016/LOG/00095376/0000/00000381
+      # the zipFileName should have the same name, e.g. 00000381.zip
       zipPath = os.path.join(self.logFilePath, zipFileName)
       res = returnSingleResult(StorageElement(self.logSE).getURL(zipPath, protocol='https'))
       if not res['OK']:
@@ -173,8 +175,12 @@ class UploadLogFile(ModuleBase):
       else:
         logHttpsURL = res['Value']
 
-      self.log.info('putFile %s %s' % (zipFileName, self.logSE))
-      res = returnSingleResult(StorageElement(self.logSE).putFile({zipPath: zipFileName}))
+      self.log.info('putFile', '%s to %s' % (zipFileName, self.logSE))
+      # What is uploaded should be something like /lhcb/MC/2016/LOG/00095376/0000/00000381.zip
+      # (so, removing the last directory, that is the same same of the .zip file)
+      # The rule for interpreting what is to be deflated can be found in /eos/lhcb/grid/prod/lhcb/logSE/.htaccess
+      uploadPath = os.path.join(os.path.dirname(self.logFilePath.rstrip('/')), zipFileName)
+      res = returnSingleResult(StorageElement(self.logSE).putFile({uploadPath: zipFileName}))
       if res['OK']:
         self.log.info('Successfully upload log file',
                       'to %s' % self.logSE)
