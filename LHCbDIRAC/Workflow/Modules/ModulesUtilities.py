@@ -21,7 +21,9 @@ import time
 
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers import Resources
+from DIRAC.Core.Utilities.List import fromChar
 from DIRAC.WorkloadManagementSystem.Client.CPUNormalization import getCPUTime
+from DIRAC.WorkloadManagementSystem.Utilities.JobParameters import getNumberOfJobProcessors
 from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 
 
@@ -221,3 +223,33 @@ def getProductionParameterValue(productionXML, parameterName):
   return None
 
 ###############################################################################
+
+
+def getNumberOfProcessorsToUse(jobID):
+  """ get the number of processors to use for an application step on a certain node
+  """
+
+  siteName = gConfig.getValue('/LocalSite/Site')
+  gridCE = gConfig.getValue('/LocalSite/GridCE')
+  queue = gConfig.getValue('/LocalSite/CEQueue')
+
+  if _multicoreWN(siteName, gridCE, queue):
+    nProcessors = getNumberOfJobProcessors(jobID)
+    return int(nProcessors)
+  else:
+    gLogger.info("Running in MultiProcessor is not allowed here")
+
+
+def _multicoreWN(siteName, gridCE, queue):
+  """ Returns "True" if the CE, or the Queue is marked as one where multi-processing is allowed
+      (by having Tag "MultiProcessor")
+  """
+  # Tags of the CE
+  tags = fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Tag' % (siteName.split('.')[0], siteName, gridCE),
+                  ''))
+  # Tags of the Queue
+  tags += fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Queues/%s/Tag' % (siteName.split('.')[0], siteName,
+                                                                                     gridCE, queue),
+                   ''))
+
+  return bool(tags and 'MultiProcessor' in tags)

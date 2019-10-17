@@ -246,6 +246,10 @@ class LHCbJob(Job):
                         ('multiCore', 'string', '', 'If the step can run multicore'),
                         ('extraPackages', 'string', '', 'ExtraPackages'),
                         ('SystemConfig', 'string', '', 'binary tag')]
+      if appName == 'Gauss':
+        # add parameter for gracefully stop Gauss with a signal (interpreted by the DIRAC Watchdog)
+        parametersList.append(('StopSigNumber', 'string', '', 'signal number (interpreted by Gaudi)'))
+        parametersList.append(('StopSigRegex', 'string', '', 'RegEx of what to stop'))
 
     step = getStepDefinition(stepName,
                              modulesNameList=modulesNameList,
@@ -273,6 +277,9 @@ class LHCbJob(Job):
     stepInstance.setValue('multiCore', 'Y' if multicore else 'N')
     stepInstance.setValue('extraPackages', extraPackages)
     stepInstance.setValue('SystemConfig', systemConfig)
+    if appName == 'Gauss':
+      stepInstance.setValue('StopSigNumber', '2')
+      stepInstance.setValue('StopSigRegex', '.* Gauss.* gaudirun.py .* prodConf_Gauss_[0-9]*_[0-9]*_[0-9].py')
 
     return S_OK(stepInstance)
 

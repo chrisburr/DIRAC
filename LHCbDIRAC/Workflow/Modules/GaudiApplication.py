@@ -52,8 +52,6 @@ class GaudiApplication(ModuleBase):
     self.extraOptionsLine = ''
     self.extraPackages = ''
     self.jobType = ''
-    self.multicoreJob = 'True'
-    self.multicoreStep = 'N'
 
   def _resolveInputVariables(self):
     """ Resolve all input variables for the module here.
@@ -165,12 +163,13 @@ class GaudiApplication(ModuleBase):
       ra.command = self.executable
       ra.extraOptionsLine = self.extraOptionsLine
       ra.commandOptions = commandOptions
-      if self.multicoreStep.upper() == 'Y':
-        ra.multicore = self.multicoreJob
+      ra.numberOfProcessors = self.numberOfProcessors
       ra.prodConfFileName = prodConfFileName
       if self.applicationLog:
         ra.applicationLog = self.applicationLog
       ra.stdError = self.stdError
+      # env
+      ra.jobID = self.jobID
 
       # Now really running
       try:
