@@ -1,3 +1,26 @@
+v10r0-pre2
+use DIRAC v7r0p3
+
+* fix? upload of logs
+* v9r4p7
+* NumberOfProcessors is set to 1 by default
+* fix pylint
+* add sql command
+* add NumberOfProcessors to the bookkeeping report
+* removed unused local variables
+* reporting in Bookkeeping the number of processors used for the step
+* simplifying
+* modules discover the number of processors to use for an application step
+* style
+* removed unused module
+* added job parameters for Gauss graceful stop
+* discovering the number of processors for the job
+* correcting the prodConf for gauss MP test
+* v9r4p6
+* Fix LFN generation for root files
+* v9r4p5
+* Support (input|output)MetaQuery in TransformationClient
+
 v10r0-pre1
 use DIRAC v7r0p1
 
