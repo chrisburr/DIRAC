@@ -2128,7 +2128,8 @@ class OracleBookkeepingDB(object):
                 'Tck': 'None',
                 'StepID': None,
                 'WNMJFHS06': 0,
-                'HLT2Tck': 'None'}
+                'HLT2Tck': 'None',
+                'NumberOfProcessors': 1}
 
     for param in job:
       if not attrList.__contains__(param):
@@ -2187,7 +2188,8 @@ class OracleBookkeepingDB(object):
                                                                attrList['Tck'],
                                                                attrList['StepID'],
                                                                attrList['WNMJFHS06'],
-                                                               attrList['HLT2Tck']])
+                                                               attrList['HLT2Tck'],
+                                                               attrList['NumberOfProcessors']])
     return result
 
   #############################################################################
@@ -4141,7 +4143,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                   f.CreationDate fcreation, j.JobStart jstat, j.JobEnd jend, j.WorkerNode jnode, \
                   ft.Name ftypen, f.eventtypeid evttypeid, j.runnumber jrun, j.fillnumber jfill,\
                    f.fullstat ffull, d.dataqualityflag dflag,j.eventinputstat jevent, j.totalluminosity jtotal,\
-                           f.luminosity flum, f.instLuminosity finst, j.tck jtck from %s where \
+                           f.luminosity flum, f.instLuminosity finst, j.tck jtck, j.WNMJFHS06,j.HLT2TCK,\
+                           j.NumberOfProcessors from %s where \
     j.jobid=f.jobid and \
     ft.filetypeid=prod.filetypeid and \
     f.filetypeid=prod.filetypeid and \

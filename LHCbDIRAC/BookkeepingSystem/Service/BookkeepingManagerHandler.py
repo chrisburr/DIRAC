@@ -764,7 +764,8 @@ class BookkeepingManagerHandler(RequestHandler):
                     'RunNumber', 'FillNumber', 'FullStat',
                     'DataqualityFlag', 'EventInputStat',
                     'TotalLuminosity', 'Luminosity',
-                    'InstLuminosity', 'TCK']
+                    'InstLuminosity', 'TCK', 'WNMJFHS06', 'HLT2TCK',
+                    'NumberOfProcessors']
       for record in retVal['Value']:
         records += [[record[0], record[1], record[2],
                      str(record[3]), str(record[4]),
