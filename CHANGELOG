@@ -12,6 +12,9 @@ use DIRAC v7r0p1
 * added createClient decorator
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
+v9r4p7
+uses DIRAC v6r22p12
+
 v9r4p6
 uses DIRAC v6r22p12
 
