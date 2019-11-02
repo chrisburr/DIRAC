@@ -228,7 +228,7 @@ def getProductionParameterValue(productionXML, parameterName):
 def getNumberOfProcessorsToUse(jobID, payloadProcessors=None):
   """ get the number of processors to use for an application step on a certain node
 
-      payloadProcessors corresponds normally to the workflow parameter "maxNumberOfPayloadProcessors"
+      payloadProcessors corresponds normally to the workflow parameter "maxNumberOfProcessors"
   """
 
   siteName = gConfig.getValue('/LocalSite/Site')
