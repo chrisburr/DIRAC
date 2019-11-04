@@ -1,3 +1,14 @@
+v10r0-pre3
+use DIRAC v7r0p4
+
+* use new script utility
+* new utility for scripts
+* convert free space to TB
+* add info on missing files from FTS
+* add a progress bar missing call
+* corrected the option name
+* getting the number of processors to use consider a max
+
 v10r0-pre2
 use DIRAC v7r0p3
 
