@@ -16,72 +16,13 @@
 
 __RCSID__ = "$Id$"
 
-
-def _getTransformationID(transName):
-  """
-  Check that a transformation exists and return its ID or None if it doesn't exist
-
-  :param transName: name or ID of a transformation
-  :type transName: int,long or string
-
-  :return : transformation ID or None if it doesn't exist
-  """
-  testName = transName
-  # We can try out a long range of indices, as when the transformation is not found, it returns None
-  for ind in xrange(1, 100):
-    result = trClient.getTransformation(testName)
-    if not result['OK']:
-      # Transformation doesn't exist
-      return None
-    status = result['Value']['Status']
-    # If the status is still compatible, accept
-    if status in ('Active', 'Idle', 'New', 'Stopped'):
-      return result['Value']['TransformationID']
-    # If transformationID was given, return error
-    if isinstance(transName, (long, int)) or transName.isdigit():
-      gLogger.error("Transformation in incorrect status", "%s, status %s" % (str(testName), status))
-      return None
-    # Transformation name given, try out adding an index
-    testName = "%s-%d" % (transName, ind)
-  return None
-
-
-def __getTransformations(args):
-  """
-  Parse the arguments of hte script and generates a lit of transformations
-  """
-  transList = []
-  if not len(args):
-    print "Specify transformation number..."
-    Script.showHelp()
-  else:
-    ids = args[0].split(",")
-    try:
-      for transID in ids:
-        r = transID.split(':')
-        if len(r) > 1:
-          for i in xrange(int(r[0]), int(r[1]) + 1):
-            tid = _getTransformationID(i)
-            if tid is not None:
-              transList.append(tid)
-        else:
-          tid = _getTransformationID(r[0])
-          if tid is not None:
-            transList.append(tid)
-          else:
-            gLogger.error("Transformation not found", r[0])
-    except Exception as e:
-      gLogger.exception("Invalid transformation", lException=e)
-      transList = []
-  return transList
-
+from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
 if __name__ == "__main__":
   import os
   import DIRAC
   from DIRAC import gLogger
-  from DIRAC.Core.Base import Script
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -123,7 +64,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import addFilesToTransformation
   from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
   trClient = TransformationClient()
-  transList = __getTransformations(Script.getPositionalArgs())
+  transList = getTransformations(Script.getPositionalArgs())
   if not transList:
     DIRAC.exit(1)
 

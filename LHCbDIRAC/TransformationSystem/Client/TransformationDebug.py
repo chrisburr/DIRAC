@@ -790,7 +790,7 @@ class TransformationDebug(object):
     taskID = task['TaskID']
     taskName = '%08d_%08d' % (self.transID, taskID)
     if taskCompleted and (task['ExternalStatus'] not in ('Done', 'Failed') or
-                          status in ('Assigned', 'Problematic')):
+                          set(status) & {'Assigned', 'Problematic'}):
       # If the task is completed but files are not set Processed, wand or fix it
       #   note that this may just be to a delay of the RequestTaskAgent, but it wouldn't harm anyway
       prString = "\tTask %s is completed: no %s replicas" % (taskName, dmFileStatusComment)
@@ -886,20 +886,34 @@ class TransformationDebug(object):
               fts3FileStatusCount[fts3File.status] += 1
 
           prStr = []
-          for status, statusCount in fts3FileStatusCount.iteritems():
-            if statusCount:
-              prStr.append('%s:%d' % (status, statusCount))
+          for stat, statusCount in fts3FileStatusCount.iteritems():
+            prStr.append('%s:%d' % (stat, statusCount))
           gLogger.notice('\tFTS files statuses: %s' % ', '.join(prStr))
+
+          # Get FTS jobs that are still active
+          activeFtsGUID = set()
+          for fts3Op in fts3Ops:
+            for fts3File in fts3Op.ftsFiles:
+              if fts3File.status != 'Finished':
+                activeFtsGUID.add(fts3File.ftsGUID)
+                # If asking for Assigned or Problematic  files, list those that are not yet replicated
+                if set(status) & {'Assigned', 'Problematic'}:
+                  gLogger.notice('\t%s : %s' %
+                                 (fts3File.status, fts3File.lfn))
 
           fts3Jobs = []
           for fts3Op in fts3Ops:
-            fts3Jobs.extend(fts3Op.ftsJobs)
+            for job in fts3Op.ftsJobs:
+              if job.ftsGUID in activeFtsGUID:
+                fts3Jobs.append(job)
 
-          for job in fts3Jobs:
-            gLogger.notice('\tFTS jobs associated:', '%s@%s (%s completed at %s %%)' %
-                           (job.ftsGUID, job.ftsServer, job.status, job.completeness))
           if not fts3Jobs:
-            gLogger.notice('\tNo FTS jobs found for that request')
+            gLogger.notice('\tNo active FTS jobs found for that request')
+          else:
+            gLogger.notice('\tActive associated FTS jobs:')
+            for job in fts3Jobs:
+              gLogger.notice('\t\t%s@%s (%s, completed at %s %%)' %
+                             (job.ftsGUID, job.ftsServer, job.status, job.completeness))
         except ImportError as e:
           gLogger.notice("\tNo FTS information:", repr(e))
 

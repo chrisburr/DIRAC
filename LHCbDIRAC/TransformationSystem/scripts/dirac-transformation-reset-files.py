@@ -14,11 +14,11 @@
 """
 
 import DIRAC
-from DIRAC.Core.Base import Script
 from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
 if __name__ == "__main__":
 
@@ -52,24 +52,9 @@ if __name__ == "__main__":
       newStatus = val
 
   args = Script.getPositionalArgs()
-
-  if not len(args):
-    print "Specify transformation number..."
-    DIRAC.exit(0)
-  else:
-    ids = args[0].split(",")
-    idList = []
-    try:
-      for id_o in ids:
-        r = id_o.split(':')
-        if len(r) > 1:
-          for i in xrange(int(r[0]), int(r[1]) + 1):
-            idList.append(i)
-        else:
-          idList.append(int(r[0]))
-    except Exception:
-      print "Invalid set of transformationIDs..."
-      DIRAC.exit(1)
+  idList = getTransformations([args[0]])
+  if not idList:
+    DIRAC.exit(1)
 
   if len(args) == 2:
     status = args[1].split(',')

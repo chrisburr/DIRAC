@@ -334,7 +334,7 @@ def _updateDescendantsLumi(parentLumi, doIt=False, force=False):
   for lfn in success:
     for desc in success[lfn]:
       fileType = success[lfn][desc]['FileType']
-      if fileType not in ('LOG', ) and 'HIST' not in fileType:
+      if fileType not in ('LOG',) and 'HIST' not in fileType:
         descLumi.setdefault(desc, 0.)
         descLumi[desc] += parentLumi[lfn]
         fileTypes[desc] = fileType
@@ -1683,6 +1683,7 @@ def executeRejectionStats(dmScript):
       else:
         progressBar = ProgressBar(len(lfns), title="Getting metadata for %d jobs" % len(jobLfns), chunk=chunkSize)
         for lfnChunk in breakListIntoChunks(jobLfns, chunkSize):
+          progressBar.loop()
           res = bkClient.bulkJobInfo(lfnChunk)
           if not res['OK']:
             gLogger.fatal("Error getting job information", res['Message'])
