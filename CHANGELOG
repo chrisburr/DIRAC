@@ -35,6 +35,11 @@ use DIRAC v7r0p1
 * added createClient decorator
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
+v9r4p8
+uses DIRAC v6r22p13
+
+* fix? upload of logs
+
 v9r4p7
 uses DIRAC v6r22p12
 

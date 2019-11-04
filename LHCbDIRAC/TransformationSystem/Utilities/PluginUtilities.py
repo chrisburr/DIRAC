@@ -535,7 +535,8 @@ get from BK" % (param, self.paramName))
         return 0
       self.freeSpace[se] = res['Value']
 
-    free = self.freeSpace[se]['Free']
+    # Return free space in TB as RSS returns in MB
+    free = self.freeSpace[se]['Free'] / 1000000.
     self.logDebug('Free space for SE %s: %d' % (se, free))
     return free
 
