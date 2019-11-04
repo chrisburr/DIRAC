@@ -438,7 +438,11 @@ class ModuleBase(object):
         self.multicoreStep = False
 
     if self.multicoreJob and self.multicoreStep:
-      self.numberOfProcessors = getNumberOfProcessorsToUse(jobID)
+      # the parameter 'MaxNumberOfProcessors' is in the workflow commons:
+      # for simplicity we assume that there's a general max number
+      # of processors the application can use, set at the workflow level (by the Job API)
+      payloadProcessors = self.workflow_commons.get('MaxNumberOfProcessors', None)
+      self.numberOfProcessors = getNumberOfProcessorsToUse(jobID, payloadProcessors)
 
     self.systemConfig = self.step_commons.get('SystemConfig', self.systemConfig)
 

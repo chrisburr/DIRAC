@@ -225,8 +225,10 @@ def getProductionParameterValue(productionXML, parameterName):
 ###############################################################################
 
 
-def getNumberOfProcessorsToUse(jobID):
+def getNumberOfProcessorsToUse(jobID, payloadProcessors=None):
   """ get the number of processors to use for an application step on a certain node
+
+      payloadProcessors corresponds normally to the workflow parameter "maxNumberOfProcessors"
   """
 
   siteName = gConfig.getValue('/LocalSite/Site')
@@ -234,10 +236,18 @@ def getNumberOfProcessorsToUse(jobID):
   queue = gConfig.getValue('/LocalSite/CEQueue')
 
   if _multicoreWN(siteName, gridCE, queue):
-    nProcessors = getNumberOfJobProcessors(jobID)
-    return int(nProcessors)
+    maxNumberOfProcessorsAllowedOnTheWN = int(getNumberOfJobProcessors(jobID))
+    if not payloadProcessors:
+      payloadProcessors = maxNumberOfProcessorsAllowedOnTheWN
+
+    return min(maxNumberOfProcessorsAllowedOnTheWN, payloadProcessors)
+    # NB: the case with
+    # maxNumberOfProcessorsAllowedOnTheWN < number of processors requested (JDL param "NumberOfProcessors")
+    # should not happen by construction, as the job should not be matched in a first place
+
   else:
     gLogger.info("Running in MultiProcessor is not allowed here")
+    return 1
 
 
 def _multicoreWN(siteName, gridCE, queue):
