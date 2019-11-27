@@ -87,6 +87,36 @@ run_pycodestyle:
     - git branch -avv
     - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
 
+# Check that the documentation does not generate any error/warning
+check_docs:
+  allow_failure: true
+  #<<: *test_setup
+  image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
+  before_script:
+    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel
+    - export PYCURL_SSL_LIBRARY=openssl
+    - pip install --upgrade setuptools
+    - pip install --upgrade pip
+  script:
+    # We need to use m2crypto, otherwise it looks for GSI, which is annoying
+    - export DIRAC_USE_M2CRYPTO=True
+    - export PYTHONPATH=$PWD:$PYTHONPATH
+    - cd docs
+    - pip install -r requirements.txt
+    # We need to export the DIRAC env variable so that the makefile knows where to find the documentation tools
+    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print diracdoctools.__file__"))
+    - SPHINXOPTS=-wsphinxWarnings make htmlall || { echo "Failed to build documentation, check for errors above" ; exit 1; }
+    # Check that sphinxWarnings is not empty
+    - >
+      if [ -s sphinxWarnings ]; then
+        echo "********************************************************************************"
+        echo "Warnings When Creating Doc:"
+        echo "********************************************************************************"
+        cat sphinxWarnings
+        echo "********************************************************************************"
+        exit 1
+      fi
+
 # This ensures the license text is present
 # Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
 check-copyright:
