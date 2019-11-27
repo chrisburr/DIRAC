@@ -1,0 +1,5 @@
+# Install all the requirements of DIRAC to build the DOC
+-r https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/requirements.txt
+# Install DIRAC to be able to execute the commands
+git+https://github.com/DIRACGrid/DIRAC/@integration
+LbPlatformUtils

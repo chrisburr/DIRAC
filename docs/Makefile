@@ -10,21 +10,26 @@
 #LC_ALL := en_GB.UTF-8
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+#SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
+
+
+
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
+.PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest singlehtml \
+	htmlall cleanall
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html      to make standalone HTML files"
+	@echo "  htmlall   to make standalone HTML files, including auto generating various source files"
 	@echo "  dirhtml   to make HTML files named index.html in directories"
 	@echo "  pickle    to make pickle files"
 	@echo "  json      to make JSON files"
@@ -34,14 +39,37 @@ help:
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
+	@echo "  clean     to remove the build directory"
+	@echo "  cleanall  to remove the build directory and also the code documentation rst files"
 
 clean:
 	-rm -rf $(BUILDDIR)/*
+
+cleanall: clean
+	$(DIRACDOCTOOLS)/scripts/dirac-docs-build-code.py --clean
+	@echo "Cleaned..., for even more thorough cleaning, use ' git clean -X -d -f'"
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+# AUTO MAKE START
+htmlall:
+	$(DIRACDOCTOOLS)/scripts/dirac-docs-build-commands.py
+	$(DIRACDOCTOOLS)/scripts/dirac-docs-build-code.py
+	$(DIRACDOCTOOLS)/scripts/dirac-docs-concatenate-diraccfg.py
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+# AUTO MAKE END
+
+
+singlehtml:
+	$(SPHINXBUILD) -b singlehtml $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
