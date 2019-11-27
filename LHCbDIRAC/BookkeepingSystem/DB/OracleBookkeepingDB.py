@@ -2015,7 +2015,7 @@ class OracleBookkeepingDB(object):
     :param int depth: the depth of the processing pass chain(how far to go)
     :param productin: production number
     :param bool checkreplica: take into account the replica flag
-    :return all descendents
+    :returns: all descendents
     """
     logicalFileNames = {'Failed': [], 'NotProcessed': []}
     ancestorList = {}
@@ -2096,7 +2096,7 @@ class OracleBookkeepingDB(object):
     inserts a job to the database
 
     :param dict job: job attributes
-    :return jobId
+    :returns: jobId
     """
     gLogger.debug("Insert job into database!")
     attrList = {'ConfigName': None,
@@ -2209,7 +2209,7 @@ class OracleBookkeepingDB(object):
     inserts an output file
 
     :param dict fileobject: file attributes
-    :return fileid
+    :returns: fileid
     """
     attrList = {'Adler32': None,
                 'CreationDate': None,
@@ -2351,7 +2351,7 @@ class OracleBookkeepingDB(object):
     inserts a data taking condition:
 
     :param dict conditions: data taking conditions attributes.
-    :return data quality id
+    :returns: data quality id
     """
     datataking = {'Description': None,
                   'BeamCond': None,
@@ -2478,6 +2478,7 @@ class OracleBookkeepingDB(object):
     For retrieving file metdata for web
 
     :param list lfns: list of LFNs
+
     :returns lfn metadata
     """
     totalrecords = len(lfns)
@@ -3427,7 +3428,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str visible: file visibility flag
     :param bool filesize: only sum the files size
     :param list tcks: list of run TCKs
-    :return list of files
+    :returns: list of files
     """
 
     if runnumbers is None:
@@ -4543,7 +4544,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param int production: it is the production number
     :param list steps it contains all the steps and output file types
     :param number/list eventtype given event type which will be produced by the jobs
-    :return S_OK/S_ERROR
+    :returns: S_OK/S_ERROR
     """
     # if we have some specific file type version, it can be added to this dictionary
     fileTypeMap = {'RAW': 'MDF'}
@@ -5506,7 +5507,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param list eventtypes it inserts a list of event types. For example: the list elements are the following:
     {'EVTTYPEID': '12265021', 'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
     'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
-    :return S_ERROR S_OK({'Failed':[],'Successful':[]})
+    :returns: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
     failed = []
     for evt in eventtypes:
@@ -5528,7 +5529,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param list eventtypes it is a list of event types. For example: the list elements are the following:
     {'EVTTYPEID': '12265021', 'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
     'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
-    :return S_ERROR S_OK({'Failed':[],'Successful':[]})
+    :returns: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
     failed = []
     for evt in eventtypes:
@@ -5596,7 +5597,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     Availabe database tags
 
-    :return S_OK/S_ERROR a list of db tags
+    :returns: S_OK/S_ERROR a list of db tags
     """
 
     command = "select distinct DDDB,CONDDB,DQTAG from steps where Usable='Yes'"
@@ -5621,7 +5622,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     This method used to retreive the JobId, FileId and FiletypeId for a given list of lfns
 
     :param list lfns: list of lfns
-    :return S_OK/S_ERROR {"FileId:1","JobId":22, "FileTypeId":3}
+    :returns: S_OK/S_ERROR {"FileId:1","JobId":22, "FileTypeId":3}
     """
     retVal = self.dbR_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkgetIdsFromFiles',
                                               parameters=[],

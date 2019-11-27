@@ -9,13 +9,15 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """
-in_dict = {'EventTypeId': 93000000,
-        'ConfigVersion': 'Collision10',
-        'ProcessingPass': '/Real Data',
-        'ConfigName': 'LHCb',
-        'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
-        'Production':7421
-         }
+Whatever:
+
+  in_dict = {'EventTypeId': 93000000,
+          'ConfigVersion': 'Collision10',
+          'ProcessingPass': '/Real Data',
+          'ConfigName': 'LHCb',
+          'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
+          'Production':7421
+          }
 """
 
 import tempfile
@@ -124,7 +126,8 @@ class BookkeepingClient(Client):
     :param list lfns: list of LFNs
     :param int depth: depth of the processing chane
     :param bool replica: take into account the replica flag.
-    :return It returns the ancestors of a file with metadata or a list of files
+
+    :returns: It returns the ancestors of a file with metadata or a list of files
     """
     if isinstance(lfns, basestring):
       lfns = lfns.split(';')
