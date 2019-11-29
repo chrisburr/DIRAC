@@ -1,4 +1,6 @@
-# This dockerfile creates a container of a LHCbDIRAC client installation.
+# This templated dockerfile creates a container image of a LHCbDIRAC client installation.
+# The variables are replaced by gitlab-CI when creating the image
+#
 # Based on CC7
 #
 # The purpose of this container can be:
@@ -14,7 +16,7 @@ FROM cern/cc7-base
 MAINTAINER Federico Stagni <federico.stagni@cern.ch>
 
 # Specify the version and setup
-ENV LHCB_DIRAC_VERSION v10r0-pre3
+ENV LHCB_DIRAC_VERSION $$LHCB_DIRAC_VERSION$$
 ENV LHCB_DIRAC_SETUP LHCb-Certification
 ENV LHCB_DIRAC_CS dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server
 
