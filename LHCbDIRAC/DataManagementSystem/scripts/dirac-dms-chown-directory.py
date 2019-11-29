@@ -59,6 +59,7 @@ if group:
   toChange.append('group')
 if mode:
   toChange.append('mode')
+toChange = ','.join(toChange)
 
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 from LHCbDIRAC.DataManagementSystem.Utilities.FCUtilities import chown
@@ -96,7 +97,7 @@ dfc = FileCatalogClient()
 success = 0
 startTime = time()
 progressBar = ProgressBar(len(directories),
-                          title="Changing %s%s to %d directories:" % (','.join(toChange),
+                          title="Changing %s%s to %d directories:" % (toChange,
                                                                       ' recursively' if recursive else '',
                                                                       len(directories)),
                           chunk=1, interactive=True)
@@ -122,11 +123,11 @@ for baseDir in directories:
     success += res['Value']
 
 if success:
-  msg = 'Successfully changed %s%s in %d directories' % (','.join(toChange),
+  msg = 'Successfully changed %s%s in %d directories' % (toChange,
                                                          ' recursively' if recursive else '',
                                                          success)
 else:
-  msg = 'Failed changing %s%s in %d directories' % (','.join(toChange),
+  msg = 'Failed changing %s%s in %d directories' % (toChange,
                                                     ' recursively' if recursive else '',
                                                     len(directories))
 progressBar.endLoop(msg)
