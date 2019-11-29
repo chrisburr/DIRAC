@@ -23,10 +23,10 @@ image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
 
 stages:
    # Run all the tests
-  - test
+  # - test
   # deploy the coverage results
-  - coverage
-  - coverageDfs
+  # - coverage
+  # - coverageDfs
   # Release the software on AFS
   - release
   # Build the docker and deploy on CVMFS
@@ -36,112 +36,112 @@ stages:
 
 # ### test stage ###
 
-# Common configuration between pytest, pylint, pycodestyle
-.test_setup: &test_setup
-  before_script:
-    # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - diracTAG=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 3 | tail -n 1 | sed 's/ //g' | cut -d ':' -f 2)
-    - echo "Using DIRAC tag $diracTAG"
-    - git clone https://github.com/DIRACGrid/DIRAC.git
-    - cd DIRAC
-    - git checkout $diracTAG
-    - cd ..
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel
-    - export PYCURL_SSL_LIBRARY=openssl
-    - pip install --upgrade setuptools
-    - pip install --upgrade pip
-    - pip install virtualenv
-    - virtualenv DIRAC_VENV
-    - source DIRAC_VENV/bin/activate
-    - pip install --upgrade setuptools
-    - pip install --upgrade pip
-    - pip list
-    - pip install -r DIRAC/requirements.txt
-    - pip install LbEnv==$LBENV_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
-    - pip install LbPlatformUtils==$LBPLATFORMUTILS_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
+# # Common configuration between pytest, pylint, pycodestyle
+# .test_setup: &test_setup
+#   before_script:
+#     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
+#     - diracTAG=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 3 | tail -n 1 | sed 's/ //g' | cut -d ':' -f 2)
+#     - echo "Using DIRAC tag $diracTAG"
+#     - git clone https://github.com/DIRACGrid/DIRAC.git
+#     - cd DIRAC
+#     - git checkout $diracTAG
+#     - cd ..
+#     - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel
+#     - export PYCURL_SSL_LIBRARY=openssl
+#     - pip install --upgrade setuptools
+#     - pip install --upgrade pip
+#     - pip install virtualenv
+#     - virtualenv DIRAC_VENV
+#     - source DIRAC_VENV/bin/activate
+#     - pip install --upgrade setuptools
+#     - pip install --upgrade pip
+#     - pip list
+#     - pip install -r DIRAC/requirements.txt
+#     - pip install LbEnv==$LBENV_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
+#     - pip install LbPlatformUtils==$LBPLATFORMUTILS_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
 
-  stage: test
-  only:
-    - branches
+#   stage: test
+#   only:
+#     - branches
 
-# This runs pylint and fails if there are errors
-run_pylint:
-  <<: *test_setup
-  script:
-    - cd LHCbDIRAC
-    - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
+# # This runs pylint and fails if there are errors
+# run_pylint:
+#   <<: *test_setup
+#   script:
+#     - cd LHCbDIRAC
+#     - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
 
-# This runs pytest and generates the coverage report
-run_pytest:
-  <<: *test_setup
-  script:
-    - cd LHCbDIRAC
-    - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
-  coverage: '/\d+\%\s*$/'
-  artifacts:
-    paths:
-      - LHCbDIRAC/htmlcov/
+# # This runs pytest and generates the coverage report
+# run_pytest:
+#   <<: *test_setup
+#   script:
+#     - cd LHCbDIRAC
+#     - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
+#   coverage: '/\d+\%\s*$/'
+#   artifacts:
+#     paths:
+#       - LHCbDIRAC/htmlcov/
 
-# This runs pycodestyle
-run_pycodestyle:
-  <<: *test_setup
-  script:
-    - lhcbDiracBranch=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 1 | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
-    - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
-    - git fetch --no-tags GL
-    - git branch -avv
-    - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
+# # This runs pycodestyle
+# run_pycodestyle:
+#   <<: *test_setup
+#   script:
+#     - lhcbDiracBranch=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 1 | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
+#     - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
+#     - git fetch --no-tags GL
+#     - git branch -avv
+#     - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
 
-# This ensures the license text is present
-# Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
-check-copyright:
-  stage: test
-  before_script:
-    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
-    - git fetch --all
-    - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
-  script:
-    - python lb-check-copyright upstream/devel --exclude '^tests/.*\.xml$'
+# # This ensures the license text is present
+# # Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
+# check-copyright:
+#   stage: test
+#   before_script:
+#     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
+#     - git fetch --all
+#     - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
+#   script:
+#     - python lb-check-copyright upstream/devel --exclude '^tests/.*\.xml$'
 
 
 # ### coverage stage ###
 
-# This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
-pages:
-  stage: coverage
-  dependencies:
-    - run_pytest
-  script:
-    - TARGET_DIR="public/${CI_COMMIT_REF_NAME}"
-    - if [ ! -d "$TARGET_DIR" ]; then mkdir -p $TARGET_DIR; fi
-    - echo "Copying into $TARGET_DIR"
-    - mv LHCbDIRAC/htmlcov/* $TARGET_DIR
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
-  only:
-    - master@lhcb-dirac/LHCbDIRAC
-    - devel@lhcb-dirac/LHCbDIRAC
+# # This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
+# pages:
+#   stage: coverage
+#   dependencies:
+#     - run_pytest
+#   script:
+#     - TARGET_DIR="public/${CI_COMMIT_REF_NAME}"
+#     - if [ ! -d "$TARGET_DIR" ]; then mkdir -p $TARGET_DIR; fi
+#     - echo "Copying into $TARGET_DIR"
+#     - mv LHCbDIRAC/htmlcov/* $TARGET_DIR
+#   artifacts:
+#     paths:
+#       - public
+#     expire_in: 30 days
+#   only:
+#     - master@lhcb-dirac/LHCbDIRAC
+#     - devel@lhcb-dirac/LHCbDIRAC
 
-# Deploy the pages generated to DFS
-dfsdeploy:
-  # Executed during the deploy stage
-  stage: coverageDfs
-  # # Only when the master branch is pushed
-  only:
-    - master
-    - devel
-  # Custom docker image providing the needed tools to deploy in DFS
-  image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
-  script:
-  # Script that performs the deploy to DFS. Makes use of the variables defined in the project
-  # It will not sync the generated content with the folder in DFS (risk of deleting DFS management files)
-  # It will just override the contents of DFS or copy new files
-  - deploy-dfs
-  # do not run any globally defined before_script or after_script for this step
-  before_script: []
-  after_script: []
+# # Deploy the pages generated to DFS
+# dfsdeploy:
+#   # Executed during the deploy stage
+#   stage: coverageDfs
+#   # # Only when the master branch is pushed
+#   only:
+#     - master
+#     - devel
+#   # Custom docker image providing the needed tools to deploy in DFS
+#   image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
+#   script:
+#   # Script that performs the deploy to DFS. Makes use of the variables defined in the project
+#   # It will not sync the generated content with the folder in DFS (risk of deleting DFS management files)
+#   # It will just override the contents of DFS or copy new files
+#   - deploy-dfs
+#   # do not run any globally defined before_script or after_script for this step
+#   before_script: []
+#   after_script: []
 
 
 # ### release stage ###
@@ -222,11 +222,22 @@ build_client_docker_image:
   stage: deploy_release
   # only:
   #   - tags
-  # This needs to be there for gitlab
+  image: 
+    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+    entrypoint: [""]
   script:
-    - ls -l
-    - sed -i "s/$$LHCB_DIRAC_VERSION$$/v10r0-pre3/g" ./container/client/Dockerfile
+    # - sed -i "s/%%LHCB_DIRAC_VERSION%%/$CI_COMMIT_TAG/g" ./container/client/Dockerfile
+    - sed -i "s %%LHCB_DIRAC_VERSION%% v10r0-pre3 g" ./container/client/Dockerfile
+    #- SETUP=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "LHCb-Certification"; else echo "LHCb-Production"; fi)
+    - SETUP=$(echo v10r0-pre3 | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "LHCb-Certification"; else echo "LHCb-Production"; fi)
+    - sed -i "s %%LHCB_DIRAC_SETUP%% $SETUP g" ./container/client/Dockerfile
+    # - CS=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server"; else echo "dips://lbvobox100.cern.ch:9135/Configuration/Server,dips://lbvobox102.cern.ch:9135/Configuration/Server,dips://lbvobox103.cern.ch:9135/Configuration/Server,dips://lbvobox104.cern.ch:9135/Configuration/Server"; fi)
+    - CS=$(echo v10r0-pre3 | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server"; else echo "dips://lbvobox100.cern.ch:9135/Configuration/Server,dips://lbvobox102.cern.ch:9135/Configuration/Server,dips://lbvobox103.cern.ch:9135/Configuration/Server,dips://lbvobox104.cern.ch:9135/Configuration/Server"; fi)
+    - sed -i "s %%LHCB_DIRAC_CS%% $CS g" ./container/client/Dockerfile
     - more ./container/client/Dockerfile
+
+    # - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    # - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE
   # variables:
   #   TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
   #   CONTEXT_DIR: container/lhcbdirac/

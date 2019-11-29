@@ -16,9 +16,9 @@ FROM cern/cc7-base
 MAINTAINER Federico Stagni <federico.stagni@cern.ch>
 
 # Specify the version and setup
-ENV LHCB_DIRAC_VERSION $$LHCB_DIRAC_VERSION$$
-ENV LHCB_DIRAC_SETUP LHCb-Certification
-ENV LHCB_DIRAC_CS dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server
+ENV LHCB_DIRAC_VERSION %%LHCB_DIRAC_VERSION%%
+ENV LHCB_DIRAC_SETUP %%LHCB_DIRAC_SETUP%%
+ENV LHCB_DIRAC_CS %%LHCB_DIRAC_CS%%
 
 # Add the EGI trustanchors and CAs
 ADD http://repository.egi.eu/sw/production/cas/1/current/repo-files/EGI-trustanchors.repo /etc/yum.repos.d/EGI-trustanchors.repo
