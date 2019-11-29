@@ -25,7 +25,9 @@ ADD http://repository.egi.eu/sw/production/cas/1/current/repo-files/EGI-trustanc
 RUN yum install -y ca-policy-egi-core
 
 # install packages
-RUN yum install -y tar which git && yum clean all
+RUN yum update -y && \
+    yum install -y tar which git && \
+    yum clean all
 
 # Copying in ENTRYPOINT script
 COPY ./dockerEntrypoint.sh /
