@@ -30,7 +30,7 @@ RUN yum update -y && \
     yum clean all
 
 # Copying in ENTRYPOINT script
-COPY ./dockerEntrypoint.sh /
+COPY dockerEntrypoint.sh /
 RUN chmod 755 /dockerEntrypoint.sh
 ENTRYPOINT [ "/dockerEntrypoint.sh" ]
 
