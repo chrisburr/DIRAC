@@ -233,7 +233,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
     gLogger.notice("All files exist and have a correct checksum -> OK!")
 
 
-def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False):
+def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False, checkFC2SE=True):
   """
   Method actually calling for the the check using ConsistencyChecks module
   It prints out results and calls corrective actions if required
@@ -256,13 +256,16 @@ def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False):
 
     affectedRuns = list(set(str(run) for run in cc.existLFNsBKRepNo.itervalues()))
     gLogger.error("%d files are in the FC but have replica = NO in BK" % len(cc.existLFNsBKRepNo))
-    from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
-    ccAux = ConsistencyChecks()
-    gLogger.notice("====== Now checking %d files from FC to SE ======" % len(cc.existLFNsBKRepNo))
-    ccAux.lfns = cc.existLFNsBKRepNo.keys()
-    doCheckFC2SE(ccAux, bkCheck=False, fixIt=fixFC, fixOption='FixFC')
-    cc.existLFNsBKRepNo = sorted(set(cc.existLFNsBKRepNo) - set(ccAux.existLFNsNoSE) -
-                                 set(ccAux.existLFNsNotExisting) - set(ccAux.existLFNsBadFiles))
+    if checkFC2SE:
+      from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
+      ccAux = ConsistencyChecks()
+      gLogger.notice("====== Now checking %d files from FC to SE ======" % len(cc.existLFNsBKRepNo))
+      ccAux.lfns = cc.existLFNsBKRepNo.keys()
+      doCheckFC2SE(ccAux, bkCheck=False, fixIt=fixFC, fixOption='FixFC')
+      cc.existLFNsBKRepNo = sorted(set(cc.existLFNsBKRepNo) - set(ccAux.existLFNsNoSE) -
+                                   set(ccAux.existLFNsNotExisting) - set(ccAux.existLFNsBadFiles))
+    else:
+      cc.existLFNsBKRepNo = sorted(cc.existLFNsBKRepNo)
     if cc.existLFNsBKRepNo:
       gLogger.notice("====== Completed, %d files are in the FC and SE but have replica = NO in BK ======" %
                      len(cc.existLFNsBKRepNo))

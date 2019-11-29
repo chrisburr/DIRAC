@@ -22,7 +22,6 @@ __RCSID__ = "$Id$"
 
 # Code
 
-
 if __name__ == '__main__':
 
   # Script initialization
@@ -38,12 +37,14 @@ if __name__ == '__main__':
   dmScript.registerBKSwitches()
   Script.registerSwitch('', 'FixBK', '   Take action to fix the BK')
   Script.registerSwitch('', 'FixFC', '   Take action to fix the FC')
+  Script.registerSwitch('', 'NoFC2SE', "   Don't execute an FC2SE check")
   Script.registerSwitch('', 'AffectedRuns', '   List the runs affected by the encountered problem')
   Script.parseCommandLine(ignoreErrors=True)
 
   from DIRAC import gLogger
   fixBK = False
   fixFC = False
+  checkFC2SE = True
   listAffectedRuns = False
   for switch in Script.getUnprocessedSwitches():
     if switch[0] == 'FixFC':
@@ -52,6 +53,8 @@ if __name__ == '__main__':
       fixBK = True
     elif switch[0] == 'AffectedRuns':
       listAffectedRuns = True
+    elif switch[0] == 'NoFC2SE':
+      checkFC2SE = False
 
   if fixFC and fixBK:
     gLogger.notice("Can't fix both FC and BK, please choose")
@@ -79,4 +82,4 @@ if __name__ == '__main__':
     if bkQuery:
       bkQuery.setOption('ReplicaFlag', 'All')
       cc.bkQuery = bkQuery
-    doCheckFC2BK(cc, fixFC, fixBK, listAffectedRuns)
+    doCheckFC2BK(cc, fixFC=fixFC, fixBK=fixBK, listAffectedRuns=listAffectedRuns, checkFC2SE=checkFC2SE)
