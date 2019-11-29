@@ -262,8 +262,8 @@ def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False, checkFC2S
       gLogger.notice("====== Now checking %d files from FC to SE ======" % len(cc.existLFNsBKRepNo))
       ccAux.lfns = cc.existLFNsBKRepNo.keys()
       doCheckFC2SE(ccAux, bkCheck=False, fixIt=fixFC, fixOption='FixFC')
-      cc.existLFNsBKRepNo = sorted(set(cc.existLFNsBKRepNo) - set(ccAux.existLFNsNoSE) - \
-                                   set(ccAux.existLFNsNotExisting) - set(ccAux.existLFNsBadFiles))
+      cc.existLFNsBKRepNo = sorted(set(cc.existLFNsBKRepNo) - set(ccAux.existLFNsNoSE)
+                                   -set(ccAux.existLFNsNotExisting) - set(ccAux.existLFNsBadFiles))
     else:
       cc.existLFNsBKRepNo = sorted(cc.existLFNsBKRepNo)
     if cc.existLFNsBKRepNo:
