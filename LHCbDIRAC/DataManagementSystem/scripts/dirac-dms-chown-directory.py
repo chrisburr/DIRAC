@@ -96,10 +96,10 @@ dfc = FileCatalogClient()
 success = 0
 startTime = time()
 progressBar = ProgressBar(len(directories),
-                           title="Changing %s%s to %d directories:" % (','.join(toChange),
-                                                                       ' recursively' if recursive else '',
-                                                                       len(directories)),
-                           chunk=1, interactive=True)
+                          title="Changing %s%s to %d directories:" % (','.join(toChange),
+                                                                     ' recursively' if recursive else '',
+                                                                     len(directories)),
+                          chunk=1, interactive=True)
 errors = {}
 for baseDir in directories:
   progressBar.loop()
