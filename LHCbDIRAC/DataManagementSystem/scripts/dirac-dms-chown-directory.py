@@ -48,7 +48,18 @@ for switch in Script.getUnprocessedSwitches():
 
 args = Script.getPositionalArgs()
 if dirList is None and args:
-  dirList = args
+  dirList = []
+  for arg in args:
+    dirList += arg.split(',')
+
+toChange = []
+if user:
+  toChange.append('user')
+if group:
+  toChange.append('group')
+if mode:
+  toChange.append('mode')
+toChange = ','.join(toChange)
 
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 from LHCbDIRAC.DataManagementSystem.Utilities.FCUtilities import chown
@@ -79,54 +90,59 @@ if not directories or (user is None and group is None and mode is None):
   Script.showHelp()
   exit(1)
 
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 dfc = FileCatalogClient()
 
-error = 0
 success = 0
 startTime = time()
-if len(directories) > 1:
-  sys.stdout.write('Changing ownership to %d directories :' % len(directories))
-  sys.stdout.flush()
-count = 0
+progressBar = ProgressBar(len(directories),
+                          title="Changing %s%s to %d directories:" % (toChange,
+                                                                      ' recursively' if recursive else '',
+                                                                      len(directories)),
+                          chunk=1, interactive=True)
+errors = {}
 for baseDir in directories:
+  progressBar.loop()
   if not baseDir.startswith('/lhcb'):
-    gLogger.fatal("\nNot a valid directory", baseDir)
-    error = 1
+    errors[baseDir] = 'Not a valid directory'
     continue
   if not dfc.isDirectory(baseDir).get('Value', {}).get('Successful', {}).get(baseDir):
     if create:
       res = dfc.createDirectory(baseDir)
       if not res['OK']:
-        gLogger.fatal("\nError creating directory", res['Message'])
-        error = 1
+        errors[baseDir] = res['Message'] + ' while creating directory'
         continue
     else:
-      gLogger.fatal("\nDirectory doesn't exist", baseDir)
-      error = 1
+      errors[baseDir] = "Directory doesn't exist"
       continue
   res = chown(baseDir, user, group=group, mode=mode, recursive=recursive, fcClient=dfc)
   if not res['OK']:
-    gLogger.fatal('\nError changing directory owner', res['Message'])
-    error = 1
-    continue
+    errors[baseDir] = res['Message'] + ' executing %s: ' % res['Action']
+  else:
+    success += res['Value']
 
-  if len(directories) == 1:
-    gLogger.always('Successfully changed owner in %d directories in %.1f seconds' % (res['Value'], time() - startTime))
-    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
-    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeLfnMetadata
-    dmScript = DMScript()
-    dmScript.setLFNs(baseDir)
-    sys.stdout.write('Directory metadata: ')
-    sys.stdout.flush()
-    executeLfnMetadata(dmScript)
-  elif count % 10 == 0:
-    sys.stdout.write('.')
-    sys.stdout.flush()
-  count += 1
-  success += res['Value']
-  error = 0
-
-if len(directories) > 1:
-  gLogger.notice('\nSuccessfully changed owner in %d directories in %.1f seconds' % (success, time() - startTime))
-exit(error)
+if success:
+  msg = 'Successfully changed %s%s in %d directories' % (toChange,
+                                                         ' recursively' if recursive else '',
+                                                         success)
+else:
+  msg = 'Failed changing %s%s in %d directories' % (toChange,
+                                                    ' recursively' if recursive else '',
+                                                    len(directories))
+progressBar.endLoop(msg)
+retCode = 0
+if errors:
+  retCode = 1
+  gLogger.notice("Errors:")
+  for baseDir, error in errors.iteritems():
+    gLogger.notice("\tDirectory %s - " % baseDir, error)
+elif len(directories) == 1:
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeLfnMetadata
+  dmScript = DMScript()
+  dmScript.setLFNs(list(directories)[0])
+  sys.stdout.write('Directory metadata: ')
+  sys.stdout.flush()
+  executeLfnMetadata(dmScript)
+exit(retCode)
