@@ -25,6 +25,7 @@ useThreadPoolExecutor = False
 if os.getenv('DIRAC_USE_NEWTHREADPOOL', 'NO').lower() in ('yes', 'true'):
   from concurrent.futures import ThreadPoolExecutor
   useThreadPoolExecutor = True
+  raise Exception('Sucessfully using new thread pool executor')
 else:
   from DIRAC.Core.Utilities.ThreadPool import ThreadPool
 
