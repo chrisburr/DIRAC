@@ -36,7 +36,7 @@ setup(
     name="DIRAC",
     version="7.1.pre10",
     url="https://github.com/DIRACGRID/DIRAC",
-    license="GPLv3",
+    license="GPL-3.0",
     package_dir=package_dir,
     packages=allPackages,
     scripts=scripts,
