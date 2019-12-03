@@ -57,6 +57,7 @@ function prepareEnvironment() {
         echo "export TESTREPO=${TESTREPO}"
         echo "export ALTERNATIVE_MODULES=${ALTERNATIVE_MODULES}"
         echo "export DIRACBRANCH=${DIRACBRANCH}"
+        echo "export DIRAC_USE_NEWTHREADPOOL=${DIRAC_USE_NEWTHREADPOOL:-no}"
       } >> "${SERVERCONFIG}"
   fi
   cp "${SERVERCONFIG}" "${CLIENTCONFIG}"
