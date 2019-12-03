@@ -7,6 +7,7 @@ Sources
 
 Releases
 {
+<<<<<<< HEAD
    
   v10r0-pre3
   {
@@ -26,8 +27,7 @@ Releases
   {
     Modules = LHCbDIRAC:v10r0-pre1, LHCbWebDIRAC:v5r0p6
     Depends = DIRAC:v7r0p1
-    DIRACOS = LHCb:v1r0
-  }
+=======
   
   v9r4p11
   {
@@ -50,9 +50,10 @@ Releases
     Modules = LHCbDIRAC:v9r4p9, LHCbWebDIRAC:v5r0p10
     Depends = DIRAC:v6r22p14
     LcgVer = v14r11
+>>>>>>> upstream/master
     DIRACOS = LHCb:v1r0
   }
-  
+
   v9r4p8
   {
     Modules = LHCbDIRAC:v9r4p8, LHCbWebDIRAC:v5r0p9
@@ -60,6 +61,7 @@ Releases
     LcgVer = v14r11
     DIRACOS = LHCb:v1r0
   }
+
 
   v9r4p7
   {
