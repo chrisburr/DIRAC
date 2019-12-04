@@ -1,3 +1,9 @@
+v10r0-pre4
+use DIRAC v7r0p8
+
+* Use the DFC recursive capability instead of looping
+* Add an option for not running a check FC2SE in FC2BKK
+
 v10r0-pre2
 use DIRAC v7r0p3
 
