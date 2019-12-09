@@ -1177,7 +1177,7 @@ class ProductionRequestDB(DB):
 
     # Now copy the master
     recl = [rec[x] for x in self.requestFields[1:-7]]
-    result = self._fixedEscapeValues(recl)
+    result = self._fixedEscapeValues(recl, 24)
     if not result['OK']:
       self.lock.release()
       return result
