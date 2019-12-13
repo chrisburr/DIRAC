@@ -42,7 +42,7 @@ class BookkeepingClient(Client):
     self.setServer('Bookkeeping/BookkeepingManager')
     if url:
       self.setServer(url)
-    self.setTimeout(3600)
+    self.timeout = 3600
 
   #############################################################################
   def getAvailableFileTypes(self):
