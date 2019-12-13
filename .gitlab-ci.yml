@@ -17,6 +17,10 @@ variables:
     LBENV_RELEASE: "1.1.1"
     LBPLATFORMUTILS_RELEASE: "4.2.3"
     DEPLOY_REPO: "lhcb-core/cvmfs-deploy/deploy-lhcbdirac.git"
+
+# Image used for most of the jobs, unless specified
+image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
+
 stages:
    # Run all the tests
   - test
@@ -25,14 +29,15 @@ stages:
   - coverageDfs
   # Release the software on AFS
   - release
-  # Build the docker
+  # Build the docker and deploy on CVMFS
   - deploy_release
   # Tag the devel container if needed
   - tag_container
 
-# Common configuration between pytest and pylint
+### test stage ###
+
+# Common configuration between pytest, pylint, pycodestyle
 .test_setup: &test_setup
-  image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   before_script:
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - diracTAG=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 3 | tail -n 1 | sed 's/ //g' | cut -d ':' -f 2)
@@ -90,7 +95,6 @@ run_pycodestyle:
 # This ensures the license text is present
 # Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
 check-copyright:
-  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   stage: test
   before_script:
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
@@ -98,6 +102,9 @@ check-copyright:
     - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
   script:
     - python lb-check-copyright upstream/devel --exclude '^tests/.*\.xml$'
+
+
+### coverage stage ###
 
 # This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
 pages:
@@ -137,6 +144,7 @@ dfsdeploy:
   after_script: []
 
 
+# ### release stage ###
 
 # This creates and deploy the tarball on AFS
 # It is triggered with a tag only
@@ -191,29 +199,46 @@ create_tarball:
     - source /tmp/deploy.sh
 
 
+# ### deploy_release stage ###
 
-# When we have a git tag, after creating the tarball, create the docker image
+# When we have a git tag, after creating the tarball, create a docker image used by Mesos
+# and upload it to the gitlab registry
 build_docker_image:
-  tags:
-    - docker-image-build
   stage: deploy_release
   only:
     - tags
-  # This needs to be there for gitlab
-  script: echo ""
-  variables:
-    TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
-    CONTEXT_DIR: container/lhcbdirac/
+  image: 
+    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/container/lhcbdirac --dockerfile $CI_PROJECT_DIR/container/lhcbdirac/Dockerfile --destination $CI_REGISTRY_IMAGE:${CI_COMMIT_TAG}
 
 
-
+# This instead creates a docker image to be used as LHCbDIRAC client
+build_client_docker_image:
+  stage: deploy_release
+  only:
+    - tags
+  image: 
+    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+    entrypoint: [""]
+  script:
+    # Replacements
+    - sed -i "s %%LHCB_DIRAC_VERSION%% $CI_COMMIT_TAG g" ./container/client/Dockerfile
+    - SETUP=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "LHCb-Certification"; else echo "LHCb-Production"; fi)
+    - sed -i "s %%LHCB_DIRAC_SETUP%% $SETUP g" ./container/client/Dockerfile
+    - CS=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server"; else echo "dips://lbvobox100.cern.ch:9135/Configuration/Server,dips://lbvobox102.cern.ch:9135/Configuration/Server,dips://lbvobox103.cern.ch:9135/Configuration/Server,dips://lbvobox104.cern.ch:9135/Configuration/Server"; fi)
+    - sed -i "s %%LHCB_DIRAC_CS%% $CS g" ./container/client/Dockerfile
+    # Now build and upload
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/container/client --dockerfile $CI_PROJECT_DIR/container/client/Dockerfile --destination $CI_REGISTRY_IMAGE-client:${CI_COMMIT_TAG}
 
 # When we have a git tag for a pre-release,
 # update the config of deploy-lhcbdirac
 # to have it deployed on cvmfs-dev
 # Note for the time being, it is allowed to fail
 deploy_on_cvmfs:
-  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   stage: deploy_release
   allow_failure: true
   only:
@@ -238,6 +263,7 @@ deploy_on_cvmfs:
     - git push origin master
 
 
+# ### tag_container stage ###
 
 # If we are triggering on a pre release,
 # tag the docker image we just built as 'devel'
