@@ -228,7 +228,7 @@ def getProductionParameterValue(productionXML, parameterName):
 def getNumberOfProcessorsToUse(jobID, payloadProcessors=None):
   """ get the number of processors to use for an application step on a certain node
 
-      payloadProcessors corresponds normally to the workflow parameter "maxNumberOfProcessors"
+      payloadProcessors corresponds normally to the workflow (and JDL) parameter "MaxNumberOfProcessors"
   """
 
   siteName = gConfig.getValue('/LocalSite/Site')
@@ -240,7 +240,7 @@ def getNumberOfProcessorsToUse(jobID, payloadProcessors=None):
     if not payloadProcessors:
       payloadProcessors = maxNumberOfProcessorsAllowedOnTheWN
 
-    return min(maxNumberOfProcessorsAllowedOnTheWN, payloadProcessors)
+    return min(maxNumberOfProcessorsAllowedOnTheWN, int(payloadProcessors))
     # NB: the case with
     # maxNumberOfProcessorsAllowedOnTheWN < number of processors requested (JDL param "NumberOfProcessors")
     # should not happen by construction, as the job should not be matched in a first place
