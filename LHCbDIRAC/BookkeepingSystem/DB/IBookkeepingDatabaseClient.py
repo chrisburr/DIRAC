@@ -129,7 +129,8 @@ class IBookkeepingDatabaseClient(object):
                       production, fileType, dataQuality, startRun, endRun, visible, startDate,
                       endDate, runNumbers, replicaFlag, tcks):
     "more info in the BookkeepingClient.py"
-    return self.getManager().getFilesSummary(configName, configVersion, conditionDescription, processingPass, eventType,
+    return self.getManager().getFilesSummary(configName, configVersion,
+                                             conditionDescription, processingPass, eventType,
                                              production, fileType, dataQuality, startRun, endRun, visible, startDate,
                                              endDate, runNumbers, replicaFlag, tcks)
 
