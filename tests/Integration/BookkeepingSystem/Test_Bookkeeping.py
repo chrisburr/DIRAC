@@ -987,7 +987,7 @@ class TestMethods(DataInsertTestCase):
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 125)
-    
+
     bkQuery['EventType'] = [90000000, 91000000]
     retVal = self.bk.getFiles(bkQuery)
     self.assertTrue(retVal['OK'])
