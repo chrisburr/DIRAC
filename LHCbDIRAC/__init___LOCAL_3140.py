@@ -27,17 +27,10 @@ rootPath = os.path.dirname(os.path.realpath(__path__[0]))
 
 # Define Version
 
-<<<<<<< HEAD
 majorVersion = 10
 minorVersion = 0
 patchLevel = 0
 preVersion = 4
-=======
-majorVersion = 9
-minorVersion = 4
-patchLevel = 12
-preVersion = 0
->>>>>>> upstream/master
 
 version = "v%sr%s" % (majorVersion, minorVersion)
 buildVersion = "v%dr%d" % (majorVersion, minorVersion)

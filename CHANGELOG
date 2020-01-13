@@ -41,6 +41,12 @@ use DIRAC v7r0p1
 * added createClient decorator
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
+v9r4p12
+use DIRAC v6r22p18
+
+* fix pylint
+* allow to select a list of event types
+* fix Production request splitter (allow None for FastSimulationType
 v9r4p11
 use DIRAC v6r22p17
 

@@ -1,34 +1,9 @@
 <<<<<<< HEAD
-v10r0-pre3
-use DIRAC v7r0p4
-=======
-v9r4p11
-use DIRAC v6r22p17
+v10r0-pre4
+use DIRAC v7r0p8
 
-* make pycodestyle happy
-* one more attempt
-* try and make pycodestyle happy
-* cosmetics
-* fix indent
-* fix indent
 * Use the DFC recursive capability instead of looping
 * Add an option for not running a check FC2SE in FC2BKK
-
-v9r4p10
-use DIRAC v6r22p15
-
-v9r4p9
-use DIRAC v6r22p14
->>>>>>> upstream/master
-
-* use new script utility
-* new utility for scripts
-* convert free space to TB
-* add info on missing files from FTS
-* add a progress bar missing call
-<<<<<<< HEAD
-* corrected the option name
-* getting the number of processors to use consider a max
 
 v10r0-pre2
 use DIRAC v7r0p3
@@ -67,7 +42,39 @@ use DIRAC v7r0p1
 * added createClient decorator
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 =======
+v9r4p12
+use DIRAC v6r22p18
+
+* fix pylint
+* allow to select a list of event types
+* fix Production request splitter (allow None for FastSimulationType
 >>>>>>> upstream/master
+
+v9r4p11
+use DIRAC v6r22p17
+
+* make pycodestyle happy
+* one more attempt
+* try and make pycodestyle happy
+* cosmetics
+* fix indent
+* fix indent
+* Use the DFC recursive capability instead of looping
+* Add an option for not running a check FC2SE in FC2BKK
+
+v9r4p10
+use DIRAC v6r22p15
+
+v9r4p9
+use DIRAC v6r22p14
+
+* use new script utility
+* new utility for scripts
+* convert free space to TB
+* add info on missing files from FTS
+* add a progress bar missing call
+* corrected the option name
+* getting the number of processors to use consider a max
 
 v9r4p8
 uses DIRAC v6r22p13
