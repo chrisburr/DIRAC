@@ -3760,6 +3760,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           tables += ' ,productionoutputfiles prod'
 
       if isinstance(evt, (list, tuple)) and len(evt) > 0:
+        condition += ' and '
         cond = ' ( '
         for i in evt:
           cond += " %s.eventtypeid=%s or " % (table, (str(i)))

@@ -988,6 +988,11 @@ class TestMethods(DataInsertTestCase):
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 125)
 
+    bkQuery['EventType'] = [90000000, 91000000]
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(len(retVal['Value']), 125)
+
   def test_getFiles8(self):
     """
     This is used to test the ganga queries
