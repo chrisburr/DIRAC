@@ -13,11 +13,10 @@
 
 __RCSID__ = "$Id$"
 
-
-import shlex
+import six
+import uproot
 
 from DIRAC import gLogger, S_OK, S_ERROR
-from DIRAC.Core.Utilities.Subprocess import systemCall
 from DIRAC.Core.Utilities.File import makeGuid as DIRACMakeGUID
 
 
@@ -36,20 +35,26 @@ def getRootFileGUIDs(fileList):
 
 
 def getRootFileGUID(fileName):
-  """ Function to retrieve a file GUID using Root.
+  """ Function to retrieve a file GUID using uproot.
   """
-  res = systemCall(timeout=0, cmdSeq=shlex.split("getROOTFileGUID.py %s" % fileName))
-  if not res['OK']:
-    return res
-  if res['Value'][0]:
-    return S_ERROR(res['Value'][2])
-  return S_OK(res['Value'][1])
+  try:
+    f = uproot.open(fileName)
+    branch = f['Refs']['Params']
+    for item in branch.array():
+        item = item.decode()
+        if item.startswith('FID='):
+            return S_OK(item.split('=')[1])
+    return S_ERROR('GUID not found')
+  except Exception as e:
+    errorMsg = 'Error extracting GUID'
+    gLogger.exception(errorMsg, lException=e)
+    return S_ERROR(errorMsg)
 
 
 def makeGuid(fileNames):
-  """ Function to retrieve a file GUID using Root.
+  """ Function to retrieve a file GUID using uproot.
   """
-  if isinstance(fileNames, basestring):
+  if isinstance(fileNames, six.string_types):
     fileNames = [fileNames]
 
   fileGUIDs = {}

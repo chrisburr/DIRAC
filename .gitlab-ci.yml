@@ -59,6 +59,8 @@ stages:
     - pip install -r DIRAC/requirements.txt
     - pip install LbEnv==$LBENV_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
     - pip install LbPlatformUtils==$LBPLATFORMUTILS_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
+    - yum install -y xz-devel
+    - pip install uproot backports.lzma lz4
 
   stage: test
   only:
