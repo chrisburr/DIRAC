@@ -148,15 +148,18 @@ Conflicts or not, you'll need to push back to upstream::
 
 Creating the release tarball, add uploading it to the LHCb web service
 ``````````````````````````````````````````````````````````````````````
+
+```````````````````
 Automatic procedure
-^^^^^^^^^^^^^^^^^^^
+```````````````````
+
 When a new git tag is pushed to the repository, a gitlab-ci job takes care of testing, creating the tarball, uploading it to the web service, and to build the docker image. You can check it in the pipeline page of the repository (https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines).
 
 It may happen that the pipeline fails. There are various reasons for that, but normally, it is just a timeout on the runner side, so just restart the job from the pipeline web interface. If it repeatedly fails building the tarball, try the manual procedure described bellow to understand.
 
-
+````````````````
 Manual procedure
-^^^^^^^^^^^^^^^^
+````````````````
 
 **This should a priori not be used anymore. If the pipeline fails, you should rather investigate why.**
 
@@ -243,7 +246,7 @@ Open a JIRA task: https://its.cern.ch/jira/projects/LHCBDEP.
 
 * JIRA task: Summary:LHCbDirac vArBpC;  Description: Please release  LHCbDirac by following the instructions::
 
-  https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Installation/make_release.html#new-procedure-for-installing-on-cvmfs-lhcb
+    https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Installation/make_release.html#new-procedure-for-installing-on-cvmfs-lhcb
 
 
 Once the client has been deployed, you should setup the correct environment (source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac), preferably on a CERNVM, on lxplus otherwise, and run the following two scripts:

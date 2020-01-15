@@ -10,16 +10,16 @@
 ###############################################################################
 """ GangaDataFile is a utility to create a Data file, to be used by ganga.
 
-    Given input files, it will create something like:
+    Givn input files, it will create something like::
 
-    from Gaudi.Configuration import *
-    from GaudiConf import IOHelper
-    IOHelper("ROOT").inputFiles([
-        "LFN:foo",
-        "LFN:bar"
-    ], clear=True)
+      from Gaudi.Configuration import *
+      from GaudiConf import IOHelper
+      IOHelper("ROOT").inputFiles([
+          "LFN:foo",
+          "LFN:bar"
+      ], clear=True)
 
-    FileCatalog().Catalogs = ["xmlcatalog_file:pool_xml_catalog.xml"]
+      FileCatalog().Catalogs = ["xmlcatalog_file:pool_xml_catalog.xml"]
 """
 
 __RCSID__ = "$Id$"

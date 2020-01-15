@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# LHCbDIRACDocs documentation build configuration file, created by
+# DiracDocs documentation build configuration file, created by
 # sphinx-quickstart on Sun Apr 25 17:34:37 2010.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -10,64 +10,120 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
+###############################################################################
+# (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
+#                                                                             #
+# This software is distributed under the terms of the GNU General Public      #
+# Licence version 3 (GPL Version 3), copied verbatim in the file "LICENSE".   #
+#                                                                             #
+# In applying this licence, CERN does not waive the privileges and immunities #
+# granted to it by virtue of its status as an Intergovernmental Organization  #
+# or submit itself to any jurisdiction.                                       #
+###############################################################################
 
-import sys
-import os
+import logging
 import datetime
-
-sys.path.append(os.getcwd())
-
-import fakeEnv
-
-sys.modules["LHCbDIRAC.Core.Base"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Base.Script"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Base.DB"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Base.AgentModule"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Base.API"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Base.Client"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Base.AgentReactor"] = fakeEnv
-
-sys.modules["LHCbDIRAC.DataManagementSystem.DB.RequestDB"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.BarGraph"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.Graph"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.GraphData"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.GraphUtilities"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.Legend"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.LineGraph"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.Palette"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.PieGraph"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.PlotBase"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.Graphs.QualityMapGraph"] = fakeEnv
-sys.modules["LHCbDIRAC.Core.Utilities.OracleDB"] = fakeEnv
-sys.modules["RequestDB"] = fakeEnv
-sys.modules["pytz"] = fakeEnv
-sys.modules["numpy"] = fakeEnv
-sys.modules["numpy.random"] = fakeEnv
-sys.modules["matplotlib"] = fakeEnv
-sys.modules["matplotlib.ticker"] = fakeEnv
-sys.modules["matplotlib.figure"] = fakeEnv
-sys.modules["matplotlib.dates"] = fakeEnv
-sys.modules["dateutil"] = fakeEnv
-sys.modules["dateutil.relativedelta"] = fakeEnv
-sys.modules["matplotlib.backends"] = fakeEnv
-sys.modules["matplotlib.backends.backend_agg"] = fakeEnv
-sys.modules["MySQLdb"] = fakeEnv
-sys.modules["LHCbDIRAC.FrameworkSystem.Service.PlotCache"] = fakeEnv
-sys.modules["LHCbDIRAC.FrameworkSystem.Service.PlottingHandler"] = fakeEnv
+import os
+import sys
+import subprocess
 
 
+sys.path.insert(0, ".")
+
+# try:
+#  import fakeEnvironment
+# except ImportError:
+#  pass
+# try:
+#   import fakeEnv
+# except ImportError:
+#   pass
+
+import diracdoctools
+import diracdoctools.cmd
+from diracdoctools import fakeEnvironment, environmentSetup, DIRAC_DOC_MOCK_LIST
+from diracdoctools.Utilities import setUpReadTheDocsEnvironment, mkdir
+
+logging.basicConfig(level=logging.INFO, format='%(name)s: %(levelname)8s: %(message)s')
+LOG = logging.getLogger('conf.py')
+
+
+LHCbDIRACRelease = os.environ.get('LHCbDIRACVERSION', 'integration')
+if os.environ.get('READTHEDOCS') == 'True':
+  LHCbDIRACRelease = os.path.basename(os.path.abspath("../../"))
+  if LHCbDIRACRelease.startswith("rel-"):
+    LHCbDIRACRelease = LHCbDIRACRelease[4:]
+
+LOG.info('LHCbDIRACVERSION is %r', LHCbDIRACRelease)
+
+
+LOG.info('Current location %r', os.getcwd())
+LOG.info('DiracDocTools location %r', diracdoctools.__file__)
+LOG.info('DiracDocTools location %r', diracdoctools.Utilities.__file__)
+LOG.info('DiracDocTools location %r', diracdoctools.cmd.__file__)
+
+
+# ...............................................................................
+# configuration
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.append(os.path.abspath('.'))
+
+if os.environ.get('READTHEDOCS') == 'True':
+  setUpReadTheDocsEnvironment(moduleName='LHCbDIRAC')
+
+  # ########################
+
+  # LHCbDIRACPath = os.path.abspath(os.path.join(os.getcwd(), '../..'))
+  # buildfolder = '_build'
+  # mkdir(os.path.abspath('../' + buildfolder))
+  # # We need to have the LHCbDIRAC module somewhere, or we cannot import it,
+  # # as readtheDocs clones the repo into something based on the branchname
+  # if not os.path.exists("../../LHCbDIRAC"):
+  #   LHCbDIRACLink = os.path.abspath(os.path.join(os.getcwd(), "../", buildfolder, "LHCbDIRAC"))
+  #   print "LHCbDIRACLink", LHCbDIRACLink
+  #   if not os.path.exists(LHCbDIRACLink):
+  #     RES = subprocess.check_output(["ln", "-s", LHCbDIRACPath, LHCbDIRACLink])
+  #   LHCbDIRACPath = os.path.abspath(os.path.join(LHCbDIRACLink, ".."))
+
+  # sys.path.insert(0, LHCbDIRACPath)
+
+  ###################
+
+  # # CHRIS: we have to find DIRAC one way or the other...
+  # # Currentl just hard code boooo
+  # diracPath = os.path.join(LHCbDIRACPath, '..')
+  # sys.path.insert(1, diracPath)
+
+  # for path in sys.path:
+  #   os.environ['PYTHONPATH'] = os.environ.get('PYTHONPATH', '') + ":" + path
+
+  # re-create the RST files for the command references
+  LOG.info('Building command reference')
+  from diracdoctools.cmd.commandReference import run as buildCommandReference
+  buildCommandReference(configFile='../docs.conf')
+
+  # singlehtml build needs too much memory, so we need to create less code documentation
+  buildType = 'limited' if any('singlehtml' in arg for arg in sys.argv) else 'full'
+  LOG.info('Chosing build type: %r', buildType)
+  from diracdoctools.cmd.codeReference import run as buildCodeDoc
+  buildCodeDoc(configFile='../docs.conf', buildType=buildType)
+
+  # Update dirac.cfg
+  LOG.info('Concatenating dirac.cfg')
+  from diracdoctools.cmd.concatcfg import run as updateCompleteDiracCFG
+  updateCompleteDiracCFG(configFile='../docs.conf')
 
 # -- General configuration -----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.napoleon',
+              'sphinx.ext.graphviz',
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -90,9 +146,9 @@ copyright = u'%s, LHCbDIRAC Project' % datetime.datetime.utcnow().year
 # built documents.
 #
 # The short X.Y version.
-version = 'v7'
+version = ''
 # The full version, including alpha/beta/rc tags.
-release = 'v7'
+release = LHCbDIRACRelease
 
 # The language for content autogenerated by Sphinx. Refer to documentation
 # for a list of supported languages.
@@ -102,14 +158,15 @@ release = 'v7'
 # non-false value, then it is used:
 #today = ''
 # Else, today_fmt is used as the format for a strftime call.
-#today_fmt = '%B %d, %Y'
+today_fmt = '%H:%M %d/%m/%Y %Z'
 
 # List of documents that shouldn't be included in the build.
 #unused_docs = []
 
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
-exclude_trees = []
+# ADRI: Ignore old stuff that is not included in the compilation
+exclude_trees = ['AdministratorGuide/Configuration/ConfigurationReference']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -138,26 +195,29 @@ pygments_style = 'sphinx'
 # Sphinx are currently 'default' and 'sphinxdoc'.
 html_theme = 'default'
 
+# CHRIS REDO
+# html_style = 'dirac.css'
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {
+# html_theme_options = {
 #  'sidebarbgcolor':'#D5E2F2'
-#}
+# }
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+# html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = "LHCbDIRAC Documentation"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+# html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = 'LHCbDIRAC_logo.png'
+# html_logo = '_static/DIRAC-logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -171,7 +231,7 @@ html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%d/%m/%Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -219,8 +279,8 @@ htmlhelp_basename = 'LHCbDIRACDocsdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'LHCbDIRACDocs.tex', u'LHCbDIRAC Documentation',
-   u'LHCbDIRAC Project.', 'manual'),
+    ('index', 'LHCbDIRACDocs.tex', u'LHCbDIRAC Documentation',
+     u'LHCbDIRAC Project.', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -239,3 +299,27 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+# packages that cannot be installed in RTD
+# autodoc_mock_imports = ['lcg_util', 'cx_Oracle', 'fts3', 'XRootD', 'gfal2', 'arc', '_arc',
+#                        'matplotlib',
+#                        'git',
+#                        'numpy', 'irods', 'pylab', 'stomp',
+#                        'pythonjsonlogger', 'cmreslogging',
+#                        'GSI', 'psutil', 'MySQLdb', 'elasticsearch', 'suds',
+#                        'LbPlatformUtils', 'pilotCommands', 'pilotTools',
+#                        'elasticsearch_dsl', 'dateutil', 'PyQt4'
+#                        ]
+
+autodoc_mock_imports = DIRAC_DOC_MOCK_LIST + ['PyQt4', 'MySQLdb']
+
+# link with the python standard library docs
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/2.7', None),
+    'DIRAC': ('https://dirac.readthedocs.io/en/latest/', None),
+}
+
+
+# ...............................................................................
+
+# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

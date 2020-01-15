@@ -33,7 +33,8 @@ LHCbDIRAC is the LHCb extension to DIRAC:
    DevsGuide/tree.rst
    AdministratorGuide/tree.rst
    Certification/tree.rst
-
+   CodeDocumentation/index
+   UserGuide/index
 
 
 Documentation sources
@@ -49,14 +50,19 @@ Documentation sources
 |                                         |                                                           |
 +-----------------------------------------+-----------------------------------------------------------+
 |                                         |                                                           |
-| :doc:`AdministratorGuide/tree`          |                                                           |
+| :doc:`AdministratorGuide/tree`          | :doc:`CodeDocumentation/index`                            |
 |                                         |                                                           |
 | Administration of the DIRAC services    |                                                           |
-| (server installations)                  | Code reference to be added                                |
+| (server installations)                  | Code reference                                            |
 |                                         |                                                           |
 +-----------------------------------------+-----------------------------------------------------------+
-
-
+|                                         |                                                           |
+| :doc:`UserGuide/index`                  |                                                           |
+|                                         |                                                           |
+| Using the DIRAC services                |                                                           |
+|                                         |                                                           |
+|                                         |                                                           |
++-----------------------------------------+-----------------------------------------------------------+
 
 
 Indices and tables

@@ -3,16 +3,17 @@ CERN centralized Elasticsearch service
 ======================================
 
 This document contains all information needed to manage the ES. ES is provided by
-CERN. 
+CERN.
 
-----------------------
+-----------------------
 Communication channels:
-----------------------
+-----------------------
+
 
 	1. open a ticket: ` snow ticket: <https://cern.service-now.com/service-portal/service-element.do?name=Elasticsearch-Service>_`.
 	2. mattermost: LHCb ` specific channel <https://mattermost.web.cern.ch/it-dep/channels/es-for-lhcb>`_ or ` it general
 	channel <https://mattermost.web.cern.ch/it-dep/channels/it-es-project>`_.
-	
+
 -----------------------
 Elasticsearch instances
 -----------------------
@@ -22,13 +23,13 @@ We are using three instances(host:username):
 	1. es-lhcb-monitoring:lhcb for monitoring WMS and ComponentMonitoring
 	2. es-lhcb-dirac-logs:lhcb-dirac-logs for centralized Monitoring
 	3. es-lhcb-mcstats:lhcb-mcstats for MC statistics
-	
+
 
 ------------------------------------
 Elasticsearch performance monitoring
 ------------------------------------
 
-IT/ES provides monitoring tool for monitoring ES instances. You can access `in the following link <https://es-perfmon-lhcb.cern.ch>`_. 
+IT/ES provides monitoring tool for monitoring ES instances. You can access `in the following link <https://es-perfmon-lhcb.cern.ch>`_.
 
 ------
 Kibana
