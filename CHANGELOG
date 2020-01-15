@@ -1,3 +1,31 @@
+v10r0-pre5
+use DIRAC v7r0p10
+
+* Update pip to support python_version metadata
+* several style fixes
+* fix type
+* committing to dockerhub
+* fix wrong merge
+* fix pylint
+* allow to select a list of event types
+* fix Production request splitter (allow None for FastSimulationType
+* doc
+* using kaniko for creating the docker image
+* setTimeout method is depracated
+* Install uproot for CI
+* Use uproot for getting file GUIDs
+* templated Dockerfile
+* yum update
+* creating the image from gitlab CI
+* CI: test no documentation warning
+* Doc: adapt to new doc tools of Dirac V7
+* add copyright
+* update doc for release
+* added a Dockerfile for an LHCbDIRAC client
+* updated to cc7
+* Docs: few syntax fixes
+* BKK: do not call the constructor in the default parameter
+
 v10r0-pre4
 use DIRAC v7r0p8
 
