@@ -1,3 +1,8 @@
+v10r0-pre6
+use DIRAC v7r0p10
+
+* allow to fail + debug
+
 v10r0-pre5
 use DIRAC v7r0p10
 
