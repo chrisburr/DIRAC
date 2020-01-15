@@ -349,13 +349,13 @@ class BookkeepingManagerHandler(RequestHandler):
 
       if len(values) > 0:
         for record in values:
-          if record[0] != None:
+          if record[0] is not None:
             sim_records += [[record[0], record[2],
                              record[3], record[4],
                              record[5], record[6],
                              record[7], record[8],
                              record[9]]]
-          elif record[1] != None:
+          elif record[1] is not None:
             daq_records += [[record[1], record[10], record[11],
                              record[12], record[13], record[14],
                              record[15], record[16], record[17],
@@ -1874,17 +1874,17 @@ class BookkeepingManagerHandler(RequestHandler):
       for i in values:
         nbfiles = nbfiles + 1
         row = dict(zip(parameters, i))
-        if row['EventStat'] != None:
+        if row['EventStat'] is not None:
           nbevents += row['EventStat']
-        if row['EventInputStat'] != None:
+        if row['EventInputStat'] is not None:
           evinput += row['EventInputStat']
-        if row['FileSize'] != None:
+        if row['FileSize'] is not None:
           fsize += row['FileSize']
-        if row['TotalLuminosity'] != None:
+        if row['TotalLuminosity'] is not None:
           tLumi += row['TotalLuminosity']
-        if row['Luminosity'] != None:
+        if row['Luminosity'] is not None:
           lumi += row['Luminosity']
-        if row['InstLuminosity'] != None:
+        if row['InstLuminosity'] is not None:
           ilumi += row['InstLuminosity']
         result[row['FileName']] = {'EventStat': row['EventStat'],
                                    'EventInputStat': row['EventInputStat'],

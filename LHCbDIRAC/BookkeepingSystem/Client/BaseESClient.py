@@ -12,13 +12,15 @@
  Base Entity System client
 """
 
-from DIRAC                                                                   import S_ERROR
-from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager                        import BaseESManager
+from DIRAC import S_ERROR
+from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager
 
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class BaseESClient:
   """ Basic client"""
 
@@ -57,4 +59,3 @@ class BaseESClient:
     return self.getManager().getPathSeparator()
 
   #############################################################################
-

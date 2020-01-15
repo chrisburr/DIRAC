@@ -617,7 +617,7 @@ class XMLFilesReaderManager(object):
         (Please fill it!) Production=%s" % (str(attrList['Production']))
         gLogger.warn(errorMessage)
 
-    if attrList['JobStart'] == None:
+    if attrList['JobStart'] is None:
       # date = config.getDate().split('-')
       # time = config.getTime().split(':')
       # dateAndTime = datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), 0, 0)

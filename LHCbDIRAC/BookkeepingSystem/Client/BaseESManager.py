@@ -14,12 +14,15 @@ Base Entity System Manager
 """
 
 
-from DIRAC                                                                import gLogger, S_OK, S_ERROR
 import os
+from DIRAC import gLogger, S_OK, S_ERROR
+
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class BaseESManager:
   """Base Entity manager class"""
 
@@ -38,7 +41,7 @@ class BaseESManager:
     """list the path"""
     selectionDict = selectionDict if selectionDict is not None else {}
     sortDict = sortDict if sortDict is not None else {}
-    gLogger.error('This method is not implemented!'+ (str(self.__class__)))
+    gLogger.error('This method is not implemented!' + (str(self.__class__)))
     gLogger.error(str(path))
     gLogger.error(str(selectionDict))
     gLogger.error(str(sortDict))
@@ -51,14 +54,14 @@ class BaseESManager:
   def getAbsolutePath(path):
     """absolute path"""
     # get current working directory if empty
-    if path == "" or path == None:
+    if path == "" or path is None:
       path = "."
-        # convert it into absolute path
+      # convert it into absolute path
     try:
       path = os.path.abspath(path)
       return S_OK(path)
-    except IOError, ex:
-      return S_ERROR("getAbsalutePath: "+str(ex))
+    except IOError as ex:
+      return S_ERROR("getAbsalutePath: " + str(ex))
 
   #############################################################################
   def mergePaths(self, path1, path2):
@@ -68,8 +71,7 @@ class BaseESManager:
     return path
 
   #############################################################################
-  def get(self, path = ""):
+  def get(self, path=""):
     """the path element"""
-    gLogger.warn('not implemented'+path+str(self.__class__))
+    gLogger.warn('not implemented' + path + str(self.__class__))
     return S_ERROR("Not implemented!")
-
