@@ -151,9 +151,9 @@ class StorageUsageAgent(AgentModule):
               if seName not in filesOpened:
                 if seName not in self.__replicaFilesUsed:
                   self.__replicaFilesUsed.add(seName)
-                  filesOpened[seName] = file(filePath, "w")
+                  filesOpened[seName] = open(filePath, "w")
                 else:
-                  filesOpened[seName] = file(filePath, "a")
+                  filesOpened[seName] = open(filePath, "a")
             # seName file is opened. Write
             filesOpened[seName].write("%s -> %s\n" % (lfn, dirData[lfn][seName]))
       # Close the files
