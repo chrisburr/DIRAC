@@ -117,9 +117,8 @@ class GaussSuccess(RunApplicationTestCase):
                                    5732353,
                                    4340993,
                                    'User')['Value']  # always OK
-    options = open(generatedOpts, 'w')
-    options.write(projectOpts)
-    options.close()
+    with open(generatedOpts, 'w') as options:
+      options.write(projectOpts)
 
     ra.applicationLog = 'user_133294_log.txt'
     ra.stdError = 'user_133294_err.txt'

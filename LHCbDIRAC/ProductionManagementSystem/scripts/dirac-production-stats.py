@@ -12,6 +12,8 @@
 """ Get statistics on productions related to a given processing pass
 """
 
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.ProductionManagementSystem.Client.ProcessingProgress import ProcessingProgress, HTMLProgressTable
@@ -80,16 +82,15 @@ if __name__ == "__main__":
       htmlTable.writeHTML(bkQuery.getConditions(), prodStats)
 
   if printResult:
-    print printOutput
+    print(printOutput)
   if outputHTML:
     htmlSummary = ''
     if len(summaryProdStats) > 1:
       htmlTable.writeHTMLSummary(summaryProdStats)
     try:
-      f = open(outputHTML, 'w')
-      f.write("<head>\n<title>Progress of %s</title>\n</title>\n" % bkQueries[0].getProcessingPass())
-      f.write(str(htmlTable.getTable()))
-      f.close()
-      print "Successfully wrote HTML file", outputHTML
-    except BaseException:
-      print "Failed to write HTML file", outputHTML
+      with open(outputHTML, 'w') as f:
+        f.write("<head>\n<title>Progress of %s</title>\n</title>\n" % bkQueries[0].getProcessingPass())
+        f.write(str(htmlTable.getTable()))
+      print("Successfully wrote HTML file", outputHTML)
+    except Exception:
+      print("Failed to write HTML file", outputHTML)

@@ -183,7 +183,7 @@ class ControlerFileDialog(ControlerAbstract):
       filedescriptor.close()
       sys.exit(0)
     elif fileName != '':
-      message = Message({'action':'SaveToTxt', 'fileName':fileName, 'lfns':lfns})
+      message = Message({'action': 'SaveToTxt', 'fileName':fileName, 'lfns':lfns})
       feedback = self.getParent().messageFromChild(self, message)
       if feedback:
         QMessageBox.information(self.getWidget(),

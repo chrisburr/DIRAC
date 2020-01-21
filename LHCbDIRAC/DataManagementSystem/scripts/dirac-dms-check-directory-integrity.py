@@ -46,10 +46,9 @@ else:
 directories = []
 for inputFileName in inputNames:
   try:
-    inputFile = open(inputFileName, 'r')
-    stringIn = inputFile.read()
-    directories += stringIn.splitlines()
-    inputFile.close()
+    with open(inputFileName, 'r') as inputFile:
+      stringIn = inputFile.read()
+      directories += stringIn.splitlines()
   except Exception:
     directories.append(inputFileName)
 

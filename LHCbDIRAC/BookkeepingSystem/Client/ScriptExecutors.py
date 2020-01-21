@@ -728,8 +728,6 @@ def executeGetFiles(dmScript, maxFiles=20):
     LHCB_BKKDBClient(welcome=False).writeJobOptions(fileDict, optionsFile=optionsFile, dataset=dataset)
     gLogger.notice('\n%d files in options file %s' % (len(fileDict), optionsFile))
 
-#==================================================================================
-
 
 def executeFileSisters(dmScript, level=1):
   '''

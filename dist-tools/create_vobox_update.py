@@ -51,13 +51,12 @@ E_list = ['lbvobox110.cern.ch', 'lbvobox201.cern.ch', 'lbvobox111.cern.ch', 'vol
 
 
 def generateTemplate(hosts, filename):
-  fdw = open(filename, 'w')
-  for machine in hosts:
-    print machine
-    command = skel_commands.replace('LHCB_MACHINE_NAME', machine)
-    command = command.replace('LHCB_VERSION', lhcbver)
-    fdw.write(command)
-  fdw.close()
+  with open(filename, 'w') as fdw:
+    for machine in hosts:
+      print machine
+      command = skel_commands.replace('LHCB_MACHINE_NAME', machine)
+      command = command.replace('LHCB_VERSION', lhcbver)
+      fdw.write(command)
 
 
 if __name__ == '__main__':
