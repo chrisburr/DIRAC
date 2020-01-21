@@ -20,14 +20,14 @@ __RCSID__ = "$Id$"
 from DIRAC.Core.Base import Script
 
 
-Script.setUsageMessage( '\n'.join( [ __doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [prod1[:prod2][,prod3[:prod4]]' % Script.scriptName, ] ) )
-Script.registerSwitch( '', 'NoReset', "Don't reset the MaxRest files to unused (default is to reset)" )
-Script.parseCommandLine( ignoreErrors = True )
+Script.setUsageMessage('\n'.join([__doc__,
+                                  'Usage:',
+                                  '  %s [option|cfgfile] [prod1[:prod2][,prod3[:prod4]]' % Script.scriptName, ]))
+Script.registerSwitch('', 'NoReset', "Don't reset the MaxRest files to unused (default is to reset)")
+Script.parseCommandLine(ignoreErrors=True)
 
 import DIRAC
-from LHCbDIRAC.TransformationSystem.Client.TransformationClient           import TransformationClient
+from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 transClient = TransformationClient()
 
 resetUnused = True
@@ -37,32 +37,32 @@ for switch in switches:
     resetUnused = False
 args = Script.getPositionalArgs()
 
-if not len( args ):
+if not len(args):
   print "Specify transformation number..."
-  DIRAC.exit( 0 )
+  DIRAC.exit(0)
 else:
-  ids = args[0].split( "," )
+  ids = args[0].split(",")
   idList = []
   for transId in ids:
-    r = transId.split( ':' )
-    if len( r ) > 1:
-      for i in xrange( int( r[0] ), int( r[1] ) + 1 ):
-        idList.append( i )
+    r = transId.split(':')
+    if len(r) > 1:
+      for i in xrange(int(r[0]), int(r[1]) + 1):
+        idList.append(i)
     else:
-      idList.append( int( r[0] ) )
+      idList.append(int(r[0]))
 
 
 for prod in idList:
-  res = transClient.getTransformation( prod, extraParams = True )
+  res = transClient.getTransformation(prod, extraParams=True)
   if not res['OK']:
     print "Error getting transformation %s" % prod, res['Message']
   else:
-    res = transClient.moveFilesToDerivedTransformation( res['Value'], resetUnused )
+    res = transClient.moveFilesToDerivedTransformation(res['Value'], resetUnused)
     if not res['OK']:
       print "Error updating a derived transformation %d:" % prod, res['Message']
     else:
       parentProd, movedFiles = res['Value']
       if movedFiles:
-        print "Successfully moved files from %d to %d:" % ( parentProd, prod )
+        print "Successfully moved files from %d to %d:" % (parentProd, prod)
         for status, val in movedFiles.iteritems():
-          print "\t%d files to status %s" % ( val, status )
+          print "\t%d files to status %s" % (val, status)

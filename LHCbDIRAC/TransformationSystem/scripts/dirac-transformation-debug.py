@@ -16,14 +16,8 @@ It is possible to do minor fixes to those files, using options
 
 __RCSID__ = "$Id$"
 
-import sys
-import os
-from DIRAC.Core.Utilities.File import mkDir
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
-from DIRAC import gLogger
 
-
-#====================================
 if __name__ == "__main__":
 
   from DIRAC.Core.Base import Script

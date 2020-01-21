@@ -18,7 +18,6 @@
 """
 
 __RCSID__ = "$Id$"
-__VERSION__ = "$Revision: 71758 $"
 
 import DIRAC
 from DIRAC.Core.Base import Script

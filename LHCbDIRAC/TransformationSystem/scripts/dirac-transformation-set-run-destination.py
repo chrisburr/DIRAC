@@ -12,7 +12,6 @@
 """
    Set the destination for a set of runs, based on the majority of reco output
 """
-from itertools import count
 
 __RCSID__ = "$Id$"
 
@@ -20,6 +19,7 @@ import DIRAC
 from DIRAC.Core.Base import Script
 from DIRAC import gLogger
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
+
 
 def execute():
   """
