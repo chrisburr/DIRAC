@@ -9,7 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
+
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -46,7 +48,7 @@ if __name__ == "__main__":
     dmScript.setLFNsFromFile(lfn)
   lfns = dmScript.getOption('LFNs')
   if not lfns:
-    print "No LFNs given..."
+    print("No LFNs given...")
     Script.showHelp()
     DIRAC.exit(0)
 

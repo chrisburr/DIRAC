@@ -10,6 +10,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
@@ -28,7 +30,7 @@ def usage():
 
   """
 
-  print 'Usage: %s <WMS Job ID> [<WMS Job ID>]' % Script.scriptName
+  print('Usage: %s <WMS Job ID> [<WMS Job ID>]' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -40,7 +42,7 @@ diracProd = DiracProduction()
 try:
   jobIDs = [int(jobID) for jobID in args]
 except Exception as x:
-  print 'ERROR WMS JobID(s) must be integers'
+  print('ERROR WMS JobID(s) must be integers')
   DIRAC.exit(2)
 
 exitCode = 0
@@ -58,6 +60,6 @@ for job in jobIDs:
     exitCode = 0
 
 for error in errorList:
-  print "ERROR %s: %s" % error
+  print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

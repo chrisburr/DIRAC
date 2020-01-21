@@ -10,6 +10,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
@@ -28,7 +30,6 @@ import DIRAC
 from DIRAC import gLogger
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from LHCbDIRAC.DataManagementSystem.Client.DataIntegrityClient import DataIntegrityClient
-import sys
 
 fc = FileCatalog()
 integrity = DataIntegrityClient()
@@ -36,7 +37,7 @@ gLogger.setLevel('INFO')
 
 args = Script.getPositionalArgs()
 if len(args) < 1:
-  print "Please provide a directory or a file containing directories"
+  print("Please provide a directory or a file containing directories")
   Script.showHelp()
   DIRAC.exit(0)
 else:

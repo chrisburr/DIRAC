@@ -17,6 +17,8 @@
   Start or stop the production(s)
 """
 
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -61,10 +63,10 @@ for switch in switches:
     stop = True
 
 if start and stop:
-  print "ERROR: decide if you want to start or stop ( not both )."
+  print("ERROR: decide if you want to start or stop ( not both ).")
   DIRAC.exit(2)
 elif not (start or stop):
-  print "ERROR: decide if you want to start or stop."
+  print("ERROR: decide if you want to start or stop.")
   DIRAC.exit(2)
 elif start:
   action = 'start'
@@ -84,6 +86,6 @@ for prodID in args:
     exitCode = 0
 
 for error in errorList:
-  print "ERROR %s: %s" % error
+  print("ERROR %s" % error)
 
 DIRAC.exit(exitCode)

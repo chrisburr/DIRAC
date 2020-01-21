@@ -13,6 +13,9 @@
 # File :   dirac-production-file-summary
 # Author : Stuart Paterson
 ########################################################################
+
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -25,7 +28,7 @@ def getBoolean(value):
   elif value.lower() == 'false':
     return False
   else:
-    print 'ERROR: expected boolean'
+    print('ERROR: expected boolean')
     DIRAC.exit(2)
 
 
@@ -63,7 +66,7 @@ def usage():
 
   """
 
-  print 'Usage: %s <ProductionID> <Options> [Try -h,--help for more information]' % Script.scriptName
+  print('Usage: %s <ProductionID> <Options> [Try -h,--help for more information]' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -78,14 +81,14 @@ productionID = args[0]
 try:
   productionID = int(productionID)
 except Exception as x:
-  print 'Production ID must be an integer, not %s:\n%s' % (productionID, x)
+  print('Production ID must be an integer, not %s:\n%s' % (productionID, x))
   DIRAC.exit(2)
 
 result = diracProd.productionFileSummary(productionID, selectStatus=status,
                                          outputFile=outFile, printSummary=summary,
                                          printOutput=printVerbose)
 if not result['OK']:
-  print 'ERROR %s' % result['Message']
+  print('ERROR %s' % result['Message'])
   exitCode = 2
 
 DIRAC.exit(exitCode)
