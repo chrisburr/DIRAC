@@ -9,7 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
+
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -23,14 +25,14 @@ if __name__ == "__main__":
   dmScript.registerFileSwitches()
 
   fixIt = False
-  Script.registerSwitch( '', 'FixIt', 'Set replicas problematic if needed' )
-  Script.setUsageMessage( """
+  Script.registerSwitch('', 'FixIt', 'Set replicas problematic if needed')
+  Script.setUsageMessage("""
   Check the integrity of the state of the storages and information in the File Catalogs
   for a given file or a collection of files.
 
   Usage:
      %s <lfn | fileContainingLfns> <SE> <status>
-  """ % Script.scriptName )
+  """ % Script.scriptName)
 
   Script.parseCommandLine()
 
@@ -39,26 +41,26 @@ if __name__ == "__main__":
       fixIt = True
 
   from DIRAC import gLogger
-  gLogger.setLevel( 'INFO' )
+  gLogger.setLevel('INFO')
   from LHCbDIRAC.DataManagementSystem.Client.DataIntegrityClient import DataIntegrityClient
 
   for lfn in Script.getPositionalArgs():
-    dmScript.setLFNsFromFile( lfn )
-  lfns = dmScript.getOption( 'LFNs' )
+    dmScript.setLFNsFromFile(lfn)
+  lfns = dmScript.getOption('LFNs')
   if not lfns:
-    print "No LFNs given..."
+    print("No LFNs given...")
     Script.showHelp()
-    DIRAC.exit( 0 )
+    DIRAC.exit(0)
 
   integrityClient = DataIntegrityClient()
-  res = integrityClient.catalogFileToBK( lfns )
+  res = integrityClient.catalogFileToBK(lfns)
   if not res['OK']:
-    gLogger.error( res['Message'] )
-    DIRAC.exit( 1 )
+    gLogger.error(res['Message'])
+    DIRAC.exit(1)
   replicas = res['Value']['CatalogReplicas']
   metadata = res['Value']['CatalogMetadata']
-  res = integrityClient.checkPhysicalFiles( replicas, metadata, fixIt = fixIt )
+  res = integrityClient.checkPhysicalFiles(replicas, metadata, fixIt=fixIt)
   if not res['OK']:
-    gLogger.error( res['Message'] )
-    DIRAC.exit( 1 )
-  DIRAC.exit( 0 )
+    gLogger.error(res['Message'])
+    DIRAC.exit(1)
+  DIRAC.exit(0)

@@ -657,9 +657,8 @@ class DiracProduction(DiracLHCb):
         print 'Requested output file %s already exists, please remove this file to continue' % outputFile
         return fileSummary
 
-      fopen = open(outputFile, 'w')
-      fopen.write(toWrite)
-      fopen.close()
+      with open(outputFile, 'w') as fopen:
+        fopen.write(toWrite)
       if not selectStatus:
         print 'Wrote %s lines to file %s' % (totalRecords, outputFile)
       else:

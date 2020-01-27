@@ -48,8 +48,8 @@ if os.path.isdir(os.path.join(diracroot, 'runit')) and os.path.isdir(os.path.joi
       print 'Restart Agent ' + agent
       filename_stop = os.path.join(diracroot, 'control', system, agent, 'stop_agent')
       print filename_stop
-      fd = open(filename_stop, 'w')
-      fd.close()
+      with open(filename_stop, 'w'):
+        pass
     else:
       if re.search('Framework_SystemAdministrator', link):
         print 'Skip Framework_SystemAdministrator'

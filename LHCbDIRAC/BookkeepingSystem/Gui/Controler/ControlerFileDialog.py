@@ -20,20 +20,23 @@ __RCSID__ = "$Id$"
 
 import webbrowser
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
 
-from DIRAC                                                           import S_ERROR
-from PyQt4.QtGui                                                     import QMessageBox, QApplication
+from DIRAC import S_ERROR
+from PyQt4.QtGui import QMessageBox, QApplication
 
 import sys
 
 #############################################################################
+
+
 class ControlerFileDialog(ControlerAbstract):
   """
   ControlerFileDialog class
   """
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller and the members of the class"""
     ControlerAbstract.__init__(self, widget, parent)
@@ -53,11 +56,10 @@ class ControlerFileDialog(ControlerAbstract):
   def __list(self, message):
     """list a directory"""
     items = message['items'].getChildren()
-    self.getWidget().updateModel(items) # I have to save files.
+    self.getWidget().updateModel(items)  # I have to save files.
     self.getWidget().setPath(message['items']['fullpath'])
     self.__selectedFiles = []
     res = self.getWidget().showData(items)
-
 
     keys = items.keys()
     if len(keys) > 0:
@@ -87,9 +89,9 @@ class ControlerFileDialog(ControlerAbstract):
         self.getWidget().show()
 
       tcks = self.makeTCKlist(items)
-      self.getWidget().fillTckFilter(tcks) # The combobox and the filter listview will be filled
-            # using the TCK values from the files
-      message = Message({'action':'list', 'items':tcks})
+      self.getWidget().fillTckFilter(tcks)  # The combobox and the filter listview will be filled
+      # using the TCK values from the files
+      message = Message({'action': 'list', 'items': tcks})
       controlers = self.getChildren()
       controlers['TckFilterWidget'].messageFromParent(message)
     else:
@@ -128,10 +130,10 @@ class ControlerFileDialog(ControlerAbstract):
         for i in files:
           lfns[i] = model[i]
 
-      message = Message({'action':'createCatalog',
-                         'fileName':fileName,
-                         'lfns':lfns, 'selection':sel,
-                         'dataset':self.getDataSet()})
+      message = Message({'action': 'createCatalog',
+                         'fileName': fileName,
+                         'lfns': lfns, 'selection': sel,
+                         'dataset': self.getDataSet()})
       self.getParent().messageFromChild(self, message)
     elif message.action() == 'applyFilter':
       values = message['items']
@@ -142,8 +144,8 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   def close(self):
     """handles the close button action"""
-    #self.getWidget().hide()
-    message = Message({'action':'PageSizeIsNull'})
+    # self.getWidget().hide()
+    message = Message({'action': 'PageSizeIsNull'})
     self.getParent().messageFromChild(self, message)
     self.getWidget().clearTable()
 
@@ -170,10 +172,10 @@ class ControlerFileDialog(ControlerAbstract):
       for i in files:
         lfns[i] = model[i]
 
-    message = Message({'action':'GetFileName'})
+    message = Message({'action': 'GetFileName'})
     fileName = self.getParent().messageFromChild(self, message)
 
-    message = Message({'action':'GetPathFileName'})
+    message = Message({'action': 'GetPathFileName'})
     fpath = self.getParent().messageFromChild(self, message)
 
     if fpath != '':
@@ -183,12 +185,12 @@ class ControlerFileDialog(ControlerAbstract):
       filedescriptor.close()
       sys.exit(0)
     elif fileName != '':
-      message = Message({'action':'SaveToTxt', 'fileName':fileName, 'lfns':lfns})
+      message = Message({'action': 'SaveToTxt', 'fileName': fileName, 'lfns': lfns})
       feedback = self.getParent().messageFromChild(self, message)
       if feedback:
         QMessageBox.information(self.getWidget(),
-                                  "Save As...", "This file has been saved!",
-                                  QMessageBox.Ok)
+                                "Save As...", "This file has been saved!",
+                                QMessageBox.Ok)
         self.__selectedFiles = []
     else:
       fileName = self.getWidget().getPath()
@@ -198,34 +200,34 @@ class ControlerFileDialog(ControlerAbstract):
       fileName, ext = self.getWidget().saveAs(fileName)
 
       if '.opts' in ext:
-        if not fileName.endswith( '.opts' ):
+        if not fileName.endswith('.opts'):
           fileName += '.opts'
-        message = Message( {'action':'SaveAs', 'fileName':fileName, 'lfns':lfns, 'dataset':self.getDataSet()} )
-        feedback = self.getParent().messageFromChild( self, message )
+        message = Message({'action': 'SaveAs', 'fileName': fileName, 'lfns': lfns, 'dataset': self.getDataSet()})
+        feedback = self.getParent().messageFromChild(self, message)
         if feedback:
-          QMessageBox.information( self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok )
+          QMessageBox.information(self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok)
       elif '.txt' in ext:
-        if not fileName.endswith( '.txt' ):
+        if not fileName.endswith('.txt'):
           fileName += '.txt'
-        message = Message( {'action':'SaveToTxt', 'fileName':fileName, 'lfns':lfns} )
-        feedback = self.getParent().messageFromChild( self, message )
+        message = Message({'action': 'SaveToTxt', 'fileName': fileName, 'lfns': lfns})
+        feedback = self.getParent().messageFromChild(self, message)
         if feedback:
-          QMessageBox.information( self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok )
+          QMessageBox.information(self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok)
       elif '.py' in ext:
-        if not fileName.endswith( '.py' ):
+        if not fileName.endswith('.py'):
           fileName += '.py'
-        message = Message( {'action':'SaveAs', 'fileName':fileName, 'lfns':lfns, 'dataset':self.getDataSet()} )
-        feedback = self.getParent().messageFromChild( self, message )
+        message = Message({'action': 'SaveAs', 'fileName': fileName, 'lfns': lfns, 'dataset': self.getDataSet()})
+        feedback = self.getParent().messageFromChild(self, message)
         if feedback:
-          QMessageBox.information( self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok )
-      
+          QMessageBox.information(self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok)
+
       elif '.csv' in ext:
-        if not fileName.endswith( '.csv' ):
+        if not fileName.endswith('.csv'):
           fileName += '.csv'
-        message = Message( {'action':'SaveToCSV', 'fileName':fileName, 'lfns':lfns, 'dataset':self.getDataSet()} )
-        feedback = self.getParent().messageFromChild( self, message )
+        message = Message({'action': 'SaveToCSV', 'fileName': fileName, 'lfns': lfns, 'dataset': self.getDataSet()})
+        feedback = self.getParent().messageFromChild(self, message)
         if feedback:
-          QMessageBox.information( self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok )
+          QMessageBox.information(self.getWidget(), "Save As...", "This file has been saved!", QMessageBox.Ok)
 
   ############################################################################
   def selection(self, selected, deselected):
@@ -246,7 +248,6 @@ class ControlerFileDialog(ControlerAbstract):
       self.updateselectedNbEventInputStat(self.__selectedFiles)
       self.updateselectedTotalLuminosity(self.__selectedFiles)
       self.updateSelectedLuminosity(self.__selectedFiles)
-
 
     if deselected:
       rows = []
@@ -272,7 +273,7 @@ class ControlerFileDialog(ControlerAbstract):
     eventnum = 0
     for item in items:
       value = items[item]
-      if value['EventStat'] != None:
+      if value['EventStat'] is not None:
         eventnum += int(value['EventStat'])
     return eventnum
 
@@ -283,7 +284,7 @@ class ControlerFileDialog(ControlerAbstract):
     eventinputstat = 0
     for item in items:
       value = items[item]
-      if value['EventInputStat'] != None:
+      if value['EventInputStat'] is not None:
         eventinputstat += int(value['EventInputStat'])
     return eventinputstat
 
@@ -300,7 +301,7 @@ class ControlerFileDialog(ControlerAbstract):
     luminosity = 0
     for item in items:
       value = items[item]
-      if value['TotalLuminosity'] != None:
+      if value['TotalLuminosity'] is not None:
         luminosity += float(value['TotalLuminosity'])
     return luminosity
 
@@ -311,7 +312,7 @@ class ControlerFileDialog(ControlerAbstract):
     luminosity = 0
     for item in items:
       value = items[item]
-      if value['Luminosity'] != None:
+      if value['Luminosity'] is not None:
         luminosity += float(value['Luminosity'])
     return luminosity
 
@@ -385,7 +386,7 @@ class ControlerFileDialog(ControlerAbstract):
   def jobinfo(self):
     """handles the job info action"""
     if len(self.__selectedFiles) != 0:
-      message = Message({'action':'JobInfo', 'fileName':self.__selectedFiles[0]})
+      message = Message({'action': 'JobInfo', 'fileName': self.__selectedFiles[0]})
       feedback = self.getParent().messageFromChild(self, message)
       if feedback.action() == 'showJobInfos':
         controlers = self.getChildren()
@@ -393,11 +394,11 @@ class ControlerFileDialog(ControlerAbstract):
         feedback = ct.messageFromParent(feedback)
       return S_ERROR(feedback)
 
-
   #############################################################################
+
   def getancesstots(self):
     """handles the ancesstors action"""
-    message = Message({'action':'getAnccestors', 'files':self.__selectedFiles[0]})
+    message = Message({'action': 'getAnccestors', 'files': self.__selectedFiles[0]})
     feedback = self.getParent().messageFromChild(self, message)
     action = feedback.action()
     if action == 'error':
@@ -406,7 +407,7 @@ class ControlerFileDialog(ControlerAbstract):
       controlers = self.getChildren()
       ct = controlers['HistoryDialog']
       message = feedback['files']
-      message = Message({'action':'list', 'items':message})
+      message = Message({'action': 'list', 'items': message})
       feedback = ct.messageFromParent(message)
     else:
       self.getWidget().showError('Unkown message' + str(message))
@@ -414,20 +415,20 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   def loggininginfo(self):
     """handles the login info action"""
-    message = Message({'action':'logfile', 'fileName':self.__selectedFiles})
+    message = Message({'action': 'logfile', 'fileName': self.__selectedFiles})
     feedback = self.getParent().messageFromChild(self, message)
     action = feedback.action()
     if action == 'error':
       self.getWidget().showError(feedback['message'])
     elif action == 'showLog':
       fileName = feedback['fileName']
-      webbrowser.open( "http://lhcb-logs.cern.ch/storage%s" % fileName )
-
+      webbrowser.open("http://lhcb-logs.cern.ch/storage%s" % fileName)
 
   #############################################################################
+
   def advancedSave(self):
     """handles the advanced save action"""
-    message = Message({'action':'showWidget'})
+    message = Message({'action': 'showWidget'})
     controlers = self.getChildren()
     controlers['AdvancedSave'].messageFromParent(message)
 
@@ -435,7 +436,7 @@ class ControlerFileDialog(ControlerAbstract):
   def next(self):
     """handles the action of the next button"""
     path = self.getWidget().getPath()
-    message = Message({'action':'getLimitedFiles', 'path':path})
+    message = Message({'action': 'getLimitedFiles', 'path': path})
     self.getParent().messageFromChild(self, message)
 
   #############################################################################
@@ -477,5 +478,3 @@ class ControlerFileDialog(ControlerAbstract):
   def getDataSet(self):
     """returns the dataset"""
     return self.__dataSet
-
-

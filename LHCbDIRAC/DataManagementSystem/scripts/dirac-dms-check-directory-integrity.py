@@ -10,82 +10,81 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
+from __future__ import absolute_import, division, print_function
+
 __RCSID__ = "$Id$"
 
-if __name__ == "__main__":
-  from DIRAC.Core.Base import Script
+from DIRAC.Core.Base import Script
 
-  Script.setUsageMessage( """
-  Check the integrity of the state of the storages and information in the File Catalogs
-  for a given directory or a collection of directories.
+Script.setUsageMessage("""
+Check the integrity of the state of the storages and information in the File Catalogs
+for a given directory or a collection of directories.
 
-  Usage:
-     %s  (<options>|<cfgFile>) <dir | fileContainingDirs>
-  """ % Script.scriptName )
+Usage:
+   %s  (<options>|<cfgFile>) <dir | fileContainingDirs>
+""" % Script.scriptName)
 
-  Script.parseCommandLine()
+Script.parseCommandLine()
 
-  import DIRAC
-  from DIRAC                                                          import gLogger
-  from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
-  from LHCbDIRAC.DataManagementSystem.Client.DataIntegrityClient      import DataIntegrityClient
-  import sys
+import DIRAC
+from DIRAC import gLogger
+from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
+from LHCbDIRAC.DataManagementSystem.Client.DataIntegrityClient import DataIntegrityClient
 
-  fc = FileCatalog()
-  integrity = DataIntegrityClient()
-  gLogger.setLevel( 'INFO' )
+fc = FileCatalog()
+integrity = DataIntegrityClient()
+gLogger.setLevel('INFO')
 
-  args = Script.getPositionalArgs()
-  if len( args ) < 1:
-    print "Please provide a directory or a file containing directories"
-    Script.showHelp()
-    DIRAC.exit( 0 )
-  else:
-    inputNames = args
+args = Script.getPositionalArgs()
+if len(args) < 1:
+  print("Please provide a directory or a file containing directories")
+  Script.showHelp()
+  DIRAC.exit(0)
+else:
+  inputNames = args
 
-  directories = []
-  for inputFileName in inputNames:
-    try:
-      inputFile = open( inputFileName, 'r' )
+directories = []
+for inputFileName in inputNames:
+  try:
+    with open(inputFileName, 'r') as inputFile:
       stringIn = inputFile.read()
       directories += stringIn.splitlines()
-      inputFile.close()
-    except:
-      directories.append( inputFileName )
+  except Exception:
+    directories.append(inputFileName)
 
-  ######################################################
-  #
-  # This check performs Catalog->BK and Catalog->SE for possible output directories
-  #
-  res = fc.exists( directories )
+######################################################
+#
+# This check performs Catalog->BK and Catalog->SE for possible output directories
+#
+res = fc.exists(directories)
+if not res['OK']:
+  gLogger.error(res['Message'])
+  DIRAC.exit(-2)
+for directory, error in res['Value']['Failed']:
+  gLogger.error('Failed to determine existence of directory', '%s %s' % (directory, error))
+if res['Value']['Failed']:
+  DIRAC.exit(-2)
+directoryExists = res['Value']['Successful']
+for directory in sorted(directoryExists):
+  if not directoryExists[directory]:
+    continue
+  gLogger.info("Checking the integrity of %s" % directory)
+  iRes = integrity.catalogDirectoryToBK(directory)
+  if not iRes['OK']:
+    gLogger.error('Error getting directory content:', iRes['Message'])
+    continue
+  catalogDirMetadata = iRes['Value']['CatalogMetadata']
+  catalogDirReplicas = iRes['Value']['CatalogReplicas']
+  catalogMetadata = {}
+  catalogReplicas = {}
+  for lfn in catalogDirMetadata:
+    # if not lfn in bk2catalogMetadata.keys():
+    catalogMetadata[lfn] = catalogDirMetadata[lfn]
+    if lfn in catalogDirReplicas:
+      catalogReplicas[lfn] = catalogDirReplicas[lfn]
+  if not catalogMetadata:
+    continue
+  res = integrity.checkPhysicalFiles(catalogReplicas, catalogMetadata, [])
   if not res['OK']:
-    gLogger.error( res['Message'] )
-    DIRAC.exit( -2 )
-  for directory, error in res['Value']['Failed']:
-    gLogger.error( 'Failed to determine existence of directory', '%s %s' % ( directory, error ) )
-  if res['Value']['Failed']:
-    DIRAC.exit( -2 )
-  directoryExists = res['Value']['Successful']
-  for directory in sorted( directoryExists ):
-    if not directoryExists[directory]:
-      continue
-    gLogger.info( "Checking the integrity of %s" % directory )
-    iRes = integrity.catalogDirectoryToBK( directory )
-    if not iRes['OK']:
-      gLogger.error( 'Error getting directory content:', iRes['Message'] )
-      continue
-    catalogDirMetadata = iRes['Value']['CatalogMetadata']
-    catalogDirReplicas = iRes['Value']['CatalogReplicas']
-    catalogMetadata = {}
-    catalogReplicas = {}
-    for lfn in catalogDirMetadata:
-      #if not lfn in bk2catalogMetadata.keys():
-        catalogMetadata[lfn] = catalogDirMetadata[lfn]
-        if lfn in catalogDirReplicas:
-          catalogReplicas[lfn] = catalogDirReplicas[lfn]
-    if not catalogMetadata:
-      continue
-    res = integrity.checkPhysicalFiles( catalogReplicas, catalogMetadata, [] )
-    if not res['OK']:
-      gLogger.error( "Error checking physical files:", res['Message'] )
-      continue
+    gLogger.error("Error checking physical files:", res['Message'])
+    continue

@@ -110,9 +110,8 @@ class MergeMDF(ModuleBase):
       logLines.append(msg)
       logLines = [str(i) for i in logLines]
       logLines.append('#EOF')
-      fopen = open(self.applicationLog, 'w')
-      fopen.write('\n'.join(logLines) + '\n')
-      fopen.close()
+      with open(self.applicationLog, 'w') as fopen:
+        fopen.write('\n'.join(logLines) + '\n')
 
       return S_OK('%s %s Successful' % (self.applicationName, self.applicationVersion))
 

@@ -61,9 +61,8 @@ class XMLFilesReaderManager(object):
   def readFile(filename):
     """reads an file content which format is XML"""
     try:
-      stream = open(filename)
-      doc = parse(stream)
-      stream.close()
+      with open(filename) as stream:
+        doc = parse(stream)
 
       docType = doc.doctype  # job or replica
       xmltype = docType.name.encode('ascii')  # pylint: disable=no-member

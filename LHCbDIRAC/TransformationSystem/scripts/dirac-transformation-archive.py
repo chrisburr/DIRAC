@@ -16,22 +16,22 @@ import DIRAC
 __RCSID__ = "$Id$"
 
 import sys
-if len( sys.argv ) < 2:
+if len(sys.argv) < 2:
   print 'Usage: dirac-transformation-archive transID [transID] [transID]'
-  DIRAC.exit( 1 )
+  DIRAC.exit(1)
 else:
   try:
-    transIDs = [int( arg ) for arg in sys.argv[1:]]
-  except:
+    transIDs = [int(arg) for arg in sys.argv[1:]]
+  except BaseException:
     print 'Invalid list of transformations'
-    DIRAC.exit( 1 )
+    DIRAC.exit(1)
 
-from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent     import TransformationCleaningAgent
+from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import TransformationCleaningAgent
 
-agent = TransformationCleaningAgent( 'Transformation/TransformationCleaningAgent',
-                                     'Transformation/TransformationCleaningAgent',
-                                     'dirac-transformation-archive' )
+agent = TransformationCleaningAgent('Transformation/TransformationCleaningAgent',
+                                    'Transformation/TransformationCleaningAgent',
+                                    'dirac-transformation-archive')
 agent.initialize()
 
 for transID in transIDs:
-  agent.archiveTransformation( transID )
+  agent.archiveTransformation(transID)

@@ -22,11 +22,7 @@ from DIRAC.ResourceStatusSystem.Policy.Configurations import POLICIESMETA
 
 # LHCb Policies
 
-POLICIESMETA_LHCB = {'GGUSTickets': {'description': "Open GGUS tickets",
-                                     'module': 'GGUSTicketsPolicy',
-                                     'command': ('GGUSTicketsCommand', 'GGUSTicketsCommand'),
-                                     'args': {'onlyCache': False}},
-                     'TransferQualitySource': {'description': 'Transfers from element, quality measure',
+POLICIESMETA_LHCB = {'TransferQualitySource': {'description': 'Transfers from element, quality measure',
                                                'module': 'TransferQualityPolicy',
                                                'command': ('TransferCommand', 'TransferCommand'),
                                                'args': {'direction': 'Source',
@@ -54,14 +50,6 @@ policies = {'DTScheduled': {'description': 'Ongoing and scheduled down-times',
                             'Resource_Panel': [{'WebLink': {'CommandIn': ('GOCDBStatusCommand',
                                                                           'DTInfoCachedCommand'),
                                                             'args': None}}]},
-            'GGUSTickets': {'description': 'Open GGUS tickets',
-                            'module': 'GGUSTicketsPolicy',
-                            'command': ('GGUSTicketsCommand', 'GGUSTicketsOpen'),
-                            'args': None,
-                            'Site_Panel': [{'WebLink': {'CommandIn': ('GGUSTicketsCommand', 'GGUSTicketsLink'),
-                                                        'args': None}},
-                                           {'TextInfo': {'CommandIn': ('GGUSTicketsCommand', 'GGUSTicketsInfo'),
-                                                         'args': None}}]},
 
             'OnStorageElementPropagation': {'description': 'How the storage element\'s nodes are behaving in the RSS',
                                             'module': 'DownHillPropagationPolicy',
