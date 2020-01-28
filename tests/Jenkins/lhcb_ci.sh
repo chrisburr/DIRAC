@@ -405,7 +405,7 @@ function installLHCbDIRACClient(){
 
   fi
 
-  DIRAC='' source bashrc
+  source bashrc
 
   #mkdir $CLIENTINSTALLDIR/etc
   #ln -s /cvmfs/lhcb.cern.ch/lib/lhcb/DIRAC/etc/dirac.cfg $CLIENTINSTALLDIR/etc/dirac.cfg
