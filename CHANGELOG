@@ -1,3 +1,17 @@
+v10r0-pre7
+use DIRAC v7r0p11
+
+* removed GGUSTicketsPolicy (backported to DIRAC)
+* removed old script
+* style
+* open files with cm
+* open instead of file
+* updated a few print functions
+* style fixes
+* removed old script
+* use the correct commands for deploying LHCbDIRAC to cvmfs
+* changed destination
+
 v10r0-pre6
 use DIRAC v7r0p10
 
