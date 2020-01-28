@@ -84,6 +84,22 @@ gLogger.info("Hello world job: ", result)
 
 ########################################################################################
 
+gLogger.info("\n Submitting hello world job targeting centos7 machines")
+
+helloJ = LHCbJob()
+dirac = DiracLHCb()
+
+helloJ.setName("helloWorld-test-centos7")
+helloJ.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
+
+helloJ.setCPUTime(17800)
+helloJ.setPlatform('x86_64-centos7')
+result = dirac.submitJob(helloJ)
+gLogger.info("Hello world job: ", result)
+
+########################################################################################
+
 gLogger.info("\n Submitting hello world job targeting slc6 machines")
 
 helloJ = LHCbJob()
