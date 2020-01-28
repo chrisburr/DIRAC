@@ -303,7 +303,7 @@ The version to be deployed is vArBpC. Login on aivoadm.cern.ch and follow the se
   ssh cvmfs-lhcb
   sudo -i -u cvlhcb
   cd /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/
-  cvmfs_server transaction lhcb.cern.ch
+  cvmfs_transaction
   source lhcbdirac pro (pro is the actual version)
   export DIRAC=/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/pro
   dirac-install -v -r vArBpC -t server -l LHCb -e LHCb --createLink
@@ -311,7 +311,7 @@ The version to be deployed is vArBpC. Login on aivoadm.cern.ch and follow the se
   pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip
   pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org ipython
   cd /
-  cvmfs_server publish lhcb.cern.ch
+  cvmfs_publish
   exit
   exit
 
