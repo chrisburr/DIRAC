@@ -1,8 +1,12 @@
+-- you can check the blockin queries using the following commands:
 select distinct final_blocking_session, final_blocking_instance from v$session;
+
+-- List the queries, which are taking very long for a given session
 select * from V$SESSION_LONGOPS where  SQL_ID=xxxxx;
 
 select * from V$SESSION_LONGOPS where sid in (select sid from v$session where username='LHCB_DIRACBOOKKEEPING' and status='ACTIVE') and sofar!=totalwork;
 
+-- if you want to kill the query or you want to know the blocking query you can use:
 select S.USERNAME, s.sid, s.osuser, t.sql_id, sql_text
 from v$sqltext_with_newlines t,V$SESSION s
 where t.address =s.sql_address
@@ -11,6 +15,7 @@ and s.status = 'ACTIVE'
 and s.username <> 'SYSTEM'
 order by s.sid,t.piece;
 
+-- which database object is being locked (can be index, table, etc.)
 select
   object_name, 
   object_type, 
@@ -28,7 +33,8 @@ where
   v$lock.sid = v$locked_object.session_id
 order by
   session_id, ctime desc, object_name;
-  
+
+-- queries which are taking very long: 
 SELECT sid, to_char(start_time,'hh24:mi:ss') stime, 
 message,( sofar/totalwork)* 100 percent 
 FROM v$session_longops
