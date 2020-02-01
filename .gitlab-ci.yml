@@ -137,6 +137,61 @@ check-copyright:
     - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - python lb-check-copyright upstream/master --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
 
+# Integration tests
+# .test_setup: &test_setup
+# <<: *test_setup
+integration_tests:
+  stage: test
+  tags:
+  - docker-privileged
+  image: diracgrid/docker-compose-dirac:latest
+  services:
+  - docker:19.03.1-dind
+  variables:
+      # As of GitLab 12.5, privileged runners at CERN mount a /certs/client docker volume that enables use of TLS to
+      # communicate with the docker daemon. This avoids a warning about the docker service possibly not starting
+      # successfully.
+      # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+      DOCKER_TLS_CERTDIR: "/certs"
+      GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
+  before_script:
+  - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
+  # Get DIRAC
+  - git clone https://github.com/chrisburr/DIRAC.git
+  - cd DIRAC
+  - git checkout support-lhcb-ci
+  - cd ..
+  # Environment
+  - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
+  - export DIRACOSVER=LHCb:master
+  - export LHCBDIRAC_RELEASE="v10r0-pre7"
+  - export DIRACBRANCH=${LHCBDIRAC_RELEASE}
+  - export CI_REGISTRY_IMAGE=diracgrid
+  # ALTERNATIVE_MODULES
+  - declare -a ALTERNATIVE_MODULES
+  - ALTERNATIVE_MODULES+=("$PWD/LHCbDIRAC")
+  - ALTERNATIVE_MODULES+=("$PWD/DIRAC")
+  # TESTREPO
+  - declare -a TESTREPO
+  - TESTREPO+=("$PWD/LHCbDIRAC")
+  - TESTREPO+=("$PWD/DIRAC")
+  # EXTRA_ENVIRONMENT_CONFIG
+  - declare -a EXTRA_ENVIRONMENT_CONFIG
+  - EXTRA_ENVIRONMENT_CONFIG+=("export LHCBDIRAC_RELEASE=${LHCBDIRAC_RELEASE}")
+  # INSTALLOPTIONS
+  - declare -a INSTALLOPTIONS
+  - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
+  script:
+    - set -x
+    - source DIRAC/tests/CI/run_docker_setup.sh
+    - prepareEnvironment
+    - installServer
+    - installClient
+    - testServer
+    - testClient
+
+### coverage stage ###
+
 # This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
 pages:
   stage: coverage
@@ -238,7 +293,7 @@ build_docker_image:
   stage: deploy_release
   only:
     - tags
-  image: 
+  image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
   script:
@@ -252,7 +307,7 @@ build_client_docker_image:
   allow_failure: true
   only:
     - tags
-  image: 
+  image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
   script:

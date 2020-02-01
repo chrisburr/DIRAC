@@ -13,32 +13,31 @@
 #-------------------------------------------------------------------------------
 # A convenient way to run all the LHCbDIRAC integration tests for client -> server interaction
 #
-# It supposes that LHCbDIRAC is installed in $SERVERINSTALLDIR
+# It supposes that LHCbDIRAC is installed in $CLIENTINSTALLDIR
 #-------------------------------------------------------------------------------
-
+set -x
 
 echo -e '****************************************'
 echo -e '******' "LHCb client -> server tests" '******\n'
 
-
 #-------------------------------------------------------------------------------#
-echo -e '***' $(date -u) "**** LHCb Bookkeeping TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping.py >> testOutputs.txt 2>&1
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_BookkeepingGUImethods.py >> testOutputs.txt 2>&1
+# echo -e '***' $(date -u) "**** LHCb Bookkeeping TESTS ****\n"
+# python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
+# python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_BookkeepingGUImethods.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
 
 #-------------------------------------------------------------------------------#
 echo -e '***' $(date -u) "**** LHCb PMS TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py >> testOutputs.txt 2>&1
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py >> testOutputs.txt 2>&1
+python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
+python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
 
 #-------------------------------------------------------------------------------#
 echo -e '***' $(date -u) "**** LHCb RSS TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ResourceStatusSystem/Test_ResourceManagement.py >> testOutputs.txt 2>&1
+python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ResourceStatusSystem/Test_ResourceManagement.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
 
 #-------------------------------------------------------------------------------#
 echo -e '***' $(date -u) "**** LHCb TS TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/TransformationSystem/Test_ClientTransformation.py >> testOutputs.txt 2>&1
+python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/TransformationSystem/Test_ClientTransformation.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
 
 #-------------------------------------------------------------------------------#
 echo -e '***' $(date -u) "**** LHCb WMS TESTS ****\n"
-$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh >> testOutputs.txt 2>&1
+$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))

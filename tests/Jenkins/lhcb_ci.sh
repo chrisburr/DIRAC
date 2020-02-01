@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
@@ -135,14 +135,10 @@ function findRelease(){
   diracVersion=`echo $versions | tr ' ' '\n' | grep ^DIRAC:v*[^,] | sed 's/,//g' | cut -d ':' -f2`
   # Extract LHCbDIRAC version
   lhcbdiracVersion=`echo $versions | tr ' ' '\n' | grep ^LHCbDIRAC:v* | sed 's/,//g' | cut -d ':' -f2`
-  # Extract LCG version
-  lcgVersion=`echo $versions | sed s/' = '/'='/g | tr ' ' '\n' | grep LcgVer | cut -d '=' -f2`
 
   # PrintOuts
   echo '==> ' DIRAC:$diracVersion && echo $diracVersion > dirac.version
   echo '==> ' LHCbDIRAC:$lhcbdiracVersion && echo $lhcbdiracVersion > lhcbdirac.version
-  echo '==> ' LCG:$lcgVersion && echo $lcgVersion > lcg.version
-
 }
 
 
@@ -388,22 +384,13 @@ function installLHCbDIRACClient(){
   cp $TESTCODE/DIRAC/Core/scripts/dirac-install.py $CLIENTINSTALLDIR/dirac-install
   chmod +x $CLIENTINSTALLDIR/dirac-install
   cd $CLIENTINSTALLDIR
-  if [ $? -ne 0 ]
-  then
+  if [ $? -ne 0 ]; then
     echo 'ERROR: cannot change to ' $CLIENTINSTALLDIR
     return
   fi
 
-  # If DIRACOSVER is not defined, use LcgBundle
-  if [ -z $DIRACOSVER ]
-  then
-     echo "Installing with LcgBundle";
-    ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client -g `cat $WORKSPACE/lcg.version` $DEBUG
-  else
-     echo "Installing with DIRACOS $DIRACOSVER";
-    ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client --dirac-os --dirac-os-version=$DIRACOSVER $DEBUG;
-
-  fi
+  echo "Installing with DIRACOS version=$DIRACOSVER";
+  ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client --dirac-os --dirac-os-version=$DIRACOSVER $DEBUG;
 
   source bashrc
 
@@ -411,7 +398,6 @@ function installLHCbDIRACClient(){
   #ln -s /cvmfs/lhcb.cern.ch/lib/lhcb/DIRAC/etc/dirac.cfg $CLIENTINSTALLDIR/etc/dirac.cfg
 
   dirac-configure --UseServerCertificate -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -S $DIRACSETUP -C $CSURL -e LHCb -ddd
-
 }
 
 function setupLHCbDIRAC(){

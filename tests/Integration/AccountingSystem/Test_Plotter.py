@@ -15,6 +15,7 @@
 
 import unittest
 
+import os
 import sys
 import math
 import operator
@@ -23,6 +24,8 @@ from PIL import Image
 from LHCbDIRAC.AccountingSystem.private.Plotters.DataStoragePlotter import DataStoragePlotter
 from LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter import StoragePlotter
 from functools import reduce
+
+png_directory = os.path.join(os.path.dirname(__file__), 'png')
 
 
 def compare(file1Path, file2Path):
@@ -100,7 +103,7 @@ class DataStoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
   def test_plotCatalogFiles(self):
@@ -128,7 +131,7 @@ class DataStoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
   def test_plotPhysicalSpace(self):
@@ -155,7 +158,7 @@ class DataStoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
   def test_plotPhysicalFiles(self):
@@ -181,7 +184,7 @@ class DataStoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
 
@@ -213,7 +216,7 @@ class StoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
   def test_plotCatalogFiles(self):
@@ -242,7 +245,7 @@ class StoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
   def test_plotPhysicalSpace(self):
@@ -271,7 +274,7 @@ class StoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
   def test_plotPhysicalFiles(self):
@@ -304,7 +307,7 @@ class StoragePlotterUnitTest(PlotterTestCase):
     self.assertEqual(res['OK'], True)
     self.assertEqual(res['Value'], {'plot': True, 'thumbnail': False})
 
-    res = compare('%s.png' % plotName, 'LHCbDIRAC/tests/Integration/AccountingSystem/png/%s.png' % plotName)
+    res = compare('%s.png' % plotName, os.path.join(png_directory, '%s.png' % plotName))
     self.assertEqual(0.0, res)
 
 
