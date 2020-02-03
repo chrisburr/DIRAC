@@ -86,9 +86,9 @@ function findRelease(){
     # First, try to find if we are on a production tag
     if [ ! -z "$LHCBDIRACBRANCH" ]
     then
-      projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+      projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
     else
-      projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g'`
+      projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g'`
     fi
 
     # The special case is when there's no 'p'... (e.g. version v8r3)
@@ -96,9 +96,9 @@ function findRelease(){
     then
       if [ ! -z "$LHCBDIRACBRANCH" ]
       then
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
       else
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g'`
       fi
     fi
 
@@ -107,20 +107,24 @@ function findRelease(){
     then
       if [ ! -z "$LHCBDIRACBRANCH" ]
       then
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
       else
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g'`
       fi
     fi
 
   fi
 
-
+  # TODO: This should be made to fail to due set -u and -o pipefail
+  if [ ! "$projectVersion" ]; then
+    echo "Failed to set projectVersion"
+    exit 1
+  fi
 
   echo PROJECT:$projectVersion && echo $projectVersion > project.version
 
   # projectVersionLine : line number where v7r15-pre2 is
-  projectVersionLine=`cat $TESTCODE/releases.cfg | grep -n $projectVersion | cut -d ':' -f 1 | head -1`
+  projectVersionLine=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep -n $projectVersion | cut -d ':' -f 1 | head -1`
   # start := line number after "{"
   start=$(($projectVersionLine+2))
   # end   := line number after "}"
@@ -129,7 +133,7 @@ function findRelease(){
   #   Modules = LHCbDIRAC:v7r15-pre2, LHCbWebDIRAC:v3r3p5
   #   Depends = DIRAC:v6r10-pre12
   #   LcgVer = 2013-09-24
-  versions=`sed -n "$start,$end p" $TESTCODE/releases.cfg`
+  versions=`sed -n "$start,$end p" $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg`
 
   # Extract DIRAC version
   diracVersion=`echo $versions | tr ' ' '\n' | grep ^DIRAC:v*[^,] | sed 's/,//g' | cut -d ':' -f2`
