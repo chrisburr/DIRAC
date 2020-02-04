@@ -70,7 +70,8 @@ function insertJobsRow(
      v_tck                         VARCHAR2,
      v_stepid                      NUMBER,
      v_WNMJFHS06                   FLOAT,
-     v_hlt2tck                     VARCHAR2
+     v_hlt2tck                     VARCHAR2,
+     v_numproc                     NUMBER
   ) return number;
 
  function insertFilesRow (
@@ -983,7 +984,8 @@ function insertJobsRow (
          StepID = v_stepid,
          Tck=v_tck,
          WNMJFHS06=v_WNMJFHS06,
-         HLT2Tck=v_hlt2tck where jobid=jid;
+         HLT2Tck=v_hlt2tck,
+         NumberOfProcessors=v_numproc where jobid=jid;
       commit;
     return jid;
     END IF;
