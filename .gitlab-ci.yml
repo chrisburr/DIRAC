@@ -96,7 +96,8 @@ check-copyright:
     - git fetch --all
     - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
   script:
-    - python lb-check-copyright upstream/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - python lb-check-copyright upstream/master --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
 
 # This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
 pages:
