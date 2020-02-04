@@ -98,7 +98,6 @@ function insertJobsRow(
 procedure insertInputFilesRow (v_FileId NUMBER, v_JobId NUMBER);
 
 procedure updateReplicaRow(v_fileID number,v_replica varchar2);
-procedure deleteJob(v_jobid number);
 procedure deleteInputFiles(v_jobid number);
 procedure deletefile(v_fileid number);
 procedure deleteSetpContiner( v_prod number);
@@ -1100,20 +1099,6 @@ procedure updateReplicaRow(
   )is
   begin
    update files set inserttimestamp = sys_extract_utc(systimestamp),gotreplica=v_replica where fileid=v_fileID;
-   commit;
-  end;
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure deleteJob(
-   v_jobid    number
- )is
-  nbOfjobs number;
-  prod number;
-  begin
-   select count(*) into nbOfjobs from jobs where jobs.production=(select production from jobs where jobid=v_jobid);
-   if nbOfjobs=1 then
-     delete productions where production=(select production from jobs where jobid=v_jobid);
-   end if;
-   delete jobs where jobid=v_jobid;
    commit;
   end;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

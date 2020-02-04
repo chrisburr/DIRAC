@@ -1,4 +1,4 @@
-define USER = 'LHCB_DIRACBOOKKEEPING'
+define USER = 'system'
 define GRANTEE = 'lhcb_diracbookkeeping_users'
 
 select 'GRANT SELECT ON ' || object_name || ' TO &GRANTEE;'
