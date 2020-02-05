@@ -242,6 +242,73 @@ gLogger.info('Submission Result: ', result)
 
 ########################################################################################
 
+gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 2 to 4 processors")
+
+gaudirunJob = LHCbJob()
+
+gaudirunJob.setName("gaudirun-Gauss-test-multicore-2to4-might-fail")
+gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
+                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
+
+optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
+optDec = "$DECFILESROOT/options/34112104.py;"
+optPythia = "$LBPYTHIAROOT/options/Pythia.py;"
+optOpts = "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py;"
+optCompr = "$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py;"
+optPConf = "prodConf_Gauss_00012345_00067890_1.py"
+options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
+# gaudirunJob.addPackage('AppConfig', 'v3r179')
+# gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
+# gaudirunJob.addPackage('ProdConf', 'v1r9')
+gaudirunJob.setApplication('Gauss', 'v45r5', options, extraPackages='AppConfig.v3r179;DecFiles.v27r14p1;ProdConf.v1r9',
+                           systemConfig='x86_64-slc5-gcc43-opt')
+
+gaudirunJob.setDIRACPlatform()
+gaudirunJob.setCPUTime(172800)
+gaudirunJob.setNumberOfProcessors(minNumberOfProcessors=2, maxNumberOfProcessors=4)
+
+result = dirac.submitJob(gaudirunJob)
+gLogger.info('Submission Result: ', result)
+
+########################################################################################
+
+gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 8 processors")
+
+gaudirunJob = LHCbJob()
+
+gaudirunJob.setName("gaudirun-Gauss-test-multicore-8")
+gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py', rootPath,
+                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setOutputSandbox('00012345_00067899_1.sim')
+
+# From step 139522
+
+options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py;"
+options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
+options += "$DECFILESROOT/options/12143001.py;"
+options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
+options += "$APPCONFIGOPTS/Gauss/TuningPythia8_Sim09.py;"
+options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py;"
+options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py;"
+options += "$APPCONFIGOPTS/Gauss/GaussMPpatch.py"
+
+# gaudirunJob.addPackage('AppConfig', 'v3r179')
+# gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
+# gaudirunJob.addPackage('ProdConf', 'v1r9')
+gaudirunJob.setApplication('Gauss', 'v53r1', options,
+                           extraPackages='AppConfig.v3r389;Gen/DecFiles.v30r35;ProdConf.v1r9',
+                           systemConfig='x86_64-slc6-gcc7-opt')
+
+gaudirunJob.setDIRACPlatform()
+gaudirunJob.setCPUTime(172800)
+gaudirunJob.setNumberOfProcessors(numberOfProcessors=8)  # exact number
+
+result = dirac.submitJob(gaudirunJob)
+gLogger.info('Submission Result: ', result)
+
+########################################################################################
+
 gLogger.info("\n Submitting gaudiRun job (Boole only)")
 
 gaudirunJob = LHCbJob()
