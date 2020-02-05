@@ -155,6 +155,7 @@ integration_tests:
       DOCKER_TLS_CERTDIR: "/certs"
       GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
   before_script:
+  - echo "${DOCKER_HOST}"
   - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
   # Get DIRAC
   - git clone https://github.com/chrisburr/DIRAC.git
@@ -202,7 +203,7 @@ integration_tests:
     # Finish configuring the bokkeeping database
     - docker network connect ci_default bkdb
     - "while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do echo 'Waiting for bookkeeping database to be ready...'; sleep 15; done"
-    - docker exec bkdb bash -x /repo/tests/Jenkins/setup_ci_bookkeeping_db.sh
+    - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/setup_ci_bookkeeping_db.sh
     - docker exec -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/ServerInstallDIR/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
     # Carry on with the CI as normal
     - installServer
