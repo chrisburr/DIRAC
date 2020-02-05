@@ -197,13 +197,13 @@ integration_tests:
     - source DIRAC/tests/CI/run_docker_setup.sh
     - prepareEnvironment
     # Install oracle client (will only work inside the CERN network!)
-    - docker exec -it -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
-    - docker exec -it -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
+    - docker exec -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
+    - docker exec -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
     # Finish configuring the bokkeeping database
     - docker network connect ci_default bkdb
     - "while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do echo 'Waiting for bookkeeping database to be ready...'; sleep 15; done"
-    - docker exec -it bkdb bash -x /repo/tests/Jenkins/setup_ci_bookkeeping_db.sh
-    - docker exec -it -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/ServerInstallDIR/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
+    - docker exec bkdb bash -x /repo/tests/Jenkins/setup_ci_bookkeeping_db.sh
+    - docker exec -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/ServerInstallDIR/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
     # Carry on with the CI as normal
     - installServer
     - installClient
