@@ -181,10 +181,30 @@ integration_tests:
   # INSTALLOPTIONS
   - declare -a INSTALLOPTIONS
   - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
+  # Start the bookkeeping database container before the job as it takes a while to launch
+  - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
+  - |
+    docker run --rm --detach --name bkdb \
+      -p 1521:1521 \
+      -e ORACLE_SID=bkdbsid \
+      -e ORACLE_PDB=bkdbpdb \
+      -e ORACLE_PWD=bkdbpass \
+      -e ORACLE_CHARACTERSET=AL32UTF8 \
+      -v $PWD:/repo \
+      gitlab-registry.cern.ch/cburr/lhcb-dirac-bookkeeping-ci/oracle-database:12.2.0.1-ee
   script:
     - set -x
     - source DIRAC/tests/CI/run_docker_setup.sh
     - prepareEnvironment
+    # Install oracle client (will only work inside the CERN network!)
+    - docker exec -it -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
+    - docker exec -it -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
+    # Finish configuring the bokkeeping database
+    - docker network connect ci_default bkdb
+    - "while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do echo 'Waiting for bookkeeping database to be ready...'; sleep 15; done"
+    - docker exec -it bkdb bash -x /repo/tests/Jenkins/setup_ci_bookkeeping_db.sh
+    - docker exec -it -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/ServerInstallDIR/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
+    # Carry on with the CI as normal
     - installServer
     - installClient
     - testServer
