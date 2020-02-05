@@ -266,15 +266,13 @@ class UserJobsFailingLocalSuccess(FailingUserJobTestCase):
     del os.environ['JOBID']
 
 
-########################################################################################################################
-########################################################################################################################
-
+###############################################################################################
 
 def createJob(local=True):
 
   gaudirunJob = LHCbJob()
 
-  gaudirunJob.setName("gaudirun-Gauss-test")
+  gaudirunJob.setName("gaudirun-Gauss-test-wrong-config-will-fail")
   if local:
     try:
       gaudirunJob.setInputSandbox(
@@ -333,7 +331,8 @@ def createJob(local=True):
                                              ('applicationLog', 'string', '',
                                               'Name of the output file of the application'),
                                              ('optionsFile', 'string', '', 'Options File'),
-                                             ('extraOptionsLine', 'string', '', 'This is appended to standard options'),
+                                             ('extraOptionsLine', 'string', '',
+                                              'This is appended to standard options'),
                                              ('inputDataType', 'string', '', 'Input Data Type'),
                                              ('inputData', 'string', '', 'Input Data'),
                                              ('numberOfEvents', 'string', '', 'Events treated'),
@@ -355,7 +354,8 @@ def createJob(local=True):
   outputFilesDict = [{'outputDataName': '00012345_00067890_1.sim',
                       'outputDataSE': 'Tier1_MC-DST',
                       'outputDataType': 'SIM'}]
-  gaudirunJob._addParameter(gaudirunJob.workflow.step_instances[0], 'listoutput', 'list', outputFilesDict, 'listoutput')
+  gaudirunJob._addParameter(gaudirunJob.workflow.step_instances[0],
+                            'listoutput', 'list', outputFilesDict, 'listoutput')
 
   gaudirunJob.setLogLevel('DEBUG')
   gaudirunJob.setDIRACPlatform()
@@ -368,8 +368,7 @@ def createJob(local=True):
 
   return gaudirunJob
 
-########################################################################################################################
-########################################################################################################################
+########################################################################################
 
 
 if __name__ == '__main__':
