@@ -664,6 +664,18 @@ CREATE TABLE STEPSCONTAINER
 
   CREATE INDEX STEPS_ID ON STEPSCONTAINER (STEPID);
 
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+     job_name             => 'produpdatejob',
+     job_type             => 'PLSQL_BLOCK',
+     job_action           => 'BEGIN BKUTILITIES.updateProdOutputFiles(); END;',
+     repeat_interval      => 'FREQ=MINUTELY; interval=10',
+     start_date           => systimestamp,
+     enabled              =>  TRUE
+     );
+END;
+/
+
 create materialized view prodrunview
 PARALLEL 4
 build immediate
