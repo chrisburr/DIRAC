@@ -1076,6 +1076,7 @@ function insertJobsRow (
                 Luminosity=v_luminosity,
                 InstLuminosity=v_instluminosity,
                 VisibilityFlag=v_visibilityFlag where fileid=fid;
+    commit;
     return fid;
   end;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1997,6 +1998,7 @@ begin
   EXCEPTION
   WHEN DUP_VAL_ON_INDEX THEN
    update runstatus set Finished= v_Finished where runnumber=v_runnumber and jobid=v_JobId;
+   commit;
   end;
 
 procedure setRunFinished(
@@ -2122,6 +2124,7 @@ EXCEPTION
     DBMS_OUTPUT.put_line ('EXISTS:'||v_production||'->'||v_stepid||'->'||v_filetypeid||'->'||v_visible||'->'||v_eventtype);
     --NOT: If the production is already in the table, we only change the step!!!
     UPDATE productionoutputfiles SET stepid=v_stepid WHERE production=v_production and filetypeid=v_filetypeid and visible =v_visible and eventtypeid=v_eventtype;
+    commit;
 END;
 
 END; 
