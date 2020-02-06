@@ -198,7 +198,7 @@ integration_tests:
         -e ORACLE_PDB=bkdbpdb \
         -e ORACLE_PWD=bkdbpass \
         -e ORACLE_CHARACTERSET=AL32UTF8 \
-        -v $PWD:/repo \
+        -v $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME:/repo \
         gitlab-registry.cern.ch/cburr/lhcb-dirac-bookkeeping-ci/oracle-database:12.2.0.1-ee
     - docker network connect ci_default bkdb
     - "while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do echo 'Waiting for bookkeeping database to be ready...'; sleep 15; done"
