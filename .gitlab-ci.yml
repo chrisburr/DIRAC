@@ -199,7 +199,6 @@ integration_tests:
     # Install oracle client (will only work inside the CERN network!)
     - docker exec -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
     - docker exec -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
-    - installServer
     # Finish configuring the bokkeeping database
     - docker network connect ci_default bkdb
     - |
@@ -208,8 +207,8 @@ integration_tests:
         sleep 15;
       done
     - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh
-    - docker exec -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/LocalRepo/TestCode/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
     # Carry on with the CI as normal
+    - installServer
     - installClient
     - testServer
     - testClient

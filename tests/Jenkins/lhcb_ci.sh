@@ -463,7 +463,15 @@ function sourcingEnv(){
 
 function setupBKKDB(){
   echo -e "==> Setting up the Bookkeeping Database"
-  python $TESTCODE/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py -p $ORACLEDB_PASSWORD $DEBUG
+  if [ -n "$ORACLEDB_PASSWORD" ]; then
+    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" -p $ORACLEDB_PASSWORD $DEBUG
+  else
+    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" "${DEBUG}" \
+      --password "bkdbpass" \
+      --host "bkdb:1521/bkdbpdb" \
+      --read-user "system" \
+      --write-user "system"
+  fi
 }
 
 #EOF
