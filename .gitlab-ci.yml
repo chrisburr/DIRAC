@@ -182,7 +182,7 @@ integration_tests:
   # INSTALLOPTIONS
   - declare -a INSTALLOPTIONS
   - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
-  # Start the bookkeeping database container (done before installing as it takes a while)
+  # Start the bookkeeping database container
   - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
   - |
     docker run --rm --detach --name bkdb \
