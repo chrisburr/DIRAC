@@ -203,7 +203,7 @@ integration_tests:
     - docker network connect ci_default bkdb
     - "while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do echo 'Waiting for bookkeeping database to be ready...'; sleep 15; done"
     # Finish configuring the bokkeeping database
-    - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/setup_ci_bookkeeping_db.sh
+    - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh
     - docker exec -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/ServerInstallDIR/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
     # Carry on with the CI as normal
     - installServer
