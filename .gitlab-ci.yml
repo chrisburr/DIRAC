@@ -143,7 +143,7 @@ check-copyright:
 integration_tests:
   stage: test
   tags:
-  - docker-privileged
+  - docker-privileged-xl
   image: diracgrid/docker-compose-dirac:latest
   services:
   - docker:19.03.1-dind
@@ -193,7 +193,6 @@ integration_tests:
     - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
     - |
       docker run --rm --detach --name bkdb \
-        --memory=768M \
         -p 1521:1521 \
         -e ORACLE_SID=bkdbsid \
         -e ORACLE_PDB=bkdbpdb \
