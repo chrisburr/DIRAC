@@ -208,7 +208,7 @@ integration_tests:
         sleep 15;
       done
     - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh
-    - docker exec -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/ServerInstallDIR/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
+    - docker exec -u dirac -w /home/dirac server bash -c 'source CONFIG && source ~/ServerInstallDIR/bashrc && ~/LocalRepo/TestCode/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py --password bkdbpass --host bkdb:1521/bkdbpdb --read-user system --write-user system'
     # Carry on with the CI as normal
     - installClient
     - testServer
