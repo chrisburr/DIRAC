@@ -21,7 +21,6 @@ import os
 import re
 import shlex
 import socket
-import subprocess
 import time
 import psutil
 from xml.dom.minidom import Document, DocumentType

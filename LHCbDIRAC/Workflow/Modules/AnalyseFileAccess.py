@@ -12,16 +12,15 @@
     We send data to the accounting (Site -> SE : fail/success)
 """
 
+__RCSID__ = "$Id$"
+
 from collections import defaultdict
 
-from DIRAC import S_OK, gLogger
+from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.AccountingSystem.Client.Types.DataOperation import DataOperation
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
-
-
-__RCSID__ = "$Id$"
 
 
 class AnalyseFileAccess(ModuleBase):
@@ -48,6 +47,7 @@ class AnalyseFileAccess(ModuleBase):
     super(AnalyseFileAccess, self)._resolveInputVariables()
     super(AnalyseFileAccess, self)._resolveInputStep()
 
+    self.dsc = self.workflow_commons['AccountingReport']
     self.XMLSummary_o = XMLSummary(self.XMLSummary, log=self.log)
     self.poolXMLCatName_o = PoolXMLCatalog(xmlfile=self.poolXMLCatName)
 
@@ -73,21 +73,23 @@ class AnalyseFileAccess(ModuleBase):
 
       accessAttempts = self._checkFileAccess(self.poolXMLCatName_o, self.XMLSummary_o)
 
-      # Retrieve the accounting DataStoreClient shared among the various steps
-      # No need to commit, it's done at the step finalization
-      dsc = self.workflow_commons['AccountingReport']
+      if not self._enableModule():
+        self.log.info('Not enabled')
+        return S_OK()
 
       for remoteSE, success in accessAttempts:
         oDataOperation = self.__initialiseAccountingObject(remoteSE, success)
-        dsc.addRegister(oDataOperation)
+        self.dsc.addRegister(oDataOperation)
+
+      return S_OK()
 
     except Exception as e:  # pylint:disable=broad-except
-      self.log.warn(str(e))
+      self.log.exception("Failure in AnalyseFileAccess execute module", lException=e)
+      self.setApplicationStatus(e)
+      return S_ERROR(str(e))
 
     finally:
       super(AnalyseFileAccess, self).finalize(self.version)
-
-    return S_OK()
 
   @staticmethod
   def _checkFileAccess(xmlCatalog, xmlSummary):
