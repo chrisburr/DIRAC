@@ -1,3 +1,10 @@
+v9r4p14
+use DIRAC v6r22p20
+
+* Add docs about Clinic/Hospital
+* Fix dirac-transformation-debug 
+
+
 v9r4p13
 use DIRAC v6r22p19
 
