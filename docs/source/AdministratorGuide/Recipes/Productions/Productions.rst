@@ -16,9 +16,27 @@ When all files have been processed except some that cannot make it due to either
 How?
 ====
 
-In the CS: /Operations/LHCb-Production/Hospital set 2 options:
-HospitalSite: for example CLOUD.CERN.cern (or any other site without strict limitations)
+In the CS: /Operations/LHCb-Production/Hospital set 2 or 3 options:
+
+::
+
 Transformations: list of productions to be processed at the hospital queue
+HospitalSite: for example CLOUD.CERN.cern (or any other site without strict limitations)
+HospitalCE: if needed, define a specific CE (e.g. one with more memory or CPU)
+
+::
+
+It is also possible to define some "Clinics" for specific purposes:
+
+Within /Operations/LHCb-Production/Hospital/Clinics define one section per clinic, with a dummy name (e.g. Stripping)
+For each clinic, define a list of transformations, a site and possibly a CE. If Site or CE is not defines the site / CE set for hospital is used.
+
+::
+Transformations: list of productions to be processed at this clinic
+ClinicSite: for example CLOUD.CERN.cern (or any other site without strict limitations)
+ClinicCE: if needed, define a specific CE (e.g. one with more memory or CPU)
+
+::
 
 Then:
 =====

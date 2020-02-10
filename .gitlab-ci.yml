@@ -90,11 +90,14 @@ run_pycodestyle:
 # This ensures the license text is present
 # Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
 check-copyright:
-  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   stage: test
-  script:
+  before_script:
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
+    - git fetch --all
     - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
-    - python lb-check-copyright origin/devel --exclude '^tests/.*\.xml$'
+  script:
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - python lb-check-copyright upstream/master --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
 
 # This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
 pages:
