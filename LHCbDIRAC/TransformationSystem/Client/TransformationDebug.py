@@ -1299,9 +1299,11 @@ class TransformationDebug(object):
       prevStatus = None
       allStatus[sys.maxsize] = ''
       jobs = []
+      # print '*** AllStatus', allStatus
       for job in sorted(allStatus):
         status = allStatus[job]
         job = int(job)
+        # print '*** job, prevStatus, status', job, prevStatus, status
         if status == prevStatus:
           jobs.append(job)
           continue
@@ -1309,6 +1311,7 @@ class TransformationDebug(object):
           prevStatus = status
           jobs = [job]
           continue
+        # print '*** Jobs', jobs
         prStr = '%3d jobs' % len(jobs)
         if 'Failed' in prevStatus or 'Done' in prevStatus or 'Completed' in prevStatus:
           prStr += ' terminated with status:'
@@ -1355,6 +1358,7 @@ class TransformationDebug(object):
         jobs = [job]
         prevStatus = status
         if exitedJobs:
+          # print '*** exitedJobs', exitedJobs
           badLfns = {}
           for lastJob in sorted(exitedJobs, reverse=True)[0:10]:
             res = self.monitoring.getJobParameter(lastJob, 'Log URL')
@@ -1366,8 +1370,9 @@ class TransformationDebug(object):
               if lfns:
                 badLfns.update({lastJob: lfns})
             # break
+          # print '*** badLfns', badLfns
           if not badLfns:
-            gLogger.notice("No error was found in XML summary files")
+            gLogger.notice("\tNo error was found in XML summary files")
           else:
             # lfnsFound is an AND of files found bad in all jobs
             lfnsFound = set(badLfns[sorted(badLfns, reverse=True)[0]])
@@ -1383,6 +1388,7 @@ class TransformationDebug(object):
                 failedLfns.setdefault((lfn, reason), []).append(job)
             else:
               gLogger.notice("No common error was found in all XML summary files")
+          exitedJobs = {}
     if idrLfns:
       gLogger.notice("\nSummary of failures due to Input Data Resolution")
       for(lfn, jobs) in idrLfns.iteritems():
@@ -1396,6 +1402,7 @@ class TransformationDebug(object):
                          (lfn, ', '.join("%d (%s)" % (job, jobSites.get(job, 'Unknown'))
                                          for job in jobs)))
 
+    # print '*** failedLfns', failedLfns
     if failedLfns:
       gLogger.notice("\nSummary of failures due to: Application Exited with non-zero status")
       lfnDict = {}
