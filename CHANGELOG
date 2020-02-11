@@ -1,3 +1,23 @@
+v10r0-pre12
+use DIRAC v7r0p12
+
+BUGGY CHANGELOG BECAUSE INSTRUCTIONS COMPLETELY WRONG
+
+* Fix LHCbDIRAC/releases.cfg parsing and ass master release
+* Add devel release to releases.cfg
+* v9r4p14
+* fixing ShiftDBAgent
+* minor fix for AnalyseFileAccess module
+* added Gauss MP user jobs
+* more explicit job name
+* desperate attempt
+* another attempt
+* fix copyright
+* update doc for clinic
+* fix a bad printout in trans-debug
+* changed destination in docker hub
+
+
 v10r0-pre11
 use DIRAC v7r0p11
 
