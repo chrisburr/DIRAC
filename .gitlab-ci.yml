@@ -40,7 +40,7 @@ stages:
 .test_setup: &test_setup
   before_script:
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - diracTAG=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 3 | tail -n 1 | sed 's/ //g' | cut -d ':' -f 2)
+    - diracTAG=$(python -c "s = open('LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s[s.index('Depends'):]; s = s.split('\n')[0].split('=')[1].split(':')[1].strip(); print(s)")
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
@@ -88,7 +88,7 @@ run_pytest:
 run_pycodestyle:
   <<: *test_setup
   script:
-    - lhcbDiracBranch=$(head -n 50 LHCbDIRAC/releases.cfg | grep -E ' *v' | head -n 1 | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
+    - lhcbDiracBranch=$(python -c "s = open('LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
     - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
     - git fetch --no-tags GL
     - git branch -avv
