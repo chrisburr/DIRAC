@@ -17,18 +17,14 @@
 
 __RCSID__ = "$Id$"
 
-# FIXME seems broken.
 # FIXME: should add a "DryRun" option to run in certification setup
 
-import os
 import urllib2
 import suds.client
 
 from DIRAC import gConfig, S_OK, S_ERROR
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
-
-from LHCbDIRAC.ResourceStatusSystem.Agent.ShiftEmail import getBodyEmail
 
 AGENT_NAME = 'ResourceStatus/ShiftDBAgent'
 
@@ -39,25 +35,16 @@ class ShiftDBAgent(AgentModule):
       The e-groups admin should be : lhcb-grid-experiment-egroup-admins
   """
 
-  # ShiftDB url where to find shifter emails
-  __lbshiftdburl = 'https://lbshiftdb.cern.ch/shiftdb_list_mails.php'
-  # eGroup user
-  __user = 'lbdirac'
-  # eGroup password
-  __passwd = 'belikeapanda'
-  # soap wsdl to access eGroups
-  __wsdl = 'https://foundservices.cern.ch/ws/egroups/v1/EgroupsWebService/EgroupsWebService.wsdl'
-
   def __init__(self, *args, **kwargs):
 
     AgentModule.__init__(self, *args, **kwargs)
 
     # Members initialization
 
-    self.lbshiftdburl = self.__lbshiftdburl
-    self.user = self.__user
-    self.passwd = self.__passwd
-    self.wsdl = self.__wsdl
+    # ShiftDB url where to find shifter emails
+    self.lbshiftdburl = 'https://lbshiftdb.cern.ch/shiftdb_list_mails.php'
+    # soap wsdl to access eGroups
+    self.wsdl = 'https://foundservices.cern.ch/ws/egroups/v1/EgroupsWebService/EgroupsWebService.wsdl'
 
     self.roles = {}
     self.roleShifters = {}
@@ -70,18 +57,16 @@ class ShiftDBAgent(AgentModule):
      Initialize
     """
 
-    self.user = self.am_getOption('user', self.user)
     self.lbshiftdburl = self.am_getOption('lbshiftdburl', self.lbshiftdburl)
     self.wsdl = self.am_getOption('wsdl', self.wsdl)
 
-    pwfile = os.path.join(self.am_getWorkDirectory(), '.passwd')
+    self.user = self.am_getOption('user')
+    self.passwd = self.am_getOption('password')
 
-    passwd = self.__getPass(pwfile)
-    if not passwd['OK']:
-      return passwd
-    self.passwd = passwd['Value']
+    if not (self.user and self.passwd):
+      self.log.error("User and/or password for %s not provided" % self.wsdl)
+      return S_ERROR("Creds not provided")
 
-    # Moved down to avoid crash
     self.diracAdmin = DiracAdmin()
 
     return S_OK()
@@ -272,38 +257,40 @@ class ShiftDBAgent(AgentModule):
       return S_ERROR(wError)
     return S_OK()
 
-  @staticmethod
-  def __getPass(pwfile):
-    """
-    Reads password from local file
-    """
-
-    try:
-      pwf = open(pwfile)
-      passwd = pwf.read()[:-1]
-    except IOError:
-      return S_ERROR('Error: can\'t find file or read data')
-
-    pwf.close()
-    return S_OK(passwd)
-
   def __notifyNewShifter(self, role, eGroup):
     """
     Sends an email to the shifter ( if any ) at the beginning of the shift period.
     """
 
-    body = getBodyEmail(role)
-
-    if body is None:
+    if role == 'Production':
+      body = __productionBody__
+    else:
       self.log.info('No email body defined for %s role' % role)
       return S_OK()
 
-    if role == 'Production':
-      prodRole = self.roles['Production']
-      geocRole = self.roles['Grid Expert']
-      body = body % (self.roleShifters[prodRole][0], self.roleShifters[geocRole][0])
+    prodRole = self.roles['Production']
+    geocRole = self.roles['Grid Expert']
+    body = body % (self.roleShifters[prodRole][0], self.roleShifters[geocRole][0])
 
-    # Hardcoded Joel's email to avoid dirac@mail.cern.ch be rejected by smtp server
+    # Hardcoded Concezio's email to avoid dirac@mail.cern.ch be rejected by smtp server
     res = self.diracAdmin.sendMail('%s@cern.ch' % eGroup, 'Shifter information',
-                                   body, fromAddress='joel.closier@cern.ch')
+                                   body, fromAddress='concezio.bozzi@cern.ch')
     return res
+
+
+__productionBody__ = '''Dear GEOC,
+
+this is an (automatic) mail to welcome you on the grid operations shifts.
+In order to facilitate your shift activities we wanted to provide you some pointers,
+where you could find more information about shifts, the activities and your duties during this period.
+
+http://lhcb-shifters.web.cern.ch/
+
+
+LHCbDIRAC portal
+https://lhcb-portal-dirac.cern.ch/DIRAC
+
+
+The logbook for LHCb operations, where all activities concerning offline operation are being logged.
+https://lblogbook.cern.ch/Operations/
+'''
