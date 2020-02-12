@@ -150,6 +150,10 @@ class NotifyAgent(AgentModule):
                              "<td class='link'><a href='" + link + "' target='_blank'> Link </a></td>" + \
                              "</tr>"
 
+          # If there are no requests to display, don't bother sending emails
+          if not html_elements:
+            continue
+
           html_body = """\
             <p>{header}</p>
             <table>
