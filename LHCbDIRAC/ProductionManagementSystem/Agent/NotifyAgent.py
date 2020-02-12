@@ -195,7 +195,6 @@ class NotifyAgent(AgentModule):
           conn.execute("DELETE FROM ProductionManagementCache;")
         else:
           self.log.error("_inform_people: can't send email: %s" % res['Message'])
-          return S_OK()
 
   def _executeForProductionStatusAgent(self, conn):
     """This is for the ProductionStatusAgent"""
