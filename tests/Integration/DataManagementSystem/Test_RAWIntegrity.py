@@ -598,8 +598,7 @@ class RAWIntegrityAgentTest(unittest.TestCase):
     self.db.setFileStatus(self.wasRegistered.lfn, 'Registered')
 
   def tearDown(self):
-    """
-      delete all the files
+    """delete all the files
     """
     for dbf in self.files:
       self.db.removeFile(dbf.lfn)

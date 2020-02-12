@@ -169,8 +169,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
   @staticmethod
   def export_setStepInputFiles(stepid, files):
-    """
-     It is used to set input file types to a Step.
+    """It is used to set input file types to a Step.
     """
     return dataMGMT_.setStepInputFiles(stepid, files)
 

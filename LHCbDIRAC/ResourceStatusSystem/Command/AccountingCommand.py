@@ -55,8 +55,7 @@ class JobAccountingCommand(AccountingCommand):
   """
 
   def _storeCommand(self, results):
-    """
-      Stores the results of doNew method on the database.
+    """Stores the results of doNew method on the database.
     """
 
     for result in results:
@@ -76,8 +75,7 @@ class JobAccountingCommand(AccountingCommand):
     return S_OK()
 
   def _prepareCommand(self):
-    """
-      AccountingCommand requires two arguments:
+    """AccountingCommand requires two arguments:
       - hours  : <int>
       - name   : <str>
     """
@@ -142,8 +140,7 @@ class JobAccountingCommand(AccountingCommand):
     return S_OK(uniformResult)
 
   def doCache(self):
-    """
-      Method that reads the cache table and tries to read from it. It will
+    """Method that reads the cache table and tries to read from it. It will
       return a list of dictionaries if there are results.
     """
 
@@ -188,8 +185,7 @@ class PilotAccountingCommand(AccountingCommand):
   """
 
   def _storeCommand(self, results):
-    """
-      Stores the results of doNew method on the database.
+    """Stores the results of doNew method on the database.
     """
 
     for result in results:
@@ -204,8 +200,7 @@ class PilotAccountingCommand(AccountingCommand):
     return S_OK()
 
   def _prepareCommand(self):
-    """
-      AccountingCommand requires four arguments:
+    """AccountingCommand requires four arguments:
       - hours       : <int>
       - name : <str>
       - elementType : <str>
@@ -293,8 +288,7 @@ class PilotAccountingCommand(AccountingCommand):
     return S_OK(uniformResult)
 
   def doCache(self):
-    """
-      Method that reads the cache table and tries to read from it. It will
+    """Method that reads the cache table and tries to read from it. It will
       return a list of dictionaries if there are results.
     """
 

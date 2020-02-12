@@ -396,8 +396,7 @@ class BookkeepingClient(Client):
     return self._getRPC().getRunStatus(runnumbers)
 
   def getProcessingPass(self, in_dict, path=None):
-    """
-      This method is used to recursively browse the processing pass.
+    """This method is used to recursively browse the processing pass.
 
       :param dict in_dict: contains a given conditions: ConfigName', 'ConfigVersion', 'ConditionDescription',
       'Production','RunNumber', 'EventType'

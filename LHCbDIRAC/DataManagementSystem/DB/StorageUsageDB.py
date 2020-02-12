@@ -449,8 +449,7 @@ class StorageUsageDB(DB):
     return S_OK()
 
   def removeDirFromSe_Usage(self, dirDict):
-    """
-      Remove the entry corresponding to the tuple (path, SE) from the se_Usage table.
+    """Remove the entry corresponding to the tuple (path, SE) from the se_Usage table.
        This function is typically called when a directory is found to be a problematic directory,
        and before inserting it into the problematicDirs
        table, it is necessary to remove it from the se_Usage table, if it exists there.

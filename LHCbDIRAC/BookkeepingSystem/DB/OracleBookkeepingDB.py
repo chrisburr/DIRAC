@@ -3541,8 +3541,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_OK((condition, tables))
 
   def __buildVisible(self, condition=None, visible=default, replicaFlag=default):
-    """
-      It makes the condition for a given visibility flag and replica flag
+    """It makes the condition for a given visibility flag and replica flag
       """
     if condition is None:
       condition = ''

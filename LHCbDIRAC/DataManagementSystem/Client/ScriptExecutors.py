@@ -1669,8 +1669,7 @@ def executeGetFile(dmScript):
 
 
 def __buildLfnDict(item_list):
-  """
-    From the input list, populate the dictionary
+  """From the input list, populate the dictionary
   """
   lfn_dict = {}
   lfn_dict['lfn'] = item_list[0].replace('LFN:', '').replace('lfn:', '')
@@ -1684,8 +1683,7 @@ def __buildLfnDict(item_list):
 
 
 def executeAddFile():
-  """
-    Add a file to a Grid storage element
+  """Add a file to a Grid storage element
   """
 
   args = Script.getPositionalArgs()

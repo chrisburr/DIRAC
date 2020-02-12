@@ -33,8 +33,7 @@ class RAWIntegrityClient(FileCatalogClientBase):
     self.rawIntegritySrv = self._getRPC()
 
   def isOK(self):
-    """
-      Returns valid
+    """Returns valid
     """
     return self.valid
 

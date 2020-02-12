@@ -53,8 +53,7 @@ class ShiftDBAgent(AgentModule):
     self.diracAdmin = None
 
   def initialize(self, *args, **kwargs):
-    """
-     Initialize
+    """Initialize
     """
 
     self.lbshiftdburl = self.am_getOption('lbshiftdburl', self.lbshiftdburl)

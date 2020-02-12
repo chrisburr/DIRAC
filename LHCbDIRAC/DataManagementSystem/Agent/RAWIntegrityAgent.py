@@ -149,8 +149,7 @@ class RAWIntegrityAgent(AgentModule):
     return S_OK({'Successful': successful, 'Failed': failed})
 
   def getNewlyCopiedFiles(self, activeFiles):
-    """
-        Get the list of files newly copied and those not yet copied.
+    """Get the list of files newly copied and those not yet copied.
 
         :param activeFiles: dict {lfn:RawIntegrityDB metadata} for files in Active status
 
@@ -219,8 +218,7 @@ class RAWIntegrityAgent(AgentModule):
     return filesNewlyCopied, filesNotYetCopied
 
   def registerCopiedFiles(self, filesNewlyCopied, copiedFiles, allUnmigratedFilesMeta):
-    """
-      Register successfuly copied files (newly, or in Copied status in the DB) in the DFC.
+    """Register successfuly copied files (newly, or in Copied status in the DB) in the DFC.
 
       :param filesNewlyCopied: [lfns] of files newly copied
       :param copiedFiles: {lfn:RIDb metadata} of files that were in Copied state.
@@ -268,8 +266,7 @@ class RAWIntegrityAgent(AgentModule):
     return successfulRegister
 
   def removeRegisteredFiles(self, filesNewlyRegistered, registeredFiles, allUnmigratedFilesMeta):
-    """
-      Remove successfuly registered files (newly, or in Registered status in the DB)
+    """Remove successfuly registered files (newly, or in Registered status in the DB)
       from the OnlineStorage
 
       :param filesNewlyCopied: [lfns] of files newly copied

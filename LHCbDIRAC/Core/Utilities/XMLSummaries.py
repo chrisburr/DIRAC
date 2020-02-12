@@ -157,8 +157,7 @@ class XMLSummary(object):
 ################################################################################
 
   def __getInputStatus(self):
-    """
-      We know beforehand the structure of the XML, which makes our life
+    """We know beforehand the structure of the XML, which makes our life
       easier.
 
       < summary >
@@ -235,8 +234,7 @@ class XMLSummary(object):
 ################################################################################
 
   def __getInputEvents(self):
-    """
-      We know beforehand the structure of the XML, which makes our life
+    """We know beforehand the structure of the XML, which makes our life
       easier.
 
       < summary >
@@ -260,8 +258,7 @@ class XMLSummary(object):
 ################################################################################
 
   def __getOutputStatus(self):
-    """
-      We know beforehand the structure of the XML, which makes our life
+    """We know beforehand the structure of the XML, which makes our life
       easier.
 
       < summary >
@@ -286,8 +283,7 @@ class XMLSummary(object):
 ################################################################################
 
   def __getOutputEvents(self):
-    """
-      We know beforehand the structure of the XML, which makes our life
+    """We know beforehand the structure of the XML, which makes our life
       easier.
 
       < summary >

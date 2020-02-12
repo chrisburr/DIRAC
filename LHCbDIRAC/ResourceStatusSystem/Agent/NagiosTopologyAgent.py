@@ -274,8 +274,7 @@ class NagiosTopologyAgent(AgentModule):
 
   @staticmethod
   def __writeHeaderInfo(xml_doc, xml_root):
-    """
-      Writes XML document header.
+    """Writes XML document header.
     """
 
     xml_append(xml_doc, xml_root, 'title', 'LHCb Topology Information for ATP')
@@ -443,8 +442,7 @@ class NagiosTopologyAgent(AgentModule):
 
 
 def xml_append(doc, base, elem, cdata=None, **attrs):
-  """
-    Given a Document, we append to it an element.
+  """Given a Document, we append to it an element.
   """
 
   new_elem = doc.createElement(elem)

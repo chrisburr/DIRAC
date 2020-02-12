@@ -92,8 +92,7 @@ def zipFiles(outputFile, files=None, directory=None, deleteInput=False):
 
 
 def lowerExtension():
-  """
-    Lowers the file extension of the produced files (on disk!).
+  """Lowers the file extension of the produced files (on disk!).
     E.g.: fileName.EXTens.ION -> fileName.extens.ion
   """
 
@@ -161,8 +160,7 @@ def getEventsToProduce(CPUe, CPUTime=None, CPUNormalizationFactor=None,
 
 
 def getCPUNormalizationFactorAvg():
-  """
-    Returns the average HS06 CPU normalization factor for the LCG sites (all CEs, all queues).
+  """Returns the average HS06 CPU normalization factor for the LCG sites (all CEs, all queues).
     Raises an Exception if it can not.
   """
 
