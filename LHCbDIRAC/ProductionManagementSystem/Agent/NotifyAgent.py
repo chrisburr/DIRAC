@@ -127,7 +127,7 @@ class NotifyAgent(AgentModule):
                      "or to reject the requests. In case some other member of the group has already done that, " \
                      "please ignore this mail.\n"
 
-          elif group[0] in ['lhcb_ppg', 'lhcb_tech']:
+          elif group[0] == 'lhcb_ppg':
             header = "New Productions are requested. As member of <span style='color:green'>" + group[0] + "</span> group, your are asked either to sign or " \
                      "to reject it. In case some other member of the group has already done that, please ignore this mail.\n"
           else:
