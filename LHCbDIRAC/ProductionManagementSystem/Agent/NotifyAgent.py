@@ -92,7 +92,7 @@ class NotifyAgent(AgentModule):
         self.log.error('No ProductionRequest section in configuration')
         return S_OK()
 
-      result = conn.execute("SELECT DISTINCT thegroup, reqName, reqWG, reqInform from ProductionManagementCache;")
+      result = conn.execute("SELECT DISTINCT thegroup, reqName, reqWG, reqInform, reqType from ProductionManagementCache;")
 
       html_header = """\
             <!DOCTYPE html>
@@ -118,8 +118,8 @@ class NotifyAgent(AgentModule):
         aggregated_body = ""
         html_elements = ""
 
-        # Check if group is not empty
-        if group[0]:
+        # Check if group is not empty and only ask people to act on MC requests
+        if group[0] and group[4] == 'Simulation':
 
           if group[0] == 'lhcb_bk':
             header = "New Productions are requested and they have customized Simulation Conditions. " \
