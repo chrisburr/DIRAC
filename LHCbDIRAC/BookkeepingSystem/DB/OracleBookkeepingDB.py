@@ -399,8 +399,7 @@ class OracleBookkeepingDB(object):
     """get runtime projects.
 
     :param dict in_dict: dictionary which contains the StepId
-    :return: runtime projects if no StepId is given otherwise
-    the runtime project
+    :return: runtime projects if no StepId is given otherwise the runtime project
     """
     result = S_ERROR()
     condition = ''
@@ -499,7 +498,7 @@ class OracleBookkeepingDB(object):
 
     :param int prod:  production number
     :param int stepid: step id
-    :rertun S_OK/S_ERROR return a dictionary with file types and visibility flag.
+    :return S_OK/S_ERROR: return a dictionary with file types and visibility flag.
     """
     condition = ''
     if stepid != default:
@@ -545,13 +544,25 @@ class OracleBookkeepingDB(object):
   def insertStep(self, in_dict):
     """
     inserts a given step for example:
-     Dictionary format: {'Step': {'ApplicationName': 'DaVinci', 'Usable': 'Yes', 'StepId': '',
-    'ApplicationVersion': 'v29r1', 'ext-comp-1273': 'CHARM.MDST (Charm micro dst)', 'ExtraPackages': '',
-    'StepName': 'davinci prb2', 'ProcessingPass': 'WG-Coool', 'ext-comp-1264': 'CHARM.DST (Charm stream)',
-    'Visible': 'Y', 'DDDB': '', 'OptionFiles': '', 'CONDDB': ''},
-    'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.MDST'}],
-    'InputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.DST'}],
-    'RuntimeProjects':[{'StepId':13878}]}
+
+    .. code-block:: python
+
+      {'Step': {'ApplicationName': 'DaVinci',
+                'Usable': 'Yes',
+                'StepId': '',
+                'ApplicationVersion': 'v29r1',
+                'ext-comp-1273': 'CHARM.MDST (Charm micro dst)',
+                'ExtraPackages': '',
+                'StepName': 'davinci prb2',
+                'ProcessingPass': 'WG-Coool',
+                'ext-comp-1264': 'CHARM.DST (Charm stream)',
+                'Visible': 'Y',
+                'DDDB': '',
+                'OptionFiles': '',
+                'CONDDB': ''},
+       'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.MDST'}],
+       'InputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.DST'}],
+       'RuntimeProjects': [{'StepId': 13878}]}
 
     :param dict in_dict: dictionary which contains step parameters
     """
@@ -1120,7 +1131,7 @@ class OracleBookkeepingDB(object):
     :param datetime startDate: job/run start time stamp
     :param datetime endDate: job/run end time stamp
     :param list runnumbers: run numbers
-    :param long startRunID:start run
+    :param long startRunID: start run
     :param long endRunID: end run
     :param str tcks: TCK number
     :return: a list of files with their metadata
@@ -1903,7 +1914,7 @@ class OracleBookkeepingDB(object):
     recursive helper function.
 
     :param list lfn:
-    :param int depth:the depth of the processing pass chain(how far to go)
+    :param int depth: the depth of the processing pass chain(how far to go)
     :param bool replica: take into account the replica flag
     """
     depth = min(10, max(1, depth))
@@ -1937,8 +1948,8 @@ class OracleBookkeepingDB(object):
     :param int depth: the depth of the processing pass chain(how far to go)
     :param productin: production number
     :param bool checkreplica: take into account the replica flag
-    :patam bool productionFound: It breaks the check if the production found but we
-    but we no longer are in it
+    :param bool productionFound: It breaks the check if the production found
+      but we but we no longer are in it
     :return: the descendents of a file
     """
     failed = set()
@@ -4282,7 +4293,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """inserts a processing pass.
 
     :param list values: processing pass names: Reco09, Stripping19
-    :patam long parentid: the parent processing pass
+    :param long parentid: the parent processing pass
     :param list ids: keeps all processing pass ids
     """
     if ids is None:
@@ -4480,8 +4491,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     production.
 
     :param int production: it is the production number
-    :param list steps it contains all the steps and output file types
-    :param number/list eventtype given event type which will be produced by the jobs
+    :param list steps: it contains all the steps and output file types
+    :param number/list eventtype: given event type which will be produced by the jobs
     :returns: S_OK/S_ERROR
     """
     # if we have some specific file type version, it can be added to this dictionary
@@ -5315,8 +5326,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     DIRAC jobid.
 
     :param list diracjobids: list of DIRAC jobid
-    :return: Successful: DIRAC job which has input/output Failed: DIRAC job which
-    does not exists in the db.
+    :return: Successful: DIRAC job which has input/output
+      Failed: DIRAC job which does not exists in the db.
     """
     result = {'Failed': {}, 'Successful': {}}
     for diracJobid in diracjobids:
@@ -5370,8 +5381,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """For retrieving the run status.
 
     :param list runnumbers: list of runs.
-    :return: dictionary which contains the failed runs with the result
-    and sucessful run
+    :return: dictionary which contains the failed runs with the result and sucessful run
     """
     status = {}
     params = ['Finished']
@@ -5420,8 +5430,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     """It inserts a list of event types to the db.
 
     :param list eventtypes it inserts a list of event types. For example: the list elements are the following:
-    {'EVTTYPEID': '12265021', 'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
-    'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
+
+      .. code-block:: python
+
+        {'EVTTYPEID': '12265021',
+         'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
+         'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
+
     :returns: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
     failed = []
@@ -5441,8 +5456,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     """It updates a list of event types which are exist in the db.
 
     :param list eventtypes it is a list of event types. For example: the list elements are the following:
-    {'EVTTYPEID': '12265021', 'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
-    'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
+
+      .. code-block:: python
+
+        {'EVTTYPEID': '12265021',
+         'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
+         'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
+
     :returns: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
     failed = []

@@ -16,11 +16,14 @@ For all above cases the following procedure should be used to achieve 100%:
 
 - Starting from the data in the Production DB for each transformation
   look for files in the following status:
-     Assigned
-     MaxReset
+
+    - Assigned
+    - MaxReset
+
   some of these will correspond to the final WMS status 'Failed'.
 
 For files in MaxReset and Assigned:
+
 - Discover corresponding job WMS ID
 - Check that there are no outstanding requests for the job
   o wait until all are treated before proceeding

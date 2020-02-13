@@ -8,19 +8,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
-# File: PopularityAgent.py
-########################################################################
-""" :mod: PopularityAgent
-    =====================
+"""
+:mod: PopularityAgent
 
-    .. module: PopularityAgent
-    :synopsis: The Popularity Agent creates reports about per LFC directory data usage.
+.. module: PopularityAgent
 
-    The Popularity Agent creates reports about per LFC directory data usage, based on the
-    StorageUsageDB/Popularity table. Then it creates an accounting record for each directory,
-    adding all the relevant directory metadata, obtained from the StorageUsageDB/DirMetadata table.
-    The accounting records are stored in the AccountingDB and then displayed via the web portal.
+:synopsis: The Popularity Agent creates reports about per LFC directory data usage.
+
+The Popularity Agent creates reports about per LFC directory data usage, based on the
+StorageUsageDB/Popularity table. Then it creates an accounting record for each directory,
+adding all the relevant directory metadata, obtained from the StorageUsageDB/DirMetadata table.
+The accounting records are stored in the AccountingDB and then displayed via the web portal.
 """
 # imports
 from datetime import datetime, timedelta
@@ -43,7 +41,6 @@ AGENT_NAME = "DataManagement/PopularityAgent"
 class PopularityAgent(AgentModule):
   """
   .. class:: PopularityAgent
-
   """
   # # DataUsageClient
   __dataUsageClient = None

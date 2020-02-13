@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: TransformationCleaningAgent
-    =================================
+"""
+:mod: TransformationCleaningAgent
 
-    .. module: TransformationCleaningAgent
-    :synopsis: clean up of finalised transformations
+.. module: TransformationCleaningAgent
+
+:synopsis: clean up of finalised transformations
 """
 
 __RCSID__ = "$Id$"

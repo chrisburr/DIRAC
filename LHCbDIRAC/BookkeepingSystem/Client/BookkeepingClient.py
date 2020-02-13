@@ -11,13 +11,16 @@
 """
 Whatever:
 
-  in_dict = {'EventTypeId': 93000000,
-          'ConfigVersion': 'Collision10',
-          'ProcessingPass': '/Real Data',
-          'ConfigName': 'LHCb',
-          'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
-          'Production':7421
-          }
+.. code-block:: python
+
+  in_dict = {
+    'EventTypeId': 93000000,
+    'ConfigVersion': 'Collision10',
+    'ProcessingPass': '/Real Data',
+    'ConfigName': 'LHCb',
+    'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
+    'Production':7421
+  }
 """
 
 import tempfile
@@ -64,9 +67,10 @@ class BookkeepingClient(Client):
   def getFilesWithMetadata(in_dict):
     """It is used for retrieving a files with meta data for a given condition.
 
-    :param dict in_dict: It can contains the following conditions:'ConfigName',
-    'ConfigVersion', 'ConditionDescription', 'EventType',
-    'ProcessingPass','Production','RunNumber', 'FileType', DataQuality, StartDate, EndDate
+    :param dict in_dict: It can contains the following conditions:
+      ``ConfigName``, ``ConfigVersion``, ``ConditionDescription``,
+      ``EventType``, ``ProcessingPass``,``Production``,``RunNumber``,
+      ``FileType``, ``DataQuality``, ``StartDate`` and ``EndDate``
     :return: files with meta data associated
     """
     in_dict = dict(in_dict)

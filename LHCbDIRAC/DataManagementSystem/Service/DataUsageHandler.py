@@ -8,14 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
-# File: DataUsageHandler.py
-########################################################################
-""" :mod: DataUsageHandler
-    ======================
+"""
+:mod: DataUsageHandler
 
-    .. module: DataUsageHandler
-    :synopsis: Implementation of the Data Usage service in the DISET framework.
+.. module: DataUsageHandler
+
+:synopsis: Implementation of the Data Usage service in the DISET framework.
 """
 # # imports
 # # from DIRAC

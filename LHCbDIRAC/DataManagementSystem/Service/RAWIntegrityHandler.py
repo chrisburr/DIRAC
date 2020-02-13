@@ -11,11 +11,12 @@
 ########################################################################
 # File: RAWIntegrityHandler.py
 ########################################################################
-""" :mod: RAWIntegrityHandler
-    =========================
+"""
+:mod: RAWIntegrityHandler
 
-    .. module: RAWIntegrityHandler
-    :synopsis: DISET interface to the RAWIntegrityDB.
+.. module: RAWIntegrityHandler
+
+:synopsis: DISET interface to the RAWIntegrityDB.
 """
 # imports
 from types import IntType, DictType, ListType, StringTypes

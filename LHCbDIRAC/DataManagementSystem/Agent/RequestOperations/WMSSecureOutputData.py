@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: ValidateRequest
-    ==================
+"""
+:mod: ValidateRequest
 
-    .. module: ValidateRequest
-    :synopsis: validateRequest operation handler
+.. module: ValidateRequest
+
+:synopsis: validateRequest operation handler
 """
 
 __RCSID__ = "$Id $"

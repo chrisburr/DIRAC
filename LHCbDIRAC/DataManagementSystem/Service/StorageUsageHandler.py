@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: StorageUsageHandler
-    =========================
+"""
+:mod: StorageUsageHandler
 
-    .. module: StorageUsageHandler
-    :synopsis: Implementation of the Storage Usage service in the DISET framework.
+.. module: StorageUsageHandler
+
+:synopsis: Implementation of the Storage Usage service in the DISET framework.
 """
 # imports
 # from DIRAC

@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: SEUsageAgent
-    ==================
+"""
+:mod: SEUsageAgent
 
-    .. module: SEUsageAgent
-    :synopsis: SEUsageAgent browses the SEs to determine their content and store it into a DB.
+.. module: SEUsageAgent
+
+:synopsis: SEUsageAgent browses the SEs to determine their content and store it into a DB.
 """
 # # imports
 import os

@@ -2315,8 +2315,9 @@ class BookkeepingManagerHandler(RequestHandler):
 
       .. code-block:: python
 
-        {'EVTTYPEID': '12265021', 'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
-        'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
+        {'EVTTYPEID': '12265021',
+         'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
+         'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
 
 
     :return: S_ERROR S_OK({'Failed':[],'Successful':[]})
@@ -2330,10 +2331,15 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_bulkupdateEventType(eventtypes):
     """It updates a list of event types which are exist in the db.
 
-    :param list eventtypes it is a list of event types. For example: the list elements are the following:
-    {'EVTTYPEID': '12265021', 'DESCRIPTION':
-    'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV', 'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
-    :return S_ERROR S_OK({'Failed':[],'Successful':[]})
+    :param list eventtypes: it is a list of event types. For example: the list elements are the following:
+
+      .. code-block:: python
+
+      {'EVTTYPEID': '12265021',
+      'DESCRIPTION': 'Bu_D0pipipi,Kpi-withf2=DecProdCut_pCut1600MeV',
+      'PRIMARY': '[B+ -> (D~0 -> K+ pi-) pi+ pi- pi+]cc'}
+
+    :return: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
     return dataMGMT_.bulkupdateEventType(eventtypes)
 

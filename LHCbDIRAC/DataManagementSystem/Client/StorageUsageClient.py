@@ -8,12 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""
+:mod: StorageUsageClient
 
-""" :mod: StorageUsageClient
-    ========================
+.. module: StorageUsageClient
 
-    .. module: StorageUsageClient
-    :synopsis: Lightweight possbile client to the StorageUsageDB.
+:synopsis: Lightweight possbile client to the StorageUsageDB.
 """
 
 __RCSID__ = "$Id$"

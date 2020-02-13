@@ -27,4 +27,5 @@ This page is the work in progress. See more material here soon !
    LHCbWebApp/index.rst
    Elasticsearch/esdocs.rst
    install
-   CommandReference/index
+   CommandReference/Admin/index.rst
+   Configuration/ExampleConfig.rst

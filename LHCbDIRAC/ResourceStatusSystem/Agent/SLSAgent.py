@@ -10,31 +10,36 @@
 ###############################################################################
 """LHCbDIRAC.ResourceStatusSystem.Agent.SLSAgent.
 
-    This agent creates XML files with SE space left,
-    that will be picked up by a cron job that will add to meter.cern.ch
+This agent creates XML files with SE space left,
+that will be picked up by a cron job that will add to meter.cern.ch
 
-    What's collected here will enter in https://meter.cern.ch/public/_plugin/kibana/#/dashboard/temp/meter::lhcb
-    by using this cronjob:
+What's collected here will enter in https://meter.cern.ch/public/_plugin/kibana/#/dashboard/temp/meter::lhcb
+by using this cronjob:
 
-# Puppet Name: Send SLS Info
-10 * * * * /opt/dirac/webRoot/www/send_sls_info.csh
+.. code-block:: none
 
-[dirac@lbvobox108 pro]$ more /opt/dirac/webRoot/www/send_sls_info.csh
-#!/bin/csh
-echo "CURL"
-foreach i (`ls /opt/dirac/webRoot/www/sls/dirac_services/*`)
-  echo $i
-  /usr/bin/curl -F file=@${i} xsls.cern.ch
-end
-foreach i (`ls /opt/dirac/webRoot/www/sls/log_se/*`)
-  echo $i
-  /usr/bin/curl -F file=@$i xsls.cern.ch
-end
-foreach i (`ls /opt/dirac/webRoot/www/sls/storage_space/*`)
-  echo $i
-  /usr/bin/curl -F file=@$i xsls.cern.ch
-end
-exit
+  # Puppet Name: Send SLS Info
+  10 * * * * /opt/dirac/webRoot/www/send_sls_info.csh
+
+.. code-block:: none
+
+  [dirac@lbvobox108 pro]$ more /opt/dirac/webRoot/www/send_sls_info.csh
+  #!/bin/csh
+  echo "CURL"
+  foreach i (`ls /opt/dirac/webRoot/www/sls/dirac_services/*`)
+    echo $i
+    /usr/bin/curl -F file=@${i} xsls.cern.ch
+  end
+  foreach i (`ls /opt/dirac/webRoot/www/sls/log_se/*`)
+    echo $i
+    /usr/bin/curl -F file=@$i xsls.cern.ch
+  end
+  foreach i (`ls /opt/dirac/webRoot/www/sls/storage_space/*`)
+    echo $i
+    /usr/bin/curl -F file=@$i xsls.cern.ch
+  end
+  exit
+
 """
 
 # TODO: SLSAgent is not anymore the right name

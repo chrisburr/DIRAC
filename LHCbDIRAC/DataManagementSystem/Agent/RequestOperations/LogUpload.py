@@ -8,13 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: LogUpload
-    ====================
+"""
+:mod: LogUpload
 
-    .. module: LogUpload
-    :synopsis: logUpload operation handler
+.. module: LogUpload
 
-    LogUpload operation handler
+:synopsis: logUpload operation handler
+
+LogUpload operation handler
 """
 
 # # imports

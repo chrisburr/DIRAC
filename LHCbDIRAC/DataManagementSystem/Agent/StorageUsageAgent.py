@@ -8,15 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-#####################################################################
-# File: StorageUsageAgent.py
-########################################################################
-''' :mod: StorageUsageAgent
-    =======================
+'''
+:mod: StorageUsageAgent
 
-    .. module: StorageUsageAgent
-    :synopsis: StorageUsageAgent takes the FC as the primary source of information to
-    determine storage usage.
+.. module: StorageUsageAgent
+
+:synopsis: StorageUsageAgent takes the FC as the primary source of information to
+  determine storage usage.
 '''
 # # imports
 import time

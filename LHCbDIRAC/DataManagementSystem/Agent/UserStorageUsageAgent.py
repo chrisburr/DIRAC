@@ -8,12 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: UserStorageUsageAgent
-    ===========================
+"""
+:mod: UserStorageUsageAgent
 
-    .. module: UserStorageUsageAgent
-    :synopsis: UserStorageUsageAgent simply inherits the StorageUsage agent
-    and loops over the /lhcb/user directory, removing empty ones.
+.. module: UserStorageUsageAgent
+
+:synopsis: UserStorageUsageAgent simply inherits the StorageUsage agent
+  and loops over the /lhcb/user directory, removing empty ones.
 """
 
 # # imports

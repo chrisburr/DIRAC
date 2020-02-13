@@ -8,14 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-#####################################################################
-# File: StorageUsageDB.py
-########################################################################
-""" :mod: StorageUsageDB
-    ====================
+"""
+:mod: StorageUsageDB
 
-    .. module: StorageUsageDB
-    :synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
+.. module: StorageUsageDB
+
+:synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
 """
 
 # # from DIRAC

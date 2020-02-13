@@ -144,44 +144,52 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkQueryRunsByDate(self, bkPath, startDate, endDate, dqFlag='All', selection='Runs'):
-    """This function allows to create and perform a BK query given a supplied
-    BK path. The following BK path convention is expected:
+    """This function allows to create and perform a BK query given a supplied BK path
 
-        /<ConfigurationName>/<Configuration Version>/<Condition Description><Processing Pass>/<Event Type>/<File Type>
+    The following BK path convention is expected:
 
-        so an example for 2016 collisions data would be:
+    .. code-block:: none
 
-        /LHCb/Collision09//LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real Data/Reco16/Stripping26/90000000/EW.DST
+      /<ConfigurationName>/<Configuration Version>/<Condition Description><Processing Pass>/<Event Type>/<File Type>
 
-        The startDate and endDate must be specified as yyyy-mm-dd.
+    so an example for 2016 collisions data would be:
 
-        Runs can be selected based on their status e.g. the selection parameter
-        has the following possible attributes:
-         - Runs - data for all runs in the range are queried (default)
-         - ProcessedRuns - data is retrieved for runs that are processed
-         - NotProcessed - data is retrieved for runs that are not yet processed.
+    .. code-block:: none
 
-       Example Usage:
+      /LHCb/Collision09//LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real Data/Reco16/Stripping26/90000000/EW.DST
 
-       >>> dirac.bkQueryRunsByDate('/LHCb/Collision16//Real Data/90000000/RAW',
-                                   '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
-       {'OK': True, 'Value': [<LFN1>,<LFN2>]}
+    The startDate and endDate must be specified as yyyy-mm-dd.
 
-      dirac.bkQueryRunsByDate('/LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real'
-                              'Data/Reco16/Stripping26/90000000/EW.DST',
-                              '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
+    Runs can be selected based on their status e.g. the selection parameter
+    has the following possible attributes:
 
-       @param bkPath: BK path as described above
-       @type bkPath: string
-       @param dqFlag: Optional Data Quality flag
-       @type dqFlag: string
-       @param startDate: Start date  yyyy-mm-dd
-       @param startDate: string
-       @param endDate: End date  yyyy-mm-dd
-       @param endDate: string
-       @param selection: Either Runs, ProcessedRuns or NotProcessed
-       @param selection: string
-       @return: S_OK,S_ERROR
+     - Runs - data for all runs in the range are queried (default)
+     - ProcessedRuns - data is retrieved for runs that are processed
+     - NotProcessed - data is retrieved for runs that are not yet processed.
+
+    Example Usage:
+
+    .. code-block:: python
+
+      >>> dirac.bkQueryRunsByDate('/LHCb/Collision16//Real Data/90000000/RAW',
+                                  '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
+      {'OK': True, 'Value': [<LFN1>,<LFN2>]}
+
+      >>> dirac.bkQueryRunsByDate('/LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real'
+                                  'Data/Reco16/Stripping26/90000000/EW.DST',
+                                  '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
+
+    @param bkPath: BK path as described above
+    @type bkPath: string
+    @param dqFlag: Optional Data Quality flag
+    @type dqFlag: string
+    @param startDate: Start date  yyyy-mm-dd
+    @param startDate: string
+    @param endDate: End date  yyyy-mm-dd
+    @param endDate: string
+    @param selection: Either Runs, ProcessedRuns or NotProcessed
+    @param selection: string
+    @return: S_OK,S_ERROR
     """
     runSelection = ['Runs', 'ProcessedRuns', 'NotProcessed']
     if selection not in runSelection:

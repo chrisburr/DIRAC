@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: DataUsageClient
-    =====================
+"""
+:mod: DataUsageClient
 
-    .. module: DataUsageClient
-    :synopsis: Class that contains client access to the StorageUsageDB handler.
+.. module: DataUsageClient
+
+:synopsis: Class that contains client access to the StorageUsageDB handler.
 """
 
 # # imports

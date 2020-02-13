@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: RunDBInterfaceHandler
-    ===========================
+"""
+:mod: RunDBInterfaceHandler
 
-    .. module: RunDBInterfaceHandler
-    :synopsis: DISET request handler base class for the DatasetDB
+.. module: RunDBInterfaceHandler
+
+:synopsis: DISET request handler base class for the DatasetDB
 """
 # imports
 import os

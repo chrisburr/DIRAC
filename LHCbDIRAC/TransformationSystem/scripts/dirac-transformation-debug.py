@@ -50,7 +50,7 @@ if __name__ == "__main__":
   Script.registerSwitch('v', 'Verbose', '')
   Script.setUsageMessage('\n'.join([__doc__,
                                     'Usage:',
-                                    'dirac-transformation-debug [options] transID[,transID2[,transID3[,...]]]']))
+                                    '  dirac-transformation-debug [options] transID[,transID2[,transID3[,...]]]']))
 
   Script.parseCommandLine(ignoreErrors=True)
 

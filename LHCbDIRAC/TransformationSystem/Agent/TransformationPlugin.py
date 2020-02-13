@@ -103,9 +103,10 @@ class TransformationPlugin(DIRACTransformationPlugin):
   def setTransformationFiles(self, files):
     """
     self.transFiles are all the Unused files for that transformation
-    It is a list of dictionaries, of which lfn = fileDict['LFN']
-    Keys are: ['ErrorCount', 'FileID', 'InsertedTime', 'LFN', 'LastUpdate',
-              'RunNumber', 'Status', 'TargetSE', 'TaskID', 'TransformationID', 'UsedSE']
+    It is a list of dictionaries, of which ``lfn = fileDict['LFN']``
+
+    Keys are: ``ErrorCount``, ``FileID``, ``InsertedTime``, ``LFN``, ``LastUpdate``,
+      ``RunNumber``, ``Status``, ``TargetSE``, ``TaskID``, ``TransformationID`` and ``UsedSE``
     """
     # files is a synonym, as used in DIRAC
     self.transFiles = [fileDict for fileDict in files]

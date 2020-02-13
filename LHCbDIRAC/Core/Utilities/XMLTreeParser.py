@@ -126,15 +126,14 @@ class XMLTreeParser(object):
 
 def addChildNode(parentNode, tag, returnChildren, args):
   """
-  Params
-    :parentNode:
-      node where the new node is going to be appended
-    :tag:
-      name if the XML element to be created
-    :returnChildren:
-      flag to return or not the children node, used to avoid unused variables
-    :*args:
-      possible attributes of the element
+  :param parentNode:
+    node where the new node is going to be appended
+  :param tag:
+    name if the XML element to be created
+  :param returnChildren:
+    flag to return or not the children node, used to avoid unused variables
+  :param args:
+    possible attributes of the element
   """
 
   allowedTags = ['Job', 'TypedParameter', 'InputFile', 'OutputFile', 'Parameter', 'Replica', 'SimulationCondition']

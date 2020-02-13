@@ -10,8 +10,8 @@
 ###############################################################################
 """LHCbDIRAC.ResourceStatusSystem.Agent.NagiosTopologyAgent.
 
-NagiosTopologyAgent.__bases__:
-  DIRAC.Core.Base.AgentModule.AgentModule
+NagiosTopologyAgent.__bases__: DIRAC.Core.Base.AgentModule.AgentModule
+
 xml_append
 """
 

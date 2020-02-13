@@ -74,18 +74,17 @@ TABLE_STYLE_THINBORDER = "border: 1px solid #000000; border-collapse: collapse;"
 class TableCell ( object ):
   """a TableCell object is used to create a cell in a HTML table. (TD or TH)
 
-  Attributes:
-  - text: text in the cell (may contain HTML tags). May be any object which
-          can be converted to a string using str().
-  - header: bool, false for a normal data cell (TD), true for a header cell (TH)
-  - bgcolor: str, background color
-  - width: str, width
-  - align: str, horizontal alignement (left, center, right, justify or char)
-  - char: str, alignment character, decimal point if not specified
-  - charoff: str, see HTML specs
-  - valign: str, vertical alignment (top|middle|bottom|baseline)
-  - style: str, CSS style
-  - attribs: dict, additional attributes for the TD/TH tag
+  :param text: text in the cell (may contain HTML tags). May be any object which
+    can be converted to a string using str().
+  :param header: bool, false for a normal data cell (TD), true for a header cell (TH)
+  :param bgcolor: str, background color
+  :param width: str, width
+  :param align: str, horizontal alignement (left, center, right, justify or char)
+  :param char: str, alignment character, decimal point if not specified
+  :param charoff: str, see HTML specs
+  :param valign: str, vertical alignment (top|middle|bottom|baseline)
+  :param style: str, CSS style
+  :param attribs: dict, additional attributes for the TD/TH tag
 
   Reference: http://www.w3.org/TR/html4/struct/tables.html#h-11.2.6
   """
@@ -141,13 +140,12 @@ class TableCell ( object ):
 class TableRow ( object ):
   """a TableRow object is used to create a row in a HTML table. (TR tag)
 
-  Attributes:
-  - cells: list, tuple or any iterable, containing one string or TableCell
-           object for each cell
-  - header: bool, true for a header row (TH), false for a normal data row (TD)
-  - bgcolor: str, background color
-  - col_align, col_valign, col_char, col_charoff, col_styles: see Table class
-  - attribs: dict, additional attributes for the TR tag
+  :param cells: list, tuple or any iterable, containing one string or TableCell
+    object for each cell
+  :param header: bool, true for a header row (TH), false for a normal data row (TD)
+  :param bgcolor: str, background color
+  :param col_align, col_valign, col_char, col_charoff, col_styles: see Table class
+  :param attribs: dict, additional attributes for the TR tag
 
   Reference: http://www.w3.org/TR/html4/struct/tables.html#h-11.2.5
   """
@@ -201,20 +199,19 @@ class TableRow ( object ):
 class Table ( object ):
   """a Table object is used to create a HTML table. (TABLE tag)
 
-  Attributes:
-  - rows: list, tuple or any iterable, containing one iterable or TableRow
-          object for each row
-  - header_row: list, tuple or any iterable, containing the header row (optional)
-  - border: str or int, border width
-  - style: str, table style in CSS syntax (thin black borders by default)
-  - width: str, width of the table on the page
-  - attribs: dict, additional attributes for the TABLE tag
-  - col_width: list or tuple defining width for each column
-  - col_align: list or tuple defining horizontal alignment for each column
-  - col_char: list or tuple defining alignment character for each column
-  - col_charoff: list or tuple defining charoff attribute for each column
-  - col_valign: list or tuple defining vertical alignment for each column
-  - col_styles: list or tuple of HTML styles for each column
+  :param rows: list, tuple or any iterable, containing one iterable or TableRow
+    object for each row
+  :param header_row: list, tuple or any iterable, containing the header row (optional)
+  :param border: str or int, border width
+  :param style: str, table style in CSS syntax (thin black borders by default)
+  :param width: str, width of the table on the page
+  :param attribs: dict, additional attributes for the TABLE tag
+  :param col_width: list or tuple defining width for each column
+  :param col_align: list or tuple defining horizontal alignment for each column
+  :param col_char: list or tuple defining alignment character for each column
+  :param col_charoff: list or tuple defining charoff attribute for each column
+  :param col_valign: list or tuple defining vertical alignment for each column
+  :param col_styles: list or tuple of HTML styles for each column
 
   Reference: http://www.w3.org/TR/html4/struct/tables.html#h-11.2.1
   """

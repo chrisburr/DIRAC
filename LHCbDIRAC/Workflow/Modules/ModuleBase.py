@@ -742,13 +742,17 @@ class ModuleBase(object):
     """Returns the candidate file dictionary with associated metadata.
 
     The input candidate files dictionary has the structure:
-    {'foo_1.txt': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/foo_1.txt',
-                   'type': 'txt',
-                   'workflowSE': SE1},
-    'bar_2.py': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/bar_2.py',
-                 'type': 'py',
-                 'workflowSE': 'SE2'},
-    }
+
+    .. code-block:: python
+
+      {
+        'foo_1.txt': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/foo_1.txt',
+                      'type': 'txt',
+                      'workflowSE': SE1},
+        'bar_2.py': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/bar_2.py',
+                     'type': 'py',
+                     'workflowSE': 'SE2'},
+      }
 
     this also assumes the files are in the current working directory.
     """

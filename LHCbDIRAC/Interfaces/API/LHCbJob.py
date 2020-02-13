@@ -727,20 +727,22 @@ class LHCbJob(Job):
   def setOutputData(self, lfns, OutputSE=None, OutputPath=None, replicate=None, filePrepend=None):
     """Helper function, used in preference to Job.setOutputData() for LHCb.
 
-       For specifying user output data to be registered in Grid storage.
+    For specifying user output data to be registered in Grid storage.
 
-       Example usage:
+    Example usage:
 
-       >>> job = Job()
-       >>> job.setOutputData(['DVNtuple.root'])
+    .. code-block:: python
 
-       :param lfns: Output data file or files
-       :type lfns: Single string or list of strings ['','']
-       :param OutputSE: Optional parameter to specify the Storage
-       :param OutputPath: Optional parameter to specify the Path in the Storage
-       Element to store data or files, e.g. CERN-tape
-       :type OutputSE: string or list
-       :type OutputPath: string
+      >>> job = Job()
+      >>> job.setOutputData(['DVNtuple.root'])
+
+    :param lfns: Output data file or files
+    :type lfns: Single string or list of strings ['','']
+    :param OutputSE: Optional parameter to specify the Storage
+    :param OutputPath: Optional parameter to specify the Path in the Storage
+      Element to store data or files, e.g. CERN-tape
+    :type OutputSE: string or list
+    :type OutputPath: string
     """
     # FIXME: the output data as specified here will be treated by the UserJobFinalization module
     # If we remove this method (which is totally similar to the Job() one, the output data will be

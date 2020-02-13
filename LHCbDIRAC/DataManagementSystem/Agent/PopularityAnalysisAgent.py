@@ -8,13 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: PopularityAnalysisAgent
-    =====================
+"""
+:mod: PopularityAnalysisAgent
 
-    .. module: PopularityAnalysisAgent
-    :synopsis: The PopularityAnalysis Agent generates the popularity CSV file, sends it for analysis to the
-               Yandex data popularity service, and sends the result by email
+.. module: PopularityAnalysisAgent
 
+:synopsis: The PopularityAnalysis Agent generates the popularity CSV file, sends it for analysis to the
+           Yandex data popularity service, and sends the result by email
 """
 # imports
 import os
@@ -44,7 +44,6 @@ class FakeException( Exception ):
 class PopularityAnalysisAgent( AgentModule ):
   """
   .. class:: PopularityAnalysisAgent
-
   """
 
   def __init__( self, *args, **kwargs ):

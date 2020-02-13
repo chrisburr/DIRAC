@@ -12,15 +12,17 @@
 """Check if the files are in the BK, the FC and the SEs they are supposed to be
 in.
 
-Uses the DM script switches, and, unless a list of LFNs is provided:
-1) If --Directory is used: get files in FC directories
-2) If --Production or --BK options is used get files in the FC directories from the BK
+Uses the DM script switches, and, unless a list of LFNs is provided
 
-If --FixIt is set, takes actions:
-  Missing files: remove from SE and FC
-  No replica flag: set it (in the BK)
-  Not existing in SE: remove replica or file from the catalog
-  Bad checksum: remove replica or file from SE and catalogs if no good replica
+1. If --Directory is used: get files in FC directories
+2. If --Production or --BK options is used get files in the FC directories from the BK
+
+If --FixIt is set, takes actions
+
+- Missing files: remove from SE and FC
+- No replica flag: set it (in the BK)
+- Not existing in SE: remove replica or file from the catalog
+- Bad checksum: remove replica or file from SE and catalogs if no good replica
 """
 __RCSID__ = "$Id$"
 

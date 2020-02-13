@@ -8,12 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod:  WorkflowTaskAgent
-    ========================
+"""
+:mod:  WorkflowTaskAgent
 
-  .. module:  WorkflowTaskAgent
-  :synopsis:  Extension of the DIRAC WorkflowTaskAgent, to use LHCb clients.
+.. module:  WorkflowTaskAgent
 
+:synopsis:  Extension of the DIRAC WorkflowTaskAgent, to use LHCb clients.
 """
 
 __RCSID__ = "$Id$"

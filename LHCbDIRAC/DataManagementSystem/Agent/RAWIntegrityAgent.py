@@ -11,11 +11,12 @@
 ########################################################################
 # File: RAWIntegrityAgent.py
 ########################################################################
-""" :mod: RAWIntegrityAgent
-    =======================
+"""
+:mod: RAWIntegrityAgent
 
-    .. module: RAWIntegrityAgent
-    :synopsis: RAWIntegrityAgent determines whether RAW files in CASTOR were migrated correctly.
+.. module: RAWIntegrityAgent
+
+:synopsis: RAWIntegrityAgent determines whether RAW files in CASTOR were migrated correctly.
 """
 # # imports
 import datetime

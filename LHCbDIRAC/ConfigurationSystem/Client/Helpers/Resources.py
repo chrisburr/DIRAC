@@ -58,16 +58,28 @@ def getPlatformForJob(workflow):
   ("binary tag"), then translates it in a DIRAC platform.
 
   A binary tag is in the form of
+
+  .. code-block:: none
+
     arch+microarch-osversion-gccversion-opt
+
   e.g.: x86_64+avx2+fma-centos7-gcc7-opt, x86_64-slc6-gcc49-opt
 
   We want to know what the worklow (the job) requires, so we need to "compose" the requested config
   and then get the minimum DIRAC platform that can run it.
   If, for example, the step1 and step2 respectively requires
+
+  .. code-block:: none
+
     x86_64+avx2+fma-slc6-gcc7-opt
     x86_64-centos7-gcc62-opt
+
   then we conclude that to run this job we need
+
+  .. code-block:: none
+
     x86_64+avx2+fma-centos7-gcc7-opt
+
   and so the DIRAC platform x86_64-centos7.avx2+fma
 
   :returns: a DIRAC platform (a string) or None

@@ -8,12 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: UserStorageQuotaAgent
-    ===========================
+"""
+:mod: UserStorageQuotaAgent
 
-    .. module: UserStorageQuotaAgent
-    :synopsis: UserStorageQuotaAgent obtains the usage by each user from the StorageUsageDB
-    and compares with a quota present in the CS.
+.. module: UserStorageQuotaAgent
+
+:synopsis: UserStorageQuotaAgent obtains the usage by each user from the StorageUsageDB
+  and compares with a quota present in the CS.
 """
 
 from DIRAC import gConfig, S_OK
@@ -31,7 +32,7 @@ class UserStorageQuotaAgent( AgentModule ):
 
   :param int deafultQuota: default quota in MB
   :param NotificationClient notificationClient: NotificationClient instance
-  :param StorageUsageDB storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
+  :param LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB.StorageUsageDB storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
   """
 
   defaultQuota = 1000

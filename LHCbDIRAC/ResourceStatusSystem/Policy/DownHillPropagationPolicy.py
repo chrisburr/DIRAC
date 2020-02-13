@@ -39,10 +39,13 @@ class DownHillPropagationPolicy( PolicyBase ):
     status is propagated only when one of the two status is 'Banned'.
 
     :returns:
-        {
-          `Status`:Error|Unknown|Active|Probing|Banned,
-          `Reason`:'Node/Site status: Active|Probing|Banned'
-        }
+
+    .. code-block:: python
+
+      {
+        'Status': Error|Unknown|Active|Probing|Banned,
+        'Reason': 'Node/Site status: Active|Probing|Banned'
+      }
     """
 
     commandResult = super( DownHillPropagationPolicy, self ).evaluate()
