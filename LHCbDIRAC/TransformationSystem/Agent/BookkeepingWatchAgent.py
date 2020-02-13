@@ -8,11 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" This LHCbDIRAC agent takes BkQueries from the TranformationDB,
-    and issue a query to the BKK, for populating a table in the Transformation DB,
-    with all the files in input to a transformation.
+"""This LHCbDIRAC agent takes BkQueries from the TranformationDB, and issue a
+query to the BKK, for populating a table in the Transformation DB, with all the
+files in input to a transformation.
 
-    A pickle file is used as a cache.
+A pickle file is used as a cache.
 """
 
 import os
@@ -40,12 +40,13 @@ gSynchro = Synchronizer()
 
 
 class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
-  """ LHCbDIRAC only agent. A threaded agent.
+  """LHCbDIRAC only agent.
+
+  A threaded agent.
   """
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     AgentModule.__init__(self, *args, **kwargs)
     TransformationAgentsUtilities.__init__(self)
 
@@ -77,8 +78,10 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     self.bkClient = None
 
   def initialize(self):
-    """ Make the necessary initializations.
-        The ThreadPool is created here, the _execute() method is what each thread will execute.
+    """Make the necessary initializations.
+
+    The ThreadPool is created here, the _execute() method is what each
+    thread will execute.
     """
 
     self.fullUpdatePeriod = self.am_getOption('FullUpdatePeriod', self.fullUpdatePeriod)
@@ -121,8 +124,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
 
   @gSynchro
   def __dumpLog(self):
-    """ dump the log in the pickle file
-    """
+    """dump the log in the pickle file."""
     if self.pickleFile:
       try:
         with open(self.pickleFile, 'w') as pf:
@@ -140,7 +142,9 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
   ################################################################################
 
   def execute(self):
-    """ Main execution method. Just fills a list, and a queue, with BKKQueries ID.
+    """Main execution method.
+
+    Just fills a list, and a queue, with BKKQueries ID.
     """
 
     gMonitor.addMark('Iteration', 1)
@@ -171,7 +175,9 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     return S_OK()
 
   def _execute(self, threadID):
-    """ Real executor. This is what is executed by the single threads - so do not return here! Just continue
+    """Real executor.
+
+    This is what is executed by the single threads - so do not return here! Just continue
     """
 
     while True:  # not self.bkQueriesToBeChecked.empty():
@@ -301,8 +307,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
 
   @gSynchro
   def __timeStampForTransformation(self, transID, bkQuery, now):
-    """ Determine the correct time stamp to use for this transformation
-    """
+    """Determine the correct time stamp to use for this transformation."""
 
     fullTimeLog = self.fullTimeLog.setdefault(transID, now)
     bkQueryLog = self.bkQueries.setdefault(transID, {})
@@ -320,8 +325,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
       self.fullTimeLog[transID] = now
 
   def __getFiles(self, transID, bkQuery, now):
-    """ Perform the query to the Bookkeeping
-    """
+    """Perform the query to the Bookkeeping."""
     self._logInfo("Using BK query for transformation: %s" % str(bkQuery), transID=transID)
     start = time.time()
     result = self.bkClient.getFiles(bkQuery)
@@ -336,14 +340,11 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
 
   @gSynchro
   def __updateTimeStamp(self, transID, now):
-    """
-    Update time stamp for current transformation to now
-    """
+    """Update time stamp for current transformation to now."""
     self.timeLog[transID] = now
 
   def __addRunsMetadata(self, transID, runsList):
-    """ Add the run metadata
-    """
+    """Add the run metadata."""
     runsInCache = self.transClient.getRunsInCache({'Name': ['TCK', 'CondDb', 'DDDB']})
     if not runsInCache['OK']:
       raise RuntimeError(runsInCache['Message'])
@@ -376,8 +377,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
             raise RuntimeError(res['Message'])
 
   def finalize(self):
-    """ Gracious finalization
-    """
+    """Gracious finalization."""
     if self.bkQueriesInCheck:
       self._logInfo("Wait for queue to get empty before terminating the agent (%d tasks)" % len(self.transInThread))
       self.bkQueriesInCheck = []

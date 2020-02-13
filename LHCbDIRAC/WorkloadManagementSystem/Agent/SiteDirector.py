@@ -8,7 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Extension of DIRAC SiteDirector. Simply defines what to send.
+"""Extension of DIRAC SiteDirector.
+
+Simply defines what to send.
 """
 
 __RCSID__ = "$Id$"
@@ -18,12 +20,11 @@ from DIRAC.WorkloadManagementSystem.Agent.SiteDirector import SiteDirector as DI
 
 
 class SiteDirector(DIRACSiteDirector):
-  """ Simple extension of the DIRAC site director to send LHCb specific pilots (with a custom list of commands)
-  """
+  """Simple extension of the DIRAC site director to send LHCb specific pilots
+  (with a custom list of commands)"""
 
   def beginExecution(self):
-    """ just simple redefinition
-    """
+    """just simple redefinition."""
     res = DIRACSiteDirector.beginExecution(self)
     if not res['OK']:
       return res
@@ -33,8 +34,7 @@ class SiteDirector(DIRACSiteDirector):
     return S_OK()
 
   def _getPilotOptions(self, queue, pilotsToSubmit):
-    """ Adding LHCb specific options
-    """
+    """Adding LHCb specific options."""
     pilotOptions, newPilotsToSubmit = DIRACSiteDirector._getPilotOptions(self, queue, pilotsToSubmit)
 
     if self.lbRunOnly:

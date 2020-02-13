@@ -8,21 +8,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-A database wrapper for ElasticDB to insert data into elasticsearch from Gauss & Boole simulations
-"""
+"""A database wrapper for ElasticDB to insert data into elasticsearch from
+Gauss & Boole simulations."""
 
 from DIRAC import S_OK
 from DIRAC.Core.Base.ElasticDB import ElasticDB
 
 
 class MCStatsElasticDB(ElasticDB):
-  """ Exposes interface to Elastic DB index lhcb-mcstatsdb
-  """
+  """Exposes interface to Elastic DB index lhcb-mcstatsdb."""
 
   def __init__(self):
-    """ Simple constructor, just initialize MCStatsElasticDB
-    """
+    """Simple constructor, just initialize MCStatsElasticDB."""
 
     super(MCStatsElasticDB, self).__init__('MCStatsElasticDB', 'ProductionManagement/MCStatsElasticDB')
 
@@ -54,8 +51,7 @@ class MCStatsElasticDB(ElasticDB):
     # }
 
   def set(self, indexName, typeName, data):
-    """
-    Inserts data into specified index using data given in argument
+    """Inserts data into specified index using data given in argument.
 
     :param str indexName: the name of the index in ELasticSearch
     :param str typeName: The type in the index in ElasticSearch
@@ -70,8 +66,7 @@ class MCStatsElasticDB(ElasticDB):
     return result
 
   def get(self, indexName, jobID):
-    """
-    Retrieves data given a specific WMS JobID
+    """Retrieves data given a specific WMS JobID.
 
     :param str indexName: the name of the index in ELasticSearch
     :param int JobID: The WMS JobID of the data in elasticsearch
@@ -105,8 +100,7 @@ class MCStatsElasticDB(ElasticDB):
     return S_OK(resultDict)
 
   def remove(self, indexName, jobID):
-    """
-    Removes data given a specific WMS JobID
+    """Removes data given a specific WMS JobID.
 
     :param str indexName: the name of the index in ELasticSearch
     :param int JobID: The JobID of the data in elasticsearch

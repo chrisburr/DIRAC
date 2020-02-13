@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Just couple utilities
-"""
+"""Just couple utilities."""
 
 import os
 import sqlite3
@@ -22,8 +21,7 @@ __RCSID__ = "$Id$"
 
 
 def _getMemberMails(group):
-  """ get members mails
-  """
+  """get members mails."""
   members = getUsersInGroup(group)
   if members:
     emails = []
@@ -76,8 +74,7 @@ def _aggregate(reqId, reqType, reqWG, reqName, SimCondition, ProPath, groups, in
 
 
 def informPeople(rec, oldstate, state, author, inform):
-  """ inform utility
-  """
+  """inform utility."""
 
   if not state or state == 'New':
     return  # was no state change or resurrect

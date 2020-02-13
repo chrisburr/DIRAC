@@ -24,14 +24,13 @@ from DIRAC.FrameworkSystem.Client.MonitoringClient import gMonitor
 from DIRAC.DataManagementSystem.Agent.RequestOperations.DMSRequestOperationsBase import DMSRequestOperationsBase
 
 class LogUpload( DMSRequestOperationsBase ):
-  """
-  .. class:: LogUpload
+  """.. class:: LogUpload.
 
   LogUpload operation handler
   """
 
   def __init__( self, operation = None, csPath = None ):
-    """c'tor
+    """c'tor.
 
     :param self: self reference
     :param Operation operation: Operation instance
@@ -49,7 +48,7 @@ class LogUpload( DMSRequestOperationsBase ):
     self.workDirectory = os.environ.get( 'LOGUPLOAD_CACHE', os.environ.get( 'AGENT_WORKDIRECTORY', '/tmp/LogUpload' ) )
 
   def __call__( self ):
-    """ LogUpload operation processing """
+    """LogUpload operation processing."""
     # # list of targetSEs
 
     if len( self.operation.targetSEList ) != 1:

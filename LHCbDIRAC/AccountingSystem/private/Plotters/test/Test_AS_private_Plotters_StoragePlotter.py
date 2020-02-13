@@ -8,18 +8,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-  Unittest for:
-    LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter
+"""Unittest for: LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter.
 
-  StoragePlotter.__bases__:
-    DIRAC.AccountingSystem.private.Plotters.BaseReporter
+StoragePlotter.__bases__:
+  DIRAC.AccountingSystem.private.Plotters.BaseReporter
 
-  We are assuming there is a solid test of __bases__, we are not testing them
-  here and assuming they work fine.
+We are assuming there is a solid test of __bases__, we are not testing them
+here and assuming they work fine.
 
-  IMPORTANT: the test MUST be pylint compliant !
-'''
+IMPORTANT: the test MUST be pylint compliant !
+"""
 
 #pylint: disable=protected-access
 
@@ -31,17 +29,13 @@ import mock
 #...............................................................................
 
 class StoragePlotterTestCase( unittest.TestCase ):
-  '''
-    StoragePlotterTestCase
-  '''
+  """StoragePlotterTestCase."""
 
   moduleTested = None
   classsTested = None
 
   def mockModuleTested( self, moduleTested ):
-    '''
-      Used to not redo the mocking done on the parent class ( if any )
-    '''
+    """Used to not redo the mocking done on the parent class ( if any )"""
 
     # Tries to get the mocks of the parent TestCases ( if any )
     for baseClass in self.__class__.__bases__:
@@ -61,9 +55,7 @@ class StoragePlotterTestCase( unittest.TestCase ):
     return moduleTested
 
   def setUp( self ):
-    '''
-      Setup the test case
-    '''
+    """Setup the test case."""
 
     import LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter as moduleTested
 
@@ -71,9 +63,7 @@ class StoragePlotterTestCase( unittest.TestCase ):
     self.classsTested = self.moduleTested.StoragePlotter
 
   def tearDown( self ):
-    '''
-      Tear down the test case
-    '''
+    """Tear down the test case."""
 
     del self.moduleTested
     del self.classsTested
@@ -81,29 +71,29 @@ class StoragePlotterTestCase( unittest.TestCase ):
 #...............................................................................
 
 class StoragePlotterUnitTest( StoragePlotterTestCase ):
-  '''
-    DataStoragePlotterUnitTest
-    <constructor>
-     - test_instantiate
-    <class variables>
-     - test_typeName
-     - test_typeKeyFields
-     - test_reportCatalogSpaceName
-     - test_reportCatalogFilesName
-     - test_reportPhysicalSpaceName
-     - test_reportPhysicalFilesName
-     - test_reportPFNvsLFNFileMultiplicityName
-     - test_reportPFNvsLFNSizeMultiplicityName
-    <methods>
-     - test_reportCatalogSpace
-     - test_plotCatalogSpace
-     - test_reportCatalogFiles
-     - test_plotCatalogFiles
-     - test_reportPhysicalSpace
-     - test_plotPhysicalSpace
-     - test_reportPhysicalFiles
-     - test_plotPhysicalFiles
-  '''
+  """DataStoragePlotterUnitTest.
+
+  <constructor>
+   - test_instantiate
+  <class variables>
+   - test_typeName
+   - test_typeKeyFields
+   - test_reportCatalogSpaceName
+   - test_reportCatalogFilesName
+   - test_reportPhysicalSpaceName
+   - test_reportPhysicalFilesName
+   - test_reportPFNvsLFNFileMultiplicityName
+   - test_reportPFNvsLFNSizeMultiplicityName
+  <methods>
+   - test_reportCatalogSpace
+   - test_plotCatalogSpace
+   - test_reportCatalogFiles
+   - test_plotCatalogFiles
+   - test_reportPhysicalSpace
+   - test_plotPhysicalSpace
+   - test_reportPhysicalFiles
+   - test_plotPhysicalFiles
+  """
   #FIXME: missing test_reportPFNvsLFNFileMultiplicity
   #FIXME: missing test_plotPFNvsLFNFileMultiplicity
   #FIXME: missing test_reportPFNvsLFNSizeMultiplicity
@@ -111,62 +101,52 @@ class StoragePlotterUnitTest( StoragePlotterTestCase ):
   #FIXME: missing test_multiplicityReport
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
     obj = self.classsTested( None, None )
     self.assertEqual( 'StoragePlotter', obj.__class__.__name__ )
 
   def test_typeName( self ):
-    ''' test the class variable "_typeName"
-    '''
+    """test the class variable "_typeName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._typeName, "Storage" )
 
   def test_typeKeyFields( self ):
-    ''' test the class variable "_typeKeyFields"
-    '''
+    """test the class variable "_typeKeyFields"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._typeKeyFields, [ 'StorageElement', 'Directory' ] )
 
   def test_reportCatalogSpaceName( self ):
-    ''' test the class variable "_reportCatalogSpaceName"
-    '''
+    """test the class variable "_reportCatalogSpaceName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportCatalogSpaceName, "LFN size" )
 
   def test_reportCatalogFilesName( self ):
-    ''' test the class variable "_reportCatalogFilesName"
-    '''
+    """test the class variable "_reportCatalogFilesName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportCatalogFilesName, "LFN files" )
 
   def test_reportPhysicalSpaceName( self ):
-    ''' test the class variable "_reportPhysicalSpaceName"
-    '''
+    """test the class variable "_reportPhysicalSpaceName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportPhysicalSpaceName, "PFN size" )
 
   def test_reportPhysicalFilesName( self ):
-    ''' test the class variable "_reportPhysicalFilesName"
-    '''
+    """test the class variable "_reportPhysicalFilesName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportPhysicalFilesName, "PFN files" )
 
   def test_reportPFNvsLFNFileMultiplicityName( self ):
-    ''' test the class variable "_reportPFNvsLFNFileMultiplicityName"
-    '''
+    """test the class variable "_reportPFNvsLFNFileMultiplicityName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportPFNvsLFNFileMultiplicityName, "PFN/LFN file ratio" )
 
   def test_reportPFNvsLFNSizeMultiplicityName( self ):
-    ''' test the class variable "_reportPFNvsLFNSizeMultiplicityName"
-    '''
+    """test the class variable "_reportPFNvsLFNSizeMultiplicityName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportPFNvsLFNSizeMultiplicityName, "PFN/LFN size ratio" )
 
   def test_reportCatalogSpace( self ):
-    ''' test the method "_reportCatalogSpace"
-    '''
+    """test the method "_reportCatalogSpace"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -228,8 +208,7 @@ class StoragePlotterUnitTest( StoragePlotterTestCase ):
                                         'granularity'   : 86400 } )
 
   def test_reportCatalogFiles( self ):
-    ''' test the method "_reportCatalogFiles"
-    '''
+    """test the method "_reportCatalogFiles"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -294,8 +273,7 @@ class StoragePlotterUnitTest( StoragePlotterTestCase ):
                                        } )
 
   def test_reportPhysicalSpace( self ):
-    ''' test the method "_reportPhysicalSpace"
-    '''
+    """test the method "_reportPhysicalSpace"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -355,8 +333,7 @@ class StoragePlotterUnitTest( StoragePlotterTestCase ):
                                        } )
 
   def test_reportPhysicalFiles( self ):
-    ''' test the method "_reportPhysicalFiles"
-    '''
+    """test the method "_reportPhysicalFiles"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -422,8 +399,7 @@ class StoragePlotterUnitTest( StoragePlotterTestCase ):
                                        } )
 
   def test_multiplicityReport( self ):
-    ''' test the method "_multiplicityReport"
-    '''
+    """test the method "_multiplicityReport"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -460,25 +436,24 @@ class StoragePlotterUnitTest( StoragePlotterTestCase ):
 #...............................................................................
 
 class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
-  '''
-    StoragePlotterUnitTestCrashes
-    <constructor>
-     - test_instantiate
-    <class variables>
-    <methods>
-     - test_reportCatalogSpace
-     - test_plotCatalogSpace
-     - test_reportCatalogFiles
-     - test_plotCatalogFiles
-     - test_reportPhysicalSpace
-     - test_plotPhysicalSpace
-     - test_reportPhysicalFiles
-     - test_plotPhysicalFiles
-  '''
+  """StoragePlotterUnitTestCrashes.
+
+  <constructor>
+   - test_instantiate
+  <class variables>
+  <methods>
+   - test_reportCatalogSpace
+   - test_plotCatalogSpace
+   - test_reportCatalogFiles
+   - test_plotCatalogFiles
+   - test_reportPhysicalSpace
+   - test_plotPhysicalSpace
+   - test_reportPhysicalFiles
+   - test_plotPhysicalFiles
+  """
 
   def test_instantiate( self ):
-    ''' test the constructor
-    '''
+    """test the constructor."""
 
     self.assertRaises( TypeError, self.classsTested )
     self.assertRaises( TypeError, self.classsTested, None )
@@ -489,8 +464,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
     self.assertRaises( TypeError, self.classsTested, None, None, None, extraArgs = None )
 
   def test_reportCatalogSpace( self ):
-    ''' test the method "_reportCatalogSpace"
-    '''
+    """test the method "_reportCatalogSpace"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -524,8 +498,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                              'condDict'       : None } )
 
   def test_plotCatalogSpace( self ):
-    ''' test the method "_plotCatalogSpace"
-    '''
+    """test the method "_plotCatalogSpace"."""
 
     obj = self.classsTested( None, None )
     self.assertRaises( TypeError, obj._plotCatalogSpace, None, None, None )
@@ -552,8 +525,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                           'graphDataDict' : 'graphDataDict' }, None )
 
   def test_reportCatalogFiles( self ):
-    ''' test the method "_reportCatalogFiles"
-    '''
+    """test the method "_reportCatalogFiles"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -587,8 +559,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                              'condDict'       : None } )
 
   def test_plotCatalogFiles( self ):
-    ''' test the method "_plotCatalogFiles"
-    '''
+    """test the method "_plotCatalogFiles"."""
 
     obj = self.classsTested( None, None )
     self.assertRaises( TypeError, obj._plotCatalogFiles, None, None, None )
@@ -615,8 +586,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                           'graphDataDict' : 'graphDataDict' }, None )
 
   def test_reportPhysicalSpace( self ):
-    ''' test the method "_reportPhysicalSpace"
-    '''
+    """test the method "_reportPhysicalSpace"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -641,8 +611,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                               'condDict'       : None } )
 
   def test_plotPhysicalSpace( self ):
-    ''' test the method "_plotPhysicalSpace"
-    '''
+    """test the method "_plotPhysicalSpace"."""
 
     obj = self.classsTested( None, None )
     self.assertRaises( TypeError, obj._plotPhysicalSpace, None, None, None )
@@ -669,8 +638,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                            'graphDataDict' : 'graphDataDict' }, None )
 
   def test_reportPhysicalFiles( self ):
-    ''' test the method "_reportPhysicalFiles"
-    '''
+    """test the method "_reportPhysicalFiles"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -695,8 +663,7 @@ class StoragePlotterUnitTestCrashes( StoragePlotterTestCase ):
                                                               'condDict'       : None } )
 
   def test_plotPhysicalFiles( self ):
-    ''' test the method "_plotPhysicalFiles"
-    '''
+    """test the method "_plotPhysicalFiles"."""
 
     obj = self.classsTested( None, None )
     self.assertRaises( TypeError, obj._plotPhysicalFiles, None, None, None )

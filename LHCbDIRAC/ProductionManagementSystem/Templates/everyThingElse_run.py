@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Moving toward a templates-less system
-"""
+"""Moving toward a templates-less system."""
 
 from __future__ import absolute_import
 from six.moves import range

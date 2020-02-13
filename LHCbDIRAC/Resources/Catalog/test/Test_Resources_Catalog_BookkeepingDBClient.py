@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_Resources_Catalog_BookkeepingDBClient
-'''
+"""Test_Resources_Catalog_BookkeepingDBClient."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 
@@ -29,9 +28,7 @@ __RCSID__ = "$Id$"
 class BookkeepingDBClientt_TestCase(unittest.TestCase):
 
   def setUp(self):
-    '''
-    Setup
-    '''
+    """Setup."""
     gLogger.setLevel('DEBUG')
 
     # # Mock external libraries / modules not interesting for the unit test
@@ -68,9 +65,7 @@ class BookkeepingDBClientt_TestCase(unittest.TestCase):
     self.testClass = self.moduleTested.BookkeepingDBClient
 
   def tearDown(self):
-    '''
-    TearDown
-    '''
+    """TearDown."""
     del self.testClass
     del self.moduleTested
     del self.mock_BookkeepingClient
@@ -81,15 +76,13 @@ class BookkeepingDBClientt_TestCase(unittest.TestCase):
 class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
 
   def test_instantiate(self):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     catalog = self.testClass()
     self.assertEqual('BookkeepingDBClient', catalog.__class__.__name__)
 
   def test_init(self):
-    ''' tests that the init method does what it should do
-    '''
+    """tests that the init method does what it should do."""
 
     catalog = self.testClass()
 
@@ -101,8 +94,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual('BookkeepingDB', catalog.name)
 
   def test__setHasReplicaFlag(self):
-    ''' test the output of __setHasReplicaFlag
-    '''
+    """test the output of __setHasReplicaFlag."""
 
     catalog = self.testClass()
 
@@ -175,8 +167,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     six.moves.reload_module(self.moduleTested)
 
   def test__unsetHasReplicaFlag(self):
-    ''' test the output of __unsetHasReplicaFlag
-    '''
+    """test the output of __unsetHasReplicaFlag."""
 
     catalog = self.testClass()
 
@@ -247,8 +238,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     six.moves.reload_module(self.moduleTested)
 
   def test__exists(self):
-    ''' tests the output of __exists
-    '''
+    """tests the output of __exists."""
 
     catalog = self.testClass()
 
@@ -318,8 +308,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     six.moves.reload_module(self.moduleTested)
 
   def test__getFileMetadata(self):
-    ''' tests the output of __getFileMetadata
-    '''
+    """tests the output of __getFileMetadata."""
 
     catalog = self.testClass()
 
@@ -408,8 +397,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     six.moves.reload_module(self.moduleTested)
 
   def test_addFile(self):
-    ''' tests the output of addFile
-    '''
+    """tests the output of addFile."""
 
     catalog = self.testClass()
 
@@ -435,8 +423,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': True}, 'Failed': {'B': 'File does not exist'}}, res['Value'])
 
   def test_addReplica(self):
-    ''' tests the output of addReplica
-    '''
+    """tests the output of addReplica."""
 
     catalog = self.testClass()
 
@@ -462,8 +449,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': True}, 'Failed': {'B': 'File does not exist'}}, res['Value'])
 
   def test_removeFile(self):
-    ''' tests the output of removeFile
-    '''
+    """tests the output of removeFile."""
 
     catalog = self.testClass()
 
@@ -488,8 +474,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     # on a rational way
 
   def test_removeReplica(self):
-    ''' tests the output of removeReplica
-    '''
+    """tests the output of removeReplica."""
 
     catalog = self.testClass()
 
@@ -515,8 +500,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_setReplicaStatus(self):
-    ''' tests the output of setReplicaStatus
-    '''
+    """tests the output of setReplicaStatus."""
 
     catalog = self.testClass()
 
@@ -542,8 +526,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_setReplicaHost(self):
-    ''' tests the output of setReplicaHost
-    '''
+    """tests the output of setReplicaHost."""
 
     catalog = self.testClass()
 
@@ -569,8 +552,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_removeDirectory(self):
-    ''' tests the output of removeDirectory
-    '''
+    """tests the output of removeDirectory."""
 
     catalog = self.testClass()
 
@@ -596,8 +578,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_createDirectory(self):
-    ''' tests the output of createDirectory
-    '''
+    """tests the output of createDirectory."""
 
     catalog = self.testClass()
 
@@ -623,8 +604,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_removeLink(self):
-    ''' tests the output of createDirectory
-    '''
+    """tests the output of createDirectory."""
 
     catalog = self.testClass()
 
@@ -650,8 +630,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_createLink(self):
-    ''' tests the output of createDirectory
-    '''
+    """tests the output of createDirectory."""
 
     catalog = self.testClass()
 
@@ -677,8 +656,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'C': True}, 'Failed': {}}, res['Value'])
 
   def test_exists(self):
-    ''' tests the output of exists
-    '''
+    """tests the output of exists."""
 
     catalog = self.testClass()
 
@@ -704,8 +682,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'B': 2}, 'Failed': {}}, res['Value'])
 
   def test_getFileMetadata(self):
-    ''' tests the output of getFileMetadata
-    '''
+    """tests the output of getFileMetadata."""
 
     catalog = self.testClass()
 
@@ -737,8 +714,7 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
                      res['Value'])
 
   def test_getFileSize(self):
-    ''' tests the output of getFileSize
-    '''
+    """tests the output of getFileSize."""
 
     catalog = self.testClass()
 

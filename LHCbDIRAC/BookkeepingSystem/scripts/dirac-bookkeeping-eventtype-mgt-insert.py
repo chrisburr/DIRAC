@@ -13,11 +13,11 @@
 # File :    dirac-bookkeeping-eventtype-mgt-insert
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  This tool inserts new event types.
-    The "<File>" lists the event types on which to operate.
-    Each line must have the following format:
-    EVTTYPEID="<evant id>", DESCRIPTION="<description>", PRIMARY="<primary description>"
+"""This tool inserts new event types.
+
+The "<File>" lists the event types on which to operate. Each line must
+have the following format: EVTTYPEID="<evant id>",
+DESCRIPTION="<description>", PRIMARY="<primary description>"
 """
 __RCSID__ = "$Id$"
 
@@ -46,7 +46,7 @@ exitCode = 0
 fileName = args[0]
 
 def process_event( eventline ):
-  """process one event type"""
+  """process one event type."""
   try:
     eventline.index( 'EVTTYPEID' )
     eventline.index( 'DESCRIPTION' )

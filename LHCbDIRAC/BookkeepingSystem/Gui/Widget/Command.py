@@ -8,24 +8,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Interfcae of the history browser command
-"""
+"""Interfcae of the history browser command."""
 
 
 __RCSID__ = "$Id$"
 
 ########################################################################
 class Command:
-  """Command inteface"""
+  """Command inteface."""
   def __init__(self):
     pass
   ########################################################################
   def execute(self):
-    """must be reimplemented"""
+    """must be reimplemented."""
     pass
 
   ########################################################################
   def unexecute(self):
-    """must be reimplemented"""
+    """must be reimplemented."""
     pass

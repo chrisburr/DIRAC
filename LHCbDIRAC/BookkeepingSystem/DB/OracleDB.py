@@ -9,53 +9,52 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 ########################################################################
-""" DIRAC Basic Oracle Class
-    It provides access to the basic Oracle methods in a multithread-safe mode
-    keeping used connections in a python Queue for further reuse.
+"""DIRAC Basic Oracle Class It provides access to the basic Oracle methods in a
+multithread-safe mode keeping used connections in a python Queue for further
+reuse.
 
-    These are the coded methods:
+These are the coded methods:
 
-    __init__( user, passwd, tns, [maxConnsInQueue=10] )
+__init__( user, passwd, tns, [maxConnsInQueue=10] )
 
-    Initializes the Queue and tries to connect to the DB server,
-    using the _connect method.
-    "maxConnsInQueue" defines the size of the Queue of open connections
-    that are kept for reuse. It also defined the maximum number of open
-    connections available from the object.
-    maxConnsInQueue = 0 means unlimited and it is not supported.
-
-
-    _except( methodName, exception, errorMessage )
-
-    Helper method for exceptions: the "methodName" and the "errorMessage"
-    are printed with ERROR level, then the "exception" is printed (with
-    full description if it is a Oracle Exception) and S_ERROR is returned
-    with the errorMessage and the exception.
+Initializes the Queue and tries to connect to the DB server,
+using the _connect method.
+"maxConnsInQueue" defines the size of the Queue of open connections
+that are kept for reuse. It also defined the maximum number of open
+connections available from the object.
+maxConnsInQueue = 0 means unlimited and it is not supported.
 
 
-    _connect()
+_except( methodName, exception, errorMessage )
 
-    Attemps connection to DB and sets the _connected flag to True upon success.
-    Returns S_OK or S_ERROR.
-
-
-    _query( cmd, [conn] )
-
-    Executes SQL command "cmd".
-    Gets a connection from the Queue (or open a new one if none is available),
-    the used connection is  back into the Queue.
-    If a connection to the the DB is passed as second argument this connection
-    is used and is not  in the Queue.
-    Returns S_OK with fetchall() out in Value or S_ERROR upon failure.
+Helper method for exceptions: the "methodName" and the "errorMessage"
+are printed with ERROR level, then the "exception" is printed (with
+full description if it is a Oracle Exception) and S_ERROR is returned
+with the errorMessage and the exception.
 
 
-    _getConnection()
+_connect()
 
-    Gets a connection from the Queue (or open a new one if none is available)
-    Returns S_OK with connection in Value or S_ERROR
-    the calling method is responsible for closing this connection once it is no
-    longer needed.
+Attemps connection to DB and sets the _connected flag to True upon success.
+Returns S_OK or S_ERROR.
 
+
+_query( cmd, [conn] )
+
+Executes SQL command "cmd".
+Gets a connection from the Queue (or open a new one if none is available),
+the used connection is  back into the Queue.
+If a connection to the the DB is passed as second argument this connection
+is used and is not  in the Queue.
+Returns S_OK with fetchall() out in Value or S_ERROR upon failure.
+
+
+_getConnection()
+
+Gets a connection from the Queue (or open a new one if none is available)
+Returns S_OK with connection in Value or S_ERROR
+the calling method is responsible for closing this connection once it is no
+longer needed.
 """
 
 __RCSID__ = "$Id$"
@@ -78,14 +77,10 @@ maxArraysize = 5000  # max allowed
 
 
 class OracleDB:
-  """
-  Basic multithreaded DIRAC Oracle Client Class
-  """
+  """Basic multithreaded DIRAC Oracle Client Class."""
 
   def __init__(self, userName, password='', tnsEntry='', maxQueueSize=100):
-    """
-    set Oracle connection parameters and try to connect
-    """
+    """set Oracle connection parameters and try to connect."""
     global gInstancesCount
     gInstancesCount += 1
 
@@ -126,7 +121,7 @@ class OracleDB:
 
   @staticmethod
   def __checkQueueSize(maxQueueSize):
-    """the size of the internal queue is limited"""
+    """the size of the internal queue is limited."""
 
     if maxQueueSize <= 0:
       raise Exception('OracleDB.__init__: maxQueueSize must positive')
@@ -137,10 +132,7 @@ class OracleDB:
           'OracleDB.__init__: wrong type for maxQueueSize' + str(test))
 
   def _except(self, methodName, x, err):
-    """
-    print Oracle error or exeption
-    return S_ERROR with Exception
-    """
+    """print Oracle error or exeption return S_ERROR with Exception."""
 
     try:
       raise x
@@ -153,11 +145,8 @@ class OracleDB:
       return S_ERROR('%s: (%s)' % (err, str(x)))
 
   def _connect(self):
-    """
-    open connection to Oracle DB and put Connection into Queue
-    set connected flag to True and return S_OK
-    return S_ERROR upon failure
-    """
+    """open connection to Oracle DB and put Connection into Queue set connected
+    flag to True and return S_OK return S_ERROR upon failure."""
     self.logger.debug('_connect:', self._connected)
     if self._connected:
       return S_OK()
@@ -174,22 +163,16 @@ class OracleDB:
       return self._except('_connect', x, 'Could not connect to DB.')
 
   def query(self, cmd, conn=False):
-    """
-    execute Oracle query command
-    return S_OK structure with fetchall result as tuple
-    it returns an empty tuple if no matching rows are found
-    return S_ERROR upon error
-    """
+    """execute Oracle query command return S_OK structure with fetchall result
+    as tuple it returns an empty tuple if no matching rows are found return
+    S_ERROR upon error."""
 
     return self._query(cmd, conn)
 
   def _query(self, cmd, conn=False):
-    """
-    execute Oracle query command
-    return S_OK structure with fetchall result as tuple
-    it returns an empty tuple if no matching rows are found
-    return S_ERROR upon error
-    """
+    """execute Oracle query command return S_OK structure with fetchall result
+    as tuple it returns an empty tuple if no matching rows are found return
+    S_ERROR upon error."""
     self.logger.debug('_query:', cmd)
 
     retDict = self.__getConnection(conn=conn)
@@ -232,7 +215,7 @@ class OracleDB:
     return retDict
 
   def executeStoredProcedure(self, packageName, parameters, output=True, array=None, conn=False):
-    """executes a stored procedure"""
+    """executes a stored procedure."""
     self.logger.debug('_query:', packageName + "(" + str(parameters) + ")")
 
     retDict = self.__getConnection(conn=conn)
@@ -295,7 +278,7 @@ class OracleDB:
     return retDict
 
   def executeStoredFunctions(self, packageName, returnType, parameters=None, conn=False):
-    """executs a stored function"""
+    """executs a stored function."""
     if parameters is None:
       parameters = []
     retDict = self.__getConnection(conn=conn)
@@ -321,18 +304,15 @@ class OracleDB:
     return retDict
 
   def __newConnection(self):
-    """
-    Create a New connection and put it in the Queue
-    """
+    """Create a New connection and put it in the Queue."""
     self.logger.debug('__newConnection:')
 
     connection = cx_Oracle.Connection(self.__userName, self.__passwd, self.__tnsName, threaded=True)
     self.__putConnection(connection)
 
   def __putConnection(self, connection):
-    """
-    Put a connection in the Queue, if the queue is full, the connection is closed
-    """
+    """Put a connection in the Queue, if the queue is full, the connection is
+    closed."""
     self.logger.debug('__putConnection:')
 
     # Release the semaphore first, in case something fails
@@ -349,10 +329,8 @@ class OracleDB:
       self._except('__putConnection', x, 'Failed to put Connection in Queue')
 
   def _getConnection(self):
-    """
-    Return a new connection to the DB
-    It uses the private method __getConnection
-    """
+    """Return a new connection to the DB It uses the private method
+    __getConnection."""
     self.logger.debug('_getConnection:')
 
     retDict = self.__getConnection(trial=0)
@@ -360,12 +338,12 @@ class OracleDB:
     return retDict
 
   def __getConnection(self, conn=False, trial=0):
-    """
-    Return a new connection to the DB,
-    if conn is provided then just return it.
-    then try the Queue, if it is empty add a newConnection to the Queue and retry
-    it will retry maxConnectRetry to open a new connection and will return
-    an error if it fails.
+    """Return a new connection to the DB, if conn is provided then just return
+    it.
+
+    then try the Queue, if it is empty add a newConnection to the Queue
+    and retry it will retry maxConnectRetry to open a new connection and
+    will return an error if it fails.
     """
     self.logger.debug('__getConnection:')
 

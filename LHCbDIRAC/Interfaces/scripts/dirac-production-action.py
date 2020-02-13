@@ -13,9 +13,7 @@
 # File :   dirac-production-action
 # Author : Mario Ubeda Garcia
 ########################################################################
-"""
-  Start or stop the production(s)
-"""
+"""Start or stop the production(s)"""
 
 from __future__ import absolute_import, division, print_function
 

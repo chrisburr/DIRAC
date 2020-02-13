@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Command to invoke the LHCb Bookkeeping Database graphical user interface
-"""
+"""Command to invoke the LHCb Bookkeeping Database graphical user interface."""
 
 __RCSID__ = "$Id$"
 

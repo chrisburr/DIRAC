@@ -8,21 +8,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""stores the replica information"""
+"""stores the replica information."""
 
 from DIRAC                                           import gLogger
 
 __RCSID__ = "$Id$"
 
 class ReplicaParam:
-  """
-  ReplicaParam class
-  """
+  """ReplicaParam class."""
 
 
   #############################################################################
   def __init__(self):
-    """initialize the member of the class"""
+    """initialize the member of the class."""
     self.file_ = ""
     self.name_ = ""
     self.location_ = ""
@@ -31,42 +29,42 @@ class ReplicaParam:
 
   #############################################################################
   def setFile(self, fileName):
-    """sets the file name"""
+    """sets the file name."""
     self.file_ = fileName
 
   #############################################################################
   def getFile(self):
-    """returns the file name"""
+    """returns the file name."""
     return self.file_
 
   #############################################################################
   def setName(self, name):
-    """sets the name"""
+    """sets the name."""
     self.name_ = name
 
   #############################################################################
   def getName(self):
-    """returns the name"""
+    """returns the name."""
     return self.name_
 
   #############################################################################
   def setLocation(self, location):
-    """sets the location of the replica"""
+    """sets the location of the replica."""
     self.location_ = location
 
   #############################################################################
   def getLocation(self):
-    """returns the location"""
+    """returns the location."""
     return self.location_
 
   #############################################################################
   def setSE(self, se):
-    """sets the Storage Element"""
+    """sets the Storage Element."""
     self.se_ = se
 
   #############################################################################
   def getSE(self):
-    """returns the storage element"""
+    """returns the storage element."""
     return self.se_
 
   #############################################################################
@@ -76,12 +74,12 @@ class ReplicaParam:
 
   #############################################################################
   def getAction(self):
-    """returns the action"""
+    """returns the action."""
     return self.action_
 
   #############################################################################
   def __repr__(self):
-    """formats the output of print"""
+    """formats the output of print."""
     result = "\n Replica:\n"
     result += self.file_ + " " + self.name_ + " " + self.location_ + " "
     result += self.se_ + " " + self.action_
@@ -90,7 +88,7 @@ class ReplicaParam:
 
   #############################################################################
   def writeToXML(self, flag=True):
-    """creates an XML string"""
+    """creates an XML string."""
     # job replica param
     gLogger.info("replica param", str(flag))
     if flag == True:

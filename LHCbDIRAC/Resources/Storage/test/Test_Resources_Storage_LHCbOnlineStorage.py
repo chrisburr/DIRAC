@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_Resources_Storage_LHCbOnlineStorage
-
-'''
+"""Test_Resources_Storage_LHCbOnlineStorage."""
 
 import mock
 import unittest
@@ -24,9 +22,7 @@ __RCSID__ = "$Id$"
 
 class LHCbOnlineStorage_TestCase(unittest.TestCase):
   def setUp(self):
-    '''
-    Setup
-    '''
+    """Setup."""
 
     # Mock external libraries / modules not interesting for the unit test
     mock_xmlrpclib = mock.Mock()
@@ -40,9 +36,7 @@ class LHCbOnlineStorage_TestCase(unittest.TestCase):
     self.testClass = self.moduleTested.LHCbOnlineStorage
 
   def tearDown(self):
-    '''
-    TearDown
-    '''
+    """TearDown."""
     del self.testClass
     del self.moduleTested
     del self.mock_xmlrpclib
@@ -54,8 +48,7 @@ class LHCbOnlineStorage_TestCase(unittest.TestCase):
 
 class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
   def test_instantiate(self):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     resource = self.testClass('storageName', {
         'Protocol': 'protocol',
@@ -69,8 +62,7 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     self.assertEqual('LHCbOnlineStorage', resource.__class__.__name__)
 
   def test_init(self):
-    ''' tests that the init method does what it should do
-    '''
+    """tests that the init method does what it should do."""
 
     resource = self.testClass('storageName', {
         'Protocol': 'protocol',
@@ -90,8 +82,7 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     self.assertEqual('wspath', resource.protocolParameters['WSUrl'])
 
   def test_getParameters(self):
-    ''' tests the output of getParameters method
-    '''
+    """tests the output of getParameters method."""
 
     resource = self.testClass('storageName', {
         'Protocol': 'protocol',
@@ -113,8 +104,7 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     self.assertEqual('wspath', res['WSUrl'])
 
   def test_getFileSize(self):
-    ''' tests the output of getFileSize
-    '''
+    """tests the output of getFileSize."""
 
     resource = self.testClass('storageName', {
         'Protocol': 'protocol',
@@ -142,8 +132,7 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     self.assertEqual({}, res['Value']['Failed'])
 
   def test_removeFile(self):
-    ''' tests the output of removeFile
-    '''
+    """tests the output of removeFile."""
 
     resource = self.testClass('storageName', {
         'Protocol': 'protocol',
@@ -184,8 +173,7 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     self.assertEqual(['A', 'B'], res['Value']['Failed'].keys())
 
   def test_retransferOnlineFile(self):
-    ''' tests output of retransferOnlineFile
-    '''
+    """tests output of retransferOnlineFile."""
 
     resource = self.testClass('storageName', {
         'Protocol': 'protocol',

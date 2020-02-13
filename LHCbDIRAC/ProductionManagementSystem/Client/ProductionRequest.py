@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module for creating, describing and managing production requests objects
-"""
+"""Module for creating, describing and managing production requests objects."""
 
 __RCSID__ = "$Id$"
 
@@ -35,10 +34,11 @@ class ProductionRequest(object):
   """
 
   def __init__(self, bkkClientIn=None, diracProdIn=None):
-    """ c'tor
+    """c'tor.
 
-        Some variables are defined here. A production request is made of:
-        stepsList, productionsTypes, and various parameters of those productions
+    Some variables are defined here. A production request is made of:
+    stepsList, productionsTypes, and various parameters of those
+    productions
     """
 
     if bkkClientIn is None:
@@ -130,9 +130,8 @@ class ProductionRequest(object):
   #############################################################################
 
   def resolveSteps(self):
-    """ Given a list of steps in strings, some of which might be missing,
-        resolve it into a list of dictionary of steps (self.stepsListDict)
-    """
+    """Given a list of steps in strings, some of which might be missing,
+    resolve it into a list of dictionary of steps (self.stepsListDict)"""
     outputVisFlag = dict([k, v] for el in self.outputVisFlag for k, v in el.iteritems()
                          )  # Transform the list of dictionaries in a dictionary
     specialOutputVisFlag = dict([k, v] for el in self.specialOutputVisFlag for k, v in el.iteritems())
@@ -232,9 +231,8 @@ class ProductionRequest(object):
   #############################################################################
 
   def buildAndLaunchRequest(self):
-    """ uses _applyOptionalCorrections, _getProdsDescriptionDict,
-        _buildProduction, and DiracProduction.launchProduction
-    """
+    """uses _applyOptionalCorrections, _getProdsDescriptionDict,
+    _buildProduction, and DiracProduction.launchProduction."""
 
     if not self.stepsListDict:
       self.resolveSteps()
@@ -325,12 +323,12 @@ class ProductionRequest(object):
   #############################################################################
 
   def _getStepsInProdDAG(self, prodDict, stepsListDict, stepsOrder='sequential'):
-    """ Builds the DAG of steps in a production
+    """Builds the DAG of steps in a production.
 
-        :params dict prodDict: dictionary representing one production
-        :params list stepsListDict: list of steps (which are dictionaries) that should be in the production
+    :params dict prodDict: dictionary representing one production
+    :params list stepsListDict: list of steps (which are dictionaries) that should be in the production
 
-        :returns: stepsInProd (DAG)
+    :returns: stepsInProd (DAG)
     """
     stepsInProd = DAG()
 
@@ -348,8 +346,8 @@ class ProductionRequest(object):
     return stepsInProd
 
   def _mcSpecialCase(self, prod, prodDict):
-    """ Treating the MC special case for putting MC productions in status "Testing"
-    """
+    """Treating the MC special case for putting MC productions in status
+    "Testing"."""
 
     # save the original xml before it is edited for testing
     prod._lastParameters()  # pylint: disable=protected-access
@@ -383,12 +381,12 @@ class ProductionRequest(object):
     return prodID
 
   def _modifyAndLaunchMCXML(self, prod, prodDict):
-    """ Apply modifications to the workflow XML for MC testing case
+    """Apply modifications to the workflow XML for MC testing case.
 
-        :param Production prod: Production object
-        :param dict prodDict: dictionary with production info
+    :param Production prod: Production object
+    :param dict prodDict: dictionary with production info
 
-        :returns: res['OK'] or res['ERROR']
+    :returns: res['OK'] or res['ERROR']
     """
     # set the destination and number of events for testing
     destination = self.opsH.getValue("Productions/MCTesting/MCTestingDestination", 'DIRAC.Test.ch')
@@ -436,8 +434,8 @@ class ProductionRequest(object):
     return res['Value']
 
   def _determineOutputSEs(self):
-    """ Fill outputSEsPerFileType based on outputSEs, fullListOfOutputFileTypes and specialOutputSEs
-    """
+    """Fill outputSEsPerFileType based on outputSEs, fullListOfOutputFileTypes
+    and specialOutputSEs."""
     for outputSE, specialOutputSEs in itertools.izip(self.outputSEs,
                                                      self.specialOutputSEs):
       outputSEDict = {}
@@ -449,7 +447,9 @@ class ProductionRequest(object):
       self.outputSEsPerFileType.append(outputSEDict)
 
   def _applyOptionalCorrections(self):
-    """ if needed, calls _splitIntoProductionSteps. It also applies other changes
+    """if needed, calls _splitIntoProductionSteps.
+
+    It also applies other changes
     """
     if len(self.bkQueries) != len(self.prodsTypeList):
       self.bkQueries += ['fromPreviousProd'] * (len(self.prodsTypeList) - len(self.bkQueries))
@@ -590,8 +590,8 @@ class ProductionRequest(object):
   #############################################################################
 
   def _getProdsDescriptionDict(self):
-    """ Returns a dictionary representing the description of the request (of all the productions in it)
-    """
+    """Returns a dictionary representing the description of the request (of all
+    the productions in it)"""
 
     prodsDict = {}
 
@@ -687,17 +687,18 @@ class ProductionRequest(object):
                        events=-1,
                        multicore='True',
                        ancestorDepth=0):
-    """ Wrapper around Production API to build a production, given the needed parameters
+    """Wrapper around Production API to build a production, given the needed
+    parameters.
 
-        Args:
-          prodType (str): production type (e.g. 'DataStripping')
-          stepsInProd (list): list of steps in the production
-          outputSE (dict): dictionary that holds relation between file type and output SE
-          priority (int): production priority
-          cpu (int): CPU time, in HS06s for jobs in this production
+    Args:
+      prodType (str): production type (e.g. 'DataStripping')
+      stepsInProd (list): list of steps in the production
+      outputSE (dict): dictionary that holds relation between file type and output SE
+      priority (int): production priority
+      cpu (int): CPU time, in HS06s for jobs in this production
 
-        Returns:
-          prod: a Production object
+    Returns:
+      prod: a Production object
     """
     prod = Production()
 
@@ -779,7 +780,8 @@ class ProductionRequest(object):
   #############################################################################
 
   def _addStepsToProd(self, prod, stepsInProd, stepsSequence='sequential', removeInputData=False):
-    """ Given a Production object, add requested steps (application and finalization)
+    """Given a Production object, add requested steps (application and
+    finalization)
 
     Args:
       prod (Production): the Production object to which the steps are added
@@ -789,7 +791,6 @@ class ProductionRequest(object):
 
     Returns:
       prod with steps added
-
     """
     # Adding the application steps
     firstStep = stepsInProd.pop(0)
@@ -816,8 +817,7 @@ class ProductionRequest(object):
     return prod
 
   def _getBKKQuery(self, mode='full', fileType=None, previousProdID=0):
-    """ simply creates the bkk query dictionary
-    """
+    """simply creates the bkk query dictionary."""
 
     if fileType is None:
       fileType = []
@@ -949,8 +949,7 @@ class ProductionRequest(object):
 
 
 def _splitIntoProductionSteps(step):
-  """ Given a list of bookkeeping steps, produce production steps
-  """
+  """Given a list of bookkeeping steps, produce production steps."""
   prodSteps = []
 
   if len(step['fileTypesIn']) <= 1:

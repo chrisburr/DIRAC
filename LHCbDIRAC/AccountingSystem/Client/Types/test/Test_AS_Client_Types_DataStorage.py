@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_AS_Client_Type_DataStorage
-
-'''
+"""Test_AS_Client_Type_DataStorage."""
 
 import unittest
 
@@ -34,9 +32,7 @@ class dBaseAccountingType( DummyReturn ):
 class DataStorage_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    '''
-    Setup
-    '''
+    """Setup."""
 
     # We need the proper software, and then we overwrite it.
     import LHCbDIRAC.AccountingSystem.Client.Types.DataStorage as moduleTested
@@ -46,16 +42,13 @@ class DataStorage_TestCase( unittest.TestCase ):
     self.accountingType = moduleTested.DataStorage
 
   def tearDown( self ):
-    '''
-    TearDown
-    '''
+    """TearDown."""
     del self.accountingType
 
 class DataStorage_Success( DataStorage_TestCase ):
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''     
+    """tests that we can instantiate one object of the tested class."""     
     global dummyResults
     dummyResults[ 'DataStorage' ] = None
     

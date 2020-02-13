@@ -9,10 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-    Check if all files have a replica in a certain (set of) SE )Tier1-Archive default)
-    List the files that don't have a replica in the specified SE (group)
-'''
+"""Check if all files have a replica in a certain (set of) SE )Tier1-Archive
+default) List the files that don't have a replica in the specified SE
+(group)"""
 __RCSID__ = "$Id$"
 
 

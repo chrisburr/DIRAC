@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit test of ConsistencyChecks
-"""
+"""Unit test of ConsistencyChecks."""
 
 #pylint: disable=invalid-name,missing-docstring,protected-access
 

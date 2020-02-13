@@ -18,8 +18,7 @@ import datetime
 __RCSID__ = "$Id$"
 
 class JSONDateTimeEncoder( json.JSONEncoder ):
-  """ encoder of datetime objects
-  """
+  """encoder of datetime objects."""
 
   def default( self, obj ): #pylint: disable=method-hidden
     if isinstance( obj, datetime.datetime ):
@@ -32,8 +31,7 @@ class JSONDateTimeEncoder( json.JSONEncoder ):
     return super( JSONDateTimeEncoder, self ).default( obj )
 
 class JSONDateTimeDecoder( json.JSONDecoder ):
-  """ decoder of datetime objects
-  """
+  """decoder of datetime objects."""
 
   def __init__( self, *args, **kwargs ):
     json.JSONDecoder.__init__( self, object_hook = self.object_hook, *args, **kwargs )

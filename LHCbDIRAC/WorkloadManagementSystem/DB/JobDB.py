@@ -8,9 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC Job DB
+"""LHCbDIRAC Job DB.
 
-    Extends the DIRAC JobDB with minor things
+Extends the DIRAC JobDB with minor things
 """
 
 __RCSID__ = "$Id$"
@@ -22,19 +22,16 @@ from DIRAC.WorkloadManagementSystem.DB.JobDB import JobDB as DIRACJobDB
 
 
 class JobDB(DIRACJobDB):
-  """ Extension of the DIRAC Job DB
-  """
+  """Extension of the DIRAC Job DB."""
 
   def __init__(self):
-    """ The standard constructor takes the database name (dbname) and the name of the
-        configuration section (dbconfig)
-    """
+    """The standard constructor takes the database name (dbname) and the name
+    of the configuration section (dbconfig)"""
     DIRACJobDB.__init__(self)
     self.jdl2DBParameters += ['runNumber']
 
   def getTimings(self, site, period=3600):
-    """ Get CPU and wall clock times for the jobs finished in the last hour
-    """
+    """Get CPU and wall clock times for the jobs finished in the last hour."""
     ret = self._escapeString(site)
     if not ret['OK']:
       return ret

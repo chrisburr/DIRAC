@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""interface for the database"""
+"""interface for the database."""
 
 from LHCbDIRAC.BookkeepingSystem.DB.IBookkeepingDatabaseClient import IBookkeepingDatabaseClient
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
@@ -17,7 +17,7 @@ __RCSID__ = "$Id$"
 
 
 class BookkeepingDatabaseClient(IBookkeepingDatabaseClient):
-  """simple class"""
+  """simple class."""
   #############################################################################
   def __init__(self, databaseManager=None):
     if not databaseManager:

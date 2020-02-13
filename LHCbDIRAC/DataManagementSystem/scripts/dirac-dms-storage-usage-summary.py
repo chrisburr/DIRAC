@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 ########################################################################
-"""
-  Get the storage usage summary for the given directories
-"""
+"""Get the storage usage summary for the given directories."""
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -44,10 +42,8 @@ def seSvcClass(se):
 
 
 def orderSEs(listSEs):
-  """
-  Order SEs: LFNs, then tape Ses then disk SEs
-  The input list can be a list a dict, a tuple or a set
-  """
+  """Order SEs: LFNs, then tape Ses then disk SEs The input list can be a list
+  a dict, a tuple or a set."""
   orderedSEs = ['LFN'] if 'LFN' in sorted(listSEs) else []
   orderedSEs += sorted([se for se in listSEs if se not in orderedSEs and se.endswith('-HIST')])
   orderedSEs += sorted([se for se in listSEs if se not in orderedSEs and (seSvcClass(se) == 'Tape')])
@@ -56,7 +52,7 @@ def orderSEs(listSEs):
 
 
 def printSEUsage(totalUsage, grandTotal, scaleFactor):
-  """ Nice printout of SE usage """
+  """Nice printout of SE usage."""
   dashes = '-' * 48
   print dashes
   print '%s %s %s' % ('DIRAC SE'.ljust(20), ('Size (%s)' % unit).ljust(20), 'Files'.ljust(20))
@@ -95,7 +91,7 @@ def printSEUsage(totalUsage, grandTotal, scaleFactor):
 
 
 def printBigTable(siteList, bigTable):
-  """ Print out THE big table of usage """
+  """Print out THE big table of usage."""
   siteList.sort()
   for site in ('ARCHIVE', 'LFN'):
     if site in siteList:

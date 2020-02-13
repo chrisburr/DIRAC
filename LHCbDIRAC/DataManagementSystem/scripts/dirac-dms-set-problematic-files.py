@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-    Set a (set of) LFNs as problematic in the FC and in the BK and transformation system if all replicas are problematic
-"""
+"""Set a (set of) LFNs as problematic in the FC and in the BK and
+transformation system if all replicas are problematic."""
 __RCSID__ = "$Id$"
 __VERSION__ = "$Revision: 87258 $"
 

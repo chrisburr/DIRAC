@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Client for BookkeepingDB file catalog
-"""
+"""Client for BookkeepingDB file catalog."""
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities.List import breakListIntoChunks
@@ -21,8 +20,7 @@ __RCSID__ = "$Id$"
 
 
 class BookkeepingDBClient(FileCatalogClientBase):
-  """ File catalog client for bookkeeping DB
-  """
+  """File catalog client for bookkeeping DB."""
 
   READ_METHODS = FileCatalogClientBase.READ_METHODS + ['isDirectory', 'isLink', 'getFileSize', 'getFileMetadata']
   WRITE_METHODS = FileCatalogClientBase.WRITE_METHODS + ['addFile',
@@ -38,34 +36,29 @@ class BookkeepingDBClient(FileCatalogClientBase):
                                                          'createLink']
 
   def __init__(self, **kwargs):
-    """ Constructor of the Bookkeeping catalogue client
-    """
+    """Constructor of the Bookkeeping catalogue client."""
     self.splitSize = 1000
     self.name = 'BookkeepingDB'
     self.server = BookkeepingClient(timeout=120)
 
   @checkCatalogArguments
   def addFile(self, lfn):
-    """ Set the replica flag
-    """
+    """Set the replica flag."""
     return self.__setHasReplicaFlag(lfn)
 
   @checkCatalogArguments
   def addReplica(self, lfn):
-    """ Same as addFile
-    """
+    """Same as addFile."""
     return self.addFile(lfn)
 
   @checkCatalogArguments
   def removeFile(self, path):
-    """ Remove the replica flag
-    """
+    """Remove the replica flag."""
     return self.__unsetHasReplicaFlag(path)
 
   @checkCatalogArguments
   def isFile(self, lfn):
-    """ Returns a dictionary True/False
-    """
+    """Returns a dictionary True/False."""
     return self.__exists(lfn)
 
   @checkCatalogArguments
@@ -96,7 +89,7 @@ class BookkeepingDBClient(FileCatalogClientBase):
 
   @checkCatalogArguments
   def __returnSuccess(self, lfn, val=True):
-    """ Generic method returning success for all input files"""
+    """Generic method returning success for all input files."""
     return S_OK({'Failed': {}, 'Successful': dict.fromkeys(lfn, val)})
 
   @checkCatalogArguments
@@ -133,20 +126,17 @@ class BookkeepingDBClient(FileCatalogClientBase):
 
   @checkCatalogArguments
   def exists(self, path):
-    """ Returns a dictionary of True/False on file existence
-    """
+    """Returns a dictionary of True/False on file existence."""
     return self.__exists(path)
 
   @checkCatalogArguments
   def getFileMetadata(self, path):
-    """ Return the metadata dictionary
-    """
+    """Return the metadata dictionary."""
     return self.__getFileMetadata(path)
 
   @checkCatalogArguments
   def getFileSize(self, path):
-    """ Return just the file size
-    """
+    """Return just the file size."""
 
     res = self.__getFileMetadata(path)
     # Always returns OK
@@ -159,9 +149,7 @@ class BookkeepingDBClient(FileCatalogClientBase):
   #
 
   def __checkArgumentFormat(self, path):
-    '''
-      Returns a list, either from a string or keys of a dict
-    '''
+    """Returns a list, either from a string or keys of a dict."""
     if isinstance(path, basestring):
       return S_OK([path])
     elif isinstance(path, list):
@@ -191,21 +179,15 @@ class BookkeepingDBClient(FileCatalogClientBase):
     return S_OK({'Successful': successful, 'Failed': failed})
 
   def __setHasReplicaFlag(self, lfns):
-    '''
-      Set replica flags on BKK
-    '''
+    """Set replica flags on BKK."""
     return self.__toggleReplicaFlag(lfns, setflag=True)
 
   def __unsetHasReplicaFlag(self, lfns):
-    '''
-      Removes replica flags on BKK
-    '''
+    """Removes replica flags on BKK."""
     return self.__toggleReplicaFlag(lfns, setflag=False)
 
   def __exists(self, lfns):
-    '''
-      Checks if lfns exist
-    '''
+    """Checks if lfns exist."""
     successful = {}
     failed = {}
     for lfnList in breakListIntoChunks(lfns, self.splitSize):
@@ -218,9 +200,7 @@ class BookkeepingDBClient(FileCatalogClientBase):
 
   @checkCatalogArguments
   def __getFileMetadata(self, lfns):
-    '''
-      Returns lfns metadata
-    '''
+    """Returns lfns metadata."""
     successful = {}
     failed = {}
     for lfnList in breakListIntoChunks(lfns, self.splitSize):

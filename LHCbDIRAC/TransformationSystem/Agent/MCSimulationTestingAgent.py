@@ -8,10 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-An agent to check for MCSimulation productions that have undergone the testing phase.
-Productions that have the status Idle and are also in the table StoredJobDescription have undergone testing.
-A report is created by the agent from the results of the test phase and emailed to the Production Manager
+"""An agent to check for MCSimulation productions that have undergone the
+testing phase. Productions that have the status Idle and are also in the table
+StoredJobDescription have undergone testing. A report is created by the agent
+from the results of the test phase and emailed to the Production Manager.
 
 Author: Simon Bidwell
 """
@@ -35,14 +35,17 @@ AGENT_NAME = 'Transformation/MCSimulationTestingAgent'
 
 
 class MCSimulationTestingAgent (AgentModule):
-  """An agent to check for MCSimulation productions that have undergone the testing phase.
-     Productions that have the status Idle and are also in the table StoredJobDescription have undergone testing.
-     A report is created by the agent from the results of the test phase and emailed to the Production Manager
+  """An agent to check for MCSimulation productions that have undergone the
+  testing phase.
+
+  Productions that have the status Idle and are also in the table
+  StoredJobDescription have undergone testing. A report is created by
+  the agent from the results of the test phase and emailed to the
+  Production Manager
   """
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     AgentModule.__init__(self, *args, **kwargs)
     self.transClient = None
     self.bkClient = None
@@ -140,8 +143,8 @@ class MCSimulationTestingAgent (AgentModule):
     return S_OK()
 
   def _activateTransformation(self, transID, tasks):
-    """ Calculate parameters, update the workflow, then move the production to Active
-    """
+    """Calculate parameters, update the workflow, then move the production to
+    Active."""
     parameters = self._calculateParameters(tasks)
     if not parameters['OK']:
       self.log.error("Error calculating parameters", parameters['Message'])
@@ -162,8 +165,8 @@ class MCSimulationTestingAgent (AgentModule):
     return S_OK()
 
   def __createReport(self, tasks):
-    """creates a report from a failed task to email to the production manager
-    """
+    """creates a report from a failed task to email to the production
+    manager."""
     dateformat = '%d/%m/%Y %H:%M'
     transformationID = tasks[0]["TransformationID"]
     transformation = self.transClient.getTransformations(condDict={"TransformationID": transformationID})
@@ -207,8 +210,7 @@ class MCSimulationTestingAgent (AgentModule):
     return {'subject': subject, 'body': body}
 
   def _sendReport(self, report):
-    """sends a given report to the production manager
-    """
+    """sends a given report to the production manager."""
     if not self.email:
       self.email = getUserOption(self.operations.getValue("Shifter/ProductionManager/User"), 'Email')
     body = '\n'.join(report['body'])
@@ -225,8 +227,7 @@ class MCSimulationTestingAgent (AgentModule):
       self.log.info('Mail summary sent to production manager')
 
   def _calculateParameters(self, tasks):
-    """ Calculates the CPU time per event for the production
-    """
+    """Calculates the CPU time per event for the production."""
     jobIds = [int(x['ExternalID']) for x in tasks]
     res = self.bkClient.bulkJobInfo({'jobId': jobIds})
     if not res['OK']:
@@ -260,8 +261,8 @@ class MCSimulationTestingAgent (AgentModule):
     return S_OK({'CPUe': CPUe, 'MCCpu': MCCpu})
 
   def _updateWorkflow(self, transID, CPUe, MCCpu):
-    """ Updates the workflow of a savedProductionDescription to reflect the calculated CPUe
-    """
+    """Updates the workflow of a savedProductionDescription to reflect the
+    calculated CPUe."""
     res = self.transClient.getStoredJobDescription(transID)
     if res['OK']:
       workflow = fromXMLString(res['Value'][0][1])
@@ -294,9 +295,9 @@ class MCSimulationTestingAgent (AgentModule):
       return res
 
   def _updateTransformationsTable(self, transID, workflow):
-    """ Puts the modified workflow from the savedProductionDescription table into the transformations table
-        and removes it from the savedProductionDescription table.
-    """
+    """Puts the modified workflow from the savedProductionDescription table
+    into the transformations table and removes it from the
+    savedProductionDescription table."""
     transformation = self.transClient.getTransformations(condDict={"TransformationID": transID})
     if transformation['OK']:
       body = self.transClient.setTransformationParameter(transID, "Body", workflow)

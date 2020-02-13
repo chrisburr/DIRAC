@@ -27,14 +27,13 @@ from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient
 
 ########################################################################
 class WMSSecureOutputData( OperationHandlerBase ):
-  """
-  .. class:: ValidateRequest
+  """.. class:: ValidateRequest.
 
   Validate operation handler
   """
 
   def __init__( self, operation = None, csPath = None ):
-    """c'tor
+    """c'tor.
 
     :param self: self reference
     :param Operation operation: Operation instance
@@ -44,8 +43,7 @@ class WMSSecureOutputData( OperationHandlerBase ):
 
 
   def __call__( self ):
-    """ It expects to find the reqID in operation.Arguments
-    """
+    """It expects to find the reqID in operation.Arguments."""
     try:
       decode = DEncode.decode( self.operation.Arguments )
       self.log.debug (decode)

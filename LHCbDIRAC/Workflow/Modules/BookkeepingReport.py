@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""  Bookkeeping Reporting module (just prepare the files, do not send them
-    (which is done in the uploadOutput)
-"""
+"""Bookkeeping Reporting module (just prepare the files, do not send them
+(which is done in the uploadOutput)"""
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -39,12 +38,10 @@ from LHCbDIRAC.Core.Utilities.XMLTreeParser import addChildNode
 
 
 class BookkeepingReport(ModuleBase):
-  """ BookkeepingReport class
-  """
+  """BookkeepingReport class."""
 
   def __init__(self, bkClient=None, dm=None):
-    """ Usual c'tor
-    """
+    """Usual c'tor."""
 
     self.log = gLogger.getSubLogger("BookkeepingReport")
 
@@ -73,8 +70,7 @@ class BookkeepingReport(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None, saveOnFile=True):
-    """ Usual executor
-    """
+    """Usual executor."""
     try:
 
       super(BookkeepingReport, self).execute(self.version, production_id, prod_job_id, wms_job_id,
@@ -110,8 +106,7 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
 
     super(BookkeepingReport, self)._resolveInputVariables()
     super(BookkeepingReport, self)._resolveInputStep()
@@ -191,26 +186,15 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __makeBookkeepingXML(self, bkLFNs, logFilePath):
-    ''' Bookkeeping xml looks like this:
+    """Bookkeeping xml looks like this:
 
-        <Job ConfigName="" ConfigVersion="" Date="" Time="">
-          <TypedParameter Name="" Type="" Value=""/>
-          ...
-          <InputFile Name=""/>
-          ...
-          <OutputFile Name="" TypeName="" TypeVersion="">
-            <Parameter Name="" Value=""/>
-            ...
-            <Replica Location="" Name=""/>
-            ....
-          </OutputFile>
-          ...
-          <SimulationCondition>
-            <Parameter Name="" Value=""/>
-          </SimulationCondition>
-        </Job>
-
-    '''
+    <Job ConfigName="" ConfigVersion="" Date="" Time="">
+    <TypedParameter Name="" Type="" Value=""/>   ...   <InputFile
+    Name=""/>   ...   <OutputFile Name="" TypeName="" TypeVersion="">
+    <Parameter Name="" Value=""/>     ...     <Replica Location=""
+    Name=""/>     ....   </OutputFile>   ...   <SimulationCondition>
+    <Parameter Name="" Value=""/>   </SimulationCondition> </Job>
+    """
     # Generate XML document
     doc = Document()
     docType = DocumentType("Job")
@@ -238,9 +222,10 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateJobNode(self, doc):
-    ''' Node looks like
-        <Job ConfigName="" ConfigVersion="" Date="" Time="">
-    '''
+    """Node looks like.
+
+    <Job ConfigName="" ConfigVersion="" Date="" Time="">
+    """
 
     # Get the Config name from the environment if any
     if 'configName' in self.workflow_commons:
@@ -257,34 +242,35 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateTypedParams(self, jobNode):
-    """ TypedParameter looks like
-        <TypedParameter Name="" Type="" Value="">
+    """TypedParameter looks like.
 
-        List of possible TypedParameter names
-        - CPUTIME
-        - ExecTime
-        - WNMODEL
-        - WNMEMORY
-        - WNCPUPOWER
-        - WNCACHE
-        - WNCPUHS06
-        - WNMJFHS06
-        - Production
-        - DiracJobId
-        - Name
-        - JobStart
-        - JobEnd
-        - Location
-        - JobType
-        - WorkerNode
-        - GeometryVersion
-        - ProgramName
-        - ProgramVersion
-        - DiracVersion
-        - FirstEventNumber
-        - StatisticsRequested
-        - NumberOfEvents
-        - StepID
+    <TypedParameter Name="" Type="" Value="">
+
+    List of possible TypedParameter names
+    - CPUTIME
+    - ExecTime
+    - WNMODEL
+    - WNMEMORY
+    - WNCPUPOWER
+    - WNCACHE
+    - WNCPUHS06
+    - WNMJFHS06
+    - Production
+    - DiracJobId
+    - Name
+    - JobStart
+    - JobEnd
+    - Location
+    - JobType
+    - WorkerNode
+    - GeometryVersion
+    - ProgramName
+    - ProgramVersion
+    - DiracVersion
+    - FirstEventNumber
+    - StatisticsRequested
+    - NumberOfEvents
+    - StepID
     """
 
     typedParams = []
@@ -365,9 +351,10 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateInputFiles(self, jobNode, bkLFNs):
-    ''' InputData looks like this
-        <InputFile Name=""/>
-    '''
+    """InputData looks like this.
+
+    <InputFile Name=""/>
+    """
 
     if self.stepInputData:
       intermediateInputs = False
@@ -384,15 +371,12 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateOutputFiles(self, jobNode, bkLFNs, logFilePath):
-    '''OutputFile looks like this:
+    """OutputFile looks like this:
 
-       <OutputFile Name="" TypeName="" TypeVersion="">
-         <Parameter Name="" Value=""/>
-         ...
-         <Replica Location="" Name=""/>
-         ....
-       </OutputFile>
-    '''
+    <OutputFile Name="" TypeName="" TypeVersion="">   <Parameter Name=""
+    Value=""/>   ...   <Replica Location="" Name=""/>   ....
+    </OutputFile>
+    """
 
     if self.eventType is not None:
       eventtype = self.eventType
@@ -538,12 +522,12 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def _getFileStatsFromXMLSummary(self, output, outputtype):
-    """ Gets stats per file from the XML summary,
-        considering files registered with different cases
+    """Gets stats per file from the XML summary, considering files registered
+    with different cases.
 
-        :params str output: file name looked out
-        :params str outputType: file type looked out
-        :returns: (str, str) with stats and actual file name
+    :params str output: file name looked out
+    :params str outputType: file type looked out
+    :returns: (str, str) with stats and actual file name
     """
     try:
       return str(self.xf_o.outputsEvents[output]), output
@@ -571,11 +555,11 @@ class BookkeepingReport(ModuleBase):
       raise KeyError("Could not find output LFN in XML summary object")
 
   def __generateSimulationCondition(self, jobNode):
-    '''SimulationCondition looks like this:
-       <SimulationCondition>
-         <Parameter Name="" Value=""/>
-       </SimulationCondition>
-    '''
+    """SimulationCondition looks like this:
+
+    <SimulationCondition>   <Parameter Name="" Value=""/>
+    </SimulationCondition>
+    """
     if self.applicationName == "Gauss":
       jobNode, sim = addChildNode(jobNode, "SimulationCondition", 1, ())
       sim = addChildNode(sim, "Parameter", 0, ("SimDescription", self.simDescription))
@@ -585,9 +569,10 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __getNodeInformation(self):
-    """Try to obtain system HostName, CPU, Model, cache and memory.  This information
-       is not essential to the running of the jobs but will be reported if
-       available.
+    """Try to obtain system HostName, CPU, Model, cache and memory.
+
+    This information is not essential to the running of the jobs but
+    will be reported if available.
     """
     result = {}
     try:

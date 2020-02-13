@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" PluginScript module holds PluginScript class, which is an extension of DMScript class
-"""
+"""PluginScript module holds PluginScript class, which is an extension of
+DMScript class."""
 
 from DIRAC import S_OK, gLogger
 from DIRAC.Core.Base import Script
@@ -19,16 +19,15 @@ from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
 
 class Setter(object):
-  """
-  Class used for setting an option: use setOption() method as a script setter
-  """
+  """Class used for setting an option: use setOption() method as a script
+  setter."""
 
   def __init__(self, obj, name):
     self.name = name
     self.obj = obj
 
   def setOption(self, val):
-    """ Method used as a setter in the switch definition """
+    """Method used as a setter in the switch definition."""
     if self.name.endswith('='):
       try:
         self.obj.options[self.name[:-1]] = val if not self.name == "GroupSize=" else float(val)
@@ -41,8 +40,7 @@ class Setter(object):
 
 
 class PluginScript(DMScript):
-  """ Scripts utilities class
-  """
+  """Scripts utilities class."""
 
   def __init__(self):
     super(PluginScript, self).__init__()
@@ -68,7 +66,7 @@ class PluginScript(DMScript):
     self.setters = {}
 
   def registerPluginSwitches(self):
-    """ Set of switches used by TS plugins """
+    """Set of switches used by TS plugins."""
     self.registerBKSwitches()
 
     for option in self.pluginParameters:
@@ -87,9 +85,7 @@ class PluginScript(DMScript):
       Script.registerSwitch('', option, self.additionalParameters[option], self.setters[option].setOption)
 
   def getPluginParameters(self):
-    """
-    Get  parameters used by TS plugins
-    """
+    """Get  parameters used by TS plugins."""
     if 'Parameters' in self.options:
       params = eval(self.options['Parameters'])  # pylint: disable=eval-used
     else:
@@ -102,9 +98,7 @@ class PluginScript(DMScript):
     return params
 
   def getPluginSEParameters(self):
-    """
-    Special treatment for SE-related parameters
-    """
+    """Special treatment for SE-related parameters."""
     params = {}
     # print self.options
     for key in set(self.options) & set(self.seParameters):

@@ -10,10 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
-Move files that are Unused or MaxReset from a parent production to its derived production
-The argument is a list of productions: comma separated list of ranges (a range has the form p1:p2)
-"""
+"""Move files that are Unused or MaxReset from a parent production to its
+derived production The argument is a list of productions: comma separated list
+of ranges (a range has the form p1:p2)"""
 
 __RCSID__ = "$Id$"
 

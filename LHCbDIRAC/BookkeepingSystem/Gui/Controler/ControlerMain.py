@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-main controller of the widgets.
-"""
+"""main controller of the widgets."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
 from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
@@ -29,12 +27,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerMain(ControlerAbstract):
-  """
-  ControlerMain class
-  """
+  """ControlerMain class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the main controller"""
+    """initialize the main controller."""
     ControlerAbstract.__init__(self, widget, parent)
     self.__bkClient = LHCB_BKKDBClient()
     self.__diracAPI = Dirac()
@@ -59,7 +55,7 @@ class ControlerMain(ControlerAbstract):
     self.__bkClient.setDataQualities(self.__qualityFlags)
   #############################################################################
   def messageFromParent(self, message):
-    """delivers the messages to the children controllers"""
+    """delivers the messages to the children controllers."""
     controlers = self.getChildren()
     for controler in controlers:
       ct = controlers[controler]
@@ -67,7 +63,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def messageFromChild(self, sender, message):
-    """handles the messages sent by the children controllers"""
+    """handles the messages sent by the children controllers."""
     gLogger.debug(str(self.__class__)+' Sender' + str(sender.__class__))
     gLogger.debug(str(self.__class__)+' Message'+str(message))
 
@@ -83,8 +79,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def handleDataqualitydialog(self, sender, message):
-    """ it handles the messages sent by the Data quality widget
-    """
+    """it handles the messages sent by the Data quality widget."""
     if message.action() == 'changeQualities':
       self.__qualityFlags = message['Values']
       self.__bkClient.setDataQualities(self.__qualityFlags)
@@ -94,8 +89,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def handleProductionlookup(self, sender, message):
-    """It handles the messages sent by the Production Lookup widget.
-    """
+    """It handles the messages sent by the Production Lookup widget."""
 
     if message['action'] == 'configbuttonChanged':
       return self.__configurationbasedquery()
@@ -135,8 +129,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def handleTreewidget(self, sender, message):
-    """It handles the messages sent by the tree panel.
-    """
+    """It handles the messages sent by the tree panel."""
     result = None
     if message['action'] == 'configbuttonChanged':
       result = self.__configurationbasedquery()
@@ -216,8 +209,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __expandeTreenode(self, message):
-    """It expands a given tree node (It opens a directory)
-    """
+    """It expands a given tree node (It opens a directory)"""
     self.getWidget().waitCursor()
     path = message['node']
     items = Item({'fullpath':path}, None)
@@ -239,8 +231,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __configurationbasedquery(self):
-    """It change the type of the Bookkeeping tree.
-    """
+    """It change the type of the Bookkeeping tree."""
     self.__bkClient.setParameter('Configuration')
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
@@ -251,8 +242,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __eventbasedquery(self):
-    """It change the type of the Bookkeeping tree
-    """
+    """It change the type of the Bookkeeping tree."""
     self.__bkClient.setParameter('Event type')
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
@@ -262,8 +252,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __productionLookup(self):
-    """It change the type of the Bookkeeping tree
-    """
+    """It change the type of the Bookkeeping tree."""
     self.__bkClient.setParameter('Productions')
     controlers = self.getChildren()
     items = self.root()
@@ -273,8 +262,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __runLookup(self):
-    """It change the type of the bookkeeping query.
-    """
+    """It change the type of the bookkeeping query."""
     self.__bkClient.setParameter('Runlookup')
     controlers = self.getChildren()
     items = self.root()
@@ -284,8 +272,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __saveAsDataset(self, message):
-    """it creates an gaudi card format file
-    """
+    """it creates an gaudi card format file."""
     dataset = message['dataset']
     if self.__fileName != '':
       fileName = self.__fileName
@@ -303,8 +290,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __saveToTxtformat(self, message):
-    """ it save the selected lfns to a given file in a text format
-    """
+    """it save the selected lfns to a given file in a text format."""
     if self.__fileName != '':
       fileName = self.__fileName
       lfns = message['lfns']
@@ -322,17 +308,15 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __getJobInformation(self, message):
-    """
-    It returns the information of a job which created a given file.
-    """
+    """It returns the information of a job which created a given file."""
     files = self.__bkClient.getJobInfo(message['fileName'])
     message = Message({'action':'showJobInfos', 'items':files})
     return message
 
   #############################################################################
   def __getChunkofFiles(self, message):
-    """
-    It used by the File dialog window during the paging.
+    """It used by the File dialog window during the paging.
+
     It returns only a limited number of files.
     """
     path = message['node']
@@ -345,8 +329,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __handleStandardQuery(self):
-    """it sets the standard query in the GUI and the Bookkeeping client
-    """
+    """it sets the standard query in the GUI and the Bookkeeping client."""
     self.__bkClient.setAdvancedQueries(False)
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
@@ -356,9 +339,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __handleAdvancedquery(self):
-    """
-    It sets the advanced query in the GUI and the bookkeeping client.
-    """
+    """It sets the advanced query in the GUI and the bookkeeping client."""
     self.__bkClient.setAdvancedQueries(True)
     items = self.root()
     controlers = self.getChildren()
@@ -368,8 +349,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __getFileAncestor(self, message):
-    """It used to navigate through the creation history of files.
-    """
+    """It used to navigate through the creation history of files."""
     files = message['files']
     if len(files) == 0:
       message = Message({'action':'error', 'message':'Please select a file or files!'})
@@ -383,8 +363,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __getProcessingPass(self, message):
-    """It returns the processing pass for a given step description
-    """
+    """It returns the processing pass for a given step description."""
     desc = message['groupdesc']
     retVal = self.__bkClient.getProcessingPassSteps({'StepName':desc})
     if not retVal['OK']:
@@ -394,9 +373,7 @@ class ControlerMain(ControlerAbstract):
       return retVal['Value']
   #############################################################################
   def __getDetailedProcessingPass(self, message):
-    """
-    It returns the corresponding steps created by the productions
-    """
+    """It returns the corresponding steps created by the productions."""
     bkDict = message['bkDict']
     retVal = self.__bkClient.getStepsMetadata(bkDict)
     if not retVal['OK']:
@@ -407,8 +384,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __getProductionSteps(self, message):
-    """It returns the steps and processing passes of a given production.
-    """
+    """It returns the steps and processing passes of a given production."""
     res = self.__bkClient.getProductionProcessingPassSteps({'Production':int(message['production'])})
     if res['OK']:
       return res['Value']
@@ -418,8 +394,8 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __getBookmarksPrefix(self):
-    """It returns the type of the query which can be advanced or standard from the Bookkmarks.
-    """
+    """It returns the type of the query which can be advanced or standard from
+    the Bookkmarks."""
     param = self.__bkClient.getCurrentParameter()
     querytype = self.__bkClient.getQueriesTypes()
     prefix = param + '+' + querytype
@@ -427,8 +403,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __getLogfile(self, message):
-    """It returns the log file of the job which created the selected file.
-    """
+    """It returns the log file of the job which created the selected file."""
     files = message['fileName']
     if len(files) == 0:
       message = Message({'action':'error', 'message':'Please select a file'})
@@ -456,8 +431,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def __createCatalogMessage(self, message):
-    """It creates a POOL XML catalog for a given lfns.
-    """
+    """It creates a POOL XML catalog for a given lfns."""
     if self.__fileName != '':
       lfnList = message['lfns'].keys()
       filedescriptor = open(self.__fileName, 'w')
@@ -512,7 +486,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def root(self):
-    """creates the root node"""
+    """creates the root node."""
     item = self.__bkClient.get()
     items = Item(item, None)
     path = item['Value']['fullpath']
@@ -527,7 +501,7 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def start(self):
-    """send the messages to the appropiate controllers"""
+    """send the messages to the appropiate controllers."""
     items = self.root()
     if items != None:
       message = Message({'action':'list', 'items':items})
@@ -542,17 +516,17 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def setFileName(self, fileName):
-    """sets the file name"""
+    """sets the file name."""
     self.__fileName = fileName
 
   #############################################################################
   def setPathFileName(self, filename):
-    """sets the full file name"""
+    """sets the full file name."""
     self.__pathfilename = filename
 
   #############################################################################
   def dataQuality(self):
-    """handles the data quality related actions"""
+    """handles the data quality related actions."""
     controlers = self.getChildren()
     ct = controlers['DataQuality']
     message = Message({'action':'list', 'Values':self.__qualityFlags})
@@ -560,13 +534,12 @@ class ControlerMain(ControlerAbstract):
 
   #############################################################################
   def dataQualityFlagChecked(self, flag, value):
-    """handles the actions of the data quality check boxes"""
+    """handles the actions of the data quality check boxes."""
     self.__qualityFlags[flag] = value
     
   def __saveToCSVformat(self, message):
-    """
-    This method is used to save a list of selected lfns and their metadata
-    """
+    """This method is used to save a list of selected lfns and their
+    metadata."""
     dataset = message['dataset']
     if self.__fileName != '':
       fileName = self.__fileName

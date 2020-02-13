@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" A mock of the BookkeepingClient, used for testing purposes
-"""
+"""A mock of the BookkeepingClient, used for testing purposes."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 

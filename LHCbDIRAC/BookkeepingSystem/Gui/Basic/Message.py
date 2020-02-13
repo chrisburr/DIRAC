@@ -8,21 +8,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This Message used by the controllers to deliver information
-"""
+"""This Message used by the controllers to deliver information."""
 
 __RCSID__ = "$Id$"
 
 #############################################################################
 class Message(dict):
-  """Message class"""
+  """Message class."""
   #############################################################################
   def __init__(self, message):
-    """inherits from the dictionary"""
+    """inherits from the dictionary."""
     dict.__init__(self, message)
 
   #############################################################################
   def action(self):
-    """action be performed on the views"""
+    """action be performed on the views."""
     return self['action']

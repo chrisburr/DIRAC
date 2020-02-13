@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" UploadLogFile module is used to upload the files present in the working
-    directory.
-"""
+"""UploadLogFile module is used to upload the files present in the working
+directory."""
 
 __RCSID__ = "$Id$"
 
@@ -37,14 +36,12 @@ from LHCbDIRAC.Core.Utilities.ResolveSE import getDestinationSEList
 
 
 class UploadLogFile(ModuleBase):
-  """ Upload to LogSE
-  """
+  """Upload to LogSE."""
 
   #############################################################################
 
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("UploadLogFile")
     super(UploadLogFile, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -85,8 +82,7 @@ class UploadLogFile(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main executon method
-    """
+    """Main executon method."""
 
     try:
 
@@ -208,8 +204,7 @@ class UploadLogFile(ModuleBase):
   #############################################################################
 
   def _uploadLogToFailoverSE(self, zipFileName):
-    """  Recover the logs to a failover storage element
-    """
+    """Recover the logs to a failover storage element."""
 
     # here because self.siteName is not known until execute() is invoked
     self.failoverSEs = getDestinationSEList('Tier1-Failover', self.siteName, outputmode='Any')
@@ -247,8 +242,11 @@ class UploadLogFile(ModuleBase):
       self.log.verbose("Successfully created failover request")
 
   def _determineRelevantFiles(self):
-    """ The files which are below a configurable size will be stored in the logs.
-        This will typically pick up everything in the working directory minus the output data files.
+    """The files which are below a configurable size will be stored in the
+    logs.
+
+    This will typically pick up everything in the working directory
+    minus the output data files.
     """
     logFileExtensions = ['*.txt', '*.log', '*.out', '*.output',
                          '*.xml', '*.sh', '*.info', '*.err', 'prodConf*.py']  # '*.root',
@@ -272,8 +270,10 @@ class UploadLogFile(ModuleBase):
   #############################################################################
 
   def __populateLogDirectory(self, selectedFiles):
-    """ A temporary directory is created for all the selected files.
-        These files are then copied into this directory before being uploaded
+    """A temporary directory is created for all the selected files.
+
+    These files are then copied into this directory before being
+    uploaded
     """
     # Create the temporary directory
     mkDir(self.logdir)
@@ -306,8 +306,7 @@ class UploadLogFile(ModuleBase):
   #############################################################################
 
   def __createLogUploadRequest(self, targetSE, logFileLFN, uploadedSE):
-    """ Set a request to upload job log files from the output sandbox
-    """
+    """Set a request to upload job log files from the output sandbox."""
     self.log.info('Setting log upload request',
                   'for %s at %s' % (logFileLFN, targetSE))
 
@@ -331,9 +330,8 @@ class UploadLogFile(ModuleBase):
   #############################################################################
 
   def __setLogFilePermissions(self, logDir):
-    """ Sets the permissions of all the files in the log directory to ensure
-        they are readable.
-    """
+    """Sets the permissions of all the files in the log directory to ensure
+    they are readable."""
     try:
       for toChange in os.listdir(logDir):
         if not os.path.islink('%s/%s' % (logDir, toChange)):

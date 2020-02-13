@@ -13,9 +13,7 @@
 # File :    dirac-dms-replicate-lfn
 # Author  : Stuart Paterson
 ########################################################################
-"""
-  Replicate a (list of) existing LFN(s) to (set of) Storage Element(s)
-"""
+"""Replicate a (list of) existing LFN(s) to (set of) Storage Element(s)"""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

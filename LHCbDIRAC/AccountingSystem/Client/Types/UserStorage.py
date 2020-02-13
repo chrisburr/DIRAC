@@ -8,18 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' UserStorage Type
-  
-'''
+"""UserStorage Type."""
 
 from DIRAC.AccountingSystem.Client.Types.BaseAccountingType import BaseAccountingType
 
 __RCSID__ = "$Id$"
 
 class UserStorage( BaseAccountingType ):
-  '''
-    UserStorage as extension of BaseAccountingType
-  '''
+  """UserStorage as extension of BaseAccountingType."""
 
   def __init__( self ):
 

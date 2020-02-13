@@ -9,8 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" remove output of production
-"""
+"""remove output of production."""
 
 __RCSID__ = "$Id$"
 

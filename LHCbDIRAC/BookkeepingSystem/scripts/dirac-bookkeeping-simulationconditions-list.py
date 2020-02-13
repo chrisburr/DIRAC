@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-simulationconditions-list
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  List simulation conditions from the Bookkeeping
-"""
+"""List simulation conditions from the Bookkeeping."""
 __RCSID__ = "$Id$"
 
 import DIRAC

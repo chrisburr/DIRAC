@@ -10,10 +10,9 @@
 ###############################################################################
 ############################################################
 
-"""
-   LHCbDIRAC.Interfaces package
+"""LHCbDIRAC.Interfaces package.
 
-   This contains the LHCb specific API plugins for DIRAC.
+This contains the LHCb specific API plugins for DIRAC.
 """
 
 __RCSID__ = "$Id$"

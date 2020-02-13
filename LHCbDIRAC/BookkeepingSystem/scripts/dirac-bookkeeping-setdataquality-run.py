@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-setdataquality-run
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Set Data Quality Flag for the given run
-"""
+"""Set Data Quality Flag for the given run."""
 __RCSID__ = "$Id$"
 
 import DIRAC

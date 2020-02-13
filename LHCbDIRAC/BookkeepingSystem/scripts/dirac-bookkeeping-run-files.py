@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-run-files.py
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve files for a given run
-"""
+"""Retrieve files for a given run."""
 __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC.Core.Base import Script

@@ -11,7 +11,7 @@
 ###############################################################################
 
 #
-"""  check if a service or an agent is stalled """
+"""check if a service or an agent is stalled."""
 
 __RCSID__ = "$Id$"
 
@@ -39,7 +39,7 @@ msg = 'List of Services / agents which could be stalled on ' + host + ' \n\n'
 
 
 def write_log(mesg):
-  """ create the log file """
+  """create the log file."""
   global msg
   gLogger.notice(mesg)
   msg += mesg + '\n'

@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_RSS_Command_NagiosProbesCommand
-
-'''
+"""Test_RSS_Command_NagiosProbesCommand."""
 
 #import unittest
 #

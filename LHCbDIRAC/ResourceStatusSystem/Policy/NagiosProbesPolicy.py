@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.ResourceStatusSystem.Policy.NagiosProbesPolicy
+"""LHCbDIRAC.ResourceStatusSystem.Policy.NagiosProbesPolicy.
 
-   NagiosProbesPolicy.__bases__:
-     DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
-
-'''
+NagiosProbesPolicy.__bases__:
+  DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
+"""
 
 from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
 
@@ -27,19 +26,18 @@ __RCSID__ = "$Id$"
 #...............................................................................
 
 class NagiosProbesPolicy( PolicyBase ):
-  '''
-  The NagiosProbesPolicy checks the nagios probes.
+  """The NagiosProbesPolicy checks the nagios probes.
 
-  NagiosProbesPolicy, given the Nagios probes in activeMQ for this element,
-  proposes a new status.
-  '''
+  NagiosProbesPolicy, given the Nagios probes in activeMQ for this
+  element, proposes a new status.
+  """
 
   def evaluate(self):
-    '''
-      We are ignoring the UNKNOWN metricStatuses, as this is a prototype.
-      The WARNING metricStatus is ambiguous, so it is ignored until we have
-      a clarification.
-    '''
+    """We are ignoring the UNKNOWN metricStatuses, as this is a prototype.
+
+    The WARNING metricStatus is ambiguous, so it is ignored until we
+    have a clarification.
+    """
 
     _KNOWN_METRIC_STATUS = [ 'OK', 'WARNING', 'CRITICAL', 'UNKNOWN' ]
 

@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-job-info
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  It returns the job meta data for a given list of LFNs
-"""
+"""It returns the job meta data for a given list of LFNs."""
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script

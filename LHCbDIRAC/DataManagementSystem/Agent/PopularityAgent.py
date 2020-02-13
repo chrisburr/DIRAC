@@ -57,7 +57,7 @@ class PopularityAgent(AgentModule):
   numPopRows = None
 
   def initialize(self):
-    """ agent initialisation """
+    """agent initialisation."""
     self.am_setOption('PollingTime', 43200)
     if self.am_getOption('DirectDB', False):
       self.__stDB = StorageUsageDB()
@@ -80,7 +80,7 @@ class PopularityAgent(AgentModule):
 # .........................................................................................
 
   def execute(self):
-    """ Main loop of Popularity agent """
+    """Main loop of Popularity agent."""
 
     now = datetime.now()
     endTime = datetime(now.year, now.month, now.day, 0, 0, 0)
@@ -254,8 +254,8 @@ class PopularityAgent(AgentModule):
     return res
 
   def computeTimeForAccounting(self, startTime, day):
-    """ Compute the time for the accounting record, starting from the start time of the query and the day bin
-    """
+    """Compute the time for the accounting record, starting from the start time
+    of the query and the day bin."""
     self.log.verbose("find time for accounting for startTime: %s + day %s " % (startTime, day))
     daysToAdd = timedelta(days=day, hours=12)  # add 12h just to put the value in the middle of time bin
     self.log.verbose("timedelta to add: %s " % daysToAdd)

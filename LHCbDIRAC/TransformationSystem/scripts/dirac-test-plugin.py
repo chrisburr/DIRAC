@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
- Test a plugin
-"""
+"""Test a plugin."""
 
 __RCSID__ = "$Id$"
 
@@ -107,9 +105,7 @@ class fakeClient:
       return self.transClient.getTransformationFiles(condDict=condDict)
 
   def setParameterToTransformationFiles(self, transID, lfnDict):
-    """
-    Update the transFiles with some parameters
-    """
+    """Update the transFiles with some parameters."""
     if transID == self.transID:
       for fileDict in self.transFiles:
         fileDict.update(lfnDict.get(fileDict['LFN'], {}))

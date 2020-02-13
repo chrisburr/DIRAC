@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_RSS_Policy_TransferQualityPolicy
-'''
+"""Test_RSS_Policy_TransferQualityPolicy."""
 
 import unittest
 
@@ -20,17 +19,13 @@ import LHCbDIRAC.ResourceStatusSystem.Policy.TransferQualityPolicy as moduleTest
 class TransferQualityPolicy_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    '''
-    Setup
-    '''
+    """Setup."""
 
     self.moduleTested = moduleTested
     self.testClass    = self.moduleTested.TransferQualityPolicy
 
   def tearDown( self ):
-    '''
-    Tear down
-    '''
+    """Tear down."""
 
     del self.moduleTested
     del self.testClass
@@ -40,15 +35,13 @@ class TransferQualityPolicy_TestCase( unittest.TestCase ):
 class TransferQualityPolicy_Success( TransferQualityPolicy_TestCase ):
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     module = self.testClass()
     self.assertEqual( 'TransferQualityPolicy', module.__class__.__name__ )
 
   def test_evaluate( self ):
-    ''' tests the method _evaluate
-    '''
+    """tests the method _evaluate."""
 
     module = self.testClass()
 

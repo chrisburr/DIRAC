@@ -8,13 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.ResourceStatusSystem.Policy.Configurations
+"""LHCbDIRAC.ResourceStatusSystem.Policy.Configurations.
 
-   POLICIESMETA_LHCB
-   policies
-   POLICIESMETA
-
-'''
+POLICIESMETA_LHCB policies POLICIESMETA
+"""
 
 __RCSID__ = "$Id$"
 

@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It interprets the XML reports and make a job, file, or replica object
-"""
+"""It interprets the XML reports and make a job, file, or replica object."""
 
 from xml.parsers.expat import ExpatError
 from xml.dom.minidom import parse, parseString
@@ -42,13 +40,11 @@ __RCSID__ = "$Id$"
 
 
 class XMLFilesReaderManager(object):
-  """
-  XMLFilesReaderManager class
-  """
+  """XMLFilesReaderManager class."""
   #############################################################################
 
   def __init__(self):
-    """initialize the member of class"""
+    """initialize the member of class."""
     self.jobReader_ = JobReader()
     self.replicaReader_ = ReplicaReader()
 
@@ -59,7 +55,7 @@ class XMLFilesReaderManager(object):
   #############################################################################
   @staticmethod
   def readFile(filename):
-    """reads an file content which format is XML"""
+    """reads an file content which format is XML."""
     try:
       with open(filename) as stream:
         doc = parse(stream)
@@ -74,7 +70,7 @@ class XMLFilesReaderManager(object):
 
   #############################################################################
   def readXMLfromString(self, xmlString):
-    """read the xml string"""
+    """read the xml string."""
     try:
       doc = parseString(xmlString)
 
@@ -100,7 +96,7 @@ class XMLFilesReaderManager(object):
 
   #############################################################################
   def processJob(self, job):
-    """interprets the xml content"""
+    """interprets the xml content."""
     gLogger.debug("Start Processing")
 
     # prepare for the insert, check the existence of the input files and retreive the fileid
@@ -464,7 +460,7 @@ class XMLFilesReaderManager(object):
     return S_OK()
 
   def __insertJob(self, job):
-    """Inserts the job to the database"""
+    """Inserts the job to the database."""
     config = job.getJobConfiguration()
 
     production = None
@@ -635,7 +631,7 @@ class XMLFilesReaderManager(object):
 
   #############################################################################
   def __insertOutputFiles(self, job, outputfile):
-    """insert the files produced by a job"""
+    """insert the files produced by a job."""
     attrList = {'FileName': outputfile.getFileName(),
                 'FileTypeId': outputfile.getTypeID(),
                 'JobId': job.getJobId()}
@@ -648,7 +644,7 @@ class XMLFilesReaderManager(object):
 
   #############################################################################
   def processReplicas(self, replica):
-    """process the replica registration request"""
+    """process the replica registration request."""
     outputfile = replica.getFileName()
     gLogger.debug("Processing replicas:", "%s" % outputfile)
     fileID = -1

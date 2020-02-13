@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_RSS_Client_ResourceManagementClient
-'''
+"""Test_RSS_Client_ResourceManagementClient."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 
@@ -26,17 +25,13 @@ __RCSID__ = "$Id$"
 class ResourceManagementClient_TestCase(unittest.TestCase):
 
   def setUp(self):
-    '''
-    Setup
-    '''
+    """Setup."""
     gLogger.setLevel("DEBUG")
     self.moduleTested = moduleTested
     self.testClass = self.moduleTested.ResourceManagementClient
 
   def tearDown(self):
-    '''
-    Tear down
-    '''
+    """Tear down."""
 
     del self.moduleTested
     del self.testClass
@@ -47,15 +42,13 @@ class ResourceManagementClient_TestCase(unittest.TestCase):
 class ResourceManagementClient_Success(ResourceManagementClient_TestCase):
 
   def test_instantiate(self):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     module = self.testClass()
     self.assertEqual('ResourceManagementClient', module.__class__.__name__)
 
   def test_init(self):
-    ''' test the __init__ method
-    '''
+    """test the __init__ method."""
 
     module = self.testClass()
 

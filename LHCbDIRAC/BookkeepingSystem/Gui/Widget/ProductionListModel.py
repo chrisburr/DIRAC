@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Production list model
-"""
+"""Production list model."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Basic.ListModel                   import ListModel
 
@@ -18,9 +16,7 @@ from LHCbDIRAC.BookkeepingSystem.Gui.Basic.ListModel                   import Li
 __RCSID__ = "$Id$"
 
 class ProductionListModel(ListModel):
-  """
-  ProductionListModel class
-  """
+  """ProductionListModel class."""
   #############################################################################
   def __init__(self, datain=None, parent=None, *args):
     if datain != None:

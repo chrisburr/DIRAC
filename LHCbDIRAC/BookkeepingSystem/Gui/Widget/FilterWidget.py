@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Filter widget
-"""
+"""Filter widget."""
 
 from PyQt4.QtGui                                                              import QWidget, QAbstractItemView
 from PyQt4.QtCore                                                             import SIGNAL
@@ -25,9 +23,7 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class FilterWidget(QWidget, Ui_FilterWidget):
-  """
-  FilterWidget class
-  """
+  """FilterWidget class."""
   #############################################################################
   def __init__(self, parent=None):
     QWidget.__init__(self, parent)
@@ -39,7 +35,7 @@ class FilterWidget(QWidget, Ui_FilterWidget):
     self.__controler = None
 
   def setupControler(self, parent):
-    """initialize the controllers"""
+    """initialize the controllers."""
     self.__controler = ControlerFilterWidget(self, parent.getControler())
     self.connect(self.okButton, SIGNAL("clicked()"), self.__controler.okPressed)
     self.connect(self.allButton, SIGNAL("clicked()"), self.__controler.allPressed)
@@ -50,27 +46,27 @@ class FilterWidget(QWidget, Ui_FilterWidget):
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################
   def setModel(self, data):
-    """sets the model of the widget"""
+    """sets the model of the widget."""
     self.__model.setData(data)
     self.listView.setModel(self.__model)
 
   #############################################################################
   def getListView(self):
-    """returns the list"""
+    """returns the list."""
     return self.listView
 
   #############################################################################
   def getLineEdit(self):
-    """returns the text box"""
+    """returns the text box."""
     return self.lineEdit
 
   #############################################################################
   def getModel(self):
-    """returns the model"""
+    """returns the model."""
     return self.__model
 

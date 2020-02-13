@@ -8,18 +8,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" GangaDataFile is a utility to create a Data file, to be used by ganga.
+"""GangaDataFile is a utility to create a Data file, to be used by ganga.
 
-    Givn input files, it will create something like::
+Givn input files, it will create something like::
 
-      from Gaudi.Configuration import *
-      from GaudiConf import IOHelper
-      IOHelper("ROOT").inputFiles([
-          "LFN:foo",
-          "LFN:bar"
-      ], clear=True)
+  from Gaudi.Configuration import *
+  from GaudiConf import IOHelper
+  IOHelper("ROOT").inputFiles([
+      "LFN:foo",
+      "LFN:bar"
+  ], clear=True)
 
-      FileCatalog().Catalogs = ["xmlcatalog_file:pool_xml_catalog.xml"]
+  FileCatalog().Catalogs = ["xmlcatalog_file:pool_xml_catalog.xml"]
 """
 
 __RCSID__ = "$Id$"
@@ -32,12 +32,10 @@ from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient import LHCB_BKKDBClient
 
 
 class GangaDataFile(object):
-  """ Creates ganga data file
-  """
+  """Creates ganga data file."""
 
   def __init__(self, fileName='data.py', xmlcatalog_file='pool_xml_catalog.xml', log=None):
-    """ initialize
-    """
+    """initialize."""
     if not log:
       self.log = gLogger.getSubLogger('GangaDataFile')
     else:
@@ -56,8 +54,7 @@ class GangaDataFile(object):
   ################################################################################
 
   def generateDataFile(self, lfns, persistency=None):
-    """ generate the data file
-    """
+    """generate the data file."""
     if isinstance(lfns, basestring) and lfns:
       lfns = [lfns]
     elif not isinstance(lfns, list):

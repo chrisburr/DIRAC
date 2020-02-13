@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Extension of DIRAC Task Manager
-"""
+"""Extension of DIRAC Task Manager."""
 
 from DIRAC.TransformationSystem.Client.TaskManager import WorkflowTasks
 
@@ -19,13 +18,11 @@ COMPONENT_NAME = 'LHCbTaskManager'
 
 
 class LHCbWorkflowTasks(WorkflowTasks):
-  """ A simple LHCb extension to the task manager,
-      for now only used to set the runNumber and runMetadata
-  """
+  """A simple LHCb extension to the task manager, for now only used to set the
+  runNumber and runMetadata."""
 
   def _handleInputs(self, oJob, paramsDict):
-    """ set job inputs (+ metadata)
-    """
+    """set job inputs (+ metadata)"""
     try:
       if paramsDict['InputData']:
         self.log.verbose('Setting input data to %s' % paramsDict['InputData'])
@@ -46,8 +43,8 @@ class LHCbWorkflowTasks(WorkflowTasks):
   #############################################################################
 
   def _handleRest(self, oJob, paramsDict):
-    """ add as JDL parameters all the other parameters that are not for inputs or destination
-    """
+    """add as JDL parameters all the other parameters that are not for inputs
+    or destination."""
 
     for paramName, paramValue in paramsDict.iteritems():
       if paramName not in ('InputData', 'RunNumber', 'RunMetadata', 'Site', 'TargetSE'):

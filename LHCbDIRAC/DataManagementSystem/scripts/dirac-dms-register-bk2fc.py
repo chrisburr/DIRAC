@@ -13,9 +13,8 @@
 # File :    dirac-dms-register-bk2fc
 # Author  : Philippe Charpentier
 ########################################################################
-"""
-  Given a (list of) LFNs and SEs, check for existence of a file and register in the FC if the file exists
-"""
+"""Given a (list of) LFNs and SEs, check for existence of a file and register
+in the FC if the file exists."""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

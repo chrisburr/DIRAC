@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-production-files.py
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve files of a given type for a production
-"""
+"""Retrieve files of a given type for a production."""
 __RCSID__ = "$Id$"
 from DIRAC.Core.Base import Script
 Script.setUsageMessage( '\n'.join( [ __doc__.split( '\n' )[1],

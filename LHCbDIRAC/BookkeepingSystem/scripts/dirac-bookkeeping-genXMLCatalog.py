@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Create a pool xml catalog slice for the specified LFNs
-"""
+"""Create a pool xml catalog slice for the specified LFNs."""
 
 import os
 import time

@@ -13,9 +13,7 @@
 # File :    dirac-lhcb-mc-eventtype-info
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Report sisters (i.e. descendant of ancestor) for the given LFNs
-"""
+"""Report sisters (i.e. descendant of ancestor) for the given LFNs."""
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script

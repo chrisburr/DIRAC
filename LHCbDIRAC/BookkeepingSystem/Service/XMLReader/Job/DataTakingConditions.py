@@ -8,10 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-stores the data taking conditions
-
-"""
+"""stores the data taking conditions."""
 
 from DIRAC                                                                  import gLogger
 
@@ -19,17 +16,15 @@ __RCSID__ = "$Id$"
 
 
 class DataTakingConditions:
-  """
-  DataTakingConditions class
-  """
+  """DataTakingConditions class."""
   #############################################################################
   def __init__(self):
-    """initialize the class memeber"""
+    """initialize the class memeber."""
     self.parameters_ = {}
 
   #############################################################################
   def addParam(self, name, value):
-    """adds parameter"""
+    """adds parameter."""
     self.parameters_[name] = value
 
   #############################################################################
@@ -39,7 +34,7 @@ class DataTakingConditions:
 
   #############################################################################
   def writeToXML(self):
-    """creates an xml string"""
+    """creates an xml string."""
     gLogger.info("Write DataTaking conditions to XML!!")
     result = '<DataTakingConditions>\n'
     for name, value in self.getParams().items():

@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit tests for LHCbDIRAC utilities
-"""
+"""Unit tests for LHCbDIRAC utilities."""
 
 # pylint: disable=protected-access,missing-docstring,invalid-name
 
@@ -38,8 +37,7 @@ gConfigMock.getValue.return_value = 'aValue'
 
 
 class UtilitiesTestCase(unittest.TestCase):
-  """ Base class for the Utilities test cases
-  """
+  """Base class for the Utilities test cases."""
 
   def setUp(self):
 

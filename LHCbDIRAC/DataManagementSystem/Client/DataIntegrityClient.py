@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-    This is the Data Integrity Client which allows the simple reporting of problematic
-    file and replicas to the IntegrityDB and their status correctly updated in the FileCatalog.
-"""
+"""This is the Data Integrity Client which allows the simple reporting of
+problematic file and replicas to the IntegrityDB and their status correctly
+updated in the FileCatalog."""
 
 import re
 import types
@@ -30,8 +29,7 @@ __RCSID__ = "$Id$"
 class DataIntegrityClient(DIRACDataIntegrityClient):
 
   def __init__(self):
-    """ Extending DIRAC's DIRACDataIntegrityClient init
-    """
+    """Extending DIRAC's DIRACDataIntegrityClient init."""
     super(DataIntegrityClient, self).__init__()
 
     self.cc = ConsistencyChecks()
@@ -42,8 +40,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
   #
 
   def productionToCatalog(self, productionID):
-    """  This obtains the file information from the BK and checks these files are present in the FC.
-    """
+    """This obtains the file information from the BK and checks these files are
+    present in the FC."""
     gLogger.info("-" * 40)
     gLogger.info("Performing the BK->FC check")
     gLogger.info("-" * 40)
@@ -79,8 +77,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return S_OK(resDict)
 
   def __checkCatalogForBKNoReplicas(self, lfns):
-    """ Checks the catalog existence for given files
-    """
+    """Checks the catalog existence for given files."""
     gLogger.info('Checking the catalog existence of %s files' % len(lfns))
 
     res = self.fc.getFileMetadata(lfns)
@@ -95,8 +92,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return S_OK(allMetadata)
 
   def __getProductionFiles(self, productionID):
-    """ This method queries the bookkeeping and obtains the file metadata for the given production
-    """
+    """This method queries the bookkeeping and obtains the file metadata for
+    the given production."""
     gLogger.info("Attempting to get files for production %s" % productionID)
     res = BookkeepingClient().getProductionFiles(productionID, 'ALL')
     if not res['OK']:
@@ -140,9 +137,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
   #
 
   def catalogDirectoryToBK(self, lfnDir):
-    """ This obtains the replica and metadata information from the catalog for
-      the supplied directory and checks against the BK.
-    """
+    """This obtains the replica and metadata information from the catalog for
+    the supplied directory and checks against the BK."""
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->BK check")
     gLogger.info("-" * 40)
@@ -168,8 +164,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return S_OK(resDict)
 
   def catalogFileToBK(self, lfns):
-    """ This obtains the replica and metadata information from the catalog and checks against the storage elements.
-    """
+    """This obtains the replica and metadata information from the catalog and
+    checks against the storage elements."""
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->BK check")
     gLogger.info("-" * 40)
@@ -208,8 +204,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
   #
 
   def resolveBKReplicaYes(self, problematicDict):
-    """ This takes the problematic dictionary returned by the integrity DB and resolved the BKReplicaYes prognosis
-    """
+    """This takes the problematic dictionary returned by the integrity DB and
+    resolved the BKReplicaYes prognosis."""
     lfn = problematicDict['LFN']
     fileID = problematicDict['FileID']
 
@@ -237,8 +233,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return self.__updateCompletedFiles('BKReplicaYes', fileID)
 
   def resolveBKReplicaNo(self, problematicDict):
-    """ This takes the problematic dictionary returned by the integrity DB and resolved the BKReplicaNo prognosis
-    """
+    """This takes the problematic dictionary returned by the integrity DB and
+    resolved the BKReplicaNo prognosis."""
     lfn = problematicDict['LFN']
     fileID = problematicDict['FileID']
 
@@ -263,8 +259,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return self.__updateCompletedFiles('BKReplicaNo', fileID)
 
   def checkPhysicalFiles(self, replicas, catalogMetadata, ses=[], fixIt=False):
-    """ This obtains takes the supplied replica and metadata information obtained from the catalog and checks against the storage elements.
-    """
+    """This obtains takes the supplied replica and metadata information
+    obtained from the catalog and checks against the storage elements."""
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->SE check")
     gLogger.info("-" * 40)
@@ -309,8 +305,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return S_OK()
 
   def __checkPhysicalFileMetadata(self, lfns, se):
-    """ Check obtain the physical file metadata and check the files are available
-    """
+    """Check obtain the physical file metadata and check the files are
+    available."""
     gLogger.info('Checking the integrity of %s physical files at %s' % (len(lfns), se))
 
     res = StorageElement(se).getFileMetadata(lfns)
@@ -346,7 +342,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     return S_OK(pfnMetadataDict)
 
   def reportProblematicReplicas(self, replicaTuple, se, reason, fixIt=False):
-    """ Simple wrapper function around setReplicaProblematic """
+    """Simple wrapper function around setReplicaProblematic."""
     gLogger.info('The following %s files had %s at %s' % (len(replicaTuple), reason, se))
     for lfn, pfn, se, reason1 in sorted(replicaTuple):
       if reason1 == reason:
@@ -368,8 +364,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
   #
 
   def __getCatalogDirectoryContents(self, lfnDir):
-    """ Obtain the contents of the supplied directory
-    """
+    """Obtain the contents of the supplied directory."""
     gLogger.info('Obtaining the catalog contents for %s directories' % len(lfnDir))
 
     activeDirs = list(lfnDir)

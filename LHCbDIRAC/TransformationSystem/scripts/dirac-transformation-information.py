@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This script allows to print information about a (list of) transformations
-"""
+"""This script allows to print information about a (list of)
+transformations."""
 
 from DIRAC.Core.Base import Script
 

@@ -8,16 +8,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Production API
+"""Production API.
 
-    A production is an augmented version of an LHCbJob
+A production is an augmented version of an LHCbJob
 
-    Notes:
-    - Supports all workflows
-    - create() method that takes a workflow or Production object
-      and publishes to the production management system, in addition this
-      can automatically construct and publish the BK pass info and transformations
-    - Uses __getOutputLFNs() function to add production output directory parameter
+Notes:
+- Supports all workflows
+- create() method that takes a workflow or Production object
+  and publishes to the production management system, in addition this
+  can automatically construct and publish the BK pass info and transformations
+- Uses __getOutputLFNs() function to add production output directory parameter
 """
 
 __RCSID__ = "$Id$"
@@ -40,14 +40,12 @@ from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
 
 
 class Production(object):
-  """ Production uses an LHCbJob object, as well as few clients.
-  """
+  """Production uses an LHCbJob object, as well as few clients."""
 
   #############################################################################
 
   def __init__(self, script=None):
-    """Instantiates the Workflow object and some default parameters.
-    """
+    """Instantiates the Workflow object and some default parameters."""
 
     self.LHCbJob = LHCbJob(script)
     self.bkkClient = BookkeepingClient()
@@ -77,8 +75,7 @@ class Production(object):
   #############################################################################
 
   def __setDefaults(self):
-    """Sets some default parameters.
-    """
+    """Sets some default parameters."""
 
     self.LHCbJob.stepCount = 0
     self.LHCbJob.setOutputSandbox(self.opsHelper.getValue('Productions/inOutputSandbox',
@@ -106,10 +103,10 @@ class Production(object):
   #############################################################################
 
   def setJobParameters(self, parametersDict):
-    """ Set an (LHCb)Job parameter
+    """Set an (LHCb)Job parameter.
 
-        The parametersDict is in the form {'parameterName': 'value'}
-        Each parameter calls LHCbJob.setparameterName(value)
+    The parametersDict is in the form {'parameterName': 'value'} Each
+    parameter calls LHCbJob.setparameterName(value)
     """
 
     for parameter in parametersDict.keys():
@@ -118,8 +115,8 @@ class Production(object):
   #############################################################################
 
   def setParameter(self, name, parameterType, parameterValue, description):
-    """Set parameters checking in CS in case some defaults need to be changed.
-    """
+    """Set parameters checking in CS in case some defaults need to be
+    changed."""
     proposedParam = self.opsHelper.getValue('Productions/%s' % name, '')
     if proposedParam:
       gLogger.debug('Setting %s from CS defaults = %s' % (name, proposedParam))
@@ -134,10 +131,11 @@ class Production(object):
 
   @staticmethod
   def __checkArguments(extraPackages, optionsFile):
-    """ Checks for typos in the structure of standard arguments to workflows.
-        In case of any non-standard settings will raise an exception preventing
-        creation of the production. Must be called after setting the first event type
-        of the production.
+    """Checks for typos in the structure of standard arguments to workflows.
+
+    In case of any non-standard settings will raise an exception
+    preventing creation of the production. Must be called after setting
+    the first event type of the production.
     """
     if not extraPackages:
       extraPackages = []
@@ -165,28 +163,28 @@ class Production(object):
   #############################################################################
 
   def addApplicationStep(self, stepDict, inputData=None, modulesList=None):
-    """ Adds an application step to the workflow
+    """Adds an application step to the workflow.
 
-        stepDict contains everything that is in the step, for this production, e.g.::
+    stepDict contains everything that is in the step, for this production, e.g.::
 
-          {'ApplicationName': 'DaVinci', 'Usable': 'Yes', 'StepId': 13718, 'ApplicationVersion': 'v28r3p1',
-          'ExtraPackages': 'AppConfig.v3r104', 'StepName': 'Stripping14-Merging', 'ExtraOptions': '',
-          'ProcessingPass': 'Merging', 'Visible': 'N', 'OptionsFormat': '',
-          'OptionFiles': '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py',
-          'DDDB': 'head-20110302', 'CONDDB': 'head-20110407', 'DQTag': '',
-          'isMulticore': 'N', 'SystemConfig': '', 'mcTCK': '',
-          'fileTypesIn': ['SDST'],
-          'visibilityFlag': [{'Visible': 'Y', 'FileType': 'BHADRON.DST'}],
-          'fileTypesOut': ['BHADRON.DST', 'CALIBRATION.DST', 'CHARM.MDST', 'CHARMCOMPLETEEVENT.DST']}
+      {'ApplicationName': 'DaVinci', 'Usable': 'Yes', 'StepId': 13718, 'ApplicationVersion': 'v28r3p1',
+      'ExtraPackages': 'AppConfig.v3r104', 'StepName': 'Stripping14-Merging', 'ExtraOptions': '',
+      'ProcessingPass': 'Merging', 'Visible': 'N', 'OptionsFormat': '',
+      'OptionFiles': '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py',
+      'DDDB': 'head-20110302', 'CONDDB': 'head-20110407', 'DQTag': '',
+      'isMulticore': 'N', 'SystemConfig': '', 'mcTCK': '',
+      'fileTypesIn': ['SDST'],
+      'visibilityFlag': [{'Visible': 'Y', 'FileType': 'BHADRON.DST'}],
+      'fileTypesOut': ['BHADRON.DST', 'CALIBRATION.DST', 'CHARM.MDST', 'CHARMCOMPLETEEVENT.DST']}
 
-        Note: this step treated here does not necessarily corresponds to a step of the BKK:
-        the case where they might be different is the merging case.
+    Note: this step treated here does not necessarily corresponds to a step of the BKK:
+    the case where they might be different is the merging case.
 
-        :param dict stepDict: contains everything that is in the step, for this production
-        :param str inputData: the input data of the step. Either None, or 'previousStep', or the input to the step
-        :param list modulesList: the list of module names (str) this step is made of. If None, a default is taken.
+    :param dict stepDict: contains everything that is in the step, for this production
+    :param str inputData: the input data of the step. Either None, or 'previousStep', or the input to the step
+    :param list modulesList: the list of module names (str) this step is made of. If None, a default is taken.
 
-        :returns: the name (str) of the step added
+    :returns: the name (str) of the step added
     """
 
     appName = stepDict['ApplicationName']
@@ -347,10 +345,10 @@ class Production(object):
   #############################################################################
 
   def _constructOutputFilesList(self, filesTypesList):
-    """ Build list of dictionary of output file types, including HIST case
+    """Build list of dictionary of output file types, including HIST case.
 
-        :param list filesTypesList: a list of file types (str)
-        :returns: a list with a dictionary of file types, lowered
+    :param list filesTypesList: a list of file types (str)
+    :returns: a list with a dictionary of file types, lowered
     """
 
     outputList = []
@@ -365,8 +363,7 @@ class Production(object):
   #############################################################################
 
   def __addBKPassStep(self):
-    """ Internal method to add BKK parameters
-    """
+    """Internal method to add BKK parameters."""
     bkPass = 'BKProcessingPass'
     description = 'BKProcessingPassInfo'
     self.LHCbJob._addParameter(self.LHCbJob.workflow, bkPass, 'dict', self.bkSteps,
@@ -375,10 +372,10 @@ class Production(object):
   #############################################################################
 
   def addFinalizationStep(self, modulesList=None):
-    """ Add the finalization step to the workflow (some defaults are inserted)
+    """Add the finalization step to the workflow (some defaults are inserted)
 
-        :param list modulesList: the list of modules names this step is made of. If None, a default is taken.
-        :returns: None
+    :param list modulesList: the list of modules names this step is made of. If None, a default is taken.
+    :returns: None
     """
     if modulesList is None:
       modulesList = ['UploadOutputData', 'UploadLogFile', 'UploadMC', 'FailoverRequest']
@@ -396,8 +393,8 @@ class Production(object):
   #############################################################################
 
   def _lastParameters(self):
-    """ Add the last parameters before creating the xml file containing the workflow
-    """
+    """Add the last parameters before creating the xml file containing the
+    workflow."""
 
     self.LHCbJob._addParameter(self.LHCbJob.workflow, 'gaudiSteps', 'list', self.gaudiSteps,
                                'list of Gaudi Steps')  # pylint: disable=protected-access
@@ -405,8 +402,7 @@ class Production(object):
                                'dictionary of output SEs')  # pylint: disable=protected-access
 
   def __createWorkflow(self, name=''):
-    """ Create XML of the workflow
-    """
+    """Create XML of the workflow."""
     self._lastParameters()
 
     if not name:
@@ -423,8 +419,8 @@ class Production(object):
   #############################################################################
 
   def runLocal(self):
-    """ Create XML workflow for local testing then reformulate as a job and run locally.
-    """
+    """Create XML workflow for local testing then reformulate as a job and run
+    locally."""
 
     xmlFileName = self.__createWorkflow()
     # it makes a job (a Worklow, with Parameters), out of the xml file
@@ -434,8 +430,7 @@ class Production(object):
 
   def __getProductionParameters(self, prodXMLFile, prodID, groupDescription='',
                                 bkPassInfo={}, derivedProd=0, reqID=0):
-    """ This method will publish production parameters.
-    """
+    """This method will publish production parameters."""
 
     prodWorkflow = Workflow(prodXMLFile)
 
@@ -544,13 +539,13 @@ class Production(object):
 
   def create(self, publish=True,
              wfString='', requestID=0, reqUsed=0):
-    """ Will create the production and subsequently publish to the BK.
-        Production parameters are also added at this point.
+    """Will create the production and subsequently publish to the BK.
+    Production parameters are also added at this point.
 
-        publish = True - will add production to the production management system
-                  False - does not publish the production
+    publish = True - will add production to the production management system
+              False - does not publish the production
 
-        The workflow XML is created regardless of the flags.
+    The workflow XML is created regardless of the flags.
     """
 
     if wfString:
@@ -717,8 +712,8 @@ class Production(object):
   #############################################################################
 
   def __getOutputLFNs(self, prodID='12345', prodJobID='6789', prodXMLFile=''):
-    """ Will construct the output LFNs for the production for visual inspection.
-    """
+    """Will construct the output LFNs for the production for visual
+    inspection."""
     if not prodXMLFile:
       gLogger.verbose('Using workflow object to generate XML file')
       prodXMLFile = self.__createWorkflow()
@@ -735,8 +730,7 @@ class Production(object):
   #############################################################################
 
   def setFileMask(self, fileMask='', stepMask=''):
-    """ Output data related parameters.
-    """
+    """Output data related parameters."""
     if fileMask:
       if isinstance(fileMask, list):
         fileMask = ';'.join(fileMask)
@@ -751,8 +745,7 @@ class Production(object):
   #############################################################################
 
   def banTier1s(self):
-    """ Sets Tier1s as banned.
-    """
+    """Sets Tier1s as banned."""
     tier1s = []
     sites = getSites()
     if not sites['OK']:
@@ -770,8 +763,7 @@ class Production(object):
   #############################################################################
 
   def banSites(self, listOfSites):
-    """ Sets Sites as banned.
-    """
+    """Sets Sites as banned."""
     sitesToBan = []
     sites = getSites()
     if not sites['OK']:
@@ -787,8 +779,7 @@ class Production(object):
   #############################################################################
 
   def setOutputMode(self, outputMode):
-    """ Sets output mode for all jobs, this can be 'Local' or 'Any'.
-    """
+    """Sets output mode for all jobs, this can be 'Local' or 'Any'."""
     if not outputMode.lower().capitalize() in ('Local', 'Any', 'Run'):
       raise TypeError("Output mode must be 'Local' or 'Any' or 'Run'")
     self.setParameter('outputMode', 'string', outputMode.lower().capitalize(), 'SEResolutionPolicy')
@@ -796,8 +787,7 @@ class Production(object):
   #############################################################################
 
   def setBKParameters(self, configName, configVersion, groupDescriptionOrStepsList, conditions):
-    """ Sets BK parameters for production.
-    """
+    """Sets BK parameters for production."""
     self.setParameter('configName', 'string', configName, 'ConfigName')
     self.setParameter('configVersion', 'string', configVersion, 'ConfigVersion')
     if isinstance(groupDescriptionOrStepsList, list):

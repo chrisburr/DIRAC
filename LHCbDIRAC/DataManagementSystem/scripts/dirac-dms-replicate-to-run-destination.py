@@ -13,9 +13,8 @@
 # File :    dirac-dms-replicate-to-run-destination
 # Author  : Philippe Charpentier
 ########################################################################
-"""
-  Replicate a (list of) existing LFN(s) to Ses defined by the run destination
-"""
+"""Replicate a (list of) existing LFN(s) to Ses defined by the run
+destination."""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   Get production numbers given a dataset path
-"""
+"""Get production numbers given a dataset path."""
 
 __RCSID__ = "$Id$"
 

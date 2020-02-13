@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Implementation of the ListModel
-"""
+"""Implementation of the ListModel."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Basic.ListModel                   import ListModel
 
@@ -18,11 +16,9 @@ from LHCbDIRAC.BookkeepingSystem.Gui.Basic.ListModel                   import Li
 __RCSID__ = "$Id$"
 
 class FilterListModel(ListModel):
-  """
-  FilterListModel class
-  """
+  """FilterListModel class."""
   #############################################################################
   def __init__(self, parent=None, *args):
-    """initialize the model"""
+    """initialize the model."""
     ListModel.__init__(self, parent, *args)
 

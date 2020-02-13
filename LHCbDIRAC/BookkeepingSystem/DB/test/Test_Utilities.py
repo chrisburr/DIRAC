@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It is used to test the Bookkeeping utilities
-"""
+"""It is used to test the Bookkeeping utilities."""
 import unittest
 
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import enoughParams, _ONE, _TWO

@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.ResourceStatusSystem.Agent.ShiftDBAgent
+"""LHCbDIRAC.ResourceStatusSystem.Agent.ShiftDBAgent.
 
-   ShiftDBAgent.__bases__:
-     DIRAC.Core.Base.AgentModule.AgentModule
-
+ShiftDBAgent.__bases__:
+  DIRAC.Core.Base.AgentModule.AgentModule
 """
 
 __RCSID__ = "$Id$"
@@ -53,8 +52,7 @@ class ShiftDBAgent(AgentModule):
     self.diracAdmin = None
 
   def initialize(self, *args, **kwargs):
-    """Initialize
-    """
+    """Initialize."""
 
     self.lbshiftdburl = self.am_getOption('lbshiftdburl', self.lbshiftdburl)
     self.wsdl = self.am_getOption('wsdl', self.wsdl)
@@ -71,8 +69,7 @@ class ShiftDBAgent(AgentModule):
     return S_OK()
 
   def execute(self):
-    """ Execution
-    """
+    """Execution."""
 
     self.roles = {}
     self.roleShifters = {}
@@ -144,8 +141,7 @@ class ShiftDBAgent(AgentModule):
     return S_OK(eGroups)
 
   def __getRoleEmail(self, role):
-    """ Get role email from shiftDB
-    """
+    """Get role email from shiftDB."""
 
     try:
       web = urllib2.urlopen(self.lbshiftdburl, timeout=60)
@@ -179,8 +175,7 @@ class ShiftDBAgent(AgentModule):
     return S_ERROR('Email not found')
 
   def __setRoleEmail(self, eGroup, email, role):
-    """ Set email in eGroup
-    """
+    """Set email in eGroup."""
 
     client = suds.client.Client(self.wsdl, username=self.user, password=self.passwd)
 
@@ -232,9 +227,7 @@ class ShiftDBAgent(AgentModule):
     return S_OK()
 
   def __addMember(self, email, client, wgroup):
-    """
-    Adds a new member to the group
-    """
+    """Adds a new member to the group."""
 
     # Clear e-Group before inserting anything
     # self.__deleteMembers( client, wgroup )
@@ -257,9 +250,8 @@ class ShiftDBAgent(AgentModule):
     return S_OK()
 
   def __notifyNewShifter(self, role, eGroup):
-    """
-    Sends an email to the shifter ( if any ) at the beginning of the shift period.
-    """
+    """Sends an email to the shifter ( if any ) at the beginning of the shift
+    period."""
 
     if role == 'Production':
       body = __productionBody__

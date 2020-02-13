@@ -8,9 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Simple extension of ProxyDB for just modifying the message sent.
+"""Simple extension of ProxyDB for just modifying the message sent.
 
-    Ideally, we would not need this code at all, and the message sent should just be loaded from somewhere else.
+Ideally, we would not need this code at all, and the message sent should
+just be loaded from somewhere else.
 """
 
 __RCSID__ = "$Id$"
@@ -21,8 +22,7 @@ from DIRAC.FrameworkSystem.DB.ProxyDB import ProxyDB as DIRACProxyDB
 
 
 class ProxyDB(DIRACProxyDB):
-  """ Simple extension for just taking care of the message sent
-  """
+  """Simple extension for just taking care of the message sent."""
 
   def _notifyProxyAboutToExpire(self, userDN, userGroup, lTime, notifLimit):
     result = Registry.getUsernameForDN(userDN)

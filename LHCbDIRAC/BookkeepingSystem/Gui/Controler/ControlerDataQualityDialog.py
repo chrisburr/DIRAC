@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Controls the data quality widget
-"""
+"""Controls the data quality widget."""
 
 from PyQt4.QtCore                                                             import Qt
 
@@ -23,17 +21,15 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerDataQualityDialog(ControlerAbstract):
-  """
-  ControlerDataQualityDialog class
-  """
+  """ControlerDataQualityDialog class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by the parent controller"""
+    """handles the messages sent by the parent controller."""
     if message.action() == 'list':
       values = message['Values']
       self.getWidget().addDataQulity(values)
@@ -43,12 +39,12 @@ class ControlerDataQualityDialog(ControlerAbstract):
 
   #############################################################################
   def messageFromChild(self, sender, message):
-    """handles the message sent by the children controllers"""
+    """handles the message sent by the children controllers."""
     pass
 
   #############################################################################
   def close(self):
-    """handles the action of the close button"""
+    """handles the action of the close button."""
     checkboxes = self.getWidget().getCheckBoses()
     values = {}
     for i in checkboxes:

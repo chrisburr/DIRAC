@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Methods for scanning the popularity table
-"""
+"""Methods for scanning the popularity table."""
 
 __RCSID__ = "$Id$"
 
@@ -66,16 +64,15 @@ transClient = TransformationClient()
 
 
 def getTimeBin(date):
-  """ get the bin number as week number """
+  """get the bin number as week number."""
   year, week, _day = date.isocalendar()
   week += 52 * year
   return week
 
 
 def cacheDirectories(directories):
-  """
-  Get directories information from popularity and from storageUsage and cache the information
-  """
+  """Get directories information from popularity and from storageUsage and
+  cache the information."""
 
   # Ignore already cached directories
   dirSet = directories - set(bkPathForDir) - cachedInvisible
@@ -228,9 +225,7 @@ def cacheDirectories(directories):
 
 
 def isType(se, infoType):
-  """
-  check if an SE is of a given type
-  """
+  """check if an SE is of a given type."""
   if infoType == 'All':
     return True
   if infoType == 'LFN':
@@ -239,9 +234,7 @@ def isType(se, infoType):
 
 
 def isAtSite(se, site):
-  """
-  checks if an SE is at a given site
-  """
+  """checks if an SE is at a given site."""
   seSite = cachedSESites.get(se)
   if seSite is None:
     seSite = dmsHelper.getLocalSiteForSE(se)
@@ -251,8 +244,7 @@ def isAtSite(se, site):
 
 
 def prBinNumber(binNumber):
-  """ Return bin number as a string
-  """
+  """Return bin number as a string."""
   week = binNumber
   year = week / 52
   week = week % 52
@@ -260,8 +252,7 @@ def prBinNumber(binNumber):
 
 
 def prSize(size):
-  """ Return size as a string with sensible unit
-  """
+  """Return size as a string with sensible unit."""
   units = ('Bytes', 'kB', 'MB', 'GB', 'TB', 'PB')
   for unit in units:
     if size < 1000.:
@@ -271,9 +262,7 @@ def prSize(size):
 
 
 def getPhysicalUsage(baseDir):
-  """
-  Extract information about storage usage from the StorageusageDB
-  """
+  """Extract information about storage usage from the StorageusageDB."""
   for trial in xrange(10, -1, -1):
     res = suClient.getStorageDirectoryData(baseDir, None, None, None, timeout=3600)
     if not res['OK'] and not trial:
@@ -308,7 +297,7 @@ def getPhysicalUsage(baseDir):
 
 
 def storageType(seList):
-  """ Return the storage type: disk, tape or archive """
+  """Return the storage type: disk, tape or archive."""
   if not (set(se for se in seList if not dmsHelper.isSEArchive(se)) -
           set(['CERN-SWTEST', 'CERN-FREEZER-EOS', 'CERN-FREEZER'])) and \
      set(se for se in seList if dmsHelper.isSEArchive(se)):
@@ -323,9 +312,8 @@ def storageType(seList):
 
 
 def scanPopularity(since, getAllDatasets, topDirectory='/lhcb', csvFile=None):
-  """
-  That function does the job to cache the directories, get the corresponding datasets and join with the popularity
-  """
+  """That function does the job to cache the directories, get the corresponding
+  datasets and join with the popularity."""
   # Reset global variables
 
   bkPathForDir.clear()

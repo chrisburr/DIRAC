@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" UploadMC module is used to upload to ES the json files for MC statistics
-"""
+"""UploadMC module is used to upload to ES the json files for MC statistics."""
 
 __RCSID__ = "$Id$"
 
@@ -22,12 +21,10 @@ from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsCli
 
 
 class UploadMC(ModuleBase):
-  """ Upload to LogSE
-  """
+  """Upload to LogSE."""
 
   def __init__(self):
-    """Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("UploadMC")
     super(UploadMC, self).__init__(self.log)
@@ -35,8 +32,7 @@ class UploadMC(ModuleBase):
     self.version = __RCSID__
 
   def _resolveInputVariables(self):
-    """ standard method for resolving the input variables
-    """
+    """standard method for resolving the input variables."""
 
     super(UploadMC, self)._resolveInputVariables()
 
@@ -44,8 +40,7 @@ class UploadMC(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main executon method
-    """
+    """Main executon method."""
     try:
 
       super(UploadMC, self).execute(self.version, production_id,

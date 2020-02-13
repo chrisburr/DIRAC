@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" unit tests for Configuration Helpers
-"""
+"""unit tests for Configuration Helpers."""
 import mock
 import os
 import pytest

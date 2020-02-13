@@ -8,13 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test the logic to detect successful and failed file accesses via xroot
+"""Test the logic to detect successful and failed file accesses via xroot.
 
 We use test pool and summary xml files that correspond to 3 LFNs:
 * one that worked at the first attempt
 * one that worked at the second attempt
 * one that did not work at all
-
 """
 
 import os
@@ -33,7 +32,7 @@ summaryFile = os.path.join(testdir, 'summary.xml')
 
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 def test_analyseFileAccess(mockRequestValidator):
-  """Analyze the file accesses from a pool xml catalog and the xml summary"""
+  """Analyze the file accesses from a pool xml catalog and the xml summary."""
 
   xmlCatalog = PoolXMLCatalog(xmlfile=poolFile)
   xmlSummary = XMLSummary(summaryFile)

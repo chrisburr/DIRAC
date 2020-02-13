@@ -9,7 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 ############################################################
-""" LHCbDIRAC.DataManagementSystem package """
+"""LHCbDIRAC.DataManagementSystem package."""
 __RCSID__ = "$Id$"
 
 

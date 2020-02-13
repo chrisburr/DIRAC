@@ -72,8 +72,7 @@ TABLE_STYLE_THINBORDER = "border: 1px solid #000000; border-collapse: collapse;"
 #=== CLASSES ===================================================================
 
 class TableCell ( object ):
-  """
-  a TableCell object is used to create a cell in a HTML table. (TD or TH)
+  """a TableCell object is used to create a cell in a HTML table. (TD or TH)
 
   Attributes:
   - text: text in the cell (may contain HTML tags). May be any object which
@@ -94,7 +93,7 @@ class TableCell ( object ):
   def __init__( self, text = "", bgcolor = None, header = False, width = None,
                 align = None, char = None, charoff = None, valign = None, style = None,
                 attribs = None ):
-    """TableCell constructor"""
+    """TableCell constructor."""
     self.text = text
     self.bgcolor = bgcolor
     self.header = header
@@ -109,7 +108,7 @@ class TableCell ( object ):
       self.attribs = {}
 
   def __str__( self ):
-    """return the HTML code for the table cell as a string"""
+    """return the HTML code for the table cell as a string."""
     attribs_str = ""
     if self.bgcolor:
       self.attribs['bgcolor'] = self.bgcolor
@@ -140,8 +139,7 @@ class TableCell ( object ):
 #-------------------------------------------------------------------------------
 
 class TableRow ( object ):
-  """
-  a TableRow object is used to create a row in a HTML table. (TR tag)
+  """a TableRow object is used to create a row in a HTML table. (TR tag)
 
   Attributes:
   - cells: list, tuple or any iterable, containing one string or TableCell
@@ -157,7 +155,7 @@ class TableRow ( object ):
   def __init__( self, cells = None, bgcolor = None, header = False, attribs = None,
                 col_align = None, col_valign = None, col_char = None,
                 col_charoff = None, col_styles = None ):
-    """TableCell constructor"""
+    """TableCell constructor."""
     self.bgcolor = bgcolor
     self.cells = cells
     self.header = header
@@ -171,7 +169,7 @@ class TableRow ( object ):
       self.attribs = {}
 
   def __str__( self ):
-    """return the HTML code for the table row as a string"""
+    """return the HTML code for the table row as a string."""
     attribs_str = ""
     if self.bgcolor:
       self.attribs['bgcolor'] = self.bgcolor
@@ -201,8 +199,7 @@ class TableRow ( object ):
 #-------------------------------------------------------------------------------
 
 class Table ( object ):
-  """
-  a Table object is used to create a HTML table. (TABLE tag)
+  """a Table object is used to create a HTML table. (TABLE tag)
 
   Attributes:
   - rows: list, tuple or any iterable, containing one iterable or TableRow
@@ -226,7 +223,7 @@ class Table ( object ):
                 cellspacing = None, cellpadding = 4, attribs = None, header_row = None,
                 col_width = None, col_align = None, col_valign = None,
                 col_char = None, col_charoff = None, col_styles = None ):
-    """TableCell constructor"""
+    """TableCell constructor."""
     self.border = border
     self.style = style
     # style for thin borders by default
@@ -250,7 +247,7 @@ class Table ( object ):
     self.col_styles = col_styles
 
   def __str__( self ):
-    """return the HTML code for the table as a string"""
+    """return the HTML code for the table as a string."""
     attribs_str = ""
     if self.border:
       self.attribs['border'] = self.border
@@ -324,8 +321,7 @@ class Table ( object ):
 #-------------------------------------------------------------------------------
 
 class List ( object ):
-  """
-  a List object is used to create an ordered or unordered list in HTML.
+  """a List object is used to create an ordered or unordered list in HTML.
   (UL/OL tag)
 
   Attributes:
@@ -337,7 +333,7 @@ class List ( object ):
   """
 
   def __init__( self, lines = None, ordered = False, start = None, attribs = None ):
-    """List constructor"""
+    """List constructor."""
     if lines:
       self.lines = lines
     else:
@@ -350,7 +346,7 @@ class List ( object ):
       self.attribs = {}
 
   def __str__( self ):
-    """return the HTML code for the list as a string"""
+    """return the HTML code for the list as a string."""
     attribs_str = ""
     if self.start:
       self.attribs['start'] = self.start
@@ -401,19 +397,25 @@ class List ( object ):
 
 # much simpler definition of a link as a function:
 def Link( text, url ):
-  """ create an reference link """
+  """create an reference link."""
   return '<a href="%s">%s</a>' % ( url, text )
 
 def link( text, url ):
-  """ create an reference link """
+  """create an reference link."""
   return '<a href="%s">%s</a>' % ( url, text )
 
 def table( *args, **kwargs ):
-  """ return HTML code for a table as a string. See Table class for parameters."""
+  """return HTML code for a table as a string.
+
+  See Table class for parameters.
+  """
   return str( Table( *args, **kwargs ) )
 
 def list( *args, **kwargs ):
-  """ return HTML code for a list as a string. See List class for parameters."""
+  """return HTML code for a list as a string.
+
+  See List class for parameters.
+  """
   return str( List( *args, **kwargs ) )
 
 
@@ -463,9 +465,7 @@ if __name__ == '__main__':
   print '-' * 79
 
   def gen_table_squares( n ):
-    """
-    Generator to create table rows for integers from 1 to n
-    """
+    """Generator to create table rows for integers from 1 to n."""
 ##        # First, header row:
 ##        yield TableRow(('x', 'square(x)'), header=True, bgcolor='blue')
 ##        # Then all rows:

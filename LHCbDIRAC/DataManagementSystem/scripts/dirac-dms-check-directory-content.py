@@ -9,10 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  For a given LFN directory, check the files that are registered in the FC
-  and checks that they exist on the SE, and in Bookkeeping, with the  correct ReplicaFlag
-"""
+"""For a given LFN directory, check the files that are registered in the FC and
+checks that they exist on the SE, and in Bookkeeping, with the  correct
+ReplicaFlag."""
 
 __RCSID__ = "$Id$"
 

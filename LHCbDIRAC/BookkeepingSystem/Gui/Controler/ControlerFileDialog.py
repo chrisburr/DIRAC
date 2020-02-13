@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Controller of the File Dialog window
-"""
+"""Controller of the File Dialog window."""
 ########################################################################
 
 
@@ -32,20 +30,18 @@ import sys
 
 
 class ControlerFileDialog(ControlerAbstract):
-  """
-  ControlerFileDialog class
-  """
+  """ControlerFileDialog class."""
   #############################################################################
 
   def __init__(self, widget, parent):
-    """initialize the controller and the members of the class"""
+    """initialize the controller and the members of the class."""
     ControlerAbstract.__init__(self, widget, parent)
     self.__selectedFiles = []
     self.__dataSet = {}
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by the parent"""
+    """handles the messages sent by the parent."""
     if message.action() == 'list':
       self.__list(message)
     elif message.action() == 'listNextFiles':
@@ -54,7 +50,7 @@ class ControlerFileDialog(ControlerAbstract):
     return True
 
   def __list(self, message):
-    """list a directory"""
+    """list a directory."""
     items = message['items'].getChildren()
     self.getWidget().updateModel(items)  # I have to save files.
     self.getWidget().setPath(message['items']['fullpath'])
@@ -104,7 +100,7 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   @staticmethod
   def makeTCKlist(data):
-    """make the list of tcks"""
+    """make the list of tcks."""
     tcks = []
     for i in data:
       if data[i]['TCK'] not in tcks:
@@ -113,7 +109,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def messageFromChild(self, sender, message):
-    """handles the messages send by the children controllers"""
+    """handles the messages send by the children controllers."""
     if message.action() == 'advancedSave':
 
       sel = message['selection']
@@ -143,7 +139,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def close(self):
-    """handles the close button action"""
+    """handles the close button action."""
     # self.getWidget().hide()
     message = Message({'action': 'PageSizeIsNull'})
     self.getParent().messageFromChild(self, message)
@@ -161,7 +157,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def save(self):
-    """handles the action of the save button"""
+    """handles the action of the save button."""
     model = self.getWidget().getModel()
     lfns = {}
     if len(self.__selectedFiles) >= 1:
@@ -231,7 +227,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   ############################################################################
   def selection(self, selected, deselected):
-    """select the elements of a table"""
+    """select the elements of a table."""
     if selected:
       j = -1
       rows = []
@@ -269,7 +265,7 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   @staticmethod
   def countNumberOfEvents(items):
-    """counts the number of events"""
+    """counts the number of events."""
     eventnum = 0
     for item in items:
       value = items[item]
@@ -280,7 +276,7 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   @staticmethod
   def countNumberOfEventInputStat(items):
-    """counts the number of imput events"""
+    """counts the number of imput events."""
     eventinputstat = 0
     for item in items:
       value = items[item]
@@ -291,13 +287,13 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   @staticmethod
   def countNumberOfFiles(items):
-    """returns the number of files"""
+    """returns the number of files."""
     return len(items)
 
   #############################################################################
   @staticmethod
   def countTotalLuminosity(items):
-    """calculates the total luminosity"""
+    """calculates the total luminosity."""
     luminosity = 0
     for item in items:
       value = items[item]
@@ -308,7 +304,7 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
   @staticmethod
   def countLuminosity(items):
-    """calculates the luminosity"""
+    """calculates the luminosity."""
     luminosity = 0
     for item in items:
       value = items[item]
@@ -318,7 +314,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def updateSelectedNbEventType(self, files):
-    """updates the selected number of events"""
+    """updates the selected number of events."""
     model = self.getWidget().getModel()
     lfns = {}
     for i in files:
@@ -328,7 +324,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def updateselectedNbEventInputStat(self, files):
-    """updates the selected input events"""
+    """updates the selected input events."""
     model = self.getWidget().getModel()
     lfns = {}
     for i in files:
@@ -338,7 +334,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def updateselectedTotalLuminosity(self, files):
-    """updates the selected total luminosity"""
+    """updates the selected total luminosity."""
     model = self.getWidget().getModel()
     lfns = {}
     for i in files:
@@ -348,7 +344,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def updateSelectedLuminosity(self, files):
-    """updates the luminosity"""
+    """updates the luminosity."""
     model = self.getWidget().getModel()
     lfns = {}
     for i in files:
@@ -358,13 +354,13 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def updateSelectedNbFiles(self, files):
-    """updates the number of files"""
+    """updates the number of files."""
     self.getWidget().showSelectedNumberOfFiles(len(files))
 
   #############################################################################
   @staticmethod
   def getSizeOfFiles(items):
-    """returns the size of the files"""
+    """returns the size of the files."""
     size = 0
     for item in items:
       value = items[item]
@@ -374,7 +370,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def updateSelectedFileSize(self, files):
-    """updates the size of the selected files"""
+    """updates the size of the selected files."""
     model = self.getWidget().getModel()
     lfns = {}
     for i in files:
@@ -384,7 +380,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def jobinfo(self):
-    """handles the job info action"""
+    """handles the job info action."""
     if len(self.__selectedFiles) != 0:
       message = Message({'action': 'JobInfo', 'fileName': self.__selectedFiles[0]})
       feedback = self.getParent().messageFromChild(self, message)
@@ -397,7 +393,7 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
 
   def getancesstots(self):
-    """handles the ancesstors action"""
+    """handles the ancesstors action."""
     message = Message({'action': 'getAnccestors', 'files': self.__selectedFiles[0]})
     feedback = self.getParent().messageFromChild(self, message)
     action = feedback.action()
@@ -414,7 +410,7 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def loggininginfo(self):
-    """handles the login info action"""
+    """handles the login info action."""
     message = Message({'action': 'logfile', 'fileName': self.__selectedFiles})
     feedback = self.getParent().messageFromChild(self, message)
     action = feedback.action()
@@ -427,36 +423,36 @@ class ControlerFileDialog(ControlerAbstract):
   #############################################################################
 
   def advancedSave(self):
-    """handles the advanced save action"""
+    """handles the advanced save action."""
     message = Message({'action': 'showWidget'})
     controlers = self.getChildren()
     controlers['AdvancedSave'].messageFromParent(message)
 
   #############################################################################
   def next(self):
-    """handles the action of the next button"""
+    """handles the action of the next button."""
     path = self.getWidget().getPath()
     message = Message({'action': 'getLimitedFiles', 'path': path})
     self.getParent().messageFromChild(self, message)
 
   #############################################################################
   def tckChanged(self, i):
-    """handles the tck action"""
+    """handles the tck action."""
     self.getWidget().applyFilter(str(i))
 
   #############################################################################
   def tckButtonPressed(self):
-    """handles the action of the tck button"""
+    """handles the action of the tck button."""
     self.getWidget().showTckFilter()
 
   #############################################################################
   def hideFilterWidget(self):
-    """hides the widget"""
+    """hides the widget."""
     self.getWidget().hideTckFilter()
 
   #############################################################################
   def copy(self):
-    """copy the selected data"""
+    """copy the selected data."""
     clipboard = QApplication.clipboard()
     self.getWidget().getModel()
     text = ''
@@ -471,10 +467,10 @@ class ControlerFileDialog(ControlerAbstract):
 
   #############################################################################
   def setDataSet(self, in_dict):
-    """sets the dataset"""
+    """sets the dataset."""
     self.__dataSet = in_dict
 
   #############################################################################
   def getDataSet(self):
-    """returns the dataset"""
+    """returns the dataset."""
     return self.__dataSet

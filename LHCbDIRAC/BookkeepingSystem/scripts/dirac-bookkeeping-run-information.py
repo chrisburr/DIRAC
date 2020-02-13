@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-run-informations
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve from Bookkeeping information for a given run
-"""
+"""Retrieve from Bookkeeping information for a given run."""
 __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC import gLogger, S_OK

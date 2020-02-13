@@ -55,8 +55,7 @@ def removeProxy(proxyFile):
 
 
 class StorageUsageAgent(AgentModule):
-  ''' .. class:: StorageUsageAgent
-
+  """.. class:: StorageUsageAgent.
 
   :param FileCatalog catalog: FileCatalog instance
   :parma mixed storageUsage: StorageUsageDB instance or its rpc client
@@ -65,7 +64,7 @@ class StorageUsageAgent(AgentModule):
   :param threading.Lock dataLock: data lock
   :param threading.Lock replicaListLock: replica list lock
   :param DictCache proxyCache: creds cache
-  '''
+  """
   catalog = None
   storageUsage = None
   pollingTime = 43200
@@ -76,8 +75,7 @@ class StorageUsageAgent(AgentModule):
   enableStartupSleep = True  # Enable a random sleep so not all the user agents start together
 
   def __init__(self, *args, **kwargs):
-    ''' c'tor
-    '''
+    """c'tor."""
     AgentModule.__init__(self, *args, **kwargs)
 
     self.__baseDir = '/lhcb'
@@ -110,7 +108,7 @@ class StorageUsageAgent(AgentModule):
     self.__replicaListFilesDir = ""
 
   def initialize(self):
-    ''' agent initialisation '''
+    """agent initialisation."""
 
     self.am_setOption("PollingTime", self.pollingTime)
 
@@ -127,7 +125,7 @@ class StorageUsageAgent(AgentModule):
     return S_OK()
 
   def __writeReplicasListFiles(self, dirPathList):
-    ''' dump replicas list to files '''
+    """dump replicas list to files."""
     self.replicaListLock.acquire()
     try:
       self.log.info("Dumping replicas for %s dirs" % len(dirPathList))
@@ -164,14 +162,14 @@ class StorageUsageAgent(AgentModule):
       self.replicaListLock.release()
 
   def __resetReplicaListFiles(self):
-    ''' prepare directories for replica list files '''
+    """prepare directories for replica list files."""
     self.__replicaFilesUsed = set()
     self.__replicaListFilesDir = os.path.join(self.am_getOption("WorkDirectory"), "replicaLists")
     mkDir(self.__replicaListFilesDir)
     self.log.info("Replica Lists directory is %s" % self.__replicaListFilesDir)
 
   def __replicaListFilesDone(self):
-    ''' rotate replicas list files '''
+    """rotate replicas list files."""
     self.replicaListLock.acquire()
     try:
       old = re.compile(r"^replicas\.([a-zA-Z0-9\-_]*)\.%s\.old$" % self.__baseDirLabel)
@@ -206,7 +204,7 @@ class StorageUsageAgent(AgentModule):
       self.replicaListLock.release()
 
   def __printSummary(self):
-    ''' pretty print summary '''
+    """pretty print summary."""
     res = self.storageUsage.getStorageSummary()
     if res['OK']:
       self.log.notice("Storage Usage Summary")
@@ -230,7 +228,7 @@ class StorageUsageAgent(AgentModule):
         gMonitor.addMark("%s-files" % se, files)
 
   def execute(self):
-    ''' execution in one cycle '''
+    """execution in one cycle."""
     self.__publishDirQueue = {}
     self.__dirsToPublish = {}
     self.__baseDir = self.am_getOption('BaseDirectory', '/lhcb')
@@ -284,7 +282,7 @@ class StorageUsageAgent(AgentModule):
     return S_OK()
 
   def __exploreDirList(self, dirList):
-    ''' collect directory size for directory in :dirList: '''
+    """collect directory size for directory in :dirList:"""
     # Normalise dirList first
     dirList = [os.path.realpath(d) for d in dirList]
     self.log.notice("Retrieving info for %s dirs" % len(dirList))
@@ -343,8 +341,8 @@ class StorageUsageAgent(AgentModule):
                     (self.__dirExplorer.getNumRemainingDirs(), self.__processedDirs, notCommited))
 
   def __processDirDFC(self, dirPath, metadata, subDirectories):
-    ''' gets the list of subdirs that the DFC doesn't return, set the metadata like the FC
-    and then call the same method as for the FC '''
+    """gets the list of subdirs that the DFC doesn't return, set the metadata
+    like the FC and then call the same method as for the FC."""
     if 'SubDirs' not in subDirectories:
       self.log.error('No subdirectory item for directory', dirPath)
       return
@@ -399,7 +397,7 @@ class StorageUsageAgent(AgentModule):
     return self.__processDir(dirPath, dirMetadata)
 
   def __processDir(self, dirPath, dirMetadata):
-    ''' calculate nb of files and size of :dirPath:, remove it if it's empty '''
+    """calculate nb of files and size of :dirPath:, remove it if it's empty."""
     subDirs = dirMetadata['SubDirs']
     closedDirs = dirMetadata['ClosedDirs']
     ##############################
@@ -445,7 +443,7 @@ class StorageUsageAgent(AgentModule):
     self.__processedDirs += 1
 
   def __getOwnerProxy(self, dirPath):
-    ''' get owner creds for :dirPath: '''
+    """get owner creds for :dirPath:"""
     self.log.verbose("Retrieving dir metadata...")
     # get owner form the cached information, if not, try getDirectoryMetadata
     ownerName, ownerGroup = self.__directoryOwners.pop(dirPath, (None, None))
@@ -518,7 +516,7 @@ class StorageUsageAgent(AgentModule):
     return result
 
   def __removeEmptyDir(self, dirPath, useOwnerProxy=True):
-    ''' unlink empty folder :dirPath: '''
+    """unlink empty folder :dirPath:"""
     from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData
     if len(List.fromChar(dirPath, "/")) < self.__keepDirLevels:
       return S_OK()
@@ -555,14 +553,14 @@ class StorageUsageAgent(AgentModule):
         os.environ['X509_USER_PROXY'] = prevProxyEnv
 
   def __addDirToPublishQueue(self, dirName, dirData):
-    ''' enqueue :dirName: and :dirData: for publishing '''
+    """enqueue :dirName: and :dirData: for publishing."""
     self.__publishDirQueue[dirName] = dirData
     numDirsToPublish = len(self.__publishDirQueue)
     if numDirsToPublish and numDirsToPublish % self.am_getOption("PublishClusterSize", 100) == 0:
       self.__publishData(background=True)
 
   def __publishData(self, background=True):
-    ''' publish data in a separate deamon thread '''
+    """publish data in a separate deamon thread."""
     self.dataLock.acquire()
     try:
       # Dump to file
@@ -582,7 +580,7 @@ class StorageUsageAgent(AgentModule):
       self.__executePublishData()
 
   def __executePublishData(self):
-    ''' publication thread target '''
+    """publication thread target."""
     self.dataLock.acquire()
     try:
       if not self.__dirsToPublish:

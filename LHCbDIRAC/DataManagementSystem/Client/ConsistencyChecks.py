@@ -8,11 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-    LHCb class for doing consistency checks, between files in:
-    - Bookkeeping
-    - Transformation
-    - File Catalog
+"""LHCb class for doing consistency checks, between files in:
+
+- Bookkeeping
+- Transformation
+- File Catalog
 """
 
 import time
@@ -41,7 +41,7 @@ prodsWithMerge = ('MCSimulation', 'MCFastSimulation', 'DataStripping', 'MCStripp
 
 
 def getFileDescendants(transID, lfns, transClient=None, dm=None, bkClient=None, descendantsDepth=None):
-  """ Function that returns the list of descendants from BKK
+  """Function that returns the list of descendants from BKK.
 
   Args:
       transID (str, int): transformationID
@@ -57,7 +57,6 @@ def getFileDescendants(transID, lfns, transClient=None, dm=None, bkClient=None, 
                                   '/lhcb/validation/desc_1.pidcalib.root'],
       {'/lhcb/LHCb/anLFN_2.dst': ['/lhcb/validation/desc_2.PIDCALIB.mdst',
                                   '/lhcb/validation/desc_2.pidcalib.root'],
-
   """
   cc = ConsistencyChecks(interactive=False, transClient=transClient, dm=dm, bkClient=bkClient)
   if descendantsDepth is not None:
@@ -75,12 +74,10 @@ def getFileDescendants(transID, lfns, transClient=None, dm=None, bkClient=None, 
 
 
 class ConsistencyChecks(DiracConsistencyChecks):
-  """ LHCb extension to ConsistencyInspector
-  """
+  """LHCb extension to ConsistencyInspector."""
 
   def __init__(self, interactive=True, transClient=None, dm=None, bkClient=None, fc=None):
-    """ c'tor
-    """
+    """c'tor."""
     super(ConsistencyChecks, self).__init__(interactive, transClient, dm, fc)
 
     self.dmsHelpers = DMSHelpers()
@@ -140,9 +137,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def __getLFNsFromBK(self, checkAll=False):
-    """
-    Get list of LFNs with gotReplica No and Yes
-    """
+    """Get list of LFNs with gotReplica No and Yes."""
     lfnsReplicaNo, lfnsReplicaYes = (0, 0)
     if self.lfns:
       lfnsNotInBK, lfnsReplicaNo, lfnsReplicaYes = self._getBKMetadata(self.lfns)
@@ -156,9 +151,11 @@ class ConsistencyChecks(DiracConsistencyChecks):
     return lfnsReplicaNo, lfnsReplicaYes
 
   def checkBK2FC(self, checkAll):
-    """ Starting from the BK, check if the FileCatalog has consistent information (BK -> FileCatalog)
+    """Starting from the BK, check if the FileCatalog has consistent
+    information (BK -> FileCatalog)
 
-        Works either when the bkQuery is free, or when it is made using a transformation ID
+    Works either when the bkQuery is free, or when it is made using a
+    transformation ID
     """
     lfnsReplicaNo, lfnsReplicaYes = self.__getLFNsFromBK(checkAll)
 
@@ -221,8 +218,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     return lfnsRes
 
   def __getBKQuery(self, fromTS=False):
-    """ get the bkQuery to be used
-    """
+    """get the bkQuery to be used."""
     bkQuery = None
     if fromTS:
       res = self.transClient.getBookkeepingQuery(self.prod)
@@ -246,8 +242,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def getReplicasPresence(self, lfns, ignoreFailover=False, typeStr='files'):
-    """ get the replicas using the standard DataManager.getReplicas()
-    """
+    """get the replicas using the standard DataManager.getReplicas()"""
     present = set()
     notPresent = set()
     lfns = set(lfns)
@@ -286,7 +281,9 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def getReplicasPresenceFromDirectoryScan(self, lfns, typeStr='files'):
-    """ Get replicas scanning the directories. Might be faster.
+    """Get replicas scanning the directories.
+
+    Might be faster.
     """
 
     dirs = {}
@@ -324,8 +321,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def __compareLFNLists(self, lfns, lfnsFound):
-    """ return files in both lists and files in lfns and not in lfnsFound
-    """
+    """return files in both lists and files in lfns and not in lfnsFound."""
     present = []
     notPresent = lfns
     startTime = time.time()
@@ -343,8 +339,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     return present, notPresent
 
   def _getFilesFromDirectoryScan(self, dirs):
-    """ calls dm.getFilesFromDirectory
-    """
+    """calls dm.getFilesFromDirectory."""
 
     level = gLogger.getLevel()
     gLogger.setLevel('FATAL')
@@ -364,8 +359,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def checkTS2BK(self):
-    """ Check if lfns has descendants (TransformationFiles -> BK)
-    """
+    """Check if lfns has descendants (TransformationFiles -> BK)"""
     if not self.prod:
       raise ValueError("You need a transformationID")
 
@@ -422,8 +416,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def checkAncestors(self):
-    """ Check if a set of files don't share a common ancestor
-    """
+    """Check if a set of files don't share a common ancestor."""
     if self.lfns:
       files = self.lfns
       bkQuery = None
@@ -553,7 +546,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
   def __getDaughtersInfo(self, lfns, status,
                          filesWithDescendants, filesWithoutDescendants, filesWithMultipleDescendants):
-    """ Get BK information about daughers of lfns """
+    """Get BK information about daughers of lfns."""
     chunkSize = 20
     lfns = set(lfns)
     progressBar = ProgressBar(len(lfns),
@@ -603,7 +596,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     return daughtersBKInfo
 
   def getDescendants(self, lfns, status=''):
-    """ get the descendants of a list of LFN (for the production)
+    """get the descendants of a list of LFN (for the production)
 
     Args:
         lfns (str, list, dict): a string for a single lfn, a list of strings, or a dict with lfns as keys
@@ -784,8 +777,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def _selectByFileType(self, lfnDict, fileTypes=None, fileTypesExcluded=None):
-    """ Select only those files from the values of lfnDict that have a certain type
-    """
+    """Select only those files from the values of lfnDict that have a certain
+    type."""
     if not lfnDict:
       return {}
     if not fileTypes:
@@ -812,8 +805,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
   @staticmethod
   def _getFileTypesCount(lfnDict):
-    """ return file types count
-    """
+    """return file types count."""
     ft_dict = {}
     for ancestor in lfnDict:
       t_dict = {}
@@ -837,8 +829,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     return present, notPresent
 
   def checkFC2BK(self, bkCheck=True):
-    """ check that files present in the FC are also in the BK
-    """
+    """check that files present in the FC are also in the BK."""
     present, _notPresent = self.__getLFNsFromFC()
     if not self.lfns:
       prStr = ' are in the FC but'
@@ -868,8 +859,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
     ########################################################################
 
   def __getDirectories(self):
-    """ get the directories where to look into (they are either given, or taken from the transformation ID
-    """
+    """get the directories where to look into (they are either given, or taken
+    from the transformation ID."""
     if self.directories:
       directories = []
       printout = False
@@ -939,8 +930,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     ########################################################################
 
   def _getBKMetadata(self, lfns):
-    """ get metadata (i.e. replica flag) of a list of LFNs
-    """
+    """get metadata (i.e. replica flag) of a list of LFNs."""
     missingLFNs = []
     noFlagLFNs = {}
     okLFNs = []
@@ -966,8 +956,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
   ################################################################################
 
   def checkBK2TS(self):
-    """ check that files present in the BK are also in the FC (re-check of BKWatchAgent)
-    """
+    """check that files present in the BK are also in the FC (re-check of
+    BKWatchAgent)"""
     bkQuery = self.__getBKQuery(fromTS=True)
     lfnsReplicaYes = self._getBKFiles(bkQuery)
     proc, nonProc, _statuses = self._getTSFiles()
@@ -988,9 +978,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
       self.existLFNsBadFiles = repDict['AllReplicasCorrupted']
 
   def checkSE(self, seList):
-    """
-    Check if the provided files are registered in the FC in a given list of SEs
-    """
+    """Check if the provided files are registered in the FC in a given list of
+    SEs."""
     lfnsReplicaNo, lfnsReplicaYes = self.__getLFNsFromBK()
     if not lfnsReplicaNo and not lfnsReplicaYes:
       lfns, notPresent = self.__getLFNsFromFC()
@@ -1008,10 +997,13 @@ class ConsistencyChecks(DiracConsistencyChecks):
     self.existLFNsNoSE = [lfn for lfn in success if not seSet & set(success[lfn])]
 
   def compareChecksum(self, lfns):
-    """compare the checksum of the file in the FC and the checksum of the physical replicas.
-       Returns a dictionary containing 3 sub-dictionaries: one with files with missing PFN, one with
-       files with all replicas corrupted, and one with files with some replicas corrupted and at least
-       one good replica
+    """compare the checksum of the file in the FC and the checksum of the
+    physical replicas.
+
+    Returns a dictionary containing 3 sub-dictionaries: one with files
+    with missing PFN, one with files with all replicas corrupted, and
+    one with files with some replicas corrupted and at least one good
+    replica
     """
     retDict = {'AllReplicasCorrupted': {},
                'SomeReplicasCorrupted': {},
@@ -1156,7 +1148,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   # properties
 
   def set_prod(self, value):
-    """ Setter """
+    """Setter."""
     if value:
       value = int(value)
       res = self.transClient.getTransformation(value, extraParams=False)
@@ -1171,77 +1163,75 @@ class ConsistencyChecks(DiracConsistencyChecks):
     self._prod = value
 
   def get_prod(self):
-    """ Getter """
+    """Getter."""
     return self._prod
   prod = property(get_prod, set_prod)
 
   def set_fileType(self, value):
-    """ Setter """
+    """Setter."""
     fts = [ft.upper() for ft in value]
     self._fileType = fts
 
   def get_fileType(self):
-    """ Getter """
+    """Getter."""
     return self._fileType
   fileType = property(get_fileType, set_fileType)
 
   def set_fileTypesExcluded(self, value):
-    """ Setter """
+    """Setter."""
     fts = [ft.upper() for ft in value]
     self._fileTypesExcluded = fts
 
   def get_fileTypesExcluded(self):
-    """ Getter """
+    """Getter."""
     return self._fileTypesExcluded
   fileTypesExcluded = property(get_fileTypesExcluded, set_fileTypesExcluded)
 
   def set_bkQuery(self, value):
-    """ Setter """
+    """Setter."""
     if isinstance(value, basestring):
       self._bkQuery = ast.literal_eval(value)
     else:
       self._bkQuery = value
 
   def get_bkQuery(self):
-    """ Getter """
+    """Getter."""
     return self._bkQuery
   bkQuery = property(get_bkQuery, set_bkQuery)
 
   def set_lfns(self, value):
-    """ Setter """
+    """Setter."""
     if isinstance(value, basestring):
       value = [value]
     value = [v.replace(' ', '').replace('//', '/') for v in value]
     self._lfns = value
 
   def get_lfns(self):
-    """ Getter """
+    """Getter."""
     return self._lfns
   lfns = property(get_lfns, set_lfns)
 
   def set_verbose(self, value):
-    """ Setter """
+    """Setter."""
     self._verbose = bool(value)
 
   def get_verbose(self):
-    """ Getter """
+    """Getter."""
     return self._verbose
   verbose = property(get_verbose, set_verbose)
 
   def set_seList(self, value):
-    """ Setter """
+    """Setter."""
     self._seList = set(resolveSEGroup(value))
 
   def get_seList(self):
-    """ Getter """
+    """Getter."""
     return self._seList
   seList = property(get_seList, set_seList)
 
   def _findNextProduction(self):
-    """
-    Find in the next productions one that uses the current production as input in the BK query
-    Returns its number and its type
-    """
+    """Find in the next productions one that uses the current production as
+    input in the BK query Returns its number and its type."""
     for nextProd in range(self.prod + 1, self.prod + 6):
       res = self.transClient.getBookkeepingQuery(nextProd)
       if res['OK'] and res['Value'].get('ProductionID') == self.prod:

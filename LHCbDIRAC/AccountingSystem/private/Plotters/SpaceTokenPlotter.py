@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.AccountingSystem.private.Plotters.SpaceTokenPlotter
+"""LHCbDIRAC.AccountingSystem.private.Plotters.SpaceTokenPlotter.
 
-   SpaceTokenPlotter.__bases__:
-     DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
-  
+SpaceTokenPlotter.__bases__:
+  DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
 """
 
 
@@ -26,9 +25,7 @@ __RCSID__ = "$Id$"
 
 
 class SpaceTokenPlotter( BaseReporter ):
-  """ SpaceTokenPlotter as extension of BaseReporter
-  
-  """
+  """SpaceTokenPlotter as extension of BaseReporter."""
   
   _typeName      = "SpaceToken"
   _typeKeyFields = [ dF[0] for dF in SpaceToken().definitionKeyFields ]
@@ -37,11 +34,11 @@ class SpaceTokenPlotter( BaseReporter ):
   # Generic Reporter
 
   def reporter( self, reportRequest, spaceType, groupingFields = False ):
-    """ reporter
-    
-    Generic method used by all the _report<something> methods. Only one method
-    is actually making use of the groupingFields attribute ( `_reportFreeUsedSpace` ). 
-    
+    """reporter.
+
+    Generic method used by all the _report<something> methods. Only one
+    method is actually making use of the groupingFields attribute (
+    `_reportFreeUsedSpace` ).
     """
     
     reportRequest[ 'condDict' ][ 'SpaceType' ] = spaceType
@@ -92,10 +89,9 @@ class SpaceTokenPlotter( BaseReporter ):
   # Generic Plotter
 
   def plotter( self, reportRequest, plotInfo, filename ):
-    """ plotter
-    
+    """plotter.
+
     Generic plotter method used by all _plot<something> methods.
-    
     """
     
     startEpoch  = reportRequest[ 'startTime' ]
@@ -118,9 +114,7 @@ class SpaceTokenPlotter( BaseReporter ):
   _plotFreeUsedSpace       = plotter
   _reportFreeUsedSpaceName = "Free and Used Space"
   def _reportFreeUsedSpace( self, reportRequest ):
-    """ _reportFreeUsedSpace
-    
-    """
+    """_reportFreeUsedSpace."""
     
     return self.reporter( reportRequest, [ 'Free', 'Used' ], groupingFields = True )
   
@@ -130,9 +124,7 @@ class SpaceTokenPlotter( BaseReporter ):
   _plotTotalSpace       = plotter
   _reportTotalSpaceName = "Total Space"
   def _reportTotalSpace( self, reportRequest ):
-    """ _reportTotalSpace
-    
-    """
+    """_reportTotalSpace."""
     
     return self.reporter( reportRequest, [ 'Total' ] )
 
@@ -142,9 +134,7 @@ class SpaceTokenPlotter( BaseReporter ):
   _plotGuaranteedSpace       = plotter
   _reportGuaranteedSpaceName = "Guaranteed Space"
   def _reportGuaranteedSpace( self, reportRequest ):
-    """ _reportGuaranteedSpace
-    
-    """
+    """_reportGuaranteedSpace."""
     
     return self.reporter( reportRequest, [ 'Guaranteed' ] )
 
@@ -154,9 +144,7 @@ class SpaceTokenPlotter( BaseReporter ):
   _plotFreeSpace       = plotter
   _reportFreeSpaceName = "Free Space"
   def _reportFreeSpace( self, reportRequest ):
-    """ _reportFreeSpace
-    
-    """
+    """_reportFreeSpace."""
     
     return self.reporter( reportRequest, [ 'Free' ] )
 
@@ -166,9 +154,7 @@ class SpaceTokenPlotter( BaseReporter ):
   _plotUsedSpace       = plotter
   _reportUsedSpaceName = "Used Space"
   def _reportUsedSpace( self, reportRequest ):
-    """ _reportUsedSpace
-    
-    """   
+    """_reportUsedSpace."""   
 
     return self.reporter( reportRequest, [ 'Used' ] )
 

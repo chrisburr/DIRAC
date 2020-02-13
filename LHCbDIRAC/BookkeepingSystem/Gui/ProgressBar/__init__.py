@@ -8,7 +8,5 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This packages contains the implementation of  a progress bar widget.
-"""
+"""This packages contains the implementation of  a progress bar widget."""
 __RCSID__ = "$Id$"

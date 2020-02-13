@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Analyse XMLSummary module
-"""
+"""Analyse XMLSummary module."""
 
 __RCSID__ = "$Id$"
 
@@ -27,12 +26,10 @@ from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 
 
 class AnalyseXMLSummary(ModuleBase):
-  """ Analysing the XML summary
-  """
+  """Analysing the XML summary."""
 
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger('AnalyseXMLSummary')
     super(AnalyseXMLSummary, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -43,8 +40,7 @@ class AnalyseXMLSummary(ModuleBase):
     self.XMLSummary_o = None
 
   def _resolveInputVariables(self):
-    """ By convention any workflow parameters are resolved here.
-    """
+    """By convention any workflow parameters are resolved here."""
 
     super(AnalyseXMLSummary, self)._resolveInputVariables()
     super(AnalyseXMLSummary, self)._resolveInputStep()
@@ -55,9 +51,10 @@ class AnalyseXMLSummary(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main execution method.
+    """Main execution method.
 
-        Here we analyse what is written in the XML summary, and take decisions accordingly
+    Here we analyse what is written in the XML summary, and take
+    decisions accordingly
     """
 
     try:
@@ -109,8 +106,11 @@ class AnalyseXMLSummary(ModuleBase):
       super(AnalyseXMLSummary, self).finalize(self.version)
 
   def _basicSuccess(self):
-    """ Treats basic success, meaning the outputs and the status of the XML summary are ok.
-        Now, we have to check the input files if they are in "part" or "fail"
+    """Treats basic success, meaning the outputs and the status of the XML
+    summary are ok.
+
+    Now, we have to check the input files if they are in "part" or
+    "fail"
     """
     failTheJob = False
     if self.XMLSummary_o.inputFileStats['part']:
@@ -140,8 +140,7 @@ class AnalyseXMLSummary(ModuleBase):
     return failTheJob
 
   def _finalizeWithErrors(self, subj):
-    """ Method that sends an email and uploads intermediate job outputs.
-    """
+    """Method that sends an email and uploads intermediate job outputs."""
     # Have to check that the output list is defined in the workflow commons, this is
     # done by the first BK report module that executes at the end of a step but in
     # this case the current step 'listoutput' must be added.

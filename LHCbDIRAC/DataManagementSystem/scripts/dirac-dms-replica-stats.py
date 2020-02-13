@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
-   Get statistics on number of replicas for a given directory or production
-"""
+"""Get statistics on number of replicas for a given directory or production."""
 
 __RCSID__ = "$Id$"
 

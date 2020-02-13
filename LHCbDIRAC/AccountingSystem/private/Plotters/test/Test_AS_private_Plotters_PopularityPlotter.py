@@ -8,18 +8,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-  Unittest for:
-    LHCbDIRAC.AccountingSystem.private.Plotters.PopularityPlotter
+"""Unittest for: LHCbDIRAC.AccountingSystem.private.Plotters.PopularityPlotter.
 
-  PopularityPlotter.__bases__:
-    DIRAC.AccountingSystem.private.Plotters.BaseReporter
+PopularityPlotter.__bases__:
+  DIRAC.AccountingSystem.private.Plotters.BaseReporter
 
-  We are assuming there is a solid test of __bases__, we are not testing them
-  here and assuming they work fine.
+We are assuming there is a solid test of __bases__, we are not testing them
+here and assuming they work fine.
 
-  IMPORTANT: the test MUST be pylint compliant !
-'''
+IMPORTANT: the test MUST be pylint compliant !
+"""
 
 #pylint: disable=protected-access
 
@@ -30,17 +28,13 @@ import mock
 
 
 class PopularityPlotterTestCase( unittest.TestCase ):
-  '''
-    PopularityPlotterTestCase
-  '''
+  """PopularityPlotterTestCase."""
 
   moduleTested = None
   classsTested = None
 
   def mockModuleTested( self, moduleTested ):
-    '''
-      Used to not redo the mocking done on the parent class ( if any )
-    '''
+    """Used to not redo the mocking done on the parent class ( if any )"""
 
     # Tries to get the mocks of the parent TestCases ( if any )
     for baseClass in self.__class__.__bases__:
@@ -61,9 +55,7 @@ class PopularityPlotterTestCase( unittest.TestCase ):
     return moduleTested
 
   def setUp( self ):
-    '''
-      Setup the test case
-    '''
+    """Setup the test case."""
 
     import LHCbDIRAC.AccountingSystem.private.Plotters.PopularityPlotter as moduleTested
 
@@ -71,9 +63,7 @@ class PopularityPlotterTestCase( unittest.TestCase ):
     self.classsTested = self.moduleTested.PopularityPlotter
 
   def tearDown( self ):
-    '''
-      Tear down the test case
-    '''
+    """Tear down the test case."""
 
     del self.moduleTested
     del self.classsTested
@@ -81,37 +71,34 @@ class PopularityPlotterTestCase( unittest.TestCase ):
 #...............................................................................
 
 class PopularityPlotterUnitTest( PopularityPlotterTestCase ):
-  '''
-    PopularityPlotterUnitTest
-    <constructor>
-     - test_instantiate
-    <class variables>
-     - test_typeName
-     - test_typeKeyFields
-     - test_reportDataUsageName
-     - test_reportNormalizedDataUsageName
-    <methods>
-     - test_reportDataUsage
-     - test_reportNormalizedDataUsage
-     - test_plotDataUsage
-     - test_plotNormalizedDataUsage
-  '''
+  """PopularityPlotterUnitTest.
+
+  <constructor>
+   - test_instantiate
+  <class variables>
+   - test_typeName
+   - test_typeKeyFields
+   - test_reportDataUsageName
+   - test_reportNormalizedDataUsageName
+  <methods>
+   - test_reportDataUsage
+   - test_reportNormalizedDataUsage
+   - test_plotDataUsage
+   - test_plotNormalizedDataUsage
+  """
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
     obj = self.classsTested( None, None )
     self.assertEqual( 'PopularityPlotter', obj.__class__.__name__ )
 
   def test_typeName( self ):
-    ''' test the class variable "_typeName" 
-    '''
+    """test the class variable "_typeName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._typeName, "Popularity" )
 
   def test_typeKeyFields( self ):
-    ''' test the class variable "_typeKeyFields"
-    '''
+    """test the class variable "_typeKeyFields"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._typeKeyFields, [ 'DataType', 'Activity', 'FileType',
                                             'Production', 'ProcessingPass',
@@ -119,20 +106,17 @@ class PopularityPlotterUnitTest( PopularityPlotterTestCase ):
                                           ] )
 
   def test_reportDataUsageName( self ):
-    ''' test the class variable "_reportDataUsageName"
-    '''
+    """test the class variable "_reportDataUsageName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportDataUsageName, "Data Usage" )
 
   def test_reportNormalizedDataUsageName( self ):
-    ''' test the class variable "_reportNormalizedDataUsageName"
-    '''
+    """test the class variable "_reportNormalizedDataUsageName"."""
     obj = self.classsTested( None, None )
     self.assertEqual( obj._reportNormalizedDataUsageName, "Normalized Data Usage" )
 
   def test_reportDataUsage( self ):
-    ''' test the method "_reportDataUsage"
-    '''
+    """test the method "_reportDataUsage"."""
 
     mockAccountingDB = mock.MagicMock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -184,8 +168,7 @@ class PopularityPlotterUnitTest( PopularityPlotterTestCase ):
                                       } )
 
   def test_reportNormalizedDataUsage( self ):
-    ''' test the method "_reportNormalizedDataUsage"
-    '''
+    """test the method "_reportNormalizedDataUsage"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -245,21 +228,20 @@ class PopularityPlotterUnitTest( PopularityPlotterTestCase ):
 #...............................................................................
 
 class PopularityPlotterUnitTestCrashes( PopularityPlotterTestCase ):
-  '''
-    PopularityPlotterUnitTestCrashes
-    <constructor>
-     - test_instantiate
-    <class variables>
-    <methods>
-    - test_reportDataUsage
-    - test_reportNormalizedDataUsage
-    - test_plotDataUsage
-    - test_plotNormalizedDataUsage
-  '''
+  """PopularityPlotterUnitTestCrashes.
+
+  <constructor>
+   - test_instantiate
+  <class variables>
+  <methods>
+  - test_reportDataUsage
+  - test_reportNormalizedDataUsage
+  - test_plotDataUsage
+  - test_plotNormalizedDataUsage
+  """
 
   def test_instantiate( self ):
-    ''' test the constructor
-    '''
+    """test the constructor."""
 
     self.assertRaises( TypeError, self.classsTested )
     self.assertRaises( TypeError, self.classsTested, None )
@@ -270,8 +252,7 @@ class PopularityPlotterUnitTestCrashes( PopularityPlotterTestCase ):
     self.assertRaises( TypeError, self.classsTested, None, None, None, extraArgs = None )
 
   def test_reportDataUsage( self ):
-    ''' test the method "_reportDataUsage"
-    '''
+    """test the method "_reportDataUsage"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -296,8 +277,7 @@ class PopularityPlotterUnitTestCrashes( PopularityPlotterTestCase ):
                                                            'condDict'       : None } )
     
   def test_reportNormalizedDataUsage( self ):
-    ''' test the method "_reportNormalizedDataUsage"
-    '''
+    """test the method "_reportNormalizedDataUsage"."""
 
     mockAccountingDB = mock.Mock()
     mockAccountingDB._getConnection.return_value               = { 'OK' : False, 'Message' : 'No connection' }
@@ -322,8 +302,7 @@ class PopularityPlotterUnitTestCrashes( PopularityPlotterTestCase ):
                                                                      'condDict'       : None } )
 
   def test_plotDataUsage( self ):
-    ''' test the method "_plotDataUsage"
-    '''
+    """test the method "_plotDataUsage"."""
 
     obj = self.classsTested( None, None )
     self.assertRaises( TypeError, obj._plotDataUsage, None, None, None )
@@ -350,8 +329,7 @@ class PopularityPlotterUnitTestCrashes( PopularityPlotterTestCase ):
                                                        'graphDataDict' : 'graphDataDict' }, None )
 
   def test_plotNormalizedDataUsage( self ):
-    ''' test the method "_plotNormalizedDataUsage"
-    '''
+    """test the method "_plotNormalizedDataUsage"."""
     
     obj = self.classsTested( None, None )
     self.assertRaises( TypeError, obj._plotNormalizedDataUsage, None, None, None )

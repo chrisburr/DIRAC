@@ -29,17 +29,14 @@ AGENT_NAME = 'Transformation/WorkflowTaskAgent'
 
 
 class WorkflowTaskAgent(DIRACWorkflowTaskAgent):
-  """ An AgentModule class to submit workflow tasks
-  """
+  """An AgentModule class to submit workflow tasks."""
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     DIRACWorkflowTaskAgent.__init__(self, *args, **kwargs)
 
   def _getClients(self):
-    """ LHCb clients
-    """
+    """LHCb clients."""
     res = DIRACWorkflowTaskAgent._getClients(self)
 
     outputDataModule = Operations().getValue("Transformations/OutputDataModule",

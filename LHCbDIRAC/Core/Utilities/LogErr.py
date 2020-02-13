@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-Reads .log-files and outputs summary of counters as a .json-file and a .html-file
-'''
+"""Reads .log-files and outputs summary of counters as a .json-file and a
+.html-file."""
 import os
 import json
 
@@ -20,8 +19,8 @@ from DIRAC import gLogger, S_OK, S_ERROR
 
 
 def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsID, name='errors.json'):
-  """
-  The script that runs everything
+  """The script that runs everything.
+
   :param str logFile: the name of the logfile
   :param str project: the project string of the file
   :param str version: the versio of the project
@@ -153,15 +152,13 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
 
 
 def createJSONtable(dictTotal, name, jobID, prodID, wmsID):
-  """
-  Creates a JSON file out of the collection of errors listed in dictTotal
+  """Creates a JSON file out of the collection of errors listed in dictTotal.
 
   :param dict dictTotal: the dictionary of errors
   :param str name: the name of the JSON file
   :param str jobID: the JobID of the log
   :param str prodID: the ProductionID of the log
   :param str wmsID: the wmsID of the log
-
   """
   result = {}
   temp = {}
@@ -182,12 +179,11 @@ def createJSONtable(dictTotal, name, jobID, prodID, wmsID):
 
 
 def createHTMLtable(dictG4ErrorsCount, name):
-  """
-  Creates an HTML file out of the collection of errors listed in dictG4ErrorsCount
+  """Creates an HTML file out of the collection of errors listed in
+  dictG4ErrorsCount.
 
   :param dict dictG4ErrorsCount: the dictionary of errors
   :param str name: the name of the HTML file
-
   """
   with open(name, 'w') as f:
     f.write("<HTML>\n")
@@ -220,8 +216,7 @@ def createHTMLtable(dictG4ErrorsCount, name):
 
 
 def readErrorDict(fullPathFileName, dictName):
-  """
-  Reads errors in a stringfile and puts them in dictName
+  """Reads errors in a stringfile and puts them in dictName.
 
   :param str fullPathFileName: the name of the stringfile
   :param dict dictName: the name of the dict that will insert the data in fullPathFileName
@@ -236,11 +231,9 @@ def readErrorDict(fullPathFileName, dictName):
 
 
 def getLines(fullPathFileName):
-  """
-  Reads lines in string file
+  """Reads lines in string file.
 
   :param str fullPathFileName: the name of the file to be opened and read
-
   """
 
   gLogger.notice('>>> Processed STRINGFILE -> ', fullPathFileName)
@@ -252,8 +245,8 @@ def getLines(fullPathFileName):
 
 
 def getLogString(logFile, logString):
-  """
-  Checks if the log file can be opened, and saves the text in logFile into logString
+  """Checks if the log file can be opened, and saves the text in logFile into
+  logString.
 
   :param str logFile: the name of the logFile
   :param str logStr: the name of the variable that will save the contents of logFile
@@ -275,8 +268,7 @@ def getLogString(logFile, logString):
 
 
 def pickStringFile(project, version, appConfigVersion):
-  """
-  Picks the string file from the current directory
+  """Picks the string file from the current directory.
 
   :param str project: the project name
   :param str version: the version of the project

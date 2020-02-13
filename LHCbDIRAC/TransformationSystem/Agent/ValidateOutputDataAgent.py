@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Simple extension of base class
-"""
+"""Simple extension of base class."""
 
 __RCSID__ = "$Id$"
 
@@ -26,12 +25,10 @@ AGENT_NAME = 'Transformation/ValidateOutputDataAgent'
 
 
 class ValidateOutputDataAgent(DIRACValidateOutputDataAgent):
-  """ Simple extension of base class
-  """
+  """Simple extension of base class."""
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     DIRACValidateOutputDataAgent.__init__(self, *args, **kwargs)
 
     self.integrityClient = None
@@ -40,8 +37,7 @@ class ValidateOutputDataAgent(DIRACValidateOutputDataAgent):
     self.storageUsageClient = None
 
   def initialize(self):
-    """ standard initialize method for DIRAC agents
-    """
+    """standard initialize method for DIRAC agents."""
     res = DIRACValidateOutputDataAgent.initialize(self)
     if not res['OK']:
       return res
@@ -54,8 +50,7 @@ class ValidateOutputDataAgent(DIRACValidateOutputDataAgent):
     return S_OK()
 
   def checkTransformationIntegrity(self, prodID):
-    """ This method contains the real work
-    """
+    """This method contains the real work."""
     gLogger.info("-" * 40)
     gLogger.info("Checking the integrity of production %s" % prodID)
     gLogger.info("-" * 40)
@@ -122,7 +117,8 @@ class ValidateOutputDataAgent(DIRACValidateOutputDataAgent):
     return S_OK()
 
   def getTransformationDirectories(self, transID):
-    """ get the directories for the supplied transformation from the transformation system
+    """get the directories for the supplied transformation from the
+    transformation system.
 
     :param self: self reference
     :param int transID: transformation ID

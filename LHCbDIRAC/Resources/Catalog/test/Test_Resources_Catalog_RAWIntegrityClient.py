@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test_Resources_Catalog_RAWIntegrityClient
-"""
+"""Test_Resources_Catalog_RAWIntegrityClient."""
 
 import mock
 import unittest
@@ -24,9 +23,7 @@ __RCSID__ = "$Id$"
 class RAWIntegrityClient_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    """
-    Setup
-    """
+    """Setup."""
 
     gLogger.setLevel('DEBUG')
 
@@ -53,9 +50,7 @@ class RAWIntegrityClient_TestCase( unittest.TestCase ):
     self.testClass = self.moduleTested.RAWIntegrityClient
 
   def tearDown( self ):
-    """
-    TearDown
-    """
+    """TearDown."""
     del self.testClass
     del self.moduleTested
     del self.mock_pathFinder
@@ -66,15 +61,13 @@ class RAWIntegrityClient_TestCase( unittest.TestCase ):
 class RAWIntegrityClient_Success( RAWIntegrityClient_TestCase ):
 
   def test_instantiate( self ):
-    """ tests that we can instantiate one object of the tested class
-    """
+    """tests that we can instantiate one object of the tested class."""
 
     catalog = self.testClass()
     self.assertEqual( 'RAWIntegrityClient', catalog.__class__.__name__ )
 
   def test_exists( self ):
-    """ tests the output of exists
-    """
+    """tests the output of exists."""
 
     catalog = self.testClass()
 
@@ -92,8 +85,7 @@ class RAWIntegrityClient_Success( RAWIntegrityClient_TestCase ):
     self.assertEqual( { 'Failed' : {}, 'Successful' : { 'A' : False, 'B' : False} }, res['Value'] )
 
   def test_addFile( self ):
-    """ tests the output of addFile
-    """
+    """tests the output of addFile."""
 
     catalog = self.testClass()
     catalog.rawIntegritySrv = mock.MagicMock()

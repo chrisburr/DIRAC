@@ -8,8 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module to remove input data files for given workflow. Initially written
-    for use after merged outputs have been successfully uploaded to an SE.
+"""Module to remove input data files for given workflow.
+
+Initially written for use after merged outputs have been successfully
+uploaded to an SE.
 """
 
 __RCSID__ = "$Id$"
@@ -25,8 +27,7 @@ class RemoveInputData(ModuleBase):
   #############################################################################
 
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("RemoveInputData")
     super(RemoveInputData, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -39,8 +40,7 @@ class RemoveInputData(ModuleBase):
   #############################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
 
     super(RemoveInputData, self)._resolveInputVariables()
 
@@ -50,8 +50,7 @@ class RemoveInputData(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main execution function.
-    """
+    """Main execution function."""
 
     try:
 
@@ -102,8 +101,7 @@ class RemoveInputData(ModuleBase):
   #############################################################################
 
   def __setFileRemovalRequest(self, lfn):
-    """ Sets a removal request for a file including all replicas.
-    """
+    """Sets a removal request for a file including all replicas."""
     self.log.info('Setting file removal request for %s' % lfn)
     removeFile = Operation()
     removeFile.Type = 'RemoveFile'

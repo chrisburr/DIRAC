@@ -40,8 +40,7 @@ class TransformationCleaningAgent(DiracTCAgent):
   """
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     DiracTCAgent.__init__(self, *args, **kwargs)
 
     self.directoryLocations = ['TransformationDB', 'StorageUsage']
@@ -55,8 +54,7 @@ class TransformationCleaningAgent(DiracTCAgent):
   #############################################################################
 
   def initialize(self):
-    """ Standard initialize method for agents
-    """
+    """Standard initialize method for agents."""
     DiracTCAgent.initialize(self)
 
     self.directoryLocations = sorted(self.am_getOption('DirectoryLocations', self.directoryLocations))
@@ -71,7 +69,8 @@ class TransformationCleaningAgent(DiracTCAgent):
     return S_OK()
 
   def cleanMetadataCatalogFiles(self, transID):
-    """ clean the metadata using BKK and Data Manager. This method is a replacement of the one from base class
+    """clean the metadata using BKK and Data Manager. This method is a
+    replacement of the one from base class.
 
     :param self: self reference
     :param int transID: transformation ID
@@ -113,7 +112,8 @@ class TransformationCleaningAgent(DiracTCAgent):
     return S_OK()
 
   def getTransformationDirectories(self, transID):
-    """ get the directories for the supplied transformation from the transformation system
+    """get the directories for the supplied transformation from the
+    transformation system.
 
     :param self: self reference
     :param int transID: transformation ID

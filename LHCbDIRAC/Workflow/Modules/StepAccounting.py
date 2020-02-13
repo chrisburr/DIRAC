@@ -8,10 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" StepAccounting module performs several common operations at the end of
-    a workflow step, in particular prepares and sends the step accounting
-    data
-"""
+"""StepAccounting module performs several common operations at the end of a
+workflow step, in particular prepares and sends the step accounting data."""
 
 __RCSID__ = "$Id$"
 
@@ -24,8 +22,7 @@ from LHCbDIRAC.AccountingSystem.Client.Types.JobStep import JobStep
 
 
 class StepAccounting(ModuleBase):
-  """ StepAccounting class
-  """
+  """StepAccounting class."""
 
   def __init__(self, bkClient=None, dm=None):
 
@@ -40,8 +37,7 @@ class StepAccounting(ModuleBase):
   ########################################################################
 
   def _resolveInputVariables(self, dsc=None):
-    """ By convention all workflow parameters are resolved here.
-    """
+    """By convention all workflow parameters are resolved here."""
 
     super(StepAccounting, self)._resolveInputVariables()
     super(StepAccounting, self)._resolveInputStep()

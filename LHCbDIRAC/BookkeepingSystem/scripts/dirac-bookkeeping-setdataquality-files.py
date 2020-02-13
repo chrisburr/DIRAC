@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-setdataquality-files
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Set Quality Flag for the given files
-"""
+"""Set Quality Flag for the given files."""
 __RCSID__ = "$Id$"
 
 import DIRAC

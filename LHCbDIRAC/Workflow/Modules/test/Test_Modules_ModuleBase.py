@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test class for ModuleBase
-"""
+"""Test class for ModuleBase."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name
 

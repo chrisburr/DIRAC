@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   Set the status (default Unused) of a list of LFNs or files in status <Status> of Transformation <TransID>
-"""
+"""Set the status (default Unused) of a list of LFNs or files in status
+<Status> of Transformation <TransID>"""
 
 import DIRAC
 from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient

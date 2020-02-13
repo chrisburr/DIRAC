@@ -27,7 +27,7 @@ class StorageUsageClient(Client):
   .. class:: StorageUsageClient
   """
   def __init__(self, url=None, **kwargs):
-    """ c'tor """
+    """c'tor."""
     super(StorageUsageClient, self).__init__(**kwargs)
     if url:
       self.setServer(url)

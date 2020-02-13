@@ -9,28 +9,27 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" dirac-production-shifter
+"""dirac-production-shifter.
 
-  Script for the production shifter.
+Script for the production shifter.
 
-  Print a summary of the requests in the system ( and their productions ).
-  The following switches and options are provided.
+Print a summary of the requests in the system ( and their productions ).
+The following switches and options are provided.
 
-  - requestState  : request state(s)
-     [ Accepted, Active, BK Check, BK OK, Cancelled, Done, New, PPG OK, Rejected,
-       Submitted, Tech OK ]
-  - requestType   : request type(s)
-     [ Reconstruction, Simulation, Stripping, Stripping (Moore), Swimming, WGProduction ]
-  - requestID     : request ID(s)
-  - simCondition  : simulation condition(s) ( e.g. Beam4000GeV-VeloClosed-MagDown )
-  - proPath       : proPath(s) ( e.g. Reco13 )
-  - eventType     : eventType(s) ( e.g. 90000000 )
-  - sort          : sort requests using the keywords [RequestID,RequestState,RequestType,
-                    SimCondition,ProPath,EventType]
-  - groupMerge    : group all merge productions in one line
-  - omitMerge     : omit all merge production
-  - noFiles       : do not request file information
-
+- requestState  : request state(s)
+   [ Accepted, Active, BK Check, BK OK, Cancelled, Done, New, PPG OK, Rejected,
+     Submitted, Tech OK ]
+- requestType   : request type(s)
+   [ Reconstruction, Simulation, Stripping, Stripping (Moore), Swimming, WGProduction ]
+- requestID     : request ID(s)
+- simCondition  : simulation condition(s) ( e.g. Beam4000GeV-VeloClosed-MagDown )
+- proPath       : proPath(s) ( e.g. Reco13 )
+- eventType     : eventType(s) ( e.g. 90000000 )
+- sort          : sort requests using the keywords [RequestID,RequestState,RequestType,
+                  SimCondition,ProPath,EventType]
+- groupMerge    : group all merge productions in one line
+- omitMerge     : omit all merge production
+- noFiles       : do not request file information
 """
 
 import sys
@@ -46,10 +45,8 @@ __RCSID__ = "$Id$"
 
 
 def doParse():
-  """
-  Function that contains all the switches definition and isolates the rest of the
-  module from parseCommandLine.
-  """
+  """Function that contains all the switches definition and isolates the rest
+  of the module from parseCommandLine."""
 
   # Switch description
   Script.registerSwitch('i:', 'requestID=', 'ID of the request')
@@ -121,9 +118,8 @@ def doParse():
 
 
 def getRequests(parsedInput, sortKey):
-  """
-  Gets the requests from the database using the filters given by the user.
-  """
+  """Gets the requests from the database using the filters given by the
+  user."""
 
   reqClient = ProductionRequestClient()
 
@@ -159,8 +155,7 @@ def getRequests(parsedInput, sortKey):
 
 
 def getTransformations(transClient, requestID, noFiles):
-  """Given a requestID, returns all its transformations.
-  """
+  """Given a requestID, returns all its transformations."""
 
   transformations = transClient.getTransformations({'TransformationFamily': requestID})
   if not transformations['OK']:
@@ -188,8 +183,7 @@ def getTransformations(transClient, requestID, noFiles):
 
 
 def getFiles(transClient, transformationID):
-  """ Given a transformationID, returns the status of their files.
-  """
+  """Given a transformationID, returns the status of their files."""
 
   filesDict = {'Total': 0,
                'Processed': 0,
@@ -242,8 +236,8 @@ def getFiles(transClient, transformationID):
 
 
 def printSelection(parsedInput, mergeAction, noFiles, sortKey):
-  """ Prints header with selection parameters used to filter requests, plus some extra options to narrow summary.
-  """
+  """Prints header with selection parameters used to filter requests, plus some
+  extra options to narrow summary."""
 
   if parsedInput['RequestID'] is not None:
     parsedInput = {'RequestID': parsedInput['RequestID']}
@@ -270,10 +264,12 @@ def printSelection(parsedInput, mergeAction, noFiles, sortKey):
 
 
 def printResults(request, mergeAction):
-  """Given a dictionary with requests, it prints the content on a human readable way.
-    If mergeAction is given and different than None, it can omit all merge
-    transformations from the summary or group all them together in one line if
-    the value is group.
+  """Given a dictionary with requests, it prints the content on a human
+  readable way.
+
+  If mergeAction is given and different than None, it can omit all merge
+  transformations from the summary or group all them together in one
+  line if the value is group.
   """
 
 # infoTuple = (request['requestID'], request['requestState'], request['requestType'][:4],
@@ -352,7 +348,8 @@ def printResults(request, mergeAction):
 
 
 def printTransformation(requestID, transformationID, transformation, filesDict, noFiles=False, groupMsg=None):
-  """ Prints transformation information
+  """Prints transformation information.
+
   :param requestID:
   :param transformationID:
   :param transformation: dict with keys transformationStatus and transformationType
@@ -407,16 +404,15 @@ def printTransformation(requestID, transformationID, transformation, filesDict, 
 
 
 def printRequestsInfo(requests):
-  """ Prints the number of requests
-  """
+  """Prints the number of requests."""
 
   print ' found %s requests \n' % len(requests)
   printNow()
 
 
 def printNow():
-  """ Flush stdout, otherwhise we have to wait until the end of the script to have if flushed.
-  """
+  """Flush stdout, otherwhise we have to wait until the end of the script to
+  have if flushed."""
 
   sys.stdout.flush()
 

@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" FreeDiskSpaceCommand
+"""FreeDiskSpaceCommand.
 
-  LHCbDIRAC extension adding records to the accounting
-
+LHCbDIRAC extension adding records to the accounting
 """
 
 # DIRAC
@@ -29,18 +28,17 @@ __RCSID__ = "$Id$"
 
 
 class FreeDiskSpaceCommand(FDSC):
-  """ FreeDiskSpaceCommand
+  """FreeDiskSpaceCommand.
 
   Extension of DIRAC.ResourceStatusSystem.Command.FreeDiskSpaceCommand
   to add entries to accounting. To be considered to move up to DIRAC repository.
 
   Originally, this was working for SRM only storages. It is now working with all protocols,
   but we abuse the 'SpaceToken' field to store 'SpaceReservation'
-
   """
 
   def _storeCommand(self, results):
-    """ _storeCommand
+    """_storeCommand.
 
     Adding records to accounting, on top of what does the derived method.
 

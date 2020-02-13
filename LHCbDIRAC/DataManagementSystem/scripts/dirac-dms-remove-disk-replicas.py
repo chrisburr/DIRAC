@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Remove replicas of a (list of) LFNs from all non-ARCHIVE storage elements
-"""
+"""Remove replicas of a (list of) LFNs from all non-ARCHIVE storage
+elements."""
 
 __RCSID__ = "$Id$"
 

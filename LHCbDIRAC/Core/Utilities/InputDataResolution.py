@@ -8,14 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" The input data resolution module is a VO-specific plugin that
-    allows to define VO input data policy in a simple way using existing
-    utilities in DIRAC or extension code supplied by the VO.
+"""The input data resolution module is a VO-specific plugin that allows to
+define VO input data policy in a simple way using existing utilities in DIRAC
+or extension code supplied by the VO.
 
-    The arguments dictionary from the Job Wrapper includes the file catalogue
-    result and in principle has all necessary information to resolve input data
-    for applications.
-
+The arguments dictionary from the Job Wrapper includes the file
+catalogue result and in principle has all necessary information to
+resolve input data for applications.
 """
 
 from DIRAC import S_OK
@@ -30,12 +29,10 @@ CREATE_CATALOG = False
 
 
 class InputDataResolution (DIRACInputDataResolution):
-  """ Define the Input Data Policy
-  """
+  """Define the Input Data Policy."""
 
   def __init__(self, argumentsDict, bkkClient=None):
-    """ Standard constructor
-    """
+    """Standard constructor."""
     super(InputDataResolution, self).__init__(argumentsDict)
 
     if not bkkClient:
@@ -48,8 +45,7 @@ class InputDataResolution (DIRACInputDataResolution):
 
   def execute(self):
     """Given the arguments from the Job Wrapper, this function calls existing
-       utilities in DIRAC to resolve input data according to LHCb VO policy.
-    """
+    utilities in DIRAC to resolve input data according to LHCb VO policy."""
     result = super(InputDataResolution, self).execute()
     if not result['OK'] or not result['Value'].get('Successful', {}):
       return result
@@ -84,8 +80,7 @@ class InputDataResolution (DIRACInputDataResolution):
   #############################################################################
 
   def _addPfnType(self, resolvedData):
-    """ Add the pfn type to the lfn list in input
-    """
+    """Add the pfn type to the lfn list in input."""
 
     typeVersions = self.bkkClient.getFileTypeVersion(resolvedData.keys())
     if not typeVersions['OK']:

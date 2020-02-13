@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Set of functions used by the DMS scripts
-"""
+"""Set of functions used by the DMS scripts."""
 
 import sys
 import os
@@ -35,9 +33,8 @@ __RCSID__ = "$Id$"
 
 
 def __checkSEs(args, expand=True):
-  """
-  Finds StorageElements in a list of arguments and returns them separate from other arguments
-  """
+  """Finds StorageElements in a list of arguments and returns them separate
+  from other arguments."""
   if expand:
     expanded = []
     for arg in args:
@@ -55,9 +52,7 @@ def __checkSEs(args, expand=True):
 
 
 def __getSEsFromOptions(dmScript):
-  """
-  Get the list of SEs from the dmScript information
-  """
+  """Get the list of SEs from the dmScript information."""
   seList = dmScript.getOption('SEs', [])
   sites = dmScript.getOption('Sites', [])
   if sites:
@@ -73,10 +68,8 @@ def __getSEsFromOptions(dmScript):
 
 
 def parseArguments(dmScript, allSEs=False, printOutput=True):
-  """
-  Analyse the options passed using the DMScript options,
-  returns a list of LFNs and a list of SEs
-  """
+  """Analyse the options passed using the DMScript options, returns a list of
+  LFNs and a list of SEs."""
   if allSEs:
     seList = DMSHelpers().getStorageElements()
   else:
@@ -130,9 +123,7 @@ def parseArguments(dmScript, allSEs=False, printOutput=True):
 
 
 def executeRemoveReplicas(dmScript, allDisk=False):
-  """
-  get options for remove-replicas and cal for it
-  """
+  """get options for remove-replicas and cal for it."""
   checkFC = True
   force = False
 
@@ -175,11 +166,9 @@ def executeRemoveReplicas(dmScript, allDisk=False):
 
 
 def removeReplicas(lfnList, seList, minReplicas=1, checkFC=True, allDisk=False, force=False, verbose=True):
-  """
-  remove replicas from a list of SEs or all disk SEs
-  2 different methods are used to remove registered and unregistered replicas
-  If the file is entirely removed, it is set Removed in the TS
-  """
+  """remove replicas from a list of SEs or all disk SEs 2 different methods are
+  used to remove registered and unregistered replicas If the file is entirely
+  removed, it is set Removed in the TS."""
   if not checkFC:
     res = removeReplicasNoFC(lfnList, sorted(seList))
     if not res['OK']:
@@ -224,9 +213,7 @@ def removeReplicas(lfnList, seList, minReplicas=1, checkFC=True, allDisk=False, 
 
 
 def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=False):
-  """
-  Remove registered files
-  """
+  """Remove registered files."""
   dm = DataManager()
   bk = BookkeepingClient()
   #########################
@@ -364,9 +351,7 @@ def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=Fa
 
 
 def removeReplicasNoFC(lfnList, seList):
-  """
-  Remove unregistered files
-  """
+  """Remove unregistered files."""
   dm = DataManager()
   bk = BookkeepingClient()
   savedLevel = gLogger.getLevel()
@@ -463,9 +448,7 @@ def removeReplicasNoFC(lfnList, seList):
 
 
 def executeAccessURL(dmScript):
-  """
-  Actual script executor
-  """
+  """Actual script executor."""
   # Use xrootd as default protocol since usually this is what users want
   protocol = ['xroot', 'root']
   for switch in Script.getUnprocessedSwitches():
@@ -496,9 +479,7 @@ def executeAccessURL(dmScript):
 
 
 def getAccessURL(lfnList, seList, protocol=None):
-  """
-  Get TURL at a list of SEs
-  """
+  """Get TURL at a list of SEs."""
   dm = DataManager()
   res = dm.getReplicas(lfnList, getUrl=False)
   replicas = res.get('Value', {}).get('Successful', {})
@@ -546,9 +527,7 @@ def getAccessURL(lfnList, seList, protocol=None):
 
 
 def executeRemoveFiles(dmScript):
-  """
-  get options for remove-files
-  """
+  """get options for remove-files."""
 
   lfnList, _ses = parseArguments(dmScript)
   setProcessed = False
@@ -561,10 +540,8 @@ def executeRemoveFiles(dmScript):
 
 
 def removeFiles(lfnList, setProcessed=False):
-  """
-  Remove files, and set them Removed in the TS
-  If setProcessed is True, even Processed files are set Removed
-  """
+  """Remove files, and set them Removed in the TS If setProcessed is True, even
+  Processed files are set Removed."""
   dm = DataManager()
   fc = FileCatalog()
 
@@ -653,9 +630,7 @@ def removeFiles(lfnList, setProcessed=False):
 
 
 def removeFilesInTransformations(lfns, setProcessed=False):
-  """
-  Set files Removed in transformations
-  """
+  """Set files Removed in transformations."""
   transClient = TransformationClient()
   res = transClient.getTransformationFiles({'LFN': lfns})
   if not res['OK']:
@@ -686,9 +661,7 @@ def removeFilesInTransformations(lfns, setProcessed=False):
 
 
 def executeLfnReplicas(dmScript):
-  """
-  get options for lfn-replicas
-  """
+  """get options for lfn-replicas."""
 
   lfnList, _ses = parseArguments(dmScript)
 
@@ -715,9 +688,8 @@ def executeLfnReplicas(dmScript):
 
 
 def printLfnReplicas(lfnList, active=True, diskOnly=False, preferDisk=False, forJobs=False):
-  """
-  get the replica list for a list of LFNs and print them depending on options
-  """
+  """get the replica list for a list of LFNs and print them depending on
+  options."""
   dm = DataManager()
   fc = FileCatalog()
   while True:
@@ -754,9 +726,7 @@ def printLfnReplicas(lfnList, active=True, diskOnly=False, preferDisk=False, for
 
 
 def executePfnMetadata(dmScript, check=False, exists=False, summary=False):
-  """
-  get options for pfn-metadata
-  """
+  """get options for pfn-metadata."""
 
   lfnList, seList = parseArguments(dmScript)
 
@@ -778,11 +748,9 @@ def executePfnMetadata(dmScript, check=False, exists=False, summary=False):
 
 
 def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
-  """
-  get physical files metadata at a set of SEs
-  If requested, it compares the checksum with the FC one
-  The printout may be full, terse or just a statistics summary
-  """
+  """get physical files metadata at a set of SEs If requested, it compares the
+  checksum with the FC one The printout may be full, terse or just a statistics
+  summary."""
   from DIRAC.Core.Utilities.Adler import compareAdler
   if len(seList) > 1:
     gLogger.notice("Using the following list of SEs: %s" % str(seList))
@@ -911,9 +879,7 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
 
 
 def orderSEs(listSEs):
-  """
-  Orders a list of SEs with ARCHIVE last
-  """
+  """Orders a list of SEs with ARCHIVE last."""
   listSEs = sorted(listSEs)
   dmsHelper = DMSHelpers()
   orderedSEs = [se for se in listSEs if dmsHelper.isSEArchive(se)]
@@ -922,9 +888,7 @@ def orderSEs(listSEs):
 
 
 def executeReplicaStats(dmScript):
-  """
-  get options for replica-stats
-  """
+  """get options for replica-stats."""
   getSize = False
   prNoReplicas = False
   prWithArchives = False
@@ -984,10 +948,8 @@ def executeReplicaStats(dmScript):
 def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
                       prWithReplicas=False, prWithArchives=False,
                       prFailover=False, prSEList=None, notAtSE=False, summary=False):
-  """
-  get storage statistics on a dataset (directories or LFN list
-  If requested, lists of LFNs with some criteria can be printed out
-  """
+  """get storage statistics on a dataset (directories or LFN list If requested,
+  lists of LFNs with some criteria can be printed out."""
   dm = DataManager()
   dmsHelper = DMSHelpers()
 
@@ -1213,9 +1175,7 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
 
 
 def executeReplicateLfn(dmScript):
-  """
-  get options for replicate-lfn
-  """
+  """get options for replicate-lfn."""
   removeSource = False
   for switch in Script.getUnprocessedSwitches():
     if switch[0] == 'RemoveSource':
@@ -1257,9 +1217,8 @@ def executeReplicateLfn(dmScript):
 
 
 def executeReplicateToRunDestination(dmScript):
-  """
-  get information from file for destination according to the run destination
-  """
+  """get information from file for destination according to the run
+  destination."""
   removeSource = False
   for switch in Script.getUnprocessedSwitches():
     if switch[0] == 'RemoveSource':
@@ -1312,9 +1271,7 @@ def executeReplicateToRunDestination(dmScript):
 
 
 def replicateLfn(lfnList, sourceSE, destList, localCache=None, removeSource=False, verbose=False):
-  """
-  replicate a list of LFNs to a list of SEs
-  """
+  """replicate a list of LFNs to a list of SEs."""
   dm = DataManager()
   # print lfnList, destList, sourceSE, localCache
   finalResult = {'OK': True, 'Value': {"Failed": {}, "Successful": {}}}
@@ -1375,9 +1332,7 @@ def replicateLfn(lfnList, sourceSE, destList, localCache=None, removeSource=Fals
 
 
 def executeSetProblematicFiles(dmScript):
-  """
-  get options for set-problematic-files
-  """
+  """get options for set-problematic-files."""
 
   reset = False
   fullInfo = False
@@ -1400,9 +1355,7 @@ def executeSetProblematicFiles(dmScript):
 
 
 def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=True):
-  """
-  sets replicas problematic in the FC
-  """
+  """sets replicas problematic in the FC."""
   startTime = time.time()
   fc = FileCatalog()
   tr = TransformationClient()
@@ -1582,9 +1535,7 @@ def __dfcGetDirectoryMetadata(catalog, dirList):
 
 
 def executeLfnMetadata(dmScript):
-  """
-  Print out the FC metadata of a list of LFNs
-  """
+  """Print out the FC metadata of a list of LFNs."""
   lfnList, _ses = parseArguments(dmScript)
   if not lfnList:
     gLogger.fatal("No list of LFNs provided")
@@ -1624,9 +1575,7 @@ def executeLfnMetadata(dmScript):
 
 
 def executeGetFile(dmScript):
-  """
-  get files to a local storage
-  """
+  """get files to a local storage."""
   lfnList, ses = parseArguments(dmScript)
   if ses:
     sourceSE = ses[0]
@@ -1669,8 +1618,7 @@ def executeGetFile(dmScript):
 
 
 def __buildLfnDict(item_list):
-  """From the input list, populate the dictionary
-  """
+  """From the input list, populate the dictionary."""
   lfn_dict = {}
   lfn_dict['lfn'] = item_list[0].replace('LFN:', '').replace('lfn:', '')
   lfn_dict['localfile'] = item_list[1]
@@ -1683,8 +1631,7 @@ def __buildLfnDict(item_list):
 
 
 def executeAddFile():
-  """Add a file to a Grid storage element
-  """
+  """Add a file to a Grid storage element."""
 
   args = Script.getPositionalArgs()
   if len(args) < 1 or len(args) > 4:
@@ -1777,17 +1724,13 @@ def executeAddFile():
 
 
 def __isOlderThan(cTimeStruct, days):
-  """
-  Check if a time is older than a given number of days
-  """
+  """Check if a time is older than a given number of days."""
   from datetime import datetime, timedelta
   return cTimeStruct < (datetime.utcnow() - timedelta(days=days))
 
 
 def executeListDirectory(dmScript, days=0, months=0, years=0, wildcard=None, depth=0):
-  """
-  List a FC directory contents recursively
-  """
+  """List a FC directory contents recursively."""
   onlyFiles = False
   emptyDirsFlag = False
   outputFlag = False
@@ -1912,10 +1855,9 @@ def executeListDirectory(dmScript, days=0, months=0, years=0, wildcard=None, dep
 
 
 def executeRegisterBK2FC(dmScript):
-  """
-  Get a list of files and SEs, and register the existing files if necessary
-  Files should not be in the FC yet, and will be registered in a single SE only if the replica exists
-  """
+  """Get a list of files and SEs, and register the existing files if necessary
+  Files should not be in the FC yet, and will be registered in a single SE only
+  if the replica exists."""
   # The source SE may be given as second positional argument, therefore do not aggregate
   lfnList, seList = parseArguments(dmScript)
 
@@ -1923,11 +1865,8 @@ def executeRegisterBK2FC(dmScript):
 
 
 def registerBK2FC(lfnList, seList, printResult=False):
-  """
-  Check if files are in BK and not in the FC,
-    check they are in any of the SEs and
-    if OK registers the file in the FC
-  """
+  """Check if files are in BK and not in the FC, check they are in any of the
+  SEs and if OK registers the file in the FC."""
 
   result = {'Successful': {}, 'Failed': {}}
   res = DataManager().getReplicas(lfnList, getUrl=False)

@@ -8,12 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" The ErrorLogging module is used to perform error analysis using AppConfig
-    utilities. This occurs at the end of each workflow step such that the
-    step_commons dictionary can be utilized.
+"""The ErrorLogging module is used to perform error analysis using AppConfig
+utilities. This occurs at the end of each workflow step such that the
+step_commons dictionary can be utilized.
 
-    Since not all projects are instrumented to work with the AppConfig
-    error suite any failures will not be propagated to the workflow.
+Since not all projects are instrumented to work with the AppConfig error
+suite any failures will not be propagated to the workflow.
 """
 
 __RCSID__ = "$Id$"
@@ -31,8 +31,7 @@ class ErrorLogging(ModuleBase):
   #############################################################################
 
   def __init__(self):
-    """ c'tor
-    """
+    """c'tor."""
 
     self.log = gLogger.getSubLogger("ErrorLogging")
     super(ErrorLogging, self).__init__(self.log)
@@ -45,8 +44,7 @@ class ErrorLogging(ModuleBase):
   #############################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the module input parameters are resolved here.
-    """
+    """By convention the module input parameters are resolved here."""
     super(ErrorLogging, self)._resolveInputVariables()
     super(ErrorLogging, self)._resolveInputStep()
 
@@ -58,10 +56,10 @@ class ErrorLogging(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main execution function. Always return S_OK() because we don't want the
-        job execution result to depend on retrieving errors from logs.
+    """Main execution function. Always return S_OK() because we don't want the
+    job execution result to depend on retrieving errors from logs.
 
-        This module will run regardless of the workflow status.
+    This module will run regardless of the workflow status.
     """
 
     try:

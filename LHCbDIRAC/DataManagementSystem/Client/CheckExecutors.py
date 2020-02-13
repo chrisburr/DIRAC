@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Set of functions used by the DMS checking scripts
-"""
+"""Set of functions used by the DMS checking scripts."""
 
 __RCSID__ = "$Id$"
 
@@ -22,18 +20,14 @@ from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import removeFiles, r
 
 
 def __removeFile(lfns):
-  """
-  Use the ScriptExecutors removeFile method
-  """
+  """Use the ScriptExecutors removeFile method."""
   if isinstance(lfns, basestring):
     lfns = [lfns]
   removeFiles(lfns)
 
 
 def __removeReplica(lfnDict):
-  """
-  Use the ScriptExecutors removeReplicas method
-  """
+  """Use the ScriptExecutors removeReplicas method."""
   seLFNs = {}
   for lfn in lfnDict:
     for se in lfnDict[lfn]:
@@ -44,10 +38,8 @@ def __removeReplica(lfnDict):
 
 
 def __replaceReplica(dm, seLFNs):
-  """
-  Re-replicate replicas that had just been removed because they were bad
-  It uses the DataManager instance from the ConsistencyCheck
-  """
+  """Re-replicate replicas that had just been removed because they were bad It
+  uses the DataManager instance from the ConsistencyCheck."""
   if seLFNs:
     gLogger.notice("Now replicating bad replicas...")
     success = {}
@@ -73,10 +65,8 @@ def __replaceReplica(dm, seLFNs):
 
 
 def _dumpErrorAndFiles(title, lfnList, maxFiles, dumpStr, fileName, fp):
-  """
-  Print out errors and a (restricted) list of LFNs
-  dump the whole list in a file
-  """
+  """Print out errors and a (restricted) list of LFNs dump the whole list in a
+  file."""
   gLogger.error(title)
   if not gLogger.info('\n'.join(sorted(lfnList))):
     if len(lfnList) > maxFiles:
@@ -98,7 +88,7 @@ def _dumpErrorAndFiles(title, lfnList, maxFiles, dumpStr, fileName, fp):
 
 
 def _getUniqueFileName(name):
-  """ Get a file name that doesn't exist given a prefix """
+  """Get a file name that doesn't exist given a prefix."""
   suffix = ''
   nb = 0
   while True:
@@ -111,10 +101,8 @@ def _getUniqueFileName(name):
 
 
 def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fixOption='FixIt'):
-  """
-  Method actually calling for the the check using ConsistencyChecks module
-  It prints out results and calls corrective actions if required
-  """
+  """Method actually calling for the the check using ConsistencyChecks module
+  It prints out results and calls corrective actions if required."""
   cc.checkFC2SE(bkCheck)
 
   if maxFiles is None:
@@ -234,10 +222,8 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
 
 
 def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False, checkFC2SE=True):
-  """
-  Method actually calling for the the check using ConsistencyChecks module
-  It prints out results and calls corrective actions if required
-  """
+  """Method actually calling for the the check using ConsistencyChecks module
+  It prints out results and calls corrective actions if required."""
   cc.checkFC2BK()
 
   maxFiles = 10
@@ -340,10 +326,8 @@ def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False, checkFC2S
 
 
 def doCheckBK2FC(cc, checkAll=False, fixIt=False):
-  """
-  Method actually calling for the the check using ConsistencyChecks module
-  It prints out results and calls corrective actions if required
-  """
+  """Method actually calling for the the check using ConsistencyChecks module
+  It prints out results and calls corrective actions if required."""
   cc.checkBK2FC(checkAll)
   maxPrint = 10
   chunkSize = 100

@@ -8,16 +8,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""used to store a tree structure"""
+"""used to store a tree structure."""
 
 __RCSID__ = "$Id$"
 
 #############################################################################
 class Item(dict):
-  """Item class"""
+  """Item class."""
   #############################################################################
   def __init__(self, properties, parent):
-    """ initializes the class member"""
+    """initializes the class member."""
     super(Item, self).__init__(properties)
     self.__parent = parent
     self.__children = {}
@@ -25,12 +25,12 @@ class Item(dict):
     self.__childmap = {}
   #############################################################################
   def getParent(self):
-    """returns the parent of a node"""
+    """returns the parent of a node."""
     return self.__parent
 
   #############################################################################
   def addItem(self, item):
-    """adds an item to the node"""
+    """adds an item to the node."""
     name = item['name']
     self.__children[name] = item
     self.__childmap[self.__childrenNumber] = item
@@ -39,27 +39,27 @@ class Item(dict):
 
   #############################################################################
   def getChildren(self):
-    """returns the children"""
+    """returns the children."""
     return self.__children
 
   #############################################################################
   def child(self, i):
-    """retuns the i-th csild"""
+    """retuns the i-th csild."""
     return self.__childmap[i]
 
   #############################################################################
   def name(self):
-    """returns the name of the node"""
+    """returns the name of the node."""
     return self['name']
 
   #############################################################################
   def childnum(self):
-    """returns the number of childs"""
+    """returns the number of childs."""
     return self.__childrenNumber
 
   #############################################################################
   def expandable(self):
-    """is the node has children"""
+    """is the node has children."""
     return self['expandable']
 
   #############################################################################

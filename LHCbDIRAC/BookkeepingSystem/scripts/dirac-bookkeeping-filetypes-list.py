@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-filetypes-list
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  List file types from the Bookkeeping
-"""
+"""List file types from the Bookkeeping."""
 __RCSID__ = "$Id$"
 
 import DIRAC

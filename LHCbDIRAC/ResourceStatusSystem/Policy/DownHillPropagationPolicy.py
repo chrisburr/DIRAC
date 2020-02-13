@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.ResourceStatusSystem.Policy.DownHillPropagationPolicy
+"""LHCbDIRAC.ResourceStatusSystem.Policy.DownHillPropagationPolicy.
 
-   DownHillPropagationPolicy.__bases__:
-     DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
-
-'''
+DownHillPropagationPolicy.__bases__:
+  DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
+"""
 
 from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
 
@@ -27,19 +26,17 @@ __RCSID__ = "$Id$"
 #...............................................................................
 
 class DownHillPropagationPolicy( PolicyBase ):
-  '''
-  The DownHillPropagationPolicy module is a policy module used to update the
+  """The DownHillPropagationPolicy module is a policy module used to update the
   status of an element, based on how its element in the upper part of the
   hierarchy is behaving in the RSS.
 
-  DownHillPropagationPolicy, given the status of the parent element, propagates
-  its status to the child element.
-  '''
+  DownHillPropagationPolicy, given the status of the parent element,
+  propagates its status to the child element.
+  """
 
   def evaluate(self):
-    """
-    Evaluate policy on "upper" element Status, using args (tuple).
-    The status is propagated only when one of the two status is 'Banned'
+    """Evaluate policy on "upper" element Status, using args (tuple). The
+    status is propagated only when one of the two status is 'Banned'.
 
     :returns:
         {

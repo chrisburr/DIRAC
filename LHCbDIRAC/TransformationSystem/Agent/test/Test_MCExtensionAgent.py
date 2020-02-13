@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit test for the MCExtensionAgent
-"""
+"""Unit test for the MCExtensionAgent."""
 
 import datetime
 import copy

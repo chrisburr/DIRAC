@@ -9,8 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Remove replicas of a (list of) LFNs at a list of sites. It is possible to request a minimum of remaining replicas
+"""Remove replicas of a (list of) LFNs at a list of sites.
+
+It is possible to request a minimum of remaining replicas
 """
 
 __RCSID__ = "$Id$"

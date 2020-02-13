@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Perform comprehensive checks on the supplied log file if it exists.
-"""
+"""Perform comprehensive checks on the supplied log file if it exists."""
 __RCSID__ = "$Id$"
 
 

@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test of the ProductionRequest and Production modules
-"""
+"""Test of the ProductionRequest and Production modules."""
 
 # pylint: disable=line-too-long,invalid-name,protected-access,missing-docstring
 
@@ -125,8 +124,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
 
 
 class ClientTestCase(unittest.TestCase):
-  """ Base class for the Client test cases
-  """
+  """Base class for the Client test cases."""
 
   def setUp(self):
 

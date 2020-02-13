@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient
+"""LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient.
 
-   ResourceManagementClient.__bases__:
-     DIRAC.ResourceStatusSystem.Client.ResourceManagementClient.ResourceManagementClient
-
+ResourceManagementClient.__bases__:
+  DIRAC.ResourceStatusSystem.Client.ResourceManagementClient.ResourceManagementClient
 """
 
 __RCSID__ = "$Id$"
@@ -24,8 +23,7 @@ from DIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceM
 
 
 class ResourceManagementClient(DIRACRMClient):
-  """
-  Extension for the DIRAC version of the ResourceManagementClient.
+  """Extension for the DIRAC version of the ResourceManagementClient.
 
   The :class:`ResourceManagementClient` class extends the client on DIRAC.
 
@@ -58,8 +56,7 @@ class ResourceManagementClient(DIRACRMClient):
                            siteName=None, serviceFlavour=None,
                            metricStatus=None, summaryData=None,
                            timestamp=None, lastCheckTime=None):
-    """
-    Gets from MonitoringTest all rows that match the parameters given.
+    """Gets from MonitoringTest all rows that match the parameters given.
 
     :Parameters:
       **metricName** - `[, string, list]`
@@ -88,8 +85,7 @@ class ResourceManagementClient(DIRACRMClient):
                            siteName=None, serviceFlavour=None,
                            metricStatus=None, summaryData=None,
                            timestamp=None, lastCheckTime=None):
-    """
-    Deletes from MonitoringTest all rows that match the parameters given.
+    """Deletes from MonitoringTest all rows that match the parameters given.
 
     :Parameters:
       **metricName** - `[, string, list]`
@@ -117,9 +113,8 @@ class ResourceManagementClient(DIRACRMClient):
   def addOrModifyMonitoringTest(self, metricName, serviceURI, siteName,
                                 serviceFlavour, metricStatus, summaryData,
                                 timestamp, lastCheckTime):
-    """
-    Using `metricName` and `serviceURI` to query the database, decides whether
-    to insert or update the table.
+    """Using `metricName` and `serviceURI` to query the database, decides
+    whether to insert or update the table.
 
     :Parameters:
       **metricName** - `string`
@@ -151,8 +146,7 @@ class ResourceManagementClient(DIRACRMClient):
                                done=None, failed=None, killed=None,
                                matched=None, running=None, stalled=None,
                                lastCheckTime=None):
-    """
-    Selects from JobAccountingCach all rows that match the parameters given.
+    """Selects from JobAccountingCach all rows that match the parameters given.
 
     :Parameters:
       **name** - [, `string`, `list` ]
@@ -185,8 +179,7 @@ class ResourceManagementClient(DIRACRMClient):
                                done=None, failed=None, killed=None,
                                matched=None, running=None, stalled=None,
                                lastCheckTime=None):
-    """
-    Deletes from JobAccountingCach all rows that match the parameters given.
+    """Deletes from JobAccountingCach all rows that match the parameters given.
 
     :Parameters:
       **name** - [, `string`, `list` ]
@@ -218,9 +211,8 @@ class ResourceManagementClient(DIRACRMClient):
                                     done=None, failed=None, killed=None,
                                     matched=None, running=None, stalled=None,
                                     lastCheckTime=None):
-    """
-    Using `name` to query the database, decides whether to insert or update the t
-    table.
+    """Using `name` to query the database, decides whether to insert or update
+    the t table.
 
     :Parameters:
       **name** - `string`
@@ -255,8 +247,8 @@ class ResourceManagementClient(DIRACRMClient):
   def selectPilotAccountingCache(self, name=None, aborted=None, deleted=None,
                                  done=None, failed=None, lastCheckTime=None,
                                  meta=None):
-    """
-    Selects from PilotAccountingCache all rows that match the parameters given.
+    """Selects from PilotAccountingCache all rows that match the parameters
+    given.
 
     :Parameters:
       **name** - [, `string`, `list` ]
@@ -279,8 +271,8 @@ class ResourceManagementClient(DIRACRMClient):
   def deletePilotAccountingCache(self, name=None, aborted=None, deleted=None,
                                  done=None, failed=None, lastCheckTime=None,
                                  meta=None):
-    """
-    Deletes from PilotAccountingCache all rows that match the parameters given.
+    """Deletes from PilotAccountingCache all rows that match the parameters
+    given.
 
     :Parameters:
       **name** - [, `string`, `list` ]
@@ -303,9 +295,8 @@ class ResourceManagementClient(DIRACRMClient):
   def addOrModifyPilotAccountingCache(self, name=None, aborted=None, deleted=None,
                                       done=None, failed=None, lastCheckTime=None,
                                       meta=None):
-    """
-    Using `name` to query the database, decides whether to insert or update the t
-    table.
+    """Using `name` to query the database, decides whether to insert or update
+    the t table.
 
     :Parameters:
       **name** - `string`
@@ -327,7 +318,7 @@ class ResourceManagementClient(DIRACRMClient):
     return self._getRPC().addOrModify('PilotAccountingCache', self._prepare(locals()))
 
   def getSEStorageSpace(self, seName):
-    """ getSEStorageSpace
+    """getSEStorageSpace.
 
     Given a SE, returns a dictionary with the Total, Free and Guaranteed Space.
     This last one, is still unclear what represents ( so far, is equal to Total
@@ -344,7 +335,6 @@ class ResourceManagementClient(DIRACRMClient):
           'Token'         : 'LHCb-Tape',
           'Total'         : 465L
          }
-
     """
 
     # FIXME:  The DB contains the SE name as token... This is dirty but mandatory

@@ -8,7 +8,5 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It stores replica information.
-"""
+"""It stores replica information."""
 __RCSID__ = "$Id$"

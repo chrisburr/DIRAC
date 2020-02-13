@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter
+"""LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter.
 
-   StoragePlotter.__bases__:
-     DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
-
+StoragePlotter.__bases__:
+  DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
 """
 
 from DIRAC                                                import S_OK, S_ERROR
@@ -26,9 +25,7 @@ __RCSID__ = "$Id$"
 #FIXME: refactor _plotMethods
 
 class StoragePlotter( BaseReporter ):
-  """
-    StoragePlotter as extension of BaseReporter
-  """
+  """StoragePlotter as extension of BaseReporter."""
   
   _typeName      = "Storage"
   _typeKeyFields = [ dF[0] for dF in Storage().definitionKeyFields ]
@@ -38,31 +35,30 @@ class StoragePlotter( BaseReporter ):
   
   _reportCatalogSpaceName = "LFN size"
   def _reportCatalogSpace( self, reportRequest ):
-    """
-    Reports about LFN size and catalog space from the accounting.
-    
+    """Reports about LFN size and catalog space from the accounting.
+
     :param reportRequest: <dict>
       { 'grouping'       : 'Directory',
         'groupingFields' : ( '%s', [ 'Directory' ] ),
         'startTime'      : 1355663249.0,
         'endTime'        : 1355749690.0,
-        'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] } 
+        'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] }
       }
-      
+
     returns S_OK / S_ERROR
-      { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4.9353885242469104, 
-                                             1355702400L : 4.8438444870748203 }, 
-                            '/lhcb/LHCb' : { 1355616000L : 3.93538852424691, 
+      { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4.9353885242469104,
+                                             1355702400L : 4.8438444870748203 },
+                            '/lhcb/LHCb' : { 1355616000L : 3.93538852424691,
                                              1355702400L : 3.8438444870748198 }
-                           }, 
-        'data'          : { '/lhcb/data' : { 1355616000L : 4935388.5242469106, 
-                                             1355702400L : 4843844.4870748203 }, 
-                            '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101, 
+                           },
+        'data'          : { '/lhcb/data' : { 1355616000L : 4935388.5242469106,
+                                             1355702400L : 4843844.4870748203 },
+                            '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101,
                                              1355702400L : 3843844.4870748199 }
-                           }, 
-        'unit'          : 'TB', 
-        'granularity'   : 86400 
-       }    
+                           },
+        'unit'          : 'TB',
+        'granularity'   : 86400
+       }
     """
     
     if reportRequest[ 'grouping' ] == 'StorageElement':
@@ -98,10 +94,9 @@ class StoragePlotter( BaseReporter ):
                   'unit'          : unitName } )
 
   def _plotCatalogSpace( self, reportRequest, plotInfo, filename ):
-    """
-    Creates <filename>.png file containing information regarding the LFN size and 
-    the catalog space.
-    
+    """Creates <filename>.png file containing information regarding the LFN
+    size and the catalog space.
+
     :param reportRequest: <dict>
        { 'grouping'       : 'Directory',
          'groupingFields' : ( '%s', [ 'Directory' ] ),
@@ -110,24 +105,24 @@ class StoragePlotter( BaseReporter ):
          'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] }
        }
     :param plotInfo: <dict> ( output of _reportCatalogSpace )
-       { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4.9353885242469104, 
-                                              1355702400L : 4.8438444870748203 }, 
-                             '/lhcb/LHCb' : { 1355616000L : 3.93538852424691, 
+       { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4.9353885242469104,
+                                              1355702400L : 4.8438444870748203 },
+                             '/lhcb/LHCb' : { 1355616000L : 3.93538852424691,
                                               1355702400L : 3.8438444870748198 }
-                            }, 
-         'data'          : { '/lhcb/data' : { 1355616000L : 4935388.5242469106, 
-                                              1355702400L : 4843844.4870748203 }, 
-                             '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101, 
+                            },
+         'data'          : { '/lhcb/data' : { 1355616000L : 4935388.5242469106,
+                                              1355702400L : 4843844.4870748203 },
+                             '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101,
                                               1355702400L : 3843844.4870748199 }
-                            }, 
-         'unit'          : 'TB', 
+                            },
+         'unit'          : 'TB',
          'granularity'   : 86400
-        } 
+        }
     :param filename: <str>
       '_plotCatalogSpace'
-      
+
     returns S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }      
+       { 'plot': True, 'thumbnail': False }
     """
     
     startEpoch  = reportRequest[ 'startTime' ]
@@ -149,31 +144,30 @@ class StoragePlotter( BaseReporter ):
 
   _reportCatalogFilesName = "LFN files"
   def _reportCatalogFiles( self, reportRequest ):
-    """
-    Reports about the LFN files and the catalog files from the accounting.
-    
+    """Reports about the LFN files and the catalog files from the accounting.
+
     :param reportRequest: <dict>
       { 'grouping'       : 'Directory',
         'groupingFields' : ( '%s', [ 'Directory' ] ),
         'startTime'      : 1355663249.0,
         'endTime'        : 1355749690.0,
-        'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] } 
+        'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] }
        }
-       
+
     returns S_OK / S_ERROR
-      { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4935388.5242469106, 
-                                             1355702400L : 4843844.4870748203 }, 
-                            '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101, 
+      { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4935388.5242469106,
+                                             1355702400L : 4843844.4870748203 },
+                            '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101,
                                              1355702400L : 3843844.4870748199 }
-                           }, 
-        'data'          : { '/lhcb/data' : { 1355616000L : 4935388524246.9102, 
-                                             1355702400L : 4843844487074.8203 }, 
-                            '/lhcb/LHCb' : { 1355616000L : 3935388524246.9102, 
+                           },
+        'data'          : { '/lhcb/data' : { 1355616000L : 4935388524246.9102,
+                                             1355702400L : 4843844487074.8203 },
+                            '/lhcb/LHCb' : { 1355616000L : 3935388524246.9102,
                                              1355702400L : 3843844487074.8198 }
-                           }, 
-        'unit'          : 'Mfiles', 
+                           },
+        'unit'          : 'Mfiles',
         'granularity'   : 86400
-       }  
+       }
     """
     
     if reportRequest[ 'grouping' ] == 'StorageElement':
@@ -208,36 +202,35 @@ class StoragePlotter( BaseReporter ):
                   'unit'          : unitName} )
 
   def _plotCatalogFiles( self, reportRequest, plotInfo, filename ):
-    """
-    Creates <filename>.png file containing information regarding the LFN files 
-    and the catalog files.
-    
+    """Creates <filename>.png file containing information regarding the LFN
+    files and the catalog files.
+
     :param reportRequest: <dict>
       { 'grouping'       : 'Directory',
         'groupingFields' : ( '%s', [ 'Directory' ] ),
         'startTime'      : 1355663249.0,
         'endTime'        : 1355749690.0,
-        'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] } 
+        'condDict'       : { 'Directory' : [ '/lhcb/data', '/lhcb/LHCb' ] }
        }
     :param plotInfo: <dict> ( output of _reportCatalogFiles )
-      { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4935388.5242469106, 
-                                             1355702400L : 4843844.4870748203 }, 
-                            '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101, 
+      { 'graphDataDict' : { '/lhcb/data' : { 1355616000L : 4935388.5242469106,
+                                             1355702400L : 4843844.4870748203 },
+                            '/lhcb/LHCb' : { 1355616000L : 3935388.5242469101,
                                              1355702400L : 3843844.4870748199 }
-                          }, 
-        'data'          : { '/lhcb/data' : { 1355616000L : 4935388524246.9102, 
-                                             1355702400L : 4843844487074.8203 }, 
-                            '/lhcb/LHCb' : { 1355616000L : 3935388524246.9102, 
+                          },
+        'data'          : { '/lhcb/data' : { 1355616000L : 4935388524246.9102,
+                                             1355702400L : 4843844487074.8203 },
+                            '/lhcb/LHCb' : { 1355616000L : 3935388524246.9102,
                                             1355702400L : 3843844487074.8198 }
-                                    }, 
-        'unit'          : 'Mfiles', 
+                                    },
+        'unit'          : 'Mfiles',
         'granularity'   : 86400
        }
     :param filename: <str>
       '_plotCatalogFiles'
-    
+
     returns S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }   
+       { 'plot': True, 'thumbnail': False }
     """
     startEpoch  = reportRequest[ 'startTime' ]
     endEpoch    = reportRequest[ 'endTime' ]
@@ -258,31 +251,30 @@ class StoragePlotter( BaseReporter ):
 
   _reportPhysicalSpaceName = "PFN size"
   def _reportPhysicalSpace( self, reportRequest ):
-    """
-    Reports about the PFN size and the physical space from the accounting.
-    
+    """Reports about the PFN size and the physical space from the accounting.
+
     :param reportRequest: <dict>
       { 'grouping'       : 'StorageElement',
         'groupingFields' : ( '%s', [ 'StorageElement' ] ),
         'startTime'      : 1355663249.0,
         'endTime'        : 1355749690.0,
-        'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST' ] } 
+        'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST' ] }
        }
-    
+
     returns S_OK / S_ERROR
-      { 'graphDataDict' : { 'CERN-ARCHIVE' : { 1355616000L : 2.34455676781291, 
-                                               1355702400L : 2.5445567678129102 }, 
-                            'CERN-DST'     : { 1355616000L : 0.34455676781290995, 
+      { 'graphDataDict' : { 'CERN-ARCHIVE' : { 1355616000L : 2.34455676781291,
+                                               1355702400L : 2.5445567678129102 },
+                            'CERN-DST'     : { 1355616000L : 0.34455676781290995,
                                                1355702400L : 0.54455676781290996 }
-                           }, 
-        'data'          : { 'CERN-ARCHIVE' : { 1355616000L : 2344556.76781291, 
-                                               1355702400L : 2544556.76781291 }, 
-                            'CERN-DST'     : { 1355616000L : 344556.76781290997, 
+                           },
+        'data'          : { 'CERN-ARCHIVE' : { 1355616000L : 2344556.76781291,
+                                               1355702400L : 2544556.76781291 },
+                            'CERN-DST'     : { 1355616000L : 344556.76781290997,
                                                1355702400L : 544556.76781291002 }
-                           }, 
-        'unit'          : 'TB', 
+                           },
+        'unit'          : 'TB',
         'granularity'   : 86400
-       }    
+       }
     """
     
     selectField  = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
@@ -316,36 +308,35 @@ class StoragePlotter( BaseReporter ):
                   } )
 
   def _plotPhysicalSpace( self, reportRequest, plotInfo, filename ):
-    """
-    Creates <filename>.png file containing information regarding the PFN size and 
-    the physical space.
+    """Creates <filename>.png file containing information regarding the PFN
+    size and the physical space.
 
     :param reportRequest: <dict>
       { 'grouping'       : 'StorageElement',
         'groupingFields' : ( '%s', [ 'StorageElement' ] ),
         'startTime'      : 1355663249.0,
         'endTime'        : 1355749690.0,
-        'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST' ] } 
+        'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST' ] }
       }
     :param plotInfo: <dict> ( output of _reportPhysicalSpace )
-      { 'graphDataDict' : { 'CERN-ARCHIVE' : { 1355616000L : 2.34455676781291, 
-                                               1355702400L : 2.5445567678129102 }, 
-                            'CERN-DST'     : { 1355616000L : 0.34455676781290995, 
+      { 'graphDataDict' : { 'CERN-ARCHIVE' : { 1355616000L : 2.34455676781291,
+                                               1355702400L : 2.5445567678129102 },
+                            'CERN-DST'     : { 1355616000L : 0.34455676781290995,
                                                1355702400L : 0.54455676781290996 }
-                          }, 
-        'data'          : { 'CERN-ARCHIVE' : { 1355616000L : 2344556.76781291, 
-                                               1355702400L : 2544556.76781291 }, 
-                            'CERN-DST'     : { 1355616000L : 344556.76781290997, 
+                          },
+        'data'          : { 'CERN-ARCHIVE' : { 1355616000L : 2344556.76781291,
+                                               1355702400L : 2544556.76781291 },
+                            'CERN-DST'     : { 1355616000L : 344556.76781290997,
                                                1355702400L : 544556.76781291002 }
-                          }, 
-        'unit'          : 'TB', 
+                          },
+        'unit'          : 'TB',
         'granularity'   : 86400
        }
     :param filename: <str>
       '_plotPhysicalSpace'
-    
+
     returns S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }    
+       { 'plot': True, 'thumbnail': False }
     """
 
     startEpoch  = reportRequest[ 'startTime' ]
@@ -366,33 +357,32 @@ class StoragePlotter( BaseReporter ):
 
   _reportPhysicalFilesName = "PFN files"
   def _reportPhysicalFiles( self, reportRequest ):
-    """
-    Reports about the PFN files and the physical files from the accounting.
-    
+    """Reports about the PFN files and the physical files from the accounting.
+
     :param reportRequest: <dict>
        { 'grouping'       : 'StorageElement',
          'groupingFields' : ( '%s', [ 'StorageElement' ] ),
          'startTime'      : 1355663249.0,
          'endTime'        : 1355749690.0,
-         'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST', 'CERN-BUFFER' ] } 
+         'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST', 'CERN-BUFFER' ] }
         }
-    
+
     returns S_OK / S_ERROR
-      { 'graphDataDict' : { 'CERN-BUFFER'  : { 1355616000L : 250.65890999999999, 
-                                               1355702400L : 261.65890999999999 }, 
-                            'CERN-ARCHIVE' : { 1355616000L : 412.65890999999999, 
-                                               1355702400L : 413.65890999999999 }, 
-                            'CERN-DST'     : { 1355616000L : 186.65890999999999, 
+      { 'graphDataDict' : { 'CERN-BUFFER'  : { 1355616000L : 250.65890999999999,
+                                               1355702400L : 261.65890999999999 },
+                            'CERN-ARCHIVE' : { 1355616000L : 412.65890999999999,
+                                               1355702400L : 413.65890999999999 },
+                            'CERN-DST'     : { 1355616000L : 186.65890999999999,
                                                1355702400L : 187.65890999999999 }
-                           }, 
-        'data'          : { 'CERN-BUFFER'  : { 1355616000L : 250658.91, 
-                                               1355702400L : 261658.91 }, 
-                            'CERN-ARCHIVE' : { 1355616000L : 412658.90999999997, 
-                                               1355702400L : 413658.90999999997 }, 
-                            'CERN-DST'     : { 1355616000L : 186658.91, 
+                           },
+        'data'          : { 'CERN-BUFFER'  : { 1355616000L : 250658.91,
+                                               1355702400L : 261658.91 },
+                            'CERN-ARCHIVE' : { 1355616000L : 412658.90999999997,
+                                               1355702400L : 413658.90999999997 },
+                            'CERN-DST'     : { 1355616000L : 186658.91,
                                                1355702400L : 187658.91 }
-                           }, 
-        'unit'          : 'kfiles', 
+                           },
+        'unit'          : 'kfiles',
         'granularity'   : 86400
        }
     """
@@ -426,40 +416,39 @@ class StoragePlotter( BaseReporter ):
                   'unit'          : unitName } )
 
   def _plotPhysicalFiles( self, reportRequest, plotInfo, filename ):
-    """
-    Creates <filename>.png file containing information regarding the PFN files and 
-    the physical files.
-    
+    """Creates <filename>.png file containing information regarding the PFN
+    files and the physical files.
+
     :param reportRequest: <dict>
        { 'grouping'       : 'StorageElement',
          'groupingFields' : ( '%s', [ 'StorageElement' ] ),
          'startTime'      : 1355663249.0,
          'endTime'        : 1355749690.0,
-         'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST', 'CERN-BUFFER' ] } 
+         'condDict'       : { 'StorageElement' : [ 'CERN-ARCHIVE', 'CERN-DST', 'CERN-BUFFER' ] }
         }
     :param plotInfo: <dict> ( output of _reportPhysicalFiles )
-      { 'graphDataDict' : { 'CERN-BUFFER'  : { 1355616000L : 250.65890999999999, 
-                                               1355702400L : 261.65890999999999 }, 
-                            'CERN-ARCHIVE' : { 1355616000L : 412.65890999999999, 
-                                               1355702400L : 413.65890999999999 }, 
-                            'CERN-DST'     : { 1355616000L : 186.65890999999999, 
+      { 'graphDataDict' : { 'CERN-BUFFER'  : { 1355616000L : 250.65890999999999,
+                                               1355702400L : 261.65890999999999 },
+                            'CERN-ARCHIVE' : { 1355616000L : 412.65890999999999,
+                                               1355702400L : 413.65890999999999 },
+                            'CERN-DST'     : { 1355616000L : 186.65890999999999,
                                                1355702400L : 187.65890999999999 }
-                          }, 
-        'data'          : { 'CERN-BUFFER'  : { 1355616000L : 250658.91, 
-                                               1355702400L : 261658.91 }, 
-                            'CERN-ARCHIVE' : { 1355616000L : 412658.90999999997, 
-                                               1355702400L : 413658.90999999997 }, 
-                            'CERN-DST'     : { 1355616000L : 186658.91, 
+                          },
+        'data'          : { 'CERN-BUFFER'  : { 1355616000L : 250658.91,
+                                               1355702400L : 261658.91 },
+                            'CERN-ARCHIVE' : { 1355616000L : 412658.90999999997,
+                                               1355702400L : 413658.90999999997 },
+                            'CERN-DST'     : { 1355616000L : 186658.91,
                                                1355702400L : 187658.91 }
-                          }, 
-        'unit'          : 'kfiles', 
+                          },
+        'unit'          : 'kfiles',
         'granularity'   : 86400
        }
     :param filename: <str>
       '_plotPhysicalFiles'
-      
+
     return S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }      
+       { 'plot': True, 'thumbnail': False }
     """
         
     startEpoch  = reportRequest[ 'startTime' ]

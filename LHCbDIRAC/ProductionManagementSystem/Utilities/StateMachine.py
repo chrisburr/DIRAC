@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" A module defining the state machine for the Productions
-"""
+"""A module defining the state machine for the Productions."""
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.ResourceStatusSystem.PolicySystem.StateMachine import State, StateMachine
@@ -18,13 +17,14 @@ __RCSID__ = "$Id$"
 
 
 class LHCbStateMachine(StateMachine):
-  """Just redefining one method
-  """
+  """Just redefining one method."""
 
   def setState(self, candidateState):
-    """ Makes sure the state is either None or known to the machine, and that it is a valid state to move into.
-        Final states are also checked.
-        This is a re-definition of original one that wasn't making these checks
+    """Makes sure the state is either None or known to the machine, and that it
+    is a valid state to move into.
+
+    Final states are also checked. This is a re-definition of original
+    one that wasn't making these checks
     """
 
     if candidateState == self.state:
@@ -51,13 +51,11 @@ class LHCbStateMachine(StateMachine):
 
 
 class ProductionsStateMachine(LHCbStateMachine):
-  """ PMS (Production Management System, not what google thinks!) implementation of the state machine
-  """
+  """PMS (Production Management System, not what google thinks!) implementation
+  of the state machine."""
 
   def __init__(self, state):
-    """ c'tor
-        Defines the state machine transactions
-    """
+    """c'tor Defines the state machine transactions."""
 
     super(ProductionsStateMachine, self).__init__(state)
 

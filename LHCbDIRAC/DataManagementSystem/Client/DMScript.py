@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  DMScript is a class that creates default switches for DM scripts, decodes them and sets flags
-  The module also provides a function for printing pretty results from DMS queries
-"""
+"""DMScript is a class that creates default switches for DM scripts, decodes
+them and sets flags The module also provides a function for printing pretty
+results from DMS queries."""
 
 import os
 import sys
@@ -30,7 +29,7 @@ __RCSID__ = "$Id$"
 
 
 def __printDictionary(dictionary, offset=0, shift=0, empty="Empty directory", depth=9999):
-  """ Dictionary pretty printing """
+  """Dictionary pretty printing."""
   key_max = 0
   value_max = 0
   for key, value in dictionary.iteritems():
@@ -60,7 +59,7 @@ def __printDictionary(dictionary, offset=0, shift=0, empty="Empty directory", de
 
 
 def printDMResult(result, shift=4, empty="Empty directory", script=None, depth=999, offset=0):
-  """ Printing results returned with 'Successful' and 'Failed' items """
+  """Printing results returned with 'Successful' and 'Failed' items."""
   if not script:
     script = Script.scriptName
   try:
@@ -76,9 +75,7 @@ def printDMResult(result, shift=4, empty="Empty directory", script=None, depth=9
 
 
 class ProgressBar(object):
-  """
-  This object prints a title and a progress bar on stderr
-  """
+  """This object prints a title and a progress bar on stderr."""
 
   def __init__(self, items, width=None, title=None, chunk=None, step=None, interactive=None, log=None):
     """
@@ -124,9 +121,7 @@ class ProgressBar(object):
     self._writeTitle()
 
   def _writeTitle(self):
-    """
-    Write the progress bar title to stderr
-    """
+    """Write the progress bar title to stderr."""
     if not self._interactive:
       return
     if self._showBar:
@@ -137,11 +132,8 @@ class ProgressBar(object):
     sys.stderr.flush()
 
   def loop(self, increment=True):
-    """
-    Called at each iteration of the loop
-    If the iteration modulo "step" is 0, update the bar
-    Increment the counter of items by "chunk"
-    """
+    """Called at each iteration of the loop If the iteration modulo "step" is
+    0, update the bar Increment the counter of items by "chunk"."""
     if not self._interactive:
       return
     showBar = self._showBar and (self._loopNumber % self._step) == 0
@@ -171,9 +163,8 @@ class ProgressBar(object):
       sys.stderr.flush()
 
   def endLoop(self, message=None, timing=True):
-    """
-    Closes the progress bar, printing a message and/or the timing since the bar was created
-    """
+    """Closes the progress bar, printing a message and/or the timing since the
+    bar was created."""
     if message is None:
       message = 'completed'
     timingMsg = ' in %.1f seconds' % (time.time() - self._startTime)
@@ -193,7 +184,7 @@ class ProgressBar(object):
     sys.stderr.flush()
 
   def comment(self, message, optMsg=''):
-    """ Print a comment """
+    """Print a comment."""
     fullMsg = '\n' + message + ' %s' % optMsg if optMsg else ''
     gLogger.notice(fullMsg)
     self._writeTitle()
@@ -201,12 +192,11 @@ class ProgressBar(object):
 
 
 class DMScript(object):
-  """ DMScript is a class that creates default switches for DM scripts, decodes them and sets flags
-  """
+  """DMScript is a class that creates default switches for DM scripts, decodes
+  them and sets flags."""
 
   def __init__(self):
-    """ c'tor
-    """
+    """c'tor."""
     self.bkClient = BookkeepingClient()
     self.exceptFileTypes = []
     self.bkClientQuery = None
@@ -217,27 +207,21 @@ class DMScript(object):
     self.voName = None
 
   def __voName(self):
-    """
-    Returns the name of the VO
-    """
+    """Returns the name of the VO."""
     if self.voName is None:
       self.voName = gConfig.getValue('/DIRAC/VirtualOrganization', '')
     gLogger.verbose('VO', self.voName)
     return self.voName
 
   def registerDMSwitches(self):
-    """
-    Register switches related to data management, including BK
-    """
+    """Register switches related to data management, including BK."""
     self.registerBKSwitches()
     self.registerNamespaceSwitches()
     self.registerSiteSwitches()
     self.registerFileSwitches()
 
   def registerBKSwitches(self):
-    """
-    Register switches related to bookkeeping
-    """
+    """Register switches related to bookkeeping."""
     # BK query switches
     Script.registerSwitch("B:", "BKQuery=", "   Bookkeeping query path", self.setBKQuery)
     Script.registerSwitch("f:", "FileType=",
@@ -256,34 +240,30 @@ class DMScript(object):
     Script.registerSwitch('', 'TCK=', '   Get files with a given TCK', self.setTCK)
 
   def registerNamespaceSwitches(self, action='search [ALL]'):
-    """
-    Register namespace switches
-    """
+    """Register namespace switches."""
     Script.registerSwitch("D:", "Directory=", "   Directory to " + action, self.setDirectory)
 
   def registerSiteSwitches(self):
-    """ SE switches """
+    """SE switches."""
     Script.registerSwitch("g:", "Sites=", "  Sites to consider [ALL] (comma separated list)", self.setSites)
     Script.registerSwitch("S:", "SEs=", "  SEs to consider [ALL] (comma separated list)", self.setSEs)
 
   def registerFileSwitches(self):
-    """ File switches """
+    """File switches."""
     Script.registerSwitch("", "File=", "File containing list of LFNs", self.setLFNsFromFile)
     Script.registerSwitch("l:", "LFNs=", "List of LFNs (comma separated)", self.setLFNs)
     Script.registerSwitch("", "Terminal", "LFNs are entered from stdin (--File /dev/stdin)", self.setLFNsFromTerm)
     Script.registerSwitch("", "LastLFNs", "Use last set of LFNs", self.setLFNsFromLast)
 
   def registerJobsSwitches(self):
-    """ Job switches """
+    """Job switches."""
     Script.registerSwitch("", "File=", "File containing list of DIRAC jobIds", self.setJobidsFromFile)
     Script.registerSwitch("j:", "DIRACJobids=", "List of DIRAC Jobids (comma separated)", self.setJobids)
     Script.registerSwitch("", "Terminal",
                           "DIRAC Jobids are entered from stdin (--File /dev/stdin)", self.setJobidsFromTerm)
 
   def setProductions(self, arg):
-    """
-    Parse production numbers
-    """
+    """Parse production numbers."""
     prods = []
     if arg.upper() == "ALL":
       self.options['Productions'] = arg
@@ -304,34 +284,34 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setStartDate(self, arg):
-    """ Setter """
+    """Setter."""
     self.options['StartDate'] = arg
     return DIRAC.S_OK()
 
   def setEndDate(self, arg):
-    """ Setter """
+    """Setter."""
     self.options['EndDate'] = arg
     return DIRAC.S_OK()
 
   def setFileType(self, arg):
-    """ Setter """
+    """Setter."""
     fileTypes = arg.split(',')
     self.options['FileType'] = fileTypes
     return DIRAC.S_OK()
 
   def setEventType(self, arg):
-    """ Setter """
+    """Setter."""
     eventTypes = arg.split(',')
     self.options['EventType'] = eventTypes
     return DIRAC.S_OK()
 
   def setExceptFileTypes(self, arg):
-    """ Setter """
+    """Setter."""
     self.exceptFileTypes += arg.split(',')
     return DIRAC.S_OK()
 
   def setBKQuery(self, arg):
-    """ Setter """
+    """Setter."""
     # BKQuery could either be a BK path or a file path that contains the BK items
     self.bkClientQuery = None
     self.bkClientQueryDict = {}
@@ -339,24 +319,24 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setRuns(self, arg):
-    """ Setter """
+    """Setter."""
     self.options['Runs'] = arg
     return DIRAC.S_OK()
 
   def setDQFlags(self, arg):
-    """ Setter """
+    """Setter."""
     dqFlags = arg.split(',')
     self.options['DQFlags'] = dqFlags
     return DIRAC.S_OK()
 
   def setTCK(self, arg):
-    """ Setter """
+    """Setter."""
     tcks = arg.split(',')
     self.options['TCK'] = tcks
     return DIRAC.S_OK()
 
   def setVisibility(self, arg):
-    """ Setter """
+    """Setter."""
     if arg.lower() in ('yes', 'no', 'all'):
       self.options['Visibility'] = arg
     else:
@@ -365,7 +345,7 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setReplicaFlag(self, arg):
-    """ Setter """
+    """Setter."""
     if arg.lower() in ('yes', 'no', 'all'):
       self.options['ReplicaFlag'] = arg
     else:
@@ -374,7 +354,7 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setDirectory(self, arg):
-    """ Setter """
+    """Setter."""
     if os.path.exists(arg) and not os.path.isdir(arg):
       with open(arg, 'r') as inFile:
         directories = [line.split()[0] for line in inFile.read().splitlines() if line.strip()]
@@ -384,7 +364,7 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setSites(self, arg):
-    """ Setter """
+    """Setter."""
     from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
     try:
       siteShortNames = DMSHelpers().getShortSiteNames(withStorage=False, tier=(0, 1))
@@ -397,26 +377,25 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setSEs(self, arg):
-    """ Setter """
+    """Setter."""
     self.options['SEs'] = arg.split(',')
     return DIRAC.S_OK()
 
   def setLFNs(self, arg):
-    """ Setter """
+    """Setter."""
     if arg:
       self.options.setdefault('LFNs', set()).update(arg.split(','))
     return DIRAC.S_OK()
 
   def setLFNsFromTerm(self, arg=None):
-    """ Setter """
+    """Setter."""
     return self.setLFNsFromFile(arg)
 
   def getLFNsFromList(self, lfns, directories=False):
-    """
-    Returns a list of LFNs from a list of strings
-    LFNs start with the last occurence of /<vo>/ in the file name and ends with a set of delimiters
-    If directories is True, only normalized directories (ending with a "/" are returned
-    """
+    """Returns a list of LFNs from a list of strings LFNs start with the last
+    occurence of /<vo>/ in the file name and ends with a set of delimiters If
+    directories is True, only normalized directories (ending with a "/" are
+    returned."""
     if isinstance(lfns, basestring):
       lfnList = lfns.strip().split(',')
     elif isinstance(lfns, (list, set, dict)):
@@ -441,7 +420,7 @@ class DMScript(object):
 
   @staticmethod
   def getJobIDsFromList(jobids):
-    """it returns a list of jobids using a string"""
+    """it returns a list of jobids using a string."""
     jobidsList = []
     if isinstance(jobids, basestring):
       jobidsList = jobids.split(',')
@@ -451,19 +430,15 @@ class DMScript(object):
     return jobidsList
 
   def setLFNsFromLast(self, _val):
-    """
-    Setter when --Last is used
-    """
+    """Setter when --Last is used."""
     if os.path.exists(self.lastFile):
       return self.setLFNsFromFile(self.lastFile)
     gLogger.fatal('Last file %s does not exist' % self.lastFile)
     DIRAC.exit(2)
 
   def setLFNsFromFile(self, arg):
-    """
-    Reads the content of a file or from stdin (in which case a temporary file will be created)
-    LFNs are not parsed at this stage
-    """
+    """Reads the content of a file or from stdin (in which case a temporary
+    file will be created) LFNs are not parsed at this stage."""
     if isinstance(arg, basestring) and arg.lower() == 'last':
       arg = self.lastFile
     # Make a list of files
@@ -487,13 +462,11 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def getOptions(self):
-    """ Returns all options """
+    """Returns all options."""
     return self.options
 
   def getOption(self, switch, default=None):
-    """
-    Get a specific items set by the setters
-    """
+    """Get a specific items set by the setters."""
     if switch == 'SEs':
       # SEs have to be resolved recursively using StorageElementGroups
       return resolveSEGroup(self.options.get(switch, default))
@@ -523,9 +496,7 @@ class DMScript(object):
     return value
 
   def getBKQuery(self, visible=None):
-    """
-    Returns a BKQuery object from the requested BK information
-    """
+    """Returns a BKQuery object from the requested BK information."""
     mandatoryKeys = {('ConfigName', 'ConfigVersion'),
                      'Production',
                      ('FileType', 'RunNumber'),
@@ -570,7 +541,7 @@ class DMScript(object):
     return self.bkClientQuery
 
   def getRequestID(self, prod=None):
-    """ Get the request ID for a single production """
+    """Get the request ID for a single production."""
     from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
     if not prod:
       prod = self.options.get('Productions', [])
@@ -605,5 +576,5 @@ class DMScript(object):
     return DIRAC.S_OK()
 
   def setJobidsFromTerm(self):
-    """It is used to fill a list with jobids"""
+    """It is used to fill a list with jobids."""
     return self.setJobidsFromFile(None)

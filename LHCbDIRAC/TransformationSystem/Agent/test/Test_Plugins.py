@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test class for plugins
-"""
+"""Test class for plugins."""
 
 # imports
 import unittest
@@ -49,8 +48,7 @@ data = {'/this/is/at.1': ['SE1'],
 
 
 class PluginsTestCase(unittest.TestCase):
-  """ Base class for the Agents test cases
-  """
+  """Base class for the Agents test cases."""
 
   def setUp(self):
     self.mockTC = MagicMock()

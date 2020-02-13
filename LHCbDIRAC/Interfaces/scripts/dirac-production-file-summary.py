@@ -60,10 +60,9 @@ args = Script.getPositionalArgs()
 
 
 def usage():
-  """ usage
+  """usage.
 
   Prints script usage
-
   """
 
   print('Usage: %s <ProductionID> <Options> [Try -h,--help for more information]' % Script.scriptName)

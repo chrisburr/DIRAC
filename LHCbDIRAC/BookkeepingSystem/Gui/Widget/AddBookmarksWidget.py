@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-AddBookmarks widget
-"""
+"""AddBookmarks widget."""
 ########################################################################
 from PyQt4.QtCore  import SIGNAL, Qt
 from PyQt4.QtGui   import QDialog
@@ -25,13 +23,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class AddBookmarksWidget(QDialog, Ui_AddBookmarks):
-  """
-  AddBookmarksWidget class
-  """
+  """AddBookmarksWidget class."""
   #############################################################################
   def __init__(self, parent = None):
-    """
-    Constructor
+    """Constructor.
 
     @param parent parent widget (QWidget)
     """
@@ -48,35 +43,35 @@ class AddBookmarksWidget(QDialog, Ui_AddBookmarks):
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################
   def getTitle(self):
-    """returns the title"""
+    """returns the title."""
     return str(self.titlelineEdit.text())
 
   #############################################################################
   def getPath(self):
-    """returns the path"""
+    """returns the path."""
     return str(self.pathlineEdit.text())
 
   #############################################################################
   def setTitle(self, string):
-    """sets the title"""
+    """sets the title."""
     self.titlelineEdit.setText(string)
 
   #############################################################################
   def setPath(self, string):
-    """sets the path"""
+    """sets the path."""
     self.pathlineEdit.setText(string)
 
   #############################################################################
   def waitCursor(self):
-    """wait cursor"""
+    """wait cursor."""
     self.setCursor(Qt.WaitCursor)
 
   #############################################################################
   def arrowCursor(self):
-    """normal cursor"""
+    """normal cursor."""
     self.setCursor(Qt.ArrowCursor)

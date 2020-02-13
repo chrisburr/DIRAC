@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Data quality widget
-"""
+"""Data quality widget."""
 
 from PyQt4.QtGui                                                              import QCheckBox, QDialog, QApplication
 from PyQt4.QtCore                                                             import SIGNAL
@@ -24,12 +22,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class DataQualityDialog(QDialog, Ui_DataQualityDialog):
-  """
-  DataQualityDialog class
-  """
+  """DataQualityDialog class."""
   #############################################################################
   def __init__(self, parent=None):
-    """initialize the widget"""
+    """initialize the widget."""
     QDialog.__init__(self, parent)
     Ui_DataQualityDialog.__init__(self)
     self.setupUi(self)
@@ -41,17 +37,17 @@ class DataQualityDialog(QDialog, Ui_DataQualityDialog):
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################
   def getCheckBoses(self):
-    """returns the check boxes"""
+    """returns the check boxes."""
     return self.__checkboses
 
   #############################################################################
   def addDataQulity(self, values):
-    """adds the data quality"""
+    """adds the data quality."""
     self.__checkboses = []
     j = 0
 

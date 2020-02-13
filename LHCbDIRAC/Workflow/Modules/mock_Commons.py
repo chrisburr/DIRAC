@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" just some common components for tests
-"""
+"""just some common components for tests."""
 
 from mock import MagicMock
 

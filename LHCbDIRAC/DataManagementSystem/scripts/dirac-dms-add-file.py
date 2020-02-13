@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Upload a file to the grid storage and register it in the File Catalog
-"""
+"""Upload a file to the grid storage and register it in the File Catalog."""
 __RCSID__ = "$Id$"
 
 if __name__ == "__main__":

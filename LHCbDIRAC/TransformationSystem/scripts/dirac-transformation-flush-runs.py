@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   In a transformation, flush a list of runs or runs that are flushed in the transformation used in BKQuery
-"""
+"""In a transformation, flush a list of runs or runs that are flushed in the
+transformation used in BKQuery."""
 
 import DIRAC
 from DIRAC import gLogger

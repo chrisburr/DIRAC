@@ -9,8 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Gets a list of files from BK and checks if they have common ancestors
-'''
+"""Gets a list of files from BK and checks if they have common ancestors."""
 
 
 # imports
@@ -20,8 +19,8 @@ from DIRAC import gLogger
 
 
 def removeFile(lfns):
-  ''' Method for removing a file in the RM as well as in the Transformation system
-  '''
+  """Method for removing a file in the RM as well as in the Transformation
+  system."""
   res = bkClient.setFilesInvisible(lfns)
   if res['OK']:
     gLogger.always('Files were made invisible in BK')
@@ -117,8 +116,8 @@ def removeFile(lfns):
 
 
 def analyzeAncestors(commonAncestors, ancestors):
-  ''' Analyse the list of common ancestors and checks whether one can remove some files
-  '''
+  """Analyse the list of common ancestors and checks whether one can remove
+  some files."""
   lfnsToRemove = set()
   allLfns = [lfn for lfnStr in commonAncestors for lfn in lfnStr.split(',')]
   res = bkClient.getFileMetadata(allLfns)

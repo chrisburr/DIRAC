@@ -9,18 +9,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-    Uses the DM script switches, and, unless a list of LFNs is provided:
+"""Uses the DM script switches, and, unless a list of LFNs is provided:
 
-    1) If --BKQuery is used: get files in BK directories, check if they are in FC
-    2) If --Production is used get files using the bk query of the given production
+1) If --BKQuery is used: get files in BK directories, check if they are in FC
+2) If --Production is used get files using the bk query of the given production
 
-    Then check if files registered as having a replica in the BK are also in the FC.
+Then check if files registered as having a replica in the BK are also in the FC.
 
-    If --FixIt is set, take actions:
-      - add files to the BK if they exist in the FC, but have replica = NO in the BK
-      - set replicaFlag = No in the BK for those files that are not in the FC
-'''
+If --FixIt is set, take actions:
+  - add files to the BK if they exist in the FC, but have replica = NO in the BK
+  - set replicaFlag = No in the BK for those files that are not in the FC
+"""
 
 __RCSID__ = "$Id$"
 

@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   LHCbDIRAC.Interfaces package
+"""LHCbDIRAC.Interfaces package.
 
-   This contains the LHCb specific API plugins for DIRAC.
+This contains the LHCb specific API plugins for DIRAC.
 """
 
 __RCSID__ = "$Id$"

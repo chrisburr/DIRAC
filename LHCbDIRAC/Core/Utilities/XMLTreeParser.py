@@ -8,8 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""Generic XMLParser used to convert a XML file into more
-   pythonic style. A tree ox XMLNodes.
+"""Generic XMLParser used to convert a XML file into more pythonic style.
+
+A tree ox XMLNodes.
 """
 
 
@@ -21,8 +22,10 @@ __RCSID__ = "$Id$"
 ################################################################################
 
 class XMLNode(object):
-  """XMLNodes represent XML elements. May have attributes. They have
-     either children or value ( exclusive-or).
+  """XMLNodes represent XML elements.
+
+  May have attributes. They have either children or value ( exclusive-
+  or).
   """
 
   def __init__(self, name):
@@ -32,7 +35,7 @@ class XMLNode(object):
     self.value = None
 
   def childrens(self, name):
-    """ return children """
+    """return children."""
     return [child for child in self.children if child.name == name]
 
   def __repr__(self):
@@ -42,24 +45,24 @@ class XMLNode(object):
 
 
 class XMLTreeParser(object):
-  """XMLTreeParser converts an XML file or a string into a tree of XMLNodes.
-     It does not validate the XML.
+  """XMLTreeParser converts an XML file or a string into a tree of XMLNodes. It
+  does not validate the XML.
 
-     Elements that are the only child of an element and are of text or cdata type
-     are considered to be the value of their parent.
+  Elements that are the only child of an element and are of text or
+  cdata type are considered to be the value of their parent.
   """
 
   def __init__(self):
     self.tree = None
 
   def parse(self, xmlFile):
-    """ parse the XML """
+    """parse the XML."""
     domXML = xml.dom.minidom.parse(xmlFile)
     self.__handleXML(domXML)
     return self.tree
 
   def parseString(self, xmlString):
-    """ parse the XML """
+    """parse the XML."""
     domXML = xml.dom.minidom.parseString(xmlString)
     self.__handleXML(domXML)
     return self.tree
@@ -69,13 +72,11 @@ class XMLTreeParser(object):
 ################################################################################
 
   def __handleXML(self, domXML):
-    """ handles first child
-    """
+    """handles first child."""
     self.tree = self.__handleElement([domXML.firstChild])
 
   def __handleElement(self, elements):
-    """ treat each element
-    """
+    """treat each element."""
     nodes = []
 
     for el in elements:
@@ -101,7 +102,7 @@ class XMLTreeParser(object):
 
   @staticmethod
   def __getAttributesDict(element):
-    """ get the attributes in a dictionary """
+    """get the attributes in a dictionary."""
     dictionary = {}
     if element.attributes:
       for attr in element.attributes.values():
@@ -109,12 +110,12 @@ class XMLTreeParser(object):
     return dictionary
 
   def __handleTextElement(self, textElement):
-    """ treat the Text element """
+    """treat the Text element."""
     return self.__getText(textElement)
 
   @staticmethod
   def __getText(node):
-    """ get the TEXT """
+    """get the TEXT."""
     data = ''
     if node.nodeType == node.TEXT_NODE or node.nodeType == node.CDATA_SECTION_NODE:
       data = node.data.encode('ascii')

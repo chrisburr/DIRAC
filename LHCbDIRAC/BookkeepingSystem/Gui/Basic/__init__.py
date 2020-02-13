@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This packages contains the basic classes used by various component of the GUI.
-"""
+"""This packages contains the basic classes used by various component of the
+GUI."""
 __RCSID__ = "$Id$"

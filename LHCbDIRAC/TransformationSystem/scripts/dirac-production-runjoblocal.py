@@ -9,17 +9,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-  dirac-production-runjoblocal
+"""dirac-production-runjoblocal.
 
-  Module created to run failed jobs locally on a CVMFS-configured machine.
-  It creates the necessary environment, downloads the necessary files, modifies the necessary
-  files and runs the job
+Module created to run failed jobs locally on a CVMFS-configured machine.
+It creates the necessary environment, downloads the necessary files, modifies the necessary
+files and runs the job
 
-  Usage:
-    dirac-production-runjoblocal (job ID) (Data imput mode) -  No parenthesis
-
-'''
+Usage:
+  dirac-production-runjoblocal (job ID) (Data imput mode) -  No parenthesis
+"""
 
 import os
 import shutil
@@ -55,11 +53,8 @@ for switch in Script.getUnprocessedSwitches():
 
 
 def __runSystemDefaults(jobID=None):
-  """
-  Creates the environment for running the job and returns
-  the path for the other functions.
-
-  """
+  """Creates the environment for running the job and returns the path for the
+  other functions."""
   tempdir = "LHCbjob" + str(jobID) + "temp"
   os.environ['VO_LHCB_SW_DIR'] = "/cvmfs/lhcb.cern.ch"
   mkDir(tempdir)
@@ -69,22 +64,16 @@ def __runSystemDefaults(jobID=None):
 
 
 def __downloadJobDescriptionXML(jobID, basepath):
-  """
-  Downloads the jobDescription.xml file into the temporary directory
-  created.
-
-  """
+  """Downloads the jobDescription.xml file into the temporary directory
+  created."""
   from DIRAC.Interfaces.API.Dirac import Dirac
   jdXML = Dirac()
   jdXML.getInputSandbox(jobID, basepath)
 
 
 def __modifyJobDescription(jobID, basepath, downloadinputdata):
-  """
-  Modifies the jobDescription.xml to, instead of DownloadInputData, it
-  uses InputDataByProtocol
-
-  """
+  """Modifies the jobDescription.xml to, instead of DownloadInputData, it uses
+  InputDataByProtocol."""
   if not downloadinputdata:
     from xml.etree import ElementTree as et
     archive = et.parse(basepath + "InputSandbox" + str(jobID) + os.path.sep + "jobDescription.xml")
@@ -96,10 +85,7 @@ def __modifyJobDescription(jobID, basepath, downloadinputdata):
 
 
 def __downloadPilotScripts(basepath):
-  """
-  Downloads the scripts necessary to configure the pilot
-
-  """
+  """Downloads the scripts necessary to configure the pilot."""
   # include retry function
   out = os.system(
       "wget -P " + basepath
@@ -135,10 +121,7 @@ def __downloadPilotScripts(basepath):
 
 
 def __configurePilot(basepath):
-  """
-  Configures the pilot.
-
-  """
+  """Configures the pilot."""
   out = os.system("python " + basepath + "dirac-pilot.py -S LHCb-Production -l LHCb -C dips://lhcb-conf-dirac.cern.ch:9135/Configuration/Server -N ce.debug.ch -Q default -n DIRAC.JobDebugger.cern -M 1 -E LHCbPilot -X LHCbConfigureBasics,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements -dd")
   if not out:
     directory = os.path.expanduser('~') + os.path.sep
@@ -151,10 +134,7 @@ def __configurePilot(basepath):
 
 
 def __runJobLocally(jobID, basepath):
-  """
-  Runs the job!
-
-  """
+  """Runs the job!"""
   from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
   localJob = LHCbJob(basepath + "InputSandbox" + str(jobID) + os.path.sep + "jobDescription.xml")
   localJob.setInputSandbox(os.getcwd() + "pilot.cfg")

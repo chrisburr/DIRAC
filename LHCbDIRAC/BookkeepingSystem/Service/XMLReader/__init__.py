@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This module used for reading an XML file which contains the jobs and files attributes.
-"""
+"""This module used for reading an XML file which contains the jobs and files
+attributes."""
 __RCSID__ = "$Id$"

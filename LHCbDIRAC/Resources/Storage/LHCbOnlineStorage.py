@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" This is the LHCb Online storage """
+"""This is the LHCb Online storage."""
 
 import xmlrpclib
 import os
@@ -23,8 +23,7 @@ __RCSID__ = "$Id$"
 
 
 class LHCbOnlineStorage(StorageBase):
-  """ Plugin to talk to the xmlrpc of the datamover
-  """
+  """Plugin to talk to the xmlrpc of the datamover."""
 
   def __init__(self, storageName, parameterDict):
     self.isok = True
@@ -40,8 +39,7 @@ class LHCbOnlineStorage(StorageBase):
 
   def getFileSize(self, urls):
     #FIXME: What the hell is this method doing ??
-    """ Get a fake file size
-    """
+    """Get a fake file size."""
     if not urls:
       return S_ERROR("LHCbOnline.getFileSize: No surls supplied.")
     successful = {}
@@ -52,8 +50,8 @@ class LHCbOnlineStorage(StorageBase):
     return S_OK(resDict)
 
   def retransferOnlineFile(self, urls):
-    """ Tell the Online system that the migration failed and we want to get the request again
-    """
+    """Tell the Online system that the migration failed and we want to get the
+    request again."""
 
     if not urls:
       return S_ERROR("LHCbOnline.requestRetransfer: No surls supplied.")
@@ -77,8 +75,7 @@ class LHCbOnlineStorage(StorageBase):
     return S_OK(resDict)
 
   def removeFile(self, urls):
-    """Remove physically the file specified by its path
-    """
+    """Remove physically the file specified by its path."""
     if not urls:
       return S_ERROR("LHCbOnline.removeFile: No surls supplied.")
     successful = {}

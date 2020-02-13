@@ -24,10 +24,9 @@ args = Script.getPositionalArgs()
 
 
 def usage():
-  """ usage
+  """usage.
 
   Prints script usage
-
   """
 
   print('Usage: %s <WMS Job ID> [<WMS Job ID>]' % Script.scriptName)

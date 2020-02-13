@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
- Add files to a transformation
-"""
+"""Add files to a transformation."""
 
 __RCSID__ = "$Id$"
 

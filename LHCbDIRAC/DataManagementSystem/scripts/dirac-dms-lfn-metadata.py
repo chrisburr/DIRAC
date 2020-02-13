@@ -13,9 +13,7 @@
 # File :    dirac-dms-lfn-metadata
 # Author :  Philippe Charpentier
 ########################################################################
-"""
-  Get the metadata of a (list of) LFNs from the FC
-"""
+"""Get the metadata of a (list of) LFNs from the FC."""
 __RCSID__ = "$Id$"
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 

@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It stores the replica
-"""
+"""It stores the replica."""
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.Replica import Replica
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.ReplicaParam import ReplicaParam
@@ -20,9 +18,7 @@ __RCSID__ = "$Id$"
 
 
 class ReplicaReader:
-  """
-  ReplicaReader class
-  """
+  """ReplicaReader class."""
   #############################################################################
 
   def __init__(self):
@@ -31,7 +27,7 @@ class ReplicaReader:
   #############################################################################
   @staticmethod
   def readReplica(doc, filename):
-    """reads the replica information"""
+    """reads the replica information."""
     gLogger.debug("Reading Replica from" + str(filename))
     replica = Replica()
     replica.setFileName(filename)  # full path

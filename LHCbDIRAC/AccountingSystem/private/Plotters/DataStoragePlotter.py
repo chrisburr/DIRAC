@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.AccountingSystem.private.Plotters.DataStoragePlotter
+"""LHCbDIRAC.AccountingSystem.private.Plotters.DataStoragePlotter.
 
-   DataStoragePlotter.__bases__:
-     DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
-
-'''
+DataStoragePlotter.__bases__:
+  DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
+"""
 
 from DIRAC                                                import S_OK, S_ERROR
 from DIRAC.AccountingSystem.private.Plotters.BaseReporter import BaseReporter
@@ -26,9 +25,7 @@ __RCSID__ = "$Id$"
 #FIXME: refactor _plotMethods
 
 class DataStoragePlotter( BaseReporter ):
-  '''
-    DataStoragePlotter as extension of BaseReporter
-  '''
+  """DataStoragePlotter as extension of BaseReporter."""
 
   _typeName          = "DataStorage"
   _typeKeyFields     = [ dF[0] for dF in DataStorage().definitionKeyFields ]
@@ -38,8 +35,7 @@ class DataStoragePlotter( BaseReporter ):
 
   _reportCatalogSpaceName = "LFN size"
   def _reportCatalogSpace( self, reportRequest ):
-    '''
-    Reports about the LFN size and the catalog space from the accounting.
+    """Reports about the LFN size and the catalog space from the accounting.
 
     :param reportRequest: <dict>
       { 'grouping'       : 'EventType',
@@ -59,7 +55,7 @@ class DataStoragePlotter( BaseReporter ):
         'unit'         : 'GB',
         'granularity'  : 86400
       }
-    '''
+    """
 
     if reportRequest[ 'grouping' ] == "StorageElement":
       return S_ERROR( "Grouping by storage element when requesting lfn info makes no sense" )
@@ -95,9 +91,8 @@ class DataStoragePlotter( BaseReporter ):
                    'unit'          : unitName} )
 
   def _plotCatalogSpace( self, reportRequest, plotInfo, filename ):
-    '''
-    Creates <filename>.png file containing information regarding the LFN size and
-    the catalog space.
+    """Creates <filename>.png file containing information regarding the LFN
+    size and the catalog space.
 
     :param reportRequest: <dict>
        { 'grouping'       : 'EventType',
@@ -121,7 +116,7 @@ class DataStoragePlotter( BaseReporter ):
 
     returns S_OK / S_ERROR
        { 'plot': True, 'thumbnail': False }
-    '''
+    """
 
     startTime = reportRequest[ 'startTime' ]
     endTime   = reportRequest[ 'endTime' ]
@@ -142,8 +137,7 @@ class DataStoragePlotter( BaseReporter ):
 
   _reportCatalogFilesName = "LFN files"
   def _reportCatalogFiles( self, reportRequest ):
-    '''
-    Reports about the LFN files and the catalog files from the accounting.
+    """Reports about the LFN files and the catalog files from the accounting.
 
     :param reportRequest: <dict>
       { 'grouping'       : 'EventType',
@@ -163,7 +157,7 @@ class DataStoragePlotter( BaseReporter ):
         'unit'          : 'files',
         'granularity'   : 86400
       }
-    '''
+    """
 
     if reportRequest[ 'grouping' ] == "StorageElement":
       return S_ERROR( "Grouping by storage element when requesting lfn info makes no sense" )
@@ -198,9 +192,8 @@ class DataStoragePlotter( BaseReporter ):
                    'unit'          : unitName} )
 
   def _plotCatalogFiles( self, reportRequest, plotInfo, filename ):
-    '''
-    Creates <filename>.png file containing information regarding the LFN files
-    and the catalog files.
+    """Creates <filename>.png file containing information regarding the LFN
+    files and the catalog files.
 
     :param reportRequest: <dict>
       { 'grouping'       : 'EventType',
@@ -224,7 +217,7 @@ class DataStoragePlotter( BaseReporter ):
 
     returns S_OK / S_ERROR
        { 'plot': True, 'thumbnail': False }
-    '''
+    """
 
     startTime = reportRequest[ 'startTime' ]
     endTime   = reportRequest[ 'endTime' ]
@@ -245,8 +238,7 @@ class DataStoragePlotter( BaseReporter ):
 
   _reportPhysicalSpaceName = "PFN size"
   def _reportPhysicalSpace( self, reportRequest ):
-    '''
-    Reports about the PFN size and the physical space from the accounting.
+    """Reports about the PFN size and the physical space from the accounting.
 
     :param reportRequest: <dict>
       { 'grouping'       : 'EventType',
@@ -266,7 +258,7 @@ class DataStoragePlotter( BaseReporter ):
         'unit'          : 'MB',
         'granularity'   : 86400
       }
-    '''
+    """
 
     selectString = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
     selectFields = ( selectString + ", %s, %s, SUM(%s/%s)",
@@ -300,9 +292,8 @@ class DataStoragePlotter( BaseReporter ):
                   } )
 
   def _plotPhysicalSpace( self, reportRequest, plotInfo, filename ):
-    '''
-    Creates <filename>.png file containing information regarding the PFN size and
-    the physical space.
+    """Creates <filename>.png file containing information regarding the PFN
+    size and the physical space.
 
     :param reportRequest: <dict>
       { 'grouping'       : 'EventType',
@@ -326,7 +317,7 @@ class DataStoragePlotter( BaseReporter ):
 
     returns S_OK / S_ERROR
        { 'plot': True, 'thumbnail': False }
-    '''
+    """
 
     startTime = reportRequest[ 'startTime' ]
     endTime   = reportRequest[ 'endTime' ]
@@ -347,8 +338,7 @@ class DataStoragePlotter( BaseReporter ):
 
   _reportPhysicalFilesName = "PFN files"
   def _reportPhysicalFiles( self, reportRequest ):
-    '''
-    Reports about the PFN files and the physical files from the accounting.
+    """Reports about the PFN files and the physical files from the accounting.
 
     :param reportRequest: <dict>
        { 'grouping'       : 'EventType',
@@ -368,7 +358,7 @@ class DataStoragePlotter( BaseReporter ):
         'unit'          : 'files',
         'granularity'   : 86400
       }
-    '''
+    """
 
     selectString = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
     selectFields = ( selectString + ", %s, %s, SUM(%s/%s)",
@@ -399,9 +389,8 @@ class DataStoragePlotter( BaseReporter ):
                   'unit'          : unitName} )
 
   def _plotPhysicalFiles( self, reportRequest, plotInfo, filename ):
-    '''
-    Creates <filename>.png file containing information regarding the PFN files and
-    the physical files.
+    """Creates <filename>.png file containing information regarding the PFN
+    files and the physical files.
 
     :param reportRequest: <dict>
        { 'grouping'       : 'EventType',
@@ -425,7 +414,7 @@ class DataStoragePlotter( BaseReporter ):
 
     return S_OK / S_ERROR
        { 'plot': True, 'thumbnail': False }
-    '''
+    """
 
     startTime = reportRequest[ 'startTime' ]
     endTime   = reportRequest[ 'endTime' ]

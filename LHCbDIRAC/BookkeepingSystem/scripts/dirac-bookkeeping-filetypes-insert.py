@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-filetypes-insert.py
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Insert new file types in the Bookkeeping
-"""
+"""Insert new file types in the Bookkeeping."""
 __RCSID__ = "$Id$"
 
 import DIRAC

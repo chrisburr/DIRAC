@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Set the Start or End Run for a given Transformation of add a set runs.
-"""
+"""Set the Start or End Run for a given Transformation of add a set runs."""
 __RCSID__ = "$Id$"
 """
 Examples of Usage :

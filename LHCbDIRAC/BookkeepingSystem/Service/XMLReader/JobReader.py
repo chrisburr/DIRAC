@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It stores the job related information
-"""
+"""It stores the job related information."""
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobConfiguration import JobConfiguration
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobOption import JobOption
@@ -31,9 +29,7 @@ __RCSID__ = "$Id$"
 
 
 class JobReader(object):
-  """
-  JobReader class
-  """
+  """JobReader class."""
   #############################################################################
 
   def __init__(self):
@@ -41,7 +37,7 @@ class JobReader(object):
 
   #############################################################################
   def readJob(self, doc, fileName):
-    """reads and stores the job elements from the file"""
+    """reads and stores the job elements from the file."""
     job = Job()
     job.setFileName(fileName)
     gLogger.debug("Reading job from" + str(fileName) + "XML!")
@@ -60,7 +56,7 @@ class JobReader(object):
   #############################################################################
   @staticmethod
   def __readJobConfigurations(doc, job):
-    """reads and stores the job configurations"""
+    """reads and stores the job configurations."""
 
     conf = JobConfiguration()
     jobElements = doc.getElementsByTagName('Job')
@@ -95,7 +91,7 @@ class JobReader(object):
   #############################################################################
   @staticmethod
   def __readJobOptions(doc, job):
-    """reads and stores the job option"""
+    """reads and stores the job option."""
     jobOptions = doc.getElementsByTagName('JobOption')
     for node in jobOptions:
       options = JobOption()
@@ -122,7 +118,7 @@ class JobReader(object):
   #############################################################################
   @staticmethod
   def __readJobTypeParameters(doc, job):
-    """reads and stores the job parameters"""
+    """reads and stores the job parameters."""
 
     jobTypeParameters = doc.getElementsByTagName('TypedParameter')
 
@@ -151,7 +147,7 @@ class JobReader(object):
   ########################################################################
   @staticmethod
   def __readJobInputFiles(doc, job):
-    """reads and stores the input files of a job"""
+    """reads and stores the input files of a job."""
     jobInputFile = doc.getElementsByTagName('InputFile')
     for node in jobInputFile:
       inputFile = InputFile()
@@ -165,7 +161,7 @@ class JobReader(object):
 
   ########################################################################
   def __readJobOutputFiles(self, doc, job):
-    """reads the jobs output files"""
+    """reads the jobs output files."""
     jobOutputFiles = doc.getElementsByTagName('OutputFile')
     for node in jobOutputFiles:
       outputFile = File()
@@ -212,9 +208,7 @@ class JobReader(object):
   ########################################################################
   @staticmethod
   def __readFilereplica(doc, outputFile):
-    """
-    It creates the replica object and adds to the output file.
-    """
+    """It creates the replica object and adds to the output file."""
     replicas = doc.getElementsByTagName('Replica')  # I have to check doc ? no node? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     for replica in replicas:
       rep = FileReplica()
@@ -231,9 +225,7 @@ class JobReader(object):
   ########################################################################
   @staticmethod
   def __readDataquality(node, outputFile):
-    """
-    It reads the data quality information of a given file.
-    """
+    """It reads the data quality information of a given file."""
     qualities = node.getElementsByTagName("Quality")
     for quality in qualities:
       fileQuality = Quality()
@@ -271,7 +263,7 @@ class JobReader(object):
   ########################################################################
   @staticmethod
   def __readJobSimulationConditions(doc, job):
-    """reads and stores the job simulation condition"""
+    """reads and stores the job simulation condition."""
     gLogger.debug("Read Simulation Conditions")
     simcond = doc.getElementsByTagName('SimulationCondition')
     if len(simcond) != 1:
@@ -292,7 +284,7 @@ class JobReader(object):
   ########################################################################
   @staticmethod
   def __readJobDataTakingConditions(doc, job):
-    """reads and stores the job data taking conditions"""
+    """reads and stores the job data taking conditions."""
     gLogger.debug("Read DataTaking Conditions")
     daqcond = doc.getElementsByTagName('DataTakingConditions')
     if len(daqcond) != 1:

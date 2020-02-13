@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-productions-summary
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve production summary from the Bookkeeping
-"""
+"""Retrieve production summary from the Bookkeeping."""
 __RCSID__ = "$Id$"
 
 import DIRAC

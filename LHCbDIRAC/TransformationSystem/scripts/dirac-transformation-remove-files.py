@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
- Set files Removed in a transformation
-"""
+"""Set files Removed in a transformation."""
 
 __RCSID__ = "$Id$"
 

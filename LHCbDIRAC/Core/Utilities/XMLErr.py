@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Takes an xmlSummary along with its IDs and creates a JSON file containing all the counters in the xmlSummary
-"""
+"""Takes an xmlSummary along with its IDs and creates a JSON file containing
+all the counters in the xmlSummary."""
 
 import json
 import xml.etree.ElementTree as ET
@@ -18,8 +17,7 @@ from DIRAC import gLogger, S_ERROR, S_OK
 
 
 def readXMLfile(xmlFile, jobID, prodID, wmsID, jsonFileName='errors_xmlSummary.json'):
-  """
-  The main execution function
+  """The main execution function.
 
   :param str xmlFile: the name of the XML file
   :param str jobID: the job ID of the data
@@ -42,8 +40,7 @@ def readXMLfile(xmlFile, jobID, prodID, wmsID, jsonFileName='errors_xmlSummary.j
 
 
 def extractRoot(xmlFile):
-  """
-  Takes the root element in the XML file
+  """Takes the root element in the XML file.
 
   :param str xmlFile: the name of the XML file
   """
@@ -59,8 +56,8 @@ def extractRoot(xmlFile):
 
 
 def extractData(root, jobID, prodID, wmsID):
-  """
-  Takes the root of the XML file and the ids of the job, and converts the json file from the XML file
+  """Takes the root of the XML file and the ids of the job, and converts the
+  json file from the XML file.
 
   :param str jobID: the job ID
   :param str prodID: the production ID
@@ -96,8 +93,7 @@ def extractData(root, jobID, prodID, wmsID):
 
 
 def createJSONfile(jsonData, jsonFileName):
-  """
-  Creates a JSON file given a string containing the data
+  """Creates a JSON file given a string containing the data.
 
   :param str jsonData: the string that contains the data
   :param str jsonFileName: the name of the resulting JSON file

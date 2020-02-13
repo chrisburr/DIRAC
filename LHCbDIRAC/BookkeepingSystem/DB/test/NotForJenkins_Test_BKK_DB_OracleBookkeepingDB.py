@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_BKK_DB_OracleBookkeepingDB
-'''
+"""Test_BKK_DB_OracleBookkeepingDB."""
 
 import mock
 import unittest
@@ -24,13 +23,10 @@ __RCSID__ = "$Id$"
 
 
 class OracleBookkeepingDB_TestCase(unittest.TestCase):
-  """
-  """
+  """"""
 
   def setUp(self):
-    '''
-    Setup
-    '''
+    """Setup."""
     # mock_OracleDB = mock.Mock(spec=OracleDB)
     self.moduleTested = moduleTested
     self.testClass = self.moduleTested.OracleBookkeepingDB
@@ -47,9 +43,7 @@ class OracleBookkeepingDB_TestCase(unittest.TestCase):
     self.moduleTested.gConfig.getOption = self.mock_gConfig
 
   def tearDown(self):
-    '''
-    Tear down
-    '''
+    """Tear down."""
 
     del self.moduleTested
     del self.testClass
@@ -58,22 +52,19 @@ class OracleBookkeepingDB_TestCase(unittest.TestCase):
 
 
 class OracleBookkeepingDB_Success(OracleBookkeepingDB_TestCase):
-  """
-  """
+  """"""
 
   ################################################################################
   def test_instantiate(self):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     module = self.testClass()
     self.assertEqual('OracleBookkeepingDB', module.__class__.__name__)
 
   ################################################################################
   def test_buildRunNumbers(self):
-    """It test the method which used to build the conditions when runnumbers is a
-    list/number, and end run and start run is a number
-    """
+    """It test the method which used to build the conditions when runnumbers is
+    a list/number, and end run and start run is a number."""
     client = self.testClass()
     runnumbers = [1, 3, 4]
     startRunID = None
@@ -118,7 +109,8 @@ class OracleBookkeepingDB_Success(OracleBookkeepingDB_TestCase):
 
   ################################################################################
   def test_buildConditions(self):
-    """it test the simulation/data taking condition string creation procedure"""
+    """it test the simulation/data taking condition string creation
+    procedure."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -138,7 +130,7 @@ prod.DAQPERIODID is not null  and prod.production=j.production ',
 
   ################################################################################
   def test_buildConfiguration(self):
-    """it test the configuration name and version condition string creation"""
+    """it test the configuration name and version condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -166,7 +158,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
 
   ################################################################################
   def test_buildDataquality(self):
-    """ it test the data quality condition string creation"""
+    """it test the data quality condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -194,7 +186,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
 
   ################################################################################
   def test_buildEventType(self):
-    """ it test the event type condition string creation"""
+    """it test the event type condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -219,7 +211,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
 
   ################################################################################
   def test_buildFileTypes(self):
-    """ it test the file type condition string creation"""
+    """it test the file type condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -235,7 +227,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
 
   ################################################################################
   def test_buildProcessingPass(self):
-    """it test the processing pass condition string creation"""
+    """it test the processing pass condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -275,7 +267,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
   ################################################################################
 
   def test_buildProduction(self):
-    """it test the production condition string creation"""
+    """it test the production condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ''
@@ -301,7 +293,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
 
   ################################################################################
   def test_buildReplicaflag(self):
-    """it test the replica flag condition string creation"""
+    """it test the replica flag condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ',production prod'
@@ -327,7 +319,7 @@ and       j.configurationid=c.configurationid ", " ,configurations c"), retVal['
 
   ################################################################################
   def test_buildStartenddate(self):
-    """it test the start and end date condition string creation"""
+    """it test the start and end date condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ',production prod'
@@ -366,7 +358,7 @@ and f.inserttimestamp <= TO_TIMESTAMP ('2','YYYY-MM-DD HH24:MI:SS')", tables), r
 
   ################################################################################
   def test_buildTCKS(self):
-    """ it test the TCK condition string creation"""
+    """it test the TCK condition string creation."""
     client = self.testClass()
     condition = ''
     tables = ',production prod'

@@ -29,7 +29,7 @@ class UserStorageUsageAgent( StorageUsageAgent ):
 
   """
   def removeEmptyDir( self, dirPath ):
-    """ remove empty directories, but skip home
+    """remove empty directories, but skip home.
 
     :param self: self reference
     :param str dirPath: directory to remove

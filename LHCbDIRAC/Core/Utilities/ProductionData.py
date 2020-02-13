@@ -8,13 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Utility to construct production LFNs from workflow parameters
-    according to LHCb conventions.
+"""Utility to construct production LFNs from workflow parameters according to
+LHCb conventions.
 
-    The methods here are mostly from ancient history and need to be
-    reviewed, these methods were grouped together as they form the
-    "interface" for production clients and workflow modules to create LFNs.
-
+The methods here are mostly from ancient history and need to be
+reviewed, these methods were grouped together as they form the
+"interface" for production clients and workflow modules to create LFNs.
 """
 
 __RCSID__ = "$Id$"
@@ -32,8 +31,10 @@ gLogger = gLogger.getSubLogger('ProductionData')
 
 
 def constructProductionLFNs(paramDict, bkClient=None, quick=True):
-  """ Used for local testing of a workflow, a temporary measure until LFN construction is tidied.
-      This works using the workflow commons for on the fly construction.
+  """Used for local testing of a workflow, a temporary measure until LFN
+  construction is tidied.
+
+  This works using the workflow commons for on the fly construction.
   """
   try:
 
@@ -136,7 +137,7 @@ def constructProductionLFNs(paramDict, bkClient=None, quick=True):
 
 
 def _applyMask(mask, dataTuplesList):
-  """ apply the MASK to the dataset"""
+  """apply the MASK to the dataset."""
 
   maskedData = copy.deepcopy(dataTuplesList)
 
@@ -156,8 +157,8 @@ def _applyMask(mask, dataTuplesList):
 
 
 def getLogPath(paramDict, bkClient=None, quick=True):
-  """ Can construct log file paths even if job fails e.g. no output files available.
-  """
+  """Can construct log file paths even if job fails e.g. no output files
+  available."""
   try:
     keys = ['PRODUCTION_ID', 'JOB_ID', 'configName', 'configVersion']
     for k in keys:
@@ -188,13 +189,14 @@ def getLogPath(paramDict, bkClient=None, quick=True):
 
 
 def constructUserLFNs(jobID, owner, outputFiles, outputPath='', prependString=''):
-  """ This method is used to supplant the standard job wrapper output data policy for LHCb.
+  """This method is used to supplant the standard job wrapper output data
+  policy for LHCb.
 
-      The initial convention adopted for user output files is the following:
-      /lhcb/user/<initial e.g. f>/<owner e.g. fstagni>/<outputPath>/year_month/<jobID/1000>/<jobID>/fileName
+  The initial convention adopted for user output files is the following:
+  /lhcb/user/<initial e.g. f>/<owner e.g. fstagni>/<outputPath>/year_month/<jobID/1000>/<jobID>/fileName
 
-      But, if prependString is set, then the following is adopted:
-      /lhcb/user/<initial e.g. f>/<owner e.g. fstagni>/<outputPath>/<jobID>_<prependString>_fileName
+  But, if prependString is set, then the following is adopted:
+  /lhcb/user/<initial e.g. f>/<owner e.g. fstagni>/<outputPath>/<jobID>_<prependString>_fileName
   """
 
   initial = owner[:1]
@@ -241,11 +243,11 @@ def constructUserLFNs(jobID, owner, outputFiles, outputPath='', prependString=''
 
 
 def preSubmissionLFNs(jobCommons, jobCode, productionID='1', jobID='2'):
-  """ Constructs LFNs to be added to the job description prior to submission
-      or simply for visual inspection.
+  """Constructs LFNs to be added to the job description prior to submission or
+  simply for visual inspection.
 
-      This is a wrapper around constructProductionLFNs used by the production
-      clients.
+  This is a wrapper around constructProductionLFNs used by the
+  production clients.
   """
   try:
     outputList = []
@@ -269,9 +271,8 @@ def preSubmissionLFNs(jobCommons, jobCode, productionID='1', jobID='2'):
 
 
 def _makeProductionPath(jobID, lfnROOT, typeName, prodstring, log=False):
-  """ Constructs the path in the logical name space where the output
-      data for the given production will go.
-  """
+  """Constructs the path in the logical name space where the output data for
+  the given production will go."""
   result = lfnROOT + '/' + typeName.upper() + '/' + prodstring + '/'
   if log:
     try:
@@ -287,8 +288,9 @@ def _makeProductionPath(jobID, lfnROOT, typeName, prodstring, log=False):
 
 
 def _makeProductionLFN(jobID, lfnROOT, filetuple, prodstring):
-  """ Constructs the logical file name according to LHCb conventions.
-      Returns the lfn without 'lfn:' prepended.
+  """Constructs the logical file name according to LHCb conventions.
+
+  Returns the lfn without 'lfn:' prepended.
   """
   gLogger.debug('Making production LFN for JOB_ID %s, LFN_ROOT %s, prodstring %s for %s' % (jobID, lfnROOT,
                                                                                             prodstring,
@@ -309,8 +311,7 @@ def _makeProductionLFN(jobID, lfnROOT, filetuple, prodstring):
 
 
 def _getLFNRoot(lfn, namespace='', configVersion=0, bkClient=None, quick=False):
-  """
-  return the root path of a given lfn
+  """return the root path of a given lfn.
 
   eg : /lhcb/data/CCRC08/00009909 = getLFNRoot(/lhcb/data/CCRC08/00009909/DST/0000/00009909_00003456_2.dst)
   eg : /lhcb/MC/<year>/  = getLFNRoot(None)

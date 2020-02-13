@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''Test class for the MCSimulationTestingAgent
-'''
+"""Test class for the MCSimulationTestingAgent."""
 
 import datetime
 import importlib

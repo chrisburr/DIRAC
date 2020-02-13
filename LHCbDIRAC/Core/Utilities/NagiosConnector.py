@@ -8,14 +8,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" NagiosConnector is a utility to publish checks on job results to the
-    IT-based SAM/Nagios framework. The publishing is done by messaging
-    via an ActiveMQ-Broker specified in the configuration
-    (It expects values for MsgBroker, MsgPort,  MsgQueue and NagiosName).
-    For the message to arrive, it is essential to publish to the right queue,
-    which is also specified in the configuration.
-    The message is built using a dictionary passed to one of the methods,
-    which should contain the keys 'SAMResults' 'SAMDetails' 'GridRequiredCEs'.
+"""NagiosConnector is a utility to publish checks on job results to the IT-
+based SAM/Nagios framework.
+
+The publishing is done by messaging via an ActiveMQ-Broker specified in
+the configuration (It expects values for MsgBroker, MsgPort,  MsgQueue
+and NagiosName). For the message to arrive, it is essential to publish
+to the right queue, which is also specified in the configuration. The
+message is built using a dictionary passed to one of the methods, which
+should contain the keys 'SAMResults' 'SAMDetails' 'GridRequiredCEs'.
 """
 
 import datetime
@@ -28,8 +29,8 @@ __RCSID__ = "$Id$"
 
 
 class NagiosConnector( object ):
-  """ Bundles functions in the stomp library for sending SAMJob-Results to SAM-Nagios.
-  """
+  """Bundles functions in the stomp library for sending SAMJob-Results to SAM-
+  Nagios."""
   def __init__( self ):
     self.config = {}
     self.opsHelper = Operations()
@@ -54,7 +55,7 @@ class NagiosConnector( object ):
       self.config['MsgPort'] = 6163
 
   def useDebugMessage( self ):
-    """Load a sample message for debugging"""
+    """Load a sample message for debugging."""
     self.message = """hostName: ce.hpc.iit.bme.hu
 metricStatus: OK
 timestamp: 2013-11-09T17:59:19Z
@@ -76,8 +77,7 @@ EOT"""
                        status = 'no status given',
                        details = 'no details given',
                        nagiosName = 'no nagiosName given' ):
-    """Brings message information to the generic format required by Nagios.
-    """
+    """Brings message information to the generic format required by Nagios."""
 
     statuscodes = {0: 'OK', 1: 'CRITICAL', 2: 'WARNING', 3: 'UNKNOWN'}
     if status in ['CRITICAL', 'OK', 'WARNING', 'UNKNOWN']:
@@ -113,6 +113,7 @@ EOT"""
                             _ssl_ca_certs = None,
                             _ssl_cert_validator = None  ):
     """Connect the conn object with the Broker read from configuration.
+
     Refer to the stomppy documentation for authentication args details. In short:
     use_ssl:  connect using SSL to the socket.
               This wraps the socket in a SSL connection.
@@ -140,8 +141,10 @@ EOT"""
 
   def sendMessage( self ):
     """Use the conn object to send a message to the broker.
-     If the format and the configurations are correct,
-    the message content will appear in SAM/Nagios."""
+
+    If the format and the configurations are correct, the message
+    content will appear in SAM/Nagios.
+    """
 
     if not self.message:
       gLogger.error(  'The message string is empty!' )

@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit tests for Workflow Modules
-"""
+"""Unit tests for Workflow Modules."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 
@@ -43,8 +42,7 @@ __RCSID__ = "$Id$"
 
 
 class ModulesTestCase(unittest.TestCase):
-  """ Base class for the Modules test cases
-  """
+  """Base class for the Modules test cases."""
 
   def setUp(self):
 

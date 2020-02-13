@@ -9,10 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Debug files status for a (list of) transformations
-It is possible to do minor fixes to those files, using options
-"""
+"""Debug files status for a (list of) transformations It is possible to do
+minor fixes to those files, using options."""
 
 __RCSID__ = "$Id$"
 

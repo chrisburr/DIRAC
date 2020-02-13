@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Utilities for scripts dealing with transformations
-"""
+"""Utilities for scripts dealing with transformations."""
 import os
 import datetime
 import random
@@ -39,9 +37,7 @@ __RCSID__ = "$Id$"
 
 
 def _stripNumDirectory(dirName):
-  """
-  Method to remove numeric directory form a directory path
-  """
+  """Method to remove numeric directory form a directory path."""
   while True:
     subDir = os.path.basename(dirName)
     if subDir and not subDir.isdigit():
@@ -50,9 +46,7 @@ def _stripNumDirectory(dirName):
 
 
 def _clearTaskLFNs(taskLfns):
-  """
-  Clear the input list of lists, keeping its reference
-  """
+  """Clear the input list of lists, keeping its reference."""
   nbLfns = 0
   for lfnList in taskLfns:
     nbLfns += len(lfnList)
@@ -61,16 +55,12 @@ def _clearTaskLFNs(taskLfns):
 
 
 class PluginUtilities(DIRACPluginUtilities):
-  """
-  Utility class used by plugins
-  """
+  """Utility class used by plugins."""
 
   def __init__(self, plugin='LHCbStandard', transClient=None, dataManager=None, fc=None,
                bkClient=None, rmClient=None,
                debug=False, transInThread=None, transID=None):
-    """
-    c'tor
-    """
+    """c'tor."""
     # clients
     if transClient is None:
       self.transClient = TransformationClient()
@@ -124,9 +114,8 @@ class PluginUtilities(DIRACPluginUtilities):
     self.debug = val
 
   def updateSharesUsage(self, counters, se, count, runID):
-    """
-    Update the usage counters if share is by files, and the run duration otherwise
-    """
+    """Update the usage counters if share is by files, and the run duration
+    otherwise."""
     inc = 0
     if self.shareMetrics == 'Files':
       inc = count
@@ -147,8 +136,7 @@ class PluginUtilities(DIRACPluginUtilities):
       self.printShares("New counters and used fraction (%)", counters, log=self.logVerbose)
 
   def printShares(self, title, shares, counters=None, log=None):
-    """
-    Print formatted shares and if provised counters
+    """Print formatted shares and if provised counters.
 
     :param title: header of print out
     :type title: string
@@ -178,8 +166,8 @@ class PluginUtilities(DIRACPluginUtilities):
       log(infoStr)
 
   def getPluginShares(self, section=None, backupSE=None, log=None, counters=True):
-    """
-    Get shares from CS:
+    """Get shares from CS:
+
     * If backupSE is not present: just return the CS shares as they are
     * If backupSE is specified, the shares represent a percentage of the RAW at each site and the rest is for backupSE
 
@@ -248,18 +236,14 @@ class PluginUtilities(DIRACPluginUtilities):
       return S_OK((existingCount, shares))
 
   def __getRunDuration(self, runID):
-    """
-    Get the run duration
-    """
+    """Get the run duration."""
     # Get run metadata
     runMetadata = self.transClient.getRunsMetadata([runID]).get('Value', {})
     return S_OK(self.__extractRunDuration(runMetadata, runID))
 
   def __extractRunDuration(self, runMetadata, runID):
-    """
-    Obtain run duration from the TS run metadata table
-    If not available, get it from BK
-    """
+    """Obtain run duration from the TS run metadata table If not available, get
+    it from BK."""
     duration = runMetadata.get(runID, {}).get('Duration')
     if duration is None:
       self.logVerbose('Run duration not found in TS for run %d, get it from BK' % runID)
@@ -276,9 +260,7 @@ class PluginUtilities(DIRACPluginUtilities):
     return int(duration)
 
   def getSitesRunsDuration(self, transID=None, normalise=False, requestedSEs=None):
-    """
-    Get per site how much time of run was assigned
-    """
+    """Get per site how much time of run was assigned."""
     res = self.getTransformationRuns(transID=transID)
     if not res['OK']:
       return res
@@ -305,9 +287,8 @@ class PluginUtilities(DIRACPluginUtilities):
     return S_OK(seUsage)
 
   def getExistingCounters(self, transID=None, normalise=False, requestedSEs=None):
-    """
-    Used by RAWReplication and RAWProcessing plugins, gets what has been done up to now while distributing runs
-    """
+    """Used by RAWReplication and RAWProcessing plugins, gets what has been
+    done up to now while distributing runs."""
     if transID is None:
       transID = self.transID
     res = self.transClient.getCounters('TransformationFiles', ['UsedSE'],
@@ -335,9 +316,7 @@ class PluginUtilities(DIRACPluginUtilities):
     return S_OK(usageDict)
 
   def getMetadataFromTSorBK(self, lfns, param):
-    """
-    Get BK parameters from BK unless they are already present in the TS
-    """
+    """Get BK parameters from BK unless they are already present in the TS."""
     if isinstance(lfns, basestring):
       lfns = [lfns]
     filesParam = {}
@@ -390,9 +369,8 @@ class PluginUtilities(DIRACPluginUtilities):
     return filesParam
 
   def getProductions(self, processingPasses, transStatus):
-    """
-    Get the list of productions matching a given list of processing passes
-    """
+    """Get the list of productions matching a given list of processing
+    passes."""
     # Get information about the current transformation
     transQuery = self.getTransQuery(self.transReplicas)
     if transQuery is None:
@@ -477,9 +455,8 @@ class PluginUtilities(DIRACPluginUtilities):
 
   # @timeThis
   def getFilesParam(self, lfns, param):
-    """
-    Return for each LFN the value of a single parameter "param" that can be cached
-    """
+    """Return for each LFN the value of a single parameter "param" that can be
+    cached."""
     # Make sure we request the same parameter
     if self.paramName and self.paramName != param:
       self.logWarn("Requested parameter %s not compatible with previously used parameter %s, \
@@ -507,9 +484,7 @@ get from BK" % (param, self.paramName))
     return filesParam
 
   def getStorageFreeSpace(self, candSEs):
-    """
-    Get free space in a list of SEs from the RSS
-    """
+    """Get free space in a list of SEs from the RSS."""
     weight = {}
     for se in candSEs:
       weight[se] = self.getRMFreeSpace(se)
@@ -517,9 +492,7 @@ get from BK" % (param, self.paramName))
     return weight
 
   def getRMFreeSpace(self, se):
-    """
-    Get free space in an SE from the RSS
-    """
+    """Get free space in an SE from the RSS."""
 
     isTape = StorageElement(se).status()['TapeSE']
     # For tape space token, the SRM information is useless, set it fixed
@@ -541,9 +514,7 @@ get from BK" % (param, self.paramName))
     return free
 
   def rankSEs(self, candSEs):
-    """
-    Ranks the SEs according to their free space
-    """
+    """Ranks the SEs according to their free space."""
     if len(candSEs) <= 1:
       return candSEs
     # Weights should be obtained from the RSS or CS
@@ -575,10 +546,9 @@ get from BK" % (param, self.paramName))
 
   def setTargetSEs(self, numberOfCopies, archive1SEs, archive2SEs,
                    mandatorySEs, secondarySEs, existingSEs, exclusiveSEs=False):
-    """
-    Decide on which SEs to target from lists and current status of replication
-        Policy is max one archive1, one archive 2, all mandatory SEs and required number of copies elsewhere
-    """
+    """Decide on which SEs to target from lists and current status of
+    replication Policy is max one archive1, one archive 2, all mandatory SEs
+    and required number of copies elsewhere."""
     # Select active SEs
     nbArchive1 = min(1, len(archive1SEs))
     nbArchive2 = min(1, len(archive2SEs))
@@ -639,10 +609,8 @@ get from BK" % (param, self.paramName))
     return ','.join(sorted(targetSEs))
 
   def selectSEs(self, candSEs, needToCopy, existingSEs):
-    """
-    Select SEs from a list, preferably from existing SEs
-        in order to obtain the required number of replicas
-    """
+    """Select SEs from a list, preferably from existing SEs in order to obtain
+    the required number of replicas."""
     targetSEs = []
     for se in [se for se in candSEs if se in existingSEs]:
       if needToCopy <= 0:
@@ -659,10 +627,9 @@ get from BK" % (param, self.paramName))
     return targetSEs
 
   def assignTargetToLfns(self, lfns, replicas, stringTargetSEs):
-    """
-    Assign target SEs for each LFN, excluding the existing ones
-        Returns a dictionary for files to be transferred and a list of files already in place
-    """
+    """Assign target SEs for each LFN, excluding the existing ones Returns a
+    dictionary for files to be transferred and a list of files already in
+    place."""
     # Suppress duplicate SEs from list
     targetSEs = self.uniqueSEs([se for se in stringTargetSEs.split(',') if se])
     alreadyCompleted = []
@@ -683,18 +650,18 @@ get from BK" % (param, self.paramName))
 
   # @timeThis
   def getProcessedFiles(self, lfns):
-    """
-    Check which files have been processed by a given production, i.e. have a meaningful descendant
-    """
+    """Check which files have been processed by a given production, i.e. have a
+    meaningful descendant."""
     from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import getFileDescendants
     return getFileDescendants(self.transID, lfns, transClient=self.transClient,
                               dm=self.dm, bkClient=self.bkClient)
 
   # @timeThis
   def getRAWAncestorsForRun(self, runID, param=None, paramValue=None, getFiles=False):
-    """
-    Determine from BK how many ancestors files from a given run we have.
-    This is used for deciding when to flush a run (when all RAW files have been processed)
+    """Determine from BK how many ancestors files from a given run we have.
+
+    This is used for deciding when to flush a run (when all RAW files
+    have been processed)
     """
     ancestorFiles = set()
     # The transformation files cannot be cached globally as they evolve at each cycle
@@ -766,10 +733,9 @@ get from BK" % (param, self.paramName))
     return ancestors
 
   def __getNotProcessedAncestors(self, runID, lfnToCheck):
-    """
-    returns the number of RAW ancestor files that were not processed by the reconstruction production
-    This is necessary only if that produciton is not processing all files, but in the doubt we check it
-    """
+    """returns the number of RAW ancestor files that were not processed by the
+    reconstruction production This is necessary only if that produciton is not
+    processing all files, but in the doubt we check it."""
     if runID in self.notProcessed or not lfnToCheck:
       return self.notProcessed.get(runID, 0)
     ancestorFullDST = None
@@ -822,8 +788,7 @@ get from BK" % (param, self.paramName))
     return self.bkClient.getFileAncestors(lfns, depth=depth, replica=replica)
 
   def checkAncestorsAtSE(self, taskLfns, seList):
-    """
-    Check if ancestors of a list of files are present at a set of SEs
+    """Check if ancestors of a list of files are present at a set of SEs.
 
     :param list taskLfns: list of lfn lists for all tasks
     :param list seList: list of SEs to consider
@@ -862,8 +827,7 @@ get from BK" % (param, self.paramName))
 
   # @timeThis
   def getTransformationRuns(self, runs=None, transID=None):
-    """
-    get the run table for a list of runs, if missing, add them
+    """get the run table for a list of runs, if missing, add them.
 
     :param (list,tuple,dict,set,int,long): iterable with run numbers or single run number
     :param int transID: transformation ID. If not speficied, use the current ID
@@ -897,9 +861,8 @@ get from BK" % (param, self.paramName))
 
   # @timeThis
   def getFilesGroupedByRunAndParam(self, lfns=None, param=''):
-    """
-    Group files by run and another BK parameter (e.g. file type or event type)
-    """
+    """Group files by run and another BK parameter (e.g. file type or event
+    type)"""
     runDict = {}
     # no need to query the BK as we have the answer from files
     if lfns is None:
@@ -934,9 +897,7 @@ get from BK" % (param, self.paramName))
     return runDict
 
   def getFilesGroupedByRun(self, lfns=None):
-    """
-    Get files per run in a dictionary and set the run number if not done
-    """
+    """Get files per run in a dictionary and set the run number if not done."""
     # Split the files in run groups
     if lfns is None:
       files = self.transFiles
@@ -961,9 +922,7 @@ get from BK" % (param, self.paramName))
     return runGroups
 
   def createTasks(self, storageElementGroups, chunkSize=None):
-    """
-    Create reasonable size tasks
-    """
+    """Create reasonable size tasks."""
     tasks = []
     if not chunkSize:
       chunkSize = self.getPluginParam('MaxFilesPerTask', 100)
@@ -975,9 +934,7 @@ get from BK" % (param, self.paramName))
     return tasks
 
   def readCacheFile(self, workDirectory):
-    """
-    Utility function
-    """
+    """Utility function."""
     import pickle
     # Now try and get the cached information
     tmpDir = os.environ.get('TMPDIR', '/tmp')
@@ -1013,15 +970,11 @@ get from BK" % (param, self.paramName))
         self.logVerbose("Cache file %s could not be loaded" % cacheFile)
 
   def getCachedRunLFNs(self, runID, paramValue):
-    """
-    Keep track of all files for a given parameter value
-    """
+    """Keep track of all files for a given parameter value."""
     return set(self.cachedRunLfns.get(runID, {}).get(paramValue, []))
 
   def setCachedRunLfns(self, runID, paramValue, lfnList):
-    """
-    Cache the list of LFNs for a given parameter value
-    """
+    """Cache the list of LFNs for a given parameter value."""
     self.cachedRunLfns.setdefault(runID, {})[paramValue] = lfnList
 
   def getCachedProductions(self):
@@ -1043,9 +996,7 @@ get from BK" % (param, self.paramName))
 
   # @timeThis
   def getNbRAWInRun(self, runID, evtType):
-    """
-    Get the number of RAW files in a run
-    """
+    """Get the number of RAW files in a run."""
     # Every now and then refresh the cache
     rawFiles = self.cachedNbRAWFiles.get(runID, {}).get(evtType)
     if not rawFiles:
@@ -1062,9 +1013,7 @@ get from BK" % (param, self.paramName))
     return rawFiles
 
   def writeCacheFile(self):
-    """
-    Utility function
-    """
+    """Utility function."""
     import pickle
     if self.cacheFile:
       try:
@@ -1082,9 +1031,7 @@ get from BK" % (param, self.paramName))
         self.logException("Could not write cache file", self.cacheFile, lException=e)
 
   def setRunForFiles(self, lfns):
-    """
-    For files that are missing the run number, set it from BK
-    """
+    """For files that are missing the run number, set it from BK."""
     res = self.bkClient.getFileMetadata(lfns)
     runFiles = {}
     if res['OK']:
@@ -1107,9 +1054,7 @@ get from BK" % (param, self.paramName))
     return runFiles
 
   def getTransQuery(self, transReplicas):
-    """
-    Get BK query for the current transformation
-    """
+    """Get BK query for the current transformation."""
     res = self.transClient.getBookkeepingQuery(self.transID)
     if not res['OK']:
       self.logError("Failed to get BK query for transformation", res['Message'])
@@ -1130,9 +1075,8 @@ get from BK" % (param, self.paramName))
     return transQuery
 
   def cleanFiles(self, transFiles, transReplicas, status=None):
-    """
-    Remove from transFiles all files without a replica and set their status
-    """
+    """Remove from transFiles all files without a replica and set their
+    status."""
     noReplicaFiles = []
     for fileDict in [fileDict for fileDict in transFiles]:
       if fileDict['LFN'] not in transReplicas:
@@ -1149,9 +1093,8 @@ get from BK" % (param, self.paramName))
         self.logInfo('Found %d files %s, status set to %s' % (len(noReplicaFiles), info, status))
 
   def __getRunDestinations(self, runIDList):
-    """
-    Get the site destination for a set of runs and cache this information in memory
-    """
+    """Get the site destination for a set of runs and cache this information in
+    memory."""
     runSet = set(runIDList) - set(self.runDestinations)
     if runSet:
       # Try and get a run destination from TS
@@ -1165,9 +1108,8 @@ get from BK" % (param, self.paramName))
             self.runDestinations[runID] = dest[runID]
 
   def getSEForDestination(self, runID, targets):
-    """
-    for a given run, get the information on destination SE from within a list of SEs
-    """
+    """for a given run, get the information on destination SE from within a
+    list of SEs."""
     self.__getRunDestinations([runID])
     site = self.runDestinations.get(runID)
     if site:
@@ -1216,15 +1158,14 @@ get from BK" % (param, self.paramName))
     return prodLfns
 
   def __getChunkSize(self):
-    """ Cache the chunk size """
+    """Cache the chunk size."""
     if self.chunkForFileDescendants is None:
       self.chunkForFileDescendants = self.getPluginParam('MaxFilesToGetDescendants', 100)
     return self.chunkForFileDescendants
 
   def checkForDescendants(self, lfnSet, prodList, depth=0):
-    """
-    check if the files have an existing descendant in the list of productions
-    """
+    """check if the files have an existing descendant in the list of
+    productions."""
     finalResult = set()
     if not lfnSet or not prodList:
       return S_OK(finalResult)
@@ -1326,9 +1267,8 @@ get from BK" % (param, self.paramName))
     return S_OK(finalResult)
 
   def __getStorageUsage(self, dirList, seList):
-    """
-    Get from StorageUsage the actual number of files for a list of directories at a list of SEs
-    """
+    """Get from StorageUsage the actual number of files for a list of
+    directories at a list of SEs."""
     suClient = StorageUsageClient()
     result = {}
     if isinstance(seList, (dict, set, tuple)):
@@ -1343,10 +1283,8 @@ get from BK" % (param, self.paramName))
     return S_OK(result)
 
   def _countRecentFiles(self, recentFiles, status, destSEs, dirList, delay):
-    """
-    Get files in a given status, and count how many are targeted for SEs in a list
-    with a lastUpdate more recent than 'delay' hours
-    """
+    """Get files in a given status, and count how many are targeted for SEs in
+    a list with a lastUpdate more recent than 'delay' hours."""
     self.logDebug("Getting %s files in dir %s at %s in last %d hours" %
                   (status, ','.join(dirList), ','.join(destSEs), delay))
     condDict = {'TransformationID': self.transID, 'Status': status}
@@ -1365,11 +1303,10 @@ get from BK" % (param, self.paramName))
     return S_OK()
 
   def __getMaxFilesAtSE(self, targetFilesAtDestination, directories, destSEs):
-    """
-    Get the number of files already present at SEs for a list of LFN directories
-    Using the processing and RAW distribution shares, split the maximum number of files to be staged on these SEs
-    and return the number of files that can possibly be added
-    """
+    """Get the number of files already present at SEs for a list of LFN
+    directories Using the processing and RAW distribution shares, split the
+    maximum number of files to be staged on these SEs and return the number of
+    files that can possibly be added."""
     # We strip off the directory to a default depth of 4 as we ignore the production
     dirList = stripDirectory(directories)
     # Add possibility to throttle the frequency of the plugin, but not clear if this is useful
@@ -1427,11 +1364,9 @@ get from BK" % (param, self.paramName))
     return S_OK(maxFilesAtSE)
 
   def getMaxFilesToReplicate(self, workDirectory):
-    """
-    Get the watermark and max files per SE if defined
-    The keys of maxFilesAtSE are the destination SEs
-    If plugin should just return, set watermark to None
-    """
+    """Get the watermark and max files per SE if defined The keys of
+    maxFilesAtSE are the destination SEs If plugin should just return, set
+    watermark to None."""
     destSEs = set(resolveSEGroup(self.getPluginParam('DestinationSEs', [])))
     maxFilesAtSE = dict.fromkeys(destSEs, sys.maxsize)
     if not destSEs:
@@ -1462,15 +1397,11 @@ get from BK" % (param, self.paramName))
     return S_OK((watermark, maxFilesAtSE))
 
   def _getFileSize(self, lfns):
-    """
-    Overwrite the DIRAC method and get the file size from the TS tables
-    """
+    """Overwrite the DIRAC method and get the file size from the TS tables."""
     return S_OK(self.getMetadataFromTSorBK(lfns, 'FileSize'))
 
   def checkCondDBRunTick(self, runID):
-    """
-    Check for the presence of the run tick in the ConDB
-    """
+    """Check for the presence of the run tick in the ConDB."""
     if not self.onlineCondDB:
       self.onlineCondDB = self.getPluginParam("OnlineCondDB", "/cvmfs/lhcb.cern.ch/lib/lhcb/git-conddb/ONLINE.git")
 
@@ -1487,9 +1418,7 @@ get from BK" % (param, self.paramName))
 
 
 def getRemovalPlugins():
-  """
-  Returns list of removal plugins
-  """
+  """Returns list of removal plugins."""
   return ("DestroyDataset", 'DestroyDatasetWhenProcessed', "RemoveDatasetFromDisk",
           'RemoveReplicasKeepDestination', "ReduceReplicasKeepDestination",
           "RemoveReplicas", 'RemoveReplicasWhenProcessed',
@@ -1497,9 +1426,7 @@ def getRemovalPlugins():
 
 
 def getReplicationPlugins():
-  """
-  Returns list of replication plugins
-  """
+  """Returns list of replication plugins."""
   return ("LHCbDSTBroadcast", "LHCbMCDSTBroadcastRandom",
           "ArchiveDataset", "ReplicateDataset",
           'RAWReplication', "ReplicateToRunDestination",
@@ -1508,10 +1435,8 @@ def getReplicationPlugins():
 
 
 def getShares(sType, normalise=False):
-  """
-  Get the shares from the Operations section of the CS
-  If not found, look in the Resources section
-  """
+  """Get the shares from the Operations section of the CS If not found, look in
+  the Resources section."""
   optionPath = 'Shares/%s' % sType
   res = Operations().getOptionsDict(optionPath)
   if not res['OK']:
@@ -1531,8 +1456,7 @@ def getShares(sType, normalise=False):
 
 
 def normaliseShares(shares):
-  """
-  Normalise to 1 the sum of shares
+  """Normalise to 1 the sum of shares.
 
   :param shares: shares per SE or site
   :type shares: dict
@@ -1551,9 +1475,8 @@ def normaliseShares(shares):
 
 
 def groupByRun(files):
-  """ Groups files by run
-  files is a list of dictionaries containing the run number
-  """
+  """Groups files by run files is a list of dictionaries containing the run
+  number."""
   runDict = {}
   for fileDict in files:
     runID = fileDict.get('RunNumber')
@@ -1564,10 +1487,9 @@ def groupByRun(files):
 
 
 def addFilesToTransformation(transID, lfns, addRunInfo=True):
-  """
-  Add files to a transformation, including the run number if required
-  As this is also used by the add-files script, we also add run metadata to the TS is not present
-  """
+  """Add files to a transformation, including the run number if required As
+  this is also used by the add-files script, we also add run metadata to the TS
+  is not present."""
   transClient = TransformationClient()
   bk = BookkeepingClient()
   gLogger.info("Adding %d files to transformation %s" % (len(lfns), transID))
@@ -1636,7 +1558,8 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
 
 
 def stripDirectory(files, depth=None):
-  """ Return set of directories for a list of LFNs, and directory for a single LFN """
+  """Return set of directories for a list of LFNs, and directory for a single
+  LFN."""
   if depth is None:
     depth = 4
   if isinstance(files, basestring):

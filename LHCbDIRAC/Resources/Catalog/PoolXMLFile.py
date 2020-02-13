@@ -8,17 +8,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Interacts with pool xml catalog
-"""
+"""Interacts with pool xml catalog."""
 
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
 from DIRAC.Resources.Catalog.PoolXMLFile import _getPoolCatalogs
 
 
 def getOutputType(outputs, inputs, directory=''):
-  """ This function searches the directory for POOL XML catalog files and extracts the type of the pfn.
+  """This function searches the directory for POOL XML catalog files and
+  extracts the type of the pfn.
 
-      If not found, inherits from the type of the inputs
+  If not found, inherits from the type of the inputs
   """
 
   if not isinstance(outputs, list):

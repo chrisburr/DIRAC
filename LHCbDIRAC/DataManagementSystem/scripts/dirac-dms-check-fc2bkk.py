@@ -9,15 +9,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-    Uses the DM script switches, and, unless a list of LFNs is provided:
+"""Uses the DM script switches, and, unless a list of LFNs is provided:
 
-    1) If --Directory is used: get files in FC directories, check if they are in BK and if the replica flag is set
-    2) If --Production is used get files in the FC directories used, and proceed as with --Directory
+1) If --Directory is used: get files in FC directories, check if they are in BK and if the replica flag is set
+2) If --Production is used get files in the FC directories used, and proceed as with --Directory
 
-    If --FixFC is set, remove from SE and FC
-    If --FixBK is set and no replica flag, set replica flag in the BK
-'''
+If --FixFC is set, remove from SE and FC
+If --FixBK is set and no replica flag, set replica flag in the BK
+"""
 __RCSID__ = "$Id$"
 
 # Code

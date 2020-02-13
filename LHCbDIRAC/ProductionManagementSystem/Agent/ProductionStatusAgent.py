@@ -8,30 +8,30 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""  The ProductionStatusAgent monitors productions for active requests
-     and takes care to update their status. Initially this is just to handle
-     simulation requests.
+"""The ProductionStatusAgent monitors productions for active requests and takes
+care to update their status. Initially this is just to handle simulation
+requests.
 
-     Allowed production status transitions performed by this agent include:
+Allowed production status transitions performed by this agent include:
 
-     Idle -> ValidatingInput
-     Idle -> ValidatingOutput
+Idle -> ValidatingInput
+Idle -> ValidatingOutput
 
-     ValidatedOutput -> Completed
+ValidatedOutput -> Completed
 
-     ValidatingInput -> RemovingFiles
+ValidatingInput -> RemovingFiles
 
-     RemovedFiles -> Completed
+RemovedFiles -> Completed
 
-     Active -> Idle
+Active -> Idle
 
-     Testing -> Idle
+Testing -> Idle
 
-     In addition this also updates request status from Active to Done.
+In addition this also updates request status from Active to Done.
 
-     To do: review usage of production API(s) and re-factor into Production Client
+To do: review usage of production API(s) and re-factor into Production Client
 
-     AZ 10.14: merged with a part from RequestTrackingAgent to avoid race conditions
+AZ 10.14: merged with a part from RequestTrackingAgent to avoid race conditions
 """
 
 import time
@@ -63,15 +63,16 @@ __RCSID__ = "$Id$"
 
 
 class ProductionRequestSIM(object):
-  """ Simulate PrductionRequest Service
-  """
+  """Simulate PrductionRequest Service."""
 
   def __init__(self, *args, **kwargs):
-    """ Define some test Production Requests:
-       Active Simulation Request with 3 transformations. (pr 1, t 11 MCSimulation, 12 MCStripping, 13 MCMerge)
-       Active Simulation Request with 2 subrequests,
-       2 transformations in each (pr 2,(3,4) t (14 MCSimulation, 15 MCMerge), (16,17) )
-       Active Stripping Request with 2 transformations. (pr 5, t (18 DataStripping, 19 MCMerge))
+    """Define some test Production Requests:
+
+    Active Simulation Request with 3 transformations. (pr 1, t 11
+    MCSimulation, 12 MCStripping, 13 MCMerge) Active Simulation Request
+    with 2 subrequests, 2 transformations in each (pr 2,(3,4) t (14
+    MCSimulation, 15 MCMerge), (16,17) ) Active Stripping Request with 2
+    transformations. (pr 5, t (18 DataStripping, 19 MCMerge))
     """
     self.pr = {
         1: {'state': 'Active', 'type': 'Simulation', 'master': 0, 'rqTotal': 10000, 'prods': {
@@ -90,8 +91,7 @@ class ProductionRequestSIM(object):
             19: {'Used': 1, 'Events': 0}}}}
 
   def getAllProductionProgress(self):
-    """ Returns all known productions
-    """
+    """Returns all known productions."""
     answer = {}
     for prID, summary in self.pr.iteritems():
       answer[prID] = {}
@@ -100,8 +100,7 @@ class ProductionRequestSIM(object):
     return S_OK(answer)
 
   def getProductionRequestList(self, master, u1, u2, u3, u4, rfilter):
-    """ Only works for the calls used in this agent
-    """
+    """Only works for the calls used in this agent."""
     answer = []
     for prID, summary in self.pr.iteritems():
       toInclude = False
@@ -124,8 +123,7 @@ class ProductionRequestSIM(object):
     return S_OK({'Rows': answer})
 
   def updateProductionRequest(self, prID, updDict):
-    """ Update the state of the request
-    """
+    """Update the state of the request."""
     if prID in self.pr and 'RequestState' in updDict:
       self.pr[prID]['state'] = updDict['RequestState']
       return S_OK()
@@ -133,8 +131,7 @@ class ProductionRequestSIM(object):
     return S_ERROR(' Unsupported ')
 
   def updateTrackedProductions(self, toUpdate):
-    """ Update production progress
-    """
+    """Update production progress."""
     for it in toUpdate:
       for _prID, summary in self.pr.iteritems():
         if it['ProductionID'] in summary['prods']:
@@ -143,16 +140,14 @@ class ProductionRequestSIM(object):
     return S_OK()
 
   def __getPrForT(self, tID):
-    """ For simulation only
-    """
+    """For simulation only."""
     for _prID, summary in self.pr.iteritems():
       if tID in summary['prods']:
         return summary
     return {}
 
   def getBkTotalForT(self, tID):
-    """ For simulation only
-    """
+    """For simulation only."""
     bkTotal = 0
     summary = self.__getPrForT(tID)
     for _tID, tInfo in summary['prods'].iteritems():
@@ -161,20 +156,19 @@ class ProductionRequestSIM(object):
     return bkTotal
 
   def getPrTotalForT(self, tID):
-    """ For simulation only
-    """
+    """For simulation only."""
     summary = self.__getPrForT(tID)
     return summary['rqTotal']
 
 
 class TransformationAndBookkeepingSIM(object):
-  """ Simulate TransformationClient and Bookkeeping client
-  """
+  """Simulate TransformationClient and Bookkeeping client."""
 
   def __init__(self, *args, **kwargs):
-    """ Define some test Transformations:
-       11-18 from simulated requests
-       100 is not request related transformation
+    """Define some test Transformations:
+
+    11-18 from simulated requests 100 is not request related
+    transformation
     """
     self.t_types = {11: 'MCSimulation', 12: 'MCStripping', 13: 'MCMerge', 14: 'MCSimulation', 15: 'MCReconstruction',
                     16: 'MCSimulation', 17: 'MCReconstruction', 18: 'DataStripping', 19: 'MCMerge',
@@ -191,8 +185,7 @@ class TransformationAndBookkeepingSIM(object):
     self.fPerJob = 10  # number of files to merge in one MC merge job
 
   def __animateJobs(self, tID, failing):
-    """ All running jobs go to either failed ot done state
-    """
+    """All running jobs go to either failed ot done state."""
     ts = self.t[tID]['tasksStat']
     nJobsRun = ts['Running']
     if nJobsRun == 0:
@@ -207,8 +200,7 @@ class TransformationAndBookkeepingSIM(object):
     return (nJobsDone, nJobsFail)
 
   def __createProcessingJobs(self, tID, fPerJob):
-    """ Create processing jobs using filesStat
-    """
+    """Create processing jobs using filesStat."""
     fs = self.t[tID]['filesStat']
     nJobs = int(fs['Unused'] / fPerJob)
     if nJobs == 0:
@@ -221,8 +213,7 @@ class TransformationAndBookkeepingSIM(object):
     return True
 
   def __animateMerging(self, tID, failing):
-    """ Advance merging transformation
-    """
+    """Advance merging transformation."""
 
     (nJobsDone, nJobsFail) = self.__animateJobs(tID, failing)
     fs = self.t[tID]['filesStat']
@@ -242,8 +233,7 @@ class TransformationAndBookkeepingSIM(object):
       self.log.verbose('Merging %s: %s' % (tID, str(self.t[tID])))
 
   def __animateStripping(self, tID, tNextID, failing):
-    """ Advance stripping transformation
-    """
+    """Advance stripping transformation."""
     (nJobsDone, nJobsFail) = self.__animateJobs(tID, failing)
     fs = self.t[tID]['filesStat']
     fs['Processed'] += nJobsDone
@@ -263,8 +253,7 @@ class TransformationAndBookkeepingSIM(object):
       self.log.verbose('Stripping %s: %s' % (tID, str(self.t[tID])))
 
   def __extendSimulation(self, tID, prClient):
-    """ Imitate simulation extention
-    """
+    """Imitate simulation extention."""
     bkTotal = prClient.getBkTotalForT(tID)
     prTotal = prClient.getPrTotalForT(tID)
     if bkTotal >= prTotal:
@@ -276,8 +265,7 @@ class TransformationAndBookkeepingSIM(object):
     return True
 
   def __animateSimulation(self, tID, tNextID, failing, prClient):
-    """ Advance simulation transformation
-    """
+    """Advance simulation transformation."""
 
     (nJobsDone, _nJobsFail) = self.__animateJobs(tID, failing)
     self.t[tID]['processedEvents'] += nJobsDone * self.evPerFile
@@ -296,8 +284,7 @@ class TransformationAndBookkeepingSIM(object):
       self.log.verbose('MC Simulation %s: %s' % (tID, str(self.t[tID])))
 
   def _animate3TSimulation(self, prClient):
-    """ animate Simulation->Stripping->MCMerge production request
-    """
+    """animate Simulation->Stripping->MCMerge production request."""
     if self.t[11]['tasksStat']['TotalCreated'] == 0:
       self.__extendSimulation(11, prClient)
       self.log.verbose('MC Simulation %s: %s' % (11, str(self.t[11])))
@@ -308,8 +295,7 @@ class TransformationAndBookkeepingSIM(object):
     self.__animateSimulation(11, 12, 20, prClient)
 
   def _animate2x2TSimulation(self, prClient):
-    """ animate 2x Simulation->Reconstruction production request
-    """
+    """animate 2x Simulation->Reconstruction production request."""
     if self.t[14]['tasksStat']['TotalCreated'] == 0:
       self.__extendSimulation(14, prClient)
       self.__extendSimulation(16, prClient)
@@ -323,8 +309,7 @@ class TransformationAndBookkeepingSIM(object):
     self.__animateSimulation(16, 17, 20, prClient)
 
   def _animateReplication(self):
-    """ animate replication transformation
-    """
+    """animate replication transformation."""
     tInfo = self.t[100]
     ts = tInfo['tasksStat']
     fs = tInfo['filesStat']
@@ -356,8 +341,7 @@ class TransformationAndBookkeepingSIM(object):
     self.log.verbose('Replication %s : %s' % (100, str(tInfo)))
 
   def animate(self, prClient):
-    """ Calculate next "step" of simulation
-    """
+    """Calculate next "step" of simulation."""
     # self._animateReplication()
     # self._animate3TSimulation( prClient )
     self._animate2x2TSimulation(prClient)
@@ -387,8 +371,7 @@ class TransformationAndBookkeepingSIM(object):
     return S_OK(self.t[tID]['tasksStat'])
 
   def setTransformationParameter(self, tID, par, value):
-    """ Only able to set "Status"
-    """
+    """Only able to set "Status"."""
     if tID not in self.t:
       return S_ERROR('Transformation %s does not exists' % tID)
     if par != 'Status':
@@ -400,11 +383,10 @@ class TransformationAndBookkeepingSIM(object):
 
 
 class ProductionStatusAgent(AgentModule):
-  """ Usual DIRAC agent
-  """
+  """Usual DIRAC agent."""
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
+    """c'tor.
 
     :param self: self reference
     :param str agentName: name of agent
@@ -457,8 +439,7 @@ class ProductionStatusAgent(AgentModule):
 
   #############################################################################
   def initialize(self):
-    """ Sets default values.
-    """
+    """Sets default values."""
     # shifter
     self.am_setOption('shifterProxy', 'ProductionManager')
 
@@ -479,8 +460,8 @@ class ProductionStatusAgent(AgentModule):
 
   #############################################################################
   def execute(self):
-    """ The execution method, track requests progress and implement a part of Production SM
-    """
+    """The execution method, track requests progress and implement a part of
+    Production SM."""
     updatedT = {}  # updated transformations
     updatedPr = []  # updated production requests (excluding traking updates)
 
@@ -557,9 +538,8 @@ class ProductionStatusAgent(AgentModule):
 
   @timeThis
   def __getProductionRequestsProgress(self):
-    """ get known progress for Active requests related productions
-        Failures there are critical and can inforce wrong logic
-    """
+    """get known progress for Active requests related productions Failures
+    there are critical and can inforce wrong logic."""
 
     self.log.verbose("Collecting old Production Request Progress...")
     result = self.prClient.getAllProductionProgress()
@@ -578,9 +558,10 @@ class ProductionStatusAgent(AgentModule):
 
   @timeThis
   def _getActiveProductionRequests(self):
-    """ get 'Active' requests.
-        Failures there are critical and can inforce wrong logic
-        Note: this method can be moved to the service
+    """get 'Active' requests.
+
+    Failures there are critical and can inforce wrong logic
+    Note: this method can be moved to the service
     """
     self.log.info("Collecting active production requests...")
     result = self.prClient.getProductionRequestList(0, '', 'ASC', 0, 0, {'RequestState': 'Active'})
@@ -615,7 +596,9 @@ class ProductionStatusAgent(AgentModule):
 
   @timeThis
   def __getTransformations(self, status):
-    """ dev function. Get the transformations (print info in the meanwhile)
+    """dev function.
+
+    Get the transformations (print info in the meanwhile)
     """
 
     res = self.tClient.getTransformationWithStatus(status)
@@ -635,9 +618,9 @@ class ProductionStatusAgent(AgentModule):
 
   @timeThis
   def _getTransformationsState(self):
-    """ get Transformations state (set 'Other' for not interesting states)
-        failures to get something are not critical since there is no reaction on 'Other' state
-    """
+    """get Transformations state (set 'Other' for not interesting states)
+    failures to get something are not critical since there is no reaction on
+    'Other' state."""
     self.log.info("Collecting transformations state...")
     try:
       # We put 'Finished' for both
@@ -668,8 +651,8 @@ class ProductionStatusAgent(AgentModule):
     self.log.verbose("Done with collecting transformations states")
 
   def __getTransformationTaskStats(self, tID):
-    """ get the stats for a transformation tasks (number of tasks in each status)
-    """
+    """get the stats for a transformation tasks (number of tasks in each
+    status)"""
 
     result = self.tClient.getTransformationTaskStats(tID)
     if not result['OK']:
@@ -681,8 +664,8 @@ class ProductionStatusAgent(AgentModule):
     return tTaskStats
 
   def __getTransformationFilesStats(self, tID):
-    """ get the stats for a transformation files (number of files in each status)
-    """
+    """get the stats for a transformation files (number of files in each
+    status)"""
 
     result = self.tClient.getTransformationStats(tID)
     if not result['OK']:
@@ -694,8 +677,8 @@ class ProductionStatusAgent(AgentModule):
     return tFilesStats
 
   def __isIdle(self, tID):
-    """ Checks if a transformation is idle, is procIdle and either the transformation is simulation
-    """
+    """Checks if a transformation is idle, is procIdle and either the
+    transformation is simulation."""
     self.log.debug("Checking either transformation %d is idle" % tID)
     result = self.tClient.getTransformation(tID)
     if not result['OK']:
@@ -740,8 +723,9 @@ class ProductionStatusAgent(AgentModule):
     return (isIdle, isProcIdle, isSimulation)
 
   def _getIdleProductionRequestProductions(self):
-    """ evaluate isIdle and isProcIdle status for all productions we need.
-        failures are rememberd and are taken into account later
+    """evaluate isIdle and isProcIdle status for all productions we need.
+
+    failures are rememberd and are taken into account later
     """
     self.log.verbose("Checking idle productions...")
     for tID, prID in self.prProds.iteritems():
@@ -764,9 +748,8 @@ class ProductionStatusAgent(AgentModule):
     self.log.verbose("Checking idle done")
 
   def _trackProductionRequests(self):
-    """ contact BK for the current number of processed events
-        failures are critical
-    """
+    """contact BK for the current number of processed events failures are
+    critical."""
     self.log.info("Updating production requests progress...")
 
     # Using 10 threads, and waiting for the results before continuing
@@ -811,8 +794,7 @@ class ProductionStatusAgent(AgentModule):
     return BookkeepingClient().getProductionProducedEvents(tID)
 
   def _cleanFilesUnused(self):
-    """ remove old transformations from filesUnused
-    """
+    """remove old transformations from filesUnused."""
     oldIDs = []
     for tID in self.filesUnused:
       if tID in self.prProds:
@@ -828,9 +810,11 @@ class ProductionStatusAgent(AgentModule):
       del self.filesUnused[tID]
 
   def __updateTransformationStatus(self, tID, origStatus, status, updatedT):
-    """ This method updates the transformation status and logs the changes for each
-        iteration of the agent.  Most importantly this method only allows status
-        transitions based on what the original status should be.
+    """This method updates the transformation status and logs the changes for
+    each iteration of the agent.
+
+    Most importantly this method only allows status transitions based on
+    what the original status should be.
     """
     self.log.info('Changing status for transformation %s to %s' % (tID, status))
 
@@ -848,9 +832,8 @@ class ProductionStatusAgent(AgentModule):
       self.log.error(error)
 
   def _mailProdManager(self, updatedT, updatedPr):
-    """ Notify the production manager of the changes as productions should be
-        manually extended in some cases.
-    """
+    """Notify the production manager of the changes as productions should be
+    manually extended in some cases."""
     if not updatedT and not updatedPr:
       self.log.verbose('No changes this cycle, mail will not be sent')
       return
@@ -889,8 +872,7 @@ class ProductionStatusAgent(AgentModule):
         self.log.info('Mail summary queued for sending')
 
   def __updateProductionRequestStatus(self, prID, status, updatedPr):
-    """ This method updates the production request status.
-    """
+    """This method updates the production request status."""
     self.log.info('Marking Production Request %s as %s' % (prID, status))
 
     if not gDoRealUpdate:
@@ -905,9 +887,8 @@ class ProductionStatusAgent(AgentModule):
       updatedPr.append(prID)
 
   def _applyOtherTransformationsLogic(self, updatedT):
-    """ animate not Production Requests related transformations
-        failures are not clitical
-    """
+    """animate not Production Requests related transformations failures are not
+    clitical."""
     self.log.verbose("Updating requests unrelated transformations...")
 
     if 'RemovedFiles' in self.notPrTrans:
@@ -941,8 +922,7 @@ class ProductionStatusAgent(AgentModule):
     self.log.verbose('Requests unrelated transformations update is finished')
 
   def _isReallyDone(self, summary):
-    """ Evaluate 'isDone' from current update cycle
-    """
+    """Evaluate 'isDone' from current update cycle."""
     bkTotal = 0
     for _tID, tInfo in summary['prods'].iteritems():
       if tInfo['Used']:
@@ -950,8 +930,8 @@ class ProductionStatusAgent(AgentModule):
     return True if bkTotal >= summary['prTotal'] else False
 
   def _producersAreIdle(self, summary):
-    """ Return True in case all producers (not 'Used') transformations are Idle, Finished or not exist
-    """
+    """Return True in case all producers (not 'Used') transformations are Idle,
+    Finished or not exist."""
     for _tID, tInfo in summary['prods'].iteritems():
       if tInfo['Used']:
         continue
@@ -960,8 +940,8 @@ class ProductionStatusAgent(AgentModule):
     return True
 
   def _producersAreProcIdle(self, summary):
-    """ Return True in case all producers (not 'Used') transformations are procIdle or finished or not exist
-    """
+    """Return True in case all producers (not 'Used') transformations are
+    procIdle or finished or not exist."""
     for _tID, tInfo in summary['prods'].iteritems():
       if tInfo['Used']:
         continue
@@ -970,8 +950,8 @@ class ProductionStatusAgent(AgentModule):
     return True
 
   def _processorsAreProcIdle(self, summary):
-    """ Return True in case all processors ('Used' or not Sim) transformations are procIdle or finished or not exist
-    """
+    """Return True in case all processors ('Used' or not Sim) transformations
+    are procIdle or finished or not exist."""
     for _tID, tInfo in summary['prods'].iteritems():
       if not tInfo['Used'] and tInfo['isSimulation']:
         continue
@@ -980,8 +960,8 @@ class ProductionStatusAgent(AgentModule):
     return True
 
   def _mergersAreDone(self, summary):
-    """ Return True in case all mergers ('Used') transformations are finished or not exist
-    """
+    """Return True in case all mergers ('Used') transformations are finished or
+    not exist."""
     for _tID, tInfo in summary['prods'].iteritems():
       if not tInfo['Used']:
         continue
@@ -990,8 +970,8 @@ class ProductionStatusAgent(AgentModule):
     return True
 
   def _mergersAreProcIdle(self, summary):
-    """ Return True in case all mergers ('Used') transformations are procIdle or finished or not exist
-    """
+    """Return True in case all mergers ('Used') transformations are procIdle or
+    finished or not exist."""
     for _tID, tInfo in summary['prods'].iteritems():
       if not tInfo['Used']:
         continue
@@ -1000,8 +980,8 @@ class ProductionStatusAgent(AgentModule):
     return True
 
   def _requestedMoreThenProduced(self, tID, summary):
-    """ Check that this transformation has registered less events than it was requested
-    """
+    """Check that this transformation has registered less events than it was
+    requested."""
     if summary['prods'][tID]['Events'] < summary['prTotal']:
       self.log.verbose(" Transformation %s has produced less events, asking for extention " % tID)
       return True

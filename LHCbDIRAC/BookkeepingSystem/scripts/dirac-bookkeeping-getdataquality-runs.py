@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-getdataquality-runs.py
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Get Data Quality Flag for the given run
-"""
+"""Get Data Quality Flag for the given run."""
 __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC.Core.Base import Script

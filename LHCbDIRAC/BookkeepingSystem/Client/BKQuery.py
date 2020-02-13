@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-BKQuery is a class that decodes BK paths, queries the BK at a high level
-"""
+"""BKQuery is a class that decodes BK paths, queries the BK at a high level."""
 
 __RCSID__ = "$Id$"
 
@@ -24,10 +22,10 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 
 
 def getProcessingPasses(bkQuery, depth=None):
-  """
-  Get the list of processing passes for a given BK query
-  The processing pass in the initial query may contain "..." or a '*', in which case this acts as a wildcard character
-  The search for processing passes may be limited to a certain depth (default: all)
+  """Get the list of processing passes for a given BK query The processing pass
+  in the initial query may contain "..." or a '*', in which case this acts as a
+  wildcard character The search for processing passes may be limited to a
+  certain depth (default: all)
 
   :param bkQuery: BK query dictionary
   :type bkQuery: dict
@@ -45,8 +43,7 @@ def getProcessingPasses(bkQuery, depth=None):
 
 
 def makeBKPath(bkDict):
-  """
-  Builds a path from the dictionary
+  """Builds a path from the dictionary.
 
   :param bkDict: BK query dictionary
   :type bkDict: dict
@@ -69,15 +66,12 @@ def makeBKPath(bkDict):
 
 
 class BadRunRange(Exception):
-  """
-  Exception class for bad run range
-  """
+  """Exception class for bad run range."""
   pass
 
 
 def parseRuns(bkQuery, runs):
-  """
-  Parse the parameter "Runs" and set it in the dictionary
+  """Parse the parameter "Runs" and set it in the dictionary.
 
   :param bkQuery: BK dictionary
   :type bkQuery: dict
@@ -131,10 +125,8 @@ def parseRuns(bkQuery, runs):
 
 
 class BKQuery():
-  """
-  It used to build a dictionary using a given Bookkeeping path
-  which is used to query the Bookkeeping database.
-  """
+  """It used to build a dictionary using a given Bookkeeping path which is used
+  to query the Bookkeeping database."""
 
   def __init__(self, bkQuery=None, prods=None, runs=None, fileTypes=None, visible=True, eventTypes=None):
     prods = prods if prods is not None else []
@@ -169,8 +161,7 @@ class BKQuery():
 
   def buildBKQuery(self, bkPath='', bkQueryDict=None, prods=None, runs=None,
                    fileTypes=None, visible=True, eventTypes=None):
-    """ it builds a dictionary using a path
-    """
+    """it builds a dictionary using a path."""
     bkQueryDict = bkQueryDict if bkQueryDict is not None else {}
     prods = prods if prods is not None else []
     if not isinstance(prods, list):
@@ -338,8 +329,9 @@ class BKQuery():
     return self.__bkQueryDict
 
   def setOption(self, key, val):
-    """
-    It insert an item to the dictionary. The key is an bookkeeping attribute (condition).
+    """It insert an item to the dictionary.
+
+    The key is an bookkeeping attribute (condition).
     """
     if val:
       self.__bkQueryDict[key] = val
@@ -348,7 +340,8 @@ class BKQuery():
     return self.__bkQueryDict
 
   def setConditions(self, cond=None):
-    """ Set the dictionary items for a given condition, or remove it (cond=None) """
+    """Set the dictionary items for a given condition, or remove it
+    (cond=None)"""
     if 'ConfigName' not in self.__bkQueryDict and cond:
       gLogger.warn("Impossible to set Conditions to a BK Query without Configuration")
       return self.__bkQueryDict
@@ -364,14 +357,11 @@ class BKQuery():
     return self.setOption(conditionsKey, cond)
 
   def setFileType(self, fileTypes=None):
-    """insert the file type to the Boookkeeping dictionary
-    """
+    """insert the file type to the Boookkeeping dictionary."""
     return self.setOption('FileType', self.__fileType(fileTypes))
 
   def setDQFlag(self, dqFlag='OK'):
-    """
-    Sets the data quality.
-    """
+    """Sets the data quality."""
     if isinstance(dqFlag, basestring):
       dqFlag = dqFlag.upper()
     elif isinstance(dqFlag, list):
@@ -379,27 +369,19 @@ class BKQuery():
     return self.setOption('DataQuality', dqFlag)
 
   def setStartDate(self, startDate):
-    """
-    Sets the start date.
-    """
+    """Sets the start date."""
     return self.setOption('StartDate', startDate)
 
   def setEndDate(self, endDate):
-    """
-    Sets the end date
-    """
+    """Sets the end date."""
     return self.setOption('EndDate', endDate)
 
   def setProcessingPass(self, processingPass):
-    """
-    Sets the processing pass
-    """
+    """Sets the processing pass."""
     return self.setOption('ProcessingPass', processingPass)
 
   def setEventType(self, eventTypes=None):
-    """
-    Sets the event type
-    """
+    """Sets the event type."""
     if eventTypes:
       if isinstance(eventTypes, basestring):
         eventTypes = eventTypes.split(',')
@@ -416,9 +398,7 @@ class BKQuery():
     return self.setOption('EventType', eventTypes)
 
   def setVisible(self, visible=None):
-    """
-    Sets the visibility flag
-    """
+    """Sets the visibility flag."""
     if visible is True or (isinstance(visible, basestring) and visible[0].lower() == 'y'):
       visible = 'Yes'
     if visible is False:
@@ -426,9 +406,7 @@ class BKQuery():
     return self.setOption('Visible', visible)
 
   def setExceptFileTypes(self, fileTypes):
-    """
-    Sets the expected file types
-    """
+    """Sets the expected file types."""
     if not isinstance(fileTypes, list):
       fileTypes = [fileTypes]
     self.__exceptFileTypes.update(fileTypes)
@@ -438,21 +416,15 @@ class BKQuery():
     return list(self.__exceptFileTypes)
 
   def getQueryDict(self):
-    """
-    Returns the bookkeeping dictionary
-    """
+    """Returns the bookkeeping dictionary."""
     return self.__bkQueryDict
 
   def getPath(self):
-    """
-    Returns the Bookkeeping path
-    """
+    """Returns the Bookkeeping path."""
     return self.__bkPath
 
   def makePath(self):
-    """
-    Builds a path from the dictionary
-    """
+    """Builds a path from the dictionary."""
     bk = self.__bkQueryDict
     fileType = bk.get('FileType', '')
     if isinstance(fileType, list):
@@ -471,18 +443,14 @@ class BKQuery():
         return path
 
   def getFileTypeList(self):
-    """
-    Returns the file types
-    """
+    """Returns the file types."""
     fileTypes = self.__bkQueryDict.get('FileType', [])
     if not isinstance(fileTypes, list):
       fileTypes = [fileTypes]
     return fileTypes
 
   def getEventTypeList(self):
-    """
-    Returns the event types
-    """
+    """Returns the event types."""
     eventType = self.__bkQueryDict.get("EventType", [])
     if eventType:
       if not isinstance(eventType, list):
@@ -490,21 +458,15 @@ class BKQuery():
     return eventType
 
   def getProcessingPass(self):
-    """
-    Returns the processing pass
-    """
+    """Returns the processing pass."""
     return self.__bkQueryDict.get('ProcessingPass', '')
 
   def getConditions(self):
-    """
-    Returns the Simulation/data taking conditions
-    """
+    """Returns the Simulation/data taking conditions."""
     return self.__bkQueryDict.get('ConditionDescription', '')
 
   def getConfiguration(self):
-    """
-    Returns the configuration name and configuration version
-    """
+    """Returns the configuration name and configuration version."""
     configName = self.__bkQueryDict.get('ConfigName', '')
     configVersion = self.__bkQueryDict.get('ConfigVersion', '')
     if not configName or not configVersion:
@@ -512,15 +474,11 @@ class BKQuery():
     return os.path.join('/', configName, configVersion)
 
   def isVisible(self):
-    """
-    Returns True/False depending on the visibility flag
-    """
+    """Returns True/False depending on the visibility flag."""
     return self.__bkQueryDict.get('Visible', 'All')
 
   def __fileType(self, fileType=None, returnList=False):
-    """
-    return the file types taking into account the expected file types
-    """
+    """return the file types taking into account the expected file types."""
     gLogger.verbose("BKQuery.__fileType: %s, fileType: %s" % (self, fileType))
     if not fileType:
       return []
@@ -572,9 +530,7 @@ class BKQuery():
       return list(expandedTypes)
 
   def __getAllBKFileTypes(self):
-    """
-    Returns the file types from the bookkeeping database
-    """
+    """Returns the file types from the bookkeeping database."""
     if not self.__bkFileTypes:
       self.__bkFileTypes = set([self.__fakeAllDST])
       warned = False
@@ -595,9 +551,7 @@ class BKQuery():
           warned = True
 
   def __getBKFiles(self, bkQueryDict, retries=5):
-    """
-    Call BK getFiles() with some retries
-    """
+    """Call BK getFiles() with some retries."""
     if not retries:
       retries = sys.maxsize
     errorLogged = False
@@ -612,9 +566,7 @@ class BKQuery():
     return res
 
   def getLFNsAndSize(self, getSize=True):
-    """
-    Returns the LFNs and their size for a given data set
-    """
+    """Returns the LFNs and their size for a given data set."""
     self.__getAllBKFileTypes()
     res = self.__getBKFiles(self.__bkQueryDict)
     lfns = []
@@ -658,9 +610,7 @@ class BKQuery():
     return {'LFNs': list(lfns), 'LFNSize': lfnSize}
 
   def getLFNSize(self, visible=None):
-    """
-    Returns the size of a  given data set
-    """
+    """Returns the size of a  given data set."""
     if visible is None:
       visible = self.isVisible()
     res = self.__getBKFiles(BKQuery(self.__bkQueryDict, visible=visible).setOption('FileSize', True))
@@ -671,9 +621,7 @@ class BKQuery():
     return lfnSize
 
   def getNumberOfLFNs(self, visible=None):
-    """
-    Returns the number of LFNs correspond to a given data set
-    """
+    """Returns the number of LFNs correspond to a given data set."""
     if visible is None:
       visible = self.isVisible()
     if self.isVisible() != visible:
@@ -699,8 +647,9 @@ class BKQuery():
     return {'NumberOfLFNs': nbFiles, 'LFNSize': size}
 
   def getLFNs(self, printSEUsage=False, printOutput=True, visible=None):
-    """
-    returns a list of lfns. It prints statistics about the data sets if it is requested.
+    """returns a list of lfns.
+
+    It prints statistics about the data sets if it is requested.
     """
     if visible is None:
       visible = self.isVisible()
@@ -769,9 +718,7 @@ class BKQuery():
     return lfns
 
   def getDirs(self, printOutput=False, visible=None):
-    """
-    Returns the directories
-    """
+    """Returns the directories."""
     if visible is None:
       visible = self.isVisible()
     lfns = self.getLFNs(printSEUsage=True, printOutput=printOutput, visible=visible)
@@ -782,9 +729,7 @@ class BKQuery():
 
   @staticmethod
   def __getProdStatus(prod):
-    """
-    Returns the status of a given transformation
-    """
+    """Returns the status of a given transformation."""
     res = TransformationClient().getTransformation(prod, extraParams=False)
     if not res['OK']:
       gLogger.error("Couldn't get information on production %d" % prod)
@@ -792,16 +737,12 @@ class BKQuery():
     return res['Value']['Status']
 
   def getBKRuns(self):
-    """
-    It returns a list of runs from the bookkeeping.
-    """
+    """It returns a list of runs from the bookkeeping."""
     if self.getProcessingPass().replace('/', '') == 'Real Data':
       return self.getBKProductions()
 
   def getBKProductions(self, visible=None):
-    """
-    It returns a list of productions
-    """
+    """It returns a list of productions."""
     if visible is None:
       visible = self.isVisible()
     prodList = self.__bkQueryDict.get('Production')
@@ -848,9 +789,7 @@ class BKQuery():
     return sorted(fullList)
 
   def getBKConditions(self):
-    """
-    It returns the data taking / simulation conditions
-    """
+    """It returns the data taking / simulation conditions."""
     conditions = self.__bkQueryDict.get('ConditionDescription')
     if conditions:
       if not isinstance(conditions, list):
@@ -870,9 +809,7 @@ class BKQuery():
     return sorted(conditions)
 
   def getBKEventTypes(self):
-    """
-    It returns the event types
-    """
+    """It returns the event types."""
     eventType = self.getEventTypeList()
     if eventType:
       return eventType
@@ -882,9 +819,7 @@ class BKQuery():
     return eventTypes
 
   def getBKFileTypes(self, bkDict=None):
-    """
-    It returns the file types.
-    """
+    """It returns the file types."""
     fileTypes = self.getFileTypeList()
     # print "Call getBKFileTypes:", self, fileTypes
     if not fileTypes:
@@ -919,9 +854,7 @@ class BKQuery():
     return fileTypes
 
   def getBKProcessingPasses(self, queryDict=None, depth=None):
-    """
-    It returns the processing pass.
-    """
+    """It returns the processing pass."""
     if depth is None:
       depth = sys.maxsize
     processingPasses = {}

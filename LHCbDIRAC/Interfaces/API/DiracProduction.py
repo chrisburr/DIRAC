@@ -8,13 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""DIRAC Production Management Class
+"""DIRAC Production Management Class.
 
-   This class allows to monitor the progress of productions operationally.
+This class allows to monitor the progress of productions operationally.
 
-   Of particular use are the monitoring functions allowing to drill down
-   by site, minor status and application status for a given transformation.
-
+Of particular use are the monitoring functions allowing to drill down
+by site, minor status and application status for a given transformation.
 """
 
 __RCSID__ = "$Id$"
@@ -31,12 +30,10 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 
 
 class DiracProduction(DiracLHCb):
-  """ class for managing productions
-  """
+  """class for managing productions."""
 
   def __init__(self, tsClientIn=None):
-    """Instantiates the Workflow object and some default parameters.
-    """
+    """Instantiates the Workflow object and some default parameters."""
 
     super(DiracProduction, self).__init__()
 
@@ -70,8 +67,10 @@ class DiracProduction(DiracLHCb):
                      'removed': ['RemovedFiles', 'Manual']}
 
   def getProduction(self, productionID, printOutput=False):
-    """Returns the metadata associated with a given production ID. Protects against
-       LFN: being prepended and different types of production ID.
+    """Returns the metadata associated with a given production ID.
+
+    Protects against
+    LFN: being prepended and different types of production ID.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -98,9 +97,10 @@ class DiracProduction(DiracLHCb):
     return S_OK(result['Value'])
 
   def getProductionLoggingInfo(self, productionID, printOutput=False):
-    """The logging information for the given production is returned.  This includes
-       the operation performed, any messages associated with the operation and the
-       DN of the production manager performing it.
+    """The logging information for the given production is returned.
+
+    This includes the operation performed, any messages associated with
+    the operation and the DN of the production manager performing it.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -130,9 +130,11 @@ class DiracProduction(DiracLHCb):
     return result
 
   def getProductionSummary(self, productionID=None, printOutput=False):
-    """Returns a detailed summary for the productions in the system. If production ID is
-       specified, the result is restricted to this value. If printOutput is specified,
-       the result is printed to the screen.
+    """Returns a detailed summary for the productions in the system.
+
+    If production ID is specified, the result is restricted to this
+    value. If printOutput is specified, the result is printed to the
+    screen.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -158,10 +160,12 @@ class DiracProduction(DiracLHCb):
     return result
 
   def getProductionApplicationSummary(self, productionID, status=None, minorStatus=None, printOutput=False):
-    """Returns an application status summary for the productions in the system. If printOutput is
-       specified, the result is printed to the screen.  This queries the WMS
-       for the given productionID and provides an up-to-date snapshot of the application status
-       combinations and associated WMS JobIDs.
+    """Returns an application status summary for the productions in the system.
+
+    If printOutput is specified, the result is printed to the screen.
+    This queries the WMS for the given productionID and provides an up-
+    to-date snapshot of the application status combinations and
+    associated WMS JobIDs.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -278,10 +282,12 @@ class DiracProduction(DiracLHCb):
     return result
 
   def getProductionJobSummary(self, productionID, status=None, minorStatus=None, printOutput=False):
-    """Returns a job summary for the productions in the system. If printOutput is
-       specified, the result is printed to the screen.  This queries the WMS
-       for the given productionID and provides an up-to-date snapshot of the job status
-       combinations and associated WMS JobIDs.
+    """Returns a job summary for the productions in the system.
+
+    If printOutput is specified, the result is printed to the screen.
+    This queries the WMS for the given productionID and provides an up-
+    to-date snapshot of the job status combinations and associated WMS
+    JobIDs.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -374,10 +380,11 @@ class DiracProduction(DiracLHCb):
     return result
 
   def getProductionSiteSummary(self, productionID, site=None, printOutput=False):
-    """Returns a site summary for the productions in the system. If printOutput is
-       specified, the result is printed to the screen.  This queries the WMS
-       for the given productionID and provides an up-to-date snapshot of the sites
-       that jobs were submitted to.
+    """Returns a site summary for the productions in the system.
+
+    If printOutput is specified, the result is printed to the screen.
+    This queries the WMS for the given productionID and provides an up-
+    to-date snapshot of the sites that jobs were submitted to.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -472,8 +479,8 @@ class DiracProduction(DiracLHCb):
     return result
 
   def getProductionProgress(self, productionID=None, printOutput=False):
-    """Returns the status of jobs as seen by the production management infrastructure.
-    """
+    """Returns the status of jobs as seen by the production management
+    infrastructure."""
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
 
@@ -513,8 +520,8 @@ class DiracProduction(DiracLHCb):
     return result
 
   def _getActiveProductions(self, printOutput=False):
-    """Returns a dictionary of active production IDs and their status, e.g. automatic, manual.
-    """
+    """Returns a dictionary of active production IDs and their status, e.g.
+    automatic, manual."""
     result = self.transformationClient.getTransformations()
     if not result['OK']:
       return result
@@ -535,8 +542,7 @@ class DiracProduction(DiracLHCb):
     return S_OK(currentProductions)
 
   def getProductionCommands(self):
-    """ Returns the list of possible commands and their meaning.
-    """
+    """Returns the list of possible commands and their meaning."""
     prodCommands = {}
     for keyword, statusSubMode in self.commands.iteritems():
       prodCommands[keyword] = {'Status': statusSubMode[0], 'SubmissionMode': statusSubMode[1]}
@@ -544,10 +550,11 @@ class DiracProduction(DiracLHCb):
 
   def production(self, productionID, command, disableCheck=True):
     """Allows basic production management by supporting the following commands:
-       - start : set production status to Active, job submission possible
-       - stop : set production status to Stopped, no job submissions
-       - automatic: set production submission mode to Automatic, e.g. submission via Agent
-       - manual: set produciton submission mode to manual, e.g. dirac-production-submit
+
+    - start : set production status to Active, job submission possible
+    - stop : set production status to Stopped, no job submissions
+    - automatic: set production submission mode to Automatic, e.g. submission via Agent
+    - manual: set produciton submission mode to manual, e.g. dirac-production-submit
     """
     commands = self.commands
 
@@ -590,9 +597,9 @@ class DiracProduction(DiracLHCb):
 
   def productionFileSummary(self, productionID, selectStatus=None, outputFile=None,
                             orderOutput=True, printSummary=False, printOutput=False):
-    """ Allows to investigate the input files for a given production transformation
-        and provides summaries / selections based on the file status if desired.
-    """
+    """Allows to investigate the input files for a given production
+    transformation and provides summaries / selections based on the file status
+    if desired."""
     adj = 18
     ordering = 'TaskID'
     if not orderOutput:
@@ -667,8 +674,10 @@ class DiracProduction(DiracLHCb):
     return fileSummary
 
   def checkFilesStatus(self, lfns, productionID='', printOutput=False):
-    """Checks the given LFN(s) status in the productionDB.  All productions
-       are considered by default but can restrict to productionID.
+    """Checks the given LFN(s) status in the productionDB.
+
+    All productions are considered by default but can restrict to
+    productionID.
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -689,8 +698,8 @@ class DiracProduction(DiracLHCb):
     return fileStatus
 
   def getWMSProdJobID(self, jobID, printOutput=False):
-    """This method takes the DIRAC WMS JobID and returns the Production JobID information.
-    """
+    """This method takes the DIRAC WMS JobID and returns the Production JobID
+    information."""
     result = self.getJobAttributes(jobID)
     if not result['OK']:
       return result
@@ -706,8 +715,7 @@ class DiracProduction(DiracLHCb):
     return S_OK(info)
 
   def getProdJobInfo(self, productionID, jobID, printOutput=False):
-    """Retrieve production job information from Production Manager service.
-    """
+    """Retrieve production job information from Production Manager service."""
     res = self.transformationClient.getTransformationTasks(condDict={'TransformationID': productionID, 'TaskID': jobID},
                                                            inputVector=True)
     if not res['OK']:
@@ -721,8 +729,10 @@ class DiracProduction(DiracLHCb):
 
   def selectProductionJobs(self, productionID, status=None, minorStatus=None, applicationStatus=None,
                            site=None, owner=None, date=None):
-    """Wraps around DIRAC API selectJobs(). Arguments correspond to the web page
-       selections. By default, the date is the creation date of the production.
+    """Wraps around DIRAC API selectJobs().
+
+    Arguments correspond to the web page selections. By default, the
+    date is the creation date of the production.
     """
     if not date:
       self.log.verbose('No Date supplied, setting old date for production %s' % productionID)
@@ -730,8 +740,9 @@ class DiracProduction(DiracLHCb):
     return self.selectJobs(status, minorStatus, applicationStatus, site, owner, str(productionID).zfill(8), date)
 
   def extendProduction(self, productionID, numberOfJobs, printOutput=False):
-    """ Extend Simulation type Production by number of jobs.
-        Usage: extendProduction <ProductionNameOrID> nJobs
+    """Extend Simulation type Production by number of jobs.
+
+    Usage: extendProduction <ProductionNameOrID> nJobs
     """
     if not isinstance(productionID, (int, long, str)):
       return self._errorReport('Expected string, long or int for production ID')
@@ -752,9 +763,10 @@ class DiracProduction(DiracLHCb):
     return result
 
   def getProdJobMetadata(self, productionID, status=None, minorStatus=None, site=None):
-    """Function to get the WMS job metadata for selected fields. Given a production ID will return
-       the current WMS status information for all jobs in that production starting from the creation
-       date.
+    """Function to get the WMS job metadata for selected fields.
+
+    Given a production ID will return the current WMS status information
+    for all jobs in that production starting from the creation date.
     """
     result = self.transformationClient.getTransformationParameters(long(productionID), ['CreationDate'])
     if not result['OK']:
@@ -773,9 +785,8 @@ class DiracProduction(DiracLHCb):
 
   def launchProduction(self, prod, publishFlag, testFlag, requestID,
                        extend=0, tracking=0, MCsimflag=False):
-    """ Given a production object (prod), launch it
-        It returns the productionID created
-    """
+    """Given a production object (prod), launch it It returns the productionID
+    created."""
 
     if publishFlag is False and testFlag:
       gLogger.info('Test prod will be launched locally')
