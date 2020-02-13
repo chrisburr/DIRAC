@@ -96,7 +96,6 @@ run_pycodestyle:
 
 # Check that the documentation does not generate any error/warning
 check_docs:
-  allow_failure: true
   #<<: *test_setup
   image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   before_script:
@@ -112,6 +111,8 @@ check_docs:
     - pip install -r requirements.txt
     # We need to export the DIRAC env variable so that the makefile knows where to find the documentation tools
     - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print diracdoctools.__file__"))
+    # Remove  numpy from DIRAC_DOC_MOCK_LIST as uproot fails to import without it
+    - sed -i "s@'numpy',@@" "${DIRACDOCTOOLS}/__init__.py"
     - SPHINXOPTS=-wsphinxWarnings make htmlall || { echo "Failed to build documentation, check for errors above" ; exit 1; }
     # Check that sphinxWarnings is not empty
     - >
