@@ -8,13 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: LogUpload
-    ====================
+"""
+:mod: LogUpload
 
-    .. module: LogUpload
-    :synopsis: logUpload operation handler
+.. module: LogUpload
 
-    LogUpload operation handler
+:synopsis: logUpload operation handler
+
+LogUpload operation handler
 """
 
 # # imports
@@ -24,14 +25,13 @@ from DIRAC.FrameworkSystem.Client.MonitoringClient import gMonitor
 from DIRAC.DataManagementSystem.Agent.RequestOperations.DMSRequestOperationsBase import DMSRequestOperationsBase
 
 class LogUpload( DMSRequestOperationsBase ):
-  """
-  .. class:: LogUpload
+  """.. class:: LogUpload.
 
   LogUpload operation handler
   """
 
   def __init__( self, operation = None, csPath = None ):
-    """c'tor
+    """c'tor.
 
     :param self: self reference
     :param Operation operation: Operation instance
@@ -49,7 +49,7 @@ class LogUpload( DMSRequestOperationsBase ):
     self.workDirectory = os.environ.get( 'LOGUPLOAD_CACHE', os.environ.get( 'AGENT_WORKDIRECTORY', '/tmp/LogUpload' ) )
 
   def __call__( self ):
-    """ LogUpload operation processing """
+    """LogUpload operation processing."""
     # # list of targetSEs
 
     if len( self.operation.targetSEList ) != 1:

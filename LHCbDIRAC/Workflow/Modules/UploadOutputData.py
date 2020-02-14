@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module to upload specified job output files according to the parameters defined in the production workflow.
-"""
+"""Module to upload specified job output files according to the parameters
+defined in the production workflow."""
 
 __RCSID__ = "$Id$"
 
@@ -34,13 +34,12 @@ from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
 
 class UploadOutputData(ModuleBase):
-  """ Module to upload specified job output files according to the parameters defined in the production workflow.
-  """
+  """Module to upload specified job output files according to the parameters
+  defined in the production workflow."""
 
   #############################################################################
   def __init__(self, bkClient=None, dm=None):
-    """ Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("UploadOutputData")
     super(UploadOutputData, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -65,8 +64,7 @@ class UploadOutputData(ModuleBase):
 
   #############################################################################
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
 
     super(UploadOutputData, self)._resolveInputVariables()
 
@@ -99,14 +97,14 @@ class UploadOutputData(ModuleBase):
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None,
               SEs=None, fileDescendants=None):
-    """ Main execution function.
+    """Main execution function.
 
-        1. Determine the final list of possible output files for the workflow
-           and all the parameters needed to upload them.
-        2. Verifying that the input files have no descendants (and exiting with error, otherwise)
-        3. Sending the BK records for the steps of the job
-        4. Transfer output files in their destination, register in the FC (with failover)
-        5. Registering the output files in the Bookkeeping
+    1. Determine the final list of possible output files for the workflow
+       and all the parameters needed to upload them.
+    2. Verifying that the input files have no descendants (and exiting with error, otherwise)
+    3. Sending the BK records for the steps of the job
+    4. Transfer output files in their destination, register in the FC (with failover)
+    5. Registering the output files in the Bookkeeping
     """
 
     try:
@@ -372,14 +370,13 @@ class UploadOutputData(ModuleBase):
   #############################################################################
 
   def _getLFNsForBKRegistration(self, lfns):
-    """ Check what should be registered immediately in the BK, and what later.
-        If there's a request in self.request for registering the file in the FC,
-        don't perform the registration in the BK immediately:
-        in this case the file should be registered with an operation
+    """Check what should be registered immediately in the BK, and what later.
+    If there's a request in self.request for registering the file in the FC,
+    don't perform the registration in the BK immediately: in this case the file
+    should be registered with an operation.
 
     :param list lfnsList: an iterable of LFNs
     :return: list of LFNs to be registered immediately
-
     """
 
     postPonePerformBKRegistration = []
@@ -392,8 +389,7 @@ class UploadOutputData(ModuleBase):
     return list(set(lfns) - set(postPonePerformBKRegistration))
 
   def _cleanUp(self, final):
-    """ Clean up uploaded data for the LFNs in the list
-    """
+    """Clean up uploaded data for the LFNs in the list."""
     lfnList = []
     for _fileName, metadata in final.items():
       lfnList.append(metadata['lfn'])

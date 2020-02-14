@@ -13,11 +13,11 @@
 # File :    dirac-bookkeeping-eventtype-mgt-update
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  This tool updates event types
-    The "<File>" lists the event types on which to operate.
-    Each line must have the following format:
-    EVTTYPEID="<evant id>", DESCRIPTION="<description>", PRIMARY="<primary description>"
+"""This tool updates event types The "<File>" lists the event types on which to
+operate.
+
+Each line must have the following format: EVTTYPEID="<evant id>",
+DESCRIPTION="<description>", PRIMARY="<primary description>"
 """
 __RCSID__ = "$Id$"
 
@@ -47,7 +47,7 @@ fileName = args[0]
 
 
 def process_event( eventline ):
-  """process one event"""
+  """process one event."""
   try:
     eventline.index( 'EVTTYPEID' )
     eventline.index( 'DESCRIPTION' )

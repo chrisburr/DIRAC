@@ -8,10 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Client plug-in for the RAWIntegrity catalog.
-    This exposes a single method to add files to the RAW IntegrityDB.
+"""Client plug-in for the RAWIntegrity catalog. This exposes a single method to
+add files to the RAW IntegrityDB.
 
-    USED at OnLine
+USED at OnLine
 """
 
 from DIRAC import S_OK
@@ -33,9 +33,7 @@ class RAWIntegrityClient(FileCatalogClientBase):
     self.rawIntegritySrv = self._getRPC()
 
   def isOK(self):
-    """
-      Returns valid
-    """
+    """Returns valid."""
     return self.valid
 
   @checkCatalogArguments

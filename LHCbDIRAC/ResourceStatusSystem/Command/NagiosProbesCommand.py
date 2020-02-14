@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' NagiosProbesCommand
+"""NagiosProbesCommand.
 
-  The Command gets information from the MonitoringTest cache.
-
-'''
+The Command gets information from the MonitoringTest cache.
+"""
 
 __RCSID__ = "$Id$"
 

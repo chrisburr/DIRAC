@@ -33,8 +33,8 @@ LHCbDIRAC is the LHCb extension to DIRAC:
    DevsGuide/tree.rst
    AdministratorGuide/tree.rst
    Certification/tree.rst
-   CodeDocumentation/index
-   UserGuide/index
+   CodeDocumentation/index.rst
+   UserGuide/index.rst
 
 
 Documentation sources

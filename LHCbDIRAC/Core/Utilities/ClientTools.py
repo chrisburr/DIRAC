@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""  The ClientTools module provides additional functions for use by users
-     of the DIRAC client in the LHCb environment.
-"""
+"""The ClientTools module provides additional functions for use by users of the
+DIRAC client in the LHCb environment."""
 
 import os
 import tempfile
@@ -24,8 +23,7 @@ __RCSID__ = "$Id$"
 
 
 def _errorReport(error, message=None):
-  """ Internal function to return errors and exit with an S_ERROR()
-  """
+  """Internal function to return errors and exit with an S_ERROR()"""
   if not message:
     message = error
 
@@ -34,7 +32,7 @@ def _errorReport(error, message=None):
 
 
 def mergeRootFiles(outputFile, inputFiles):
-  """ Merge several ROOT files
+  """Merge several ROOT files.
 
   Args:
       outputFile (str): output file name
@@ -75,7 +73,7 @@ def mergeRootFiles(outputFile, inputFiles):
 
 
 def _mergeRootFiles(outputFile, inputFiles):
-  """ Merge ROOT files
+  """Merge ROOT files.
 
   Args:
       outputFile (str): output file name

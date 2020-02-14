@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Production Lookup
-"""
+"""Production Lookup."""
 
 from PyQt4.QtGui                                                              import QDialog, QAbstractItemView
 from PyQt4.QtCore                                                             import SIGNAL
@@ -24,9 +22,7 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ProductionLookup(QDialog, Ui_ProductionLookup):
-  """
-  ProductionLookup class
-  """
+  """ProductionLookup class."""
   #############################################################################
   def __init__(self, data = None, parent = None):
     QDialog.__init__(self, parent)
@@ -48,32 +44,32 @@ class ProductionLookup(QDialog, Ui_ProductionLookup):
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################
   def closeEvent(self, event):
-    """ it close the window and change the query type"""
+    """it close the window and change the query type."""
     event.accept()
     self.__controler.cancel()
 
   #############################################################################
   def setModel(self, data):
-    """sets the model"""
+    """sets the model."""
     self.__model.setData(data)
     self.listView.setModel(self.__model)
 
   #############################################################################
   def getListView(self):
-    """returns the list view"""
+    """returns the list view."""
     return self.listView
 
   #############################################################################
   def getLineEdit(self):
-    """returns the lineedit widget"""
+    """returns the lineedit widget."""
     return self.lineEdit
 
   #############################################################################
   def getModel(self):
-    """returns the model"""
+    """returns the model."""
     return self.__model

@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Controlls the Bookmarks widget
-"""
+"""Controlls the Bookmarks widget."""
 ########################################################################
 
 
@@ -28,12 +26,10 @@ from DIRAC                                                               import 
 
 #############################################################################
 class ControlerBookmarks(ControlerAbstract):
-  """
-  ControlerBookmarks class
-  """
+  """ControlerBookmarks class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
     self.__selectedFiles = []
 
@@ -47,7 +43,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by parent"""
+    """handles the messages sent by parent."""
     if message.action() == 'showValues':
       controlers = self.getChildren()
       ct = controlers['AddBookmarks']
@@ -58,7 +54,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def messageFromChild(self, sender, message):
-    """handles the messages sent from its children"""
+    """handles the messages sent from its children."""
     if message.action() == 'addBookmarks':
       bookmarks = message['bookmark']
       retVal = self.__addBookmark(bookmarks['Path'], bookmarks['Title'])
@@ -72,7 +68,7 @@ class ControlerBookmarks(ControlerAbstract):
     return S_ERROR('Unkown message')
 
   def filltable(self):
-    """used to fill a table widget"""
+    """used to fill a table widget."""
     header = ['Title', 'Path']
     tabledata = []
     retVal = self.__getBookmarks()
@@ -90,7 +86,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def __getBookmarks(self):
-    """returns the bookkmarks"""
+    """returns the bookkmarks."""
     self.getWidget().waitCursor()
     upc = UserProfileClient("Bookkeeping", RPCClient)
     bookmarks = upc.retrieveVar("Bookmarks")
@@ -100,7 +96,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def __addBookmark(self, path, title):
-    """adds a bookmark"""
+    """adds a bookmark."""
     self.getWidget().waitCursor()
     upc = UserProfileClient("Bookkeeping", RPCClient)
     result = upc.retrieveVar("Bookmarks")
@@ -124,7 +120,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def __delBookmark(self, title):
-    """deletes a bookmark"""
+    """deletes a bookmark."""
     self.getWidget().waitCursor()
     upc = UserProfileClient("Bookkeeping", RPCClient)
     result = upc.retrieveVar("Bookmarks")
@@ -148,7 +144,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def removeBookmarks(self):
-    """handles the remove bookmarks"""
+    """handles the remove bookmarks."""
     row = self.getWidget().getSelectedRow()
     retVal = self.__delBookmark(row['Title'])
     if not retVal['OK']:
@@ -158,7 +154,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def addBookmarks(self):
-    """handles the addBookmarks action"""
+    """handles the addBookmarks action."""
     controlers = self.getChildren()
     ct = controlers['AddBookmarks']
     message = Message({'action':'showWidget'})
@@ -166,7 +162,7 @@ class ControlerBookmarks(ControlerAbstract):
 
   #############################################################################
   def selection(self, selected, deselected):
-    """handle the selections"""
+    """handle the selections."""
     if selected:
       for i in selected.indexes():
         row = i.row()
@@ -184,6 +180,6 @@ class ControlerBookmarks(ControlerAbstract):
           self.__selectedFiles.remove(data)
 
   def doubleclick(self, item):
-    """handles the double clicks"""
+    """handles the double clicks."""
     pass
 

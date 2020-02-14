@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Controller of the Log widget
-"""
+"""Controller of the Log widget."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
 
@@ -18,16 +16,14 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerLogInfo(ControlerAbstract):
-  """
-  ControlerLogInfo class
-  """
+  """ControlerLogInfo class."""
   #############################################################################
   def __init__(self, widget, parent):
     ControlerAbstract.__init__(self, widget, parent)
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by the parent controller"""
+    """handles the messages sent by the parent controller."""
     if message.action() == 'showLog':
       fileName = message['fileName']
       self.getWidget().setUrlUsingStorage(fileName)
@@ -41,7 +37,7 @@ class ControlerLogInfo(ControlerAbstract):
 
   #############################################################################
   def close(self):
-    """handle the close action"""
+    """handle the close action."""
     #self.getWidget().hide()
     self.getWidget().close()
 

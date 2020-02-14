@@ -8,7 +8,5 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This packages contains the implementation of the GUI widgets controllers.
-"""
+"""This packages contains the implementation of the GUI widgets controllers."""
 __RCSID__ = "$Id$"

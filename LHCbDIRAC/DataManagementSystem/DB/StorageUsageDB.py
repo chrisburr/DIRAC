@@ -8,14 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-#####################################################################
-# File: StorageUsageDB.py
-########################################################################
-""" :mod: StorageUsageDB
-    ====================
+"""
+:mod: StorageUsageDB
 
-    .. module: StorageUsageDB
-    :synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
+.. module: StorageUsageDB
+
+:synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
 """
 
 # # from DIRAC
@@ -36,15 +34,12 @@ class StorageUsageDB(DB):
   """
 
   def __init__(self):
-    """ Standard Constructor
-    """
+    """Standard Constructor."""
     DB.__init__(self, 'StorageUsageDB', 'DataManagement/StorageUsageDB')
     self.__initializeDB()
 
   def __initializeDB(self):
-    """
-    Create the tables
-    """
+    """Create the tables."""
     result = self._query("show tables")
     if not result['OK']:
       return result
@@ -146,11 +141,11 @@ class StorageUsageDB(DB):
     return self._createTables(tablesToCreate)
 
   def __sqlDirList(self, dirList):
-    """ change a list of directories to an escape one """
+    """change a list of directories to an escape one."""
     return [self._escapeString(_standardDirectory(dirPath))['Value'] for dirPath in dirList]
 
   def __stripDirectory(self, dirPath):
-    """ Remove trailing / in directory names """
+    """Remove trailing / in directory names."""
     dirPath = self._escapeString(dirPath)['Value'][1:-1]
     while dirPath and dirPath[-1] == '/':
       dirPath = dirPath[:-1]
@@ -161,7 +156,7 @@ class StorageUsageDB(DB):
   ################
 
   def publishDirectories(self, directoryDict):
-    """ Inserts a group of directories with their usage """
+    """Inserts a group of directories with their usage."""
 
     if not directoryDict:
       return S_OK()
@@ -201,7 +196,7 @@ class StorageUsageDB(DB):
   # Insert/update to problematicDirs
   ####
   def publishToProblematicDirs(self, directoryDict):
-    """ Publish an entry into the problematic data directory """
+    """Publish an entry into the problematic data directory."""
     for path, pathInfo in directoryDict.iteritems():
       path = _standardDirectory(path)
       spaceToken = pathInfo['SpaceToken']
@@ -259,7 +254,7 @@ class StorageUsageDB(DB):
   # ##
 
   def publishToSEReplicas(self, directoryDict):
-    """ Publish an entry to se_Usage table """
+    """Publish an entry to se_Usage table."""
     for path, pathInfo in directoryDict.iteritems():
       path = _standardDirectory(path)
       seName = pathInfo['SEName']
@@ -314,11 +309,11 @@ class StorageUsageDB(DB):
     return S_OK()
 
   def getIDs(self, dirList):
-    """ get IDs for list of directories """
+    """get IDs for list of directories."""
     return self.__getIDs(dirList)
 
   def __getIDs(self, dirList):
-    ''' get IDs for list of directories '''
+    """get IDs for list of directories."""
     dl = self.__sqlDirList(dirList)
     sqlCmd = "SELECT Path, DID FROM `su_Directory` WHERE Path in ( %s )" % ", ".join(dl)
     self.log.verbose("in __getIDs, query: %s" % sqlCmd)
@@ -328,7 +323,8 @@ class StorageUsageDB(DB):
     return S_OK(dict(result['Value']))
 
   def __getIDsFromProblematicDirs(self, dirList):
-    """ Get the ID from the problematicDirs table, for a given directory {Path:seInfo} """
+    """Get the ID from the problematicDirs table, for a given directory
+    {Path:seInfo}"""
     self.log.verbose("entry to be removed: %s" % dirList)
     dirPath, dirInfo = dirList.items()[0]
     dirPath = _standardDirectory(dirPath)
@@ -347,7 +343,7 @@ class StorageUsageDB(DB):
     return S_OK(dict(result['Value']))
 
   def __getIDsFromSe_Usage(self, dirList):
-    """Get the ID of the entry corresponding to the directory {path:seInfo} """
+    """Get the ID of the entry corresponding to the directory {path:seInfo}"""
     dirPath, dirInfo = dirList.items()[0]
     dirPath = _standardDirectory(dirPath)
 
@@ -389,9 +385,7 @@ class StorageUsageDB(DB):
     return S_OK(dict(result['Value']))
 
   def __updateSEUsage(self, dirID, seUsage, path):
-    """
-    Update the SE usage table
-    """
+    """Update the SE usage table."""
     sqlCmd = "DELETE FROM `su_SEUsage` WHERE DID=%d" % dirID
     result = self._update(sqlCmd)
     if not result['OK']:
@@ -449,14 +443,16 @@ class StorageUsageDB(DB):
     return S_OK()
 
   def removeDirFromSe_Usage(self, dirDict):
+    """Remove the entry corresponding to the tuple (path, SE) from the se_Usage
+    table.
+
+    This function is typically called when a directory is found to be a
+    problematic directory, and before inserting it into the
+    problematicDirs table, it is necessary to remove it from the
+    se_Usage table, if it exists there. In general, one same directory
+    can only exist into either the se_Usage or the problematicDirs
+    table.
     """
-      Remove the entry corresponding to the tuple (path, SE) from the se_Usage table.
-       This function is typically called when a directory is found to be a problematic directory,
-       and before inserting it into the problematicDirs
-       table, it is necessary to remove it from the se_Usage table, if it exists there.
-       In general, one same directory can only exist into either the
-       se_Usage or the problematicDirs table.
-     """
     deletedDirs = 0
     result = self.__getIDsFromSe_Usage(dirDict)
     if not result['OK']:
@@ -475,12 +471,12 @@ class StorageUsageDB(DB):
     return S_OK(deletedDirs)
 
   def removeDirFromProblematicDirs(self, dirDict):
-    """
-    Remove an entry from the problematicDirs table.
-    This is typically used when a directory is found to be correctly registered in the FC
-    and it was previously inserted in the problematic data table:
-    before inserting the entry into the se_Usage table, it has to be removed
-    from the problematicDirs
+    """Remove an entry from the problematicDirs table.
+
+    This is typically used when a directory is found to be correctly
+    registered in the FC and it was previously inserted in the
+    problematic data table: before inserting the entry into the se_Usage
+    table, it has to be removed from the problematicDirs
     """
     deletedDirs = 0
     result = self.__getIDsFromProblematicDirs(dirDict)
@@ -504,8 +500,8 @@ class StorageUsageDB(DB):
     return S_OK(deletedDirs)
 
   def removeAllFromProblematicDirs(self, site=False):
-    """ Remove all entries from the problematicDirs table, for a given site (optional).
-    """
+    """Remove all entries from the problematicDirs table, for a given site
+    (optional)."""
     if site:
       sqlSite = self._escapeString(site)['Value']
       sqlCmd = "DELETE FROM problematicDirs WHERE Site=%s" % sqlSite
@@ -568,8 +564,7 @@ class StorageUsageDB(DB):
   ###############
 
   def getStorageElementSelection(self):
-    """ Retireve the possible selections available through the web-monitor
-    """
+    """Retireve the possible selections available through the web-monitor."""
     sqlCmd = "SELECT DISTINCT SEName FROM `su_SEUsage` ORDER BY SEName"
     result = self._query(sqlCmd)
     if not result['OK']:
@@ -593,8 +588,7 @@ class StorageUsageDB(DB):
     return sqlCond
 
   def __getStorageSummary(self, path, fileType=False, production=False, SEs=None, groupingField="su.SEName"):
-    """ Retrieves the storage summary for all of the known directories
-    """
+    """Retrieves the storage summary for all of the known directories."""
     if SEs is None:
       SEs = []
     sqlCond = self.__getStorageCond(path, fileType, production, SEs)
@@ -629,8 +623,7 @@ class StorageUsageDB(DB):
     return "SUBSTRING_INDEX( SUBSTRING_INDEX( %s, '/', 5 ), '/', -1 )" % fieldName
 
   def getUserStorageUsage(self, userName=False):
-    """ Get the usage in the SEs
-    """
+    """Get the usage in the SEs."""
     sqlCond = ["d.DID = su.DID"]
     if userName:
       userName = self._escapeString(userName)['Value'][1:-1]
@@ -670,7 +663,8 @@ class StorageUsageDB(DB):
     return S_OK(userData)
 
   def getDirectorySummaryPerSE(self, directory):
-    """ Queries the DB and get a summary (total size and files) for the given directory """
+    """Queries the DB and get a summary (total size and files) for the given
+    directory."""
     sqlCmd = "SELECT su.SEName, SUM(su.Size), SUM(su.Files) FROM su_Directory AS d, su_SEUsage AS su " \
         " WHERE d.DID=su.DID AND d.Path LIKE '%s%%' GROUP BY su.SEName" % (directory)
     self.log.verbose("in getDirectorySummaryPerSE, sqlCmd: %s " % sqlCmd)
@@ -686,8 +680,8 @@ class StorageUsageDB(DB):
     return S_OK(data)
 
   def publishTose_STSummary(self, site, spaceToken, totalSize, totalFiles, storageDumpLastUpdate):
-    """ Publish total size and total files extracted from the storage
-        dumps to the se_STSummary """
+    """Publish total size and total files extracted from the storage dumps to
+    the se_STSummary."""
     try:
       sqlTotalSize = long(totalSize)
       sqlTotalFiles = long(totalFiles)
@@ -719,9 +713,9 @@ class StorageUsageDB(DB):
     return S_OK()
 
   def __getSTSummary(self, site, spaceToken=False):
-    """ Get total files and total size for the space token identified by the input arguments
-         (site, space token) , if space token is not specified, return all entries relative
-         to the site. """
+    """Get total files and total size for the space token identified by the
+    input arguments (site, space token) , if space token is not specified,
+    return all entries relative to the site."""
 
     sqlSite = self._escapeString(site)['Value']
     sqlCond = ["Site=%s" % sqlSite]
@@ -739,12 +733,14 @@ class StorageUsageDB(DB):
     return S_OK(result['Value'])
 
   def getSTSummary(self, site, spaceToken=False):
-    """Returns a summary of space usage for the given site, on the basis of the information
-       provided by the SRM db dumps from sites """
+    """Returns a summary of space usage for the given site, on the basis of the
+    information provided by the SRM db dumps from sites."""
     return self.__getSTSummary(site, spaceToken)
 
   def removeSTSummary(self, site, spaceToken=False):
-    """ Remove from se_STSummary table the entry relative to the given site and space token (if specified).
+    """Remove from se_STSummary table the entry relative to the given site and
+    space token (if specified).
+
     If no space token is specified, remove all entries relative to site
     """
     sqlSite = self._escapeString(site)['Value']
@@ -762,8 +758,8 @@ class StorageUsageDB(DB):
     return S_OK(result['Value'])
 
   def getProblematicDirsSummary(self, site, problem=False):
-    """ Get a summary of problematic directories for a given site and given problem (optional)
-    """
+    """Get a summary of problematic directories for a given site and given
+    problem (optional)"""
     sqlSite = self._escapeString(site)['Value']
     sqlCond = ["Site=%s" % sqlSite]
     if problem:
@@ -780,9 +776,12 @@ class StorageUsageDB(DB):
     return S_OK(result['Value'])
 
   def getRunSummaryPerSE(self, run):
-    """ Queries the DB and get a summary (total size and files) per SE  for the given run.
-    It assumes that the path in the LFC where the run's file are stored is like:
-    /lhcb/data/[YEAR]/RAW/[STREAM]/[PARTITION]/[ACTIVITY]/[RUNNO]/"""
+    """Queries the DB and get a summary (total size and files) per SE  for the
+    given run. It assumes that the path in the LFC where the run's file are
+    stored is like:
+
+    /lhcb/data/[YEAR]/RAW/[STREAM]/[PARTITION]/[ACTIVITY]/[RUNNO]/
+    """
     # try and implement bulk query
     # check the type of run
     data = {}
@@ -812,8 +811,12 @@ class StorageUsageDB(DB):
     return S_OK(data)
 
   def __getAllReplicasInFC(self, path):
-    ''' Queries the su_seUsage table to get all the entries relative to a given path registered in the FC. Returns
-     for every replica the SE, the update, the files and the total size '''
+    """Queries the su_seUsage table to get all the entries relative to a given
+    path registered in the FC.
+
+    Returns for every replica the SE, the update, the files and the
+    total size
+    """
     path = _standardDirectory(path)
     sqlCmd = "SELECT DID FROM su_Directory where Path like '%s%%'" % (path)
     result = self._query(sqlCmd)
@@ -865,8 +868,7 @@ class StorageUsageDB(DB):
     return sqlCond
 
   def __getSummary(self, path, fileType=False, production=False, groupingField="Path"):
-    """ Retrieves the storage summary for all of the known directories
-    """
+    """Retrieves the storage summary for all of the known directories."""
     sqlCond = self.__getCatalogCond(path, fileType, production)
     sqlFields = (groupingField, "SUM(Size)", "SUM(Files)")
     sqlCmd = "SELECT %s FROM `su_Directory` WHERE %s GROUP BY %s" % (", ".join(sqlFields),
@@ -896,7 +898,7 @@ class StorageUsageDB(DB):
   ######
 
   def sendDataUsageReport(self, site, directoryDict, status='New'):
-    """ Add a new trace in the Popularity table  """
+    """Add a new trace in the Popularity table."""
     self.log.verbose("in addPopCount: dirDict: %s site: %s" % (directoryDict, site))
     if not directoryDict:
       return S_OK()
@@ -920,9 +922,11 @@ class StorageUsageDB(DB):
     return S_OK(insertedEntries)
 
   def sendDataUsageReport_2(self, directoryDict):
-    """ Add a new trace in the Popularity table (new version which takes in input a dictionary per trace)
-        Each trace corresponds to a directory, and the mandatory keys are the site and the count.
-        Optional keys are the status and the creation time
+    """Add a new trace in the Popularity table (new version which takes in
+    input a dictionary per trace) Each trace corresponds to a directory, and
+    the mandatory keys are the site and the count.
+
+    Optional keys are the status and the creation time
     """
     self.log.verbose("in addPopCount: dirDict: %s" % (directoryDict))
     if not directoryDict:
@@ -959,8 +963,8 @@ class StorageUsageDB(DB):
     return S_OK(insertedEntries)
 
   def getDataUsageSummary(self, startTime, endTime, status='New'):
-    """ returns a summary of the counts for each tuple (Site,Path) in the given time interval
-    """
+    """returns a summary of the counts for each tuple (Site,Path) in the given
+    time interval."""
     if startTime > endTime:
       return S_OK()
     if not isinstance(startTime, basestring) or not isinstance(endTime, basestring):
@@ -975,15 +979,14 @@ class StorageUsageDB(DB):
     return self._query(sqlCmd)
 
   def getDataUsageForDirectory(self, path):
-    """ returns all entries for a given path
-    """
+    """returns all entries for a given path."""
     sqlCmd = "SELECT ID, Path, Site, Count, InsertTime from `Popularity` WHERE Path = %s" % \
         self._escapeString(path)['Value']
     return self._query(sqlCmd)
 
   def updatePopEntryStatus(self, idList, newStatus):
-    """ Update the status of the entry identified by the IDList, to the status specified by Newstatus.
-    """
+    """Update the status of the entry identified by the IDList, to the status
+    specified by Newstatus."""
     if not idList:
       self.log.info("updatePopEntryStatus: no entry to be updated")
       return S_OK()
@@ -999,8 +1002,12 @@ class StorageUsageDB(DB):
     return result
 
   def insertToDirMetadata(self, directoryDict):
-    """ Inserts a new entry into the DirMetadata table. The input dictionary should contain, for each
-        lfn directory, a dictionary with all the necessary metadata provided by the bookkeeping """
+    """Inserts a new entry into the DirMetadata table.
+
+    The input dictionary should contain, for each lfn directory, a
+    dictionary with all the necessary metadata provided by the
+    bookkeeping
+    """
 
     if not directoryDict:
       return S_OK()
@@ -1047,8 +1054,10 @@ class StorageUsageDB(DB):
     return S_OK(insertedEntries)
 
   def getDirMetadata(self, dirList):
-    """ Return the directory meta-data, which have been previously provided by the Bookkeeping and stored in the
-        DirMetadata table. The input is a list of LFN directories
+    """Return the directory meta-data, which have been previously provided by
+    the Bookkeeping and stored in the DirMetadata table.
+
+    The input is a list of LFN directories
     """
     if not dirList:
       return S_OK()

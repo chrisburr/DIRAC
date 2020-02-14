@@ -8,12 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" ProdConf is a utility to manipulate a ProdConf file.
-    If the file does not exist, it will be created.
-    If it exists and has options, new ones will be put in if not existing, or override the old ones if already existing.
-    This is used by the production API to
-    create production workflows but also provides lists of options files for
-    test jobs.
+"""ProdConf is a utility to manipulate a ProdConf file.
+
+If the file does not exist, it will be created. If it exists and has
+options, new ones will be put in if not existing, or override the old
+ones if already existing. This is used by the production API to create
+production workflows but also provides lists of options files for test
+jobs.
 """
 
 __RCSID__ = "$Id$"
@@ -23,12 +24,10 @@ import re
 
 
 class ProdConf(object):
-  """ Class for managing ProdConf objects
-  """
+  """Class for managing ProdConf objects."""
 
   def __init__(self, fileName='prodConf.py', log=None):
-    """ initialize a ProdConf object, setting some relevant info
-    """
+    """initialize a ProdConf object, setting some relevant info."""
 
     self.optionsDict = {'Application': 'string',
                         'AppVersion': 'string',
@@ -65,8 +64,7 @@ class ProdConf(object):
     self._getWhatsIn()
 
   def _getWhatsIn(self):
-    """ Get what's in, as options, and fill the dictionary
-    """
+    """Get what's in, as options, and fill the dictionary."""
 
     with open(self.fileName, 'r') as fopen:
       fileString = fopen.read()
@@ -97,8 +95,7 @@ class ProdConf(object):
                   self.whatsIn[option] = value
 
   def putOptionsIn(self, optionsDict, freshStart=False):
-    """ Put options, specified in the optionsDict, in the options file
-    """
+    """Put options, specified in the optionsDict, in the options file."""
 
     if freshStart:
       try:
@@ -119,8 +116,7 @@ class ProdConf(object):
     self._getWhatsIn()
 
   def _buildOptions(self, optionsDict):
-    """ just build the options Dict
-    """
+    """just build the options Dict."""
     optsThatWillGoIn = optionsDict
     for optAlreadyIn in self.whatsIn:
       if optAlreadyIn in optsThatWillGoIn:
@@ -131,8 +127,7 @@ class ProdConf(object):
     return optsThatWillGoIn
 
   def _getOptionsString(self, optsThatWillGoIn):
-    """ Build a string with the options that will go in
-    """
+    """Build a string with the options that will go in."""
     string = 'from ProdConf import ProdConf\n\n'
     string = string + 'ProdConf(\n'
     for opt, value in optsThatWillGoIn.iteritems():

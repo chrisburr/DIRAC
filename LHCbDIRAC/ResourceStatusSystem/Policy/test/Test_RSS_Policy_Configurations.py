@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_RSS_Policy_Configurations
-'''
+"""Test_RSS_Policy_Configurations."""
 
 import unittest
 
@@ -24,16 +23,12 @@ __RCSID__ = "$Id$"
 class Configurations_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    '''
-    Setup
-    '''
+    """Setup."""
 
     self.moduleTested = moduleTested
 
   def tearDown( self ):
-    '''
-    Tear down
-    '''
+    """Tear down."""
 
     del self.moduleTested
 

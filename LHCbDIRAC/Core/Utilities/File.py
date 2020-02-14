@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" File utilities module (e.g. make GUIDs)
-"""
+"""File utilities module (e.g. make GUIDs)"""
 
 __RCSID__ = "$Id$"
 
@@ -21,8 +20,7 @@ from DIRAC.Core.Utilities.File import makeGuid as DIRACMakeGUID
 
 
 def getRootFileGUIDs(fileList):
-  """ Retrieve a list of GUIDs for a list of files
-  """
+  """Retrieve a list of GUIDs for a list of files."""
   guids = {'Successful': {}, 'Failed': {}}
   for fileName in fileList:
     res = getRootFileGUID(fileName)
@@ -35,8 +33,7 @@ def getRootFileGUIDs(fileList):
 
 
 def getRootFileGUID(fileName):
-  """ Function to retrieve a file GUID using uproot.
-  """
+  """Function to retrieve a file GUID using uproot."""
   try:
     f = uproot.open(fileName)
     branch = f['Refs']['Params']
@@ -52,8 +49,7 @@ def getRootFileGUID(fileName):
 
 
 def makeGuid(fileNames):
-  """ Function to retrieve a file GUID using uproot.
-  """
+  """Function to retrieve a file GUID using uproot."""
   if isinstance(fileNames, six.string_types):
     fileNames = [fileNames]
 

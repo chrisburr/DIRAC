@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   LHCbDIRAC.Core.Utilities package
+"""LHCbDIRAC.Core.Utilities package.
 
-   This contains the LHCb specific utilities.
+This contains the LHCb specific utilities.
 """
 
 __RCSID__ = "$Id$"

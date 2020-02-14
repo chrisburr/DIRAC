@@ -10,9 +10,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
- List all BK paths matching a wildcard path ('...' is the wildcard character, or '*' but enclose with quotes)
-"""
+"""List all BK paths matching a wildcard path ('...' is the wildcard character,
+or '*' but enclose with quotes)"""
 
 __RCSID__ = "$Id$"
 

@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" ProductionRequestHandler is the implementation of the Production Request service
-"""
+"""ProductionRequestHandler is the implementation of the Production Request
+service."""
 
 __RCSID__ = "$Id$"
 
@@ -60,8 +60,7 @@ class ProductionRequestHandler(RequestHandler):
   types_createProductionRequest = [dict]
 
   def export_createProductionRequest(self, requestDict):
-    """ Create production request
-    """
+    """Create production request."""
     creds = self.__clientCredentials()
     if 'MasterID' not in requestDict:
       requestDict['RequestAuthor'] = creds['User']
@@ -88,118 +87,102 @@ class ProductionRequestHandler(RequestHandler):
                                     [int, long], [int, long], dict]
 
   def export_getProductionRequestList(self, subrequestFor, sortBy, sortOrder, offset, limit, rFilter):
-    """ Get production requests in list format (for portal grid)
-    """
+    """Get production requests in list format (for portal grid)"""
     return self.database.getProductionRequest([], subrequestFor, sortBy, sortOrder,
                                               offset, limit, rFilter)
 
   types_updateProductionRequest = [[int, long], dict]
 
   def export_updateProductionRequest(self, requestID, requestDict):
-    """ Update production request specified by requestID
-    """
+    """Update production request specified by requestID."""
     creds = self.__clientCredentials()
     return self.database.updateProductionRequest(requestID, requestDict, creds)
 
   types_duplicateProductionRequest = [[int, long], bool]
 
   def export_duplicateProductionRequest(self, requestID, clearpp):
-    """ Duplicate production request with subrequests.
-    """
+    """Duplicate production request with subrequests."""
     creds = self.__clientCredentials()
     return self.database.duplicateProductionRequest(requestID, creds, clearpp)
 
   types_deleteProductionRequest = [[int, long]]
 
   def export_deleteProductionRequest(self, requestID):
-    """ Delete production request specified by requestID
-    """
+    """Delete production request specified by requestID."""
     creds = self.__clientCredentials()
     return self.database.deleteProductionRequest(requestID, creds)
 
   types_splitProductionRequest = [[int, long], list]
 
   def export_splitProductionRequest(self, requestID, splitList):
-    """ split production request
-    """
+    """split production request."""
     creds = self.__clientCredentials()
     return self.database.splitProductionRequest(requestID, splitList, creds)
 
   types_getProductionProgressList = [[int, long]]
 
   def export_getProductionProgressList(self, requestID):
-    """ Return the list of associated with requestID productions
-    """
+    """Return the list of associated with requestID productions."""
     return self.database.getProductionProgress(requestID)
 
   types_addProductionToRequest = [dict]
 
   def export_addProductionToRequest(self, pdict):
-    """ Associate production to request
-    """
+    """Associate production to request."""
     return self.database.addProductionToRequest(pdict)
 
   types_removeProductionFromRequest = [[int, long]]
 
   def export_removeProductionFromRequest(self, productionID):
-    """ Deassociate production
-    """
+    """Deassociate production."""
     return self.database.removeProductionFromRequest(productionID)
 
   types_useProductionForRequest = [[int, long], bool]
 
   def export_useProductionForRequest(self, productionID, used):
-    """ Set Used flags for production
-    """
+    """Set Used flags for production."""
     return self.database.useProductionForRequest(productionID, used)
 
   types_getRequestHistory = [[int, long]]
 
   def export_getRequestHistory(self, requestID):
-    """ Return the list of state changes for the request
-    """
+    """Return the list of state changes for the request."""
     return self.database.getRequestHistory(requestID)
 
   types_getTrackedProductions = []
 
   def export_getTrackedProductions(self):
-    """ Return the list of productions in active requests
-    """
+    """Return the list of productions in active requests."""
     return self.database.getTrackedProductions()
 
   types_updateTrackedProductions = [list]
 
   def export_updateTrackedProductions(self, update):
-    """ Update tracked productions (used by Agent)
-    """
+    """Update tracked productions (used by Agent)"""
     return self.database.updateTrackedProductions(update)
 
   types_getTrackedInput = []
 
   def export_getTrackedInput(self):
-    """ Return the list of requests with dynamic input data
-    """
+    """Return the list of requests with dynamic input data."""
     return self.database.getTrackedInput()
 
   types_updateTrackedInput = [list]
 
   def export_updateTrackedInput(self, update):
-    """ Update real number of input events (used by Agent)
-    """
+    """Update real number of input events (used by Agent)"""
     return self.database.updateTrackedInput(update)
 
   types_getAllSubRequestSummary = []
 
   def export_getAllSubRequestSummary(self, status='', rType=''):
-    """ Return a summary for each subrequest
-    """
+    """Return a summary for each subrequest."""
     return self.database.getAllSubRequestSummary(status, rType)
 
   types_getAllProductionProgress = []
 
   def export_getAllProductionProgress(self):
-    """ Return all the production progress
-    """
+    """Return all the production progress."""
     return self.database.getAllProductionProgress()
 
   @staticmethod
@@ -230,7 +213,7 @@ class ProductionRequestHandler(RequestHandler):
     return S_OK(body)
 
   def __productionTemplateList(self, tt):
-    """ Return production template list (file based) """
+    """Return production template list (file based)"""
     ret = self.__getTplFolder(tt)
     if not ret['OK']:
       return ret
@@ -270,7 +253,7 @@ class ProductionRequestHandler(RequestHandler):
   types_getProductionTemplateList = []
 
   def export_getProductionTemplateList(self):
-    """ Return production template list (file based) """
+    """Return production template list (file based)"""
     return self.__productionTemplateList('template')
 
   types_getProductionTemplate = [basestring]
@@ -324,7 +307,7 @@ class ProductionRequestHandler(RequestHandler):
   types_execWizardScript = [basestring, dict]
 
   def export_execWizardScript(self, wizard, wizpar):
-    """ Execure wizard with parameters """
+    """Execure wizard with parameters."""
     creds = self.__clientCredentials()
     if creds['Group'] != 'lhcb_prmgr':
       # return S_ERROR("You have to be production manager")
@@ -371,16 +354,15 @@ class ProductionRequestHandler(RequestHandler):
   types_getProductionList = [[int, long]]
 
   def export_getProductionList(self, requestID):
-    """ Return the list of productions associated with request and
-        its subrequests
-    """
+    """Return the list of productions associated with request and its
+    subrequests."""
     return self.database.getProductionList(requestID)
 
   types_getProductionRequestSummary = [[basestring, list], [basestring, list]]
 
   def export_getProductionRequestSummary(self, status, requestType):
-    """ Method to retrieve the production / request relations for a given request status.
-    """
+    """Method to retrieve the production / request relations for a given
+    request status."""
     if isinstance(requestType, basestring):
       reqTypes = [requestType]
     elif isinstance(requestType, list):
@@ -428,6 +410,5 @@ class ProductionRequestHandler(RequestHandler):
   types_getFilterOptions = []
 
   def export_getFilterOptions(self):
-    """ Return the dictionary with possible values for filter
-    """
+    """Return the dictionary with possible values for filter."""
     return self.database.getFilterOptions()

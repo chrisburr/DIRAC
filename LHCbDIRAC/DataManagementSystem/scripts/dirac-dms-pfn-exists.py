@@ -13,10 +13,9 @@
 # File :    dirac-dms-pfn-metadata.py
 # Author :  Ph. Charpentier
 ########################################################################
-"""
-  Check existence of a (list of) LHCb LFNs/PFNs given a valid DIRAC SE (or for all replicas)
-  Only the LFN contained in the PFN is considered, unlike the DIRAC similar script
-"""
+"""Check existence of a (list of) LHCb LFNs/PFNs given a valid DIRAC SE (or for
+all replicas) Only the LFN contained in the PFN is considered, unlike the DIRAC
+similar script."""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script, printDMResult

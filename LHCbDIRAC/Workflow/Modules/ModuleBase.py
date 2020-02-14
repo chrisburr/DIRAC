@@ -44,8 +44,7 @@ class ModuleBase(object):
   #############################################################################
 
   def __init__(self, loggerIn=None, operationsHelperIn=None, bkClientIn=None, dm=None):
-    """ Initialization of module base.
-    """
+    """Initialization of module base."""
 
     if loggerIn is None:
       self.log = gLogger.getSubLogger('ModuleBase')
@@ -143,8 +142,7 @@ class ModuleBase(object):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Function called by all super classes
-    """
+    """Function called by all super classes."""
 
     if version:
       self.log.info('===== Executing ' + version + ' ===== ')
@@ -194,8 +192,7 @@ class ModuleBase(object):
   #############################################################################
 
   def finalize(self, version=None):
-    """ Just finalizing
-    """
+    """Just finalizing."""
 
     self.log.flushAllMessages(0)
 
@@ -205,8 +202,7 @@ class ModuleBase(object):
   #############################################################################
 
   def setApplicationStatus(self, status, sendFlag=True):
-    """Wraps around setJobApplicationStatus of state update client
-    """
+    """Wraps around setJobApplicationStatus of state update client."""
     if not self._WMSJob():
       return 0  # e.g. running locally prior to submission
 
@@ -222,8 +218,7 @@ class ModuleBase(object):
   #############################################################################
 
   def setJobParameter(self, name, value, sendFlag=True):
-    """Wraps around setJobParameter of state update client
-    """
+    """Wraps around setJobParameter of state update client."""
     if not self._WMSJob():
       return 0  # e.g. running locally prior to submission
 
@@ -236,8 +231,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the module input parameters are resolved here.
-    """
+    """By convention the module input parameters are resolved here."""
 
     self.log.verbose("workflow_commons = ", self.workflow_commons)
     self.log.verbose("step_commons = ", self.step_commons)
@@ -251,8 +245,7 @@ class ModuleBase(object):
   #############################################################################
 
   def __resolveInputWorkflow(self):
-    """ Resolve the input variables that are in the workflow_commons
-    """
+    """Resolve the input variables that are in the workflow_commons."""
 
     self.runNumber = self.workflow_commons.get('runNumber', self.runNumber)
 
@@ -352,8 +345,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _resolveInputStep(self):
-    """ Resolve the input variables for an application step
-    """
+    """Resolve the input variables for an application step."""
 
     prodID = self.workflow_commons.get('PRODUCTION_ID', '')
     jobID = self.workflow_commons.get('JOB_ID', '')
@@ -460,16 +452,16 @@ class ModuleBase(object):
   #############################################################################
 
   def _determineOutputs(self):
-    """ Method that determines the correct outputs.
+    """Method that determines the correct outputs.
 
-        For merging jobs the output has normally to be the same as the input, but there might be exceptions
-        (like for the productions for the merging of histograms)
-        For the others, we use what is in the step definition
+    For merging jobs the output has normally to be the same as the input, but there might be exceptions
+    (like for the productions for the merging of histograms)
+    For the others, we use what is in the step definition
 
-        We always remove the 'HIST'(s), when present, from the list of output file types
-        as these are treated differently.
+    We always remove the 'HIST'(s), when present, from the list of output file types
+    as these are treated differently.
 
-        There is  anyway also here the special case of histogram merging productions.
+    There is  anyway also here the special case of histogram merging productions.
     """
 
     histoTypes = self.opsH.getValue('Productions/HistogramTypes', ['HIST', 'BRUNELHIST', 'DAVINCIHIST', 'GAUSSHIST'])
@@ -537,8 +529,8 @@ class ModuleBase(object):
   #############################################################################
 
   def _getJobReporter(self):
-    """ just return the job reporter (object, always defined by dirac-jobexec)
-    """
+    """just return the job reporter (object, always defined by dirac-
+    jobexec)"""
 
     if 'JobReport' in self.workflow_commons:
       return self.workflow_commons['JobReport']
@@ -549,8 +541,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _getFileReporter(self):
-    """ just return the file reporter (object)
-    """
+    """just return the file reporter (object)"""
 
     if 'FileReport' in self.workflow_commons:
       return self.workflow_commons['FileReport']
@@ -561,8 +552,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _getRequestContainer(self):
-    """ just return the Request reporter (object)
-    """
+    """just return the Request reporter (object)"""
 
     if 'Request' in self.workflow_commons:
       return self.workflow_commons['Request']
@@ -573,15 +563,16 @@ class ModuleBase(object):
   #############################################################################
 
   def getCandidateFiles(self, outputList, outputLFNs, fileMask='', stepMask=''):
-    """ Returns list of candidate files to upload, check if some outputs are missing.
+    """Returns list of candidate files to upload, check if some outputs are
+    missing.
 
-        :param list outputList: list of outputs with the following structure::
-            [{'outputDataType': '', 'outputDataName': ''} , {...}]
-        :param list outputLFNs: output LFNs for the job
-        :param str fileMask: the output file extensions to restrict the outputs to. Can also be a list of strings
-        :param str stepMask: the step ID to restrict the outputs to. Can also be a list of strings.
+    :param list outputList: list of outputs with the following structure::
+        [{'outputDataType': '', 'outputDataName': ''} , {...}]
+    :param list outputLFNs: output LFNs for the job
+    :param str fileMask: the output file extensions to restrict the outputs to. Can also be a list of strings
+    :param str stepMask: the step ID to restrict the outputs to. Can also be a list of strings.
 
-        :returns: dictionary containing type, SE and LFN for files restricted by mask
+    :returns: dictionary containing type, SE and LFN for files restricted by mask
     """
     fileInfo = {}
 
@@ -650,8 +641,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _checkLocalExistance(self, fileList):
-    """ Check that the list of output files are present locally
-    """
+    """Check that the list of output files are present locally."""
 
     notPresentFiles = []
 
@@ -680,16 +670,16 @@ class ModuleBase(object):
   #############################################################################
 
   def _applyMask(self, candidateFilesIn, fileMask, stepMask):
-    """ Select which files have to be uploaded: in principle all
+    """Select which files have to be uploaded: in principle all.
 
-        :param dict candidateFilesIn: dictionary like
-          {'00012345_00012345_4.dst': {'lfn': '/lhcb/MC/2010/DST/123/123_45_4.dst',
-                                       type': 'dst'},
-           '00012345_00012345_2.digi': {'type': 'digi'}}
-        :param str fileMask: the output file extensions to restrict the outputs to. Can also be a list of strings
-        :param str stepMask: the step ID to restrict the outputs to. Can also be a list of strings.
+    :param dict candidateFilesIn: dictionary like
+      {'00012345_00012345_4.dst': {'lfn': '/lhcb/MC/2010/DST/123/123_45_4.dst',
+                                   type': 'dst'},
+       '00012345_00012345_2.digi': {'type': 'digi'}}
+    :param str fileMask: the output file extensions to restrict the outputs to. Can also be a list of strings
+    :param str stepMask: the step ID to restrict the outputs to. Can also be a list of strings.
 
-        :returns: a dict like the one in candidateFilesIn
+    :returns: a dict like the one in candidateFilesIn
     """
     candidateFiles = copy.deepcopy(candidateFilesIn)
 
@@ -723,14 +713,14 @@ class ModuleBase(object):
   #############################################################################
 
   def _checkSanity(self, candidateFiles):
-    """ Sanity check all final candidate metadata keys are present
+    """Sanity check all final candidate metadata keys are present.
 
-        :param dict candidateFiles: dictionary like
-          {'00012345_00012345_4.dst': {'lfn': '/lhcb/MC/2010/DST/123/123_45_4.dst',
-                                       type': 'dst'},
-           '00012345_00012345_2.digi': {'type': 'digi'}}
+    :param dict candidateFiles: dictionary like
+      {'00012345_00012345_4.dst': {'lfn': '/lhcb/MC/2010/DST/123/123_45_4.dst',
+                                   type': 'dst'},
+       '00012345_00012345_2.digi': {'type': 'digi'}}
 
-        :returns: None or raises ValueError
+    :returns: None or raises ValueError
     """
 
     notPresentKeys = []
@@ -749,18 +739,22 @@ class ModuleBase(object):
   #############################################################################
 
   def getFileMetadata(self, candidateFiles):
-    """ Returns the candidate file dictionary with associated metadata.
+    """Returns the candidate file dictionary with associated metadata.
 
-        The input candidate files dictionary has the structure:
-        {'foo_1.txt': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/foo_1.txt',
-                       'type': 'txt',
-                       'workflowSE': SE1},
+    The input candidate files dictionary has the structure:
+
+    .. code-block:: python
+
+      {
+        'foo_1.txt': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/foo_1.txt',
+                      'type': 'txt',
+                      'workflowSE': SE1},
         'bar_2.py': {'lfn': '/lhcb/MC/2010/DST/00012345/0001/bar_2.py',
                      'type': 'py',
                      'workflowSE': 'SE2'},
-        }
+      }
 
-        this also assumes the files are in the current working directory.
+    this also assumes the files are in the current working directory.
     """
     # Retrieve the POOL File GUID(s) for any final output files
     self.log.info('Will search for POOL GUIDs for: %s' % (', '.join(candidateFiles.keys())))
@@ -805,8 +799,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _determineStepInputData(self, inputData):
-    """ determine the input data for the step
-    """
+    """determine the input data for the step."""
     if inputData == 'previousStep':
       stepIndex = self.gaudiSteps.index(self.stepName)
       previousStep = self.gaudiSteps[stepIndex - 1]
@@ -832,18 +825,18 @@ class ModuleBase(object):
   #############################################################################
 
   def _manageAppOutput(self, outputs):
-    """ Calls self._findOutputs to find what's produced, then creates the LFNs
+    """Calls self._findOutputs to find what's produced, then creates the LFNs.
 
-        outputs, as called here, is created starting from step_commons['listoutput'],
-        but enriched with at least the outputDataName.
+    outputs, as called here, is created starting from step_commons['listoutput'],
+    but enriched with at least the outputDataName.
 
-        example of outputs:
-        [{'outputDataType': 'bhadron.dst', 'outputBKType': 'BHADRON.DST',
-          'outputDataName': '00012345_00012345_2.BHADRON.DST'},
-         {'outputDataType': 'calibration.dst','outputDataType': 'CALIBRATION.DST',
-          'outputDataName': '00012345_00012345_2.CALIBRATION.DST'}]
+    example of outputs:
+    [{'outputDataType': 'bhadron.dst', 'outputBKType': 'BHADRON.DST',
+      'outputDataName': '00012345_00012345_2.BHADRON.DST'},
+     {'outputDataType': 'calibration.dst','outputDataType': 'CALIBRATION.DST',
+      'outputDataName': '00012345_00012345_2.CALIBRATION.DST'}]
 
-        :params list outputs: list of dicts of step output files descriptions
+    :params list outputs: list of dicts of step output files descriptions
     """
 
     if not outputs:
@@ -874,17 +867,18 @@ class ModuleBase(object):
   #############################################################################
 
   def _findOutputs(self, stepOutput):
-    """ Find which outputs of those in stepOutput (what are expected to be produced) are effectively produced.
-        stepOutput, as called here, is created starting from step_commons['listoutput']
+    """Find which outputs of those in stepOutput (what are expected to be
+    produced) are effectively produced. stepOutput, as called here, is created
+    starting from step_commons['listoutput']
 
-        example of stepOutput:
-        [{'outputDataType': 'bhadron.dst', 'outputBKType': 'BHADRON.DST',
-          'outputDataName': '00012345_00012345_2.BHADRON.DST'},
-         {'outputDataType': 'calibration.dst','outputDataType': 'CALIBRATION.DST',
-          'outputDataName': '00012345_00012345_2.CALIBRATION.DST'}]
+    example of stepOutput:
+    [{'outputDataType': 'bhadron.dst', 'outputBKType': 'BHADRON.DST',
+      'outputDataName': '00012345_00012345_2.BHADRON.DST'},
+     {'outputDataType': 'calibration.dst','outputDataType': 'CALIBRATION.DST',
+      'outputDataName': '00012345_00012345_2.CALIBRATION.DST'}]
 
-        :params list stepOutput: list of dicts of step output files descriptions
-        :returns: list, list
+    :params list stepOutput: list of dicts of step output files descriptions
+    :returns: list, list
     """
 
     bkFileTypes = []  # uppercase list of file types
@@ -923,15 +917,13 @@ class ModuleBase(object):
   #############################################################################
 
   def _WMSJob(self):
-    """ Check if this job is running via WMS
-    """
+    """Check if this job is running via WMS."""
     return True if self.jobID else False
 
   #############################################################################
 
   def _enableModule(self):
-    """ Enable module if it's running via WMS
-    """
+    """Enable module if it's running via WMS."""
     if not self._WMSJob():
       self.log.info('No WMS JobID found, disabling module via control flag')
       return False
@@ -941,8 +933,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _checkWFAndStepStatus(self, noPrint=False):
-    """ Check the WF and Step status
-    """
+    """Check the WF and Step status."""
     if not self.workflowStatus['OK'] or not self.stepStatus['OK']:
       if not noPrint:
         self.log.info('Skip this module, failure detected in a previous step')
@@ -955,8 +946,7 @@ class ModuleBase(object):
   #############################################################################
 
   def _disableWatchdogCPUCheck(self):
-    """ just writes a file to disable the watchdog
-    """
+    """just writes a file to disable the watchdog."""
     self.log.info("Creating DISABLE_WATCHDOG_CPU_WALLCLOCK_CHECK in order to disable the Watchdog")
     with open('DISABLE_WATCHDOG_CPU_WALLCLOCK_CHECK', 'w') as fopen:
       fopen.write('%s' % time.asctime())
@@ -964,8 +954,8 @@ class ModuleBase(object):
   #############################################################################
 
   def generateFailoverFile(self):
-    """ Retrieve the accumulated reporting request, and produce a JSON file that is consumed by the JobWrapper
-    """
+    """Retrieve the accumulated reporting request, and produce a JSON file that
+    is consumed by the JobWrapper."""
     reportRequest = None
     result = self.jobReport.generateForwardDISET()
     if not result['OK']:
@@ -1025,8 +1015,9 @@ class ModuleBase(object):
                                metaData={'Checksum': 'justSomething',
                                          'ChecksumType': 'ADLER32',
                                          'GUID': 'aGUID'}):
-    """ Set a BK registration request for changing the replica flag.
-        Uses the global request object (self.request).
+    """Set a BK registration request for changing the replica flag.
+
+    Uses the global request object (self.request).
     """
     if error:
       self.log.info('BK registration for %s failed with message: "%s" setting failover request' % (lfn, error))
@@ -1053,8 +1044,8 @@ class ModuleBase(object):
   #############################################################################
 
   def createProdConfFile(self, stepOutputTypes, histogram, runNumberGauss, firstEventNumberGauss):
-    """ Utility that creates a ProdConf file, used mostly as input for gaudirun jobs
-    """
+    """Utility that creates a ProdConf file, used mostly as input for gaudirun
+    jobs."""
     # Creating ProdConf file
     prodConfFileName = 'prodConf_%s_%s_%s_%s.py' % (self.applicationName,
                                                     self.production_id,
@@ -1161,8 +1152,7 @@ class ModuleBase(object):
   jobID = property(get_jobID, set_jobID)
 
   def _getCurrentOwner(self):
-    """Simple function to return current DIRAC username.
-    """
+    """Simple function to return current DIRAC username."""
     if 'OwnerName' in self.workflow_commons:
       return self.workflow_commons['OwnerName']
 

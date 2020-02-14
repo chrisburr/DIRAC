@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-LHCbDIRAC/ResourceStatusSystem/Agent/LHCbPRProxyAgent.py
-"""
+"""LHCbDIRAC/ResourceStatusSystem/Agent/LHCbPRProxyAgent.py."""
 
 __RCSID__ = "$Id$"
 
@@ -27,10 +25,9 @@ AGENT_NAME = 'ResourceStatus/LHCbPRProxyAgent'
 
 
 class LHCbPRProxyAgent(AgentModule):
-  '''
-  Class LHCbPRProxyAgent. This agent is in charge of getting a fresh proxy from
-  DIRAC. In this case, it sets the proxy as LHCbPR.
-  See CS/Operations/Shift/LHCbPR
+  """Class LHCbPRProxyAgent. This agent is in charge of getting a fresh proxy
+  from DIRAC. In this case, it sets the proxy as LHCbPR. See
+  CS/Operations/Shift/LHCbPR.
 
   This is used by the LHCbPR framework, to get a new proxy every day,
   without having to use any hardcoded password ( which means, this agent will
@@ -40,16 +37,16 @@ class LHCbPRProxyAgent(AgentModule):
 
   - initialize
   - execute
-  '''
+  """
 
 ################################################################################
 
   def initialize(self):
-    '''
-    Method executed when the agent is launched.
-    It sets the proxy as LHCbPR, which is stored under
-      /opt/dirac/pro/work/ResourceStatus/LHCbPRProxyAgent
-    '''
+    """Method executed when the agent is launched. It sets the proxy as LHCbPR,
+    which is stored under.
+
+    /opt/dirac/pro/work/ResourceStatus/LHCbPRProxyAgent
+    """
 
     try:
 
@@ -64,13 +61,13 @@ class LHCbPRProxyAgent(AgentModule):
 ################################################################################
 
   def execute(self):
-    """
-    At every execution this method will try to print the environment variable
-    X509_USER_PROXY, which should contain the path to the proxy. If is empty,
-    something went wrong.
+    """At every execution this method will try to print the environment
+    variable X509_USER_PROXY, which should contain the path to the proxy. If is
+    empty, something went wrong.
 
     This agent should get a new proxy whenever it is close to expire.
-    Appart from that, which is done internally, it is a pretty dummy loop.
+    Appart from that, which is done internally, it is a pretty dummy
+    loop.
     """
 
     try:

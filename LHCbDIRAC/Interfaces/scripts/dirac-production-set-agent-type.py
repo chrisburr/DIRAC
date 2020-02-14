@@ -13,9 +13,7 @@
 # File :   dirac-production-set-agent-type
 # Author : Mario Ubeda Garcia
 ########################################################################
-"""
-  Set the Agent Type for a(the) given transformation(s)
-"""
+"""Set the Agent Type for a(the) given transformation(s)"""
 __RCSID__ = "$Id$"
 
 import DIRAC

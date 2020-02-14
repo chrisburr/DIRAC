@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Actual engine for adding a DM transformation, called by dirac-dms-add-Transformation
-"""
+"""Actual engine for adding a DM transformation, called by dirac-dms-add-
+Transformation."""
 __RCSID__ = "$Id$"
 
 import cPickle
@@ -33,10 +32,8 @@ from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
 
 
 def executeAddTransformation(pluginScript):
-  """
-  Method for actually adding a DM transformation
-  It takes its options and argument values from pluginScript
-  """
+  """Method for actually adding a DM transformation It takes its options and
+  argument values from pluginScript."""
   test = False
   start = False
   force = False

@@ -11,13 +11,16 @@
 """
 Whatever:
 
-  in_dict = {'EventTypeId': 93000000,
-          'ConfigVersion': 'Collision10',
-          'ProcessingPass': '/Real Data',
-          'ConfigName': 'LHCb',
-          'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
-          'Production':7421
-          }
+.. code-block:: python
+
+  in_dict = {
+    'EventTypeId': 93000000,
+    'ConfigVersion': 'Collision10',
+    'ProcessingPass': '/Real Data',
+    'ConfigName': 'LHCb',
+    'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
+    'Production':7421
+  }
 """
 
 import tempfile
@@ -33,11 +36,11 @@ __RCSID__ = "$Id$"
 
 @createClient('Bookkeeping/BookkeepingManager')
 class BookkeepingClient(Client):
-  """ This class expose the methods of the Bookkeeping Service"""
+  """This class expose the methods of the Bookkeeping Service."""
 
   def __init__(self, url=None, **kwargs):
-    """
-    c'tor
+    """c'tor.
+
     :param str url: can specify a specific URL
     """
     super(BookkeepingClient, self).__init__(**kwargs)
@@ -48,9 +51,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getAvailableFileTypes(self):
-    """
-    It returns all the available files which are registered to the bkk.
-    """
+    """It returns all the available files which are registered to the bkk."""
     retVal = self._getRPC().getAvailableFileTypes()
     if retVal['OK']:
       records = []
@@ -64,12 +65,12 @@ class BookkeepingClient(Client):
   #############################################################################
   @staticmethod
   def getFilesWithMetadata(in_dict):
-    """
-    It is used for retrieving a files with meta data for a given condition.
+    """It is used for retrieving a files with meta data for a given condition.
 
-    :param dict in_dict: It can contains the following conditions:'ConfigName',
-    'ConfigVersion', 'ConditionDescription', 'EventType',
-    'ProcessingPass','Production','RunNumber', 'FileType', DataQuality, StartDate, EndDate
+    :param dict in_dict: It can contains the following conditions:
+      ``ConfigName``, ``ConfigVersion``, ``ConditionDescription``,
+      ``EventType``, ``ProcessingPass``,``Production``,``RunNumber``,
+      ``FileType``, ``DataQuality``, ``StartDate`` and ``EndDate``
     :return: files with meta data associated
     """
     in_dict = dict(in_dict)
@@ -86,8 +87,8 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def bulkJobInfo(self, in_dict):
-    """
-    It returns the job metadata information for a given condition:
+    """It returns the job metadata information for a given condition:
+
     -a list of lfns
     - a list of DIRAC job ids
     - a list of jobNames
@@ -107,8 +108,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def setFileDataQuality(self, lfns, flag):
-    """
-    It is used to set the files data quality.
+    """It is used to set the files data quality.
 
     :param list lfns: list of LFNs or an LFN
     :param str flag: data quality flag: OK, UNCHECKED, etc.
@@ -120,8 +120,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFileAncestors(self, lfns, depth=0, replica=True):
-    """
-    Retrieve file ancestors.
+    """Retrieve file ancestors.
 
     :param list lfns: list of LFNs
     :param int depth: depth of the processing chane
@@ -136,8 +135,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFileDescendants(self, lfns, depth=0, production=0, checkreplica=False):
-    """
-    Retrieve the file descendants.
+    """Retrieve the file descendants.
 
     :param list lfns: list of LFNs
     :param int depth: depth of the processing chane
@@ -151,8 +149,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def addFiles(self, lfns):
-    """
-    It sets the replica flag Yes for a given list of files.
+    """It sets the replica flag Yes for a given list of files.
 
     :param list lfns: list of LFNs
     """
@@ -162,8 +159,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def removeFiles(self, lfns):
-    """
-    It removes the replica flag for a given list of files.
+    """It removes the replica flag for a given list of files.
 
     :param list lfns: list of lfns
     """
@@ -173,8 +169,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFileMetadata(self, lfns):
-    """
-    Retrieve the metadata information for a given file or a list of files.
+    """Retrieve the metadata information for a given file or a list of files.
 
     :param list lfns: list of LFNs
     :return: file metadata
@@ -185,8 +180,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFileMetaDataForWeb(self, lfns):
-    """
-    This method only used by the web portal. It is same as getFileMetadata.
+    """This method only used by the web portal. It is same as getFileMetadata.
 
     :param list lfns: list of LFNs
     :return: file metadata
@@ -197,8 +191,8 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def exists(self, lfns):
-    """
-    It used to check the existence of a list of files in the Bookkeeping Metadata catalogue.
+    """It used to check the existence of a list of files in the Bookkeeping
+    Metadata catalogue.
 
     :param list lfns: list of LFNs
     :return: a dictionary with the lfns {'lfn':True/False}
@@ -209,8 +203,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getRunInformation(self, in_dict):
-    """
-    It returns run information and statistics.
+    """It returns run information and statistics.
 
     :param dict in_dict: contains a given conditions
     :return: run statistics Number of events, luminosity, etc.
@@ -226,8 +219,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getRunInformations(self, runnb):
-    """
-    It returns run information and statistics.
+    """It returns run information and statistics.
 
     :param (int, long, str) runnb: run number
     :return: run statistics
@@ -240,8 +232,7 @@ class BookkeepingClient(Client):
 
 #############################################################################
   def getRunFilesDataQuality(self, runs):
-    """
-    For retrieve the data quality for runs or files.
+    """For retrieve the data quality for runs or files.
 
     :param list runs: list of run numbers.
     :return: run or file data quality
@@ -254,8 +245,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def setFilesInvisible(self, lfns):
-    """
-    It is used to set the file(s) invisible in the database
+    """It is used to set the file(s) invisible in the database.
 
     :paran list lfns: an lfn or list of lfns
     """
@@ -265,8 +255,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def setFilesVisible(self, lfns):
-    """
-    It is used to set the file(s) invisible in the database
+    """It is used to set the file(s) invisible in the database.
 
     :param list lfns: an lfn or list of lfns
     """
@@ -276,8 +265,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFilesWithGivenDataSets(self, in_dict):
-    """
-    For retrieving list of files.
+    """For retrieving list of files.
 
     :param dict in_dict: contains a given conditions
     :return: list of files
@@ -286,8 +274,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFileTypeVersion(self, lfns):
-    """
-    For retrieving the file type version
+    """For retrieving the file type version.
 
     :param list lfns: list of lfns
     :return: file type version
@@ -298,8 +285,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getDirectoryMetadata(self, lfns):
-    """
-    For retrieving  meta data information for a given directory.
+    """For retrieving  meta data information for a given directory.
 
     :param list lfns: list of lfns
     :return: directory metadata
@@ -310,8 +296,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getRunsForFill(self, fillid):
-    """
-    For retrieving a list of runs.
+    """For retrieving a list of runs.
 
     :param long fillid: fill number
     :return: runs for a given fill
@@ -324,7 +309,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def deleteSimulationConditions(self, simid):
-    """It deletes a given simulation condition
+    """It deletes a given simulation condition.
 
     :param long simid: simulation condition identifier
     """
@@ -336,8 +321,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getJobInputOutputFiles(self, diracjobids):
-    """
-    For retrieving input/output for a given Dirac job
+    """For retrieving input/output for a given Dirac job.
 
     :param list diracjobids: list of dirac job ids.
     :return: input/output file(s) for a given dirac job
@@ -347,8 +331,7 @@ class BookkeepingClient(Client):
     return self._getRPC().getJobInputOutputFiles(diracjobids)
 
   def fixRunLuminosity(self, runnumbers):
-    """
-    For fixing the luminosity for a given run(s)
+    """For fixing the luminosity for a given run(s)
 
     :param list runnumbers: list of run numbers.
     """
@@ -360,8 +343,7 @@ class BookkeepingClient(Client):
 
   #############################################################################
   def getFiles(self, in_dict):
-    """
-    It returns a list of files for a given condition.
+    """It returns a list of files for a given condition.
 
     :param dict in_dict: contains a given conditions
     :return: list of files
@@ -380,8 +362,7 @@ class BookkeepingClient(Client):
       return value
 
   def getRunStatus(self, runs):
-    """
-    For retrieving the run status.
+    """For retrieving the run status.
 
     :param list runs: list of runs
     :return: run status (finished, or not finished)
@@ -396,23 +377,20 @@ class BookkeepingClient(Client):
     return self._getRPC().getRunStatus(runnumbers)
 
   def getProcessingPass(self, in_dict, path=None):
-    """
-      This method is used to recursively browse the processing pass.
+    """This method is used to recursively browse the processing pass.
 
-      :param dict in_dict: contains a given conditions: ConfigName', 'ConfigVersion', 'ConditionDescription',
+    :param dict in_dict: contains a given conditions: ConfigName', 'ConfigVersion', 'ConditionDescription',
       'Production','RunNumber', 'EventType'
-      :param str path: To start the browsing you have to define the path as a root: path = '/'
-      :return: processing pass for a given conditions. Note: it returns a list with two dictionary. First dictionary
-      contains the processing passes
-      while the second dictionary contains the event types.
-      """
+    :param str path: To start the browsing you have to define the path as a root: path = '/'
+    :return: processing pass for a given conditions. Note: it returns a list with two dictionary. First dictionary
+      contains the processing passes while the second dictionary contains the event types.
+    """
     if path is None:
       path = '/'
     return self._getRPC().getProcessingPass(in_dict, path)
 
   def getProductionFilesStatus(self, productionid=None, lfns=None):
-    """
-    Status of the files, which belong to a given production.
+    """Status of the files, which belong to a given production.
 
     :param int productionid:
     :return: the file status in the bkk for a given production or a list of lfns.
@@ -423,9 +401,7 @@ class BookkeepingClient(Client):
 
 
 class BKClientWithRetry():
-  """
-  Utility class wrapping BKClient with retries
-  """
+  """Utility class wrapping BKClient with retries."""
 
   def __init__(self, bkClient=None, retries=None):
     if not bkClient:

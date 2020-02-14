@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Main bookkeeping widget
-"""
+"""Main bookkeeping widget."""
 
 from PyQt4.QtCore import SIGNAL, SLOT, Qt
 from PyQt4.QtGui  import QMainWindow
@@ -28,12 +26,9 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class MainWidget(QMainWindow, Ui_MainWidget):
-  """
-  MainWidget class
-  Constructor
+  """MainWidget class Constructor.
 
   @param parent parent widget (QWidget)
-
   """
   #############################################################################
   def __init__(self, fileName, savepath=None, parent=None):
@@ -66,14 +61,12 @@ class MainWidget(QMainWindow, Ui_MainWidget):
 
   #############################################################################
   def getControler(self):
-    """returs the controller"""
+    """returs the controller."""
     return self.__controler
 
   #############################################################################
   def start(self):
-    """
-    It start the bookkeeping gui.
-    """
+    """It start the bookkeeping gui."""
     self.__controler.start()
 
 #    item = self.__bkClient.get()
@@ -88,11 +81,11 @@ class MainWidget(QMainWindow, Ui_MainWidget):
 
   #############################################################################
   def waitCursor(self):
-    """shows the wait cursor"""
+    """shows the wait cursor."""
     self.setCursor(Qt.WaitCursor)
 
   #############################################################################
   def arrowCursor(self):
-    """shows the normal cursor"""
+    """shows the normal cursor."""
     self.setCursor(Qt.ArrowCursor)
 

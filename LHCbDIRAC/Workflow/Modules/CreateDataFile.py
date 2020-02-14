@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""  Prepare a file (data.py) which is consumed by Ganga, containing the input files as resolved in the workflow
-"""
+"""Prepare a file (data.py) which is consumed by Ganga, containing the input
+files as resolved in the workflow."""
 
 __RCSID__ = "$Id$"
 
@@ -20,12 +20,10 @@ from LHCbDIRAC.Core.Utilities.GangaDataFile import GangaDataFile
 
 
 class CreateDataFile(ModuleBase):
-  """ CreateDataFile class
-  """
+  """CreateDataFile class."""
 
   def __init__(self, bkClient=None, dm=None):
-    """ simple init
-    """
+    """simple init."""
 
     self.log = gLogger.getSubLogger("CreateDataFile")
 
@@ -37,8 +35,7 @@ class CreateDataFile(ModuleBase):
     self.version = __RCSID__
 
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
 
     super(CreateDataFile, self)._resolveInputVariables()
     super(CreateDataFile, self)._resolveInputStep()
@@ -48,8 +45,7 @@ class CreateDataFile(ModuleBase):
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None,
               gdf=None):
-    """Just calls GangaDataFile with some parameter
-    """
+    """Just calls GangaDataFile with some parameter."""
 
     try:
 

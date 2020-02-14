@@ -8,25 +8,23 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Help class
-"""
+"""Help class."""
 from DIRAC                                                               import gLogger, S_OK
 
 __RCSID__ = "$Id$"
 
 #############################################################################
 class Help:
-  """ Class for help"""
+  """Class for help."""
   #############################################################################
   def __init__( self ):
-    """ constructor"""
+    """constructor."""
     pass
 
   #############################################################################
   @staticmethod
   def helpConfig(treeLevels):
-    """ configure the help"""
+    """configure the help."""
     if treeLevels == -1:
       print "-------------------------------------"
       print "| Please use the following comand:   |"
@@ -64,7 +62,7 @@ class Help:
   #############################################################################
   @staticmethod
   def helpProcessing(treeLevels ):
-    """ help """
+    """help."""
     if treeLevels == -1:
       print "-------------------------------------"
       print "| Please use the following comand:   |"
@@ -101,7 +99,6 @@ class Help:
   #############################################################################
   @staticmethod
   def helpEventType(treeLevels ):
-    """ ...."""
     gLogger.debug(treeLevels)
     gLogger.warn( "Not Implemented!" )
     return

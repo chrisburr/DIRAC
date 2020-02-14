@@ -8,11 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: RunDBInterfaceHandler
-    ===========================
+"""
+:mod: RunDBInterfaceHandler
 
-    .. module: RunDBInterfaceHandler
-    :synopsis: DISET request handler base class for the DatasetDB
+.. module: RunDBInterfaceHandler
+
+:synopsis: DISET request handler base class for the DatasetDB
 """
 # imports
 import os
@@ -86,7 +87,7 @@ class RunDBInterfaceHandler(RequestHandler):
   types_getFilesSummaryWeb = [dict, list, int, int]
 
   def export_getFilesSummaryWeb(self, selectDict, sortList, startItem, maxItems):
-    """ export of getFilesSummaryWeb """
+    """export of getFilesSummaryWeb."""
     paramString = ''
     for selectParam in allFileFields:
       if selectParam in selectDict:
@@ -189,7 +190,7 @@ class RunDBInterfaceHandler(RequestHandler):
   types_getRunsSummaryWeb = [dict, list, int, int]
 
   def export_getRunsSummaryWeb(self, selectDict, sortList, startItem, maxItems):
-    """ export of getRunsSummaryWeb """
+    """export of getRunsSummaryWeb."""
     paramString = ''
     for selectParam in allRunFields:
       if selectParam in selectDict:
@@ -321,7 +322,7 @@ class RunDBInterfaceHandler(RequestHandler):
   types_getRunSelections = []
 
   def export_getRunSelections(self):
-    """ export of getRunSelections """
+    """export of getRunSelections."""
     try:
       paramDict = {}
 
@@ -370,7 +371,7 @@ class RunDBInterfaceHandler(RequestHandler):
   types_getRunParams = [int]
 
   def export_getRunParams(self, runID):
-    """ export of getRunParams """
+    """export of getRunParams."""
     success, result = server.getRunParams(runID)
     if not success:
       return S_ERROR(result)

@@ -8,8 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module that contains client access to the transformation DB handler.
-    This is a very simple extension to the DIRAC one
+"""Module that contains client access to the transformation DB handler.
+
+This is a very simple extension to the DIRAC one
 """
 
 from DIRAC                                                        import S_OK, gLogger
@@ -21,16 +22,17 @@ from LHCbDIRAC.TransformationSystem.Utilities.StateMachine        import Transfo
 
 class TransformationClient( DIRACTransformationClient ):
 
-  """ Exposes the functionality available in the LHCbDIRAC/TransformationHandler
+  """Exposes the functionality available in the
+  LHCbDIRAC/TransformationHandler.
 
-      This inherits the DIRAC base Client for direct execution of server functionality.
-      The following methods are available (although not visible here).
+  This inherits the DIRAC base Client for direct execution of server functionality.
+  The following methods are available (although not visible here).
 
-      BK query manipulation
-          deleteBookkeepingQuery(queryID)
-          deleteTransformationBookkeepingQuery(transName)
-          addBookkeepingQuery(transID,queryDict)
-          getBookkeepingQuery(transName)
+  BK query manipulation
+      deleteBookkeepingQuery(queryID)
+      deleteTransformationBookkeepingQuery(transName)
+      addBookkeepingQuery(transID,queryDict)
+      getBookkeepingQuery(transName)
   """
 
   def __init__( self, **kwargs ):
@@ -72,8 +74,8 @@ class TransformationClient( DIRACTransformationClient ):
     return S_OK( transID )
 
   def _applyTransformationStatusStateMachine( self, transIDAsDict, dictOfProposedstatus, force ):
-    """ Performs a state machine check for productions when asked to change the status
-    """
+    """Performs a state machine check for productions when asked to change the
+    status."""
     originalStatus, transformationType = transIDAsDict.values()[0][0:2]
     proposedStatus = dictOfProposedstatus.values()[0]
     if force:
@@ -90,8 +92,7 @@ class TransformationClient( DIRACTransformationClient ):
 
 
   def _applyTransformationFilesStateMachine( self, tsFilesAsDict, dictOfProposedLFNsStatus, force ):
-    """ Apply LHCb state machine for transformation files
-    """
+    """Apply LHCb state machine for transformation files."""
     newStatuses = dict()
     for lfn, newStatus in dictOfProposedLFNsStatus.iteritems():
       if lfn in tsFilesAsDict:

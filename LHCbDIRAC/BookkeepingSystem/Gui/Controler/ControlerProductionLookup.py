@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Controller of the Production lookup widget
-"""
+"""Controller of the Production lookup widget."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
 from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
@@ -24,19 +22,17 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerProductionLookup(ControlerAbstract):
-  """
-  ControlerProductionLookup class
-  """
+  """ControlerProductionLookup class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
     self.__model = None
     self.__list = []
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by the parent controller"""
+    """handles the messages sent by the parent controller."""
     if message.action() == 'list':
       self.__list = []
       self.__model = message['items']
@@ -58,7 +54,7 @@ class ControlerProductionLookup(ControlerAbstract):
 
   #############################################################################
   def close(self):
-    """handles the close action"""
+    """handles the close action."""
     widget = self.getWidget()
     indexes = widget.getListView().selectedIndexes()
     selected = []
@@ -83,7 +79,7 @@ class ControlerProductionLookup(ControlerAbstract):
 
   #############################################################################
   def cancel(self):
-    """handles the cancel button action"""
+    """handles the cancel button action."""
     self.getWidget().getListView().reset()
     self.getWidget().close()
     message = Message({'action':'configbuttonChanged'})
@@ -91,7 +87,7 @@ class ControlerProductionLookup(ControlerAbstract):
 
 
   def all(self):
-    """handles the all button action"""
+    """handles the all button action."""
     widget = self.getWidget()
     data = widget.getModel().getAllData()
     parent = Item({'fullpath':'/'}, None)
@@ -103,7 +99,7 @@ class ControlerProductionLookup(ControlerAbstract):
 
   #############################################################################
   def textChanged(self):
-    """handles the action created by the text editor"""
+    """handles the action created by the text editor."""
     widget = self.getWidget()
     pattern = str(widget.getLineEdit().text())
     new_list = [item for item in self.__list if item.find(pattern) == 0]

@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Root Application Class """
+"""Root Application Class."""
 
 __RCSID__ = "$Id$"
 
@@ -25,8 +25,7 @@ class RootApplication(ModuleBase):
 
   #############################################################################
   def __init__(self, bkClient=None, dm=None):
-    """ Module initialization
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("RootApplication")
     super(RootApplication, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -42,8 +41,7 @@ class RootApplication(ModuleBase):
 
   #############################################################################
   def _resolveInputVariables(self):
-    """ By convention the workflow parameters are resolved here.
-    """
+    """By convention the workflow parameters are resolved here."""
 
     super(RootApplication, self)._resolveInputVariables()
     super(RootApplication, self)._resolveInputStep()
@@ -80,8 +78,8 @@ class RootApplication(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_id=None, step_number=None):
-    """The main execution method of the RootApplication module: runs a ROOT app using RunApplication module
-    """
+    """The main execution method of the RootApplication module: runs a ROOT app
+    using RunApplication module."""
 
     try:
 

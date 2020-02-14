@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Table model used most of the widget
-"""
+"""Table model used most of the widget."""
 
 from PyQt4.QtCore                import Qt, SIGNAL, QAbstractTableModel, QVariant
 
@@ -22,9 +20,7 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class TableModel(QAbstractTableModel):
-  """
-  TableModel class
-  """
+  """TableModel class."""
   #############################################################################
   def __init__(self, datain, headerdata, parent=None, *args):
     QAbstractTableModel.__init__(self, parent, *args)
@@ -33,17 +29,17 @@ class TableModel(QAbstractTableModel):
 
   #############################################################################
   def rowCount(self, parent):
-    """number of rows"""
+    """number of rows."""
     return len(self.arraydata)
 
   #############################################################################
   def columnCount(self, parent):
-    """number of collumns"""
+    """number of collumns."""
     return len(self.arraydata[0])
 
   #############################################################################
   def data(self, index, role):
-    """retuns an element of the table"""
+    """retuns an element of the table."""
 
     result = None
     data = None
@@ -63,7 +59,7 @@ class TableModel(QAbstractTableModel):
   #############################################################################
 
   def headerData(self, col, orientation, role):
-    """returns the header data"""
+    """returns the header data."""
     try:
       if orientation == Qt.Horizontal and role == Qt.DisplayRole:
         return QVariant(self.headerdata[col])
@@ -75,8 +71,7 @@ class TableModel(QAbstractTableModel):
 
   #############################################################################
   def sort(self, ncol, order):
-    """Sort table by given column number.
-    """
+    """Sort table by given column number."""
     self.emit(SIGNAL("layoutAboutToBeChanged()"))
     self.arraydata = sorted(self.arraydata, key=operator.itemgetter(ncol))
     if order == Qt.DescendingOrder:

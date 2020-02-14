@@ -8,8 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" RAWIntegrityDB is the front end for the database containing the files which are awating migration.
-    It offers a simple interface to add files, get files and modify their status.
+"""RAWIntegrityDB is the front end for the database containing the files which
+are awating migration.
+
+It offers a simple interface to add files, get files and modify their
+status.
 """
 
 __RCSID__ = "$Id$"
@@ -52,7 +55,7 @@ class RAWIntegrityDB(DB):
     DB.__init__(self, 'RAWIntegrityDB', 'DataManagement/RAWIntegrityDB')
 
   def _checkTable(self):
-    """ _checkTable
+    """_checkTable.
 
     Make sure the table is created
     """
@@ -60,10 +63,11 @@ class RAWIntegrityDB(DB):
     return self.__createTables()
 
   def __createTables(self):
-    """ __createTables
+    """__createTables.
 
-    Writes the schema in the database. If a table is already in the schema, it is
-    skipped to avoid problems trying to create a table that already exists.
+    Writes the schema in the database. If a table is already in the
+    schema, it is skipped to avoid problems trying to create a table
+    that already exists.
     """
 
     # Horrible SQL here !!
@@ -99,7 +103,7 @@ class RAWIntegrityDB(DB):
     return res
 
   def showTables(self):
-    """ return the list of tables"""
+    """return the list of tables."""
 
     existingTables = self._query("show tables")
     if not existingTables['OK']:
@@ -108,8 +112,8 @@ class RAWIntegrityDB(DB):
     return S_OK(existingTables)
 
   def getActiveFiles(self):
-    """ Obtain all the active files in the database along with all their associated metadata
-    """
+    """Obtain all the active files in the database along with all their
+    associated metadata."""
     try:
       gLogger.info(
           "RAWIntegrityDB.getActiveFiles: Obtaining files awaiting migration from database.")
@@ -140,11 +144,12 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def getFiles(self, status):
-    """ Obtain all the files in a give status (or list) in the database along with all their associated metadata
+    """Obtain all the files in a give status (or list) in the database along
+    with all their associated metadata.
 
-        :param status: string or list of status we want to query
+    :param status: string or list of status we want to query
 
-        :returns: dict {lfn: metadata}
+    :returns: dict {lfn: metadata}
     """
     if isinstance(status, basestring):
       status = [status]
@@ -180,13 +185,14 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def getUnmigratedFiles(self):
-    """ Get files in status Active, Copied, and Registered """
+    """Get files in status Active, Copied, and Registered."""
 
     return self.getFiles(['Active', 'Copied', 'Registered'])
 
   def setFileStatus(self, lfn, status):
-    """ Update the status of the file in the database.
-        A file in status 'Done' cannot be unchanged
+    """Update the status of the file in the database.
+
+    A file in status 'Done' cannot be unchanged
     """
     try:
       gLogger.info("RAWIntegrityDB.setFileStatus: Attempting to update status of %s to '%s'." %
@@ -205,8 +211,7 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def removeFile(self, lfn):
-    """ Remove file from the DB
-    """
+    """Remove file from the DB."""
     try:
       gLogger.info("RAWIntegrityDB.removeFile: Attempting to remove %s." % lfn)
       req = "DELETE FROM Files WHERE LFN = '%s';" % lfn
@@ -222,8 +227,7 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def addFile(self, lfn, pfn, size, se, guid, checksum):
-    """ Insert file into the database
-    """
+    """Insert file into the database."""
     try:
       gLogger.info("RAWIntegrityDB.addFile: Attempting to add %s to database." % lfn)
       req = "INSERT INTO Files (LFN,PFN,Size,StorageElement,GUID,FileChecksum,SubmitTime) VALUES\
@@ -240,8 +244,7 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def setLastMonitorTime(self):
-    """ Set the last time the migration rate was calculated
-    """
+    """Set the last time the migration rate was calculated."""
     try:
       gLogger.info(
           "RAWIntegrityDB.setLastMonitorTime: Attempting to set the last migration marker.")
@@ -259,8 +262,7 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def getLastMonitorTimeDiff(self):
-    """ Get the last time the migration rate was calculated
-    """
+    """Get the last time the migration rate was calculated."""
     try:
       gLogger.info(
           "RAWIntegrityDB.getLastMonitorTimeDiff: Attempting to get the last migration marker.")
@@ -281,8 +283,7 @@ class RAWIntegrityDB(DB):
       return S_ERROR(errStr)
 
   def getGlobalStatistics(self):
-    """ Get the count of the file statutes in the DB
-    """
+    """Get the count of the file statutes in the DB."""
     req = "SELECT Status,COUNT(*) FROM Files GROUP BY Status;"
     res = self._query(req)
     if not res['OK']:
@@ -294,8 +295,7 @@ class RAWIntegrityDB(DB):
     return S_OK(statusDict)
 
   def getFileSelections(self):
-    """ Get the unique values of the selection fields
-    """
+    """Get the unique values of the selection fields."""
     selDict = {'StorageElement': [], 'Status': []}
     req = "SELECT DISTINCT(StorageElement) FROM Files;"
     res = self._query(req)
@@ -312,8 +312,8 @@ class RAWIntegrityDB(DB):
     return S_OK(selDict)
 
   def __buildCondition(self, condDict, older = None, newer = None, timeStamp = 'SubmitTime'):
-    """ build SQL condition statement from provided condDict and other extra conditions
-    """
+    """build SQL condition statement from provided condDict and other extra
+    conditions."""
     condition = ''
     conjunction = "WHERE"
     if condDict != None:
@@ -360,8 +360,7 @@ class RAWIntegrityDB(DB):
                   newer = None,
                   older = None,
                   limit = None):
-    """ Select the files which match the selection criteria.
-    """
+    """Select the files which match the selection criteria."""
     condition = self.__buildCondition(selectDict, older, newer)
     if orderAttribute:
       orderType = None

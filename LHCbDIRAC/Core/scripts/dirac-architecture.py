@@ -9,17 +9,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Returns the platform supported by the current WN
-"""
+"""Returns the platform supported by the current WN."""
 from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
 
 def sendMail(msg=''):
-  """ send a notification mail when no platform is found
-  """
+  """send a notification mail when no platform is found."""
   from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
 
   mailAddress = Operations().getValue('EMail/JobFailures', 'Vladimir.Romanovskiy@cern.ch')

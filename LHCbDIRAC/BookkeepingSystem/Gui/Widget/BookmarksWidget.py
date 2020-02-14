@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Bookmarks widget
-"""
+"""Bookmarks widget."""
 ########################################################################
 
 from PyQt4.QtCore  import SIGNAL, Qt
@@ -27,13 +25,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class BookmarksWidget(QWidget, Ui_BookmarksWidget):
-  """
-  BookmarksWidget
-  """
+  """BookmarksWidget."""
   #############################################################################
   def __init__(self, parent=None):
-    """
-    Constructor
+    """Constructor.
 
     @param parent parent widget (QWidget)
     """
@@ -47,11 +42,11 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   def setupControler(self, parent):
-    """setup the controller"""
+    """setup the controller."""
     self.__controler = ControlerBookmarks(self, parent.getControler())
 
     self.connect(self.removeButton, SIGNAL("clicked()"), self.__controler.removeBookmarks)
@@ -65,13 +60,13 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
 
   #############################################################################
   def hidewidget(self):
-    """hides the widget"""
+    """hides the widget."""
     self.hide()
 
 
   #############################################################################
   def filltable(self, header, tabledata):
-    """fills the table"""
+    """fills the table."""
     # set the table model
     tm = TableModel(tabledata, header, self)
 
@@ -117,7 +112,7 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
 
 
   def getSelectedRow(self):
-    """returns the selected rows"""
+    """returns the selected rows."""
     for i in self.bookmarks.selectedIndexes():
       row = i.row()
       title = i.model().arraydata[row][0]
@@ -126,10 +121,10 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
 
   #############################################################################
   def waitCursor(self):
-    """wait cursor"""
+    """wait cursor."""
     self.setCursor(Qt.WaitCursor)
 
   #############################################################################
   def arrowCursor(self):
-    """normal cursor"""
+    """normal cursor."""
     self.setCursor(Qt.ArrowCursor)

@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Transformation Files state machine (LHCb specific)
-"""
+"""Transformation Files state machine (LHCb specific)"""
 
 from DIRAC.ResourceStatusSystem.PolicySystem.StateMachine import State
 from LHCbDIRAC.ProductionManagementSystem.Utilities.StateMachine import LHCbStateMachine
@@ -18,13 +17,10 @@ __RCSID__ = "$Id$"
 
 
 class TransformationFilesStateMachine(LHCbStateMachine):
-  """ Implementation of the state machine for the TransformationFiles
-  """
+  """Implementation of the state machine for the TransformationFiles."""
 
   def __init__(self, state):
-    """ c'tor
-        Defines the state machine transactions
-    """
+    """c'tor Defines the state machine transactions."""
 
     super(TransformationFilesStateMachine, self).__init__(state)
 

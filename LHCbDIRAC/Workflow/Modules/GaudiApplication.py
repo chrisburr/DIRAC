@@ -30,12 +30,10 @@ from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
 
 class GaudiApplication(ModuleBase):
-  """ GaudiApplication class
-  """
+  """GaudiApplication class."""
 
   def __init__(self, bkClient=None, dm=None):
-    """ Usual init for LHCb workflow modules
-    """
+    """Usual init for LHCb workflow modules."""
 
     self.log = gLogger.getSubLogger("GaudiApplication")
     super(GaudiApplication, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -54,8 +52,7 @@ class GaudiApplication(ModuleBase):
     self.jobType = ''
 
   def _resolveInputVariables(self):
-    """ Resolve all input variables for the module here.
-    """
+    """Resolve all input variables for the module here."""
 
     super(GaudiApplication, self)._resolveInputVariables()
     super(GaudiApplication, self)._resolveInputStep()
@@ -64,8 +61,11 @@ class GaudiApplication(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_id=None, step_number=None):
-    """ The main execution method of GaudiApplication. It runs a gaudirun app using RunApplication module.
-        This is the module used for each and every job of productions. It can also be used by users.
+    """The main execution method of GaudiApplication.
+
+    It runs a gaudirun app using RunApplication module. This is the
+    module used for each and every job of productions. It can also be
+    used by users.
     """
 
     try:

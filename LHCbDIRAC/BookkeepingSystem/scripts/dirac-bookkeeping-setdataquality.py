@@ -9,8 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This script is used to flag a given files which belongs a certain run.
+"""This script is used to flag a given files which belongs a certain run.
 
 1. We flag OK or BAD without specifying a processing pass: this flags the RAW and all derived files as OK or BAD
 2. If a processing pass is specified (and we allow one PP at a time only):
@@ -18,7 +17,6 @@ This script is used to flag a given files which belongs a certain run.
      2.2 For OK:
                - if '/Real Data', only the RAW are flagged OK. Derived data are left unchanged. If one wants to flag everything, use 1.
                - else that processing pass (and derived) and the RAW are flagged OK
-
 """
 import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
@@ -158,9 +156,9 @@ def getProcessingPasses(runNumber, procPass):
 
 
 def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
-  """
-  This method visit the processing passes started from processingPass. The visited
-  processing passes are kept in visitedProcessingPass
+  """This method visit the processing passes started from processingPass.
+
+  The visited processing passes are kept in visitedProcessingPass
   """
 
   res = bkClient.getProcessingPass(bkDict, processingPass)

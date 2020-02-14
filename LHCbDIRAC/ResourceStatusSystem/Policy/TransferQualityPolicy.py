@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.ResourceStatusSystem.Policy.TransferQualityPolicy
+"""LHCbDIRAC.ResourceStatusSystem.Policy.TransferQualityPolicy.
 
-   TransferQualityPolicy.__bases__:
-     DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
-
-'''
+TransferQualityPolicy.__bases__:
+  DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
+"""
 
 from DIRAC import S_OK
 from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
@@ -22,25 +21,24 @@ __RCSID__ = "$Id$"
 
 
 class TransferQualityPolicy(PolicyBase):
-  '''
-  The TransferQualityPolicy class is a policy class to check the transfer
+  """The TransferQualityPolicy class is a policy class to check the transfer
   quality.
 
-  Evaluates the TransferQuality results given by the DIRACAccounting.TransferQuality
-  command against a certain set of thresholds defined in the CS.
-  '''
+  Evaluates the TransferQuality results given by the
+  DIRACAccounting.TransferQuality command against a certain set of
+  thresholds defined in the CS.
+  """
 
   @staticmethod
   def _evaluate(commandResult):
-    '''
-    Evaluate policy on Data quality.
+    """Evaluate policy on Data quality.
 
     :returns:
         {
           'Status':Error|Unknown|Active|Probing|Banned,
           'Reason':'TransferQuality:None'|'TransferQuality:xx%',
         }
-    '''
+    """
 
     result = {
         'Status': None,

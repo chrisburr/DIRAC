@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-history navigation command
-"""
+"""history navigation command."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Command                      import Command
 __RCSID__ = "$Id$"
@@ -18,12 +16,10 @@ __RCSID__ = "$Id$"
 
 ########################################################################
 class HistoryNavigationCommand(Command):
-  """
-  HistoryNavigationCommand class
-  """
+  """HistoryNavigationCommand class."""
   ########################################################################
   def __init__(self, widget, tableView, tableModel):
-    """iniztialize the concrete command"""
+    """iniztialize the concrete command."""
     Command.__init__(self)
     self.__tableView = tableView
     self.__historyWidget = widget
@@ -31,7 +27,7 @@ class HistoryNavigationCommand(Command):
 
   ########################################################################
   def execute(self):
-    """executes the command"""
+    """executes the command."""
     self.__historyWidget.setTableModel(self.__tableView, self.__tableModel)
     self.__historyWidget.show()
     self.__historyWidget.repaint()

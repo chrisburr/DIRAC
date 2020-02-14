@@ -8,25 +8,29 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" In general for data processing productions we need to completely abandon the 'by hand'
-    reschedule operation such that accidental reschedulings don't result in data being processed twice.
+"""In general for data processing productions we need to completely abandon the
+'by hand' reschedule operation such that accidental reschedulings don't result
+in data being processed twice.
 
-    For all above cases the following procedure should be used to achieve 100%:
+For all above cases the following procedure should be used to achieve 100%:
 
-    - Starting from the data in the Production DB for each transformation
-      look for files in the following status:
-         Assigned
-         MaxReset
-      some of these will correspond to the final WMS status 'Failed'.
+- Starting from the data in the Production DB for each transformation
+  look for files in the following status:
 
-    For files in MaxReset and Assigned:
-    - Discover corresponding job WMS ID
-    - Check that there are no outstanding requests for the job
-      o wait until all are treated before proceeding
-    - Check that none of the job input data has BK descendants for the current production
-      o if the data has a replica flag it means all was uploaded successfully - should be investigated by hand
-      o if there is no replica flag can proceed with file removal from LFC / storage (can be disabled by flag)
-    - Mark the recovered input file status as 'Unused' in the ProductionDB if they were not in MaxReset
+    - Assigned
+    - MaxReset
+
+  some of these will correspond to the final WMS status 'Failed'.
+
+For files in MaxReset and Assigned:
+
+- Discover corresponding job WMS ID
+- Check that there are no outstanding requests for the job
+  o wait until all are treated before proceeding
+- Check that none of the job input data has BK descendants for the current production
+  o if the data has a replica flag it means all was uploaded successfully - should be investigated by hand
+  o if there is no replica flag can proceed with file removal from LFC / storage (can be disabled by flag)
+- Mark the recovered input file status as 'Unused' in the ProductionDB if they were not in MaxReset
 """
 
 __RCSID__ = "$Id$"
@@ -46,12 +50,10 @@ AGENT_NAME = 'Transformation/DataRecoveryAgent'
 
 
 class DataRecoveryAgent(AgentModule):
-  """ Standard DIRAC agent class
-  """
+  """Standard DIRAC agent class."""
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     AgentModule.__init__(self, *args, **kwargs)
 
     self.transClient = None
@@ -65,8 +67,7 @@ class DataRecoveryAgent(AgentModule):
   #############################################################################
 
   def initialize(self):
-    """Sets defaults
-    """
+    """Sets defaults."""
     self.am_setOption('shifterProxy', 'ProductionManager')
 
     self.transClient = TransformationClient()
@@ -81,8 +82,7 @@ class DataRecoveryAgent(AgentModule):
 
   #############################################################################
   def execute(self):
-    """ The main execution method.
-    """
+    """The main execution method."""
     # Configuration settings
     self.enableFlag = self.am_getOption('EnableFlag', True)
     self.log.verbose('Enable flag is %s' % self.enableFlag)
@@ -217,8 +217,7 @@ class DataRecoveryAgent(AgentModule):
 
   #############################################################################
   def __getEligibleTransformations(self, status, typeList):
-    """ Select transformations of given status and type.
-    """
+    """Select transformations of given status and type."""
     res = self.transClient.getTransformations(condDict={'Status': status, 'Type': typeList})
     if not res['OK']:
       return res
@@ -227,8 +226,8 @@ class DataRecoveryAgent(AgentModule):
 
   #############################################################################
   def __selectTransformationFiles(self, transformation, statusList):
-    """ Select files, production jobIDs in specified file status for a given transformation.
-    """
+    """Select files, production jobIDs in specified file status for a given
+    transformation."""
     # Until a query for files with timestamp can be obtained must rely on the
     # WMS job last update
     res = self.transClient.getTransformationFiles(condDict={'TransformationID': transformation, 'Status': statusList})
@@ -247,12 +246,14 @@ class DataRecoveryAgent(AgentModule):
 
   #############################################################################
   def __obtainWMSJobIDs(self, transformation, fileDict, selectDelay, wmsStatusList):
-    """ Group files by the corresponding WMS jobIDs, check the corresponding
-        jobs have not been updated for the delay time.  Can't get into any
-        mess because we start from files only in MaxReset / Assigned and check
-        corresponding jobs.  Mixtures of files for jobs in MaxReset and Assigned
-        statuses only possibly include some files in Unused status (not Processed
-        for example) that will not be touched.
+    """Group files by the corresponding WMS jobIDs, check the corresponding
+    jobs have not been updated for the delay time.
+
+    Can't get into any mess because we start from files only in MaxReset
+    / Assigned and check corresponding jobs.  Mixtures of files for jobs
+    in MaxReset and Assigned statuses only possibly include some files
+    in Unused status (not Processed for example) that will not be
+    touched.
     """
     taskIDList = sorted(set(taskID for taskID, _status in fileDict.values()))
     self.transLogger.verbose("The following %d task IDs correspond to the selected files:\n%s" %
@@ -302,8 +303,8 @@ class DataRecoveryAgent(AgentModule):
   #############################################################################
 
   def __removePendingRequestsJobs(self, jobFileDict):
-    """ Before doing anything check that no outstanding requests are pending for the set of WMS jobIDs.
-    """
+    """Before doing anything check that no outstanding requests are pending for
+    the set of WMS jobIDs."""
     jobs = jobFileDict.keys()
 
     level = self.reqClient.log.getLevel()
@@ -330,9 +331,8 @@ class DataRecoveryAgent(AgentModule):
 
   #############################################################################
   def __checkdescendants(self, transformation, jobFileDict):
-    """ Check BK descendants for input files, prepare list of actions to be
-        taken for recovery.
-    """
+    """Check BK descendants for input files, prepare list of actions to be
+    taken for recovery."""
 
     jobsThatDidntProduceOutputs = []
     jobsThatProducedOutputs = []
@@ -351,8 +351,7 @@ class DataRecoveryAgent(AgentModule):
 
   ############################################################################
   def __updateFileStatus(self, transformation, fileList, fileStatus):
-    """ Update file list to specified status.
-    """
+    """Update file list to specified status."""
     if not self.enableFlag:
       self.transLogger.info(
           "\tEnable flag is False, would have updated %d files to '%s' status for %s" %

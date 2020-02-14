@@ -8,8 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   DIRAC.BookkeepingSystem.DB package
-"""
+"""DIRAC.BookkeepingSystem.DB package."""
 
 __RCSID__ = "$Id$"

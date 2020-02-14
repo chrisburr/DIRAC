@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-It used to control the advanced save widgets
-"""
+"""It used to control the advanced save widgets."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
 from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
@@ -22,11 +20,11 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerAdvancedSave( ControlerAbstract ):
-  """ ControlerAdvancedSave class"""
+  """ControlerAdvancedSave class."""
 
   #############################################################################
   def __init__( self, widget, parent ):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__( self, widget, parent )
     self.__sites = {'Select a site':None}
 
@@ -46,7 +44,7 @@ class ControlerAdvancedSave( ControlerAbstract ):
 
   #############################################################################
   def messageFromParent( self, message ):
-    """handles the messages sent from the parent"""
+    """handles the messages sent from the parent."""
     if message.action() == 'showWidget':
       widget = self.getWidget()
       widget.fillWindows( self.__sites )
@@ -60,19 +58,19 @@ class ControlerAdvancedSave( ControlerAbstract ):
 
   #############################################################################
   def lfnButtonChanged( self ):
-    """handles the lfn button action"""
+    """handles the lfn button action."""
     widget = self.getWidget()
     widget.setLFNbutton()
 
   #############################################################################
   def pfnButtonChanged( self ):
-    """handles the action of the pfn button"""
+    """handles the action of the pfn button."""
     widget = self.getWidget()
     widget.setPFNbutton()
 
   #############################################################################
   def saveButton( self ):
-    """handles the action of the save button"""
+    """handles the action of the save button."""
     widget = self.getWidget()
     filename = str( widget.getLineEdit().text() )
     if filename == '':

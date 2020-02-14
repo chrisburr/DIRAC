@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.AccountingSystem.private.Plotters.JobStepPlotter
+"""LHCbDIRAC.AccountingSystem.private.Plotters.JobStepPlotter.
 
-   JobStepPlotter.__bases__:
-     DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter    
-
+JobStepPlotter.__bases__:
+  DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
 """
 
 from DIRAC import S_OK
@@ -23,8 +22,7 @@ from LHCbDIRAC.AccountingSystem.Client.Types.JobStep import JobStep
 __RCSID__ = "$Id$"
 
 class JobStepPlotter( BaseReporter ):
-  """ JobStepPlotter as an extension of BaseReporter
-  """
+  """JobStepPlotter as an extension of BaseReporter."""
 
   _typeName      = "JobStep"
   _typeKeyFields = [ dF[0] for dF in JobStep().definitionKeyFields ]

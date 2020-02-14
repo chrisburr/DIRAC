@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-get-file-ancestors
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  returns ancestors for a (list of) LFN(s) 
-"""
+"""returns ancestors for a (list of) LFN(s)"""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

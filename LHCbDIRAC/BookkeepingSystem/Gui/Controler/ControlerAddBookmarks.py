@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It controlls the bookmarks widget
-"""
+"""It controlls the bookmarks widget."""
 ########################################################################
 
 
@@ -23,15 +21,15 @@ from DIRAC                                                               import 
 
 #############################################################################
 class ControlerAddBookmarks(ControlerAbstract):
-  """class"""
+  """class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent from the parent"""
+    """handles the messages sent from the parent."""
     if message.action() == 'showWidget':
       self.getWidget().show()
       return S_OK()
@@ -48,13 +46,13 @@ class ControlerAddBookmarks(ControlerAbstract):
 
   #############################################################################
   def messageFromChild(self, sender, message):
-    """handles the messages sent from its children"""
+    """handles the messages sent from its children."""
     gLogger.error('Unkown message')
     return S_ERROR('Unkown message')
 
   #############################################################################
   def okButton(self):
-    """handles the action when the ok button pressed"""
+    """handles the action when the ok button pressed."""
     self.getWidget().waitCursor()
     title = self.getWidget().getTitle()
     path = self.getWidget().getPath()
@@ -70,5 +68,5 @@ class ControlerAddBookmarks(ControlerAbstract):
     self.getWidget().arrowCursor()
   #############################################################################
   def cancelButton(self):
-    """handles the action when the close button pressed"""
+    """handles the action when the close button pressed."""
     self.getWidget().close()

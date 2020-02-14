@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""Bookkeeping file system"""
+"""Bookkeeping file system."""
 from __future__ import absolute_import, division, print_function
 
 import sys
@@ -26,11 +26,11 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class LHCbBookkeepingCLI(cmd.Cmd):
-  """class"""
+  """class."""
   #############################################################################
 
   def __init__(self):
-    """constructor"""
+    """constructor."""
     cmd.Cmd.__init__(self)
     self.prompt = "$[/]$"
     self.bk = LHCB_BKKDBClient()
@@ -47,7 +47,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def addCurrentPath(self, path):
-    """add a path"""
+    """add a path."""
     if path[0] != '/' and len(self.currentPath) == 1:
       self.currentPath += path
     else:
@@ -55,19 +55,20 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def __printPrompt(self, path=None):
-    """prints the prompt"""
+    """prints the prompt."""
     if path is None:
       path = '/'
     self.prompt = '$[' + path + ']$'
 
   #############################################################################
   def __bklist(self, path):
-    """list a path"""
+    """list a path."""
     retVal = self.bk.list(path)
     return retVal
 
   def __bkListAll(self, path):
     """list the directory with metadata.
+
     This is equivalent to ls -a
     """
     if path == '':
@@ -81,7 +82,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def __checkDirectory(self, path):
-    """is empty directory"""
+    """is empty directory."""
     res = self.bk.list(path)
     retValue = False
     if res:
@@ -90,13 +91,13 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def __rootDirectory(self):
-    """root"""
+    """root."""
     self.currentPath = '/'
     self.__printPrompt(self.currentPath)
 
   #############################################################################
   def __oneLevelback(self, logical=False):
-    """ cd .. """
+    """cd .."""
     path = self.currentPath.split('/')
     if path[0] == '' and path[1] == '':
       if not logical:
@@ -120,7 +121,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
   #############################################################################
   @staticmethod
   def help_ls():
-    """provides help"""
+    """provides help."""
     print("Usage: ls [OPTION]... [FILE]...")
     print("List information about the FILEs (the current directory by default).")
     print(" Available options: -a")
@@ -131,7 +132,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   @staticmethod
   def help_cd():
-    """help cd command"""
+    """help cd command."""
     print(" cd <dir>")
     print("cd ..")
     print("cd /")
@@ -139,7 +140,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_ls(self, path):
-    """ls command"""
+    """ls command."""
     paging = False
     if path.find('|') > -1:
       tmpPath = path.split('|')
@@ -178,12 +179,12 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_list(self, path):
-    """list commamd"""
+    """list commamd."""
     pass
 
   #############################################################################
   def do_save(self, command):
-    """save command"""
+    """save command."""
     try:
       args = self.saveParser.parse_args(shlex.split(command))
     except argparse.ArgumentError as exc:
@@ -264,7 +265,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_cd(self, path):
-    """cd command"""
+    """cd command."""
     newpath = self.currentPath + '/' + path
     if path == '':
       self.currentPath = '/'
@@ -287,12 +288,12 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_pwd(self, path):
-    """pwd command"""
+    """pwd command."""
     print(self.currentPath)
 
   #############################################################################
   def do_queries(self, command=''):
-    """execute query"""
+    """execute query."""
     retVal = self.bk.getPossibleParameters()
     print('The following bookkeeping query types are available:')
     for i in retVal:
@@ -301,14 +302,14 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_use(self, command):
-    """use command"""
+    """use command."""
     self.bk.setParameter(str(command))
     self.do_cd('/')
 
   #############################################################################
   @staticmethod
   def help_use():
-    """help of use command"""
+    """help of use command."""
     print('Usage:')
     print('  use type'.rjust(10))
     print('Arguments:')
@@ -320,7 +321,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
   #############################################################################
   @staticmethod
   def help_queries():
-    """help of queries command"""
+    """help of queries command."""
     print("This method shows the available query types!")
     print("Usage:")
     print("  queries")
@@ -329,28 +330,28 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_advanceQuery(self, command=''):
-    """advancedQuery command"""
+    """advancedQuery command."""
     self.bk.setAdvancedQueries(True)
     self.do_cd('/')
 
   #############################################################################
   @staticmethod
   def help_advanceQuery():
-    """help"""
+    """help."""
     print("It allows to see more level of the Bookkeeping Tree")
     print("Usage:")
     print("   advanceQuery")
 
   #############################################################################
   def do_standardQuery(self, command=''):
-    """command"""
+    """command."""
     self.bk.setAdvancedQueries(False)
     self.do_cd('/')
 
   #############################################################################
   @staticmethod
   def help_standardQuery():
-    """help"""
+    """help."""
     print("This is used by default")
     print("It shows a reduced bookkeeping path.")
     print("Usage:")
@@ -358,7 +359,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_dataQuality(self, command=''):
-    """command"""
+    """command."""
     print('The following Data Quality flags are available in the bookkeeping!')
     retVal = self.bk.getAvailableDataQuality()
     if retVal['OK']:
@@ -372,7 +373,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
   #############################################################################
   @staticmethod
   def help_dataQuality():
-    """help"""
+    """help."""
     print('This command shows the available data quality flags.')
     print("Usage:")
     print("  dataQuality")
@@ -380,7 +381,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_setDataQualityFlags(self, command):
-    """command"""
+    """command."""
     qualities = command.split(' ')
     if len(qualities) > 0:
       dataquality = {}
@@ -392,7 +393,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def __moreInfoProcpass(self, command):
-    """more information of a directory"""
+    """more information of a directory."""
     found = False
     retVal = self.bk.getProcessingPassSteps({'StepName': command})
     if retVal['OK']:
@@ -409,7 +410,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   #############################################################################
   def do_moreinfo(self, command=''):
-    """more info command"""
+    """more info command."""
     if command == '':
       previouspath = self.__oneLevelback(self.currentPath)
       values = self.__bklist(previouspath)
@@ -457,15 +458,13 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
   @staticmethod
   def help_sites(self):
-    """
-    help
-    """
+    """help."""
     print("it returns a list of T1 sites")
 
   #############################################################################
   @staticmethod
   def help_setDataQualityFlags():
-    """help"""
+    """help."""
     print('This command allows to use different data quality flags.')
     print("Usage:")
     print("  setDataQualityFlags flag1 [flag2 flag3, ... flagN]")
@@ -477,23 +476,23 @@ class LHCbBookkeepingCLI(cmd.Cmd):
   #############################################################################
   @staticmethod
   def help_EOF():
-    """quit"""
+    """quit."""
     print("Quits the program")
 
   #############################################################################
   def do_EOF(self, line):
-    """quit command"""
+    """quit command."""
     sys.exit()
 
   #############################################################################
   def help_save(self):
-    """help"""
+    """help."""
     self.saveParser.print_help()
 
   #############################################################################
   @staticmethod
   def help_moreinfo():
-    """help method"""
+    """help method."""
     print("Display the statistics of the selected data.")
     print("Usage:")
     print("  moreinfo")

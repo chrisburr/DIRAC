@@ -12,8 +12,6 @@
 # $HeadURL$
 ############################################################
 
-"""
-   LHCbDIRAC.WorkloadManagementSystem.Service package
-"""
+"""LHCbDIRAC.WorkloadManagementSystem.Service package."""
 
 __RCSID__ = "$Id$"

@@ -8,19 +8,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
-# File: PopularityAgent.py
-########################################################################
-""" :mod: PopularityAgent
-    =====================
+"""
+:mod: PopularityAgent
 
-    .. module: PopularityAgent
-    :synopsis: The Popularity Agent creates reports about per LFC directory data usage.
+.. module: PopularityAgent
 
-    The Popularity Agent creates reports about per LFC directory data usage, based on the
-    StorageUsageDB/Popularity table. Then it creates an accounting record for each directory,
-    adding all the relevant directory metadata, obtained from the StorageUsageDB/DirMetadata table.
-    The accounting records are stored in the AccountingDB and then displayed via the web portal.
+:synopsis: The Popularity Agent creates reports about per LFC directory data usage.
+
+The Popularity Agent creates reports about per LFC directory data usage, based on the
+StorageUsageDB/Popularity table. Then it creates an accounting record for each directory,
+adding all the relevant directory metadata, obtained from the StorageUsageDB/DirMetadata table.
+The accounting records are stored in the AccountingDB and then displayed via the web portal.
 """
 # imports
 from datetime import datetime, timedelta
@@ -43,7 +41,6 @@ AGENT_NAME = "DataManagement/PopularityAgent"
 class PopularityAgent(AgentModule):
   """
   .. class:: PopularityAgent
-
   """
   # # DataUsageClient
   __dataUsageClient = None
@@ -57,7 +54,7 @@ class PopularityAgent(AgentModule):
   numPopRows = None
 
   def initialize(self):
-    """ agent initialisation """
+    """agent initialisation."""
     self.am_setOption('PollingTime', 43200)
     if self.am_getOption('DirectDB', False):
       self.__stDB = StorageUsageDB()
@@ -80,7 +77,7 @@ class PopularityAgent(AgentModule):
 # .........................................................................................
 
   def execute(self):
-    """ Main loop of Popularity agent """
+    """Main loop of Popularity agent."""
 
     now = datetime.now()
     endTime = datetime(now.year, now.month, now.day, 0, 0, 0)
@@ -254,8 +251,8 @@ class PopularityAgent(AgentModule):
     return res
 
   def computeTimeForAccounting(self, startTime, day):
-    """ Compute the time for the accounting record, starting from the start time of the query and the day bin
-    """
+    """Compute the time for the accounting record, starting from the start time
+    of the query and the day bin."""
     self.log.verbose("find time for accounting for startTime: %s + day %s " % (startTime, day))
     daysToAdd = timedelta(days=day, hours=12)  # add 12h just to put the value in the middle of time bin
     self.log.verbose("timedelta to add: %s " % daysToAdd)

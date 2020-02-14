@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" DIRAC service that expose access for MCStatsElasticDB (ElasticSearch DB)
-"""
+"""DIRAC service that expose access for MCStatsElasticDB (ElasticSearch DB)"""
 
 __RCSID__ = "$Id$"
 
@@ -25,8 +24,8 @@ def initializeMCStatsElasticDBHandler(_serviceinfo):
 
 
 class MCStatsElasticDBHandler(RequestHandler):
-  """ Tiny service for setting/getting/removing data from ElasticSearch MCStats DB
-  """
+  """Tiny service for setting/getting/removing data from ElasticSearch MCStats
+  DB."""
 
   types_set = [basestring, basestring, dict]
 

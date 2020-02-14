@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.AccountingSystem.Client.Types package
-'''
+"""LHCbDIRAC.AccountingSystem.Client.Types package."""
 
 __RCSID__ = "$Id$"
 

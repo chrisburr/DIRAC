@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-This widget used to view a key/value pair dataset
-"""
+"""This widget used to view a key/value pair dataset."""
 
 from PyQt4.QtGui                                import QDialog
 from PyQt4.QtCore                               import SIGNAL
@@ -24,12 +22,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class InfoDialog(QDialog, Ui_InfoDialog):
-  """
-  InfoDialog class
-  """
+  """InfoDialog class."""
   #############################################################################
   def __init__(self, parent=None):
-    """initialize the widget"""
+    """initialize the widget."""
     QDialog.__init__(self, parent)
     Ui_InfoDialog.__init__(self)
     self.setupUi(self)
@@ -38,12 +34,12 @@ class InfoDialog(QDialog, Ui_InfoDialog):
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################
   def showData(self, data):
-    """hows the data"""
+    """hows the data."""
     noheader = ['name', 'expandable', 'level', 'fullpath']
     tabledata = []
     header = ['Name', 'Value']
@@ -62,7 +58,7 @@ class InfoDialog(QDialog, Ui_InfoDialog):
 
   #############################################################################
   def showDictionary(self, data):
-    """shows the dictionary content"""
+    """shows the dictionary content."""
     header = ['FileName', 'Ancestor1', 'Ancestor2', 'Ancestor3', 'Ancestor4', 'Ancestor5', 'Ancestor6']
     keys = data.keys()
     keys.sort()
@@ -85,7 +81,7 @@ class InfoDialog(QDialog, Ui_InfoDialog):
 
   #############################################################################
   def filltable(self, header, tabledata):
-    """fills the table"""
+    """fills the table."""
     # set the table model
     tm = TableModel(tabledata, header, self)
     self.tableView.setModel(tm)

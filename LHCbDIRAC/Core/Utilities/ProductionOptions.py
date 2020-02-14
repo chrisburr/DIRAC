@@ -8,10 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Production options is a utility to return options for projects based on
-    current LHCb software versions.  This is used by the production API to
-    create production workflows but also provides lists of options files for
-    test jobs.
+"""Production options is a utility to return options for projects based on
+current LHCb software versions.
+
+This is used by the production API to create production workflows but
+also provides lists of options files for test jobs.
 """
 
 __RCSID__ = "$Id$"
@@ -25,10 +26,12 @@ gLogger = gLogger.getSubLogger('ProductionOptions')
 
 def getModuleOptions(applicationName, numberOfEvents, inputDataOptions, extraOptions='',
                      runNumber=0, firstEventNumber=1, jobType=''):
-  """ Return the standard options for a Gaudi application project to be used at run time
-      by the workflow modules.  The input data options field is a python list (output of
-      getInputDataOptions() below). The runNumber and firstEventNumber only apply in the Gauss case
-      and when the job type is not 'user'.
+  """Return the standard options for a Gaudi application project to be used at
+  run time by the workflow modules.
+
+  The input data options field is a python list (output of
+  getInputDataOptions() below). The runNumber and firstEventNumber only
+  apply in the Gauss case and when the job type is not 'user'.
   """
   optionsLines = []
   optionsLines.append('\n\n#////////////////////////////////////////////')
@@ -59,9 +62,11 @@ def getModuleOptions(applicationName, numberOfEvents, inputDataOptions, extraOpt
 
 
 def getDataOptions(applicationName, inputDataList, inputDataType, poolXMLCatalogName):
-  """Given a list of input data and a specified input data type this function will
-     return the correctly formatted EventSelector options for Gaudi applications
-     specified by name.  The options are returned as a python list.
+  """Given a list of input data and a specified input data type this function
+  will return the correctly formatted EventSelector options for Gaudi
+  applications specified by name.
+
+  The options are returned as a python list.
   """
   options = []
   if inputDataList:
@@ -78,9 +83,8 @@ def getDataOptions(applicationName, inputDataList, inputDataType, poolXMLCatalog
 
 
 def getEventSelectorInput(inputDataList, inputDataType):
-  """ Returns the correctly formatted event selector options for accessing input
-      data using Gaudi applications.
-  """
+  """Returns the correctly formatted event selector options for accessing input
+  data using Gaudi applications."""
   inputDataFiles = []
   for lfn in inputDataList:
     lfn = lfn.replace('LFN:', '').replace('lfn:', '')

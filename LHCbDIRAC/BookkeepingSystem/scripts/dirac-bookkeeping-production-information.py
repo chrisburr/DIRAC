@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-production-information
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve information from the Bookkeeping for a given production
-"""
+"""Retrieve information from the Bookkeeping for a given production."""
 __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC.Core.Base import Script

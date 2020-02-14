@@ -9,10 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Get the GUID of a (set of) ROOT file
-The file can be either local, an LFN or an xrootd URL (root:...)
-"""
+"""Get the GUID of a (set of) ROOT file The file can be either local, an LFN or
+an xrootd URL (root:...)"""
 
 __RCSID__ = "$Id$"
 

@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test Interfaces API DiracProduction
-"""
+"""Test Interfaces API DiracProduction."""
 
 __RCSID__ = "$Id$"
 
@@ -33,8 +32,7 @@ def test_LJ_setApplication():
 
 
 def test_instantiate():
-  """ tests that we can instantiate one object of the tested class
-  """
+  """tests that we can instantiate one object of the tested class."""
   testClass = moduleTested.DiracProduction
   prod = testClass(1)
   assert 'DiracProduction' == prod.__class__.__name__

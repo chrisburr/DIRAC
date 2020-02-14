@@ -8,12 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: UserStorageQuotaAgent
-    ===========================
+"""
+:mod: UserStorageQuotaAgent
 
-    .. module: UserStorageQuotaAgent
-    :synopsis: UserStorageQuotaAgent obtains the usage by each user from the StorageUsageDB
-    and compares with a quota present in the CS.
+.. module: UserStorageQuotaAgent
+
+:synopsis: UserStorageQuotaAgent obtains the usage by each user from the StorageUsageDB
+  and compares with a quota present in the CS.
 """
 
 from DIRAC import gConfig, S_OK
@@ -27,12 +28,11 @@ __RCSID__ = "$Id$"
 AGENT_NAME = 'DataManagement/UserStorageQuotaAgent'
 
 class UserStorageQuotaAgent( AgentModule ):
-  """
-  .. class:: UserStorageQuotaAgent
+  """.. class:: UserStorageQuotaAgent.
 
   :param int deafultQuota: default quota in MB
   :param NotificationClient notificationClient: NotificationClient instance
-  :param StorageUsageDB storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
+  :param LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB.StorageUsageDB storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
   """
 
   defaultQuota = 1000
@@ -40,8 +40,7 @@ class UserStorageQuotaAgent( AgentModule ):
   storageUsageDB = None
 
   def __init__( self, *args, **kwargs ):
-    ''' c'tor
-    '''
+    """c'tor."""
     AgentModule.__init__( self, *args, **kwargs )
 
     self.notificationClient = NotificationClient()
@@ -53,7 +52,7 @@ class UserStorageQuotaAgent( AgentModule ):
     self.defaultQuota = gConfig.getValue( '/Registry/DefaultStorageQuota', self.defaultQuota )  # Default is 1TB
 
   def initialize( self ):
-    """ agent initialisation
+    """agent initialisation.
 
     :param self: self reference
     """
@@ -66,10 +65,9 @@ class UserStorageQuotaAgent( AgentModule ):
     return S_OK()
 
   def execute( self ):
-    """ execution of one cycle
+    """execution of one cycle.
 
     :param self: self reference
-
     """
     res = self.storageUsageDB.getUserStorageUsage()
     usageDict = res['Value']
@@ -128,7 +126,7 @@ class UserStorageQuotaAgent( AgentModule ):
     return S_OK()
 
   def sendFirstWarningMail( self, userName, userMail, quota, usage ):
-    """ first warning email
+    """first warning email.
 
     :param self: self reference
     :param str userName: DIRAC user name
@@ -153,7 +151,7 @@ Explanations can be found at https://twiki.cern.ch/twiki/bin/view/LHCb/GridStora
     self.notificationClient.sendMail( toAddress, subject, msgbody, fromAddress )
 
   def sendSecondWarningMail( self, userName, userMail, quota, usage ):
-    """ second warning email
+    """second warning email.
 
     :param self: self reference
     :param str userName: DIRAC user name
@@ -177,7 +175,7 @@ Explanations can be found at https://twiki.cern.ch/twiki/bin/view/LHCb/GridStora
     self.notificationClient.sendMail( toAddress, subject, msgbody, fromAddress )
 
   def sendBlockedMail( self, userName, userMail, quota, usage ):
-    """ send blocked email
+    """send blocked email.
 
     :param self: self reference
     :param str userName: DIRAC user name

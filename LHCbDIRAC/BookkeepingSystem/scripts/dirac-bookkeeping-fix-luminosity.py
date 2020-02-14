@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   Fix the luminosity of all descendants of a set of RAW files, if hte run is Finished
-"""
+"""Fix the luminosity of all descendants of a set of RAW files, if hte run is
+Finished."""
 
 __RCSID__ = "$Id$"
 

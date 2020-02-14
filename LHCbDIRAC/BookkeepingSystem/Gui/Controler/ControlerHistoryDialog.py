@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Controller of the history dialog window
-"""
+"""Controller of the history dialog window."""
 ########################################################################
 
 
@@ -24,12 +22,10 @@ from DIRAC                                                           import gLog
 
 #############################################################################
 class ControlerHistoryDialog(ControlerAbstract):
-  """
-  ControlerHistoryDialog class
-  """
+  """ControlerHistoryDialog class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the constructor"""
+    """initialize the constructor."""
     ControlerAbstract.__init__(self, widget, parent)
     self.__selectedFiles = []
     self.__comands = []
@@ -37,7 +33,7 @@ class ControlerHistoryDialog(ControlerAbstract):
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by the parent"""
+    """handles the messages sent by the parent."""
     if message.action() == 'list':
       values = message['items']
       headers = values['ParameterNames']
@@ -73,12 +69,12 @@ class ControlerHistoryDialog(ControlerAbstract):
 
   #############################################################################
   def messageFromChild(self, sender, message):
-    """pass the messages to the parent which are sent by the children"""
+    """pass the messages to the parent which are sent by the children."""
     return self.getParent().messageFromChild(self, message)
 
   #############################################################################
   def selection(self, selected, deselected):
-    """handles the selected data"""
+    """handles the selected data."""
     if selected:
       for i in selected.indexes():
         row = i.row()
@@ -111,14 +107,14 @@ class ControlerHistoryDialog(ControlerAbstract):
 
   #############################################################################
   def close(self):
-    """handles the close button action"""
+    """handles the close button action."""
     self.__current = 0
     self.__comands = []
     self.getWidget().close()
 
   #############################################################################
   def next(self):
-    """handles the next button action"""
+    """handles the next button action."""
     self.getWidget().setBackButtonSatate(enable=True)
     if len(self.__comands) == self.__current:
       self.getWidget().setNextButtonState(enable=False)
@@ -146,7 +142,7 @@ class ControlerHistoryDialog(ControlerAbstract):
 
   #############################################################################
   def back(self):
-    """handles the back button action"""
+    """handles the back button action."""
     self.__current -= 1
     hcommand = self.__comands[self.__current - 1 ]
     hcommand.execute()

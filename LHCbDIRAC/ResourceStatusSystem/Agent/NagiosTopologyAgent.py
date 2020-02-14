@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.ResourceStatusSystem.Agent.NagiosTopologyAgent
+"""LHCbDIRAC.ResourceStatusSystem.Agent.NagiosTopologyAgent.
 
-   NagiosTopologyAgent.__bases__:
-     DIRAC.Core.Base.AgentModule.AgentModule
-   xml_append
+NagiosTopologyAgent.__bases__: DIRAC.Core.Base.AgentModule.AgentModule
 
+xml_append
 """
 
 import os
@@ -33,11 +32,9 @@ AGENT_NAME = 'ResourceStatus/NagiosTopologyAgent'
 
 
 class NagiosTopologyAgent(AgentModule):
-  """
-  This agent loops over the Dirac CS and extracts the necessary
-  information to create a "topology map" which is used by the IT
-  provided Nagios system to test Grid sites. The topology information
-  defines the services to be tested.
+  """This agent loops over the Dirac CS and extracts the necessary information
+  to create a "topology map" which is used by the IT provided Nagios system to
+  test Grid sites. The topology information defines the services to be tested.
 
   NagiosTopologyAgent, writes the xml topology consumed by Nagios to run
   the tests.
@@ -52,8 +49,7 @@ class NagiosTopologyAgent(AgentModule):
     self.dryRun = False
 
   def initialize(self):
-    """ Initialize the agent.
-    """
+    """Initialize the agent."""
 
     self.xmlPath = rootPath + '/' + self.am_getOption('webRoot')
     self.urljson = 'https://wlcg-rebus.cern.ch/apps/topology/all/json'
@@ -67,7 +63,9 @@ class NagiosTopologyAgent(AgentModule):
 
   @staticmethod
   def isHostIPV6(host):
-    """ Test if the given host is ipv6 capable. 0:ipv6 capable. 1:ipv4 only. -1:Not a valid host (no DNS record?)
+    """Test if the given host is ipv6 capable.
+
+    0:ipv6 capable. 1:ipv4 only. -1:Not a valid host (no DNS record?)
     """
     try: # First try IPV6
       adrinfo = socket.getaddrinfo(host, None, socket.AF_INET6)
@@ -80,8 +78,7 @@ class NagiosTopologyAgent(AgentModule):
         return -1
 
   def execute(self):
-    """ Let's generate the xml file with the topology.
-    """
+    """Let's generate the xml file with the topology."""
 
     # instantiate xml doc
     xml_impl = xml.dom.minidom.getDOMImplementation()
@@ -215,20 +212,20 @@ class NagiosTopologyAgent(AgentModule):
   def __site_parameters(sites, wlcg):
     """Function that returns the sites parameters.
 
-      :param list sites:
-        List of sites or single site with same site name (e.g ['LCG.CERN.cern'] or
-        [LCG.Manchester.uk, VAC.Manchester.uk])
+    :param list sites:
+      List of sites or single site with same site name (e.g ['LCG.CERN.cern'] or
+      [LCG.Manchester.uk, VAC.Manchester.uk])
 
-      :param dict wlcg:
-        It's a dictionary with the WLCG parameters from all sites grabbed from
-        https://wlcg-rebus.cern.ch/apps/topology/all/json
+    :param dict wlcg:
+      It's a dictionary with the WLCG parameters from all sites grabbed from
+      https://wlcg-rebus.cern.ch/apps/topology/all/json
 
-      Keys:
-      'WlcgName', 'Coordinates', 'Description', 'Mail', 'DiracName', 'Tier', 'Sub-Tier',
-      'SE', 'Country':, 'Federation', 'FederationAccountingName', 'Infrastructure',
-      'Institute Name', 'Grid'
+    Keys:
+    'WlcgName', 'Coordinates', 'Description', 'Mail', 'DiracName', 'Tier', 'Sub-Tier',
+    'SE', 'Country':, 'Federation', 'FederationAccountingName', 'Infrastructure',
+    'Institute Name', 'Grid'
 
-      If the site is not listed in WLCG or have no MoU Tier Level the function will return False
+    If the site is not listed in WLCG or have no MoU Tier Level the function will return False
     """
 
     grid_dict = {}
@@ -274,9 +271,7 @@ class NagiosTopologyAgent(AgentModule):
 
   @staticmethod
   def __writeHeaderInfo(xml_doc, xml_root):
-    """
-      Writes XML document header.
-    """
+    """Writes XML document header."""
 
     xml_append(xml_doc, xml_root, 'title', 'LHCb Topology Information for ATP')
     xml_append(xml_doc, xml_root, 'description',
@@ -290,8 +285,7 @@ class NagiosTopologyAgent(AgentModule):
 
   @staticmethod
   def __writeCEInfo(xml_doc, grid, xml_site, site, ces):
-    """ Writes CE information in the XML Document
-    """
+    """Writes CE information in the XML Document."""
 
     has_grid_elem = 'False'
 
@@ -361,13 +355,9 @@ class NagiosTopologyAgent(AgentModule):
 
   @staticmethod
   def __writeSEInfo(xml_doc, xml_site, site, site_tier, site_subtier):
-    """ Writes SE information in the XML Document
-
-    """
+    """Writes SE information in the XML Document."""
     def __write_SE_XML(site_se_opts):
-      """Sub-function just to populate the XML with the SE values
-
-      """
+      """Sub-function just to populate the XML with the SE values."""
       site_se_name = site_se_opts.get('Host')
       site_se_flavour = site_se_opts.get('Protocol')
       site_se_path = site_se_opts.get('Path', 'UNDEFINED')
@@ -443,9 +433,7 @@ class NagiosTopologyAgent(AgentModule):
 
 
 def xml_append(doc, base, elem, cdata=None, **attrs):
-  """
-    Given a Document, we append to it an element.
-  """
+  """Given a Document, we append to it an element."""
 
   new_elem = doc.createElement(elem)
   for attr in attrs:

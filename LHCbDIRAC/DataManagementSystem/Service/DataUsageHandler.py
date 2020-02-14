@@ -8,14 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
-# File: DataUsageHandler.py
-########################################################################
-""" :mod: DataUsageHandler
-    ======================
+"""
+:mod: DataUsageHandler
 
-    .. module: DataUsageHandler
-    :synopsis: Implementation of the Data Usage service in the DISET framework.
+.. module: DataUsageHandler
+
+:synopsis: Implementation of the Data Usage service in the DISET framework.
 """
 # # imports
 # # from DIRAC
@@ -32,7 +30,7 @@ gStorageUsageDB = False
 
 
 def initializeDataUsageHandler(_serviceInfo):
-  """ service initalisation """
+  """service initalisation."""
   global gStorageUsageDB
   gStorageUsageDB = StorageUsageDB()
   return S_OK()
@@ -46,47 +44,47 @@ class DataUsageHandler(RequestHandler):
 
   @staticmethod
   def export_sendDataUsageReport(site, directoryDict, status='New'):
-    """ export of sendDataUsageReport """
+    """export of sendDataUsageReport."""
     return gStorageUsageDB.sendDataUsageReport(site, directoryDict, status)
 
   types_getDataUsageSummary = [basestring, basestring, basestring]
 
   @staticmethod
   def export_getDataUsageSummary(startTime, endTime, status):
-    """ export of getDataUsageSummary """
+    """export of getDataUsageSummary."""
     return gStorageUsageDB.getDataUsageSummary(startTime, endTime, status)
 
   types_getDataUsageForDirectory = [basestring]
 
   @staticmethod
   def export_getDataUsageForDirectory(path):
-    """ export of getDataUsageForDirectory """
+    """export of getDataUsageForDirectory."""
     return gStorageUsageDB.getDataUsageForDirectory(path)
 
   types_sendDataUsageReport_2 = [(dict)]
 
   @staticmethod
   def export_sendDataUsageReport_2(directoryDict):
-    """ export of sendDataUsageReport (new version) """
+    """export of sendDataUsageReport (new version)"""
     return gStorageUsageDB.sendDataUsageReport_2(directoryDict)
 
   types_updatePopEntryStatus = [list, basestring]
 
   @staticmethod
   def export_updatePopEntryStatus(idList, newStatus):
-    """ export of updatePopEntryStatus """
+    """export of updatePopEntryStatus."""
     return gStorageUsageDB.updatePopEntryStatus(idList, newStatus)
 
   types_insertToDirMetadata = [dict]
 
   @staticmethod
   def export_insertToDirMetadata(directoryDict):
-    """ export of insertToDirMetadata """
+    """export of insertToDirMetadata."""
     return gStorageUsageDB.insertToDirMetadata(directoryDict)
 
   types_getDirMetadata = [list]
 
   @staticmethod
   def export_getDirMetadata(directoryList):
-    """ export of getDirMetadata """
+    """export of getDirMetadata."""
     return gStorageUsageDB.getDirMetadata(directoryList)

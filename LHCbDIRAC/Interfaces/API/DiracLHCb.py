@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   LHCb API Class
+"""LHCb API Class.
 
-   The LHCb API exposes LHCb specific functionality in addition to the standard DIRAC API.
-
+The LHCb API exposes LHCb specific functionality in addition to the
+standard DIRAC API.
 """
 
 __RCSID__ = "$Id$"
@@ -38,8 +37,7 @@ COMPONENT_NAME = 'DiracLHCb'
 
 
 def getSiteForSE(se):
-  """ Get site name for the given SE
-  """
+  """Get site name for the given SE."""
   result = getSitesForSE(se)
   if not result['OK']:
     return result
@@ -67,8 +65,7 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def __init__(self, withRepo=False, repoLocation='', operationsHelperIn=None):
-    """Internal initialization of the DIRAC API.
-    """
+    """Internal initialization of the DIRAC API."""
 
     super(DiracLHCb, self).__init__(withRepo=withRepo, repoLocation=repoLocation)
     self.tier1s = []
@@ -94,8 +91,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def addRootFile(self, lfn, fullPath, diracSE, printOutput=False):
-    """ Add a Root file to Grid storage, an attempt is made to retrieve the
-        POOL GUID of the file prior to upload.
+    """Add a Root file to Grid storage, an attempt is made to retrieve the POOL
+    GUID of the file prior to upload.
 
        Example Usage:
 
@@ -117,14 +114,13 @@ class DiracLHCb(Dirac):
                                           printOutput=printOutput)
 
   def addFile(self, lfn, fullPath, diracSE, printOutput=False):  # pylint: disable=arguments-differ
-    """ Copy of addRootFile
-    """
+    """Copy of addRootFile."""
     return super(DiracLHCb, self).addFile(lfn, fullPath, diracSE,
                                           fileGuid=makeGuid(fullPath)[fullPath],
                                           printOutput=printOutput)
 
   def getBKAncestors(self, lfns, depth=1, replica=True):
-    """ This function allows to retrieve ancestor files from the Bookkeeping.
+    """This function allows to retrieve ancestor files from the Bookkeeping.
 
         Example Usage:
 
@@ -148,44 +144,52 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkQueryRunsByDate(self, bkPath, startDate, endDate, dqFlag='All', selection='Runs'):
-    """ This function allows to create and perform a BK query given a supplied
-        BK path. The following BK path convention is expected:
+    """This function allows to create and perform a BK query given a supplied BK path
 
-        /<ConfigurationName>/<Configuration Version>/<Condition Description><Processing Pass>/<Event Type>/<File Type>
+    The following BK path convention is expected:
 
-        so an example for 2016 collisions data would be:
+    .. code-block:: none
 
-        /LHCb/Collision09//LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real Data/Reco16/Stripping26/90000000/EW.DST
+      /<ConfigurationName>/<Configuration Version>/<Condition Description><Processing Pass>/<Event Type>/<File Type>
 
-        The startDate and endDate must be specified as yyyy-mm-dd.
+    so an example for 2016 collisions data would be:
 
-        Runs can be selected based on their status e.g. the selection parameter
-        has the following possible attributes:
-         - Runs - data for all runs in the range are queried (default)
-         - ProcessedRuns - data is retrieved for runs that are processed
-         - NotProcessed - data is retrieved for runs that are not yet processed.
+    .. code-block:: none
 
-       Example Usage:
+      /LHCb/Collision09//LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real Data/Reco16/Stripping26/90000000/EW.DST
 
-       >>> dirac.bkQueryRunsByDate('/LHCb/Collision16//Real Data/90000000/RAW',
-                                   '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
-       {'OK': True, 'Value': [<LFN1>,<LFN2>]}
+    The startDate and endDate must be specified as yyyy-mm-dd.
 
-      dirac.bkQueryRunsByDate('/LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real'
-                              'Data/Reco16/Stripping26/90000000/EW.DST',
-                              '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
+    Runs can be selected based on their status e.g. the selection parameter
+    has the following possible attributes:
 
-       @param bkPath: BK path as described above
-       @type bkPath: string
-       @param dqFlag: Optional Data Quality flag
-       @type dqFlag: string
-       @param startDate: Start date  yyyy-mm-dd
-       @param startDate: string
-       @param endDate: End date  yyyy-mm-dd
-       @param endDate: string
-       @param selection: Either Runs, ProcessedRuns or NotProcessed
-       @param selection: string
-       @return: S_OK,S_ERROR
+     - Runs - data for all runs in the range are queried (default)
+     - ProcessedRuns - data is retrieved for runs that are processed
+     - NotProcessed - data is retrieved for runs that are not yet processed.
+
+    Example Usage:
+
+    .. code-block:: python
+
+      >>> dirac.bkQueryRunsByDate('/LHCb/Collision16//Real Data/90000000/RAW',
+                                  '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
+      {'OK': True, 'Value': [<LFN1>,<LFN2>]}
+
+      >>> dirac.bkQueryRunsByDate('/LHCb/Collision16/Beam6500GeV-VeloClosed-MagDown/Real'
+                                  'Data/Reco16/Stripping26/90000000/EW.DST',
+                                  '2016-08-20','2016-08-22',dqFlag='OK',selection='Runs')
+
+    @param bkPath: BK path as described above
+    @type bkPath: string
+    @param dqFlag: Optional Data Quality flag
+    @type dqFlag: string
+    @param startDate: Start date  yyyy-mm-dd
+    @param startDate: string
+    @param endDate: End date  yyyy-mm-dd
+    @param endDate: string
+    @param selection: Either Runs, ProcessedRuns or NotProcessed
+    @param selection: string
+    @return: S_OK,S_ERROR
     """
     runSelection = ['Runs', 'ProcessedRuns', 'NotProcessed']
     if selection not in runSelection:
@@ -258,8 +262,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkQueryRun(self, bkPath, dqFlag='All'):
-    """ This function allows to create and perform a BK query given a supplied
-        BK path. The following BK path convention is expected:
+    """This function allows to create and perform a BK query given a supplied
+    BK path. The following BK path convention is expected:
 
         /<Run Number>/<Processing Pass>/<Event Type>/<File Type>
 
@@ -336,8 +340,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkQueryProduction(self, bkPath, dqFlag='All'):
-    """ This function allows to create and perform a BK query given a supplied
-        BK path. The following BK path convention is expected:
+    """This function allows to create and perform a BK query given a supplied
+    BK path. The following BK path convention is expected:
 
         /<ProductionID>/[<Processing Pass>/<Event Type>/]<File Type>
 
@@ -392,8 +396,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkQueryPath(self, bkPath, dqFlag='All'):
-    """ This function allows to create and perform a BK query given a supplied
-        BK path. The following BK path convention is expected:
+    """This function allows to create and perform a BK query given a supplied
+    BK path. The following BK path convention is expected:
 
        /<ConfigurationName>/<Configuration Version>/<Sim or Data Taking Condition>
        /<Processing Pass>/<Event Type>/<File Type>
@@ -460,8 +464,8 @@ class DiracLHCb(Dirac):
   def bookkeepingQuery(self, SimulationConditions='All', DataTakingConditions='All',
                        ProcessingPass='All', FileType='All', EventType='All', ConfigName='All',
                        ConfigVersion='All', ProductionID=0, DataQuality='ALL'):
-    """ This function will create and perform a BK query using the supplied arguments
-        and return a list of LFNs.
+    """This function will create and perform a BK query using the supplied
+    arguments and return a list of LFNs.
 
         Example Usage:
 
@@ -503,8 +507,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkQuery(self, bkQueryDict):
-    """ Developer function. Perform a query to the LHCb Bookkeeping to return
-        a list of LFN(s). This method takes a BK query dictionary.
+    """Developer function. Perform a query to the LHCb Bookkeeping to return a
+    list of LFN(s). This method takes a BK query dictionary.
 
         Example Usage:
 
@@ -572,8 +576,10 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def __checkDQFlags(self, flags):
-    """ Internal function.  Checks the provided flags against the list of
-        possible DQ flag statuses from the Bookkeeping.
+    """Internal function.
+
+    Checks the provided flags against the list of possible DQ flag
+    statuses from the Bookkeeping.
     """
     dqFlags = []
     if isinstance(flags, list):
@@ -606,8 +612,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def getAllDQFlags(self, printOutput=False):
-    """ Helper function.  Returns the list of possible DQ flag statuses
-        from the Bookkeeping.
+    """Helper function.  Returns the list of possible DQ flag statuses from the
+    Bookkeeping.
 
         Example Usage:
 
@@ -632,8 +638,8 @@ class DiracLHCb(Dirac):
   #############################################################################
   def getDataByRun(self, lfns, printOutput=False):
     """Sort the supplied lfn list by run. An S_OK object will be returned
-       containing a dictionary of runs and the corresponding list of LFN(s)
-       associated with them.
+    containing a dictionary of runs and the corresponding list of LFN(s)
+    associated with them.
 
        Example usage:
 
@@ -679,9 +685,9 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def bkMetadata(self, lfns, printOutput=False):
-    """Return metadata for the supplied lfn list. An S_OK object will be returned
-       containing a dictionary of LFN(s) and the corresponding metadata associated
-       with them.
+    """Return metadata for the supplied lfn list. An S_OK object will be
+    returned containing a dictionary of LFN(s) and the corresponding metadata
+    associated with them.
 
        Example usage:
 
@@ -719,22 +725,20 @@ class DiracLHCb(Dirac):
   #############################################################################
 
   def lhcbProxyInit(self, *args):  # pylint: disable=no-self-use
-    """ just calling the dirac-proxy-init script
-    """
+    """just calling the dirac-proxy-init script."""
     os.system("dirac-proxy-init -o LogLevel=NOTICE -t --rfc %s" % "' '".join(args))
 
   #############################################################################
 
   def lhcbProxyInfo(self, *args):  # pylint: disable=no-self-use
-    """ just calling the dirac-proxy-info script
-    """
+    """just calling the dirac-proxy-info script."""
     os.system("dirac-proxy-info -o LogLevel=NOTICE %s" % "' '".join(args))
   #############################################################################
 
   def gridWeather(self, printOutput=False):
-    """This method gives a snapshot of the current Grid weather from the perspective
-       of the DIRAC site and SE masks.  Tier-1 sites are returned with more detailed
-       information.
+    """This method gives a snapshot of the current Grid weather from the
+    perspective of the DIRAC site and SE masks.  Tier-1 sites are returned with
+    more detailed information.
 
        Example usage:
 
@@ -809,7 +813,8 @@ class DiracLHCb(Dirac):
 
   #############################################################################
   def checkSites(self, printOutput=False):  # pylint: disable=no-self-use
-    """Return the list of sites in the DIRAC site mask and those which are banned.
+    """Return the list of sites in the DIRAC site mask and those which are
+    banned.
 
        Example usage:
 
@@ -887,9 +892,8 @@ class DiracLHCb(Dirac):
 
   def splitInputDataBySize(self, lfns, maxSizePerJob=20, printOutput=False):
     """Split the supplied lfn list by the replicas present at the possible
-       destination sites, based on a maximum size.
-       An S_OK object will be returned containing a list of
-       lists in order to create the jobs.
+    destination sites, based on a maximum size. An S_OK object will be returned
+    containing a list of lists in order to create the jobs.
 
        Example usage:
 
@@ -975,9 +979,9 @@ class DiracLHCb(Dirac):
     #############################################################################
 
   def getAccessURL(self, lfn, storageElement, protocol=None, printOutput=False):
-    """Allows to retrieve an access URL for an LFN replica given a valid DIRAC SE
-       name.  Contacts the file catalog and contacts the site SRM endpoint behind
-       the scenes.
+    """Allows to retrieve an access URL for an LFN replica given a valid DIRAC
+    SE name.  Contacts the file catalog and contacts the site SRM endpoint
+    behind the scenes.
 
        Example Usage:
 
@@ -1006,7 +1010,9 @@ class DiracLHCb(Dirac):
   #############################################################################
 
   def _getLocalInputData(self, parameters):
-    """ LHCb extension of DIRAC API's _getLocalInputData. Only used for handling ancestors.
+    """LHCb extension of DIRAC API's _getLocalInputData.
+
+    Only used for handling ancestors.
     """
     inputData = parameters.get('InputData')
     if inputData:

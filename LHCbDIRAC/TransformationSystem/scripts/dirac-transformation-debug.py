@@ -9,10 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Debug files status for a (list of) transformations
-It is possible to do minor fixes to those files, using options
-"""
+"""Debug files status for a (list of) transformations It is possible to do
+minor fixes to those files, using options."""
 
 __RCSID__ = "$Id$"
 
@@ -52,7 +50,7 @@ if __name__ == "__main__":
   Script.registerSwitch('v', 'Verbose', '')
   Script.setUsageMessage('\n'.join([__doc__,
                                     'Usage:',
-                                    'dirac-transformation-debug [options] transID[,transID2[,transID3[,...]]]']))
+                                    '  dirac-transformation-debug [options] transID[,transID2[,transID3[,...]]]']))
 
   Script.parseCommandLine(ignoreErrors=True)
 

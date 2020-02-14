@@ -8,33 +8,37 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" LHCbDIRAC.ResourceStatusSystem.Agent.SLSAgent
+"""LHCbDIRAC.ResourceStatusSystem.Agent.SLSAgent.
 
-    This agent creates XML files with SE space left,
-    that will be picked up by a cron job that will add to meter.cern.ch
+This agent creates XML files with SE space left,
+that will be picked up by a cron job that will add to meter.cern.ch
 
-    What's collected here will enter in https://meter.cern.ch/public/_plugin/kibana/#/dashboard/temp/meter::lhcb
-    by using this cronjob:
+What's collected here will enter in https://meter.cern.ch/public/_plugin/kibana/#/dashboard/temp/meter::lhcb
+by using this cronjob:
 
-# Puppet Name: Send SLS Info
-10 * * * * /opt/dirac/webRoot/www/send_sls_info.csh
+.. code-block:: none
 
-[dirac@lbvobox108 pro]$ more /opt/dirac/webRoot/www/send_sls_info.csh
-#!/bin/csh
-echo "CURL"
-foreach i (`ls /opt/dirac/webRoot/www/sls/dirac_services/*`)
-  echo $i
-  /usr/bin/curl -F file=@${i} xsls.cern.ch
-end
-foreach i (`ls /opt/dirac/webRoot/www/sls/log_se/*`)
-  echo $i
-  /usr/bin/curl -F file=@$i xsls.cern.ch
-end
-foreach i (`ls /opt/dirac/webRoot/www/sls/storage_space/*`)
-  echo $i
-  /usr/bin/curl -F file=@$i xsls.cern.ch
-end
-exit
+  # Puppet Name: Send SLS Info
+  10 * * * * /opt/dirac/webRoot/www/send_sls_info.csh
+
+.. code-block:: none
+
+  [dirac@lbvobox108 pro]$ more /opt/dirac/webRoot/www/send_sls_info.csh
+  #!/bin/csh
+  echo "CURL"
+  foreach i (`ls /opt/dirac/webRoot/www/sls/dirac_services/*`)
+    echo $i
+    /usr/bin/curl -F file=@${i} xsls.cern.ch
+  end
+  foreach i (`ls /opt/dirac/webRoot/www/sls/log_se/*`)
+    echo $i
+    /usr/bin/curl -F file=@$i xsls.cern.ch
+  end
+  foreach i (`ls /opt/dirac/webRoot/www/sls/storage_space/*`)
+    echo $i
+    /usr/bin/curl -F file=@$i xsls.cern.ch
+  end
+  exit
 
 """
 
@@ -126,14 +130,14 @@ class SpaceTokenOccupancyTest(TestBase):
       self.generate_xml(itemDict)
 
   def generate_xml(self, itemDict):
-    """ itemDict is like
+    """itemDict is like.
 
-      {'Endpoint': 'httpg://tbit00.nipne.ro:8446/srm/managerv2',
-       'Free': 113252649.213,
-       'Guaranteed': 0.0,
-       'LastCheckTime': datetime.datetime(2018, 11, 8, 10, 49, 14),
-       'Token': 'NIPNE-07_MC-DST',
-       'Total': 274877906.944}
+    {'Endpoint': 'httpg://tbit00.nipne.ro:8446/srm/managerv2',
+     'Free': 113252649.213,
+     'Guaranteed': 0.0,
+     'LastCheckTime': datetime.datetime(2018, 11, 8, 10, 49, 14),
+     'Token': 'NIPNE-07_MC-DST',
+     'Total': 274877906.944}
     """
 
     endpoint = itemDict['Endpoint']

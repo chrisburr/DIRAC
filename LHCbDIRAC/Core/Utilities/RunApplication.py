@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Utility for invoking running LHCb applications
-"""
+"""Utility for invoking running LHCb applications."""
 from __future__ import absolute_import, print_function
 
 __RCSID__ = "$Id$"
@@ -24,26 +23,22 @@ from DIRAC.Core.Utilities.Subprocess import systemCall
 
 
 class LbRunError(RuntimeError):
-  """ Exception for lb-run errors
-  """
+  """Exception for lb-run errors."""
   pass
 
 
 class LHCbApplicationError(RuntimeError):
-  """ Exception for application errors
-  """
+  """Exception for application errors."""
   pass
 
 
 class LHCbDIRACError(RuntimeError):
-  """ Exception for application errors
-  """
+  """Exception for application errors."""
   pass
 
 
 class RunApplication(object):
-  """ Encapsulate logic for running an LHCb application
-  """
+  """Encapsulate logic for running an LHCb application."""
 
   def __init__(self):
     """ c'tor - holds common variables
@@ -80,8 +75,7 @@ class RunApplication(object):
     self.opsH = Operations()
 
   def run(self):
-    """ Invokes lb-run (what you call after having setup the object)
-    """
+    """Invokes lb-run (what you call after having setup the object)"""
     self.log.info("Executing application %s %s for binary tag configuration '%s'" % (self.applicationName,
                                                                                      self.applicationVersion,
                                                                                      self.systemConfig))
@@ -151,8 +145,7 @@ class RunApplication(object):
     return runResult
 
   def _lbRunCommandOptions(self):
-    """ Return lb-run command options
-    """
+    """Return lb-run command options."""
 
     # extra packages (for setup phase) (added using '--use')
     extraPackagesString = ''
@@ -196,8 +189,7 @@ class RunApplication(object):
     return extraPackagesString, runtimeProjectString, externalsString
 
   def _gaudirunCommand(self):
-    """ construct a gaudirun command
-    """
+    """construct a gaudirun command."""
     command = self.opsH.getValue('/GaudiExecution/gaudirunFlags', 'gaudirun.py')
 
     # multicore?
@@ -221,10 +213,10 @@ class RunApplication(object):
     return command
 
   def _runApp(self, command, env=None):
-    """ Safe system call of a command
+    """Safe system call of a command.
 
-       :param command basestring: the command to run
-       :param env dict: environment where to run -- maybe the LHCb environment from LbLogin
+    :param command basestring: the command to run
+    :param env dict: environment where to run -- maybe the LHCb environment from LbLogin
     """
     print('Command called: \n%s' % command)  # Really printing here as we want to see and maybe cut/paste
 
@@ -234,7 +226,7 @@ class RunApplication(object):
                       env=env)
 
   def __redirectLogOutput(self, fd, message):
-    """ Callback function for the Subprocess calls (manages log files)
+    """Callback function for the Subprocess calls (manages log files)
 
     Args:
         fd (int): stdin/stderr file descriptor

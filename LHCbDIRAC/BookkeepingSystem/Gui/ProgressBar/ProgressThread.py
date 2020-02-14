@@ -20,7 +20,7 @@ from PyQt4.QtGui                                                                
 __RCSID__ = "$Id$"
 
 class ProgressThread(QThread):
-  """" ProgressThread class"""
+  """" ProgressThread class."""
   def __init__(self, stop, message='', parent=None):
     """The constructor initialize the QThread."""
     QThread.__init__(self, parent)
@@ -30,7 +30,7 @@ class ProgressThread(QThread):
 
 
   def run(self):
-    """Run a thread"""
+    """Run a thread."""
     i = 0
     progressDialog = QProgressDialog(QString(), QString(), 0, 100)
     #progressDialog.setLabelText(self.__message)
@@ -53,7 +53,7 @@ class ProgressThread(QThread):
     #gLogger.info('Thread run end')
 
   def stop(self):
-    """Stop a thread"""
+    """Stop a thread."""
     #gLogger.info('Thread stoped')
     self.__stoped = True
 

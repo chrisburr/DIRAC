@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   Set the visibility flag to a dataset
-"""
+"""Set the visibility flag to a dataset."""
 
 __RCSID__ = "$Id$"
 

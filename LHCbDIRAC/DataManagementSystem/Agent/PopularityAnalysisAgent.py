@@ -8,13 +8,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod: PopularityAnalysisAgent
-    =====================
+"""
+:mod: PopularityAnalysisAgent
 
-    .. module: PopularityAnalysisAgent
-    :synopsis: The PopularityAnalysis Agent generates the popularity CSV file, sends it for analysis to the
-               Yandex data popularity service, and sends the result by email
+.. module: PopularityAnalysisAgent
 
+:synopsis: The PopularityAnalysis Agent generates the popularity CSV file, sends it for analysis to the
+           Yandex data popularity service, and sends the result by email
 """
 # imports
 import os
@@ -37,18 +37,17 @@ AGENT_NAME = "DataManagement/PopularityAnalysisAgent"
 
 
 class FakeException( Exception ):
-  """ Fake exception to drive the error handling"""
+  """Fake exception to drive the error handling."""
   pass
 
 
 class PopularityAnalysisAgent( AgentModule ):
   """
   .. class:: PopularityAnalysisAgent
-
   """
 
   def __init__( self, *args, **kwargs ):
-    """ c'tor """
+    """c'tor."""
 
     super( PopularityAnalysisAgent, self ).__init__( *args, **kwargs )
 
@@ -83,7 +82,7 @@ class PopularityAnalysisAgent( AgentModule ):
     self.startDate = None
 
   def initialize( self ):
-    """ agent initialisation """
+    """agent initialisation."""
 
     self.workDirectory = self.am_getOption( "WorkDirectory" )  # pylint: disable=attribute-defined-outside-init
 
@@ -121,18 +120,17 @@ class PopularityAnalysisAgent( AgentModule ):
     return S_OK()
 
   def execute( self ):
-    """ Main loop of Popularity agent
+    """Main loop of Popularity agent.
 
-        We first trigger the generation of the csv file which contains all the
-        popularity and datasets data.
+    We first trigger the generation of the csv file which contains all the
+    popularity and datasets data.
 
-        We then send it to the Yandex data popularity service, and receive a csv file back.
+    We then send it to the Yandex data popularity service, and receive a csv file back.
 
-        We merge the two files into an html human readable file.
+    We merge the two files into an html human readable file.
 
-        We send the html and the Yandex report by email
-
-     """
+    We send the html and the Yandex report by email
+    """
 
     self.startDate = datetime.datetime.utcnow().strftime( '%Y-%m-%d_%H-%M' )
 
@@ -174,14 +172,14 @@ class PopularityAnalysisAgent( AgentModule ):
     return S_OK()
 
   def _generateHtmlReport( self, popularityFile, inputCsvFile ):
-    """ Generate a report, html formated.
+    """Generate a report, html formated.
 
-        args:
-            popularityFile (str): path to the popularity csv file
-            inputCsvFile (str): report of the analysis
+    args:
+        popularityFile (str): path to the popularity csv file
+        inputCsvFile (str): report of the analysis
 
-        returns:
-            path to the html report file
+    returns:
+        path to the html report file
     """
 
     htmlReportFile = os.path.join( self.workDirectory, 'popularityAnalysis_%s.html' % self.startDate )
@@ -261,10 +259,10 @@ class PopularityAnalysisAgent( AgentModule ):
 
   # pylint: disable=protected-access
   def _sendReport( self, listOfFiles ):
-    """ Send the reports by email
+    """Send the reports by email.
 
-        args:
-            listOfFiles (list): list of files to be sent
+    args:
+        listOfFiles (list): list of files to be sent
     """
 
     mail = Mail()
@@ -278,10 +276,10 @@ class PopularityAnalysisAgent( AgentModule ):
 
   # pylint: disable=protected-access
   def _sendErrorMail( self, errorMail ):
-    """ Send the reports by email
+    """Send the reports by email.
 
-        args:
-            errorMail : Error to report
+    args:
+        errorMail : Error to report
     """
 
     mail = Mail()

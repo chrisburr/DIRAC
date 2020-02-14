@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Bookkeeping utilities
-"""
+"""Bookkeeping utilities."""
 
 __RCSID__ = "$Id$"
 
@@ -30,9 +28,8 @@ _TWO = ['ConfigName', 'ConfigVersion', 'ConditionDescription', 'EventType', 'Pro
 
 
 def enoughParams(in_dict):
-  """
-  Dirty method to check the query parameters and make sure the queries have enough parameters.
-  """
+  """Dirty method to check the query parameters and make sure the queries have
+  enough parameters."""
   checkingDict = in_dict.copy()
   if not checkingDict:
     return False
@@ -55,14 +52,15 @@ def enoughParams(in_dict):
 
 
 def checkEnoughBKArguments(func):
-  """
-  The decorator used to check the parameters of a given dictionary (BkQuery).
-  """
+  """The decorator used to check the parameters of a given dictionary
+  (BkQuery)."""
 
   def checkMethodArguments(self, *args, **kwargs):
-    """
-    This is used to check the conditions of a given query. We assume a dictionary can not be empty and
-    it has more than one element, if we do not take into account the replica flag and the visibility flag
+    """This is used to check the conditions of a given query.
+
+    We assume a dictionary can not be empty and it has more than one
+    element, if we do not take into account the replica flag and the
+    visibility flag
     """
 
     if args:

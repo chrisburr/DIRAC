@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-get-file-descendants
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Returns descendants for a (list of) LFN(s)
-"""
+"""Returns descendants for a (list of) LFN(s)"""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

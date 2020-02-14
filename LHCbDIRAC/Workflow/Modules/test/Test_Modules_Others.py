@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit tests for Workflow Modules
-"""
+"""Unit tests for Workflow Modules."""
 
 __RCSID__ = "$Id$"
 
@@ -51,8 +50,7 @@ getDestinationSEListMockCNAF.return_value = ['CNAF']
 
 
 class ModulesTestCase(unittest.TestCase):
-  """ Base class for the Modules test cases
-  """
+  """Base class for the Modules test cases."""
 
   def setUp(self):
 

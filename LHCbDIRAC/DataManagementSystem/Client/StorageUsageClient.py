@@ -8,12 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""
+:mod: StorageUsageClient
 
-""" :mod: StorageUsageClient
-    ========================
+.. module: StorageUsageClient
 
-    .. module: StorageUsageClient
-    :synopsis: Lightweight possbile client to the StorageUsageDB.
+:synopsis: Lightweight possbile client to the StorageUsageDB.
 """
 
 __RCSID__ = "$Id$"
@@ -27,7 +27,7 @@ class StorageUsageClient(Client):
   .. class:: StorageUsageClient
   """
   def __init__(self, url=None, **kwargs):
-    """ c'tor """
+    """c'tor."""
     super(StorageUsageClient, self).__init__(**kwargs)
     if url:
       self.setServer(url)

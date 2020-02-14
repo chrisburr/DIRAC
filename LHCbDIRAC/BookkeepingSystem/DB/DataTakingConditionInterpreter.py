@@ -8,54 +8,54 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""interpret the data taking conditions"""
+"""interpret the data taking conditions."""
 __RCSID__ = "$Id$"
 
 #############################################################################
 
 
 class Context:
-  """the data taking condition"""
+  """the data taking condition."""
 
   def __init__(self, cond, part='LHCb'):
-    """initialize the variables"""
+    """initialize the variables."""
     self.__input = cond
     self.__output = ''
     self.__partition = part
 
   def getInput(self):
-    """get input"""
+    """get input."""
     return self.__input
 
   def setOutput(self, text):
-    """output string"""
+    """output string."""
     if text is not None:
       self.__output += str(text)
 
   def getOutput(self):
-    """get output"""
+    """get output."""
     return self.__output.strip('-')
 
   def getParticionName(self):
-    """partition """
+    """partition."""
     return self.__partition
 
 #############################################################################
 
 
 class Conditions:
-  """different conditions"""
+  """different conditions."""
 
   def __init__(self):
-    """initialize the variables"""
+    """initialize the variables."""
     self.__condition = 'NOT INCLUDED'
 
   def getCondition(self):
-    """conditions"""
+    """conditions."""
     return self.__condition
 
   def interpret(self, context):
-    """interpret the context"""
+    """interpret the context."""
     if self.beamCond() in context.getInput():
       context.setOutput(self.template(context.getInput()[self.beamCond()]))
 
@@ -142,80 +142,80 @@ class Conditions:
           context.setOutput(self.template(context.getInput()[self.velo()]))
 
   def beamCond(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def beamenergy(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def velo(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def magneticField(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def ecal(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def hcal(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def hlt(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def it(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def lo(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def muon(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def ot(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def rich1(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def rich2(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def spd_prs(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def tt(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def veloCond(self):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def template(self, value):
-    """define a condition"""
+    """define a condition."""
     pass
 
   def template2(self, value):
-    """define a condition"""
+    """define a condition."""
     return ''
 
   @staticmethod
   def excl(context):
-    """define a condition"""
+    """define a condition."""
     if context.getOutput().find('Excl') < 0:
       context.setOutput('Excl-')
 
@@ -223,28 +223,28 @@ class Conditions:
 
 
 class BeamCondition(Conditions):
-  """condition class"""
+  """condition class."""
 
   def beamCond(self):
-    """beamcondition"""
+    """beamcondition."""
     return 'BeamCond'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     return value
 
 #############################################################################
 
 
 class BeamEnergyCondition(Conditions):
-  """Energy """
+  """Energy."""
 
   def beamenergy(self):
-    """beam energy"""
+    """beam energy."""
     return 'BeamEnergy'
 
   def template(self, value):
-    """Template method"""
+    """Template method."""
     try:
       if value is not None:
         if (value.strip() != 'None'):
@@ -260,10 +260,10 @@ class BeamEnergyCondition(Conditions):
 
 
 class MagneticFieldCondition(Conditions):
-  """magnetic field"""
+  """magnetic field."""
 
   def magneticField(self):
-    """magfild"""
+    """magfild."""
     return 'MagneticField'
 
   def template(self, value):
@@ -281,14 +281,14 @@ class MagneticFieldCondition(Conditions):
 
 
 class VeloPosition(Conditions):
-  """Velo position class"""
+  """Velo position class."""
 
   def velo(self):
-    """Open or Closed"""
+    """Open or Closed."""
     return 'VELO'
 
   def template(self, value):
-    """tempalte method"""
+    """tempalte method."""
     if value == self.getCondition():
       return 'VE-'
 
@@ -296,28 +296,28 @@ class VeloPosition(Conditions):
 
 
 class EcalCondition(Conditions):
-  """ECAL class"""
+  """ECAL class."""
 
   def ecal(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'ECAL'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'EC-'
 #############################################################################
 
 
 class HcalCondition(Conditions):
-  """HCAL class"""
+  """HCAL class."""
 
   def hcal(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'HCAL'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'HC-'
 
@@ -325,14 +325,14 @@ class HcalCondition(Conditions):
 
 
 class HltCondition(Conditions):
-  """HLT class"""
+  """HLT class."""
 
   def Hhlt(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'HLT'
 
   def template(self, value):
-    """template methos"""
+    """template methos."""
     if value == self.getCondition():
       return 'HL-'
 
@@ -340,14 +340,14 @@ class HltCondition(Conditions):
 
 
 class ItCondition(Conditions):
-  """It class"""
+  """It class."""
 
   def it(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'IT'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'IT-'
 
@@ -355,14 +355,14 @@ class ItCondition(Conditions):
 
 
 class LoCondition(Conditions):
-  """Lo class"""
+  """Lo class."""
 
   def lo(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'LO'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'LO-'
 
@@ -370,14 +370,14 @@ class LoCondition(Conditions):
 
 
 class MuonCondition(Conditions):
-  """Muon class"""
+  """Muon class."""
 
   def muon(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'MUON'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'MU-'
 
@@ -385,14 +385,14 @@ class MuonCondition(Conditions):
 
 
 class OtCondition(Conditions):
-  """Ot class"""
+  """Ot class."""
 
   def ot(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'OT'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'OT-'
 
@@ -400,14 +400,14 @@ class OtCondition(Conditions):
 
 
 class Rich1Condition(Conditions):
-  """RICH1 class"""
+  """RICH1 class."""
 
   def rich1(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'RICH1'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'R1-'
 
@@ -415,14 +415,14 @@ class Rich1Condition(Conditions):
 
 
 class Rich2Condition(Conditions):
-  """RICH2 class"""
+  """RICH2 class."""
 
   def rich2(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'RICH2'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'R2-'
 
@@ -430,14 +430,14 @@ class Rich2Condition(Conditions):
 
 
 class Spd_prsCondition(Conditions):
-  """SPD class"""
+  """SPD class."""
 
   def spd_prs(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'SPD_PRS'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'SP-'
 
@@ -445,14 +445,14 @@ class Spd_prsCondition(Conditions):
 
 
 class TtCondition(Conditions):
-  """TT class"""
+  """TT class."""
 
   def tt(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'TT'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value == self.getCondition():
       return 'TT-'
 
@@ -460,14 +460,14 @@ class TtCondition(Conditions):
 
 
 class VeloCondition(Conditions):
-  """Velo class"""
+  """Velo class."""
 
   def veloCond(self):
-    """status of the subdetector"""
+    """status of the subdetector."""
     return 'VeloPosition'
 
   def template(self, value):
-    """template method"""
+    """template method."""
     if value.upper() == 'OPEN':
       return 'VeloOpen-'
     elif value.upper() == 'CLOSED':

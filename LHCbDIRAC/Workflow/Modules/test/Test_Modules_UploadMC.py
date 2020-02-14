@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit tests for Workflow Module UploadMC
-"""
+"""Unit tests for Workflow Module UploadMC."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 

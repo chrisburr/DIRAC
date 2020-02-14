@@ -8,18 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' JobStep Type
-  
-'''
+"""JobStep Type."""
 
 from DIRAC.AccountingSystem.Client.Types.BaseAccountingType import BaseAccountingType
 
 __RCSID__ = "$Id$"
 
 class JobStep( BaseAccountingType ):
-  '''
-    JobStep as extension of BaseAccountingType
-  '''
+  """JobStep as extension of BaseAccountingType."""
 
   def __init__( self ):
     

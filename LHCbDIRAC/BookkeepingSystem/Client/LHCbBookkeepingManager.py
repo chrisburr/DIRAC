@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-LHCb Bookkeeping database manager
-"""
+"""LHCb Bookkeeping database manager."""
 import os
 import types
 import time
@@ -31,7 +29,7 @@ INTERNAL_PATH_SEPARATOR = "/"
 
 
 class LHCbBookkeepingManager(BaseESManager):
-  """creates the virtual file system"""
+  """creates the virtual file system."""
 
   __bookkeepingFolderProperties = ['name',
                                    'fullpath',
@@ -82,7 +80,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def __init__(self, url=None, web=False, welcome=True):
-    """initialize the values"""
+    """initialize the values."""
     BaseESManager.__init__(self)
     self._BaseESManager___fileSeparator = INTERNAL_PATH_SEPARATOR
     # self.__pathSeparator = INTERNAL_PATH_SEPARATOR
@@ -112,7 +110,10 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def setFileTypes(self, fileTypeList=list()):
-    """it sets the file types. The parameter is a list of file type"""
+    """it sets the file types.
+
+    The parameter is a list of file type
+    """
     if fileTypeList and len(fileTypeList) > 0:
       self.__filetypes = fileTypeList
     else:
@@ -124,28 +125,28 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _updateTreeLevels(self, level):
-    """tree level update"""
+    """tree level update."""
     self.treeLevels_ = level
 
   #############################################################################
   @staticmethod
   def setVerbose(value):
-    """information printed"""
+    """information printed."""
     objects.VERBOSE = value
 
   #############################################################################
   def setAdvancedQueries(self, value):
-    """advanced queries"""
+    """advanced queries."""
     self.advancedQuery_ = value
 
   #############################################################################
   def _getTreeLevels(self):
-    """level of the current tree"""
+    """level of the current tree."""
     return self.treeLevels_
 
   #############################################################################
   def help(self):
-    """help information"""
+    """help information."""
     if self.parameter_ == self.__bookkeepingParameters[0]:
       self.helper_.helpConfig(self._getTreeLevels())
     elif self.parameter_ == self.__bookkeepingParameters[1]:
@@ -155,17 +156,17 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getPossibleParameters(self):
-    """available parameters"""
+    """available parameters."""
     return self.__bookkeepingParameters
 
   #############################################################################
   def getCurrentParameter(self):
-    """current parameters"""
+    """current parameters."""
     return self.__bookkeepingShortparameternames[self.parameter_]
 
   #############################################################################
   def getQueriesTypes(self):
-    """types of queries"""
+    """types of queries."""
     if self.advancedQuery_:
       return self.__bookkeepingQueryTypes[0]
     else:
@@ -173,7 +174,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def setParameter(self, name):
-    """query types"""
+    """query types."""
     if self.__bookkeepingParameters.__contains__(name):
       self.parameter_ = name
       self.treeLevels_ = -1
@@ -190,19 +191,19 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getLogicalFiles(self):
-    """lfn"""
+    """lfn."""
     return self.files_
 
   #############################################################################
   def getFilesPFN(self):
-    """pfn"""
+    """pfn."""
     lfns = self.files_
     res = self.fileCatalog.getReplicas(lfns)
     return res
 
   #############################################################################
   def list(self, path="/", selectionDict=None, sortDict=None, startItem=0, maxitems=0):
-    """list a path"""
+    """list a path."""
     gLogger.debug(path)
     selectionDict = selectionDict if selectionDict is not None else {}
     sortDict = sortDict if sortDict is not None else {}
@@ -218,7 +219,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getLevelAndPath(self, path):
-    """level and path"""
+    """level and path."""
     if path == '/':
       return 0, [], ''  # it is the first level
     path = self.getAbsolutePath(path)['Value']  # shall we do this here or in the _processedPath()?
@@ -241,7 +242,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   # This method recursive visite all the tree nodes and found the processing pass
   def __getLevel(self, path, visited, level, start, end, processingpath, startlevel):
-    """level"""
+    """level."""
     for i in path:
       if level == startlevel and not start:
         for j in visited:
@@ -269,7 +270,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def __getRunLevel(self, path, visited, level, start, end, processingpath, startlevel):
-    """run level"""
+    """run level."""
     for i in path:
       if level == startlevel and not start:
         for j in visited:
@@ -299,7 +300,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   # This method recursive visite all the tree nodes and found the processing pass
   def __getEvtLevel(self, path, visited, level, start, end, processingpath, startlevel):
-    """evt level"""
+    """evt level."""
     for i in path:
       if level == startlevel and not start:
         for j in visited:
@@ -328,7 +329,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _listConfigs(self, path, sortDict, startItem, maxitems):
-    """list 1th tree"""
+    """list 1th tree."""
     entityList = list()
     levels, processedPath, procpass = self.getLevelAndPath(path)
 
@@ -372,7 +373,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def __addAll(self, path, levels, description):
-    """ level all"""
+    """level all."""
     if self.advancedQuery_:
       return self._getEntityFromPath(path, "ALL", levels, description)
     else:
@@ -380,7 +381,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   @staticmethod
   def __createPath(processedPath, name):
-    """ create a path"""
+    """create a path."""
     path = ''
     for i in processedPath:
       string = '/' + i[0] + '_' + i[1]
@@ -402,7 +403,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBody_0(self, path, levels):
-    """1t level of the configuration tree"""
+    """1t level of the configuration tree."""
     entityList = list()
     result = self.db_.getAvailableConfigNames()
 
@@ -418,7 +419,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def clevelHeader_1(processedPath):
-    """ second level"""
+    """second level."""
     gLogger.debug("listing configversions")
     in_dict = {'ConfigName': processedPath[0]}
     gLogger.debug("-----------------------------------------------------------")
@@ -430,7 +431,7 @@ class LHCbBookkeepingManager(BaseESManager):
     return in_dict
 
   def clevelBody_1(self, path, levels, in_dict):
-    """second """
+    """second."""
     entityList = list()
     result = self.db_.getConfigVersions(in_dict)
     if result['OK']:
@@ -446,7 +447,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def clevelHeader_2(processedPath):
-    """third"""
+    """third."""
     gLogger.debug("listing Simulation Conditions!")
     in_dict = {'ConfigName': processedPath[0],
                'ConfigVersion': processedPath[1]}
@@ -461,7 +462,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBody_2(self, path, levels, in_dict):
-    """build the tree node"""
+    """build the tree node."""
     entityList = list()
     result = self.db_.getConditions(in_dict)
     if result['OK']:
@@ -501,7 +502,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def clevelHeader_3(processedPath):
-    """fourth level"""
+    """fourth level."""
     gLogger.debug("listing processing pass")
     in_dict = {'ConfigName': processedPath[0],
                'ConfigVersion': processedPath[1],
@@ -518,7 +519,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBody_3(self, path, levels, in_dict, procpass):
-    """ fourth tree node"""
+    """fourth tree node."""
     entityList = list()
     in_dict['ProcessingPass'] = procpass
     result = self.db_.getProcessingPass(in_dict, procpass)
@@ -548,7 +549,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def clevelHeader_4(processedPath, procpass):
-    """ 5th level"""
+    """5th level."""
     gLogger.debug("listing event types")
     retVal = procpass.split('/')[1:]
     for i in retVal:
@@ -571,7 +572,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBody_4(self, path, levels, in_dict):
-    """5th tree node"""
+    """5th tree node."""
     entityList = list()
     result = self.db_.getProductions(in_dict)
     if result['OK']:
@@ -586,7 +587,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelHeader_5(self, processedPath, procpass):
-    """6th tree"""
+    """6th tree."""
     gLogger.debug("listing event types")
     retVal = procpass.split('/')[1:]
     for i in retVal:
@@ -616,7 +617,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBody_5(self, path, levels, in_dict):
-    """build the 6th tree node"""
+    """build the 6th tree node."""
     entityList = list()
     in_dict['Visible'] = 'Y'
     result = self.db_.getFileTypes(in_dict)
@@ -631,7 +632,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelHeader_6(self, processedPath, procpass):
-    """7th tree prepare"""
+    """7th tree prepare."""
     gLogger.debug("listing event types")
 
     retVal = procpass.split('/')[1:]
@@ -663,7 +664,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBody_6(self, path, levels, in_dict):
-    """build the 7th tree"""
+    """build the 7th tree."""
     entityList = list()
     in_dict['DataQuality'] = self.__getSelectedQualities()
     in_dict['Visible'] = 'Y'
@@ -686,7 +687,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def clevelBodyLimited_6(self, path, levels, in_dict, sortDict, startItem, maxitems):
-    """7th tree node for web"""
+    """7th tree node for web."""
     entityList = list()
     in_dict['DataQuality'] = self.__getSelectedQualities()
     result = self.__getFiles(in_dict, sortDict, startItem, maxitems)
@@ -705,7 +706,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _listEventTypes(self, path, sortDict, startItem, maxitems):
-    """second tree based on event type"""
+    """second tree based on event type."""
     entityList = list()
     levels, processedPath, procpass = self.getLevelAndPath(path)
 
@@ -746,7 +747,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def elevelBody_2(self, path, levels, in_dict):
-    """event type based queries"""
+    """event type based queries."""
     entityList = list()
     result = self.db_.getEventTypes(in_dict)
     if result['OK']:
@@ -769,7 +770,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def elevelHeader_3(processedPath):
-    """event type based tree node"""
+    """event type based tree node."""
     gLogger.debug("listing simulation conditions")
 
     in_dict = {'ConfigName': processedPath[0], 'ConfigVersion': processedPath[1], 'EventType': processedPath[2]}
@@ -785,7 +786,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def elevelBody_3(self, path, levels, in_dict):
-    """building the tree node"""
+    """building the tree node."""
 
     entityList = list()
 
@@ -826,7 +827,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def elevelHeader_4(processedPath):
-    """prepare the 5th query"""
+    """prepare the 5th query."""
     gLogger.debug("listing processing pass")
 
     in_dict = {'ConfigName': processedPath[0],
@@ -846,7 +847,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def elevelBody_4(self, path, levels, in_dict, procpass):
-    """make the tree node"""
+    """make the tree node."""
     entityList = list()
 
     result = self.db_.getProcessingPass(in_dict, procpass)
@@ -887,7 +888,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def elevelHedaer_5(self, processedPath, procpass):
-    """prepare tree node"""
+    """prepare tree node."""
     retVal = procpass.split('/')[1:]
     for i in retVal:
       processedPath.remove(i)
@@ -915,7 +916,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def elevelHeader_6(self, processedPath, procpass):
-    """ prepare tree mode"""
+    """prepare tree mode."""
     retVal = procpass.split('/')[1:]
     for i in retVal:
       processedPath.remove(i)
@@ -945,7 +946,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _listProduction(self, path):
-    """production lookup"""
+    """production lookup."""
     entityList = list()
     levels, processedPath, procpass = self.getLevelAndPath(path)
     gLogger.debug(str(procpass))
@@ -970,7 +971,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _listRuns(self, path):
-    """run lookup"""
+    """run lookup."""
     entityList = list()
 
     levels, processedPath, procpass = self.getLevelAndPath(path)
@@ -996,7 +997,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def plevelHeader_0():
-    """prepare production lookup tree node"""
+    """prepare production lookup tree node."""
     gLogger.debug("-----------------------------------------------------------")
     gLogger.debug("productions:")
     gLogger.debug("-----------------------------------------------------------")
@@ -1006,7 +1007,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def plevelBody_0(self, path, levels):
-    """make the node of the production lookup tree"""
+    """make the node of the production lookup tree."""
     entityList = list()
     result = self.db_.getAvailableProductions()
 
@@ -1023,7 +1024,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def plevelHeader_2(processedPath):
-    """prepare the tree node"""
+    """prepare the tree node."""
     gLogger.debug("listing eventtype")
 
     in_dict = {'Production': processedPath[0]}
@@ -1038,7 +1039,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def plevelBody_2(self, path, levels, in_dict):
-    """make the tree node"""
+    """make the tree node."""
     entityList = list()
 
     result = self.db_.getEventTypes(in_dict)
@@ -1063,7 +1064,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def plevelHeader_3(processedPath):
-    """prepare tree node"""
+    """prepare tree node."""
     gLogger.debug("listing file types")
     in_dict = {'Production': processedPath[0], 'EventType': processedPath[1]}
     gLogger.debug("-----------------------------------------------------------")
@@ -1076,7 +1077,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def plevelBody_3(self, path, levels, in_dict):
-    """make tree node"""
+    """make tree node."""
     entityList = list()
     in_dict['Visible'] = 'Y'
     result = self.db_.getFileTypes(in_dict)
@@ -1092,7 +1093,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def plevelHeader_4(processedPath):
-    """prepare the tree node"""
+    """prepare the tree node."""
     gLogger.debug("listing file types")
     in_dict = {'Production': processedPath[0], 'EventType': processedPath[1], 'FileType': processedPath[2]}
 
@@ -1106,7 +1107,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def plevelBody_4(self, path, levels, in_dict):
-    """make the tree node"""
+    """make the tree node."""
     entityList = list()
     in_dict['DataQuality'] = self.__getSelectedQualities()
     in_dict['Visible'] = 'Y'
@@ -1132,7 +1133,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   @staticmethod
   def rlevelHeader_0():
-    """prepare run lookup node"""
+    """prepare run lookup node."""
     gLogger.debug("-----------------------------------------------------------")
     gLogger.debug("Runs:")
     gLogger.debug("-----------------------------------------------------------")
@@ -1142,7 +1143,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def rlevelBody_0(self, path, levels):
-    """make tree node"""
+    """make tree node."""
     entityList = list()
     result = self.db_.getAvailableRuns()
 
@@ -1159,7 +1160,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def rlevelHeader_2(processedPath):
-    """prepare tree node"""
+    """prepare tree node."""
     gLogger.debug("listing processing pass")
     in_dict = {'RunNumber': processedPath[0]}
     gLogger.debug("-----------------------------------------------------------")
@@ -1172,7 +1173,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def rlevelBody_2(self, path, levels, in_dict, procpass):
-    """make tree node"""
+    """make tree node."""
     entityList = list()
     in_dict['ProcessingPass'] = procpass
     result = self.db_.getProcessingPass(in_dict, procpass)
@@ -1202,7 +1203,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def rlevelHeader_3(processedPath, procpass):
-    """prepare node of the run lookup tree"""
+    """prepare node of the run lookup tree."""
     gLogger.debug("listing eventtypes")
     retVal = procpass.split('/')[1:]
     for i in retVal:
@@ -1221,7 +1222,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def rlevelBody_3(self, path, levels, in_dict):
-    """make tree node"""
+    """make tree node."""
     entityList = list()
     in_dict['Visible'] = 'Y'
     result = self.db_.getFileTypes(in_dict)
@@ -1237,7 +1238,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def rlevelHeader_4(processedPath, procpass):
-    """prepare tree"""
+    """prepare tree."""
     gLogger.debug("listing file types")
     retVal = procpass.split('/')[1:]
     for i in retVal:
@@ -1256,7 +1257,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def _getEntityFromPath(presentPath, newPathElement, level, leveldescription=None, selection=None, method=None):
-    """create a entity"""
+    """create a entity."""
     if isinstance(newPathElement, types.DictType):
       # this must be a file
       entity = objects.Entity(newPathElement)
@@ -1306,7 +1307,7 @@ class LHCbBookkeepingManager(BaseESManager):
                                  description=None,
                                  leveldescription=None,
                                  selection=None, method=None):
-    """crate a specific entity"""
+    """crate a specific entity."""
     if isinstance(value, types.DictType):
       entity = objects.Entity(value)
       name = newPathElement
@@ -1338,7 +1339,10 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   def _processPath(self, path):
     """takes an absolute path and returns of tuples with prefixes and posfixes
-     of path elements. If invalid path returns null"""
+    of path elements.
+
+    If invalid path returns null
+    """
     path = path.encode('ascii')
     path = path.strip(INTERNAL_PATH_SEPARATOR + " ")
     paths = path.split(self.getPathSeparator())
@@ -1346,7 +1350,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _cacheIt(self, entityList):
-    """it caches an entity or a list of entities"""
+    """it caches an entity or a list of entities."""
     if isinstance(entityList, objects.Entity):
       # convert it into a list
       entityList = [entityList]
@@ -1367,7 +1371,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def getAbsolutePath(path):
-    """ get current working directory if empty"""
+    """get current working directory if empty."""
     if path in ["", ".", None]:
       path = INTERNAL_PATH_SEPARATOR  # root
       # convert it into absolute path
@@ -1382,7 +1386,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def get(self, path="/"):
-    """get a node for a given path"""
+    """get a node for a given path."""
     path = self.getAbsolutePath(path)['Value']
     entity = self._getEntity(path)
     if not isinstance(entity, objects.Entity):
@@ -1392,7 +1396,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _getEntity(self, path):
-    """This is not doing anything at the moment"""
+    """This is not doing anything at the moment."""
     try:
       entity = self.__entityCache[path][0]
       gLogger.debug("getting " + str(path) + " from the cache")
@@ -1417,7 +1421,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def getNumberOfEvents(files):
-    """statistics"""
+    """statistics."""
     esum = 0
     for lfn in files:
       esum += int(lfn['EventStat'])
@@ -1425,7 +1429,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getJobInfo(self, lfn):
-    """job info"""
+    """job info."""
     result = self.db_.getJobInfo(lfn)
     value = None
     if result['OK']:
@@ -1444,7 +1448,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getLimitedFiles(self, selectionDict, sortDict, startItem, maxitems):
-    """web """
+    """web."""
     if self.parameter_ == self.__bookkeepingParameters[0]:
       return self._getLimitedFilesConfigParams(selectionDict, sortDict, startItem, maxitems)
     elif self.parameter_ == self.__bookkeepingParameters[1]:
@@ -1458,7 +1462,7 @@ class LHCbBookkeepingManager(BaseESManager):
   def _getDataSetTree1(self, selectionDict):
     # it is the configname configversion(default) query.
     # The input parameter is a path and it constructs the dictionary.
-    """input dictionary"""
+    """input dictionary."""
     path = selectionDict['fullpath']
     levels, processedPath, procpass = self.getLevelAndPath(path)
     gLogger.debug(str(levels))
@@ -1485,13 +1489,13 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _getLimitedFilesConfigParams(self, selectionDict, sortDict, startItem, maxitems):
-    """input dictionary"""
+    """input dictionary."""
     selection = self._getDataSetTree1(selectionDict)
     return self.__getFiles(selection, sortDict, startItem, maxitems)
 
   #############################################################################
   def _getDataSetTree2(self, selectionDict):  # it is the event type based query
-    """input dictionary of the event type tree"""
+    """input dictionary of the event type tree."""
     path = selectionDict['fullpath']
     levels, processedPath, procpass = self.getLevelAndPath(path)
     gLogger.debug(str(levels))
@@ -1518,13 +1522,13 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _getLimitedFilesEventTypeParams(self, selectionDict, sortDict, startItem, maxitems):
-    """input dictionary"""
+    """input dictionary."""
     selection = self._getDataSetTree2(selectionDict)
     return self.__getFiles(selection, sortDict, startItem, maxitems)
 
   #############################################################################
   def _getDataSetTree3(self, selectionDict):  # production based query
-    """input dictionary"""
+    """input dictionary."""
     path = selectionDict['fullpath']
     levels, processedPath, procpass = self.getLevelAndPath(path)
     gLogger.debug(str(levels))
@@ -1536,13 +1540,13 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _getLimitedFilesProductions(self, selectionDict, sortDict, startItem, maxitems):
-    """input dictionary"""
+    """input dictionary."""
     selection = self._getDataSetTree3(selectionDict)
     return self.__getFiles(selection, sortDict, startItem, maxitems)
 
   #############################################################################
   def _getDataSetTree4(self, selectionDict):  # run based query
-    """input dictionary"""
+    """input dictionary."""
     path = selectionDict['fullpath']
     levels, processedPath, procpass = self.getLevelAndPath(path)
     gLogger.debug(str(levels))
@@ -1559,13 +1563,13 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def _getLimitedFilesRuns(self, selectionDict, sortDict, startItem, maxitems):
-    """input dictionary"""
+    """input dictionary."""
     selection = self._getDataSetTree4(selectionDict)
     return self.__getFiles(selection, sortDict, startItem, maxitems)
 
   #############################################################################
   def __getFiles(self, in_dict, sortDict, startItem, maxitems):
-    """returns the files"""
+    """returns the files."""
     totalrecords = 0
     nbOfEvents = 0
     filesSize = 0
@@ -1610,17 +1614,17 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getAncestors(self, files, depth):
-    """ancestors of given files"""
+    """ancestors of given files."""
     return self.db_.getFileAncestors(files, depth)
 
   #############################################################################
   def getLogfile(self, filename):
-    """log file"""
+    """log file."""
     return self.db_.getFileCreationLog(filename)
 
   #############################################################################
   def writePythonOrJobOptions(self, startItem, maxitems, path, savetype):
-    """create Gaudi Card"""
+    """create Gaudi Card."""
     result = None
     dataset = None
     if self.parameter_ == self.__bookkeepingParameters[0]:
@@ -1653,7 +1657,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getLimitedInformations(self, startItem, maxitems, path):
-    """statistics"""
+    """statistics."""
     result = None
     if self.parameter_ == self.__bookkeepingParameters[0]:
       result = self._getLimitedFilesConfigParams({'fullpath': path}, {'need': 0}, startItem, maxitems)
@@ -1681,16 +1685,16 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def writeJobOptions(self, files, optionsFile=None, savedType=None, catalog=None, savePfn=None, dataset=None):
-    """create options file
+    """create options file.
 
-        :params dict files: LFNs for which to write the options
-        :params str optionsFile: file name where options might be written (iff given)
-        :params str savedType: if savedType == 'txt', return the list of LFNs
-        :params str catalog: add catalog or not
-        :params dict savePfn: file type versions
-        :params dict dataset: metadata about the dataset
+    :params dict files: LFNs for which to write the options
+    :params str optionsFile: file name where options might be written (iff given)
+    :params str savedType: if savedType == 'txt', return the list of LFNs
+    :params str catalog: add catalog or not
+    :params dict savePfn: file type versions
+    :params dict dataset: metadata about the dataset
 
-        :returns: str with options
+    :returns: str with options
     """
     if optionsFile is None and savedType == 'txt':
       # Only return the list of LFNs
@@ -1717,8 +1721,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def __addDatasetCreationMetadata(self, dataset):
-    """it adds the metadata information about the dataset creation.
-    """
+    """it adds the metadata information about the dataset creation."""
     string = ''
     if dataset:
       string += "\n%s Extra information about the data processing phases:\n" % (self.comment)
@@ -1734,8 +1737,7 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def __createFormatString(filesandformats):
-    """It generates the Root format option file.
-    """
+    """It generates the Root format option file."""
     string = "\nfrom Gaudi.Configuration import * "
     string += "\nfrom GaudiConf import IOHelper\n"
     for fileFormat, lfns in filesandformats.iteritems():
@@ -1750,8 +1752,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def __addGaudiheader(self, evtTypes):
-    """it creates the header of the job option
-    """
+    """it creates the header of the job option."""
     string = self.comment + "GAUDI jobOptions generated on " + time.asctime() + "\n"
     if evtTypes:
       string += self.comment + "Contains event types : \n"
@@ -1764,8 +1765,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def __getFilesandFormats(self, savePfn, files):
-    """It returns a list of lfns for each file format (as a dictionary)
-    """
+    """It returns a list of lfns for each file format (as a dictionary)"""
     filesandformats = {}
     if savePfn:
       # we have to decide the file type version.
@@ -1799,8 +1799,8 @@ class LHCbBookkeepingManager(BaseESManager):
   #############################################################################
   @staticmethod
   def __createEventTypeList(files):
-    """It creates a dictionary which contains the event types and the size of the data set.
-    """
+    """It creates a dictionary which contains the event types and the size of
+    the data set."""
     evtTypes = {}
     if not isinstance(files, dict):
       return evtTypes
@@ -1822,53 +1822,52 @@ class LHCbBookkeepingManager(BaseESManager):
 
   #############################################################################
   def getProcessingPassSteps(self, in_dict):
-    """steps for a given processing pass"""
+    """steps for a given processing pass."""
     return self.db_.getProcessingPassSteps(in_dict)
 
   #############################################################################
   def getMoreProductionInformations(self, prodid):
-    """production statistics"""
+    """production statistics."""
     return self.db_.getMoreProductionInformations(prodid)
 
   #############################################################################
   def getAvailableProductions(self):
-    """available productions"""
+    """available productions."""
     return self.db_.getAvailableProductions()
 
   #############################################################################
   def getFileHistory(self, lfn):
-    """history"""
+    """history."""
     return self.db_.getFileHistory(lfn)
 
   #############################################################################
   def getProductionProcessingPassSteps(self, in_dict):
-    """step of a production"""
+    """step of a production."""
     return self.db_.getProductionProcessingPassSteps(in_dict)
 
   #############################################################################
   def getAvailableDataQuality(self):
-    """ all the existing data qualities"""
+    """all the existing data qualities."""
     return self.db_.getAvailableDataQuality()
 
   #############################################################################
   def setDataQualities(self, values):
-    """setting data quality"""
+    """setting data quality."""
     self.dataQualities_ = values
 
   def __getSelectedQualities(self):
-    """data quality"""
+    """data quality."""
     return [flag for flag, val in self.dataQualities_.iteritems() if val is True]
 
   #############################################################################
   def getStepsMetadata(self, bkDict):
-    """
-    It is a wrapper to the bookkeeping client
-    """
+    """It is a wrapper to the bookkeeping client."""
     return self.db_.getStepsMetadata(bkDict)
 
   #############################################################################
   def getFilesWithMetadata(self, dataset):
-    """it sets the file types
+    """it sets the file types.
+
     :param dict dataset: it is a bookkeeping dictionary, which contains the conditions used to retreive the lfns
     :return: S_OK lfns with metadata
     """

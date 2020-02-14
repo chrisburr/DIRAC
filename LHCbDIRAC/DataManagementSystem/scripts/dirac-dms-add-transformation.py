@@ -10,9 +10,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
- Create a new dataset replication or removal transformation according to plugin
-"""
+"""Create a new dataset replication or removal transformation according to
+plugin."""
 
 __RCSID__ = "$Id$"
 

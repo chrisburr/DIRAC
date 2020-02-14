@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit tests for Workflow Modules utilities
-"""
+"""Unit tests for Workflow Modules utilities."""
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 
@@ -26,8 +25,7 @@ from LHCbDIRAC.Workflow.Modules.ModulesUtilities import lowerExtension, getEvent
 
 
 class ModulesUtilitiesTestCase(unittest.TestCase):
-  """ Base class for the ModulesUtilities test cases
-  """
+  """Base class for the ModulesUtilities test cases."""
 
   def setUp(self):
 

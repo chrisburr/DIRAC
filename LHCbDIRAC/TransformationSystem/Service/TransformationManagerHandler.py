@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" DISET request handler for the LHCbDIRAC/TransformationDB. """
+"""DISET request handler for the LHCbDIRAC/TransformationDB."""
 
 __RCSID__ = "$Id$"
 
@@ -28,8 +28,7 @@ def initializeTransformationManagerHandler(serviceInfo):
 class TransformationManagerHandler(TManagerBase):
 
   def __init__(self, *args, **kargs):
-    """ c'tor
-    """
+    """c'tor."""
     self.setDatabase(database)
     TManagerBase.__init__(self, *args, **kargs)
 
@@ -142,8 +141,8 @@ class TransformationManagerHandler(TManagerBase):
   types_getTransformationRunsSummaryWeb = [dict, list, int, int]
 
   def export_getTransformationRunsSummaryWeb(self, selectDict, sortList, startItem, maxItems):
-    """ Get the summary of the transformation run information for a given page in the generic format
-    """
+    """Get the summary of the transformation run information for a given page
+    in the generic format."""
 
     # Obtain the timing information from the selectDict
     last_update = selectDict.get('LastUpdate', None)
@@ -262,40 +261,35 @@ class TransformationManagerHandler(TManagerBase):
 
   @classmethod
   def export_addRunsMetadata(self, runID, metadataDict):
-    """ insert run metadata
-    """
+    """insert run metadata."""
     return database.setRunsMetadata(runID, metadataDict)
 
   types_updateRunsMetadata = [[long, int], dict]
 
   @classmethod
   def export_updateRunsMetadata(self, runID, metadataDict):
-    """ insert run metadata
-    """
+    """insert run metadata."""
     return database.updateRunsMetadata(runID, metadataDict)
 
   types_getRunsMetadata = [[list, long, int]]
 
   @classmethod
   def export_getRunsMetadata(self, runID):
-    """ retrieve run metadata
-    """
+    """retrieve run metadata."""
     return database.getRunsMetadata(runID)
 
   types_deleteRunsMetadata = [[long, int]]
 
   @classmethod
   def export_deleteRunsMetadata(self, runID):
-    """ delete run metadata
-    """
+    """delete run metadata."""
     return database.deleteRunsMetadata(runID)
 
   types_getRunsInCache = [dict]
 
   @classmethod
   def export_getRunsInCache(self, condDict):
-    """ gets what's in
-    """
+    """gets what's in."""
     return database.getRunsInCache(condDict)
 
   #############################################################################
@@ -307,8 +301,7 @@ class TransformationManagerHandler(TManagerBase):
 
   @classmethod
   def export_getDestinationForRun(self, runIDs):
-    """ retrieve run destination for a single run or a list of runs
-    """
+    """retrieve run destination for a single run or a list of runs."""
     if isinstance(runIDs, (int, long)):
       runIDs = [runIDs]
     if isinstance(runIDs, str):
@@ -320,8 +313,7 @@ class TransformationManagerHandler(TManagerBase):
 
   @classmethod
   def export_setDestinationForRun(self, runID, destination):
-    """ set run destination
-    """
+    """set run destination."""
     return database.setDestinationForRun(runID, destination)
 
   #############################################################################

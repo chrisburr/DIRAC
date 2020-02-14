@@ -9,14 +9,13 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-""" The job path resolution module is a VO-specific plugin that
-    allows to define VO job policy in a simple way.  This allows the
-    inclusion of LHCb specific WMS optimizers without compromising the
-    generic nature of DIRAC.
+"""The job path resolution module is a VO-specific plugin that allows to define
+VO job policy in a simple way.  This allows the inclusion of LHCb specific WMS
+optimizers without compromising the generic nature of DIRAC.
 
-    The arguments dictionary from the JobPathAgent includes the ClassAd
-    job description and therefore decisions are made based on the existence
-    of JDL parameters.
+The arguments dictionary from the JobPathAgent includes the ClassAd job
+description and therefore decisions are made based on the existence of
+JDL parameters.
 """
 
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
@@ -26,19 +25,17 @@ COMPONENT_NAME = 'LHCbJobPathResolution'
 
 
 class JobPathResolution:
-  """ Main class for JobPathResolution """
+  """Main class for JobPathResolution."""
 
   def __init__(self, argumentsDict):
-    """ Standard constructor
-    """
+    """Standard constructor."""
     self.arguments = argumentsDict
     self.name = COMPONENT_NAME
     self.log = gLogger.getSubLogger(self.name)
 
   def execute(self):
-    """Given the arguments from the JobPathAgent, this function resolves job optimizer
-       paths according to LHCb VO policy.
-    """
+    """Given the arguments from the JobPathAgent, this function resolves job
+    optimizer paths according to LHCb VO policy."""
 
     if 'ConfigPath' not in self.arguments:
       self.log.warn('No CS ConfigPath defined')

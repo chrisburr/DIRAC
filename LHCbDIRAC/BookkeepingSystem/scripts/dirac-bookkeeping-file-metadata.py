@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-eventtype-mgt-update
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve metadata from the Bookkeeping for the given files
-"""
+"""Retrieve metadata from the Bookkeeping for the given files."""
 __RCSID__ = "$Id$"
 import  DIRAC.Core.Base.Script as Script
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript

@@ -8,81 +8,80 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""LHCb Job Class
+"""LHCb Job Class.
 
-   The LHCb Job class inherits generic VO functionality from the Job base class
-   and provides VO-specific functionality to aid in the construction of
-   workflows.
+The LHCb Job class inherits generic VO functionality from the Job base class
+and provides VO-specific functionality to aid in the construction of
+workflows.
 
-   Helper functions are documented with example usage for the DIRAC API.
+Helper functions are documented with example usage for the DIRAC API.
 
-   Below are several examples of LHCbJob usage.
+Below are several examples of LHCbJob usage.
 
-   An example DaVinci application script would be::
+An example DaVinci application script would be::
 
-     from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-     from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
+  from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
+  from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
-     j = LHCbJob()
-     j.setCPUTime(5000)
-     j.setApplication('DaVinci','v19r12','DaVinciv19r12.opts',
-     optionsLine='ApplicationMgr.EvtMax=1',
-     inputData=['/lhcb/production/DC06/phys-v2-lumi2/00001650/DST/0000/00001650_00000054_5.dst'])
-     j.setName('MyJobName')
-     #j.setDestination('LCG.CERN.cern')
+  j = LHCbJob()
+  j.setCPUTime(5000)
+  j.setApplication('DaVinci','v19r12','DaVinciv19r12.opts',
+  optionsLine='ApplicationMgr.EvtMax=1',
+  inputData=['/lhcb/production/DC06/phys-v2-lumi2/00001650/DST/0000/00001650_00000054_5.dst'])
+  j.setName('MyJobName')
+  #j.setDestination('LCG.CERN.cern')
 
-     dirac = DiracLHCb()
-     jobID = dirac.submitJob(j)
-     print 'Submission Result: ',jobID
+  dirac = DiracLHCb()
+  jobID = dirac.submitJob(j)
+  print 'Submission Result: ',jobID
 
-   The setDestination() method is optional and takes the DIRAC site name as an argument.
+The setDestination() method is optional and takes the DIRAC site name as an argument.
 
-   Another example for executing a script in the Gaudi Application environment is::
+Another example for executing a script in the Gaudi Application environment is::
 
-     from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-     from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
+  from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
+  from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
-     j = LHCbJob()
-     j.setCPUTime(5000)
-     j.setApplicationScript('DaVinci','v19r11','myGaudiPythonScript.py',
-     inputData=['/lhcb/production/DC06/phys-lumi2/00001501/DST/0000/00001501_00000320_5.dst'])
-     j.setName('MyJobName')
-     #j.setDestination('LCG.CERN.cern')
+  j = LHCbJob()
+  j.setCPUTime(5000)
+  j.setApplicationScript('DaVinci','v19r11','myGaudiPythonScript.py',
+  inputData=['/lhcb/production/DC06/phys-lumi2/00001501/DST/0000/00001501_00000320_5.dst'])
+  j.setName('MyJobName')
+  #j.setDestination('LCG.CERN.cern')
 
-     dirac = DiracLHCb()
-     jobID = dirac.submitJob(j)
-     print 'Submission Result: ',jobID
+  dirac = DiracLHCb()
+  jobID = dirac.submitJob(j)
+  print 'Submission Result: ',jobID
 
-   For execution of a python Bender module::
+For execution of a python Bender module::
 
-     from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-     from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
+  from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
+  from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
-     j = LHCbJob()
-     j.setCPUTime(5000)
-     j.setBenderModule('v8r3','BenderExample.PhiMC',
-     inputData=['LFN:/lhcb/production/DC06/phys-v2-lumi2/00001758/DST/0000/00001758_00000001_5.dst'],numberOfEvents=100)
-     j.setName('MyJobName')
+  j = LHCbJob()
+  j.setCPUTime(5000)
+  j.setBenderModule('v8r3','BenderExample.PhiMC',
+  inputData=['LFN:/lhcb/production/DC06/phys-v2-lumi2/00001758/DST/0000/00001758_00000001_5.dst'],numberOfEvents=100)
+  j.setName('MyJobName')
 
-     dirac = DiracLHCb()
-     jobID = dirac.submitJob(j)
-     print 'Submission Result: ',jobID
+  dirac = DiracLHCb()
+  jobID = dirac.submitJob(j)
+  print 'Submission Result: ',jobID
 
-   To execute a ROOT Macro, Python script and Executable consecutively an example script would be::
+To execute a ROOT Macro, Python script and Executable consecutively an example script would be::
 
-     from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-     from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
+  from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
+  from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
-     j = LHCbJob()
-     j.setCPUTime(50000)
-     j.setRootMacro('5.18.00a','test.C')
-     j.setRootPythonScript('5.18.00a','test.py')
-     j.setRootExecutable('5.18.00a','minexam')
+  j = LHCbJob()
+  j.setCPUTime(50000)
+  j.setRootMacro('5.18.00a','test.C')
+  j.setRootPythonScript('5.18.00a','test.py')
+  j.setRootExecutable('5.18.00a','minexam')
 
-     dirac = DiracLHCb()
-     jobID = dirac.submitJob(j,mode='local')
-     print 'Submission Result: ',jobID
-
+  dirac = DiracLHCb()
+  jobID = dirac.submitJob(j,mode='local')
+  print 'Submission Result: ',jobID
 """
 
 import os
@@ -100,14 +99,12 @@ from LHCbDIRAC.ConfigurationSystem.Client.Helpers.Resources import getPlatformFo
 
 
 class LHCbJob(Job):
-  """ LHCbJob class as extension of DIRAC Job class
-  """
+  """LHCbJob class as extension of DIRAC Job class."""
 
   #############################################################################
 
   def __init__(self, script=None, stdout='std.out', stderr='std.err'):
-    """Instantiates the Workflow object and some default parameters.
-    """
+    """Instantiates the Workflow object and some default parameters."""
     super(LHCbJob, self).__init__(script, stdout, stderr)
     self.stepCount = 0
     self.inputDataType = 'DATA'  # Default, other options are MDF, ETC
@@ -498,7 +495,8 @@ class LHCbJob(Job):
   #############################################################################
 
   def setRootMacro(self, rootVersion, rootScript, arguments=None, logFile=None, systemConfig='ANY'):
-    """Specifies ROOT version and macro to be executed (e.g. root -b -f <rootScript>).
+    """Specifies ROOT version and macro to be executed (e.g. root -b -f
+    <rootScript>).
 
        Can optionally specify arguments to the script and a name for the output log file.
 
@@ -522,7 +520,8 @@ class LHCbJob(Job):
   #############################################################################
 
   def setRootPythonScript(self, rootVersion, rootScript, arguments=None, logFile=None, systemConfig='ANY'):
-    """Specifies ROOT version and python script to be executed (e.g. python <rootScript>).
+    """Specifies ROOT version and python script to be executed (e.g. python
+    <rootScript>).
 
        Can optionally specify arguments to the script and a name for the output log file.
 
@@ -570,9 +569,9 @@ class LHCbJob(Job):
   #############################################################################
 
   def __configureRootModule(self, rootVersion, rootScript, rootType, arguments, logFile, systemConfig):
-    """ Internal function.
+    """Internal function.
 
-        Supports the root macro, python and executable wrapper functions.
+    Supports the root macro, python and executable wrapper functions.
     """
     kwargs = {'rootVersion': rootVersion, 'rootScript': rootScript, 'rootType': rootType,
               'arguments': arguments, 'logFile': logFile}
@@ -646,7 +645,6 @@ class LHCbJob(Job):
 
        :param depth: Ancestor depth
        :type depth: string or int
-
     """
     kwargs = {'depth': depth}
     description = 'Level at which ancestor files are retrieved from the bookkeeping'
@@ -677,7 +675,6 @@ class LHCbJob(Job):
 
        :param inputDataType: Input Data Type
        :type inputDataType: String
-
     """
     description = 'User specified input data type'
     if not isinstance(inputDataType, str):
@@ -730,20 +727,22 @@ class LHCbJob(Job):
   def setOutputData(self, lfns, OutputSE=None, OutputPath=None, replicate=None, filePrepend=None):
     """Helper function, used in preference to Job.setOutputData() for LHCb.
 
-       For specifying user output data to be registered in Grid storage.
+    For specifying user output data to be registered in Grid storage.
 
-       Example usage:
+    Example usage:
 
-       >>> job = Job()
-       >>> job.setOutputData(['DVNtuple.root'])
+    .. code-block:: python
 
-       :param lfns: Output data file or files
-       :type lfns: Single string or list of strings ['','']
-       :param OutputSE: Optional parameter to specify the Storage
-       :param OutputPath: Optional parameter to specify the Path in the Storage
-       Element to store data or files, e.g. CERN-tape
-       :type OutputSE: string or list
-       :type OutputPath: string
+      >>> job = Job()
+      >>> job.setOutputData(['DVNtuple.root'])
+
+    :param lfns: Output data file or files
+    :type lfns: Single string or list of strings ['','']
+    :param OutputSE: Optional parameter to specify the Storage
+    :param OutputPath: Optional parameter to specify the Path in the Storage
+      Element to store data or files, e.g. CERN-tape
+    :type OutputSE: string or list
+    :type OutputPath: string
     """
     # FIXME: the output data as specified here will be treated by the UserJobFinalization module
     # If we remove this method (which is totally similar to the Job() one, the output data will be
@@ -797,7 +796,7 @@ class LHCbJob(Job):
   def setExecutable(self, executable, arguments=None, logFile=None, systemConfig='ANY',
                     modulesNameList=None, parametersList=None):
     """Specifies executable script to run with optional arguments and log file
-       for standard output.
+    for standard output.
 
        These can be either:
 
@@ -876,9 +875,11 @@ class LHCbJob(Job):
   #############################################################################
 
   def setDIRACPlatform(self):
-    """ Use LHCbDIRAC.ConfigurationSystem.Client.Helpers.Resources.getPlatformForJob for determining DIRAC platform
+    """Use
+    LHCbDIRAC.ConfigurationSystem.Client.Helpers.Resources.getPlatformForJob
+    for determining DIRAC platform.
 
-        :returns: S_OK/S_ERROR
+    :returns: S_OK/S_ERROR
     """
     platform = getPlatformForJob(self.workflow)
     if platform:
@@ -886,15 +887,16 @@ class LHCbJob(Job):
     return S_OK()
 
   def setPlatform(self, platform):
-    """ Developer function: sets the target platform, e.g. x86_64-slc6, or x86_64-slc6.avx2
-        This platform is in the form of what it is returned by the dirac-architecture script)
+    """Developer function: sets the target platform, e.g. x86_64-slc6, or
+    x86_64-slc6.avx2 This platform is in the form of what it is returned by the
+    dirac-architecture script)
 
-        Normally, this method should not be called directly. Instead, clients should call setDIRACPlatfom()
+    Normally, this method should not be called directly. Instead, clients should call setDIRACPlatfom()
 
-        FIXME: this method is similar (but not same) to what is in Vanilla DIRAC Job.py
-               and should be evaluated if to change the base one and remove this.
+    FIXME: this method is similar (but not same) to what is in Vanilla DIRAC Job.py
+           and should be evaluated if to change the base one and remove this.
 
-        :returns: S_OK/S_ERROR
+    :returns: S_OK/S_ERROR
     """
     kwargs = {'platform': platform}
 
@@ -909,8 +911,7 @@ class LHCbJob(Job):
   #############################################################################
 
   def setInputData(self, lfns, bkClient=None, runNumber=None, persistencyType=None):
-    """ Add the input data and the run number, if available
-    """
+    """Add the input data and the run number, if available."""
 
     if not lfns:
       self.log.warn("no lfns passed in setInputData, was that intentional?")
@@ -972,8 +973,7 @@ class LHCbJob(Job):
   #############################################################################
 
   def setRunMetadata(self, runMetadataDict):
-    """ set the run metadata
-    """
+    """set the run metadata."""
 
     self._addParameter(self.workflow, 'runMetadata', 'String', str(runMetadataDict), 'Input run metadata')
     return S_OK()
@@ -981,9 +981,10 @@ class LHCbJob(Job):
   #############################################################################
 
   def runLocal(self, diracLHCb=None):
-    """ The DiracLHCb (API) object is for local submission.
-        A BKKClient might be needed.
-        First, adds Ancestors (in any) to the InputData.
+    """The DiracLHCb (API) object is for local submission.
+
+    A BKKClient might be needed. First, adds Ancestors (in any) to the
+    InputData.
     """
 
     if diracLHCb is not None:

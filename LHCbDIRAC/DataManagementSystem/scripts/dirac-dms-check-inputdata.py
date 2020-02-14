@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Check input files availability for a (list of) jobs
-"""
+"""Check input files availability for a (list of) jobs."""
 
 __RCSID__ = "$Id$"
 

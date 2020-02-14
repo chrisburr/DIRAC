@@ -8,12 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" DIRAC Transformation DB
+"""DIRAC Transformation DB.
 
-    Transformation database is used to collect and serve the necessary information
-    in order to automate the task of job preparation for high level transformations.
-    This class is typically used as a base class for more specific data processing
-    databases
+Transformation database is used to collect and serve the necessary
+information in order to automate the task of job preparation for high
+level transformations. This class is typically used as a base class for
+more specific data processing databases
 """
 
 __RCSID__ = "$Id$"
@@ -28,13 +28,11 @@ from DIRAC.Core.Utilities.List import intListToString, breakListIntoChunks
 
 
 class TransformationDB(DIRACTransformationDB):
-  """ Extension of the DIRAC Transformation DB
-  """
+  """Extension of the DIRAC Transformation DB."""
 
   def __init__(self, dbname=None, dbconfig=None, dbIn=None):
-    """ The standard constructor takes the database name (dbname) and the name of the
-        configuration section (dbconfig)
-    """
+    """The standard constructor takes the database name (dbname) and the name
+    of the configuration section (dbconfig)"""
     DIRACTransformationDB.__init__(self, dbname, dbconfig, dbIn)
     self.lock = threading.Lock()
     self.queryFields = ('SimulationConditions', 'DataTakingConditions', 'ProcessingPass', 'FileType',
@@ -48,8 +46,7 @@ class TransformationDB(DIRACTransformationDB):
     self.TASKSPARAMS.append('RunNumber')
 
   def deleteTransformation(self, transID, author='', connection=False):
-    """ Small extension to not forget to delete the BkQueries
-    """
+    """Small extension to not forget to delete the BkQueries."""
     res = self.deleteBookkeepingQuery(transID, connection)
     if not res['OK']:
       return res
@@ -57,9 +54,8 @@ class TransformationDB(DIRACTransformationDB):
     return DIRACTransformationDB.deleteTransformation(self, transID, author, connection)
 
   def cleanTransformation(self, transID, author='', connection=False):
-    """ Clean the transformation specified by name or id
-        Extends DIRAC one for deleting the unused runs metadata
-    """
+    """Clean the transformation specified by name or id Extends DIRAC one for
+    deleting the unused runs metadata."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return res
@@ -102,8 +98,7 @@ class TransformationDB(DIRACTransformationDB):
 
   def getTasksForSubmission(self, transID, numTasks=1, site="", statusList=['Created'],
                             older=None, newer=None, connection=False):
-    """ extends base class including the run metadata
-    """
+    """extends base class including the run metadata."""
     tasksDict = DIRACTransformationDB.getTasksForSubmission(self, transID, numTasks, site, statusList,
                                                             older, newer, connection)
     if not tasksDict['OK']:
@@ -131,8 +126,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(tasksDict)
 
   def setHotFlag(self, transID, flag=False, connection=False):
-    """ Simply set the hot flag
-    """
+    """Simply set the hot flag."""
     connection = self.__getConnection(connection)
     return self._update("UPDATE Transformations SET Hot = %s WHERE TransformationID = %d" % (flag, int(transID)),
                         connection)
@@ -142,14 +136,12 @@ class TransformationDB(DIRACTransformationDB):
   # Managing the BkQueries table
 
   def deleteBookkeepingQuery(self, transID, connection=False):
-    """ Delete the specified query from the database
-    """
+    """Delete the specified query from the database."""
     connection = self.__getConnection(connection)
     return self._update("DELETE FROM BkQueriesNew WHERE TransformationID=%d" % int(transID), connection)
 
   def setBookkeepingQueryEndRun(self, transID, runNumber, connection=False):
-    """ Set the EndRun for the supplied transformation
-    """
+    """Set the EndRun for the supplied transformation."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return res
@@ -168,8 +160,7 @@ class TransformationDB(DIRACTransformationDB):
     return self._update(req, connection)
 
   def setBookkeepingQueryStartRun(self, transID, runNumber, connection=False):
-    """ Set the StartRun for the supplied transformation
-    """
+    """Set the StartRun for the supplied transformation."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return res
@@ -188,8 +179,7 @@ class TransformationDB(DIRACTransformationDB):
     return self._update(req, connection)
 
   def addBookkeepingQueryRunList(self, transID, runList, connection=False):
-    """ Adds the list of runs
-    """
+    """Adds the list of runs."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return S_ERROR("Failed to get Connection to TransformationDB")
@@ -216,8 +206,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK()
 
   def addBookkeepingQuery(self, transID, queryDict, connection=False):
-    """ Add a new Bookkeeping query specification
-    """
+    """Add a new Bookkeeping query specification."""
     connection = self.__getConnection(connection)
     values = []
     for field in self.queryFields:
@@ -247,8 +236,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(transID)
 
   def getTransformationsWithBkQueries(self, transIDs=None, connection=False):
-    """ Get those Transformations that have a BkQuery
-    """
+    """Get those Transformations that have a BkQuery."""
     connection = self.__getConnection(connection)
     req = "SELECT DISTINCT TransformationID FROM BkQueriesNew"
     if transIDs:
@@ -259,8 +247,7 @@ class TransformationDB(DIRACTransformationDB):
     return res
 
   def getBookkeepingQuery(self, transID, connection=False):
-    """ Get the bookkeeping query parameters
-    """
+    """Get the bookkeeping query parameters."""
     connection = self.__getConnection(connection)
     req = "SELECT * FROM BkQueriesNew WHERE TransformationID=%d" % (int(transID))
     res = self._query(req, connection)
@@ -286,9 +273,8 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(bkDict)
 
   def __insertExistingTransformationFiles(self, transID, fileTuplesList, connection=False):
-    """ extends DIRAC.__insertExistingTransformationFiles
-        Does not add userSE and adds runNumber
-    """
+    """extends DIRAC.__insertExistingTransformationFiles Does not add userSE
+    and adds runNumber."""
 
     gLogger.info("Inserting %d files in TransformationFiles" % len(fileTuplesList))
     # splitting in various chunks, in case it is too big
@@ -338,8 +324,7 @@ class TransformationDB(DIRACTransformationDB):
   #
 
   def addTaskForTransformation(self, transID, lfns=[], se='Unknown', connection=False):
-    """ Create a new task with the supplied files for a transformation.
-    """
+    """Create a new task with the supplied files for a transformation."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return res
@@ -411,8 +396,7 @@ class TransformationDB(DIRACTransformationDB):
 
   def getTransformationRuns(self, condDict=None, older=None, newer=None, timeStamp='LastUpdate',
                             orderAttribute=None, limit=None, connection=False):
-    """ Gets the transformation runs registered (usual query)
-    """
+    """Gets the transformation runs registered (usual query)"""
 
     connection = self.__getConnection(connection)
     selectDict = {}
@@ -447,8 +431,7 @@ class TransformationDB(DIRACTransformationDB):
     return result
 
   def getTransformationRunStats(self, transIDs, connection=False):
-    """ Gets counters of runs (taken from the TransformationFiles table)
-    """
+    """Gets counters of runs (taken from the TransformationFiles table)"""
     connection = self.__getConnection(connection)
     res = self.getCounters('TransformationFiles',
                            ['TransformationID', 'RunNumber', 'Status'],
@@ -466,8 +449,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(transRunStatusDict)
 
   def addTransformationRunFiles(self, transID, runID, lfns, connection=False):
-    """ Adds the RunID to the TransformationFiles table
-    """
+    """Adds the RunID to the TransformationFiles table."""
     if not lfns:
       return S_ERROR('Zero length LFN list')
     res = self._getConnectionTransID(connection, transID)
@@ -492,8 +474,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(resDict)
 
   def setParameterToTransformationFiles(self, transID, lfnsDict, connection=False):
-    """ Sets a parameter in the TransformationFiles table
-    """
+    """Sets a parameter in the TransformationFiles table."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return res
@@ -516,8 +497,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(fileIDs)
 
   def setTransformationRunStatus(self, transID, runIDs, status, connection=False):
-    """ Sets a status in the TransformationRuns table
-    """
+    """Sets a status in the TransformationRuns table."""
     if not runIDs:
       return S_OK()
     if not isinstance(runIDs, list):
@@ -534,8 +514,7 @@ class TransformationDB(DIRACTransformationDB):
     return res
 
   def setTransformationRunsSite(self, transID, runID, selectedSite, connection=False):
-    """ Sets the site for Transformation Runs
-    """
+    """Sets the site for Transformation Runs."""
     res = self._getConnectionTransID(connection, transID)
     if not res['OK']:
       return res
@@ -550,8 +529,7 @@ class TransformationDB(DIRACTransformationDB):
     return res
 
   def insertTransformationRun(self, transID, runID, selectedSite='', status=None, connection=False):
-    """ Inserts a new Run for a specific transformation
-    """
+    """Inserts a new Run for a specific transformation."""
     if status is None:
       status = 'Active'
     if selectedSite:
@@ -578,8 +556,7 @@ class TransformationDB(DIRACTransformationDB):
   #
 
   def setRunsMetadata(self, runID, metadataDict, connection=False):
-    """ Add the metadataDict to runID (if already present, does nothing)
-    """
+    """Add the metadataDict to runID (if already present, does nothing)"""
     connection = self.__getConnection(connection)
     for name, value in metadataDict.iteritems():
       res = self.__insertRunMetadata(runID, name, value, connection)
@@ -588,8 +565,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK()
 
   def updateRunsMetadata(self, runID, metadataDict, connection=False):
-    """ Add the metadataDict to runID (if already present, does nothing)
-    """
+    """Add the metadataDict to runID (if already present, does nothing)"""
     connection = self.__getConnection(connection)
     for name, value in metadataDict.iteritems():
       res = self.__updateRunMetadata(runID, name, value, connection)
@@ -624,7 +600,9 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK()
 
   def getRunsMetadata(self, runIDs, connection=False):
-    """ get meta of a run. RunIDs can be a list.
+    """get meta of a run.
+
+    RunIDs can be a list.
     """
     connection = self.__getConnection(connection)
     try:
@@ -647,7 +625,9 @@ class TransformationDB(DIRACTransformationDB):
       return S_OK(dictOfNameValue)
 
   def deleteRunsMetadata(self, condDict=None, connection=False):
-    """ delete meta of a run. RunIDs can be a list.
+    """delete meta of a run.
+
+    RunIDs can be a list.
     """
     connection = self.__getConnection(connection)
     req = "DELETE FROM RunsMetadata %s" % self.buildCondition(condDict)
@@ -658,8 +638,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK()
 
   def getRunsInCache(self, condDict=None, connection=False):
-    """ get which runNumnber are cached
-    """
+    """get which runNumnber are cached."""
     connection = self.__getConnection(connection)
     req = "SELECT DISTINCT RunNumber FROM RunsMetadata %s" % self.buildCondition(condDict)
     res = self._query(req, connection)
@@ -675,8 +654,7 @@ class TransformationDB(DIRACTransformationDB):
   #
 
   def getDestinationForRun(self, runIDs, connection=False):
-    """ get destination of a run or a list of runs.
-    """
+    """get destination of a run or a list of runs."""
     connection = self.__getConnection(connection)
     req = "SELECT * FROM RunDestination WHERE RunNumber IN (%s)" % (', '.join(str(runID) for runID in runIDs))
     res = self._query(req, connection)
@@ -686,8 +664,7 @@ class TransformationDB(DIRACTransformationDB):
     return S_OK(dict(res['Value']) if res['Value'] else {})
 
   def setDestinationForRun(self, runID, destination, connection=False):
-    """ set destination of a run.
-    """
+    """set destination of a run."""
     connection = self.__getConnection(connection)
     req = "INSERT INTO RunDestination (RunNumber, Destination) VALUES (%d, '%s')" % (runID, destination)
     res = self._query(req, connection)
@@ -701,8 +678,7 @@ class TransformationDB(DIRACTransformationDB):
   #
 
   def addStoredJobDescription(self, transformationID, jobDescription, connection=False):
-    """ store a job description for transformationID
-    """
+    """store a job description for transformationID."""
     connection = self.__getConnection(connection)
     res = self._escapeString(jobDescription)
     if not res['OK']:
@@ -718,8 +694,7 @@ class TransformationDB(DIRACTransformationDB):
       return S_OK()
 
   def getStoredJobDescription(self, transformationID, connection=False):
-    """ get the job description for transformationID
-    """
+    """get the job description for transformationID."""
     connection = self.__getConnection(connection)
     req = "SELECT * FROM StoredJobDescription WHERE TransformationID = %d" % transformationID
     res = self._query(req, connection)
@@ -730,8 +705,7 @@ class TransformationDB(DIRACTransformationDB):
       return S_OK(res['Value'])
 
   def removeStoredJobDescription(self, transformationID, connection=False):
-    """ remove the job description for transformationID
-    """
+    """remove the job description for transformationID."""
     connection = self.__getConnection(connection)
     req = "DELETE FROM StoredJobDescription WHERE TransformationID = %d" % transformationID
     res = self._query(req, connection)
@@ -742,8 +716,7 @@ class TransformationDB(DIRACTransformationDB):
       return S_OK()
 
   def getStoredJobDescriptionIDs(self, connection=False):
-    """ gets a list of all the stored job description transformationIDs
-    """
+    """gets a list of all the stored job description transformationIDs."""
     connection = self.__getConnection(connection)
     req = "SELECT TransformationID FROM StoredJobDescription"
     res = self._query(req, connection)

@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_PMS_Client_ProcessingProgress
-
-'''
+"""Test_PMS_Client_ProcessingProgress."""
 
 import unittest
 
@@ -33,9 +31,7 @@ class dTable( DummyReturn )  : pass
 class HTMLProgressTable_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    '''
-    Setup
-    '''
+    """Setup."""
 
     # We need the proper software, and then we overwrite it.
     import LHCbDIRAC.ProductionManagementSystem.Client.ProcessingProgress as moduleTested
@@ -43,9 +39,7 @@ class HTMLProgressTable_TestCase( unittest.TestCase ):
     self.progress = moduleTested.HTMLProgressTable
 
   def tearDown( self ):
-    '''
-    TearDown
-    '''
+    """TearDown."""
     del self.progress
 
 ################################################################################
@@ -53,8 +47,7 @@ class HTMLProgressTable_TestCase( unittest.TestCase ):
 class HTMLProgressTable_Success( HTMLProgressTable_TestCase ):
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     global dummyResults
     dummyResults[ 'dTable'   ] = None

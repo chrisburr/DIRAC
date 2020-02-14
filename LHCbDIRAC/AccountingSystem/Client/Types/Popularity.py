@@ -8,18 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Popularity Type
-  
-'''
+"""Popularity Type."""
 
 from DIRAC.AccountingSystem.Client.Types.BaseAccountingType import BaseAccountingType
 
 __RCSID__ = "$Id$"
 
 class Popularity( BaseAccountingType ):
-  '''
-    Popularity as extension of BaseAccountingType
-  '''
+  """Popularity as extension of BaseAccountingType."""
 
   def __init__( self ):
     

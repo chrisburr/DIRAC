@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.TransformationSystem.Agent package
-'''
+"""LHCbDIRAC.TransformationSystem.Agent package."""
 
 __RCSID__ = "$Id$"

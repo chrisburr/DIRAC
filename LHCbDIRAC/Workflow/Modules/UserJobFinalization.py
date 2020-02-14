@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module to upload specified job output files according to the parameters
-    defined in the user workflow.
-"""
+"""Module to upload specified job output files according to the parameters
+defined in the user workflow."""
 
 import os
 import random
@@ -29,13 +28,11 @@ __RCSID__ = "$Id$"
 
 
 class UserJobFinalization(ModuleBase):
-  """ Finalization of user jobs
-  """
+  """Finalization of user jobs."""
 
   #############################################################################
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("UserJobFinalization")
     super(UserJobFinalization, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -57,8 +54,7 @@ class UserJobFinalization(ModuleBase):
 
   #############################################################################
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
     super(UserJobFinalization, self)._resolveInputVariables()
 
     # Use LHCb utility for local running via dirac-jobexec
@@ -91,8 +87,7 @@ class UserJobFinalization(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None, orderedSEs=None):
-    """ Main execution function.
-    """
+    """Main execution function."""
 
     try:
 
@@ -301,8 +296,7 @@ class UserJobFinalization(ModuleBase):
   #############################################################################
 
   def _getOrderedSEsList(self):
-    """ Returns list of ordered SEs to which trying to upload
-    """
+    """Returns list of ordered SEs to which trying to upload."""
     # FIXME: remove all banned SEs (not the force ones)
     # First get the local (or assigned) SE to try first for upload and others in random fashion
     localSEs = set(getDestinationSEList('Tier1-USER', self.siteName, outputmode='local'))

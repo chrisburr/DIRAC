@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Minimal test for TransformationCleaningAgent
-"""
+"""Minimal test for TransformationCleaningAgent."""
 
 import importlib
 import unittest

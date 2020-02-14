@@ -39,12 +39,10 @@ __RCSID__ = "$Id: $"
 
 
 class WMSSecureGWHandler(RequestHandler):
-  """ WMSSecure class
-  """
+  """WMSSecure class."""
   @classmethod
   def initializeHandler(cls, serviceInfo):  # pylint: disable=unused-argument
-    """ Handler initialization
-    """
+    """Handler initialization."""
     from DIRAC.DataManagementSystem.Service.FileCatalogHandler import FileCatalogHandler
     if FileCatalogHandler.types_hasAccess != cls.types_hasAccess:
       raise Exception("FileCatalog hasAccess types has been changed.")
@@ -98,9 +96,8 @@ class WMSSecureGWHandler(RequestHandler):
   types_requestJob = [[basestring, dict]]
 
   def export_requestJob(self, resourceDescription):
-    """ Serve a job to the request of an agent which is the highest priority
-        one matching the agent's site capacity
-    """
+    """Serve a job to the request of an agent which is the highest priority one
+    matching the agent's site capacity."""
     result = MatcherClient(timeout=600).requestJob(resourceDescription)
     return result
 
@@ -108,9 +105,10 @@ class WMSSecureGWHandler(RequestHandler):
   types_setJobStatus = [[basestring, int, long], basestring, basestring, basestring]
 
   def export_setJobStatus(self, jobID, status, minorStatus, source='Unknown', datetime=None):
-    """ Set the major and minor status for job specified by its JobId.
-        Set optionally the status date and source component which sends the
-        status information.
+    """Set the major and minor status for job specified by its JobId.
+
+    Set optionally the status date and source component which sends the
+    status information.
     """
     jobStatus = JobStateUpdateClient().setJobStatus(int(jobID), status, minorStatus, source, datetime)
     return jobStatus
@@ -119,8 +117,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_setJobSite = [[basestring, int, long], basestring]
 
   def export_setJobSite(self, jobID, site):
-    """Allows the site attribute to be set for a job specified by its jobID.
-    """
+    """Allows the site attribute to be set for a job specified by its jobID."""
     jobSite = JobStateUpdateClient().setJobSite(jobID, site)
     return jobSite
 
@@ -128,9 +125,8 @@ class WMSSecureGWHandler(RequestHandler):
   types_setJobParameter = [[basestring, int, long], basestring, basestring]
 
   def export_setJobParameter(self, jobID, name, value):
-    """ Set arbitrary parameter specified by name/value pair
-        for job specified by its JobId
-    """
+    """Set arbitrary parameter specified by name/value pair for job specified
+    by its JobId."""
     jobParam = JobStateUpdateClient().setJobParameter(int(jobID), name, value)
     return jobParam
 
@@ -138,10 +134,11 @@ class WMSSecureGWHandler(RequestHandler):
   types_setJobStatusBulk = [[basestring, int, long], dict]
 
   def export_setJobStatusBulk(self, jobID, statusDict):
-    """ Set various status fields for job specified by its JobId.
-        Set only the last status in the JobDB, updating all the status
-        logging information in the JobLoggingDB. The statusDict has datetime
-        as a key and status information dictionary as values
+    """Set various status fields for job specified by its JobId.
+
+    Set only the last status in the JobDB, updating all the status
+    logging information in the JobLoggingDB. The statusDict has datetime
+    as a key and status information dictionary as values
     """
     jobStatus = JobStateUpdateClient().setJobStatusBulk(jobID, statusDict)
     return jobStatus
@@ -150,9 +147,8 @@ class WMSSecureGWHandler(RequestHandler):
   types_setJobParameters = [[basestring, int, long], list]
 
   def export_setJobParameters(self, jobID, parameters):
-    """ Set arbitrary parameters specified by a list of name/value pairs
-        for job specified by its JobId
-    """
+    """Set arbitrary parameters specified by a list of name/value pairs for job
+    specified by its JobId."""
     jobParams = JobStateUpdateClient().setJobParameters(jobID, parameters)
     return jobParams
 
@@ -160,8 +156,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_sendHeartBeat = [[basestring, int, long], dict, dict]
 
   def export_sendHeartBeat(self, jobID, dynamicData, staticData):
-    """ Send a heart beat sign of life for a job jobID
-    """
+    """Send a heart beat sign of life for a job jobID."""
     result = JobStateUpdateClient(timeout=120).sendHeartBeat(jobID, dynamicData, staticData)
     return result
 
@@ -169,8 +164,10 @@ class WMSSecureGWHandler(RequestHandler):
   types_rescheduleJob = []
 
   def export_rescheduleJob(self, jobIDs):
-    """  Reschedule a single job. If the optional proxy parameter is given
-         it will be used to refresh the proxy in the Proxy Repository
+    """Reschedule a single job.
+
+    If the optional proxy parameter is given it will be used to refresh
+    the proxy in the Proxy Repository
     """
     result = JobManagerClient().rescheduleJob(jobIDs)
     return result
@@ -179,8 +176,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_setPilotStatus = [basestring, basestring]
 
   def export_setPilotStatus(self, pilotRef, status, destination=None, reason=None, gridSite=None, queue=None):
-    """ Set the pilot agent status
-    """
+    """Set the pilot agent status."""
     result = WMSAdministratorClient().setPilotStatus(pilotRef, status, destination, reason, gridSite, queue)
     return result
 
@@ -188,8 +184,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_setJobForPilot = [(basestring, int, long), basestring]
 
   def export_setJobForPilot(self, jobID, pilotRef, destination=None):
-    """ Report the DIRAC job ID which is executed by the given pilot job
-    """
+    """Report the DIRAC job ID which is executed by the given pilot job."""
     result = WMSAdministratorClient().setJobForPilot(jobID, pilotRef, destination)
     return result
 
@@ -197,8 +192,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_setPilotBenchmark = [basestring, float]
 
   def export_setPilotBenchmark(self, pilotRef, mark):
-    """ Set the pilot agent benchmark
-    """
+    """Set the pilot agent benchmark."""
     result = WMSAdministratorClient().setPilotBenchmark(pilotRef, mark)
     return result
 
@@ -215,9 +209,7 @@ class WMSSecureGWHandler(RequestHandler):
 
   def export_getVOMSProxy(self, userDN, userGroup, requestPem,
                           requiredLifetime, vomsAttribute=False):  # pylint: disable=unused-argument
-    """
-    Always return the Boinc proxy.
-    """
+    """Always return the Boinc proxy."""
     userDN, userGroup, _ = self.__getOwnerGroupDN('BoincUser')
     rpcClient = RPCClient("Framework/BoincProxyManager", timeout=120)
     retVal = rpcClient.getProxy(userDN, userGroup, requestPem, requiredLifetime)
@@ -227,8 +219,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_getProxy = [basestring, basestring, basestring, (int, long)]
 
   def export_getProxy(self, userDN, userGroup, requestPem, requiredLifetime):  # pylint: disable=unused-argument
-    """Get the Boinc User proxy
-    """
+    """Get the Boinc User proxy."""
     userDN, userGroup, _ = self.__getOwnerGroupDN('BoincUser')
     rpcClient = RPCClient("Framework/BoincProxyManager", timeout=120)
     retVal = rpcClient.getProxy(userDN, userGroup, requestPem, requiredLifetime)
@@ -236,9 +227,8 @@ class WMSSecureGWHandler(RequestHandler):
 
   ##############################################################################
   def __checkProperties(self, requestedUserDN, requestedUserGroup):
-    """
-    Check the properties and return if they can only download limited proxies if authorized
-    """
+    """Check the properties and return if they can only download limited
+    proxies if authorized."""
     credDict = self.getRemoteCredentials()
     gLogger.debug("in credDict %s" % credDict['properties'])
     if Properties.FULL_DELEGATION in credDict['properties']:
@@ -259,8 +249,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_hasAccess = [[basestring, dict], [basestring, list, dict]]
 
   def export_hasAccess(self, paths, opType):  # pylint: disable=unused-argument
-    """ Access
-    """
+    """Access."""
     successful = {}
     for path in paths:
       successful[path] = True
@@ -270,7 +259,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_exists = [[ListType, DictType] + list(StringTypes)]
 
   def export_exists(self, lfns):
-    """ Check whether the supplied paths exists """
+    """Check whether the supplied paths exists."""
     successful = {}
     for lfn in lfns:
       successful[lfn] = False
@@ -282,7 +271,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_addFile = [[ListType, DictType] + list(StringTypes)]
 
   def export_addFile(self, lfns):
-    """ Register supplied files """
+    """Register supplied files."""
     failed = {}
     for lfn in lfns:
       failed[lfn] = True
@@ -291,7 +280,7 @@ class WMSSecureGWHandler(RequestHandler):
   types_putRequest = [basestring]
 
   def export_putRequest(self, requestJSON):
-    """ put a new request into RequestDB """
+    """put a new request into RequestDB."""
 
     requestDict = json.loads(requestJSON)
     request = Request(requestDict)

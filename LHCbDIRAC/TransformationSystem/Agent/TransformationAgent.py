@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""  TransformationAgent is and LHCb class just for overwriting some of the DIRAC methods
-"""
+"""TransformationAgent is and LHCb class just for overwriting some of the DIRAC
+methods."""
 
 __RCSID__ = "$Id$"
 
@@ -24,12 +24,10 @@ AGENT_NAME = 'Transformation/LHCbTransformationAgent'
 
 
 class TransformationAgent(DIRACTransformationAgent):
-  """ Extends base class
-  """
+  """Extends base class."""
 
   def initialize(self):
-    """ LHCb defaults
-    """
+    """LHCb defaults."""
     DIRACTransformationAgent.initialize(self)
 
     self.pluginLocation = self.am_getOption('PluginLocation',
@@ -40,8 +38,7 @@ class TransformationAgent(DIRACTransformationAgent):
     return S_OK()
 
   def _getClients(self):
-    """ returns the clients used in the threads
-    """
+    """returns the clients used in the threads."""
     res = DIRACTransformationAgent._getClients(self)
 
     threadTransformationClient = TransformationClient()
@@ -55,8 +52,7 @@ class TransformationAgent(DIRACTransformationAgent):
     return res
 
   def __generatePluginObject(self, plugin, clients):
-    """ Generates the plugin object
-    """
+    """Generates the plugin object."""
     try:
       plugModule = __import__(self.pluginLocation, globals(), locals(), ['TransformationPlugin'])
     except ImportError as x:

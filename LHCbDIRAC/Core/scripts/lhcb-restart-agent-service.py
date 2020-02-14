@@ -14,9 +14,7 @@
 # File : lhcb-restart-agent-service
 #
 #####################################
-"""
-  Restart any agent  and service installed on a VOBOX
-"""
+"""Restart any agent  and service installed on a VOBOX."""
 __RCSID__ = "$Id$"
 
 import re

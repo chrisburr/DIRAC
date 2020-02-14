@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_TS_Client_TaskManager
-
-'''
+"""Test_TS_Client_TaskManager."""
 
 import mock
 import unittest
@@ -24,16 +22,12 @@ __RCSID__ = "$Id$"
 class TaskManager_TestCase( unittest.TestCase ):
   
   def setUp( self ):
-    '''
-    Setup
-    '''        
+    """Setup."""        
     self.moduleTested = moduleTested
     self.testClass    = self.moduleTested.LHCbWorkflowTasks
     
   def tearDown( self ):
-    '''
-    TearDown
-    '''
+    """TearDown."""
     del self.testClass
     del self.moduleTested     
      
@@ -43,8 +37,7 @@ class TaskManager_TestCase( unittest.TestCase ):
 class TaskManager_Success( TaskManager_TestCase ):
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''  
+    """tests that we can instantiate one object of the tested class."""  
     instance = self.testClass()
     self.assertEqual( 'LHCbWorkflowTasks', instance.__class__.__name__ ) 
 

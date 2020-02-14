@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Unit tests for LHCbDIRAC RunApplication module
-"""
+"""Unit tests for LHCbDIRAC RunApplication module."""
 
 
 from mock import MagicMock
@@ -18,8 +17,7 @@ from LHCbDIRAC.Core.Utilities.RunApplication import RunApplication
 
 
 def test_lbRunCommand():
-  """ Testing lb-run command (for setting the environment)
-  """
+  """Testing lb-run command (for setting the environment)"""
   ra = RunApplication()
   ra.extraPackages = [('package1', 'v1r0'), ('package2', 'v2r0'), ('package3', '')]
   ra.runTimeProject = 'aRunTimeProject'
@@ -40,8 +38,7 @@ def test_lbRunCommand():
 
 
 def test__gaudirunCommand(mocker):
-  """ Testing what is run (the gaudirun command, for example)
-  """
+  """Testing what is run (the gaudirun command, for example)"""
   ra = RunApplication()
   ra.opsH = MagicMock()
   ra.opsH.getValue.return_value = 'gaudirun.py'

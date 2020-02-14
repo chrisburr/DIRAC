@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" AccountingCommand module
-"""
+"""AccountingCommand module."""
 
 __RCSID__ = "$Id$"
 
@@ -25,9 +24,7 @@ from LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient import Resou
 
 
 class AccountingCommand(Command):
-  """
-    Accounting "master" Command
-  """
+  """Accounting "master" Command."""
 
   def __init__(self, args=None, clients=None):
 
@@ -50,14 +47,10 @@ class AccountingCommand(Command):
 
 
 class JobAccountingCommand(AccountingCommand):
-  """
-    Accounting command that gets information of the WMSHistory type.
-  """
+  """Accounting command that gets information of the WMSHistory type."""
 
   def _storeCommand(self, results):
-    """
-      Stores the results of doNew method on the database.
-    """
+    """Stores the results of doNew method on the database."""
 
     for result in results:
 
@@ -76,10 +69,10 @@ class JobAccountingCommand(AccountingCommand):
     return S_OK()
 
   def _prepareCommand(self):
-    """
-      AccountingCommand requires two arguments:
-      - hours  : <int>
-      - name   : <str>
+    """AccountingCommand requires two arguments:
+
+    - hours  : <int>
+    - name   : <str>
     """
 
     if 'hours' not in self.args:
@@ -142,9 +135,9 @@ class JobAccountingCommand(AccountingCommand):
     return S_OK(uniformResult)
 
   def doCache(self):
-    """
-      Method that reads the cache table and tries to read from it. It will
-      return a list of dictionaries if there are results.
+    """Method that reads the cache table and tries to read from it.
+
+    It will return a list of dictionaries if there are results.
     """
 
     params = self._prepareCommand()
@@ -161,8 +154,7 @@ class JobAccountingCommand(AccountingCommand):
     return S_OK(result)
 
   def doMaster(self):
-    """
-    """
+    """"""
 
     sites = getSites()
     if not sites['OK']:
@@ -183,14 +175,10 @@ class JobAccountingCommand(AccountingCommand):
 
 
 class PilotAccountingCommand(AccountingCommand):
-  """
-    Accounting command that gets information of the Pilot type.
-  """
+  """Accounting command that gets information of the Pilot type."""
 
   def _storeCommand(self, results):
-    """
-      Stores the results of doNew method on the database.
-    """
+    """Stores the results of doNew method on the database."""
 
     for result in results:
 
@@ -204,11 +192,11 @@ class PilotAccountingCommand(AccountingCommand):
     return S_OK()
 
   def _prepareCommand(self):
-    """
-      AccountingCommand requires four arguments:
-      - hours       : <int>
-      - name : <str>
-      - elementType : <str>
+    """AccountingCommand requires four arguments:
+
+    - hours       : <int>
+    - name : <str>
+    - elementType : <str>
     """
 
     if 'hours' not in self.args:
@@ -293,9 +281,9 @@ class PilotAccountingCommand(AccountingCommand):
     return S_OK(uniformResult)
 
   def doCache(self):
-    """
-      Method that reads the cache table and tries to read from it. It will
-      return a list of dictionaries if there are results.
+    """Method that reads the cache table and tries to read from it.
+
+    It will return a list of dictionaries if there are results.
     """
 
     params = self._prepareCommand()

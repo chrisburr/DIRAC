@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Create and send a combined request for any pending operations at
-    the end of a job:
-      fileReport (for the transformation)
-      jobReport (for jobs)
-      accounting
-      request (for failover)
+"""Create and send a combined request for any pending operations at the end of
+a job:
+
+fileReport (for the transformation) jobReport (for jobs) accounting
+request (for failover)
 """
 
 from DIRAC import S_OK, S_ERROR, gLogger
@@ -30,8 +29,7 @@ class FailoverRequest(ModuleBase):
   #############################################################################
 
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
 
     self.log = gLogger.getSubLogger("FailoverRequest")
     super(FailoverRequest, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -41,8 +39,7 @@ class FailoverRequest(ModuleBase):
   #############################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the module input parameters are resolved here.
-    """
+    """By convention the module input parameters are resolved here."""
     super(FailoverRequest, self)._resolveInputVariables()
     super(FailoverRequest, self)._resolveInputStep()
 
@@ -52,8 +49,7 @@ class FailoverRequest(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main execution function.
-    """
+    """Main execution function."""
 
     try:
 

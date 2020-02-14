@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Actual executor methods of the dirac-transformation-debug script
-"""
+"""Actual executor methods of the dirac-transformation-debug script."""
 
 import sys
 import os
@@ -41,8 +39,7 @@ from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import PluginUtili
 
 
 def _getTransformations(args):
-  """
-  Parse command arguments to get a list of transformations
+  """Parse command arguments to get a list of transformations.
 
   :param args: arguments
   :type args: list of args, first is transIDs
@@ -66,8 +63,7 @@ def _getTransformations(args):
 
 
 def _checkReplicasForProblematic(lfns, replicas, nbReplicasProblematic, problematicReplicas):
-  """
-  Check replicas of Problematic files
+  """Check replicas of Problematic files.
 
   :param lfns: list of LFNs
   :type lfns: list
@@ -90,9 +86,7 @@ def _checkReplicasForProblematic(lfns, replicas, nbReplicasProblematic, problema
 
 
 def _genericLfn(lfn, lfnList):
-  """
-  From a file name, replace the job number with <jobNumber>
-  """
+  """From a file name, replace the job number with <jobNumber>"""
   if lfn not in lfnList and os.path.dirname(lfn) == '':
     spl = lfn.split('_')
     if len(spl) == 3:
@@ -102,7 +96,8 @@ def _genericLfn(lfn, lfnList):
 
 
 def __buildURL(urlBase, ref):
-  """ Build URL from a base, checking whether the ref file is an absolute or relative path """
+  """Build URL from a base, checking whether the ref file is an absolute or
+  relative path."""
   # If absolute path, get the hostas base
   if os.path.isabs(ref):
     urlBase = os.path.sep.join(urlBase.split(os.path.sep)[:3])
@@ -111,9 +106,7 @@ def __buildURL(urlBase, ref):
 
 
 def _getLog(urlBase, logFile, debug=False):
-  """
-  Get a logfile and return its content
-  """
+  """Get a logfile and return its content."""
   # if logFile == "" it is assumed the file is directly the urlBase
   # Otherwise it can either be referenced within urlBase or contained (.tar.gz)
 
@@ -264,9 +257,7 @@ def _getLog(urlBase, logFile, debug=False):
 
 
 def _getSandbox(job, logFile, debug=False):
-  """
-  Get a sandox and return its content
-  """
+  """Get a sandox and return its content."""
   fd = None
   files = []
   try:
@@ -299,10 +290,8 @@ def _getSandbox(job, logFile, debug=False):
 
 
 def _checkXMLSummary(job, logURL):
-  """
-  Look in an XMLSummary file for partly processed files of failed files
-  Return the list of bad LFNs
-  """
+  """Look in an XMLSummary file for partly processed files of failed files
+  Return the list of bad LFNs."""
   debug = False
   try:
     xmlFile = _getLog(logURL, 'summary*.xml*', debug=debug)
@@ -331,9 +320,7 @@ def _checkXMLSummary(job, logURL):
 
 
 def _checkLog(logURL):
-  """
-  Find ERROR string, core dump or "stalled events" in a logfile
-  """
+  """Find ERROR string, core dump or "stalled events" in a logfile."""
   for i in xrange(5, 0, -1):
     logFile = _getLog(logURL, '*_%d.log' % i, debug=False)
     if logFile:
@@ -358,9 +345,7 @@ def _checkLog(logURL):
 
 
 class TransformationDebug(object):
-  """
-  This class houses all methods for debugging transformations
-  """
+  """This class houses all methods for debugging transformations."""
 
   def __init__(self):
 
@@ -381,8 +366,7 @@ class TransformationDebug(object):
     self.transPlugin = None
 
   def __getFilesForRun(self, runID=None, status=None, lfnList=None, seList=None, taskList=None):
-    """
-    Get a lit of TS files fulfilling criteria
+    """Get a lit of TS files fulfilling criteria.
 
     :param runList: list of run numbers
     :type runList: list
@@ -427,8 +411,7 @@ class TransformationDebug(object):
       return []
 
   def __filesProcessed(self, runID):
-    """
-    Get the number of files and number of processed files in a run
+    """Get the number of files and number of processed files in a run.
 
     :param runID: run number
     :type runID: int, long
@@ -440,8 +423,7 @@ class TransformationDebug(object):
     return (files, processed)
 
   def __getRuns(self, runList=None, byRuns=True, seList=None, status=None, taskList=None):
-    """
-    Get a list of TS runs fulfilling criteria
+    """Get a list of TS runs fulfilling criteria.
 
     :param runList: list of run numbers
     :type runList: list
@@ -500,8 +482,8 @@ class TransformationDebug(object):
     return runs
 
   def __justStats(self, status, seList):
-    """
-    Print out statistics per usedSE about TS files in a given status targeting some sites
+    """Print out statistics per usedSE about TS files in a given status
+    targeting some sites.
 
     :param status: (list of) status
     :type status: list or string
@@ -551,8 +533,7 @@ class TransformationDebug(object):
     return improperJobs
 
   def __getTransformationInfo(self, transSep):
-    """
-    Print out information about a given transformation
+    """Print out information about a given transformation.
 
     :param transSep: separator to print out before info
     :type transSep: string
@@ -591,8 +572,7 @@ class TransformationDebug(object):
     return taskType, queryFileTypes
 
   def __fixRunNumber(self, filesToFix, fixRun, noTable=False):
-    """
-    Fix run information in TS
+    """Fix run information in TS.
 
     :param filesToFix: list of TS files to get fixed
     :type filesToFix: list
@@ -634,8 +614,7 @@ class TransformationDebug(object):
         gLogger.notice("***ERROR*** getting metadata for %d files:" % len(filesToFix), res['Message'])
 
   def __checkFilesMissingInFC(self, transFilesList, status):
-    """
-    Check a list of files that are missing in FC and print information
+    """Check a list of files that are missing in FC and print information.
 
     :param transFilesList: list of TS files
     :type transFilesList: list
@@ -681,8 +660,7 @@ class TransformationDebug(object):
               gLogger.notice("All files are really missing in FC and BK")
 
   def __getReplicas(self, lfns):
-    """
-    Get replicas of a list of LFNs
+    """Get replicas of a list of LFNs.
 
     :param lfns: list of LFNs
     :type lfns: list
@@ -697,8 +675,7 @@ class TransformationDebug(object):
     return replicas
 
   def __getTask(self, taskID):
-    """
-    Get a TS task
+    """Get a TS task.
 
     :param taskID: task ID
     :type taskID: int
@@ -709,9 +686,9 @@ class TransformationDebug(object):
     return res['Value'][0]
 
   def __fillStatsPerSE(self, seStat, rep, listSEs):
-    """
-    Fill statistics per SE for a set of replicas and a list of SEs
-    Depending whether the transformation is replication or removal, give the stat of missing or still present SEs
+    """Fill statistics per SE for a set of replicas and a list of SEs Depending
+    whether the transformation is replication or removal, give the stat of
+    missing or still present SEs.
 
     :param seStat: returned dictionary (number per SE)
     :type seStat: dictionary
@@ -741,8 +718,7 @@ class TransformationDebug(object):
     return completed
 
   def __getRequestName(self, requestID):
-    """
-    Return request name from ID
+    """Return request name from ID.
 
     :param requestID: request ID
     :type requestID: int
@@ -763,17 +739,14 @@ class TransformationDebug(object):
       gLogger.setLevel(level)
 
   def __getAssignedRequests(self):
-    """
-    Set member variable to the list of Assigned requests
-    """
+    """Set member variable to the list of Assigned requests."""
     if not self.listOfAssignedRequests:
       res = self.reqClient.getRequestIDsList(['Assigned'], limit=10000)
       if res['OK']:
         self.listOfAssignedRequests = [reqID for reqID, _x, _y in res['Value']]
 
   def __printRequestInfo(self, task, lfnsInTask, taskCompleted, status, dmFileStatusComment):
-    """
-    Print information about a request for a given task
+    """Print information about a request for a given task.
 
     :param task: TS task
     :type task: dictionary
@@ -963,8 +936,7 @@ class TransformationDebug(object):
     return toBeKicked
 
   def __checkProblematicFiles(self, nbReplicasProblematic, problematicReplicas, failedFiles):
-    """
-    Check files found Problematic in TS
+    """Check files found Problematic in TS.
 
     :param nbReplicasProblematic: dict of frequency of nb of replicas
     :type nbReplicasProblematic: dict
@@ -1133,8 +1105,7 @@ class TransformationDebug(object):
     gLogger.notice("")
 
   def __removeFilesFromTS(self, lfns):
-    """
-    Set a list of files in status Removed
+    """Set a list of files in status Removed.
 
     :param lfns: list of LFNs
     :type lfns: list
@@ -1158,8 +1129,7 @@ class TransformationDebug(object):
     return removed, [str(tr) for tr in transFiles]
 
   def __removeFiles(self, lfns):
-    """
-    Remove files from FC and TS
+    """Remove files from FC and TS.
 
     :param lfns: list of LFNs
     :type lfns: list
@@ -1175,9 +1145,8 @@ class TransformationDebug(object):
       gLogger.notice("ERROR when removing files from FC:", res['Message'])
 
   def __getJobStatus(self, job):
-    """
-    Get the status of a (list of) job, return it formated <major>;<minor>;<application>
-    """
+    """Get the status of a (list of) job, return it formated
+    <major>;<minor>;<application>"""
     if isinstance(job, basestring):
       jobs = [int(job)]
     elif isinstance(job, (long, int)):
@@ -1204,9 +1173,8 @@ class TransformationDebug(object):
                 for job in jobs)
 
   def __getJobSites(self, job):
-    """
-    Get the status of a (list of) job, return it formated <major>;<minor>;<application>
-    """
+    """Get the status of a (list of) job, return it formated
+    <major>;<minor>;<application>"""
     if isinstance(job, basestring):
       jobs = [int(job)]
     elif isinstance(job, (long, int)):
@@ -1223,9 +1191,8 @@ class TransformationDebug(object):
     return dict((job, jobSites.get(job, {}).get('Site', 'Unknown')) for job in jobs)
 
   def __getJobCPU(self, job):
-    """
-    Get the status of a (list of) job, return it formated <major>;<minor>;<application>
-    """
+    """Get the status of a (list of) job, return it formated
+    <major>;<minor>;<application>"""
     if isinstance(job, basestring):
       jobs = [int(job)]
     elif isinstance(job, (long, int)):
@@ -1258,8 +1225,7 @@ class TransformationDebug(object):
     return jobCPU
 
   def __checkJobs(self, jobsForLfn, byFiles=False, checkLogs=False):
-    """
-    Extract all information about jobs referring to list of LFNs
+    """Extract all information about jobs referring to list of LFNs.
 
     :param jobsForLfn: dict { lfnString : [jobs] }
     :type jobsForLfn: dict
@@ -1442,8 +1408,7 @@ class TransformationDebug(object):
     gLogger.notice('')
 
   def __checkRunsToFlush(self, runID, transFilesList, runStatus, evtType=90000000, fileTypes=None):
-    """
-    Check whether the run is flushed and if not, why it was not
+    """Check whether the run is flushed and if not, why it was not.
 
     :param runID: run number
     :type runID: int
@@ -1558,9 +1523,10 @@ class TransformationDebug(object):
                      % (rawFiles, runID, prStr.replace('; ', '\n\t')))
 
   def __checkWaitingTasks(self):
-    """
-    Check waiting tasks:
-    They can be really waiting (assigned files), Failed, Done or just orphan (no files)
+    """Check waiting tasks:
+
+    They can be really waiting (assigned files), Failed, Done or just
+    orphan (no files)
     """
     res = self.transClient.getTransformationTasks({'TransformationID': self.transID, 'ExternalStatus': 'Waiting'})
     if not res['OK']:
@@ -1614,15 +1580,13 @@ class TransformationDebug(object):
       gLogger.notice('Use --KickRequests to fix them')
 
   def __getRunsForFiles(self, lfnList):
-    """
-    Get run list for a set of files
-    """
+    """Get run list for a set of files."""
     transFiles = self.__getFilesForRun(lfnList=lfnList)
     return list(set([str(f['RunNumber']) for f in transFiles]))
 
   def debugTransformation(self, dmScript, infoList, statusList):
-    """
-    Actual script execution code: parses arguments and implements the checking logic
+    """Actual script execution code: parses arguments and implements the
+    checking logic.
 
     :param dmScript: DMScript object to be parsed
     :type dmScript: DMScript

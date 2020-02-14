@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-reimplementation of the dictionary
-"""
+"""reimplementation of the dictionary."""
 
 from DIRAC                                                               import gLogger
 from LHCbDIRAC.BookkeepingSystem.Client                                  import IndentMaker
@@ -24,51 +22,51 @@ VERBOSE = True
 __RCSID__ = "$Id$"
 #############################################################################
 class odict(UserDict):
-  """user defined dictionary"""
+  """user defined dictionary."""
   #############################################################################
   def __init__(self, dict=None):
-    """initialize"""
+    """initialize."""
     self._keys = []
     UserDict.__init__(self, dict)
 
   #############################################################################
   def __delitem__(self, key):
-    """delete"""
+    """delete."""
     UserDict.__delitem__(self, key)
     self._keys.remove(key)
 
   #############################################################################
   def __setitem__(self, key, item):
-    """set"""
+    """set."""
     UserDict.__setitem__(self, key, item)
     if key not in self._keys: self._keys.append(key)
 
   #############################################################################
   def clear(self):
-    """clear"""
+    """clear."""
     UserDict.clear(self)
     self._keys = []
 
   #############################################################################
   def copy(self):
-    """copy"""
+    """copy."""
     dict = UserDict.copy(self)
     dict._keys = self._keys[:]
     return dict
 
   #############################################################################
   def items(self):
-    """items"""
+    """items."""
     return zip(self._keys, self.values())
 
   #############################################################################
   def keys(self):
-    """keys"""
+    """keys."""
     return self._keys
 
   #############################################################################
   def popitem(self):
-    """popitem"""
+    """popitem."""
     try:
       key = self._keys[-1]
     except IndexError:
@@ -81,14 +79,14 @@ class odict(UserDict):
 
   #############################################################################
   def setdefault(self, key, failobj=None):
-    """default value"""
+    """default value."""
     UserDict.setdefault(self, key, failobj)
     if key not in self._keys:
       self._keys.append(key)
 
   #############################################################################
   def update(self, dict):
-    """update"""
+    """update."""
     UserDict.update(self, dict)
     for key in dict.keys():
       if key not in self._keys:
@@ -96,17 +94,17 @@ class odict(UserDict):
 
   #############################################################################
   def values(self):
-    """values"""
+    """values."""
     return map(self.get, self._keys)
 
 
 
 ############################################################################
 class Entity(dict):
-  """Entity class"""
+  """Entity class."""
   #############################################################################
   def __init__(self, properties={}):
-    """initialize an Entity"""
+    """initialize an Entity."""
     #odict.__init__(self)
     if isinstance(properties, types.ListType):
       for key in properties:
@@ -144,7 +142,7 @@ class Entity(dict):
 #    return s
 #
   def __repr__(self):
-    """print """
+    """print."""
     if len(self) == 0 :
       string = "{\n " + str(None) + "\n}"
     else:

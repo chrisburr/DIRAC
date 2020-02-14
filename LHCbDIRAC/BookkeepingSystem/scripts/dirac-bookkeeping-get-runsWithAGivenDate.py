@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-get-runsWithAGivenDate.py
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve from the Bookkeeping runs from a given date range
-"""
+"""Retrieve from the Bookkeeping runs from a given date range."""
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script

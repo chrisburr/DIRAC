@@ -13,9 +13,8 @@
 # File :    dirac-bookkeeping-get-file-sisters
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Report sisters or cousins (i.e. descendant of a parent or ancestor) for a (list of) LFN(s)
-"""
+"""Report sisters or cousins (i.e. descendant of a parent or ancestor) for a
+(list of) LFN(s)"""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

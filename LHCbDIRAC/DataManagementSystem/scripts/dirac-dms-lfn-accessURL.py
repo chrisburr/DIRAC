@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
-  Retrieve an access URL for an LFN replica given a valid DIRAC SE.
-"""
+"""Retrieve an access URL for an LFN replica given a valid DIRAC SE."""
 
 __RCSID__ = "$Id$"
 

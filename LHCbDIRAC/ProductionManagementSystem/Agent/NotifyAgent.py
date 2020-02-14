@@ -8,15 +8,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' NotifyAgent
-  This agent reads a cache file ( cache.db ) which contains the aggregated information
-  of what happened to each production request. After reading the cache file
-  ( by default every 30 minutes ) it sends an email for every site and then clears it.
+"""NotifyAgent This agent reads a cache file ( cache.db ) which contains the
+aggregated information of what happened to each production request. After
+reading the cache file ( by default every 30 minutes ) it sends an email for
+every site and then clears it.
 
-  Please note that this agent is a hybrid agent that sends aggregated emails for both
-  LHCbDIRAC.ProductionManagementSystem.Utilities.Utils.informPeople and
-  LHCbDIRAC.ProductionManagementSystem.Agent.ProductionStatusAgent._mailProdManager
-'''
+Please note that this agent is a hybrid agent that sends aggregated emails for both
+LHCbDIRAC.ProductionManagementSystem.Utilities.Utils.informPeople and
+LHCbDIRAC.ProductionManagementSystem.Agent.ProductionStatusAgent._mailProdManager
+"""
 
 import os
 import sqlite3
@@ -47,8 +47,7 @@ class NotifyAgent(AgentModule):
       self.cacheFile = os.path.realpath('cache.db')
 
   def initialize(self):
-    ''' NotifyAgent initialization
-    '''
+    """NotifyAgent initialization."""
 
     try:
       with sqlite3.connect(self.cacheFile) as conn:

@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Resolve SE takes the workflow SE description and returns the list
-    of destination storage elements for uploading an output file.
-"""
+"""Resolve SE takes the workflow SE description and returns the list of
+destination storage elements for uploading an output file."""
 
 from random import shuffle
 
@@ -22,7 +21,7 @@ __RCSID__ = "$Id$"
 
 
 def _setLocalFirst(seList, localSEs):
-  """ return a shuffled list of SEs from seList, localSEs being first """
+  """return a shuffled list of SEs from seList, localSEs being first."""
   local = [se for se in seList if se in localSEs]
   remote = [se for se in seList if se not in localSEs]
   shuffle(local)
@@ -31,9 +30,8 @@ def _setLocalFirst(seList, localSEs):
 
 
 def getDestinationSEList(outputSE, site, outputmode='Any', run=None):
-  """ Evaluate the output SE list from a workflow and return the concrete list
-      of SEs to upload output data.
-  """
+  """Evaluate the output SE list from a workflow and return the concrete list
+  of SEs to upload output data."""
   if outputmode.lower() not in ('any', 'local', 'run'):
     raise RuntimeError("Unexpected outputmode")
 

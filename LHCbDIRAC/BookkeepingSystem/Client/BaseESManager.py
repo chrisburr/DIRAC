@@ -9,9 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""
-Base Entity System Manager
-"""
+"""Base Entity System Manager."""
 
 
 import os
@@ -24,21 +22,21 @@ __RCSID__ = "$Id$"
 
 
 class BaseESManager:
-  """Base Entity manager class"""
+  """Base Entity manager class."""
 
   #############################################################################
   def __init__(self):
-    """Initialize the class members"""
+    """Initialize the class members."""
     self.__fileSeparator = '/'
 
   #############################################################################
   def getPathSeparator(self):
-    """The path separator used"""
+    """The path separator used."""
     return self.__fileSeparator
 
   #############################################################################
   def list(self, path="/", selectionDict=None, sortDict=None, startItem=0, maxitems=0):
-    """list the path"""
+    """list the path."""
     selectionDict = selectionDict if selectionDict is not None else {}
     sortDict = sortDict if sortDict is not None else {}
     gLogger.error('This method is not implemented!' + (str(self.__class__)))
@@ -52,7 +50,7 @@ class BaseESManager:
   #############################################################################
   @staticmethod
   def getAbsolutePath(path):
-    """absolute path"""
+    """absolute path."""
     # get current working directory if empty
     if path == "" or path is None:
       path = "."
@@ -65,13 +63,13 @@ class BaseESManager:
 
   #############################################################################
   def mergePaths(self, path1, path2):
-    """merge two path"""
+    """merge two path."""
     gLogger.debug("mergePaths(path1, path2) with input " + str(path1) + ", " + str(path2))
     path = self.getAbsolutePath(os.path.join(path1, path2))
     return path
 
   #############################################################################
   def get(self, path=""):
-    """the path element"""
+    """the path element."""
     gLogger.warn('not implemented' + path + str(self.__class__))
     return S_ERROR("Not implemented!")

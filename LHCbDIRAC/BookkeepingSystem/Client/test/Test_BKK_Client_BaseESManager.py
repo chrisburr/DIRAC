@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_BKK_Client_BaseESManager
-
-'''
+"""Test_BKK_Client_BaseESManager."""
 
 import unittest
 import LHCbDIRAC.BookkeepingSystem.Client.BaseESManager as moduleTested
@@ -22,16 +20,12 @@ __RCSID__ = "$Id$"
 class BaseESManager_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    '''
-    Setup
-    '''
+    """Setup."""
 
     self.testClass = moduleTested.BaseESManager
 
   def tearDown( self ):
-    '''
-    TearDown
-    '''
+    """TearDown."""
     
     del self.testClass
 
@@ -40,8 +34,7 @@ class BaseESManager_TestCase( unittest.TestCase ):
 class BaseESManager_Success( BaseESManager_TestCase ):
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
     client = self.testClass()
     self.assertEqual( 'BaseESManager', client.__class__.__name__ )
 

@@ -13,9 +13,7 @@
 # File :   dirac-admin-lfn-replicas
 # Author : Stuart Paterson
 ########################################################################
-"""
-    Show replicas for a (set of) LFNs
-"""
+"""Show replicas for a (set of) LFNs."""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

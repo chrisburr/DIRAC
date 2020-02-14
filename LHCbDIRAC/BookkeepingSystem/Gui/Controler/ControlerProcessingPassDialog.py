@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It controlles the Processing Pass dialog
-"""
+"""It controlles the Processing Pass dialog."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
 from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
@@ -19,17 +17,15 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerProcessingPassDialog(ControlerAbstract):
-  """
-  ControlerProcessingPassDialog class
-  """
+  """ControlerProcessingPassDialog class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
 
   #############################################################################
   def messageFromParent(self, message):
-    """handles the messages sent by the parent controller"""
+    """handles the messages sent by the parent controller."""
     if message.action() == 'showprocessingpass':
       self.__handleShowProcessingpass(message)
     elif message.action() == 'list':
@@ -45,15 +41,13 @@ class ControlerProcessingPassDialog(ControlerAbstract):
 
   #############################################################################
   def close(self):
-    """handles the close action"""
+    """handles the close action."""
     #self.getWidget().hide()
     self.getWidget().close()
 
   #############################################################################
   def __handleShowProcessingpass(self, message):
-    """
-    This method is used to send the information to its widget.
-    """
+    """This method is used to send the information to its widget."""
     feedback = message['items']
     proc = ''
     records = feedback['Records']
@@ -87,9 +81,8 @@ class ControlerProcessingPassDialog(ControlerAbstract):
 
   #############################################################################
   def __handleList(self, message):
-    """
-    It sends a message to its parent controller in order to retrieve the processing pass informations.
-    """
+    """It sends a message to its parent controller in order to retrieve the
+    processing pass informations."""
     item = message['items']
     message = Message({'action':'procDescription', 'groupdesc':item['name']})
     feedback = self.getParent().messageFromChild(self, message)
@@ -97,9 +90,8 @@ class ControlerProcessingPassDialog(ControlerAbstract):
 
   #############################################################################
   def __handleDetailedList(self, message):
-    """
-    It sends a message to its parent controller in order to retrieve a detailed processing pass informations.
-    """
+    """It sends a message to its parent controller in order to retrieve a
+    detailed processing pass informations."""
     item = message['items']
 
     bkDict = item['selection']
@@ -111,9 +103,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
 
   #############################################################################
   def __fillWidget(self, feedback, processingPass):
-    """
-    It creates the widgets used to show the processing pass
-    """
+    """It creates the widgets used to show the processing pass."""
     if feedback != None:
       widget = self.getWidget()
       widget.setTotalProccesingPass(processingPass)

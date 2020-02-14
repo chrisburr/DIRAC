@@ -11,11 +11,12 @@
 ########################################################################
 # File: RAWIntegrityAgent.py
 ########################################################################
-""" :mod: RAWIntegrityAgent
-    =======================
+"""
+:mod: RAWIntegrityAgent
 
-    .. module: RAWIntegrityAgent
-    :synopsis: RAWIntegrityAgent determines whether RAW files in CASTOR were migrated correctly.
+.. module: RAWIntegrityAgent
+
+:synopsis: RAWIntegrityAgent determines whether RAW files in CASTOR were migrated correctly.
 """
 # # imports
 import datetime
@@ -37,16 +38,14 @@ AGENT_NAME = 'DataManagement/RAWIntegrityAgent'
 
 
 class RAWIntegrityAgent(AgentModule):
-  """
-  .. class:: RAWIntegirtyAgent
+  """.. class:: RAWIntegirtyAgent.
 
   :param RAWIntegrityDB rawIntegrityDB: RAWIntegrityDB instance
   :param str gatewayUrl: URL to online RequestClient
   """
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
 
     AgentModule.__init__(self, *args, **kwargs)
 
@@ -55,7 +54,7 @@ class RAWIntegrityAgent(AgentModule):
     self.onlineRequestMgr = None
 
   def initialize(self):
-    """ agent initialisation """
+    """agent initialisation."""
 
     self.rawIntegrityDB = RAWIntegrityDB()
 
@@ -112,13 +111,13 @@ class RAWIntegrityAgent(AgentModule):
     return S_OK()
 
   def _checkMigrationStatus(self, filesMetadata, lfnsMetadata):
-    """ Check that the lfns in parameters are properly migrated,
-        and compares the checksum between castor and the RAWIntegrityDB
+    """Check that the lfns in parameters are properly migrated, and compares
+    the checksum between castor and the RAWIntegrityDB.
 
-        :param filesMetadata: dict {lfn: se metadata}
-        :param lfnsMetadata: dict {lfn: metadata in RAWIntegrityDB}
+    :param filesMetadata: dict {lfn: se metadata}
+    :param lfnsMetadata: dict {lfn: metadata in RAWIntegrityDB}
 
-        :returns: True/False in successful, Failed in case of problem
+    :returns: True/False in successful, Failed in case of problem
     """
     ############################################################
     #
@@ -149,12 +148,11 @@ class RAWIntegrityAgent(AgentModule):
     return S_OK({'Successful': successful, 'Failed': failed})
 
   def getNewlyCopiedFiles(self, activeFiles):
-    """
-        Get the list of files newly copied and those not yet copied.
+    """Get the list of files newly copied and those not yet copied.
 
-        :param activeFiles: dict {lfn:RawIntegrityDB metadata} for files in Active status
+    :param activeFiles: dict {lfn:RawIntegrityDB metadata} for files in Active status
 
-        :return: tuple filesNewlyCopied, filesNotYetCopied (lfns lists)
+    :return: tuple filesNewlyCopied, filesNotYetCopied (lfns lists)
     """
     # This is a list of all the lfns that we will have newly copied
     filesNewlyCopied = []
@@ -219,15 +217,15 @@ class RAWIntegrityAgent(AgentModule):
     return filesNewlyCopied, filesNotYetCopied
 
   def registerCopiedFiles(self, filesNewlyCopied, copiedFiles, allUnmigratedFilesMeta):
-    """
-      Register successfuly copied files (newly, or in Copied status in the DB) in the DFC.
+    """Register successfuly copied files (newly, or in Copied status in the DB)
+    in the DFC.
 
-      :param filesNewlyCopied: [lfns] of files newly copied
-      :param copiedFiles: {lfn:RIDb metadata} of files that were in Copied state.
-      :param allUnmigratedFilesMeta: {lfn:RI Db metadata} for all lfns non migrated at
-                                    the beginning of the loop.
+    :param filesNewlyCopied: [lfns] of files newly copied
+    :param copiedFiles: {lfn:RIDb metadata} of files that were in Copied state.
+    :param allUnmigratedFilesMeta: {lfn:RI Db metadata} for all lfns non migrated at
+                                  the beginning of the loop.
 
-      :return: {lfn:True} for successfuly registered lfns
+    :return: {lfn:True} for successfuly registered lfns
     """
     if filesNewlyCopied or copiedFiles:
       self.log.info("Attempting to register %s newly copied and %s previously copied files" %
@@ -268,16 +266,15 @@ class RAWIntegrityAgent(AgentModule):
     return successfulRegister
 
   def removeRegisteredFiles(self, filesNewlyRegistered, registeredFiles, allUnmigratedFilesMeta):
-    """
-      Remove successfuly registered files (newly, or in Registered status in the DB)
-      from the OnlineStorage
+    """Remove successfuly registered files (newly, or in Registered status in
+    the DB) from the OnlineStorage.
 
-      :param filesNewlyCopied: [lfns] of files newly copied
-      :param copiedFiles: {lfn:RIDb metadata} of files that were in Copied state.
-      :param allUnmigratedFilesMeta: {lfn:RI Db metadata} for all lfns non migrated at
-                                    the beginning of the loop.
+    :param filesNewlyCopied: [lfns] of files newly copied
+    :param copiedFiles: {lfn:RIDb metadata} of files that were in Copied state.
+    :param allUnmigratedFilesMeta: {lfn:RI Db metadata} for all lfns non migrated at
+                                  the beginning of the loop.
 
-      :return: {lfn:True} for successfuly registered lfns
+    :return: {lfn:True} for successfuly registered lfns
     """
     if filesNewlyRegistered or registeredFiles:
       self.log.info("Attempting to remove %s newly registered and %s previously registered files" %
@@ -326,9 +323,7 @@ class RAWIntegrityAgent(AgentModule):
     return filesNewlyRemoved
 
   def execute(self):
-    """ execution in one cycle
-
-    """
+    """execution in one cycle."""
 
     # Don't use the server certificate otherwise the DFC wont let us write
     gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'false')

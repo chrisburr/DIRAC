@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""  TransformationPlugin is a class wrapping the supported LHCb transformation plugins
-"""
+"""TransformationPlugin is a class wrapping the supported LHCb transformation
+plugins."""
 
 # pylint: disable=too-many-lines
 # pylint: disable=missing-docstring
@@ -44,8 +44,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                transClient=None, dataManager=None,
                bkClient=None, rmClient=None, fc=None,
                debug=False, transInThread=None):
-    """ The clients can be passed in.
-    """
+    """The clients can be passed in."""
     super(TransformationPlugin, self).__init__(plugin,
                                                transClient=transClient,
                                                dataManager=dataManager,
@@ -91,10 +90,10 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return
 
   def setInputData(self, data):
-    """
-    self.transReplicas are the replica location of the transformation files.
-    However if some don't have a replica, they are not in this dictionary
-    self.transReplicas[lfn] == [ SE1, SE2...]
+    """self.transReplicas are the replica location of the transformation files.
+
+    However if some don't have a replica, they are not in this
+    dictionary self.transReplicas[lfn] == [ SE1, SE2...]
     """
     # data is a synonym as used in DIRAC
     self.transReplicas = data.copy()
@@ -104,9 +103,10 @@ class TransformationPlugin(DIRACTransformationPlugin):
   def setTransformationFiles(self, files):
     """
     self.transFiles are all the Unused files for that transformation
-    It is a list of dictionaries, of which lfn = fileDict['LFN']
-    Keys are: ['ErrorCount', 'FileID', 'InsertedTime', 'LFN', 'LastUpdate',
-              'RunNumber', 'Status', 'TargetSE', 'TaskID', 'TransformationID', 'UsedSE']
+    It is a list of dictionaries, of which ``lfn = fileDict['LFN']``
+
+    Keys are: ``ErrorCount``, ``FileID``, ``InsertedTime``, ``LFN``, ``LastUpdate``,
+      ``RunNumber``, ``Status``, ``TargetSE``, ``TaskID``, ``TransformationID`` and ``UsedSE``
     """
     # files is a synonym, as used in DIRAC
     self.transFiles = [fileDict for fileDict in files]
@@ -127,9 +127,9 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
   # @timeThis
   def _removeProcessedFiles(self):
-    """
-    Checks if the LFNs have descendants in the same transformation. Removes them from self.transReplicas
-    and sets them 'Processed'
+    """Checks if the LFNs have descendants in the same transformation.
+
+    Removes them from self.transReplicas and sets them 'Processed'
     """
     self.util.logVerbose('Checking if %d files are processed' % len(self.transReplicas))
     descendants = self.util.getProcessedFiles(self.transReplicas.keys())
@@ -150,9 +150,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
         self.util.logVerbose("No input files have already been processed")
 
   def _RAWReplication(self):
-    """
-    Plugin for replicating RAW data to Tier1s according to shares, and defining the processing destination site
-    """
+    """Plugin for replicating RAW data to Tier1s according to shares, and
+    defining the processing destination site."""
     self.util.logInfo("Starting execution of plugin")
     sourceSE = 'CERN-RAW'
     rawTargets = self.util.getPluginParam('RAWStorageElements', ['Tier1-RAW'])
@@ -315,9 +314,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(tasks)
 
   def _RAWProcessing(self):
-    """
-    Create tasks for RAW data processing using the run destination table
-    """
+    """Create tasks for RAW data processing using the run destination table."""
     # Let's create jobs only at active SEs
     fromSEs = set(se for se in resolveSEGroup(self.util.getPluginParam('FromSEs', []))
                   if StorageElement(se).status()['Read'])
@@ -452,9 +449,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self.util.dmsHelper.getSEInGroupAtSite(bufferTargets, site)
 
   def _groupBySize(self, files=None):
-    """
-    Generate a task for a given amount of data at a (set of) SE
-    """
+    """Generate a task for a given amount of data at a (set of) SE."""
     if not files:
       files = self.transReplicas
     else:
@@ -462,9 +457,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self.util.groupBySize(files, self.params['Status'])
 
   def _LHCbStandard(self):
-    """ Plugin grouping files at same sites based on number of files,
-        used for example for stripping or WG productions
-    """
+    """Plugin grouping files at same sites based on number of files, used for
+    example for stripping or WG productions."""
     return self.util.groupByReplicas(self.transReplicas, self.params['Status'])
 
   def _ByRun(self, param='', plugin='LHCbStandard', requireFlush=False, forceFlush=False):
@@ -476,8 +470,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
   # @timeThis
   def __byRun(self, param='', plugin='LHCbStandard', requireFlush=False, forceFlush=False):
-    """ Basic plugin for when you want to group files by run
-    """
+    """Basic plugin for when you want to group files by run."""
     self.util.logInfo("Starting execution of plugin")
     allTasks = []
     if not self.transReplicas:
@@ -818,10 +811,9 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self._BySize()
 
   def _LHCbDSTBroadcast(self):
-    """ This plug-in broadcasts files to one archive1SE, one archive2SE and numberOfCopies secondarySEs
-        All files for the same run have the same target
-        Usually for replication of real data (4 copies)
-    """
+    """This plug-in broadcasts files to one archive1SE, one archive2SE and
+    numberOfCopies secondarySEs All files for the same run have the same target
+    Usually for replication of real data (4 copies)"""
     archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
     archive2SEs = resolveSEGroup(self.util.getPluginParam('Archive2SEs', []))
     mandatorySEs = resolveSEGroup(self.util.getPluginParam('MandatorySEs', []))
@@ -913,8 +905,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups))
 
   def _LHCbMCDSTBroadcastRandom(self):
-    """ This plug-in broadcasts files to archive1, to archive2 and to random (NumberOfReplicas) secondary SEs
-    """
+    """This plug-in broadcasts files to archive1, to archive2 and to random
+    (NumberOfReplicas) secondary SEs."""
 
     self.util.logInfo("Starting execution of plugin")
     archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
@@ -962,8 +954,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups))
 
   def _ReplicateDataset(self, maxFiles=None):
-    """ Plugin for replicating files to specified SEs
-    """
+    """Plugin for replicating files to specified SEs."""
     destSEs = resolveSEGroup(self.util.getPluginParam('DestinationSEs', []))
     if not destSEs:
       destSEs = resolveSEGroup(self.util.getPluginParam('MandatorySEs', []))
@@ -973,8 +964,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self._simpleReplication(destSEs, secondarySEs, numberOfCopies, fromSEs=fromSEs, maxFiles=maxFiles)
 
   def _ReplicateToRunDestination(self):
-    """ Plugin for replicating files to the run destination
-    """
+    """Plugin for replicating files to the run destination."""
     # Get replication throttling parameters and destination
     res = self.util.getMaxFilesToReplicate(self.workDirectory)
     if not res['OK']:
@@ -1038,8 +1028,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(tasks)
 
   def _ArchiveDataset(self):
-    """ Plugin for archiving datasets (normally 2 archives, unless one of the lists is empty)
-    """
+    """Plugin for archiving datasets (normally 2 archives, unless one of the
+    lists is empty)"""
     archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
     archive2SEs = resolveSEGroup(self.util.getPluginParam('Archive2SEs', []))
     archive1ActiveSEs = getActiveSEs(archive1SEs)
@@ -1056,8 +1046,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self._simpleReplication(archive1SE, archive2ActiveSEs, numberOfCopies=numberOfCopies)
 
   def _simpleReplication(self, mandatorySEs, secondarySEs, numberOfCopies=0, fromSEs=None, maxFiles=None):
-    """ Actually creates the replication tasks for replication plugins
-    """
+    """Actually creates the replication tasks for replication plugins."""
     self.util.logInfo("Starting execution of plugin")
     mandatorySEs = set(mandatorySEs)
     secondarySEs = set(secondarySEs) - mandatorySEs
@@ -1145,7 +1134,9 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups, chunkSize=maxFiles))
 
   def _FakeReplication(self):
-    """ Creates replication tasks for to the existing SEs. Used only for tests!
+    """Creates replication tasks for to the existing SEs.
+
+    Used only for tests!
     """
     storageElementGroups = {}
     for replicaSE, lfnGroup in getFileGroups(self.transReplicas).iteritems():
@@ -1158,8 +1149,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups))
 
   def _DestroyDataset(self):
-    """ Plugin setting all existing SEs as targets
-    """
+    """Plugin setting all existing SEs as targets."""
     self.util.logInfo("Starting execution of plugin")
     res = self._removeReplicas(keepSEs=[], minKeep=0)
     if not res['OK'] or not res['Value']:
@@ -1212,15 +1202,14 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(tasks)
 
   def _ReduceReplicasKeepDestination(self):
-    """ Plugin for reducing the number of replicas to NumberOfReplicas
-    """
+    """Plugin for reducing the number of replicas to NumberOfReplicas."""
     # this is the number of replicas to be kept in addition to keepSEs and mandatorySEs
     minKeep = -abs(self.util.getPluginParam('NumberOfReplicas', 1))
     return self._RemoveReplicasKeepDestination(minKeep=minKeep)
 
   def _RemoveReplicasKeepDestination(self, minKeep=None):
-    """ Plugin used to remove all replicas from a set of SEs except at run destination
-    """
+    """Plugin used to remove all replicas from a set of SEs except at run
+    destination."""
     fromSEs = set(resolveSEGroup(self.util.getPluginParam('FromSEs', [])))
     keepSEs = resolveSEGroup(self.util.getPluginParam('KeepSEs', ['Tier1-Archive']))
     # this is the number of replicas to be kept in addition to keepSEs and mandatorySEs
@@ -1283,15 +1272,13 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(tasks)
 
   def _RemoveDatasetFromDisk(self):
-    """ Plugin used to remove disk replicas, keeping some (e.g. archives)
-    """
+    """Plugin used to remove disk replicas, keeping some (e.g. archives)"""
     keepSEs = resolveSEGroup(self.util.getPluginParam('KeepSEs', ['Tier1-Archive']))
     self.util.logInfo("Starting execution of plugin")
     return self._removeReplicas(keepSEs=keepSEs, minKeep=0)
 
   def _RemoveReplicas(self, minKeep=None):
-    """ Plugin for removing replicas from specific SEs specified in FromSEs
-    """
+    """Plugin for removing replicas from specific SEs specified in FromSEs."""
     fromSEs = resolveSEGroup(self.util.getPluginParam('FromSEs', []))
     keepSEs = resolveSEGroup(self.util.getPluginParam('KeepSEs', ['Tier1-Archive']))
     mandatorySEs = resolveSEGroup(self.util.getPluginParam('MandatorySEs', []))
@@ -1305,16 +1292,14 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self._removeReplicas(fromSEs=fromSEs, keepSEs=keepSEs, mandatorySEs=mandatorySEs, minKeep=minKeep)
 
   def _ReduceReplicas(self):
-    """ Plugin for reducing the number of replicas to NumberOfReplicas
-    """
+    """Plugin for reducing the number of replicas to NumberOfReplicas."""
     # this is the number of replicas to be kept in addition to keepSEs and mandatorySEs
     self.util.logInfo("Starting execution of plugin")
     minKeep = -abs(self.util.getPluginParam('NumberOfReplicas', 1))
     return self._RemoveReplicas(minKeep=minKeep)
 
   def _removeReplicas(self, replicas=None, fromSEs=None, keepSEs=None, mandatorySEs=None, minKeep=999):
-    """ Utility actually implementing the logic to remove replicas or files
-    """
+    """Utility actually implementing the logic to remove replicas or files."""
     if fromSEs is None:
       fromSEs = []
     if keepSEs is None:
@@ -1395,9 +1380,9 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups))
 
   def _RemoveReplicasWhenProcessed(self, maxFiles=None):
-    """ This plugin considers files and checks whether they were processed for a list of processing passes
-        For files that were processed, it sets replica removal tasks from a set of SEs
-    """
+    """This plugin considers files and checks whether they were processed for a
+    list of processing passes For files that were processed, it sets replica
+    removal tasks from a set of SEs."""
     keepSEs = resolveSEGroup(self.util.getPluginParam('KeepSEs', []))
     fromSEs = set(resolveSEGroup(self.util.getPluginParam('FromSEs', []))) - set(keepSEs)
     # Ignore files that are at a banned SE
@@ -1542,9 +1527,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups, chunkSize=maxFiles))
 
   def _RemoveReplicasWithAncestors(self):
-    """ Same as _RemoveReplicasWhenProcessed but also remove parents
-    This plugin is useful for removing at once RDST and RAW files after stripping
-    """
+    """Same as _RemoveReplicasWhenProcessed but also remove parents This plugin
+    is useful for removing at once RDST and RAW files after stripping."""
     return self.__addAncestors(pluginMethod=self._RemoveReplicasWhenProcessed)
 
   def __getAncestorLFNs(self, lfns):
@@ -1556,8 +1540,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(ancestors)
 
   def __addAncestors(self, pluginMethod=None):
-    """ Call a standard plugin and then add ancestors to tasks
-    """
+    """Call a standard plugin and then add ancestors to tasks."""
     maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100) / 2
     tasks = pluginMethod(maxFiles=maxFiles)
     if not tasks['OK']:
@@ -1603,8 +1586,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(newTasks)
 
   def _ReplicateToLocalSE(self, maxFiles=None):
-    """ Used for example to replicate from a buffer to a tape SE on the same site
-    """
+    """Used for example to replicate from a buffer to a tape SE on the same
+    site."""
     res = self.util.getMaxFilesToReplicate(self.workDirectory)
     if not res['OK']:
       return res
@@ -1667,18 +1650,17 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(self.util.createTasks(storageElementGroups, chunkSize=maxFiles))
 
   def _ReplicateWithAncestors(self):
-    """ Same as _ReplicateToLocalSE but also replicate parents
-    If only one SE is given, use _ReplicateDataset
-    This plugin is useful for prestaging at once RDST and RAW files before stripping
-    """
+    """Same as _ReplicateToLocalSE but also replicate parents If only one SE is
+    given, use _ReplicateDataset This plugin is useful for prestaging at once
+    RDST and RAW files before stripping."""
     destSEs = set(resolveSEGroup(self.util.getPluginParam('DestinationSEs', [])))
     if len(destSEs) == 1:
       return self.__addAncestors(pluginMethod=self._ReplicateDataset)
     return self.__addAncestors(pluginMethod=self._ReplicateToLocalSE)
 
   def _Healing(self):
-    """ Plugin that creates task for replicating files to the same SE where they are declared problematic
-    """
+    """Plugin that creates task for replicating files to the same SE where they
+    are declared problematic."""
     self.util.cleanFiles(self.transFiles, self.transReplicas)
     storageElementGroups = {}
 

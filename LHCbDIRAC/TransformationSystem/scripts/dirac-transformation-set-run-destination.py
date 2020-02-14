@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   Set the destination for a set of runs, based on the majority of reco output
-"""
+"""Set the destination for a set of runs, based on the majority of reco
+output."""
 
 __RCSID__ = "$Id$"
 
@@ -22,9 +21,7 @@ from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
 
 
 def execute():
-  """
-  Parse the options and execute the script
-  """
+  """Parse the options and execute the script."""
   bkQuery = dmScript.getBKQuery()
   fileType = bkQuery.getFileTypeList()
   if not set(fileType) & {'FULL.DST', 'RDST', 'SDST'}:

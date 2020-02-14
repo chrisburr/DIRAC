@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-simulationconditions-insert
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Insert a new set of simulation conditions in the Bookkeeping
-"""
+"""Insert a new set of simulation conditions in the Bookkeeping."""
 __RCSID__ = "$Id$"
 
 import DIRAC

@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Tab widget
-"""
+"""Tab widget."""
 
 from PyQt4.QtGui                                                    import  QWidget, QGridLayout, \
                                                                             QTableView, QMenu, QAction,\
@@ -27,12 +25,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class TabWidget(QWidget):
-  """
-  TabWidget class
-  """
+  """TabWidget class."""
   #############################################################################
   def __init__(self, data, parent=None):
-    """initialize the widget"""
+    """initialize the widget."""
     QWidget.__init__(self, parent)
 
     self.__data = data
@@ -42,7 +38,7 @@ class TabWidget(QWidget):
 
   #############################################################################
   def createTable(self, header, tabledata):
-    """creates a table"""
+    """creates a table."""
     gridlayout2 = QGridLayout(self)
     gridlayout2.setObjectName("gridlayout2")
 
@@ -95,7 +91,7 @@ class TabWidget(QWidget):
 
   #############################################################################
   def getGroupDesc(self):
-    """retuns the description"""
+    """retuns the description."""
     if self.__data == None:
       gLogger.error('Wrong tab!')
     else:
@@ -103,12 +99,12 @@ class TabWidget(QWidget):
 
   #############################################################################
   def popUpMenu(self):
-    """shows the popup menu"""
+    """shows the popup menu."""
     self.__popUp.popup(QCursor.pos())
 
   #############################################################################
   def copy(self):
-    """ copy data to the clipboard"""
+    """copy data to the clipboard."""
     text = ''
     for i in self.__data:
       text += '%s \t %s \n' % (i[0], i[1])

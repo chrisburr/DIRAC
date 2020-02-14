@@ -3,3 +3,6 @@
 # Install DIRAC to be able to execute the commands
 git+https://github.com/DIRACGrid/DIRAC/@integration
 LbPlatformUtils
+uproot
+certifi
+futures

@@ -8,12 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.ResourceStatusSystem.Policy.JobEfficiencyPolicy
+"""LHCbDIRAC.ResourceStatusSystem.Policy.JobEfficiencyPolicy.
 
-   JobWebSummaryEfficiencyPolicy.__bases__:
-     DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
-
-'''
+JobWebSummaryEfficiencyPolicy.__bases__:
+  DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase.PolicyBase
+"""
 
 from DIRAC import S_OK
 from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
@@ -22,25 +21,22 @@ __RCSID__ = "$Id$"
 
 
 class JobWebSummaryEfficiencyPolicy(PolicyBase):
-  '''
-  The JobEfficiencyPolicy class is a policy that checks the efficiency of the
-  jobs according to what is on WMS.
+  """The JobEfficiencyPolicy class is a policy that checks the efficiency of
+  the jobs according to what is on WMS.
 
-
-    Evaluates the JobEfficiency results given by the JobCommand.JobCommand
-  '''
+  Evaluates the JobEfficiency results given by the JobCommand.JobCommand
+  """
 
   @staticmethod
   def _evaluate(commandResult):
-    '''
-    Evaluate policy on jobs stats, using args (tuple).
+    """Evaluate policy on jobs stats, using args (tuple).
 
     :returns:
       {
         'Status':Unknown|Active|Probing|Bad,
         'Reason':'JobsEff:Good|JobsEff:Fair|JobsEff:Poor|JobsEff:Bad|JobsEff:Idle',
       }
-    '''
+    """
 
     result = {
         'Status': None,

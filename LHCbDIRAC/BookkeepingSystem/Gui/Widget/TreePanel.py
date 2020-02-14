@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Tree panel
-"""
+"""Tree panel."""
 
 from PyQt4.QtCore import SIGNAL, QString, Qt
 from PyQt4.QtGui import QTreeWidget, QIcon, QStyle, QAbstractItemView, QPixmap, QCursor, QMenu, QAction
@@ -29,12 +27,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class TreePanel(QTreeWidget):
-  """
-  TreePanel class
-  """
+  """TreePanel class."""
   #############################################################################
   def __init__(self, parent=None):
-    """initialize the widget"""
+    """initialize the widget."""
     QTreeWidget.__init__(self, parent)
 
     #labels = QStringList()
@@ -76,13 +72,12 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def getController(self):
-    """it returns the controller of this widget
-    """
+    """it returns the controller of this widget."""
     return self.__controler
 
   #############################################################################
   def setupControler(self):
-    """set up the controllers"""
+    """set up the controllers."""
     self.__controler = self.parentWidget().getControler()
 
     self.connect(self, SIGNAL('itemExpanded(QTreeWidgetItem *)'),
@@ -132,7 +127,7 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def showTree(self, item, parent=None):
-    """shows a tree"""
+    """shows a tree."""
     #self.clear()
 
     #self.disconnect(self, QtCore.SIGNAL("itemChanged(QTreeWidgetItem *, int)"),
@@ -161,7 +156,7 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def addLeaf(self, element, parentItem=None):
-    """adds a leaf to the current node"""
+    """adds a leaf to the current node."""
     item = self.createItem(parentItem)
     item.setUserObject(element)
     #print '!!!!!!!!!',parentItem.getUserObject()
@@ -179,7 +174,7 @@ class TreePanel(QTreeWidget):
 
 
   def parseFolderElement(self, element, parentItem=None):
-    """creates the elements of the tree"""
+    """creates the elements of the tree."""
 
     item = self.createItem(parentItem)
     item.setUserObject(element)
@@ -236,7 +231,7 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def createdumyNode(self, element, parent):
-    """creates a dumy node"""
+    """creates a dumy node."""
     if parent != None:
       dumy = self.createItem(parent)
       dumy.setUserObject(None)
@@ -249,7 +244,7 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def createItem(self, parentItem=None):
-    """create an item"""
+    """create an item."""
     item = TreeNode()#QTreeWidgetItem()
 
     if parentItem is not None:
@@ -260,13 +255,13 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def clearTree(self):
-    """clear the tree"""
+    """clear the tree."""
     self.clear()
     self.repaint()
 
   #############################################################################
   def popUpMenu(self, pos):
-    """shows the poup menu"""
+    """shows the poup menu."""
     item = self.itemAt(pos)
     if item:
       self.__currentItem = item
@@ -276,7 +271,7 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def __createPopUpMenu(self):
-    """creates the menu"""
+    """creates the menu."""
     self.__popUp = QMenu(self)
 
     self.__jobAction = QAction(self.tr("More Information"), self)
@@ -297,6 +292,6 @@ class TreePanel(QTreeWidget):
 
   #############################################################################
   def getCurrentItem(self):
-    """returns the current node"""
+    """returns the current node."""
     return self.__currentItem
 

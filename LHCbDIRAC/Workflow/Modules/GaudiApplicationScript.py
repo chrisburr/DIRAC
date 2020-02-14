@@ -8,15 +8,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Gaudi Application Script Class
+"""Gaudi Application Script Class.
 
-    This allows the execution of a simple python script in a given LHCb project environment,
-    e.g. python <script> <arguments>. GaudiPython / Bender scripts can be executed very simply
-    in this way.
+This allows the execution of a simple python script in a given LHCb project environment,
+e.g. python <script> <arguments>. GaudiPython / Bender scripts can be executed very simply
+in this way.
 
-    To make use of this module the LHCbJob method setApplicationScript can be called by users.
+To make use of this module the LHCbJob method setApplicationScript can be called by users.
 
-    This is usually the main module run by user jobs.
+This is usually the main module run by user jobs.
 """
 
 __RCSID__ = "$Id$"
@@ -52,8 +52,7 @@ class GaudiApplicationScript(ModuleBase):
   #############################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the workflow parameters are resolved here.
-    """
+    """By convention the workflow parameters are resolved here."""
 
     super(GaudiApplicationScript, self)._resolveInputVariables()
     super(GaudiApplicationScript, self)._resolveInputStep()
@@ -75,8 +74,10 @@ class GaudiApplicationScript(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ The main execution method of the module. It runs a gaudi script app using RunApplication module.
-        This is usually the main module run by user jobs.
+    """The main execution method of the module.
+
+    It runs a gaudi script app using RunApplication module. This is
+    usually the main module run by user jobs.
     """
 
     try:

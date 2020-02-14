@@ -10,8 +10,9 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-AdvancedSave widget. It used to create a Gaudi card.
+"""AdvancedSave widget.
+
+It used to create a Gaudi card.
 """
 
 from PyQt4.QtGui                                                              import QDialog
@@ -25,13 +26,11 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class AdvancedSave(QDialog, Ui_AdvancedSave):
-  """
-  AdvancedSave class
-  """
+  """AdvancedSave class."""
 
   #############################################################################
   def __init__(self, parent=None):
-    """initialize the widget"""
+    """initialize the widget."""
     QDialog.__init__(self, parent)
     Ui_AdvancedSave.__init__(self)
     self.setupUi(self)
@@ -46,12 +45,12 @@ class AdvancedSave(QDialog, Ui_AdvancedSave):
 
   #############################################################################
   def getControler(self):
-    """returns the controller of this widget"""
+    """returns the controller of this widget."""
     return self.__controler
 
   #############################################################################
   def fillWindows(self, sites):
-    """fills the combo box"""
+    """fills the combo box."""
     self.comboBox.clear()
     j = 0
     for i in sites:
@@ -62,7 +61,7 @@ class AdvancedSave(QDialog, Ui_AdvancedSave):
 
   #############################################################################
   def setLFNbutton(self):
-    """handles the action when a check box button pressed"""
+    """handles the action when a check box button pressed."""
     if self.lfnButton.isChecked():
       self.lfnButton.setChecked(False)
     else:
@@ -70,7 +69,7 @@ class AdvancedSave(QDialog, Ui_AdvancedSave):
 
   #############################################################################
   def setPFNbutton(self):
-    """handles the action when a check box button pressed"""
+    """handles the action when a check box button pressed."""
     if self.pfnButton.isChecked():
       self.pfnButton.setChecked(False)
     else:
@@ -78,32 +77,32 @@ class AdvancedSave(QDialog, Ui_AdvancedSave):
 
   #############################################################################
   def getLineEdit(self):
-    """returns the content of the text box"""
+    """returns the content of the text box."""
     return self.lineEdit
 
   #############################################################################
   def isPFNbuttonChecked(self):
-    """checks the status of the check box"""
+    """checks the status of the check box."""
     return self.pfnButton.isChecked()
 
   #############################################################################
   def isLFNbuttonChecked(self):
-    """checks the status of the check box"""
+    """checks the status of the check box."""
     return self.lfnButton.isChecked()
 
   #############################################################################
   def getSite(self):
-    """returns the selected site"""
+    """returns the selected site."""
     return self.comboBox.currentText()
 
   #############################################################################
   def waitCursor(self):
-    """wait cursor"""
+    """wait cursor."""
     self.setCursor(Qt.WaitCursor)
 
   #############################################################################
   def arrowCursor(self):
-    """normal cursor"""
+    """normal cursor."""
     self.setCursor(Qt.ArrowCursor)
 
   #############################################################################

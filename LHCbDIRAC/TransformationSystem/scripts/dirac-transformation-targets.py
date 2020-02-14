@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Gets all Assigned files in a transformation and reports by target SE
-"""
+"""Gets all Assigned files in a transformation and reports by target SE."""
 
 __RCSID__ = "$Id$"
 

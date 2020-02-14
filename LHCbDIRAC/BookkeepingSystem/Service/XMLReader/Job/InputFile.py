@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-stores the input files
-"""
+"""stores the input files."""
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.File                       import File
 
@@ -18,11 +16,9 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class InputFile(File):
-  """
-  InputFile class
-  """
+  """InputFile class."""
   #############################################################################
   def writeToXML(self):
-    """creates an xml string"""
+    """creates an xml string."""
     result = '  <InputFile    Name="'+self.getFileName()+'"/>\n'
     return result

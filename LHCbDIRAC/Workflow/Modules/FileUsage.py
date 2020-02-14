@@ -8,9 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module to upload specified job output files according to the parameters
-    defined in the user workflow.
-"""
+"""Module to upload specified job output files according to the parameters
+defined in the user workflow."""
 
 __RCSID__ = "$Id$"
 
@@ -28,8 +27,7 @@ class FileUsage(ModuleBase):
   #############################################################################
 
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
     self.log = gLogger.getSubLogger("FileUsage")
     super(FileUsage, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
     self.version = __RCSID__
@@ -38,8 +36,7 @@ class FileUsage(ModuleBase):
   #############################################################################
 
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
     super(FileUsage, self)._resolveInputVariables()
 
     dirDict = {}
@@ -62,8 +59,7 @@ class FileUsage(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_id=None, step_number=None):
-    """ Main execution function.
-    """
+    """Main execution function."""
 
     try:
 

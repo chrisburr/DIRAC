@@ -13,9 +13,7 @@
 # File :    dirac-bookkeeping-get-files.py
 # Author :  Zoltan Mathe
 ########################################################################
-"""
-  Retrieve files of a BK query
-"""
+"""Retrieve files of a BK query."""
 __RCSID__ = "$Id$"
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 

@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-This script adds a user directory to the DFC or changes a user directory's ownership
-"""
+"""This script adds a user directory to the DFC or changes a user directory's
+ownership."""
 
 from DIRAC.Core.Base import Script
 from DIRAC import exit, gLogger, S_OK

@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-Table widget used by most widgets
-"""
+"""Table widget used by most widgets."""
 
 from PyQt4.QtGui   import QWidget
 
@@ -23,12 +21,9 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class TableWidget(QWidget, Ui_TableWidget):
-  """
-  TableWidget class
-  """
+  """TableWidget class."""
   def __init__(self, parent=None):
-    """
-    Constructor
+    """Constructor.
 
     @param parent parent widget (QWidget)
     """
@@ -39,27 +34,27 @@ class TableWidget(QWidget, Ui_TableWidget):
 
   #############################################################################
   def clear(self):
-    """clear the table"""
+    """clear the table."""
     self.tableWidget.clear()
 
   #############################################################################
   def setColumnCount(self, number):
-    """sets the number of columns"""
+    """sets the number of columns."""
     self.tableWidget.setColumnCount(number)
 
   #############################################################################
   def setRowCount(self, row):
-    """sets the number of rows"""
+    """sets the number of rows."""
     self.tableWidget.setRowCount(row)
 
   #############################################################################
   def setupControler(self, controler):
-    """sets the controller"""
+    """sets the controller."""
     pass
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################

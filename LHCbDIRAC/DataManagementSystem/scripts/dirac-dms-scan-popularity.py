@@ -9,9 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Script for scanning the popularity table
-  """
+"""Script for scanning the popularity table."""
 if __name__ == '__main__':
 
   # Script initialization

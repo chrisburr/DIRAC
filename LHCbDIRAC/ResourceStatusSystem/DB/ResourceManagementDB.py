@@ -8,18 +8,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' LHCbDIRAC.ResourceStatusSystem.DB.ResourceManagementDB
+"""LHCbDIRAC.ResourceStatusSystem.DB.ResourceManagementDB.
 
-    ResourceManagementDB.__bases__:
-      DIRAC.ResourceStatusSystem.DB.ResourceManagementDB.ResourceManagementDB
+ResourceManagementDB.__bases__:
+  DIRAC.ResourceStatusSystem.DB.ResourceManagementDB.ResourceManagementDB
 
-    Extension of ResourceManagementDB, adding the following tables:
-    - MonitoringTest
-    - JobAccountingCache
-    - PilotAccountingCache
-    - SLST1Service (obsolete)
-    - SLSLogSE (obsolete)
-'''
+Extension of ResourceManagementDB, adding the following tables:
+- MonitoringTest
+- JobAccountingCache
+- PilotAccountingCache
+- SLST1Service (obsolete)
+- SLSLogSE (obsolete)
+"""
 
 __RCSID__ = "$Id$"
 
@@ -40,8 +40,7 @@ TABLESLIST = TABLESLIST + ['MonitoringTest',
 
 
 class MonitoringTest(rmsBase):
-  """ MonitoringTest table
-  """
+  """MonitoringTest table."""
 
   __tablename__ = 'MonitoringTest'
   __table_args__ = {'mysql_engine': 'InnoDB',
@@ -57,9 +56,7 @@ class MonitoringTest(rmsBase):
   summarydata = Column('SummaryData', BLOB, nullable=False)
 
   def fromDict(self, dictionary):
-    """
-    Fill the fields of the MonitoringTest object from a dictionary
-    """
+    """Fill the fields of the MonitoringTest object from a dictionary."""
 
     utcnow = self.lastchecktime if self.lastchecktime else datetime.datetime.utcnow().replace(microsecond=0)
 
@@ -73,15 +70,13 @@ class MonitoringTest(rmsBase):
     self.summarydata = dictionary.get('SummaryData', self.summarydata)
 
   def toList(self):
-    """ Simply returns a list of column values
-    """
+    """Simply returns a list of column values."""
     return [self.serviceuri, self.metricname, self.serviceflavour, self.lastchecktime, self.metricstatus,
             self.metricstatus, self.sitename, self.timestamp, self.summarydata]
 
 
 class JobAccountingCache(rmsBase):
-  """ JobAccountingCache table
-  """
+  """JobAccountingCache table."""
 
   __tablename__ = 'JobAccountingCache'
   __table_args__ = {'mysql_engine': 'InnoDB',
@@ -99,9 +94,7 @@ class JobAccountingCache(rmsBase):
   lastchecktime = Column('LastCheckTime', DateTime, nullable=False)
 
   def fromDict(self, dictionary):
-    """
-    Fill the fields of the JobAccountingCache object from a dictionary
-    """
+    """Fill the fields of the JobAccountingCache object from a dictionary."""
 
     utcnow = self.lastchecktime if self.lastchecktime else datetime.datetime.utcnow().replace(microsecond=0)
 
@@ -117,15 +110,13 @@ class JobAccountingCache(rmsBase):
     self.lastchecktime = dictionary.get('LastCheckTime', utcnow)
 
   def toList(self):
-    """ Simply returns a list of column values
-    """
+    """Simply returns a list of column values."""
     return [self.name, self.failed, self.running, self.done, self.stalled, self.checking,
             self.completed, self.killed, self.matched, self.lastchecktime]
 
 
 class PilotAccountingCache(rmsBase):
-  """ PilotAccountingCache table
-  """
+  """PilotAccountingCache table."""
 
   __tablename__ = 'PilotAccountingCache'
   __table_args__ = {'mysql_engine': 'InnoDB',
@@ -139,9 +130,7 @@ class PilotAccountingCache(rmsBase):
   lastchecktime = Column('LastCheckTime', DateTime, nullable=False)
 
   def fromDict(self, dictionary):
-    """
-    Fill the fields of the PilotAccountingCache object from a dictionary
-    """
+    """Fill the fields of the PilotAccountingCache object from a dictionary."""
 
     utcnow = self.lastchecktime if self.lastchecktime else datetime.datetime.utcnow().replace(microsecond=0)
 
@@ -153,16 +142,14 @@ class PilotAccountingCache(rmsBase):
     self.lastchecktime = dictionary.get('LastCheckTime', utcnow)
 
   def toList(self):
-    """ Simply returns a list of column values
-    """
+    """Simply returns a list of column values."""
     return [self.name, self.failed, self.deleted, self.done, self.aborted, self.lastchecktime]
 
 
 # TABLES THAT WILL EVENTUALLY BE DELETED
 
 class SLST1Service(rmsBase):
-  """ SLST1Service table
-  """
+  """SLST1Service table."""
 
   __tablename__ = 'SLST1Service'
   __table_args__ = {'mysql_engine': 'InnoDB',
@@ -178,9 +165,7 @@ class SLST1Service(rmsBase):
   availability = Column('Availability', TINYINT, nullable=False)
 
   def fromDict(self, dictionary):
-    """
-    Fill the fields of the SLST1Service object from a dictionary
-    """
+    """Fill the fields of the SLST1Service object from a dictionary."""
 
     utcnow = self.lastchecktime if self.lastchecktime else datetime.datetime.utcnow().replace(microsecond=0)
 
@@ -194,15 +179,13 @@ class SLST1Service(rmsBase):
     self.availability = dictionary.get('Availability', self.availability)
 
   def toList(self):
-    """ Simply returns a list of column values
-    """
+    """Simply returns a list of column values."""
     return [self.site, self.system, self.hostuptime, self.version, self.serviceuptime,
             self.timestamp, self.message, self.availability]
 
 
 class SLSLogSE(rmsBase):
-  """ SLSLogSE table
-  """
+  """SLSLogSE table."""
 
   __tablename__ = 'SLSLogSE'
   __table_args__ = {'mysql_engine': 'InnoDB',
@@ -216,9 +199,7 @@ class SLSLogSE(rmsBase):
   validityduration = Column('ValidityDuration', String(32), nullable=False)
 
   def fromDict(self, dictionary):
-    """
-    Fill the fields of the SLSLogSE object from a dictionary
-    """
+    """Fill the fields of the SLSLogSE object from a dictionary."""
 
     self.name = dictionary.get('Name', self.name)
     self.timestamp = dictionary.get('TimeStamp', self.timestamp)
@@ -228,7 +209,6 @@ class SLSLogSE(rmsBase):
     self.validityduration = dictionary.get('ValidityDuration', self.validityduration)
 
   def toList(self):
-    """ Simply returns a list of column values
-    """
+    """Simply returns a list of column values."""
     return [self.name, self.timestamp, self.availability,
             self.datapartitiontotal, self.datapartitionused, self.validityduration]

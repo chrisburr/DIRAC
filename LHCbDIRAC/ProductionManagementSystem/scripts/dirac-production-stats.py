@@ -9,8 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Get statistics on productions related to a given processing pass
-"""
+"""Get statistics on productions related to a given processing pass."""
 
 from __future__ import absolute_import, division, print_function
 

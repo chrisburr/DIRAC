@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Its ident the debug message
-"""
+"""Its ident the debug message."""
 
 __RCSID__ = "$Id$"
 
@@ -21,7 +19,7 @@ DEFAULT = "___"
 
 #############################################################################
 def _createIndentedString(string, indent):
-  """create string"""
+  """create string."""
   string = string.strip('\n')
   tokens = string.split("\n")
   newstr = ""
@@ -32,7 +30,7 @@ def _createIndentedString(string, indent):
 
 #############################################################################
 def prepend(string, indent=DEFAULT):
-  """ add string"""
+  """add string."""
   return _createIndentedString(string, indent)
 
 #############################################################################

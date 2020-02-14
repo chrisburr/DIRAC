@@ -11,11 +11,12 @@
 ########################################################################
 # File: RAWIntegrityHandler.py
 ########################################################################
-""" :mod: RAWIntegrityHandler
-    =========================
+"""
+:mod: RAWIntegrityHandler
 
-    .. module: RAWIntegrityHandler
-    :synopsis: DISET interface to the RAWIntegrityDB.
+.. module: RAWIntegrityHandler
+
+:synopsis: DISET interface to the RAWIntegrityDB.
 """
 # imports
 from types import IntType, DictType, ListType, StringTypes
@@ -32,7 +33,7 @@ gRAWIntegrityDB = False
 
 
 def initializeRAWIntegrityHandler(_serviceInfo):
-  """ handler initialisation """
+  """handler initialisation."""
 
   global gRAWIntegrityDB
   gRAWIntegrityDB = RAWIntegrityDB()
@@ -50,7 +51,7 @@ class RAWIntegrityHandler(RequestHandler):
 
   @staticmethod
   def export_addFile(lfn, pfn, size, se, guid, checksum):
-    """ Add a file to the RAW integrity DB """
+    """Add a file to the RAW integrity DB."""
     try:
       gLogger.info("RAWIntegrityHandler.addFile: Attempting to add %s to the gRAWIntegrityDB." % lfn)
       res = gRAWIntegrityDB.addFile(lfn, pfn, size, se, guid, checksum)
@@ -64,7 +65,7 @@ class RAWIntegrityHandler(RequestHandler):
 
   @staticmethod
   def export_getGlobalStatistics():
-    """ Get global file statistics """
+    """Get global file statistics."""
     try:
       gLogger.info("Attempting to get global statistics.")
       res = gRAWIntegrityDB.getGlobalStatistics()
@@ -82,8 +83,7 @@ class RAWIntegrityHandler(RequestHandler):
 
   @staticmethod
   def export_getFileSelections():
-    """ Get the possible selections available
-    """
+    """Get the possible selections available."""
     try:
       gLogger.info("Attempting to get selections.")
       res = gRAWIntegrityDB.getFileSelections()
@@ -101,7 +101,7 @@ class RAWIntegrityHandler(RequestHandler):
 
   @staticmethod
   def export_getFilesSummaryWeb(selectDict, sortList, startItem, maxItems):
-    """ Get the file information according to conventions """
+    """Get the file information according to conventions."""
     resultDict = {}
     startDate = selectDict.get('FromDate', None)
     if startDate:
@@ -153,8 +153,8 @@ class RAWIntegrityHandler(RequestHandler):
 
   @staticmethod
   def export_getStatistics(attribute, selectDict):
-    """ Get job statistics distribution per attribute value with a given selection
-    """
+    """Get job statistics distribution per attribute value with a given
+    selection."""
     startDate = selectDict.get('FromDate', None)
     if startDate:
       del selectDict['FromDate']

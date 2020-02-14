@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Controlles a table widget
-"""
+"""Controlles a table widget."""
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
 
@@ -18,12 +16,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class ControlerTable(ControlerAbstract):
-  """
-  ControlerTable class
-  """
+  """ControlerTable class."""
   #############################################################################
   def __init__(self, widget, parent):
-    """initialize the controller"""
+    """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
 
   #############################################################################

@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''
-Set of functions used by the DMS scripts
-'''
+"""Set of functions used by the DMS scripts."""
 import os
 import datetime
 
@@ -32,12 +30,11 @@ __RCSID__ = "$Id$"
 
 
 def executeFileMetadata(dmScript):
-  '''
-  Get a list of LFNs, their BK metadata and print it out
+  """Get a list of LFNs, their BK metadata and print it out.
 
   :param dmScript: instance containing options (LFNs mandatory)
   :type dmScript: DMScript class
-  '''
+  """
   full = False
   switches = Script.getUnprocessedSwitches()
   for switch in switches:
@@ -110,22 +107,19 @@ def executeFileMetadata(dmScript):
 
 
 def __buildPath(bkDict):
-  '''
-  Build a BK path from the BK dictionary
-  '''
+  """Build a BK path from the BK dictionary."""
   return os.path.join('/' + bkDict['ConfigName'], bkDict['ConfigVersion'], bkDict['ConditionDescription'],
                       bkDict['ProcessingPass'][1:].replace('Real Data', 'RealData'), str(bkDict['EventType']),
                       bkDict['FileType']) + (' (Invisible)' if bkDict['VisibilityFlag'] == 'N' else '')
 
 
 def executeFilePath(dmScript):
-  '''
-  Gets a list of LFNs and extracts their BK paths or other metadata
-  Then print the result or group LFNs by path or metadata
+  """Gets a list of LFNs and extracts their BK paths or other metadata Then
+  print the result or group LFNs by path or metadata.
 
   :param dmScript: instance containing options (LFNs mandatory)
   :type dmScript: DMScript class
-  '''
+  """
   full = False
   groupBy = False
   summary = False
@@ -285,13 +279,12 @@ def executeFilePath(dmScript):
 
 
 def _updateFileLumi(fileDict, retries=5):
-  '''
-  Update the luminosity of a list of files in the BK
+  """Update the luminosity of a list of files in the BK.
 
   :param dict fileDict: {lfn:luminosity}
 
   :return: bool reporting error
-  '''
+  """
   error = False
   progressBar = ProgressBar(len(fileDict), title='Updating luminosity', step=10)
   for lfn in fileDict:
@@ -309,16 +302,15 @@ def _updateFileLumi(fileDict, retries=5):
 
 
 def _updateDescendantsLumi(parentLumi, doIt=False, force=False):
-  '''
-  Get file descendants and update their luminosity if necessary (if doIt == True)
-  This function does it recursively to all descendants
+  """Get file descendants and update their luminosity if necessary (if doIt ==
+  True) This function does it recursively to all descendants.
 
   :param dict parentLumi: {lfn:lumi} for parent files
   :param bool doit: execute the operation if True, else only print out information
   :param bool force: update lumi even if OK (useful if further descendants may not be OK)
 
   :return: bool indicating error
-  '''
+  """
   if not parentLumi:
     return None
   # Get descendants:
@@ -402,13 +394,13 @@ def _updateRunLumi(run, evtType, fileInfo, doIt=False, force=False):
 
 
 def executeFixLuminosity(dmScript):
-  '''
-  Checks the luminosity of files in a BK query against the run luminosity
-  If requested, it fixes recursively the luminosity of the files and all descendants
+  """Checks the luminosity of files in a BK query against the run luminosity If
+  requested, it fixes recursively the luminosity of the files and all
+  descendants.
 
   :param dmScript: instance containing options (BKQuery mandatory)
   :type dmScript: DMScript class
-  '''
+  """
   doIt = False
   force = False
   for switch in Script.getUnprocessedSwitches():
@@ -473,14 +465,14 @@ def executeFixLuminosity(dmScript):
 
 
 def executeFileAncestors(dmScript, level=1):
-  '''
-  Gets a list of LFNs and obtains from BK the list of ancestors at a certain depth and/or for a certain Production
+  """Gets a list of LFNs and obtains from BK the list of ancestors at a certain
+  depth and/or for a certain Production.
 
   :param dmScript: instance containing options (LFNs mandatory)
   :type dmScript: DMScript class
   :param level: level to which search for ancestors
   :type level: int
-  '''
+  """
   full = False
   checkreplica = True
   for switch in Script.getUnprocessedSwitches():
@@ -536,14 +528,14 @@ def executeFileAncestors(dmScript, level=1):
 
 
 def executeFileDescendants(dmScript, level=1):
-  '''
-  Gets a list of LFNs and obtains from BK the list of descendants at a certain depth and/or for a certain Production
+  """Gets a list of LFNs and obtains from BK the list of descendants at a
+  certain depth and/or for a certain Production.
 
   :param dmScript: instance containing options (LFNs mandatory)
   :type dmScript: DMScript class
   :param level: level to which search for descendants
   :type level: int
-  '''
+  """
   checkreplica = True
   prod = 0
   full = False
@@ -609,14 +601,13 @@ def executeFileDescendants(dmScript, level=1):
 
 
 def executeGetFiles(dmScript, maxFiles=20):
-  '''
-  Get files given a BK query
+  """Get files given a BK query.
 
   :param dmScript: instance containing options (BKQuery mandatory)
   :type dmScript: DMScript class
   :param maxFiles: maximum number of files to get
   :type maxFiles: int
-  '''
+  """
   output = None
   nMax = None
   bkFile = None
@@ -730,14 +721,14 @@ def executeGetFiles(dmScript, maxFiles=20):
 
 
 def executeFileSisters(dmScript, level=1):
-  '''
-  Gets a list of files and extract from BK the sisters (i.e. files with same parent in the same production
+  """Gets a list of files and extract from BK the sisters (i.e. files with same
+  parent in the same production.
 
   :param dmScript: instance containing options (LFNs mandatory)
   :type dmScript: DMScript class
   :param level: level to which search for common ancestors
   :type level: int
-  '''
+  """
   checkreplica = True
   prod = 0
   full = False
@@ -876,14 +867,13 @@ def executeFileSisters(dmScript, level=1):
 
 
 def _intWithQuotes(val, quote="'"):
-  '''
-  Print numbers with a character separating each thousand
+  """Print numbers with a character separating each thousand.
 
   :param int,long val: integer value to printout
   :param character quote: character to use as a separator
 
   :return: string to print out
-  '''
+  """
   chunks = []
   if not val:
     return 'None'
@@ -898,14 +888,13 @@ def _intWithQuotes(val, quote="'"):
 
 
 def _scaleValue(val, units):
-  '''
-  Scale a value by thousands, return value and unit
+  """Scale a value by thousands, return value and unit.
 
   :param float val: value to scale
   :param iterable units: list of unit names (increasing order)
 
   :return: tuple (scaledValue, unitName)
-  '''
+  """
   if val:
     for unit in units:
       if val < 1000.:
@@ -918,27 +907,22 @@ def _scaleValue(val, units):
 
 
 def _scaleLumi(lumi):
-  '''
-  Return lumi in the appropriate unit
-  '''
+  """Return lumi in the appropriate unit."""
   return _scaleValue(lumi, ('/microBarn', '/nb', '/pb', '/fb', '/ab'))
 
 
 def scaleSize(size):
-  '''
-  Return size in appropriate unit
-  '''
+  """Return size in appropriate unit."""
   return _scaleValue(size, ('Bytes', 'kB', 'MB', 'GB', 'TB', 'PB'))
 
 
 def _getCollidingBunches(fills):
-  '''
-  Get the number of colliding bunches for all fills and average
+  """Get the number of colliding bunches for all fills and average.
 
   :param iterable fills: list of fill numbers
 
   :return: dictionary {fill:nbCollisingBunches}
-  '''
+  """
   import urllib2
   import json
   result = {}
@@ -955,12 +939,11 @@ def _getCollidingBunches(fills):
 
 
 def executeGetStats(dmScript):
-  '''
-  Extract statistics for a BK query or a set of LFNs
+  """Extract statistics for a BK query or a set of LFNs.
 
   :param dmScript: instance containing options (LFNs or BKQuery mandatory)
   :type dmScript: DMScript class
-  '''
+  """
   triggerRate = False
   listRuns = False
   listFills = False
@@ -1278,13 +1261,13 @@ def executeGetStats(dmScript):
 
 
 def executeRunInfo(item):
-  '''
-  Get some run information for a range of runs, either print out by item value or by run range
-  It can also define run ranges according to a run number gap or a time gap
+  """Get some run information for a range of runs, either print out by item
+  value or by run range It can also define run ranges according to a run number
+  gap or a time gap.
 
   :param item: name of a run item
   :type item: string
-  '''
+  """
   runsDict = {}
   if item not in ('Tck', 'DataTakingDescription', 'ProcessingPass', 'Ranges'):
     gLogger.fatal("Incorrect run information item")
@@ -1476,14 +1459,13 @@ def executeRunInfo(item):
 
 
 def _jobFromLfn(lfn):
-  """ Extract job unique name form LFN """
+  """Extract job unique name form LFN."""
   return os.path.basename(lfn).split('.')[0]
 
 
 def _getJobsEISFromAncestors(lfnList):
-  """
-  Get EventInputStat of all jobs in a recursive way
-  The EventInputStat of all jobs is set in the global dictionary jobEventInputStat
+  """Get EventInputStat of all jobs in a recursive way The EventInputStat of
+  all jobs is set in the global dictionary jobEventInputStat.
 
   :param lfnList: list of LFNs
   """
@@ -1542,9 +1524,7 @@ def _getJobsEISFromAncestors(lfnList):
 
 
 def _getEventInputStat(lfns):
-  """
-  Get EventInputStat of all ancestor jobs of a list of files
-  """
+  """Get EventInputStat of all ancestor jobs of a list of files."""
   # Sort events by job
   jobLfns = {}
   for lfn in lfns:
@@ -1565,9 +1545,7 @@ def _getEventInputStat(lfns):
 
 
 def _checkEventInputStat(lfn):
-  """
-  Check if EventInputStat is correct
-  """
+  """Check if EventInputStat is correct."""
   progressBar = ProgressBar(1, title="Checking if BK EventInputStat is reliable...", chunk=1)
   # Get EventInputStat from ancestors
   res = _getJobsEISFromAncestors([lfn])
@@ -1591,12 +1569,11 @@ def _checkEventInputStat(lfn):
 
 
 def executeRejectionStats(dmScript):
-  '''
-  Get rejection rate for stripping streams
+  """Get rejection rate for stripping streams.
 
   :param dmScript: instance containing options (LFNs or BKQuery mandatory)
   :type dmScript: DMScript class
-  '''
+  """
   byStream = False
   for switch in Script.getUnprocessedSwitches():
     if switch[0] == 'ByStream':

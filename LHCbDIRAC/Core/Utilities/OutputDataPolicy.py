@@ -8,9 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" OutputDataPolicy generates the output data that will be created by a workflow task
+"""OutputDataPolicy generates the output data that will be created by a
+workflow task.
 
-    DIRAC assumes an execute() method will exist during usage.
+DIRAC assumes an execute() method will exist during usage.
 """
 
 from DIRAC import gLogger
@@ -19,14 +20,14 @@ from LHCbDIRAC.Core.Utilities.ProductionData import preSubmissionLFNs
 
 
 class OutputDataPolicy(object):
-  """ class to generate the output Data"""
+  """class to generate the output Data."""
 
   def __init__(self, paramDict):
-    """ Constructor """
+    """Constructor."""
     self.paramDict = paramDict
 
   def execute(self):
-    """ main loop """
+    """main loop."""
     jobDescription = self.paramDict['Job']
     prodID = self.paramDict['TransformationID']
     jobID = self.paramDict['TaskID']

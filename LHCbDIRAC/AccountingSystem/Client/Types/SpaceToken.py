@@ -8,11 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""LHCbDIRAC.AccountingSystem.Client.Types.SpaceToken
+"""LHCbDIRAC.AccountingSystem.Client.Types.SpaceToken.
 
-  SpaceToken.__bases__:
-    DIRAC.AccountingSystem.Client.Types.SpaceToken.BaseAccountingType.BaseAccountingType
-
+SpaceToken.__bases__:
+  DIRAC.AccountingSystem.Client.Types.SpaceToken.BaseAccountingType.BaseAccountingType
 """
 
 
@@ -23,16 +22,14 @@ __RCSID__ = "$Id$"
 
 
 class SpaceToken(BaseAccountingType):
-  """SpaceToken as extension of BaseAccountingType
+  """SpaceToken as extension of BaseAccountingType.
 
-  It is filled from the RSS.Command.SpaceTokenCommand every time the command
-  is executed ( see RSS.Agent.CacheFeederAgent ).
-
+  It is filled from the RSS.Command.SpaceTokenCommand every time the
+  command is executed ( see RSS.Agent.CacheFeederAgent ).
   """
 
   def __init__(self):
-    """ constructor
-    """
+    """constructor."""
     BaseAccountingType.__init__(self)
     self.definitionKeyFields = [('Site', 'VARCHAR(64)'),
                                 ('Endpoint', 'VARCHAR(255)'),

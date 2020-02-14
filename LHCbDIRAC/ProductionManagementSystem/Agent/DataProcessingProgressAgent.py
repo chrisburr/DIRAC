@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' DataProcessingProgressAgent
-'''
+"""DataProcessingProgressAgent."""
 
 import datetime
 import os
@@ -31,8 +30,7 @@ class DataProcessingProgressAgent( AgentModule ):
 
   #############################################################################
   def initialize( self ):
-    """Sets default values.
-    """
+    """Sets default values."""
 
     self.pollingTime = self.am_getOption( 'PollingTime', 6 * 60 * 60 )
     self.printResult = self.am_getOption( 'Verbose', False )

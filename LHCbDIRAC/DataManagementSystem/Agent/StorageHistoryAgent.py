@@ -8,13 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''   The Storage History Agent will create a summary of the
-      storage usage DB grouped by processing pass or other
-      interesting parameters.
+"""The Storage History Agent will create a summary of the storage usage DB
+grouped by processing pass or other interesting parameters.
 
-      Initially this will dump the information to a file but eventually
-      can be inserted in a new DB table and made visible via the web portal.
-'''
+Initially this will dump the information to a file but eventually can be
+inserted in a new DB table and made visible via the web portal.
+"""
 
 import os
 import time
@@ -45,10 +44,12 @@ def _standardDirList( dirList ):
   return [_standardDirectory( dirPath ) for dirPath in dirList]
 
 def _fillMetadata( dictToFill, metadataValue ):
-  ''' Fill the dictionary to send to the accounting.
-      If metadataValue is a string then set all the values of dictToFill, to this value
-      if metadataValue is a dictionary then set each value of dictToFill to the corresponding value of metadataValue
-  '''
+  """Fill the dictionary to send to the accounting.
+
+  If metadataValue is a string then set all the values of dictToFill, to
+  this value if metadataValue is a dictionary then set each value of
+  dictToFill to the corresponding value of metadataValue
+  """
   # ds = DataStorage()
   # keyList = ds.keyFieldsList
   # this is the list of attributes returned by the Bookkeeping for a given directory
@@ -63,8 +64,7 @@ def _fillMetadata( dictToFill, metadataValue ):
 
 class StorageHistoryAgent( AgentModule ):
   def initialize( self ):
-    '''Sets defaults
-    '''
+    """Sets defaults."""
     self.am_setOption( 'PollingTime', 43200 )
     if self.am_getOption( 'DirectDB', False ):
       from LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB import StorageUsageDB
@@ -338,7 +338,8 @@ class StorageHistoryAgent( AgentModule ):
     return S_OK()
 
   def __getMetadataForAcc( self, dirList ):
-    """ Get metadata for a directory either from memory, from the storageDB or from BK """
+    """Get metadata for a directory either from memory, from the storageDB or
+    from BK."""
     # Try and get the metadata from memory cache
     notFound = []
     metaForList = {}
@@ -442,9 +443,8 @@ class StorageHistoryAgent( AgentModule ):
         self.log.notice( "commit for DataStorage returned: %s" % res )
 
   def generateStorageUsagePerDir( self ):
-    '''Generate a dump of the StorageUsageDB and keep it in memory in a dictionary
-       (new version of Apr 2012)
-    '''
+    """Generate a dump of the StorageUsageDB and keep it in memory in a
+    dictionary (new version of Apr 2012)"""
 
     start = time.time()
     self.log.notice( 'Starting from path: /lhcb/' )
@@ -574,8 +574,8 @@ class StorageHistoryAgent( AgentModule ):
     return self.eventTypeDescription.get( eventType, 'na' )
 
   def fillAndSendAccountingRecord( self, lfnDir, metadataDict, now ):
-    ''' Create, fill and send to accounting a record for the DataStorage type.
-    '''
+    """Create, fill and send to accounting a record for the DataStorage
+    type."""
     dataRecord = DataStorage()
     dataRecord.setStartTime( now )
     dataRecord.setEndTime( now )

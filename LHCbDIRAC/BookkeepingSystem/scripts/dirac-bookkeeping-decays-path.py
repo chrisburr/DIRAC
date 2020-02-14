@@ -9,10 +9,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Get Bookkeeping paths given a decay
+"""Get Bookkeeping paths given a decay.
 
-    @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-            Federico Stagni fstagni@cern.ch
+@author Vanya BELYAEV Ivan.Belyaev@itep.ru
+        Federico Stagni fstagni@cern.ch
 """
 
 __RCSID__ = "$Id$"

@@ -10,9 +10,7 @@
 ###############################################################################
 # pylint: skip-file
 
-"""
-File dialog widget
-"""
+"""File dialog widget."""
 
 from PyQt4.QtGui                                import QDialog, QMenu, QAction, \
                                                        QSortFilterProxyModel, QMessageBox, \
@@ -30,14 +28,10 @@ __RCSID__ = "$Id$"
 
 #############################################################################
 class FileDialog(QDialog, Ui_FileDialog):
-  """
-  FileDialog class
-  """
+  """FileDialog class."""
   #############################################################################
   def __init__(self, parent=None):
-    """
-    initialize the widget
-    """
+    """initialize the widget."""
     QDialog.__init__(self, parent)
     Ui_FileDialog.__init__(self)
     self.setupUi(self)
@@ -96,107 +90,107 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def closeEvent (self, event):
-    """handles the close action"""
+    """handles the close action."""
     gLogger.debug(event)
     self.getControler().close()
 
   #############################################################################
   def getControler(self):
-    """returns the controller"""
+    """returns the controller."""
     return self.__controler
 
   #############################################################################
   def setModel(self, model):
-    """sets the model"""
+    """sets the model."""
     self.__model = model
 
   def updateModel(self, model):
-    """updates the model in case of change"""
+    """updates the model in case of change."""
     self.__model.update(model)
 
   #############################################################################
   def getModel(self):
-    """returns the model"""
+    """returns the model."""
     return self.__model
 
   #############################################################################
   def setPath(self, path):
-    """sets the path"""
+    """sets the path."""
     self.__path = path
 
   #############################################################################
   def getPath(self):
-    """returns the path"""
+    """returns the path."""
     return self.__path
 
   #############################################################################
   def showNumberOfEvents(self, number):
-    """shows the number of events"""
+    """shows the number of events."""
     self.lineEdit_2.setText(str(number))
 
   #############################################################################
   def showNumberOfFiles(self, number):
-    """shows the number of files"""
+    """shows the number of files."""
     self.lineEdit.setText(str(number))
 
   #############################################################################
   def showEventInputStat(self, number):
-    """shows the number of processed input events"""
+    """shows the number of processed input events."""
     self.alleventinputstat.setText(str(number))
 
   #############################################################################
   def showFilesSize(self, number):
-    """shows the size of the files"""
+    """shows the size of the files."""
     self.lineEdit_5.setText(str(number) + '  GB')
 
   #############################################################################
   def showSelectedNumberOfEvents(self, number):
-    """shows the selected number of events"""
+    """shows the selected number of events."""
     self.lineEdit_4.setText(str(number))
 
   #############################################################################
   def showSelectedEventInputStat(self, number):
-    """shows the selected processed input events"""
+    """shows the selected processed input events."""
     self.eventInputstat.setText(str(number))
 
   #############################################################################
   def showSelectedNumberOfFiles(self, number):
-    """shoes the selected number of files"""
+    """shoes the selected number of files."""
     self.lineEdit_3.setText(str(number))
 
   #############################################################################
   def showSelectedFileSize(self, number):
-    """shows the selected file size"""
+    """shows the selected file size."""
     self.lineEdit_6.setText(str(number) + '  GB')
 
   #############################################################################
   def showTotalLuminosity(self, number):
-    """shows the total luminosity"""
+    """shows the total luminosity."""
     self.alltotalluminosity.setText(str(number))
 
   #############################################################################
   def showSelectedTotalLuminosity(self, number):
-    """selected total luminosity"""
+    """selected total luminosity."""
     self.totalluminosity.setText(str(number))
 
   #############################################################################
   def showLuminosity(self, number):
-    """luminosity"""
+    """luminosity."""
     self.allluminosity.setText(str(number))
 
   #############################################################################
   def showSelectedLuminosity(self, number):
-    """selected luminosity"""
+    """selected luminosity."""
     self.luminosity.setText(str(number))
 
   #############################################################################
   def showError(self, message):
-    """shows the message as an ERROR"""
+    """shows the message as an ERROR."""
     QMessageBox.critical(self, "ERROR", message, QMessageBox.Ok)
 
   #############################################################################
   def showData(self, data):
-    """shows the files in the table widget"""
+    """shows the files in the table widget."""
     self.waitCursor()
 
     tabledata = []
@@ -224,7 +218,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def filltable(self, header, tabledata):
-    """ fill the table widget"""
+    """fill the table widget."""
     # set the table model
 
     tm = TableModel(tabledata, header, self)
@@ -275,7 +269,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def saveAs(self, filename=''):
-    """saves the selected files"""
+    """saves the selected files."""
     saveDialog = QFileDialog (self, 'Feicim Save file(s) dialog',
                               QDir.currentPath(),
                               'Python option(*.py);;Option file (*.opts);;Text file (*.txt);;CSV (*.csv)')
@@ -322,12 +316,12 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def popUpMenu(self):
-    """shows the popup menu"""
+    """shows the popup menu."""
     self.__popUp.popup(QCursor.pos())
 
   #############################################################################
   def showSelection(self, in_dict):
-    """ shows the Bookkeeping query, the selected dataset"""
+    """shows the Bookkeeping query, the selected dataset."""
 
     if in_dict.has_key('ConfigName'):
       self.configname.setText(in_dict["ConfigName"])
@@ -354,13 +348,13 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def clearTable(self):
-    """clear the elements from the table"""
+    """clear the elements from the table."""
     #self.tableView().clear()
     self.__model = {}
 
   #############################################################################
   def fillTckFilter(self, data):
-    """fills the tck combo box"""
+    """fills the tck combo box."""
     tcks = data + ['All']
 
     self.tckcombo.clear()
@@ -374,7 +368,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def applyFilter(self, data):
-    """performs filter over the files"""
+    """performs filter over the files."""
     if data == 'All':
       gLogger.debug('applyFilter-ALL')
       self.__proxy.clear()
@@ -395,7 +389,7 @@ class FileDialog(QDialog, Ui_FileDialog):
         self.tableView.setRowHeight(row, 18)
 
   def applyListFilter(self, data):
-    """specific filter"""
+    """specific filter."""
     gLogger.debug('applyListFilter')
     filterCondition = '\\b'
     cond = '('
@@ -413,7 +407,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def showTckFilter(self):
-    """shows the tcks"""
+    """shows the tcks."""
     self.tckButton.hide()
     self.tckcloseButton.show()
     self.tckcombo.hide()
@@ -421,7 +415,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def hideTckFilter(self):
-    """hides the tcks"""
+    """hides the tcks."""
     self.tckButton.show()
     self.tckcloseButton.hide()
     self.tckcombo.show()
@@ -429,7 +423,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def getLFNs(self):
-    """returns the lfns"""
+    """returns the lfns."""
     lfns = []
     for row in xrange(self.__proxy.rowCount()):
       index = self.__proxy.index(row, 0) # this add the files to my selected list
@@ -438,11 +432,11 @@ class FileDialog(QDialog, Ui_FileDialog):
 
   #############################################################################
   def waitCursor(self):
-    """shows the wait cursor"""
+    """shows the wait cursor."""
     self.setCursor(Qt.WaitCursor)
 
   #############################################################################
   def arrowCursor(self):
-    """shows the normal cursor"""
+    """shows the normal cursor."""
     self.setCursor(Qt.ArrowCursor)
 

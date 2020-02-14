@@ -9,9 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Remove the given file or a list of files from the File Catalog and from the storage
-"""
+"""Remove the given file or a list of files from the File Catalog and from the
+storage."""
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-   This modules contains utility functions for LHCb DM
-"""
+"""This modules contains utility functions for LHCb DM."""
 __RCSID__ = "$Id$"
 from DIRAC import S_OK, S_ERROR, gLogger
 import sys, os
@@ -18,9 +16,8 @@ from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 
 def chown(directories, user=None, group=None, mode=None, recursive=False, ndirs=None, fcClient=None):
-  """
-  This method may change the user, group or mode of a directory and apply it recursively if required
-  """
+  """This method may change the user, group or mode of a directory and apply it
+  recursively if required."""
   if ndirs is None:
     ndirs = 0
   if not directories:
@@ -51,9 +48,7 @@ def chown(directories, user=None, group=None, mode=None, recursive=False, ndirs=
 
 
 def createUserDirectory(user):
-  """
-  This functions creates (if not existing) a user directory in the DFC
-  """
+  """This functions creates (if not existing) a user directory in the DFC."""
   dfc = FileCatalogClient()
   initial = user[0]
   baseDir = os.path.join('/lhcb', 'user', initial, user)

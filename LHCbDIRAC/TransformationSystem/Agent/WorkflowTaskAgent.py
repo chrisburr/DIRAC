@@ -8,12 +8,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" :mod:  WorkflowTaskAgent
-    ========================
+"""
+:mod:  WorkflowTaskAgent
 
-  .. module:  WorkflowTaskAgent
-  :synopsis:  Extension of the DIRAC WorkflowTaskAgent, to use LHCb clients.
+.. module:  WorkflowTaskAgent
 
+:synopsis:  Extension of the DIRAC WorkflowTaskAgent, to use LHCb clients.
 """
 
 __RCSID__ = "$Id$"
@@ -29,17 +29,14 @@ AGENT_NAME = 'Transformation/WorkflowTaskAgent'
 
 
 class WorkflowTaskAgent(DIRACWorkflowTaskAgent):
-  """ An AgentModule class to submit workflow tasks
-  """
+  """An AgentModule class to submit workflow tasks."""
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     DIRACWorkflowTaskAgent.__init__(self, *args, **kwargs)
 
   def _getClients(self):
-    """ LHCb clients
-    """
+    """LHCb clients."""
     res = DIRACWorkflowTaskAgent._getClients(self)
 
     outputDataModule = Operations().getValue("Transformations/OutputDataModule",

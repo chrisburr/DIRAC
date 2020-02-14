@@ -14,9 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 
-"""
-Bookkeeping Command line interface
-"""
+"""Bookkeeping Command line interface."""
 
 from DIRAC.Core.Base                                      import Script
 Script.parseCommandLine( ignoreErrors = True )

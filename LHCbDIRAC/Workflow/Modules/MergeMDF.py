@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Simple merging module for MDF files.
-"""
+"""Simple merging module for MDF files."""
 
 import shlex
 
@@ -23,13 +22,11 @@ __RCSID__ = "$Id$"
 
 
 class MergeMDF(ModuleBase):
-  """ To be used in normal workflows
-  """
+  """To be used in normal workflows."""
 
   #############################################################################
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization.
-    """
+    """Module initialization."""
     self.log = gLogger.getSubLogger("MergeMDF")
     super(MergeMDF, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
@@ -43,8 +40,7 @@ class MergeMDF(ModuleBase):
 
   #############################################################################
   def _resolveInputVariables(self):
-    """ By convention the module parameters are resolved here.
-    """
+    """By convention the module parameters are resolved here."""
 
     super(MergeMDF, self)._resolveInputVariables()
     super(MergeMDF, self)._resolveInputStep()
@@ -55,8 +51,7 @@ class MergeMDF(ModuleBase):
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """ Main execution function.
-    """
+    """Main execution function."""
 
     try:
 

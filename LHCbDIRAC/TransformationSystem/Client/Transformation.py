@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Client module to deal with transformations, but mostly dedicated to DataManipulation (e.g.: replications)
-"""
+"""Client module to deal with transformations, but mostly dedicated to
+DataManipulation (e.g.: replications)"""
 
 __RCSID__ = "$Id$"
 
@@ -24,14 +24,15 @@ COMPONENT_NAME = 'Transformation'
 
 
 class Transformation(DIRACTransformation):
-  """ Class for dealing with Transformation objects
-  """
+  """Class for dealing with Transformation objects."""
 
   #############################################################################
 
   def __init__(self, transID=0, transClientIn=None):
-    """ Just params setting.
-        transClient is passed here as LHCbDIRAC TransformationsClient, it will be self.transClient
+    """Just params setting.
+
+    transClient is passed here as LHCbDIRAC TransformationsClient, it
+    will be self.transClient
     """
 
     if not transClientIn:
@@ -44,8 +45,7 @@ class Transformation(DIRACTransformation):
   #############################################################################
 
   def testBkQuery(self, bkQuery, printOutput=False, bkClient=None):
-    """ just pretty print of the result of a BK Query
-    """
+    """just pretty print of the result of a BK Query."""
 
     if bkClient is None:
       bkClient = BookkeepingClient()
@@ -61,8 +61,7 @@ class Transformation(DIRACTransformation):
   #############################################################################
 
   def setBkQuery(self, queryDict, test=False):
-    """ set a BKK Query
-    """
+    """set a BKK Query."""
     if test:
       res = self.testBkQuery(queryDict)
       if not res['OK']:
@@ -79,8 +78,7 @@ class Transformation(DIRACTransformation):
   #############################################################################
 
   def getBkQuery(self, printOutput=False):
-    """ get a BKK Query
-    """
+    """get a BKK Query."""
     if self.paramValues['BkQuery']:
       return S_OK(self.paramValues['BkQuery'])
     res = self.__executeOperation('getBookkeepingQuery', printOutput=printOutput)
@@ -93,8 +91,7 @@ class Transformation(DIRACTransformation):
   #############################################################################
 
   def deleteTransformationBkQuery(self):
-    """ delete a BKK Query
-    """
+    """delete a BKK Query."""
     transID = self.paramValues['TransformationID']
     if self.exists and transID:
       res = self.transClient.deleteTransformationBookkeepingQuery(transID)
@@ -107,8 +104,7 @@ class Transformation(DIRACTransformation):
   #############################################################################
 
   def addTransformation(self, addFiles=True, printOutput=False):
-    """ Add a transformation, using TransformationClient()
-    """
+    """Add a transformation, using TransformationClient()"""
     res = super(Transformation, self).addTransformation(addFiles, printOutput)
     if res['OK']:
       transID = res['Value']

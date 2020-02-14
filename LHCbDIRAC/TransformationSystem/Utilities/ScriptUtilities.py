@@ -8,17 +8,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-Utilities used by LHCb TS scripts
-"""
+"""Utilities used by LHCb TS scripts."""
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 
 def _getTransformationID(transName):
-  """
-  Check that a transformation exists and return its ID or None if it doesn't exist
+  """Check that a transformation exists and return its ID or None if it doesn't
+  exist.
 
   :param transName: name or ID of a transformation
   :type transName: int,long or string
@@ -47,9 +45,8 @@ def _getTransformationID(transName):
 
 
 def getTransformations(args):
-  """
-  Parse the arguments of the script and generates a list of transformations
-  """
+  """Parse the arguments of the script and generates a list of
+  transformations."""
   transList = []
   if not len(args):
     print "Specify transformation number..."

@@ -8,15 +8,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-  Extends DIRAC EmailAgent
+"""Extends DIRAC EmailAgent.
 
-  This agent extends the DIRAC EmailAgent which is used to aggregate status changes,
-  in this case LHCbDIRAC EmailAgent adds the additional functionality of automatically posting these
-  status changes in the LHCb logbook ("lblogbook.cern.ch").
+This agent extends the DIRAC EmailAgent which is used to aggregate status changes,
+in this case LHCbDIRAC EmailAgent adds the additional functionality of automatically posting these
+status changes in the LHCb logbook ("lblogbook.cern.ch").
 
-  This is done by sending a request to a restful API which is used to post the data to the LHCb logbook.
-  The authentication is done by providing a valid username and password in the configuration file of dirac.
+This is done by sending a request to a restful API which is used to post the data to the LHCb logbook.
+The authentication is done by providing a valid username and password in the configuration file of dirac.
 """
 
 __RCSID__ = '$Id$'

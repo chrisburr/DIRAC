@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Just a module with some utilities
-"""
+"""Just a module with some utilities."""
 
 __RCSID__ = "$Id$"
 
@@ -28,8 +27,7 @@ from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 
 
 def tarFiles(outputFile, files=None, compression='gz', deleteInput=False):
-  """ just make a tar
-  """
+  """just make a tar."""
   if files is None:
     files = []
 
@@ -52,12 +50,12 @@ def tarFiles(outputFile, files=None, compression='gz', deleteInput=False):
 
 
 def zipFiles(outputFile, files=None, directory=None, deleteInput=False):
-  """ just make a zip
+  """just make a zip.
 
-      :param str outputFile: output file name, normally something.zip
-      :param list files: file names to be added to the zip file
-      :param str directory: optional directory inside the zip
-      :param bool deleteInput: if you want to delete the inputs
+  :param str outputFile: output file name, normally something.zip
+  :param list files: file names to be added to the zip file
+  :param str directory: optional directory inside the zip
+  :param bool deleteInput: if you want to delete the inputs
   """
   if files is None:
     files = []
@@ -92,9 +90,9 @@ def zipFiles(outputFile, files=None, directory=None, deleteInput=False):
 
 
 def lowerExtension():
-  """
-    Lowers the file extension of the produced files (on disk!).
-    E.g.: fileName.EXTens.ION -> fileName.extens.ion
+  """Lowers the file extension of the produced files (on disk!).
+
+  E.g.: fileName.EXTens.ION -> fileName.extens.ion
   """
 
   filesInDir = [x for x in os.listdir('.') if not os.path.isdir(x)]
@@ -120,11 +118,11 @@ def lowerExtension():
 
 def getEventsToProduce(CPUe, CPUTime=None, CPUNormalizationFactor=None,
                        maxNumberOfEvents=None, jobMaxCPUTime=None):
-  """ Returns the number of events to produce considering the CPU time available.
-      CPUTime and CPUNormalizationFactor are taken from the LocalSite configuration if not provided.
-      No checks are made on the values passed !
+  """Returns the number of events to produce considering the CPU time
+  available. CPUTime and CPUNormalizationFactor are taken from the LocalSite
+  configuration if not provided. No checks are made on the values passed !
 
-      Limits can be set.
+  Limits can be set.
   """
 
   if CPUNormalizationFactor is None:
@@ -161,9 +159,10 @@ def getEventsToProduce(CPUe, CPUTime=None, CPUNormalizationFactor=None,
 
 
 def getCPUNormalizationFactorAvg():
-  """
-    Returns the average HS06 CPU normalization factor for the LCG sites (all CEs, all queues).
-    Raises an Exception if it can not.
+  """Returns the average HS06 CPU normalization factor for the LCG sites (all
+  CEs, all queues).
+
+  Raises an Exception if it can not.
   """
 
   factorsSum = 0.0
@@ -201,8 +200,7 @@ def getCPUNormalizationFactorAvg():
 
 
 def getProductionParameterValue(productionXML, parameterName):
-  """ Get a parameter value from a production XML description
-  """
+  """Get a parameter value from a production XML description."""
 
   # lets assume no parameters are different only by case, as it would be a bad idea
   parameterName = parameterName.lower()
@@ -226,9 +224,11 @@ def getProductionParameterValue(productionXML, parameterName):
 
 
 def getNumberOfProcessorsToUse(jobID, payloadProcessors=None):
-  """ get the number of processors to use for an application step on a certain node
+  """get the number of processors to use for an application step on a certain
+  node.
 
-      payloadProcessors corresponds normally to the workflow (and JDL) parameter "MaxNumberOfProcessors"
+  payloadProcessors corresponds normally to the workflow (and JDL)
+  parameter "MaxNumberOfProcessors"
   """
 
   siteName = gConfig.getValue('/LocalSite/Site')
@@ -251,9 +251,8 @@ def getNumberOfProcessorsToUse(jobID, payloadProcessors=None):
 
 
 def _multicoreWN(siteName, gridCE, queue):
-  """ Returns "True" if the CE, or the Queue is marked as one where multi-processing is allowed
-      (by having Tag "MultiProcessor")
-  """
+  """Returns "True" if the CE, or the Queue is marked as one where multi-
+  processing is allowed (by having Tag "MultiProcessor")"""
   # Tags of the CE
   tags = fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Tag' % (siteName.split('.')[0], siteName, gridCE),
                   ''))

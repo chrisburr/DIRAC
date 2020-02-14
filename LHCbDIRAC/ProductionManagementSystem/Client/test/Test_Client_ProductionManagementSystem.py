@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Test of the ProductionRequest and Production modules
-"""
+"""Test of the ProductionRequest and Production modules."""
 
 import pytest
 

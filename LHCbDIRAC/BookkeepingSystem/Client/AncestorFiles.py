@@ -13,11 +13,11 @@
 # Author : Stuart Paterson
 ########################################################################
 
-"""   This utility simply queries the BK for ancestor files of a specified
-      LFN with a given ancestor depth.
+"""This utility simply queries the BK for ancestor files of a specified LFN
+with a given ancestor depth.
 
-      N.B. this made more sense during the transitional period between old
-      and new BK but now could most likely be refactored into the BK client.
+N.B. this made more sense during the transitional period between old and
+new BK but now could most likely be refactored into the BK client.
 """
 
 __RCSID__ = "$Id$"
@@ -30,11 +30,11 @@ import string
 
 #############################################################################
 def getFileAncestors( inputData, ancestorDepth ):
-  """ Returns S_OK({inputFile1:[ancestor1,],}) or S_ERROR(<Message>) after querying the
-      Bookkeeping for ancestor files.
+  """Returns S_OK({inputFile1:[ancestor1,],}) or S_ERROR(<Message>) after
+  querying the Bookkeeping for ancestor files.
 
-      Input data can be an LFN string or a list of LFNs.  Ancestor depth is an integer or
-      string that converts to an integer.
+  Input data can be an LFN string or a list of LFNs.  Ancestor depth is
+  an integer or string that converts to an integer.
   """
   if not type( inputData ) == type( [] ):
     inputData = [inputData]
@@ -59,13 +59,13 @@ def getFileAncestors( inputData, ancestorDepth ):
   return S_OK( data['Successful'] )
 
 def getAncestorFiles( inputData, ancestorDepth ):
-  """ Returns S_OK(<list of files>) or S_ERROR(<Message>) after querying the
-      Bookkeeping for ancestor files.
+  """Returns S_OK(<list of files>) or S_ERROR(<Message>) after querying the
+  Bookkeeping for ancestor files.
 
-      Input data can be an LFN string or a list of LFNs.  Ancestor depth is an integer or
-      string that converts to an integer.
+  Input data can be an LFN string or a list of LFNs.  Ancestor depth is an integer or
+  string that converts to an integer.
 
-      If successful, the original input data LFNs are also returned in the list.
+  If successful, the original input data LFNs are also returned in the list.
   """
   res = getFileAncestors( inputData, ancestorDepth )
   if not res['OK']:

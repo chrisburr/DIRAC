@@ -8,7 +8,5 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""
-It is used to store a grid job metadata information.
-"""
+"""It is used to store a grid job metadata information."""
 __RCSID__ = "$Id$"

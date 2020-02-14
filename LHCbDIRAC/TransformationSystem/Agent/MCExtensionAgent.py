@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" An agent to extend MC productions based on the remaining events to produce.
-"""
+"""An agent to extend MC productions based on the remaining events to
+produce."""
 
 __RCSID__ = "$Id$"
 
@@ -29,12 +29,10 @@ AGENT_NAME = 'Transformation/MCExtensionAgent'
 
 
 class MCExtensionAgent(DIRACMCExtensionAgent):
-  """ MCExtensionAgent
-  """
+  """MCExtensionAgent."""
 
   def __init__(self, *args, **kwargs):
-    """ c'tor
-    """
+    """c'tor."""
     DIRACMCExtensionAgent.__init__(self, *args, **kwargs)
 
     self.rpcProductionRequest = None
@@ -52,8 +50,7 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
 
   #############################################################################
   def initialize(self):
-    """ Logs some parameters and initializes the clients
-    """
+    """Logs some parameters and initializes the clients."""
     self.extensionFactorBoost = self.am_getOption('extensionFactorBoost', self.extensionFactorBoost)
 
     self.rpcProductionRequest = ProductionRequestClient()
@@ -66,8 +63,7 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
 
   #############################################################################
   def execute(self):
-    """ The MCExtensionAgent execution method.
-    """
+    """The MCExtensionAgent execution method."""
 
     self.enableFlag = self.am_getOption('EnableFlag', 'True')
     if not self.enableFlag == 'True':
@@ -97,9 +93,8 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
   #############################################################################
 
   def _getCPUParameters(self):
-    """ Get the CPUTimeAvg and CPUNormalizationFactorAvg from config,
-        or as a fail-over, there are some defaults
-    """
+    """Get the CPUTimeAvg and CPUNormalizationFactorAvg from config, or as a
+    fail-over, there are some defaults."""
 
     op = Operations()
     self.cpuTimeAvg = op.getValue('Transformations/cpuTimeAvg', self.cpuTimeAvg)
@@ -115,8 +110,8 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
 
   #############################################################################
   def _checkProductionRequest(self, productionRequestID, productionRequestSummary):
-    """ Check if a production request need to be extended and do it if needed
-    """
+    """Check if a production request need to be extended and do it if
+    needed."""
 
     # check if enough events have been produced
     missingEvents = productionRequestSummary['reqTotal'] - productionRequestSummary['bkTotal']
@@ -201,8 +196,8 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
 
   #############################################################################
   def _extendProduction(self, production, extensionFactor, eventsNeeded):
-    """ Extends a production to produce eventsNeeded*extensionFactor more events.
-    """
+    """Extends a production to produce eventsNeeded*extensionFactor more
+    events."""
     productionID = production['TransformationID']
 
     cpuEProd = getProductionParameterValue(production['Body'], 'CPUe')

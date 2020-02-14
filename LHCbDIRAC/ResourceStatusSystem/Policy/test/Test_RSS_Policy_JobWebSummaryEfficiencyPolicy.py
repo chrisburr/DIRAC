@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-''' Test_RSS_Policy_JobEfficiencyPolicy
-'''
+"""Test_RSS_Policy_JobEfficiencyPolicy."""
 
 import unittest
 
@@ -20,16 +19,12 @@ import LHCbDIRAC.ResourceStatusSystem.Policy.JobWebSummaryEfficiencyPolicy as mo
 class JobWebSummaryEfficiencyPolicy_TestCase( unittest.TestCase ):
 
   def setUp( self ):
-    '''
-    Setup
-    '''
+    """Setup."""
     self.moduleTested = moduleTested
     self.testClass    = self.moduleTested.JobWebSummaryEfficiencyPolicy
 
   def tearDown( self ):
-    '''
-    Tear down
-    '''
+    """Tear down."""
 
     del self.moduleTested
     del self.testClass
@@ -40,15 +35,13 @@ class JobWebSummaryEfficiencyPolicy_TestCase( unittest.TestCase ):
 class JobWebSummaryEfficiencyPolicy_Success( JobWebSummaryEfficiencyPolicy_TestCase ):
 
   def test_instantiate( self ):
-    ''' tests that we can instantiate one object of the tested class
-    '''
+    """tests that we can instantiate one object of the tested class."""
 
     module = self.testClass()
     self.assertEqual( 'JobWebSummaryEfficiencyPolicy', module.__class__.__name__ )
 
   def test_evaluate( self ):
-    ''' tests the method _evaluate
-    '''
+    """tests the method _evaluate."""
 
     module = self.testClass()
 
