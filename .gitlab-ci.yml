@@ -212,6 +212,7 @@ integration_tests:
     - installClient
     - testServer
     - testClient
+    - checkErrors
 
 ### coverage stage ###
 
