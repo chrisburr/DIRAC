@@ -228,7 +228,7 @@ if found>0 then
 else
 select distinct DESCRIPTION into descr from filetypes where
            NAME=UPPER(v_name);
-select COALESCE(max(filetypeid)+1, 0) into id from filetypes;
+select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
 insert into filetypes(filetypeid,name,description,version) values(id, UPPER(v_name),descr,filetype);
 commit;
 return id;
@@ -237,7 +237,7 @@ EXCEPTION
   WHEN found_name then
   raise_application_error(-20001,'The '||v_name || ' file type is already exist!!!');
   WHEN NO_DATA_FOUND then
-   select COALESCE(max(filetypeid)+1, 0) into id from filetypes;
+   select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
    insert into filetypes(filetypeid,name,description,version) values(id,UPPER(v_name),description,filetype);
    commit;
   return id;
@@ -807,7 +807,7 @@ function checkFileTypeAndVersion (
    IF id > 0 then
    select distinct DESCRIPTION into descr from filetypes where
            NAME=v_NAME;
-   select COALESCE(max(filetypeid)+1, 0) into id from filetypes;
+   select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
    insert into filetypes(filetypeid,name,description,version) values(id,v_NAME,descr,v_VERSION);
    commit;
    return id;
