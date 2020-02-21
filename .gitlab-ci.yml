@@ -149,9 +149,8 @@ integration_tests:
     DOCKER_TLS_CERTDIR: "/certs"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
   before_script:
-    - yum install -y epel-release
-    - yum install -y jq
-    - pip install diraccfg
+    - apk add jq python3
+    - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - LHCBDIRAC_RELEASE=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
     - export LHCBDIRAC_RELEASE
