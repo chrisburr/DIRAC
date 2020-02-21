@@ -158,9 +158,9 @@ integration_tests:
   - echo "${DOCKER_HOST}"
   - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
   # Get DIRAC
-  - git clone https://github.com/chrisburr/DIRAC.git
+  - git clone https://github.com/DIRACGrid/DIRAC.git
   - cd DIRAC
-  - git checkout support-lhcb-ci
+  - git checkout rel-v7r0
   - cd ..
   # Environment
   - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
