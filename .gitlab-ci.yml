@@ -155,7 +155,7 @@ integration_tests:
     - LHCBDIRAC_RELEASE=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
     - export LHCBDIRAC_RELEASE
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)""
+    - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
     - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
     # Get DIRAC
     - git clone https://github.com/DIRACGrid/DIRAC.git
