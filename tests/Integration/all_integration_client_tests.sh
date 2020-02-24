@@ -21,7 +21,7 @@ echo -e '****************************************'
 echo -e '******' "LHCb client -> server tests" '******\n'
 
 #-------------------------------------------------------------------------------#
-# echo -e '***' $(date -u) "**** LHCb Bookkeeping TESTS ****\n"
+echo -e '***' $(date -u) "**** LHCb Bookkeeping TESTS ****\n"
 python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
 python $CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_BookkeepingGUImethods.py 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= $? ))
 
