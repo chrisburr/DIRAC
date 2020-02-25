@@ -3708,7 +3708,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       if useMainTables:
         condition += ' and prview.runnumber=j.runnumber '
       condition += ' and prview.production=cont.production '
-      tables += ' , prodrunview prview'
+      tables += ' , prodrunview prview, productionscontainer cont'
     cond = None
     if isinstance(runnumbers, (int, long)):
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
