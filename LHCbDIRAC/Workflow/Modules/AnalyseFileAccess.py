@@ -18,16 +18,18 @@ from collections import defaultdict
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.AccountingSystem.Client.Types.DataOperation import DataOperation
-from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
+from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary, XMLSummaryError
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
 
 class AnalyseFileAccess(ModuleBase):
-  """Analyzing the access with xroot."""
+  """ Analyzing the access with xroot
+  """
 
   def __init__(self, bkClient=None, dm=None):
-    """Module initialization."""
+    """Module initialization.
+    """
 
     self.log = gLogger.getSubLogger('AnalyseFileAccess')
     super(AnalyseFileAccess, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
@@ -37,25 +39,26 @@ class AnalyseFileAccess(ModuleBase):
     self.XMLSummary_o = None
     self.poolXMLCatName = ''
     self.poolXMLCatName_o = None
+    self.dsc = None
 
   def _resolveInputVariables(self):
-    """By convention any workflow parameters are resolved here."""
+    """ By convention any workflow parameters are resolved here.
+    """
 
     super(AnalyseFileAccess, self)._resolveInputVariables()
     super(AnalyseFileAccess, self)._resolveInputStep()
 
-    self.dsc = self.workflow_commons['AccountingReport']
     self.XMLSummary_o = XMLSummary(self.XMLSummary, log=self.log)
+    self.dsc = self.workflow_commons['AccountingReport']
     self.poolXMLCatName_o = PoolXMLCatalog(xmlfile=self.poolXMLCatName)
 
   def execute(self, production_id=None, prod_job_id=None, wms_job_id=None,
               workflowStatus=None, stepStatus=None,
               wf_commons=None, step_commons=None,
               step_number=None, step_id=None):
-    """Main execution method.
+    """ Main execution method.
 
-    Here we analyse what is written in the XML summary and the pool XML,
-    and send accounting
+        Here we analyse what is written in the XML summary and the pool XML, and send accounting
     """
 
     try:
@@ -65,7 +68,14 @@ class AnalyseFileAccess(ModuleBase):
                                              wf_commons, step_commons,
                                              step_number, step_id)
 
-      self._resolveInputVariables()
+      try:
+        self._resolveInputVariables()
+      except XMLSummaryError as e:
+        if e.message == 'XML Summary Not Available':
+          self.log.warn("XML summary not created, skipping this module")
+          return S_OK()
+        else:
+          raise e
 
       self.log.info("Analyzing root access from %s and %s" % (self.XMLSummary, self.poolXMLCatName))
 
@@ -91,15 +101,15 @@ class AnalyseFileAccess(ModuleBase):
 
   @staticmethod
   def _checkFileAccess(xmlCatalog, xmlSummary):
-    """Given an xmlCatalog and an xmlSummary, check which were the successful
-    and failed attempts to open remote root files.
+    """ Given an xmlCatalog and an xmlSummary, check which were the successful and failed attempts
+        to open remote root files
 
-    For each attempts, we return a tuple (srcSE, flag) with the flag being true if the read was successful.
+        For each attempts, we return a tuple (srcSE, flag) with the flag being true if the read was successful.
 
-    :param xmlCatalog: instance of :py:class:`~LHCbDIRAC.Resources.Catalog.PoolXMLCatalog.PoolXMLCatalog`
-    :param xmlSummary: instance of :py:class:`~LHCbDIRAC.LHCbDIRAC.Core.Utilities.XMLSummaries.XMLSummary`
+        :param xmlCatalog: instance of :py:class:`~LHCbDIRAC.Resources.Catalog.PoolXMLCatalog.PoolXMLCatalog`
+        :param xmlSummary: instance of :py:class:`~LHCbDIRAC.LHCbDIRAC.Core.Utilities.XMLSummaries.XMLSummary`
 
-    :returns: list of tuples (srcSE, successful flag)
+        :returns: list of tuples (srcSE, successful flag)
     """
 
     # This will contain the list of tuples with the accesses and their status
@@ -158,7 +168,7 @@ class AnalyseFileAccess(ModuleBase):
     return accessAttempts
 
   def __initialiseAccountingObject(self, srcSE, successful):
-    """create accouting record."""
+    """ create accouting record """
     accountingDict = {}
 
     accountingDict['OperationType'] = 'fileAccess'
