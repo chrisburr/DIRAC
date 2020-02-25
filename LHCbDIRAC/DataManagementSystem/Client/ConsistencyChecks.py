@@ -69,7 +69,11 @@ def getFileDescendants(transID, lfns, transClient=None, dm=None, bkClient=None, 
   cc.fileTypesExcluded = Operations().getValue('DataConsistency/IgnoreDescendantsOfType', [])
   savedLevel = gLogger.getLevel()
   gLogger.setLevel('FATAL')
-  descendants = cc.getDescendants(lfns)[0]
+  result = cc.getDescendants(lfns)
+  # Files with descendants
+  descendants = result[0]
+  # Add files with multiple descendants
+  descendants.update(result[2])
   gLogger.setLevel(savedLevel)
   return descendants
 
@@ -566,7 +570,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
       while True:
         resChunk = self.bkClient.getFileDescendants(lfnChunk, depth=self.descendantsDepth,
                                                     production=self.prod, checkreplica=False)
-        if resChunk['OK']:
+        # If error, global or for some files, retry
+        if resChunk['OK'] and not resChunk['Value']['Failed']:
           # Key is ancestor, value is metadata dictionary of daughters
           descDict = self._selectByFileType(resChunk['Value']['WithMetadata'])
           # Do the daughters have a replica flag in BK? Store file type as well... Key is daughter
