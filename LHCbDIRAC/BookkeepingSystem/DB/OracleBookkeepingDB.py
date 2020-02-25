@@ -3709,7 +3709,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         condition += ' and prview.runnumber=j.runnumber '
       else:
         condition += ' and prview.production=cont.production '
-      if 'prodrunview' not in tables.lower():  
+      if 'prodrunview' not in tables.lower():
         tables += ' ,prodrunview prview'
       if 'productionscontainer' not in tables.lower():
         tables += ' ,productionscontainer cont'
