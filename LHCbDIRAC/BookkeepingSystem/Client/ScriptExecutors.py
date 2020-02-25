@@ -596,7 +596,10 @@ def executeFileDescendants(dmScript, level=1):
         for lfn in okResult:
           fullResult['Value'].setdefault('Successful', {})[lfn] = \
               dict((desc, 'Replica-%s' % meta['GotReplica']) for desc, meta in okResult[lfn].iteritems())
-      fullResult['Value'].setdefault('Failed', {}).update(result['Value']['Failed'])
+      failed = result['Value']['Failed']
+      if isinstance(failed, list):
+        failed = dict.fromkeys(failed, 'Unknown error')
+      fullResult['Value'].setdefault('Failed', {}).update(failed)
       fullResult['Value'].setdefault('NotProcessed', []).extend(result['Value']['NotProcessed'])
     else:
       fullResult = result
