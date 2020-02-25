@@ -156,7 +156,7 @@ FOR prod IN(SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotrepl
             f.gotreplica IS NOT NULL and
             f.filetypeid NOT IN(9,17) GROUP BY j.production, J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag Order by f.gotreplica,f.visibilityflag asc) LOOP
     select count(*) into nb from productionoutputfiles where production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid and visible=prod.visibilityflag and gotreplica=prod.gotreplica;
-    --dbms_output.put_line('Try update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
+    dbms_output.put_line('Try update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
     if nb = 0 then -- we whant to update only the row, which has modified...
         -- we have to see which rows can be updated
         for toupdate in (select * from (select production, stepid, eventtypeid, filetypeid, gotreplica, visible as visibilityflag from productionoutputfiles where production=v_production) minus
