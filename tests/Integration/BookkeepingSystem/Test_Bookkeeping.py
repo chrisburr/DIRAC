@@ -2694,7 +2694,7 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
   def test_getJobInfo(self):
     retVal = self.bk.getJobInfo('/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim')
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value'][0]), 22)
+    self.assertEqual(len(retVal['Value'][0]), 24)
 
   def test_bulkJobInfo(self):
     retVal = self.bk.bulkJobInfo(
