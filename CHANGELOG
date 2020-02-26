@@ -1,3 +1,20 @@
+v9r4p15
+use DIRAC v6r22p22
+
+* fix code style
+* do not use the runview table for a given run
+* add missing table to the list of tables
+* protect in case getFileDescendants fails
+* protect if Failed is a list
+* fixed looking in egroups
+* fix error handling
+* fix when jobIDs are provided
+* Don't give up if one email is invalid
+* Minimise nesting to make ProductionManagementSystem/Agent/NotifyAgent.py more readable
+* Only ask people to act on Simulation requests
+* Don't ask lhcb_tech to sign requests
+* Don't send emails if there is nothing to do
+
 v9r4p14
 use DIRAC v6r22p20
 
