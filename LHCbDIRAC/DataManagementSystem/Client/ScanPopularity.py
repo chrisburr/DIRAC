@@ -265,9 +265,10 @@ def getPhysicalUsage(baseDir):
   """Extract information about storage usage from the StorageusageDB."""
   for trial in xrange(10, -1, -1):
     res = suClient.getStorageDirectoryData(baseDir, None, None, None, timeout=3600)
-    if not res['OK'] and not trial:
-      gLogger.fatal("Error getting list of directories for %s" % baseDir, res['Message'])
-      DIRAC.exit(1)
+    if not res['OK']:
+      if not trial:
+        gLogger.fatal("Error getting list of directories for %s" % baseDir, res['Message'])
+        DIRAC.exit(1)
     else:
       break
   # The returned value is a dictionary of all directory leaves

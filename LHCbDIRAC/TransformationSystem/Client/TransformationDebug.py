@@ -394,18 +394,33 @@ class TransformationDebug(object):
       selectDict['LFN'] = lfnList
     if seList:
       selectDict['UsedSE'] = seList
+    taskFiles = {}
     if taskList:
       # First get fileID per task as the task may no longer be in the TransformationFiles table
-      res = self.transClient.getTableDistinctAttributeValues('TransformationFileTasks', ['FileID'],
-                                                             {'TransformationID': self.transID, 'TaskID': taskList})
-      if res['OK']:
-        selectDict['FileID'] = res['Value']['FileID']
-      else:
-        gLogger.error("Error getting Transformation tasks:", res['Message'])
-        return []
+      for taskID in taskList:
+        res = self.transClient.getTableDistinctAttributeValues('TransformationFileTasks', ['FileID'],
+                                                               {'TransformationID': self.transID, 'TaskID': taskID})
+        if res['OK']:
+          # Keep track of which file corresponds to which task
+          fileID = res['Value']['FileID'][0]
+          taskFiles.setdefault(fileID, []).append(taskID)
+          selectDict.setdefault('FileID', []).append(fileID)
+        else:
+          gLogger.error("Error getting Transformation tasks:", res['Message'])
+          return []
     res = self.transClient.getTransformationFiles(selectDict)
     if res['OK']:
-      return res['Value']
+      if taskFiles:
+        # Set the correct taskID as it may have changed
+        fileDictList = []
+        for fileDict in res['Value']:
+          for taskID in taskFiles[fileDict['FileID']]:
+            newFile = fileDict.copy()
+            newFile['TaskID'] = taskID
+            fileDictList.append(newFile)
+      else:
+        fileDictList = res['Value']
+      return fileDictList
     else:
       gLogger.error("Error getting Transformation files:", res['Message'])
       return []
@@ -1297,7 +1312,7 @@ class TransformationDebug(object):
               lfns = res['Value']['DownloadInputData'].split('Failed to download')[1].split(':')[1].split()
               for lfn in lfns:
                 idrLfns.setdefault(lfn, []).append(job1)
-        elif majorStatus == 'Failed' and minorStatus == 'Job stalled: pilot not running':
+        elif minorStatus in ('Job stalled: pilot not running', 'Watchdog identified this job as stalled'):
           lastLine = ''
           # Now get last lines
           for job1 in sorted(jobs) + [0]:
@@ -1851,7 +1866,7 @@ class TransformationDebug(object):
                 taskDict.setdefault(taskID, []).append(fileDict['LFN'])
           fileRun = fileDict['RunNumber']
           fileLfn = fileDict['LFN']
-          if byFiles and not taskList:
+          if byFiles:
             gLogger.notice("%s - Run: %s - Status: %s - UsedSE: %s - ErrorCount %s" %
                            (fileLfn, fileRun, fileDict['Status'], fileDict['UsedSE'], fileDict['ErrorCount']))
           if not fileRun and '/MC' not in fileLfn:
@@ -1973,7 +1988,7 @@ class TransformationDebug(object):
               gLogger.notice("")
         if byJobs and jobsForLfn:
           self.__checkJobs(jobsForLfn, byFiles, checkLogs)
-      if 'Problematic' in status and nbReplicasProblematic:
+      if 'Problematic' in status and nbReplicasProblematic and not byFiles:
         self.__checkProblematicFiles(nbReplicasProblematic, problematicReplicas, failedFiles)
       if toBeKicked:
         if self.kickRequests:

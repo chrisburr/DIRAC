@@ -192,7 +192,10 @@ class ShiftDBAgent(AgentModule):
       if wgroup.warnings != []:
         self.log.warn(wgroup.warnings)
     #  return S_ERROR(wgroup.warnings)
-    elif wgroup.result.Members:
+    if hasattr(wgroup, 'error'):
+      if wgroup.error != []:
+        self.log.error(wgroup.error)
+    if hasattr(wgroup, 'result') and hasattr(wgroup.result, 'Members'):
       for members in wgroup.result.Members:
         lastShifterEmail.append(members.Email)
         lastShifterList[members.Email] = members
