@@ -506,7 +506,7 @@ class TestMethods(unittest.TestCase):
                 ['OptionFiles', '$APPCONFIGOPTS/Merging/DV-Stripping13-Merging.py'],
                 ['DDDB', 'head-20110302'],
                 ['CONDDB', 'head-20110512'],
-                ['ExtraPackages', 'AppConfig.v3r102'],
+                ['ExtraPackages', 'AppConfig.v3r274'],
                 ['Visible', 'N']]
     for value in expected:
       self.assertTrue(value in retVal['Value']['Records']['Step-13438'])
