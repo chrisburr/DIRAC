@@ -35,9 +35,6 @@ class AccountingCommand(Command):
     else:
       self.rClient = ReportsClient()
 
-    if 'ReportGenerator' in self.apis:
-      self.rClient.rpcClient = self.apis['ReportGenerator']
-
     if 'ResourceManagementClient' in self.apis:
       self.rmClient = self.apis['ResourceManagementClient']
     else:

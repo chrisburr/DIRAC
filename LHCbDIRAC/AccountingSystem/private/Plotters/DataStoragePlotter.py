@@ -14,27 +14,28 @@ DataStoragePlotter.__bases__:
   DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
 """
 
-from DIRAC                                                import S_OK, S_ERROR
+from DIRAC import S_OK, S_ERROR
 from DIRAC.AccountingSystem.private.Plotters.BaseReporter import BaseReporter
 
-from LHCbDIRAC.AccountingSystem.Client.Types.DataStorage  import DataStorage
+from LHCbDIRAC.AccountingSystem.Client.Types.DataStorage import DataStorage
 
 __RCSID__ = "$Id$"
 
-#FIXME: refactor _reportMethods
-#FIXME: refactor _plotMethods
+# FIXME: refactor _reportMethods
+# FIXME: refactor _plotMethods
 
-class DataStoragePlotter( BaseReporter ):
+
+class DataStoragePlotter(BaseReporter):
   """DataStoragePlotter as extension of BaseReporter."""
 
-  _typeName          = "DataStorage"
-  _typeKeyFields     = [ dF[0] for dF in DataStorage().definitionKeyFields ]
+  _typeName = "DataStorage"
+  _typeKeyFields = [dF[0] for dF in DataStorage().definitionKeyFields]
 
-  #.............................................................................
   # Catalog Space
 
   _reportCatalogSpaceName = "LFN size"
-  def _reportCatalogSpace( self, reportRequest ):
+
+  def _reportCatalogSpace(self, reportRequest):
     """Reports about the LFN size and the catalog space from the accounting.
 
     :param reportRequest: <dict>
@@ -57,40 +58,40 @@ class DataStoragePlotter( BaseReporter ):
       }
     """
 
-    if reportRequest[ 'grouping' ] == "StorageElement":
-      return S_ERROR( "Grouping by storage element when requesting lfn info makes no sense" )
+    if reportRequest['grouping'] == "StorageElement":
+      return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
 
-    selectString = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
+    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
 
-    selectFields = ( selectString + ", %s, %s, SUM(%s/%s)",
-                     reportRequest[ 'groupingFields' ][1] + ['startTime', 'bucketLength',
-                                                             'LogicalSize', 'entriesInBucket']
-                   )
+    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
+                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
+                                                          'LogicalSize', 'entriesInBucket']
+                    )
 
-    retVal = self._getTimedData( reportRequest[ 'startTime' ],
-                                 reportRequest[ 'endTime' ],
-                                 selectFields,
-                                 reportRequest[ 'condDict' ],
-                                 reportRequest[ 'groupingFields' ],
-                                 { 'convertToGranularity' : 'average', 'checkNone' : True } )
-    if not retVal[ 'OK' ]:
+    retVal = self._getTimedData(reportRequest['startTime'],
+                                reportRequest['endTime'],
+                                selectFields,
+                                reportRequest['condDict'],
+                                reportRequest['groupingFields'],
+                                {'convertToGranularity': 'average', 'checkNone': True})
+    if not retVal['OK']:
       return retVal
 
-    dataDict, granularity = retVal[ 'Value' ]
-    self.stripDataField( dataDict, 0 )
+    dataDict, granularity = retVal['Value']
+    self.stripDataField(dataDict, 0)
 
-    accumMaxValue = self._getAccumulationMaxValue( dataDict )
-    suitableUnits = self._findSuitableUnit( dataDict, accumMaxValue, "bytes" )
+    accumMaxValue = self._getAccumulationMaxValue(dataDict)
+    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "bytes")
 
-    #3rd variable unused ( maxValue )
+    # 3rd variable unused ( maxValue )
     baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    return S_OK( {'data'          : baseDataDict,
-                   'graphDataDict' : graphDataDict,
-                   'granularity'   : granularity,
-                   'unit'          : unitName} )
+    return S_OK({'data': baseDataDict,
+                 'graphDataDict': graphDataDict,
+                 'granularity': granularity,
+                 'unit': unitName})
 
-  def _plotCatalogSpace( self, reportRequest, plotInfo, filename ):
+  def _plotCatalogSpace(self, reportRequest, plotInfo, filename):
     """Creates <filename>.png file containing information regarding the LFN
     size and the catalog space.
 
@@ -118,25 +119,26 @@ class DataStoragePlotter( BaseReporter ):
        { 'plot': True, 'thumbnail': False }
     """
 
-    startTime = reportRequest[ 'startTime' ]
-    endTime   = reportRequest[ 'endTime' ]
-    span      = plotInfo[ 'granularity' ]
-    dataDict  = plotInfo[ 'graphDataDict' ]
+    startTime = reportRequest['startTime']
+    endTime = reportRequest['endTime']
+    span = plotInfo['granularity']
+    dataDict = plotInfo['graphDataDict']
 
-    metadata = {'title'     : "LFN space usage grouped by %s" % reportRequest[ 'grouping' ],
-                'starttime' : startTime,
-                'endtime'   : endTime,
-                'span'      : span,
-                'ylabel'    : plotInfo[ 'unit' ]}
+    metadata = {'title': "LFN space usage grouped by %s" % reportRequest['grouping'],
+                'starttime': startTime,
+                'endtime': endTime,
+                'span': span,
+                'ylabel': plotInfo['unit']}
 
-    dataDict = self._fillWithZero( span, startTime, endTime, dataDict )
-    return self._generateStackedLinePlot( filename, dataDict, metadata )
+    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+    return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-  #.............................................................................
+  # .............................................................................
   # Catalog Files
 
   _reportCatalogFilesName = "LFN files"
-  def _reportCatalogFiles( self, reportRequest ):
+
+  def _reportCatalogFiles(self, reportRequest):
     """Reports about the LFN files and the catalog files from the accounting.
 
     :param reportRequest: <dict>
@@ -159,39 +161,39 @@ class DataStoragePlotter( BaseReporter ):
       }
     """
 
-    if reportRequest[ 'grouping' ] == "StorageElement":
-      return S_ERROR( "Grouping by storage element when requesting lfn info makes no sense" )
+    if reportRequest['grouping'] == "StorageElement":
+      return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
 
-    selectString = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
-    selectFields = ( selectString + ", %s, %s, SUM(%s/%s)",
-                     reportRequest[ 'groupingFields' ][1] + [ 'startTime', 'bucketLength',
-                                    'LogicalFiles', 'entriesInBucket'
-                                   ]
-                   )
-    retVal = self._getTimedData( reportRequest[ 'startTime' ],
-                                 reportRequest[ 'endTime' ],
-                                 selectFields,
-                                 reportRequest[ 'condDict' ],
-                                 reportRequest[ 'groupingFields' ],
-                                 { 'convertToGranularity' : 'average', 'checkNone' : True } )
-    if not retVal[ 'OK' ]:
+    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
+    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
+                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
+                                                          'LogicalFiles', 'entriesInBucket'
+                                                          ]
+                    )
+    retVal = self._getTimedData(reportRequest['startTime'],
+                                reportRequest['endTime'],
+                                selectFields,
+                                reportRequest['condDict'],
+                                reportRequest['groupingFields'],
+                                {'convertToGranularity': 'average', 'checkNone': True})
+    if not retVal['OK']:
       return retVal
 
-    dataDict, granularity = retVal[ 'Value' ]
-    self.stripDataField( dataDict, 0 )
+    dataDict, granularity = retVal['Value']
+    self.stripDataField(dataDict, 0)
 
-    accumMaxValue = self._getAccumulationMaxValue( dataDict )
-    suitableUnits = self._findSuitableUnit( dataDict, accumMaxValue, "files" )
+    accumMaxValue = self._getAccumulationMaxValue(dataDict)
+    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "files")
 
-    #3rd variable unused ( maxValue )
+    # 3rd variable unused ( maxValue )
     baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    return S_OK( { 'data'          : baseDataDict,
-                   'graphDataDict' : graphDataDict,
-                   'granularity'   : granularity,
-                   'unit'          : unitName} )
+    return S_OK({'data': baseDataDict,
+                 'graphDataDict': graphDataDict,
+                 'granularity': granularity,
+                 'unit': unitName})
 
-  def _plotCatalogFiles( self, reportRequest, plotInfo, filename ):
+  def _plotCatalogFiles(self, reportRequest, plotInfo, filename):
     """Creates <filename>.png file containing information regarding the LFN
     files and the catalog files.
 
@@ -219,25 +221,26 @@ class DataStoragePlotter( BaseReporter ):
        { 'plot': True, 'thumbnail': False }
     """
 
-    startTime = reportRequest[ 'startTime' ]
-    endTime   = reportRequest[ 'endTime' ]
-    span      = plotInfo[ 'granularity' ]
-    dataDict  = plotInfo[ 'graphDataDict' ]
+    startTime = reportRequest['startTime']
+    endTime = reportRequest['endTime']
+    span = plotInfo['granularity']
+    dataDict = plotInfo['graphDataDict']
 
-    metadata = {'title'     : "Number of LFNs by %s" % reportRequest[ 'grouping' ],
-                'starttime' : startTime,
-                'endtime'   : endTime,
-                'span'      : span,
-                'ylabel'    : plotInfo[ 'unit' ]}
+    metadata = {'title': "Number of LFNs by %s" % reportRequest['grouping'],
+                'starttime': startTime,
+                'endtime': endTime,
+                'span': span,
+                'ylabel': plotInfo['unit']}
 
-    dataDict = self._fillWithZero( span, startTime, endTime, dataDict )
-    return self._generateStackedLinePlot( filename, dataDict, metadata )
+    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+    return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-  #.............................................................................
+  # .............................................................................
   # Physical Space
 
   _reportPhysicalSpaceName = "PFN size"
-  def _reportPhysicalSpace( self, reportRequest ):
+
+  def _reportPhysicalSpace(self, reportRequest):
     """Reports about the PFN size and the physical space from the accounting.
 
     :param reportRequest: <dict>
@@ -260,38 +263,38 @@ class DataStoragePlotter( BaseReporter ):
       }
     """
 
-    selectString = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
-    selectFields = ( selectString + ", %s, %s, SUM(%s/%s)",
-                     reportRequest[ 'groupingFields' ][1] + [ 'startTime', 'bucketLength',
-                                    'PhysicalSize', 'entriesInBucket'
-                                   ]
-                   )
-    retVal = self._getTimedData( reportRequest[ 'startTime' ],
-                                 reportRequest[ 'endTime' ],
-                                 selectFields,
-                                 reportRequest[ 'condDict' ],
-                                 reportRequest[ 'groupingFields' ],
-                                 { 'convertToGranularity' : 'average', 'checkNone' : True } )
-    if not retVal[ 'OK' ]:
+    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
+    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
+                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
+                                                          'PhysicalSize', 'entriesInBucket'
+                                                          ]
+                    )
+    retVal = self._getTimedData(reportRequest['startTime'],
+                                reportRequest['endTime'],
+                                selectFields,
+                                reportRequest['condDict'],
+                                reportRequest['groupingFields'],
+                                {'convertToGranularity': 'average', 'checkNone': True})
+    if not retVal['OK']:
       return retVal
 
-    dataDict, granularity = retVal[ 'Value' ]
-    self.stripDataField( dataDict, 0 )
+    dataDict, granularity = retVal['Value']
+    self.stripDataField(dataDict, 0)
 
-    accumMaxValue = self._getAccumulationMaxValue( dataDict )
-    suitableUnits = self._findSuitableUnit( dataDict, accumMaxValue, "bytes" )
+    accumMaxValue = self._getAccumulationMaxValue(dataDict)
+    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "bytes")
 
-    #3rd variable unused ( maxValue )
+    # 3rd variable unused ( maxValue )
     baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    return S_OK( {
-                  'data'          : baseDataDict,
-                  'graphDataDict' : graphDataDict,
-                  'granularity'   : granularity,
-                  'unit'          : unitName
-                  } )
+    return S_OK({
+        'data': baseDataDict,
+        'graphDataDict': graphDataDict,
+        'granularity': granularity,
+        'unit': unitName
+    })
 
-  def _plotPhysicalSpace( self, reportRequest, plotInfo, filename ):
+  def _plotPhysicalSpace(self, reportRequest, plotInfo, filename):
     """Creates <filename>.png file containing information regarding the PFN
     size and the physical space.
 
@@ -319,25 +322,26 @@ class DataStoragePlotter( BaseReporter ):
        { 'plot': True, 'thumbnail': False }
     """
 
-    startTime = reportRequest[ 'startTime' ]
-    endTime   = reportRequest[ 'endTime' ]
-    span      = plotInfo[ 'granularity' ]
-    dataDict  = plotInfo[ 'graphDataDict' ]
+    startTime = reportRequest['startTime']
+    endTime = reportRequest['endTime']
+    span = plotInfo['granularity']
+    dataDict = plotInfo['graphDataDict']
 
-    metadata = {'title'     : "PFN space usage by %s" % reportRequest[ 'grouping' ],
-                'starttime' : startTime,
-                'endtime'   : endTime,
-                'span'      : span,
-                'ylabel'    : plotInfo[ 'unit' ]}
+    metadata = {'title': "PFN space usage by %s" % reportRequest['grouping'],
+                'starttime': startTime,
+                'endtime': endTime,
+                'span': span,
+                'ylabel': plotInfo['unit']}
 
-    dataDict = self._fillWithZero( span, startTime, endTime, dataDict )
-    return self._generateStackedLinePlot( filename, dataDict, metadata )
+    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+    return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-  #.............................................................................
+  # .............................................................................
   # Physical Files
 
   _reportPhysicalFilesName = "PFN files"
-  def _reportPhysicalFiles( self, reportRequest ):
+
+  def _reportPhysicalFiles(self, reportRequest):
     """Reports about the PFN files and the physical files from the accounting.
 
     :param reportRequest: <dict>
@@ -360,35 +364,35 @@ class DataStoragePlotter( BaseReporter ):
       }
     """
 
-    selectString = self._getSelectStringForGrouping( reportRequest[ 'groupingFields' ] )
-    selectFields = ( selectString + ", %s, %s, SUM(%s/%s)",
-                     reportRequest[ 'groupingFields' ][1] + [ 'startTime', 'bucketLength',
-                                    'PhysicalFiles', 'entriesInBucket'
-                                   ]
-                   )
-    retVal = self._getTimedData( reportRequest[ 'startTime' ],
-                                 reportRequest[ 'endTime' ],
-                                 selectFields,
-                                 reportRequest[ 'condDict' ],
-                                 reportRequest[ 'groupingFields' ],
-                                 { 'convertToGranularity' : 'average', 'checkNone' : True } )
-    if not retVal[ 'OK' ]:
+    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
+    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
+                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
+                                                          'PhysicalFiles', 'entriesInBucket'
+                                                          ]
+                    )
+    retVal = self._getTimedData(reportRequest['startTime'],
+                                reportRequest['endTime'],
+                                selectFields,
+                                reportRequest['condDict'],
+                                reportRequest['groupingFields'],
+                                {'convertToGranularity': 'average', 'checkNone': True})
+    if not retVal['OK']:
       return retVal
-    dataDict, granularity = retVal[ 'Value' ]
-    self.stripDataField( dataDict, 0 )
+    dataDict, granularity = retVal['Value']
+    self.stripDataField(dataDict, 0)
 
-    accumMaxValue = self._getAccumulationMaxValue( dataDict )
-    suitableUnits = self._findSuitableUnit( dataDict, accumMaxValue, "files" )
+    accumMaxValue = self._getAccumulationMaxValue(dataDict)
+    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "files")
 
-    #3rd variable unused ( maxValue )
+    # 3rd variable unused ( maxValue )
     baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    return S_OK( {'data'          : baseDataDict,
-                  'graphDataDict' : graphDataDict,
-                  'granularity'   : granularity,
-                  'unit'          : unitName} )
+    return S_OK({'data': baseDataDict,
+                 'graphDataDict': graphDataDict,
+                 'granularity': granularity,
+                 'unit': unitName})
 
-  def _plotPhysicalFiles( self, reportRequest, plotInfo, filename ):
+  def _plotPhysicalFiles(self, reportRequest, plotInfo, filename):
     """Creates <filename>.png file containing information regarding the PFN
     files and the physical files.
 
@@ -416,19 +420,16 @@ class DataStoragePlotter( BaseReporter ):
        { 'plot': True, 'thumbnail': False }
     """
 
-    startTime = reportRequest[ 'startTime' ]
-    endTime   = reportRequest[ 'endTime' ]
-    span      = plotInfo[ 'granularity' ]
-    dataDict  = plotInfo[ 'graphDataDict' ]
+    startTime = reportRequest['startTime']
+    endTime = reportRequest['endTime']
+    span = plotInfo['granularity']
+    dataDict = plotInfo['graphDataDict']
 
-    metadata = {'title'     : "Number of PFNs by %s" % reportRequest[ 'grouping' ],
-                'starttime' : startTime,
-                'endtime'   : endTime,
-                'span'      : span,
-                'ylabel'    : plotInfo[ 'unit' ]}
+    metadata = {'title': "Number of PFNs by %s" % reportRequest['grouping'],
+                'starttime': startTime,
+                'endtime': endTime,
+                'span': span,
+                'ylabel': plotInfo['unit']}
 
-    dataDict = self._fillWithZero( span, startTime, endTime, dataDict )
-    return self._generateStackedLinePlot( filename, dataDict, metadata )
-
-#...............................................................................
-#EOF
+    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+    return self._generateStackedLinePlot(filename, dataDict, metadata)

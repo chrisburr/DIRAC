@@ -24,8 +24,8 @@ __RCSID__ = "$Id$"
 class SpaceToken(BaseAccountingType):
   """SpaceToken as extension of BaseAccountingType.
 
-  It is filled from the RSS.Command.SpaceTokenCommand every time the
-  command is executed ( see RSS.Agent.CacheFeederAgent ).
+  It is filled from the LHCbDIRAC RSS Command FreeDiskSpace every time the
+  command is executed (from Agent CacheFeederAgent)
   """
 
   def __init__(self):
@@ -46,6 +46,3 @@ class SpaceToken(BaseAccountingType):
                           ]
 
     self.checkType()
-
-#...............................................................................
-# EOF
