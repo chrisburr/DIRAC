@@ -1,3 +1,71 @@
+v10r0-pre13
+use DIRAC v7r0p14
+
+* fix style
+* removed remnants of dist-tools
+* mostly style fixes
+* fixed RSS ConfigTemplate.cfg
+* removed SLS Agent
+* pep8
+* Uncomment line in oracle_utilities_stored_procedures.sql
+* HACK: Disable DataManager and Bookkeeping client tests
+* Apply bokkeeping database feedback
+* Fix another typo
+* Fix typo
+* Use apk instead of yum to install integration test dependencies
+* Change IRODSStorageElementHandler to StorageElementHandler for data management tests
+* Add error code check
+* Simplify CI config and use diraccfg
+* Run tests against DIRACGrid/DIRAC@rel-v7r0
+* Add RAW filetype when running bookkeeping tests
+* Set bookkeeping configuration at the right time
+* Fix path to dirac-bkk-cfg-update.py
+* Start bookkeeping database earlier in the CI job
+* Use docker-privileged-xl runners
+* Limit Oracle to 768MB of memory
+* Install server before configuring bookkeeping
+* Fix typo
+* Fix path to source in bookkeeping database container
+* Add missing copyright statement
+* Start bookkeeping after preparingEnvironment to minimise resource usage
+* Fix bookkeeping CI schema creation command
+* Fix docker exec commands for running without a tty
+* Start adding bookkepping integration tests
+* Always fill DATAQUALITY table
+* Add missing commits in oracle_schema_storedprocedures.sql
+* Support generating a filetypeid when filetypes is empty
+* Another addition to the bookkeeping schema
+* Fix and update bookkeeping SQL
+* Fix finding project version
+* Add integration to CI tests
+* Add cx_Oracle to doc test environment
+* new columns added to the jobs table, test updated accordinly
+* fix Bookkeeping integration test
+* v9r4p15
+* fix code style
+* do not use the runview table for a given run
+* add missing table to the list of tables
+* protect in case getFileDescendants fails
+* protect if Failed is a list
+* fixed looking in egroups
+* fix error handling
+* re-try upload docker hub
+* don't look for XMLSummary if it is not created
+* use https instead of ssh
+* fix when jobIDs are provided
+* Clear accidentally committed ExampleConfig.rst
+* Fix another set of warnings that were found when rebasing
+* Fix the one last doc warning
+* Fix running check_docs in CI
+* Fix remaining warnings by hand
+* Run docformatter to fix docstring style
+* DOC: Fix incorrect indentation on first line of comment
+* Don't give up if one email is invalid
+* Minimise nesting to make ProductionManagementSystem/Agent/NotifyAgent.py more readable
+* Only ask people to act on Simulation requests
+* Don't ask lhcb_tech to sign requests
+
+
 v10r0-pre12
 use DIRAC v7r0p12
 
