@@ -18,16 +18,16 @@ variables:
 image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
 
 stages:
+  # If there's a new tag, create its tarball, and upload it.
+  - release
    # Run all the tests
   - test
   # deploy the coverage results
   - coverage
   - coverageDfs
-  # Release the software on AFS
-  - release
-  # Build the docker and deploy on CVMFS
+  # If there's a new tag, build the docker images, and also deploy on CVMFS
   - deploy_release
-  # Tag the devel container if needed
+  # If there's a new tag, tag the devel container
   - tag_container
 
 ### test stage ###
