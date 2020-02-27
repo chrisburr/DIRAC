@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
@@ -86,9 +86,9 @@ function findRelease(){
     # First, try to find if we are on a production tag
     if [ ! -z "$LHCBDIRACBRANCH" ]
     then
-      projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+      projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
     else
-      projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g'`
+      projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g'`
     fi
 
     # The special case is when there's no 'p'... (e.g. version v8r3)
@@ -96,9 +96,9 @@ function findRelease(){
     then
       if [ ! -z "$LHCBDIRACBRANCH" ]
       then
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
       else
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g'`
       fi
     fi
 
@@ -107,20 +107,24 @@ function findRelease(){
     then
       if [ ! -z "$LHCBDIRACBRANCH" ]
       then
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
       else
-        projectVersion=`cat $TESTCODE/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g'`
+        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g'`
       fi
     fi
 
   fi
 
-
+  # TODO: This should be made to fail to due set -u and -o pipefail
+  if [ ! "$projectVersion" ]; then
+    echo "Failed to set projectVersion"
+    exit 1
+  fi
 
   echo PROJECT:$projectVersion && echo $projectVersion > project.version
 
   # projectVersionLine : line number where v7r15-pre2 is
-  projectVersionLine=`cat $TESTCODE/releases.cfg | grep -n $projectVersion | cut -d ':' -f 1 | head -1`
+  projectVersionLine=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep -n $projectVersion | cut -d ':' -f 1 | head -1`
   # start := line number after "{"
   start=$(($projectVersionLine+2))
   # end   := line number after "}"
@@ -129,20 +133,16 @@ function findRelease(){
   #   Modules = LHCbDIRAC:v7r15-pre2, LHCbWebDIRAC:v3r3p5
   #   Depends = DIRAC:v6r10-pre12
   #   LcgVer = 2013-09-24
-  versions=`sed -n "$start,$end p" $TESTCODE/releases.cfg`
+  versions=`sed -n "$start,$end p" $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg`
 
   # Extract DIRAC version
   diracVersion=`echo $versions | tr ' ' '\n' | grep ^DIRAC:v*[^,] | sed 's/,//g' | cut -d ':' -f2`
   # Extract LHCbDIRAC version
   lhcbdiracVersion=`echo $versions | tr ' ' '\n' | grep ^LHCbDIRAC:v* | sed 's/,//g' | cut -d ':' -f2`
-  # Extract LCG version
-  lcgVersion=`echo $versions | sed s/' = '/'='/g | tr ' ' '\n' | grep LcgVer | cut -d '=' -f2`
 
   # PrintOuts
   echo '==> ' DIRAC:$diracVersion && echo $diracVersion > dirac.version
   echo '==> ' LHCbDIRAC:$lhcbdiracVersion && echo $lhcbdiracVersion > lhcbdirac.version
-  echo '==> ' LCG:$lcgVersion && echo $lcgVersion > lcg.version
-
 }
 
 
@@ -157,7 +157,7 @@ function findRelease(){
 diracServices(){
   echo '==> [diracServices]'
 
-  services=$(cat services |  cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|IRODSStorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
+  services=$(cat services |  cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
 
   for serv in $services
   do
@@ -388,22 +388,13 @@ function installLHCbDIRACClient(){
   cp $TESTCODE/DIRAC/Core/scripts/dirac-install.py $CLIENTINSTALLDIR/dirac-install
   chmod +x $CLIENTINSTALLDIR/dirac-install
   cd $CLIENTINSTALLDIR
-  if [ $? -ne 0 ]
-  then
+  if [ $? -ne 0 ]; then
     echo 'ERROR: cannot change to ' $CLIENTINSTALLDIR
     return
   fi
 
-  # If DIRACOSVER is not defined, use LcgBundle
-  if [ -z $DIRACOSVER ]
-  then
-     echo "Installing with LcgBundle";
-    ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client -g `cat $WORKSPACE/lcg.version` $DEBUG
-  else
-     echo "Installing with DIRACOS $DIRACOSVER";
-    ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client --dirac-os --dirac-os-version=$DIRACOSVER $DEBUG;
-
-  fi
+  echo "Installing with DIRACOS version=$DIRACOSVER";
+  ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client --dirac-os --dirac-os-version=$DIRACOSVER $DEBUG;
 
   source bashrc
 
@@ -411,7 +402,6 @@ function installLHCbDIRACClient(){
   #ln -s /cvmfs/lhcb.cern.ch/lib/lhcb/DIRAC/etc/dirac.cfg $CLIENTINSTALLDIR/etc/dirac.cfg
 
   dirac-configure --UseServerCertificate -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -S $DIRACSETUP -C $CSURL -e LHCb -ddd
-
 }
 
 function setupLHCbDIRAC(){
@@ -473,7 +463,15 @@ function sourcingEnv(){
 
 function setupBKKDB(){
   echo -e "==> Setting up the Bookkeeping Database"
-  python $TESTCODE/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py -p $ORACLEDB_PASSWORD $DEBUG
+  if [ -n "$ORACLEDB_PASSWORD" ]; then
+    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" -p $ORACLEDB_PASSWORD $DEBUG
+  else
+    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" "${DEBUG}" \
+      --password "bkdbpass" \
+      --host "bkdb:1521/bkdbpdb" \
+      --read-user "system" \
+      --write-user "system"
+  fi
 }
 
 #EOF

@@ -36,6 +36,7 @@ class DataInsertTestCase(unittest.TestCase):
   def setUp(self):
     super(DataInsertTestCase, self).setUp()
     self.bk = BookkeepingClient()
+    self.bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
     self.runnb = '1122'
     self.files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (self.runnb, self.runnb, i) for i in xrange(5)]
     self.xmlJob = """<?xml version="1.0" encoding="ISO-8859-1"?>

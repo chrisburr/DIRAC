@@ -98,7 +98,6 @@ function insertJobsRow(
 procedure insertInputFilesRow (v_FileId NUMBER, v_JobId NUMBER);
 
 procedure updateReplicaRow(v_fileID number,v_replica varchar2);
-procedure deleteJob(v_jobid number);
 procedure deleteInputFiles(v_jobid number);
 procedure deletefile(v_fileid number);
 procedure deleteSetpContiner( v_prod number);
@@ -229,7 +228,7 @@ if found>0 then
 else
 select distinct DESCRIPTION into descr from filetypes where
            NAME=UPPER(v_name);
-select max(filetypeid)+1 into id from filetypes;
+select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
 insert into filetypes(filetypeid,name,description,version) values(id, UPPER(v_name),descr,filetype);
 commit;
 return id;
@@ -238,7 +237,7 @@ EXCEPTION
   WHEN found_name then
   raise_application_error(-20001,'The '||v_name || ' file type is already exist!!!');
   WHEN NO_DATA_FOUND then
-   select max(filetypeid)+1 into id from filetypes;
+   select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
    insert into filetypes(filetypeid,name,description,version) values(id,UPPER(v_name),description,filetype);
    commit;
   return id;
@@ -808,7 +807,7 @@ function checkFileTypeAndVersion (
    IF id > 0 then
    select distinct DESCRIPTION into descr from filetypes where
            NAME=v_NAME;
-   select max(filetypeid)+1 into id from filetypes;
+   select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
    insert into filetypes(filetypeid,name,description,version) values(id,v_NAME,descr,v_VERSION);
    commit;
    return id;
@@ -1077,6 +1076,7 @@ function insertJobsRow (
                 Luminosity=v_luminosity,
                 InstLuminosity=v_instluminosity,
                 VisibilityFlag=v_visibilityFlag where fileid=fid;
+    commit;
     return fid;
   end;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1100,20 +1100,6 @@ procedure updateReplicaRow(
   )is
   begin
    update files set inserttimestamp = sys_extract_utc(systimestamp),gotreplica=v_replica where fileid=v_fileID;
-   commit;
-  end;
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure deleteJob(
-   v_jobid    number
- )is
-  nbOfjobs number;
-  prod number;
-  begin
-   select count(*) into nbOfjobs from jobs where jobs.production=(select production from jobs where jobid=v_jobid);
-   if nbOfjobs=1 then
-     delete productions where production=(select production from jobs where jobid=v_jobid);
-   end if;
-   delete jobs where jobid=v_jobid;
    commit;
   end;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2012,6 +1998,7 @@ begin
   EXCEPTION
   WHEN DUP_VAL_ON_INDEX THEN
    update runstatus set Finished= v_Finished where runnumber=v_runnumber and jobid=v_JobId;
+   commit;
   end;
 
 procedure setRunFinished(
@@ -2137,6 +2124,7 @@ EXCEPTION
     DBMS_OUTPUT.put_line ('EXISTS:'||v_production||'->'||v_stepid||'->'||v_filetypeid||'->'||v_visible||'->'||v_eventtype);
     --NOT: If the production is already in the table, we only change the step!!!
     UPDATE productionoutputfiles SET stepid=v_stepid WHERE production=v_production and filetypeid=v_filetypeid and visible =v_visible and eventtypeid=v_eventtype;
+    commit;
 END;
 
 END; 

@@ -14,8 +14,6 @@
 variables:
     SANCHA_PATH_DEVEL: "/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/Sencha/ext-6.2.0/"
     SANCHA_PATH_PROD: "/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/Sencha/ext-6.2.0/"
-    LBENV_RELEASE: "1.1.1"
-    LBPLATFORMUTILS_RELEASE: "4.2.3"
     DEPLOY_REPO: "lhcb-core/cvmfs-deploy/deploy-lhcbdirac.git"
 
 # Image used for most of the jobs, unless specified
@@ -39,28 +37,26 @@ stages:
 # Common configuration between pytest, pylint, pycodestyle
 .test_setup: &test_setup
   before_script:
+    - yum install -y epel-release
+    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq
+    - export PYCURL_SSL_LIBRARY=openssl
+    - pip install --upgrade pip setuptools
+    - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - diracTAG=$(python -c "s = open('LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s[s.index('Depends'):]; s = s.split('\n')[0].split('=')[1].split(':')[1].strip(); print(s)")
+    - lhcbdiracTag=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
     - git checkout $diracTAG
     - cd ..
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel
-    - export PYCURL_SSL_LIBRARY=openssl
-    - pip install --upgrade pip
-    - pip install --upgrade setuptools
-    - pip install virtualenv
+    # Create a virtual environment in which to run the tests
     - virtualenv DIRAC_VENV
     - source DIRAC_VENV/bin/activate
-    - pip install --upgrade pip
-    - pip install --upgrade setuptools
-    - pip list
+    - pip install --upgrade pip setuptools
     - pip install -r DIRAC/requirements.txt
-    - pip install LbEnv==$LBENV_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
-    - pip install LbPlatformUtils==$LBPLATFORMUTILS_RELEASE --trusted-host=lhcb-pypi.web.cern.ch --extra-index-url=https://lhcb-pypi.web.cern.ch/lhcb-pypi/simple --force-reinstall
-    - yum install -y xz-devel
-    - pip install uproot backports.lzma lz4
+    - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4
 
   stage: test
   only:
@@ -136,6 +132,92 @@ check-copyright:
   script:
     - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - python lb-check-copyright upstream/master --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
+
+# Integration tests
+integration_tests:
+  stage: test
+  tags:
+    - docker-privileged-xl
+  image: diracgrid/docker-compose-dirac:latest
+  services:
+    - docker:19.03.1-dind
+  variables:
+    # As of GitLab 12.5, privileged runners at CERN mount a /certs/client docker volume that enables use of TLS to
+    # communicate with the docker daemon. This avoids a warning about the docker service possibly not starting
+    # successfully.
+    # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+    DOCKER_TLS_CERTDIR: "/certs"
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
+  before_script:
+    - apk add jq python3
+    - pip3 install diraccfg
+    # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
+    - LHCBDIRAC_RELEASE=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - export LHCBDIRAC_RELEASE
+    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
+    - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
+    - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
+    # Get DIRAC
+    - git clone https://github.com/DIRACGrid/DIRAC.git
+    - cd DIRAC
+    - git checkout "$diracRef"
+    - cd ..
+    # TODO: Fix and re-enable bookkeeping and data management tests
+    - sed -E -i 's@^.*/Test_DataManager.py .*$@@g' DIRAC/tests/Integration/all_integration_client_tests.sh
+    - sed -E -i 's@^.*/Test_Bookkeeping.py .*$@@g' LHCbDIRAC/tests/Integration/all_integration_client_tests.sh
+    - sed -E -i 's@^.*/Test_BookkeepingGUImethods.py .*$@@g' LHCbDIRAC/tests/Integration/all_integration_client_tests.sh
+    # Environment
+    - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
+    - export DIRACOSVER=LHCb:master
+    - export DIRACBRANCH=${LHCBDIRAC_RELEASE}
+    - export CI_REGISTRY_IMAGE=diracgrid
+    # ALTERNATIVE_MODULES
+    - declare -a ALTERNATIVE_MODULES
+    - ALTERNATIVE_MODULES+=("$PWD/LHCbDIRAC")
+    - ALTERNATIVE_MODULES+=("$PWD/DIRAC")
+    # TESTREPO
+    - declare -a TESTREPO
+    - TESTREPO+=("$PWD/LHCbDIRAC")
+    - TESTREPO+=("$PWD/DIRAC")
+    # EXTRA_ENVIRONMENT_CONFIG
+    - declare -a EXTRA_ENVIRONMENT_CONFIG
+    - EXTRA_ENVIRONMENT_CONFIG+=("export LHCBDIRAC_RELEASE=${LHCBDIRAC_RELEASE}")
+    # INSTALLOPTIONS
+    - declare -a INSTALLOPTIONS
+    - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
+    # Start the bookkeeping database container
+    - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
+    - |
+      docker run --rm --detach --name bkdb \
+        -p 1521:1521 \
+        -e ORACLE_SID=bkdbsid \
+        -e ORACLE_PDB=bkdbpdb \
+        -e ORACLE_PWD=bkdbpass \
+        -e ORACLE_CHARACTERSET=AL32UTF8 \
+        -v $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME:/repo \
+        gitlab-registry.cern.ch/cburr/lhcb-dirac-bookkeeping-ci/oracle-database:12.2.0.1-ee
+  script:
+    - source DIRAC/tests/CI/run_docker_setup.sh
+    - prepareEnvironment
+    # Install oracle client (will only work inside the CERN network!)
+    - docker exec -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
+    - docker exec -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
+    # Finish configuring the bokkeeping database
+    - docker network connect ci_default bkdb
+    - |
+      while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do
+        echo "Waiting for bookkeeping database to be ready... $(docker logs bkdb | grep 'complete' | tail -n 1)";
+        sleep 15;
+      done
+    - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh
+    # Carry on with the CI as normal
+    - installServer
+    - installClient
+    - testServer
+    - testClient
+    - checkErrors
+
+### coverage stage ###
 
 # This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
 pages:
@@ -238,7 +320,7 @@ build_docker_image:
   stage: deploy_release
   only:
     - tags
-  image: 
+  image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
   script:
@@ -252,7 +334,7 @@ build_client_docker_image:
   allow_failure: true
   only:
     - tags
-  image: 
+  image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
   script:
