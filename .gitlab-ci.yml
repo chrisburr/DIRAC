@@ -12,24 +12,22 @@
 # It performs some operations with an account.
 # Its credentials are stored as secret variable KRB_PASSWORD and KRB_USERNAME
 variables:
-    SANCHA_PATH_DEVEL: "/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/Sencha/ext-6.2.0/"
-    SANCHA_PATH_PROD: "/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/Sencha/ext-6.2.0/"
     DEPLOY_REPO: "lhcb-core/cvmfs-deploy/deploy-lhcbdirac.git"
 
 # Image used for most of the jobs, unless specified
 image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
 
 stages:
+  # If there's a new tag, create its tarball, and upload it.
+  - release
    # Run all the tests
   - test
   # deploy the coverage results
   - coverage
   - coverageDfs
-  # Release the software on AFS
-  - release
-  # Build the docker and deploy on CVMFS
+  # If there's a new tag, build the docker images, and also deploy on CVMFS
   - deploy_release
-  # Tag the devel container if needed
+  # If there's a new tag, tag the devel container
   - tag_container
 
 ### test stage ###
@@ -259,56 +257,22 @@ dfsdeploy:
 
 # ### release stage ###
 
-# This creates and deploy the tarball on AFS
+# This creates and deploy the tarball
 # It is triggered with a tag only
 create_tarball:
+  image: diracgrid/dirac-distribution:latest
   before_script:
     # Fetch a Kerberos token
     - echo "${KRB_PASSWORD}" | kinit ${KRB_USERNAME}@CERN.CH
-    # Get the group_login to be able to use lb-run
-    - source /cvmfs/lhcb.cern.ch/group_login.sh
-    # Configure ssh to use kerberos
-    - mkdir /root/.ssh
-    - echo -e  "PreferredAuthentications=gssapi-with-mic\nStrictHostKeyChecking=no\nHost lxplus*\n\tForwardX11Trusted yes\n\tGSSAPITrustDns yes\n\tGSSAPIDelegateCredentials yes\n\tGSSAPIAuthentication yes\n" > /root/.ssh/config
-    # Configure git to use kerberos
-    - git config --global http.emptyAuth true
-    # java is required by Sencha Cmd
-    - yum install -y java
-    # Sencha Cmd needs to be depoyed using the installer from cvmfs
-    - /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/Sencha/SenchaCmd-6.7.0.63-linux-amd64.sh -q -dir /tmp/extjs
-    - export PATH=/tmp/extjs:$PATH
-    - set -o pipefail
   stage: release
-  tags:
-    # We need a runner with CVMFS
-    - cvmfs
   only:
     - tags@lhcb-dirac/LHCbDIRAC
   script:
-
-    # Choose from which branch we should get the releases.cfg file
-    # We take it from devel if it is a pre release, otherwise master
-    - BRANCH=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
-    # Get the releases.cfg from the devel branch
-    - curl -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/LHCbDIRAC/releases.cfg > releases.cfg
-    # This is how it was originaly retrieved....
-    #- git archive --remote  ${CI_PROJECT_DIR} origin/devel LHCbDIRAC/releases.cfg  | tar -x -v -f - --transform 's|^LHCbDIRAC/||' LHCbDIRAC/releases.cfg
-    # use the kerberos gitlab auth rather than ssh
-    - sed 's/ssh:\/\/git@gitlab.cern.ch:7999/https:\/\/:@gitlab.cern.ch:8443/g' -i releases.cfg
-    # Identify extjs path based on the barnch
-    - SANCHA_PATH=$(if [ $BRANCH == "devel" ]; then echo $SANCHA_PATH_DEVEL; else echo $SANCHA_PATH_PROD; fi)
     # Create the release tarball
     # The last line output by the script is the command to run in order to deploy
-    - echo ${SANCHA_PATH}
-    - lb-run LHCbDIRAC/prod dirac-distribution -r ${CI_COMMIT_TAG} -l LHCb -C file:///$(pwd)/releases.cfg --extjspath=${SANCHA_PATH} | tail -n 1  > /tmp/deploy.sh
-    # Use the proper user
-    - export USER=${KRB_USERNAME}
-   #  # FIXME: this is the wrong path, but is used as a test
-   #  - sed 's/\/afs\/cern.ch\/lhcb\/distribution\/LHCbDirac_project/\/afs\/cern.ch\/user\/l\/lbmesos/g' -i /tmp/deploy.sh
-    # There are not html and pdf file, so the script returns a non 0 code, despite working fine
-    - sed 's/\*.pdf \*.html//g' -i /tmp/deploy.sh
+    - python3 dirac-distribution.py -r ${CI_COMMIT_TAG} -l LHCb | tail -n 1  > /tmp/deploy.sh
     - cat /tmp/deploy.sh
-    # Execute the deployment
+    - export USER=${KRB_USERNAME}
     - source /tmp/deploy.sh
 
 
