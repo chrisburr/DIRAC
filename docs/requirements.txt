@@ -6,3 +6,4 @@ LbPlatformUtils
 uproot
 certifi
 futures
+cx_Oracle
