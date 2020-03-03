@@ -147,6 +147,9 @@ integration_tests:
     DOCKER_TLS_CERTDIR: "/certs"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
   before_script:
+    # Login to GitLab
+    - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
+    # Add some dependencies
     - apk add jq python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
@@ -184,7 +187,6 @@ integration_tests:
     - declare -a INSTALLOPTIONS
     - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
     # Start the bookkeeping database container
-    - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
     - |
       docker run --rm --detach --name bkdb \
         -p 1521:1521 \
