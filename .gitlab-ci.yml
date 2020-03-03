@@ -147,6 +147,14 @@ integration_tests:
     DOCKER_TLS_CERTDIR: "/certs"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
   before_script:
+    - |
+      if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASS:-}" ]]; then
+        echo -e '\033[1m\033[31mError LHCB_BOOKKEEPING_DB_IMAGE_PASS variable is not defined!!!\033[0m';
+        echo -e 'Due to oracle licensing restrictions CI jobs need a secret to be able able to access the bookkeeping database container.';
+        echo -e 'For this test to run you will have to ask another LHCbDIRAC developer to give you access.';
+        echo -e "You can then manually copy to a masked variable to your fork's configuration using the instructions at:";
+        echo -e ' > https://docs.gitlab.com/ee/ci/variables/#via-the-ui';
+      fi
     # Login to GitLab
     - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
     # Add some dependencies
