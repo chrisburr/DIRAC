@@ -146,6 +146,9 @@ integration_tests:
     # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
     DOCKER_TLS_CERTDIR: "/certs"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
+  rules:
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASS == ""'
+      allow_failure: true
   before_script:
     - |
       if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASS:-}" ]]; then
