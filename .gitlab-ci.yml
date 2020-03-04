@@ -148,12 +148,12 @@ integration_tests:
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
   # Support for this will be added in GitLab 12.8 which will likely be available at CERN in late March
   # rules:
-  #   - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASS == ""'
+  #   - if: 'LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == ""'
   #     allow_failure: true
   before_script:
     - |
-      if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASS:-}" ]]; then
-        echo -e '\033[1m\033[31mError LHCB_BOOKKEEPING_DB_IMAGE_PASS variable is not defined!!!\033[0m';
+      if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD:-}" ]]; then
+        echo -e '\033[1m\033[31mError LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD variable is not defined!!!\033[0m';
         echo -e 'Due to oracle licensing restrictions CI jobs need a secret to be able able to access the bookkeeping database container.';
         echo -e 'For this test to run you will have to ask another LHCbDIRAC developer to give you access.';
         echo -e "You can then manually copy to a masked variable to your fork's configuration using the instructions at:";
