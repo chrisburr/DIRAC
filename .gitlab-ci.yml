@@ -270,7 +270,7 @@ create_tarball:
   script:
     # Create the release tarball
     # The last line output by the script is the command to run in order to deploy
-    - python3 dirac-distribution.py -r ${CI_COMMIT_TAG} -l LHCb | tail -n 1  > /tmp/deploy.sh
+    - python3 ./dirac-distribution.py -r ${CI_COMMIT_TAG} -l LHCb | tail -n 1  > /tmp/deploy.sh
     - cat /tmp/deploy.sh
     - export USER=${KRB_USERNAME}
     - source /tmp/deploy.sh
