@@ -1,3 +1,8 @@
+v9r4p16
+use DIRAC v6r22p23
+
+* Set input files status directly within the workflow
+
 v9r4p15
 use DIRAC v6r22p22
 
