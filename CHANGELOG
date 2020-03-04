@@ -189,6 +189,11 @@ use DIRAC v7r0p1
 * added createClient decorator
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
+v9r4p16
+use DIRAC v6r22p23
+
+* Set input files status directly within the workflow
+
 v9r4p15
 use DIRAC v6r22p22
 
@@ -205,6 +210,7 @@ use DIRAC v6r22p22
 * Only ask people to act on Simulation requests
 * Don't ask lhcb_tech to sign requests
 * Don't send emails if there is nothing to do
+
 v9r4p14
 use DIRAC v6r22p20
 

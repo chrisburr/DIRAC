@@ -75,42 +75,30 @@ class FailoverRequest(ModuleBase):
       filesInFileReport = self.fileReport.getFiles()
 
       if not self._checkWFAndStepStatus(noPrint=True):
-        # To overcome race condition issues, the file status for this case is reported by the failover request
-        statusDict = {}
+        # if the job fails, the input files will be reset to 'Unused'
         for lfn in self.inputDataList:
           if lfn not in filesInFileReport:
-            self.log.info("Add operation to set status 'Unused' due to workflow failure for input file: %s" % (lfn))
-            statusDict[lfn] = 'Unused'
-        if statusDict:
-          # Avoid setting an empty request
-          setFileStatusOp = Operation()
-          setFileStatusOp.Type = 'SetFileStatus'
-          setFileStatusOp.Arguments = DEncode.encode({'transformation': int(self.production_id),
-                                                      'statusDict': statusDict,
-                                                      'force': False})
-          self.request.addOperation(setFileStatusOp)
+            self.log.info("Set status of input files to 'Unused' due to workflow failure", lfn)
+            self.fileReport.setFileStatus(int(self.production_id), lfn, 'Unused')
       else:
         for lfn in self.inputDataList:
           if lfn not in filesInFileReport:
-            self.log.verbose("No status populated for input data %s, setting to 'Processed'" % lfn)
+            self.log.verbose("No status populated for input data, setting to 'Processed'", lfn)
             self.fileReport.setFileStatus(int(self.production_id), lfn, 'Processed')
 
       result = self.fileReport.commit()
       # If there are still files to set, try a second time and generate a request if it fails again
       if self.fileReport.getFiles():
-        self.log.error("Failed to report file status to TransformationDB")
+        self.log.error("On first attempt, failed to report file status to TransformationDB")
         # This will try a second time a commit, before generating a SetFileStatus operation
         result = self.fileReport.generateForwardDISET()
         if not result['OK']:
           self.log.warn("Could not generate Operation for file report with result:\n%s" % (result['Value']))
         else:
           if result['Value'] is None:  # Means the FileReport managed to report, no need for a new operation
-            self.log.info("On second trial, files correctly reported to TransformationDB")
+            self.log.info("On second attempt, files correctly reported to TransformationDB")
           else:
-            self.log.info("Populating request with file report info (SetFileStatus operation)")
-            result = self.request.addOperation(result['Value'])
-            if not result['OK']:
-              return result
+            self.log.error("On second attempt, SetFileStatus operation definitely failed - the DRA will take care")
       elif result['Value']:
         self.log.info("Status of files have been properly updated in the TransformationDB")
 
