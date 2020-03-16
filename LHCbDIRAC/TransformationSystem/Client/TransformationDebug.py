@@ -38,31 +38,7 @@ from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitor
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import PluginUtilities
-
-
-def _getTransformations(args):
-  """
-  Parse command arguments to get a list of transformations
-
-  :param args: arguments
-  :type args: list of args, first is transIDs
-
-  :return : list of integer transformation IDs
-  """
-  if not len(args):
-    gLogger.notice("Specify transformation number...")
-    Script.showHelp()
-  else:
-    ids = args[0].split(",")
-    transList = []
-    for transID in ids:
-      tid = transID.split(':')
-      if len(tid) > 1:
-        for i in xrange(int(tid[0]), int(tid[1]) + 1):
-          transList.append(i)
-      else:
-        transList.append(int(tid[0]))
-  return transList
+from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
 
 def _checkReplicasForProblematic(lfns, replicas, nbReplicasProblematic, problematicReplicas):
@@ -380,7 +356,7 @@ class TransformationDebug(object):
     self.listOfAssignedRequests = {}
     self.transPlugin = None
 
-  def __getFilesForRun(self, runID=None, status=None, lfnList=None, seList=None, taskList=None):
+  def __getFilesForRun(self, runID=None, status=None, lfnList=None, seList=None, taskList=None, transID=None):
     """
     Get a lit of TS files fulfilling criteria
 
@@ -394,11 +370,15 @@ class TransformationDebug(object):
     :type taskList: list
     :param lfnList: list of LFNs
     :type lfnList: list
+    :param transID: transformation ID
+    :type transID: int
 
     :return : list of TS files (i.e. dictionaries) fulfilling the criteria
     """
+    if transID is None:
+      transID = self.transID
     # print transID, runID, status, lfnList
-    selectDict = {'TransformationID': self.transID}
+    selectDict = {'TransformationID': transID}
     if runID is not None:
       if runID:
         selectDict["RunNumber"] = runID
@@ -415,7 +395,7 @@ class TransformationDebug(object):
       # First get fileID per task as the task may no longer be in the TransformationFiles table
       for taskID in taskList:
         res = self.transClient.getTableDistinctAttributeValues('TransformationFileTasks', ['FileID'],
-                                                               {'TransformationID': self.transID, 'TaskID': taskID})
+                                                               {'TransformationID': transID, 'TaskID': taskID})
         if res['OK']:
           # Keep track of which file corresponds to which task
           fileID = res['Value']['FileID'][0]
@@ -454,7 +434,7 @@ class TransformationDebug(object):
     processed = sum(fileDict['Status'] == "Processed" for fileDict in transFilesList)
     return (files, processed)
 
-  def __getRuns(self, runList=None, byRuns=True, seList=None, status=None, taskList=None):
+  def __getRuns(self, runList=None, byRuns=True, seList=None, status=None, taskList=None, transID=None):
     """
     Get a list of TS runs fulfilling criteria
 
@@ -473,7 +453,7 @@ class TransformationDebug(object):
     """
     runs = []
     if status and byRuns and not runList:
-      files = self.__getFilesForRun(status=status, taskList=taskList)
+      files = self.__getFilesForRun(status=status, taskList=taskList, transID=transID)
       runList = set(str(fileDict['RunNumber']) for fileDict in files)
 
     if runList:
@@ -1665,6 +1645,7 @@ class TransformationDebug(object):
     checkSubmittedTasks = False
     checkLogs = False
     jobList = []
+    exceptProd = None
 
     switches = Script.getUnprocessedSwitches()
     for opt, val in switches:
@@ -1726,6 +1707,8 @@ class TransformationDebug(object):
         jobList = [int(job) for job in val.split(',') if job.isdigit()]
         byTasks = True
         byFiles = True
+      elif opt == 'ExceptActiveRunsFromProduction':
+        exceptProd = int(val)
 
     lfnList = dmScript.getOption('LFNs', [])
     if lfnList:
@@ -1740,7 +1723,7 @@ class TransformationDebug(object):
     if fixRun and not status:
       status = 'Unused'
 
-    transList = _getTransformations(Script.getPositionalArgs()) \
+    transList = getTransformations(Script.getPositionalArgs()) \
         if not jobList and not checkSubmittedTasks else []
 
     improperJobs = []
@@ -1802,16 +1785,34 @@ class TransformationDebug(object):
       if byRuns and lfnList:
         runList = self.__getRunsForFiles(lfnList)
         gLogger.notice("Files are from runs %s" % ','.join(runList))
-      runsDictList = self.__getRuns(runList, byRuns, seList, status)
+      runsDictList = self.__getRuns(runList=runList, byRuns=byRuns, seList=seList, status=status)
+      # If some runs must be excluded, remove them
+      if status and byRuns and exceptProd:
+        exceptRunsDict = self.__getRuns(runList=[], byRuns=byRuns, seList=seList,
+                                        status=['Assigned', 'Problematic', 'Unused', 'MaxReset'],
+                                        transID=exceptProd)
+        exceptRuns = [run['RunNumber'] for run in exceptRunsDict]
+        for run in list(runsDictList):
+          if run['RunNumber'] in exceptRuns:
+            runsDictList.remove(run)
+      else:
+        exceptRuns = []
       if runList and [run['RunNumber'] for run in runsDictList] == [None]:
         gLogger.notice("None of the requested runs was found, exit")
         DIRAC.exit(0)
       if status and byRuns and not runList:
         if not runsDictList:
-          gLogger.notice('No runs found...')
+          if exceptRuns:
+            gLogger.notice('No runs left, runs %s have non-processed files in production %d' %
+                           (','.join([str(r) for r in exceptRuns]), exceptProd))
+          else:
+            gLogger.notice('No runs found...')
         else:
           gLogger.notice('%d runs found: %s' %
                          (len(runsDictList), ','.join(str(runDict['RunNumber']) for runDict in runsDictList)))
+          if exceptRuns:
+            gLogger.notice('Runs %s excluded: they have non-processed files in production %d' %
+                           (','.join([str(r) for r in exceptRuns]), exceptProd))
       seStat = {"Total": 0}
       allFiles = []
       toBeKicked = 0
@@ -1910,7 +1911,7 @@ class TransformationDebug(object):
           if fileRun:
             runInTable = runsInTable.get(fileRun)
             if not runInTable:
-              runInTable = self.__getRuns([str(fileRun)], True)[0].get('RunNumber')
+              runInTable = self.__getRuns(runList=[str(fileRun)], byRuns=True)[0].get('RunNumber')
               runsInTable[fileRun] = runInTable
             if not runInTable:
               filesWithNoRunTable.append(fileLfn)
