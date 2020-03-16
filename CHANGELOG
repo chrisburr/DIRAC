@@ -1,3 +1,16 @@
+v10r0-pre14
+use DIRAC v7r0p17
+
+* Use absolute path to dirac-distribution.py
+* Fix command in create_tarball CI job
+* rules > allow_failure support will be added in late March
+* Try to allow failure if LHCB_BOOKKEEPING_DB_IMAGE_PASS is not defined
+* Exit if LHCB_BOOKKEEPING_DB_IMAGE_PASS isn't defined
+* Improve error message if LHCB_BOOKKEEPING_DB_IMAGE_PASS is not set
+* Fail faster if there are no credentials for the oracle container
+* don't checkout LHCbDIRAC
+* Set input files status directly within the workflow
+
 v10r0-pre13
 use DIRAC v7r0p14
 
