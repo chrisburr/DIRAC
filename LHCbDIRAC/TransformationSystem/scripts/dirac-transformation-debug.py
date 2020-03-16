@@ -37,6 +37,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'Info=', "Specify what to print out from %s" % str(infoList))
   Script.registerSwitch('', 'Status=', "Select files with a given status from %s" % str(statusList))
   Script.registerSwitch('', 'Runs=', "Specify a (list of) runs")
+  Script.registerSwitch('', 'ExceptActiveRunsFromProduction=',
+                        "Do not consider runs with active files from these prods")
   Script.registerSwitch('', 'SEs=', 'Specify a (list of) target SEs')
   Script.registerSwitch('', 'Tasks=', "Specify a (list of) tasks")
   Script.registerSwitch('', 'Jobs=', 'Specify a (list of) jobs')
