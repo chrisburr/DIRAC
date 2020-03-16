@@ -67,14 +67,14 @@ class NagiosTopologyAgent(AgentModule):
 
     0:ipv6 capable. 1:ipv4 only. -1:Not a valid host (no DNS record?)
     """
-    try: # First try IPV6
-      adrinfo = socket.getaddrinfo(host, None, socket.AF_INET6)
+    try:  # First try IPV6
+      socket.getaddrinfo(host, None, socket.AF_INET6)
       return 0
-    except socket.gaierror: #No IPv6 address
-      try: # Next try IPv4
-        adrinfo = socket.getaddrinfo(host, None, socket.AF_INET)
+    except socket.gaierror:  # No IPv6 address
+      try:  # Next try IPv4
+	socket.getaddrinfo(host, None, socket.AF_INET)
         return 1
-      except socket.gaierror: # The host does not exist (no IPv6 or IPv4 address)
+      except socket.gaierror:  # The host does not exist (no IPv6 or IPv4 address)
         return -1
 
   def execute(self):
@@ -198,7 +198,7 @@ class NagiosTopologyAgent(AgentModule):
     else:
       # produce the xml
       # XML file Name must be modified uppon next update back to :
-      #with open(self.xmlPath + "lhcb_topology.xml", 'w') as xmlf:
+      # with open(self.xmlPath + "lhcb_topology.xml", 'w') as xmlf:
       with open(self.xmlPath + "lhcb_topology_Generated.xml", 'w') as xmlf:
         xmlf.write(xml_doc.toxml())
 
@@ -206,7 +206,7 @@ class NagiosTopologyAgent(AgentModule):
 
     return S_OK()
 
-## Private methods #######################################################
+# Private methods #######################################################
 
   @staticmethod
   def __site_parameters(sites, wlcg):
@@ -262,8 +262,7 @@ class NagiosTopologyAgent(AgentModule):
                      'Country': wlcg_params.get('Country'), 'Federation': wlcg_params.get('Federation'),
                      'FederationAccountingName': wlcg_params.get('FederationAccountingName'),
                      'Infrastructure': wlcg_params.get('Infrastructure'),
-                     'Institute Name': wlcg_params.get('Institute Name'), 'Grid': grid_dict
-                     }
+		     'Institute Name': wlcg_params.get('Institute Name'), 'Grid': grid_dict}
 
       return site_params
     else:
@@ -292,8 +291,8 @@ class NagiosTopologyAgent(AgentModule):
     for site_ce_name in ces:
 
       has_grid_elem = True
-      etf_default = 'False'
-      max_CPU = 0
+
+      # FIXME: use proper helpers
       site_ce_opts = gConfig.getOptionsDict(
           'Resources/Sites/%s/%s/CEs/%s' % (grid, site, site_ce_name))
       if not site_ce_opts['OK']:
@@ -332,7 +331,6 @@ class NagiosTopologyAgent(AgentModule):
         i6Comment = "Maybe DIRAC Service, not a valid machine"
       xml_append(xml_doc, xml_ce, 'queues', ipv6_status=str(i6Status), ipv6_comment=i6Comment)
 
-
       for queue in ce_queues:
         queue_information = gConfig.getOptionsDict(
             'Resources/Sites/%s/%s/CEs/%s/Queues/%s' % (grid, site, site_ce_name, queue))
@@ -349,7 +347,6 @@ class NagiosTopologyAgent(AgentModule):
                    # etf_default=etf_default # => this needs to be fixed, when necessary
                    # maxWaitingJobs=queue_information.get('MaxWaitingJobs'),
                    # maxCPUTime=queue_information.get('maxCPUTime')
-
                    )
     return has_grid_elem
 
@@ -366,10 +363,10 @@ class NagiosTopologyAgent(AgentModule):
                           'root': 'XROOTD', 'http': 'HTTPS'}
 
       xml_se = xml_append(xml_doc, xml_site, 'service',
-                 endpoint=site_se_endpoint,
-                 flavour=mappingSEFlavour.get(site_se_flavour, 'UNDEFINED'),
-                 hostname=site_se_name,
-                 path=site_se_path)
+			  endpoint=site_se_endpoint,
+			  flavour=mappingSEFlavour.get(site_se_flavour, 'UNDEFINED'),
+			  hostname=site_se_name,
+			  path=site_se_path)
 
       # ipv6 status of the SE
       i6Status = NagiosTopologyAgent.isHostIPV6(site_se_name)
