@@ -8,3 +8,4 @@ HowTo
    Productions.rst
    DataStripping.rst
    Merging.rst
+   MultipleProcessing.rst
