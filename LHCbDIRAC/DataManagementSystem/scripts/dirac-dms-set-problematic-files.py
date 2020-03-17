@@ -26,7 +26,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'Full', '   Give full list of files')
   Script.registerSwitch('', 'NoAction', '   No action taken, just give stats')
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
 

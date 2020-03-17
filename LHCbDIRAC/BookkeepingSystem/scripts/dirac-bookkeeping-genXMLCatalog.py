@@ -78,7 +78,7 @@ def execute():
   Script.registerSwitch('', 'Ignore', '   Ignore missing files')
   Script.registerSwitch('', 'GaudiVerbose', '   Set Gaudi verbose when parsing option files')
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... ' % Script.scriptName]))
   Script.parseCommandLine(ignoreErrors=True)

@@ -248,7 +248,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'AllFiles', '   Sets visible = False (useful if files were marked invisible)')
   Script.registerSwitch('', 'NoReplicaFiles', '   Also gets the files without replica (just for BK test)')
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 

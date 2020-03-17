@@ -22,7 +22,7 @@ if __name__ == "__main__":
   dmScript = DMScript()
   dmScript.registerFileSwitches()
   dmScript.registerSiteSwitches()
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]]' % Script.scriptName,
                                     'Arguments:',

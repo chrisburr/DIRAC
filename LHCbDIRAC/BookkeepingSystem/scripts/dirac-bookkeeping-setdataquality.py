@@ -196,7 +196,7 @@ Script.registerSwitch("r:", "run=", "Flag a run")
 Script.registerSwitch("p:", "processingPass=", "Processing pass for which a run should be flagged")
 Script.registerSwitch("q:", "dataqualityflag=", "Data quality flag")
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   '\nArguments:',
                                   '  lfnfile (string) : [LFN|filename]',
                                   '  processingPass (string) : porcessing pass(es)',

@@ -40,7 +40,7 @@ if __name__ == "__main__":
       "   (list of) BK ConfigVersion; gets active MC processing passes ('All' for all years)")
   Script.registerSwitch("", "ListProcessingPasses", "   Only lists the processing passes")
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 

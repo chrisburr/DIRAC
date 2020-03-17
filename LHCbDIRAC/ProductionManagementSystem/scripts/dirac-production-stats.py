@@ -29,11 +29,11 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'HTML=', '   <file> : Output in html format to <file>')
   Script.registerSwitch('', 'NoPrint', '   No printout')
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ...' % Script.scriptName, ]))
   Script.parseCommandLine(ignoreErrors=False)

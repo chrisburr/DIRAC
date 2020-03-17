@@ -15,7 +15,7 @@ __RCSID__ = "$Id$"
 if __name__ == "__main__":
 
   from DIRAC.Core.Base import Script
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... LFN Path SE [GUID]' % Script.scriptName,
                                     'Arguments:',
