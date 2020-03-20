@@ -23,12 +23,25 @@ import json
 import socket
 
 from DIRAC import S_OK, rootPath, gLogger, gConfig
+from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getSites
+from DIRAC.ConfigurationSystem.Client.Helpers.Path import cfgPath
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 
 __RCSID__ = "$Id$"
 AGENT_NAME = 'ResourceStatus/NagiosTopologyAgent'
+
+
+MAPPING_CE_TYPE = {'lcg': 'CE',
+                   'cream': 'CREAM-CE',
+                   'arc': 'ARC-CE',
+                   'htcondorce': 'HTCONDOR-CE',
+                   'vac': 'VAC',
+                   'cloud': 'CLOUD',
+                   'boinc': 'BOINC',
+                   'vcycle': 'VCYCLE',
+                   'dirac': 'DIRAC'}
 
 
 class NagiosTopologyAgent(AgentModule):
@@ -44,41 +57,144 @@ class NagiosTopologyAgent(AgentModule):
 
     AgentModule.__init__(self, *args, **kwargs)
 
-    self.xmlPath = None
+    self.xmlPath = 'webRoot/www/topology/'
+    self.urljson = 'https://wlcg-rebus.cern.ch/apps/topology/all/json'
 
     self.dryRun = False
 
   def initialize(self):
     """Initialize the agent."""
 
-    self.xmlPath = rootPath + '/' + self.am_getOption('webRoot')
-    self.urljson = 'https://wlcg-rebus.cern.ch/apps/topology/all/json'
+    self.xmlPath = rootPath + '/' + self.am_getOption('webRoot', self.xmlPath)
 
     try:
       os.makedirs(self.xmlPath)
     except OSError:
-      pass  # The dirs exist already, or cannot be created: do nothing
+      pass  # The dir exists already, or cannot be created: do nothing
 
     return S_OK()
 
-  @staticmethod
-  def isHostIPV6(host):
-    """Test if the given host is ipv6 capable.
-
-    0:ipv6 capable. 1:ipv4 only. -1:Not a valid host (no DNS record?)
-    """
-    try:  # First try IPV6
-      socket.getaddrinfo(host, None, socket.AF_INET6)
-      return 0
-    except socket.gaierror:  # No IPv6 address
-      try:  # Next try IPv4
-	socket.getaddrinfo(host, None, socket.AF_INET)
-        return 1
-      except socket.gaierror:  # The host does not exist (no IPv6 or IPv4 address)
-        return -1
-
   def execute(self):
-    """Let's generate the xml file with the topology."""
+    """ Generates xml and json topology files
+    """
+
+    res = getSites()
+    if not res['OK']:
+      return res
+    sites = res['Value']
+
+    # First, create the JSON topology, which contains also what the XML topology needs
+    res = self.createJSONTopology(sites)
+    if not res['OK']:
+      self.log.error("Failed to create JSON topology", res['Message'])
+      return res
+    self.log.info("Created JSON topology")
+
+    res = self.createXMLTopology(sites)
+    if not res['OK']:
+      self.log.error("Failed to create XML topology", res['Message'])
+      return res
+    self.log.info("Created XML topology")
+
+    return S_OK()
+
+  def createJSONTopology(self, sites):
+    """ Function that creates a topology.json file, based on specification from WLCG group
+    """
+
+    fullSitesDict = dict()
+    for site in sites:
+      grid = site.split(".")[0]
+      res = gConfig.getOptionsDict('Resources/Sites/%s/%s' % (grid, site))
+      if not res['OK']:
+        self.log.error("Failure getting options dict for site", "%s: %s" % (site, res['Message']))
+        continue
+      siteInfoCS = res['Value']
+      wlcgName = siteInfoCS.get('Name')
+
+      siteInfo = dict()
+      siteInfo['WLCG_site'] = wlcgName
+      # Tier level 4 is what they want for opportunistic resource
+      siteInfo['Tier'] = siteInfoCS.get('MoUTierLevel', '4')
+      siteInfo['Type'] = 'GRID' if grid == 'LCG' else site.split('.')[0]
+
+      # Services is for CEs and SEs
+      siteInfoServices = dict()
+
+      # CEs
+      res = gConfig.getSections(cfgPath('Resources', 'Sites', grid, site, 'CEs'), [])
+      if not res['OK']:
+        self.log.error("Failure getting CEs section for site", "%s: %s" % (site, res['Message']))
+        continue
+      if not res['Value']:
+        self.log.warn("Site without CEs", "(%s)" % site)
+      else:
+        cesList = res['Value']
+        for ce in cesList:
+          res = gConfig.getOptionsDict(cfgPath('Resources', 'Sites', grid, site, 'CEs', ce))
+          if not res['OK']:
+            self.log.error("Failure getting info on ce", "%s: %s" % (ce, res['Message']))
+            continue
+
+          ceDetailsInCS = res['Value']
+          ceDetails = dict()
+          ceDetails['type'] = 'compute'
+          ceDetails['access_points'] = dict()
+          ceDetails['access_points'][ce] = dict()
+          ceDetails['access_points'][ce]['endpoint_url'] = ce
+          ceDetails['access_points'][ce]['type'] = MAPPING_CE_TYPE.get(ceDetailsInCS['CEType'].lower(), 'UNDEFINED')
+          ceDetails['access_points'][ce]['monitored'] = 'yes' if wlcgName else 'no'
+          ceDetails['access_points'][ce]['quality_level'] = 'production'
+          # queues
+          res = gConfig.getSections(cfgPath('Resources', 'Sites', grid, site, 'CEs', ce, 'Queues'), [])
+          if not res['OK']:
+            self.log.error("Failure getting info on ce/queues", "%s: %s" % (ce, res['Message']))
+            continue
+          if not res['Value']:
+            self.log.warn("CE without queues", "(%s)" % ce)
+          else:
+            for queue in res['Value']:
+              ceDetails['compute_shares'] = dict()
+              ceDetails['compute_shares'][queue] = dict()
+              ceDetails['compute_shares'][queue]['type'] = 'queue'
+              ceDetails['compute_shares'][queue]['name'] = queue
+
+          siteInfoServices[ce] = ceDetails
+
+      # SEs
+      ses = gConfig.getValue(cfgPath('Resources', 'Sites', grid, site, 'SE'), [])
+      if not ses:
+        pass
+      for se in ses:
+        diracSE = StorageElement(se)  # this 'se' is .e.g. 'CERN-DST-EOS'
+        seDetailsForDIRACSE = dict()
+        for diracSEoption in diracSE.protocolOptions:
+          dseo = '_'.join([se, diracSEoption['Protocol']])  # just a unique name e.g. 'CERN-DST-EOS_root'
+
+          seDetails = dict()
+          seDetails['endpoint_url'] = diracSEoption['Host']
+          seDetails['interface_type'] = diracSEoption['Protocol']
+          seDetails['monitored'] = 'yes' if wlcgName else 'no'
+          seDetails['quality_level'] = 'production'
+
+          seDetailsForDIRACSE[dseo] = seDetails
+
+        siteInfoServices[se] = {'storage_endpoints': seDetailsForDIRACSE}
+
+      siteInfo['Services'] = siteInfoServices
+      fullSitesDict[site] = siteInfo
+
+    with open(self.xmlPath + 'topology.json', 'w') as tj:
+      json.dump(fullSitesDict, tj)
+      self.log.verbose("JSON topology saved", self.xmlPath + 'topology.json')
+
+    return S_OK()
+
+  def createXMLTopology(self, sites):
+    """ Creates a lhcb_topology_Generated.xml file to be used for Nagios tests
+
+        :params list sites: list of sites (from DIRAC CS)
+    """
 
     # instantiate xml doc
     xml_impl = xml.dom.minidom.getDOMImplementation()
@@ -86,38 +202,20 @@ class NagiosTopologyAgent(AgentModule):
     xml_root = xml_doc.documentElement
 
     # xml header info
-    self.__writeHeaderInfo(xml_doc, xml_root)
+    writeHeaderInfo(xml_doc, xml_root)
 
     # loop over sites
-
-##########################################################################
-# Newest code to include VAC and VCYCLE
-
     response = urllib.urlopen(self.urljson)
     wlcg = json.loads(response.read())
 
-    ret = gConfig.getSections('Resources/Sites')
-    if not ret['OK']:
-      gLogger.error(ret['Message'])
-      return ret
-
-    gridTypes = ret['Value']
-
-    all_sites = []
     organized_list_of_sites = []
-
-    for grid in gridTypes:
-      sites = gConfig.getSections('Resources/Sites/%s' % grid)
-      all_sites = all_sites + sites['Value']
-
-    for site in all_sites:
+    for site in sites:
       grid, real_site_name, country = site.split(".")
-      same_site = [s for s in all_sites if (
-          "." + real_site_name + "." + country) in s]
+      same_site = [s for s in sites if ("." + real_site_name + "." + country) in s]
       organized_list_of_sites = organized_list_of_sites + [same_site]
 
-    for sites in organized_list_of_sites:
-      site_parameters = self.__site_parameters(sites, wlcg)
+    for site in organized_list_of_sites:
+      site_parameters = getSiteParameters(site, wlcg)
 
       if site_parameters:
 
@@ -137,14 +235,14 @@ class NagiosTopologyAgent(AgentModule):
           ces = site_parameters['Grid'][grid]['CEs']
           # CE info
           if ces:
-            res = self.__writeCEInfo(xml_doc, grid, xml_site, site, ces)
+            res = writeCEInfo(xml_doc, grid, xml_site, site, ces)
             # Update has_grid_elem
             has_grid_elem = res or has_grid_elem
 
         # SE info
         if site_parameters['SE'] and (site_tier in ['0', '1', '2'] or site_subtier in ['T2-D']):
-          # res = self.__writeSEInfo( xml_doc, xml_site, dirac_name )
-          res = self.__writeSEInfo(xml_doc, xml_site, dirac_name, site_tier, site_subtier)
+          # res = self.writeSEInfo( xml_doc, xml_site, dirac_name )
+          res = writeSEInfo(xml_doc, xml_site, dirac_name, site_tier, site_subtier)
           # Update has_grid_elem
           has_grid_elem = res or has_grid_elem
 
@@ -197,8 +295,6 @@ class NagiosTopologyAgent(AgentModule):
 
     else:
       # produce the xml
-      # XML file Name must be modified uppon next update back to :
-      # with open(self.xmlPath + "lhcb_topology.xml", 'w') as xmlf:
       with open(self.xmlPath + "lhcb_topology_Generated.xml", 'w') as xmlf:
         xmlf.write(xml_doc.toxml())
 
@@ -208,225 +304,228 @@ class NagiosTopologyAgent(AgentModule):
 
 # Private methods #######################################################
 
-  @staticmethod
-  def __site_parameters(sites, wlcg):
-    """Function that returns the sites parameters.
 
-    :param list sites:
-      List of sites or single site with same site name (e.g ['LCG.CERN.cern'] or
-      [LCG.Manchester.uk, VAC.Manchester.uk])
+def isHostIPV6(host):
+  """Test if the given host is ipv6 capable.
 
-    :param dict wlcg:
-      It's a dictionary with the WLCG parameters from all sites grabbed from
-      https://wlcg-rebus.cern.ch/apps/topology/all/json
+  0:ipv6 capable. 1:ipv4 only. -1:Not a valid host (no DNS record?)
+  """
+  try:  # First try IPV6
+    socket.getaddrinfo(host, None, socket.AF_INET6)
+    return 0
+  except socket.gaierror:  # No IPv6 address
+    try:  # Next try IPv4
+      socket.getaddrinfo(host, None, socket.AF_INET)
+      return 1
+    except socket.gaierror:  # The host does not exist (no IPv6 or IPv4 address)
+      return -1
 
-    Keys:
-    'WlcgName', 'Coordinates', 'Description', 'Mail', 'DiracName', 'Tier', 'Sub-Tier',
-    'SE', 'Country':, 'Federation', 'FederationAccountingName', 'Infrastructure',
-    'Institute Name', 'Grid'
 
-    If the site is not listed in WLCG or have no MoU Tier Level the function will return False
-    """
+def getSiteParameters(sites, wlcg):
+  """Function that returns the sites parameters.
 
-    grid_dict = {}
-    grid, real_site_name, country = sites[0].split(".")
-    site_opts = gConfig.getOptionsDict(
-        'Resources/Sites/%s/%s' % (grid, sites[0]))
-    site_opts = site_opts.get('Value')
-    site_name = site_opts.get('Name')
-    site_tier = site_opts.get('MoUTierLevel', 'None')
-    if site_tier != 'None':
-      wlcg_params = [s for s in wlcg if site_name in s.get('Site')]
-      wlcg_params = wlcg_params[0] if wlcg_params else {}
-      if not wlcg_params:
-        return False
-      if len(sites) > 1:
-        for i in sites:
-          grid = i.split(".")[0]
-          CE = gConfig.getSections('Resources/Sites/%s/%s/CEs' % (grid, i))
-          CE = CE['Value'] if CE['OK'] else None
-          grid_dict.update({grid: {'SiteName': i, 'CEs': CE}})
-      else:
-        CE = gConfig.getSections(
-            'Resources/Sites/%s/%s/CEs' % (grid, sites[0]))
-        CE = CE['Value'] if CE['OK'] else None
-        grid_dict.update({grid: {'SiteName': sites[0], 'CEs': CE}})
+  :param list sites:
+    List of sites or single site with same site name (e.g ['LCG.CERN.cern'] or
+    [LCG.Manchester.uk, VAC.Manchester.uk])
 
-      site_subtier = site_opts.get('SubTier', None)
-      ses = site_opts.get('SE', None)
+  :param dict wlcg:
+    It's a dictionary with the WLCG parameters from all sites grabbed from
+    https://wlcg-rebus.cern.ch/apps/topology/all/json
 
-      site_params = {'WlcgName': site_opts.get('Name'), 'Coordinates': site_opts.get('Coordinates'),
-                     'Description': site_opts.get('Description'), 'Mail': site_opts.get('Mail'),
-                     'DiracName': ('LCG.' + real_site_name + "." + country),
-                     'Tier': site_tier, 'Sub-Tier': site_subtier, 'SE': ses,
-                     'Country': wlcg_params.get('Country'), 'Federation': wlcg_params.get('Federation'),
-                     'FederationAccountingName': wlcg_params.get('FederationAccountingName'),
-                     'Infrastructure': wlcg_params.get('Infrastructure'),
-		     'Institute Name': wlcg_params.get('Institute Name'), 'Grid': grid_dict}
+  Keys:
+  'WlcgName', 'Coordinates', 'Description', 'Mail', 'DiracName', 'Tier', 'Sub-Tier',
+  'SE', 'Country':, 'Federation', 'FederationAccountingName', 'Infrastructure',
+  'Institute Name', 'Grid'
 
-      return site_params
-    else:
+  If the site is not listed in WLCG or have no MoU Tier Level the function will return False
+  """
+
+  grid_dict = {}
+  grid, real_site_name, country = sites[0].split(".")
+  res = gConfig.getOptionsDict('Resources/Sites/%s/%s' % (grid, sites[0]))
+  if not res['OK']:
+    gLogger.error("Could not get options", "for site %s: %s" % (sites[0], res['Message']))
+    return False
+  site_opts = res['Value']
+  site_name = site_opts.get('Name')
+  site_tier = site_opts.get('MoUTierLevel')
+  if site_tier and site_name:
+    wlcg_params = [s for s in wlcg if site_name in s.get('Site')]
+    wlcg_params = wlcg_params[0] if wlcg_params else {}
+    if not wlcg_params:
       return False
+    if len(sites) > 1:
+      for i in sites:
+        grid = i.split(".")[0]
+        res = gConfig.getSections('Resources/Sites/%s/%s/CEs' % (grid, i))
+        grid_dict.update({grid: {'SiteName': i, 'CEs': res['Value'] if res['OK'] else None}})
+    else:
+      res = gConfig.getSections('Resources/Sites/%s/%s/CEs' % (grid, sites[0]))
+      grid_dict.update({grid: {'SiteName': sites[0], 'CEs': res['Value'] if res['OK'] else None}})
 
-  @staticmethod
-  def __writeHeaderInfo(xml_doc, xml_root):
-    """Writes XML document header."""
+    site_subtier = site_opts.get('SubTier', None)
+    ses = site_opts.get('SE', None)
 
-    xml_append(xml_doc, xml_root, 'title', 'LHCb Topology Information for ATP')
-    xml_append(xml_doc, xml_root, 'description',
-               'List of LHCb site names for monitoring and mapping to the SAM/WLCG site names')
-    xml_append(xml_doc, xml_root, 'feed_responsible',
-               dn='/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=roiser/CN=564059/CN=Stefan Roiser',
-               name='Stefan Roiser')
-    xml_append(xml_doc, xml_root, 'last_update',
-               time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
-    xml_append(xml_doc, xml_root, 'vo', 'lhcb')
+    site_params = {'WlcgName': site_opts.get('Name'), 'Coordinates': site_opts.get('Coordinates'),
+                   'Description': site_opts.get('Description'), 'Mail': site_opts.get('Mail'),
+                   'DiracName': ('LCG.' + real_site_name + "." + country),
+                   'Tier': site_tier, 'Sub-Tier': site_subtier, 'SE': ses,
+                   'Country': wlcg_params.get('Country'), 'Federation': wlcg_params.get('Federation'),
+                   'FederationAccountingName': wlcg_params.get('FederationAccountingName'),
+                   'Infrastructure': wlcg_params.get('Infrastructure'),
+                   'Institute Name': wlcg_params.get('Institute Name'), 'Grid': grid_dict}
 
-  @staticmethod
-  def __writeCEInfo(xml_doc, grid, xml_site, site, ces):
-    """Writes CE information in the XML Document."""
+    return site_params
+  else:
+    return False
 
-    has_grid_elem = 'False'
 
-    for site_ce_name in ces:
+def writeHeaderInfo(xml_doc, xml_root):
+  """Writes XML document header."""
 
-      has_grid_elem = True
+  xml_append(xml_doc, xml_root, 'title', 'LHCb Topology Information for ATP')
+  xml_append(xml_doc, xml_root, 'description',
+             'List of LHCb site names for monitoring and mapping to the SAM/WLCG site names')
+  xml_append(xml_doc, xml_root, 'feed_responsible',
+             dn='/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=roiser/CN=564059/CN=Stefan Roiser',
+             name='Stefan Roiser')
+  xml_append(xml_doc, xml_root, 'last_update',
+             time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
+  xml_append(xml_doc, xml_root, 'vo', 'lhcb')
 
-      # FIXME: use proper helpers
-      site_ce_opts = gConfig.getOptionsDict(
-          'Resources/Sites/%s/%s/CEs/%s' % (grid, site, site_ce_name))
-      if not site_ce_opts['OK']:
-        gLogger.error(site_ce_opts['Message'])
-        continue
-      site_ce_opts = site_ce_opts['Value']
 
-      site_ce_type = site_ce_opts.get('CEType')
-      mappingCEType = {'LCG': 'CE', 'CREAM': 'CREAM-CE',
-                       'ARC': 'ARC-CE', 'HTCondorCE': 'HTCONDOR-CE',
-                       'Vac': 'VAC', 'Cloud': 'CLOUD', 'Boinc': 'BOINC',
-                       'Vcycle': 'VCYCLE'}
+def writeCEInfo(xml_doc, grid, xml_site, site, ces):
+  """Writes CE information in the XML Document."""
 
-                      # After Marian fixes his side, this should be reverted
-                      # {'LCG': 'CE', 'CREAM': 'CREAM-CE',
-                      #  'ARC': 'ARC-CE', 'HTCondorCE': 'org.opensciencegrid.htcondorce',
-                      #  'Vac': 'uk.ac.gridpp.vac', 'Cloud': 'CLOUD', 'Boinc': 'BOINC',
-                      #  'Vcycle': 'uk.ac.gridpp.vcycle'}
+  has_grid_elem = 'False'
 
-      xml_ce = xml_append(xml_doc, xml_site, 'service', hostname=site_ce_name,
-                          flavour=mappingCEType.get(site_ce_type, 'UNDEFINED'))
-
-      ce_queues = gConfig.getSections(
-          'Resources/Sites/%s/%s/CEs/%s/Queues/' % (grid, site, site_ce_name))
-      ce_queues = ce_queues['Value']
-      #   I'll leave this code commented in case it needs to be used in the future,
-      #   this function consumes a hell lot of time to return a value that is not
-      #   mandatory at the momment
-      #ce_batch = ldapCEState(site_ce_name, site_ce_opts['VO'])
-      #ce_batch = ce_batch['Value'][0]['GlueCEInfoJobManager'] if (ce_batch['OK'] and ce_batch['Value']) else None
-
-      # ipv6 status of the CE
-      i6Status = NagiosTopologyAgent.isHostIPV6(site_ce_name)
-      i6Comment = ""
-      if i6Status == -1:
-        i6Comment = "Maybe DIRAC Service, not a valid machine"
-      xml_append(xml_doc, xml_ce, 'queues', ipv6_status=str(i6Status), ipv6_comment=i6Comment)
-
-      for queue in ce_queues:
-        queue_information = gConfig.getOptionsDict(
-            'Resources/Sites/%s/%s/CEs/%s/Queues/%s' % (grid, site, site_ce_name, queue))
-        if queue_information['OK']:
-          queue_information = queue_information['Value']
-          # if queue_information.get('maxCPUTime') > max_CPU:
-          #   etf_default = 'True'
-          #   max_CPU = queue_information.get('maxCPUTime')
-
-        xml_append(xml_doc, xml_ce, 'queues', ce_resource=queue,
-                   # - the following items are already predicter for latter changes if necessary
-                   # batch_system=ce_batch,
-                   # queue=queue_information.get('VO'),
-                   # etf_default=etf_default # => this needs to be fixed, when necessary
-                   # maxWaitingJobs=queue_information.get('MaxWaitingJobs'),
-                   # maxCPUTime=queue_information.get('maxCPUTime')
-                   )
-    return has_grid_elem
-
-  @staticmethod
-  def __writeSEInfo(xml_doc, xml_site, site, site_tier, site_subtier):
-    """Writes SE information in the XML Document."""
-    def __write_SE_XML(site_se_opts):
-      """Sub-function just to populate the XML with the SE values."""
-      site_se_name = site_se_opts.get('Host')
-      site_se_flavour = site_se_opts.get('Protocol')
-      site_se_path = site_se_opts.get('Path', 'UNDEFINED')
-      site_se_endpoint = site_se_opts.get('URLBase')
-      mappingSEFlavour = {'srm': 'SRMv2',
-                          'root': 'XROOTD', 'http': 'HTTPS'}
-
-      xml_se = xml_append(xml_doc, xml_site, 'service',
-			  endpoint=site_se_endpoint,
-			  flavour=mappingSEFlavour.get(site_se_flavour, 'UNDEFINED'),
-			  hostname=site_se_name,
-			  path=site_se_path)
-
-      # ipv6 status of the SE
-      i6Status = NagiosTopologyAgent.isHostIPV6(site_se_name)
-      i6Comment = ""
-      if i6Status == -1:
-        i6Comment = "Maybe DIRAC Service, not a valid machine"
-      xml_append(xml_doc, xml_se, 'queues', ipv6_status=str(i6Status), ipv6_comment=i6Comment)
+  for site_ce_name in ces:
 
     has_grid_elem = True
 
-    real_site_name = site.split(".")[1]
-    dmsHelper = DMSHelpers()
+    # FIXME: use proper helpers
+    site_ce_opts = gConfig.getOptionsDict(
+        'Resources/Sites/%s/%s/CEs/%s' % (grid, site, site_ce_name))
+    if not site_ce_opts['OK']:
+      gLogger.error(site_ce_opts['Message'])
+      continue
+    site_ce_opts = site_ce_opts['Value']
+
+    site_ce_type = site_ce_opts.get('CEType')
+
+    xml_ce = xml_append(xml_doc, xml_site, 'service', hostname=site_ce_name,
+                        flavour=MAPPING_CE_TYPE.get(site_ce_type.lower(), 'UNDEFINED'))
+
+    ce_queues = gConfig.getSections(
+        'Resources/Sites/%s/%s/CEs/%s/Queues/' % (grid, site, site_ce_name))
+    ce_queues = ce_queues['Value']
+    #   I'll leave this code commented in case it needs to be used in the future,
+    #   this function consumes a hell lot of time to return a value that is not
+    #   mandatory at the momment
+    # ce_batch = ldapCEState(site_ce_name, site_ce_opts['VO'])
+    # ce_batch = ce_batch['Value'][0]['GlueCEInfoJobManager'] if (ce_batch['OK'] and ce_batch['Value']) else None
+
+    # ipv6 status of the CE
+    i6Status = isHostIPV6(site_ce_name)
+    i6Comment = ""
+    if i6Status == -1:
+      i6Comment = "Maybe DIRAC Service, not a valid machine"
+    xml_append(xml_doc, xml_ce, 'queues', ipv6_status=str(i6Status), ipv6_comment=i6Comment)
+
+    for queue in ce_queues:
+      queue_information = gConfig.getOptionsDict(
+          'Resources/Sites/%s/%s/CEs/%s/Queues/%s' % (grid, site, site_ce_name, queue))
+      if queue_information['OK']:
+        queue_information = queue_information['Value']
+        # if queue_information.get('maxCPUTime') > max_CPU:
+        #   etf_default = 'True'
+        #   max_CPU = queue_information.get('maxCPUTime')
+
+      xml_append(xml_doc, xml_ce, 'queues', ce_resource=queue,
+                 # - the following items are already predicter for latter changes if necessary
+                 # batch_system=ce_batch,
+                 # queue=queue_information.get('VO'),
+                 # etf_default=etf_default # => this needs to be fixed, when necessary
+                 # maxWaitingJobs=queue_information.get('MaxWaitingJobs'),
+                 # maxCPUTime=queue_information.get('maxCPUTime')
+                 )
+  return has_grid_elem
+
+
+def writeSEInfo(xml_doc, xml_site, site, site_tier, site_subtier):
+  """Writes SE information in the XML Document."""
+  def write_SE_XML(site_se_opts):
+    """Sub-function just to populate the XML with the SE values."""
+    site_se_name = site_se_opts.get('Host')
+    site_se_flavour = site_se_opts.get('Protocol')
+    site_se_path = site_se_opts.get('Path', 'UNDEFINED')
+    site_se_endpoint = site_se_opts.get('URLBase')
+    mappingSEFlavour = {'srm': 'SRMv2',
+                        'root': 'XROOTD', 'http': 'HTTPS'}
+
+    xml_se = xml_append(xml_doc, xml_site, 'service',
+                        endpoint=site_se_endpoint,
+                        flavour=mappingSEFlavour.get(site_se_flavour, 'UNDEFINED'),
+                        hostname=site_se_name,
+                        path=site_se_path)
+
+    # ipv6 status of the SE
+    i6Status = isHostIPV6(site_se_name)
+    i6Comment = ""
+    if i6Status == -1:
+      i6Comment = "Maybe DIRAC Service, not a valid machine"
+    xml_append(xml_doc, xml_se, 'queues', ipv6_status=str(i6Status), ipv6_comment=i6Comment)
+
+  has_grid_elem = True
+
+  real_site_name = site.split(".")[1]
+  dmsHelper = DMSHelpers()
+
+  if int(site_tier) in (0, 1):
+    dst = dmsHelper.getSEInGroupAtSite('Tier1-DST', real_site_name)
+    raw = dmsHelper.getSEInGroupAtSite('Tier1-RAW', real_site_name)
+    if not raw['OK']:
+      gLogger.error(raw['Message'])
+      return False
+    raw = raw['Value']
+    se_RAW = StorageElement(raw)
+    se_plugins_RAW = se_RAW.getPlugins()
+
+  if site_subtier == 'T2-D':
+    dst = dmsHelper.getSEInGroupAtSite('Tier2D-DST', real_site_name)
+
+  if not dst['OK']:
+    gLogger.error(dst['Message'])
+    return False
+
+  dst = dst['Value']
+  se_DST = StorageElement(dst)
+  se_plugins_DST = se_DST.getPlugins()
+  if not se_plugins_DST['OK']:
+    gLogger.error(se_plugins_DST['Message'])
+    return False
+
+  for protocol in se_plugins_DST['Value']:
+    site_se_opts_DST = se_DST.getStorageParameters(protocol)
+    if not site_se_opts_DST['OK']:
+      gLogger.error(site_se_opts_DST['Message'])
+      return False
+    site_se_opts_DST = site_se_opts_DST['Value']
+    write_SE_XML(site_se_opts_DST)
 
     if int(site_tier) in (0, 1):
-      dst = dmsHelper.getSEInGroupAtSite('Tier1-DST', real_site_name)
-      raw = dmsHelper.getSEInGroupAtSite('Tier1-RAW', real_site_name)
-      if not raw['OK']:
-        gLogger.error(raw['Message'])
-        return False
-      raw = raw['Value']
-      se_RAW = StorageElement(raw)
-      se_plugins_RAW = se_RAW.getPlugins()
+      if protocol in se_plugins_RAW['Value']:
+        site_se_opts_RAW = se_RAW.getStorageParameters(protocol)
+        if not site_se_opts_RAW['OK']:
+          gLogger.error(site_se_opts_RAW['Message'])
+          return has_grid_elem
+        site_se_opts_RAW = site_se_opts_RAW['Value']
+        # This tests if the DST and RAW StorageElements have the same endpoint.
+        # If so it only uses the one already added.
+        if site_se_opts_RAW['Host'] != site_se_opts_DST['Host']:
+          write_SE_XML(site_se_opts_RAW)
 
-    if site_subtier == 'T2-D':
-      dst = dmsHelper.getSEInGroupAtSite('Tier2D-DST', real_site_name)
-
-    if not dst['OK']:
-      gLogger.error(dst['Message'])
-      return False
-
-    dst = dst['Value']
-    se_DST = StorageElement(dst)
-    se_plugins_DST = se_DST.getPlugins()
-    if not se_plugins_DST['OK']:
-      gLogger.error(se_plugins_DST['Message'])
-      return False
-
-    for protocol in se_plugins_DST['Value']:
-      site_se_opts_DST = se_DST.getStorageParameters(protocol)
-      if not site_se_opts_DST['OK']:
-        gLogger.error(site_se_opts_DST['Message'])
-        return False
-      site_se_opts_DST = site_se_opts_DST['Value']
-      __write_SE_XML(site_se_opts_DST)
-
-      if int(site_tier) in (0, 1):
-        if protocol in se_plugins_RAW['Value']:
-          site_se_opts_RAW = se_RAW.getStorageParameters(protocol)
-          if not site_se_opts_RAW['OK']:
-            gLogger.error(site_se_opts_RAW['Message'])
-            return has_grid_elem
-          site_se_opts_RAW = site_se_opts_RAW['Value']
-          # This tests if the DST and RAW StorageElements have the same endpoint.
-          # If so it only uses the one already added.
-          if site_se_opts_RAW['Host'] != site_se_opts_DST['Host']:
-            __write_SE_XML(site_se_opts_RAW)
-
-    return has_grid_elem
-
-##########################################################################
+  return has_grid_elem
 
 
 def xml_append(doc, base, elem, cdata=None, **attrs):

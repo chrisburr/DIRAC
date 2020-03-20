@@ -794,9 +794,8 @@ class DiracProduction(DiracLHCb):
       if result['OK']:
         gLogger.info('Template finished successfully')
         return S_OK()
-      else:
-        gLogger.error('Launching production: something wrong with execution!')
-        return S_ERROR('Something wrong with execution!')
+      gLogger.error('Launching production: something wrong with execution!')
+      return S_ERROR('Something wrong with execution!')
 
     result = prod.create(publish=publishFlag,
                          requestID=requestID,
