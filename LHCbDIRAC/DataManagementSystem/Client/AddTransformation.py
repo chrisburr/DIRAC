@@ -280,7 +280,7 @@ def executeAddTransformation(pluginScript):
                                                                                    res['Value']['TransformationID'],
                                                                                    res['Value']['Status']))
         continue
-    transformation.setTransformationName(transName)
+    transformation.setTransformationName(transName[:255])
     transformation.setTransformationGroup(transGroup)
     transformation.setDescription(longName)
     transformation.setLongDescription(longName)
