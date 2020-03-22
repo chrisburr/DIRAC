@@ -236,6 +236,8 @@ def executeAddTransformation(pluginScript):
       longName = transGroup + " of " + fileStr + " for productions %s " % prodsStr
       if len(prods) > 5:
         prodsStr = '%d-productions' % len(prods)
+      if len(fileStr) > 30:
+        fileStr = '%d-fileTypes' % len(fileType)
       transName += '-' + fileStr + '-' + prodsStr
     elif transBKQuery and 'FileType' in transBKQuery and \
             'BKPath' not in pluginScript.getOptions():
