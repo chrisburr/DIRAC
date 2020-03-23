@@ -2015,7 +2015,7 @@ class TransformationDebug(object):
             # More information from Request tasks
             if taskType == "Request":
               toBeKicked += self.__printRequestInfo(task, lfnsInTask, taskCompleted, status, dmFileStatusComment)
-            elif task['ExternalStatus'] == 'Failed':
+            elif task['ExternalStatus'] in ('Failed', 'Done', 'Completed'):
               # Get job statuses
               jobID = int(task['ExternalID'])
               jobStatus = self.__getJobStatus(jobID)
