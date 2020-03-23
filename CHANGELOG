@@ -202,6 +202,18 @@ use DIRAC v7r0p1
 * added createClient decorator
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
+
+v9r4p17
+use DIRAC v6r22p24
+
+* revert [:255] for transName
+* give job status for all final statuses
+* Pass required status to ConsistencyChecks
+* limit size of transName
+* limit trans name to 255 characters
+* fix case of /vo/vo
+* Add option to transformation-debug to automatically exclude runs
+
 v9r4p16
 use DIRAC v6r22p23
 
