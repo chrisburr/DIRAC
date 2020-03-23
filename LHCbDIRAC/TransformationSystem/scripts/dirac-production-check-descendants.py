@@ -45,6 +45,7 @@ if __name__ == '__main__':
   Script.parseCommandLine(ignoreErrors=True)
   fileType = []
   runsList = []
+  lfnList = []
   fixIt = False
   fromProd = None
   verbose = False
@@ -136,17 +137,9 @@ if __name__ == '__main__':
     gLogger.notice("Processing %s production %d" % (cc.transType, cc.prod))
 
     if status:
-      res = tr.getTransformationFiles({'TransformationID': prod, 'Status': status})
-      if res['OK']:
-        lfnList = [trFile['LFN'] for trFile in res['Value']]
-        gLogger.notice('Found %d files with status %s' % (len(lfnList), status))
-      else:
-        gLogger.fatal("Error getting files %s" % status, res['Message'])
-        DIRAC.exit(2)
-      if not lfnList:
-        continue
-
-    cc.lfns = lfnList
+      cc.status = status
+    if lfnList:
+      cc.lfns = lfnList
     if not fileType:
       bkQuery = BKQuery({'Production': prod, 'FileType': 'ALL', 'Visible': 'All'})
       cc.fileType = bkQuery.getBKFileTypes()
