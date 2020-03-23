@@ -12,6 +12,7 @@
 
 import time
 import random
+import os
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine(ignoreErrors=True)
@@ -20,7 +21,7 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 bk = BookkeepingClient()
 
 lfns = []
-with open('testfiles.txt') as f:
+with open(os.path.join(os.path.dirname(__file__), 'testfiles.txt')) as f:
   for i in f:
     lfns += [i.strip()]
 
