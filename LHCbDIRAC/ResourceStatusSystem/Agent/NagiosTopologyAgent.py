@@ -168,18 +168,41 @@ class NagiosTopologyAgent(AgentModule):
       for se in ses:
         diracSE = StorageElement(se)  # this 'se' is .e.g. 'CERN-DST-EOS'
         seDetailsForDIRACSE = dict()
+        seStorageSharesForDIRACSE = dict()
         for diracSEoption in diracSE.protocolOptions:
-          dseo = '_'.join([se, diracSEoption['Protocol']])  # just a unique name e.g. 'CERN-DST-EOS_root'
 
+          # Building the storage_endpoints section
           seDetails = dict()
-          seDetails['endpoint_url'] = diracSEoption['Host']
+          ep = os.path.join(diracSEoption['Protocol'] + '://' + diracSEoption['Host'].strip('/')
+                            + ':' + diracSEoption['Port'],
+                            diracSEoption['Path'].strip('/'))
+          seDetails['endpoint_url'] = ep
           seDetails['interface_type'] = diracSEoption['Protocol']
           seDetails['monitored'] = 'yes' if wlcgName else 'no'
           seDetails['quality_level'] = 'production'
 
-          seDetailsForDIRACSE[dseo] = seDetails
+          dseep = '_'.join([se, diracSEoption['Protocol']])  # just a unique name e.g. 'CERN-DST-EOS_root'
+          seDetailsForDIRACSE[dseep] = seDetails
 
-        siteInfoServices[se] = {'storage_endpoints': seDetailsForDIRACSE}
+          if diracSEoption.get('SpaceToken'):
+            # Building the storage_shares section
+            seDetails = dict()
+            seDetails['Name'] = diracSEoption['SpaceToken']
+            seDetails['path'] = diracSEoption['WSUrl']
+            if diracSEoption['Protocol'].lower() == 'srm':
+              seDetails['assigned_endpoints'] = ep
+
+            dsess = '_'.join([se, diracSEoption['SpaceToken']])  # just a unique name e.g. 'CNAF-DST_LHCb-Disk'
+            seStorageSharesForDIRACSE[dsess] = seDetails
+
+        siteInfoServices[se] = dict()
+        siteInfoServices[se]['storage_endpoints'] = seDetailsForDIRACSE
+        if seStorageSharesForDIRACSE:
+          siteInfoServices[se]['storage_shares'] = seStorageSharesForDIRACSE
+
+        siteInfoServices[se]['type'] = 'storage'
+        siteInfoServices[se]['quality_level'] = 'production'
+        siteInfoServices[se]['monitored'] = 'yes' if wlcgName else 'no'
 
       siteInfo['Services'] = siteInfoServices
       fullSitesDict[site] = siteInfo
