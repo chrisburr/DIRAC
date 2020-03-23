@@ -97,6 +97,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     self._fileType = []
     self._fileTypesExcluded = []
     self._lfns = []
+    self._status = None
     self._seList = []
     self._verbose = False
     self.noFC = False
@@ -514,6 +515,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
     selectDict = {'TransformationID': self.prod}
     if self._lfns:
       selectDict['LFN'] = self._lfns
+    elif self._status:
+      selectDict['Status'] = self._status
     elif self.runStatus and self.fromProd:
       res = self.transClient.getTransformationRuns({'TransformationID': self.fromProd, 'Status': self.runStatus})
       if not res['OK']:
@@ -1223,6 +1226,15 @@ class ConsistencyChecks(DiracConsistencyChecks):
     """ Getter """
     return self._lfns
   lfns = property(get_lfns, set_lfns)
+
+  def set_status(self, value):
+    """ Setter """
+    self._status = value
+
+  def get_status(self):
+    """ Getter """
+    return self._status
+  status = property(get_status, set_status)
 
   def set_verbose(self, value):
     """ Setter """
