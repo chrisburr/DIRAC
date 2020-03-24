@@ -467,7 +467,7 @@ class BookkeepingManagerHandler(RequestHandler):
     production = in_dict.get('Production', default)
     runnb = in_dict.get('RunNumber', default)
     visible = in_dict.get('Visible', 'Y')
-    replicaflag = in_dict.get('ReplicaFlag', default)
+    replicaflag = in_dict.get('ReplicaFlag', 'Yes')
 
     if 'EventTypeId' in in_dict:
       gLogger.verbose('The EventTypeId has to be replaced by EventType!')
