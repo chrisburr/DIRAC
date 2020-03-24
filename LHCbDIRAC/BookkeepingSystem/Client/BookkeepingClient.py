@@ -59,8 +59,7 @@ class BookkeepingClient(Client):
       for record in retVal['Value']:
         records += [list(record)]
       return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      return retVal
+    return retVal
 
   #############################################################################
   @staticmethod
@@ -80,10 +79,9 @@ class BookkeepingClient(Client):
     retVal = bkk.receiveFile(file_name.name, params)
     if not retVal['OK']:
       return retVal
-    else:
-      value = JEncoder.load(open(file_name.name))
-      file_name.close()
-      return S_OK(value)
+    value = JEncoder.load(open(file_name.name))
+    file_name.close()
+    return S_OK(value)
 
   #############################################################################
   def bulkJobInfo(self, in_dict):
@@ -211,7 +209,7 @@ class BookkeepingClient(Client):
     if 'Fields' not in in_dict:
       in_dict['Fields'] = ['ConfigName', 'ConfigVersion', 'JobStart', 'JobEnd', 'TCK',
                            'FillNumber', 'ProcessingPass', 'ConditionDescription', 'CONDDB', 'DDDB']
-    if 'Statistics' in in_dict and len(in_dict['Statistics']) == 0:
+    if 'Statistics' in in_dict and not in_dict['Statistics']:
       in_dict['Statistics'] = ['NbOfFiles', 'EventStat', 'FileSize', 'FullStat',
                                'Luminosity', 'InstLumonosity', 'EventType']
 
@@ -356,10 +354,9 @@ class BookkeepingClient(Client):
     retVal = bkk.receiveFile(file_name.name, params)
     if not retVal['OK']:
       return retVal
-    else:
-      value = JEncoder.load(open(file_name.name))
-      file_name.close()
-      return value
+    value = JEncoder.load(open(file_name.name))
+    file_name.close()
+    return value
 
   def getRunStatus(self, runs):
     """For retrieving the run status.

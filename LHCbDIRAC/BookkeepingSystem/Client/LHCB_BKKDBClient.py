@@ -15,8 +15,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingManager import LHCbBookke
 
 __RCSID__ = "$Id$"
 
-#############################################################################
-
 
 class LHCB_BKKDBClient(BaseESClient):
   """Client which used to browse the Entities."""

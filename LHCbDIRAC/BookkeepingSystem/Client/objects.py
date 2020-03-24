@@ -10,20 +10,19 @@
 ###############################################################################
 """reimplementation of the dictionary."""
 
-from DIRAC                                                               import gLogger
-from LHCbDIRAC.BookkeepingSystem.Client                                  import IndentMaker
-from UserDict                                                            import UserDict
+from UserDict import UserDict
 
-import types
+from DIRAC import gLogger
+from LHCbDIRAC.BookkeepingSystem.Client import IndentMaker
 
-global VERBOSE
-VERBOSE = True
 
 __RCSID__ = "$Id$"
-#############################################################################
+
+
 class odict(UserDict):
   """user defined dictionary."""
   #############################################################################
+
   def __init__(self, dict=None):
     """initialize."""
     self._keys = []
@@ -39,7 +38,8 @@ class odict(UserDict):
   def __setitem__(self, key, item):
     """set."""
     UserDict.__setitem__(self, key, item)
-    if key not in self._keys: self._keys.append(key)
+    if key not in self._keys:
+      self._keys.append(key)
 
   #############################################################################
   def clear(self):
@@ -98,22 +98,22 @@ class odict(UserDict):
     return map(self.get, self._keys)
 
 
-
 ############################################################################
 class Entity(dict):
   """Entity class."""
   #############################################################################
+
   def __init__(self, properties={}):
     """initialize an Entity."""
-    #odict.__init__(self)
-    if isinstance(properties, types.ListType):
+    # odict.__init__(self)
+    if isinstance(properties, list):
       for key in properties:
         self[key] = None  # find a simpler way to declare all keys
     elif isinstance(properties, type(odict)):
-      if not (len(properties) == 0):
+      if properties:
         self.update(properties)
-    elif isinstance(properties, types.DictType):
-      if not (len(properties) == 0):
+    elif isinstance(properties, dict):
+      if properties:
         self.update(properties.items())
     else:
       gLogger.warn("Cannot create Entity from properties:" + str(properties))
@@ -143,38 +143,34 @@ class Entity(dict):
 #
   def __repr__(self):
     """print."""
-    if len(self) == 0 :
+    if not self:
       string = "{\n " + str(None) + "\n}"
     else:
       string = "{"
       keys = self.keys()
       if 'fullpath' in keys:
         string += '\n' + 'fullpath: ' + str(self['fullpath'])
-      if VERBOSE:
-        for key in keys:
-          if key != 'name' and key != 'level' and key != 'fullpath' \
-          and key != 'expandable' and key != 'selection'\
-          and key != 'method' and key != 'showFiles':
-            string += "\n " + str(key) + " : "
-            value = self[key]
-            # some entities do not have this key. Ignore then.
-            try:
-              if key in self['not2show']:
-                string += '-- not shown --'
-                continue
-            except Exception, ex:
-              pass
-            if isinstance(value, types.DictType):
-              value = Entity(value)
-              string += "\n" + IndentMaker.prepend(str(value), (len(str(key)) + 3) * " ")
-            #childrenString += str(Entity(child)) + "\n"
-            else:
-              string += str(value)
+      for key in keys:
+        if key not in ('name', 'level', 'fullpath', 'expandable', 'selection', 'method', 'showFiles'):
+          string += "\n " + str(key) + " : "
+          value = self[key]
+          # some entities do not have this key. Ignore then.
+          try:
+            if key in self['not2show']:
+              string += '-- not shown --'
+              continue
+          except Exception:
+            pass
+          if isinstance(value, dict):
+            value = Entity(value)
+            string += "\n" + IndentMaker.prepend(str(value), (len(str(key)) + 3) * " ")
+          else:
+            string += str(value)
       else:
         for key in keys:
-          if key != 'name' and key != 'fullpath' and  key == 'FileName':
+          if key not in ('name', 'fullpath', 'FileName'):
             value = self[key]
-            if isinstance(value, types.DictType):
+            if isinstance(value, dict):
               value = Entity(value)
               string += "\n" + IndentMaker.prepend(str(value), (len(str(key)) + 3) * " ")
             else:
@@ -183,4 +179,3 @@ class Entity(dict):
       string += "\n}"
   #        string = IndentMaker.prepend(string, "_______")
     return string
-

@@ -185,7 +185,7 @@ class BKQuery():
     else:
       bkQuery = {}
 
-    ###### Query given as a path /ConfigName/ConfigVersion/ConditionDescription/ProcessingPass/EventType/FileType ######
+    # Query given as a path /ConfigName/ConfigVersion/ConditionDescription/ProcessingPass/EventType/FileType
     # or if prefixed with evt: /ConfigName/ConfigVersion/EventType/ConditionDescription/ProcessingPass/FileType
     if bkPath:
       self.__getAllBKFileTypes()
@@ -498,20 +498,20 @@ class BKQuery():
         fileTypes = []
     expandedTypes = set()
     # print "Requested", fileTypes
-    for fileType in fileTypes:
-      if fileType.lower() == 'all.hist':
+    for ft in fileTypes:
+      if ft.lower() == 'all.hist':
         allRequested = False
         expandedTypes.update([t for t in self.__exceptFileTypes.union(self.__bkFileTypes)
                               if t.endswith('HIST')])
-      elif fileType.lower().find("all.") == 0:
-        ext = '.' + fileType.split('.')[1]
-        fileType = []
+      elif ft.lower().find("all.") == 0:
+        ext = '.' + ft.split('.')[1]
+        ft = []
         if allRequested is None:
           allRequested = True
         expandedTypes.update([t for t in set(self.getBKFileTypes()) - self.__exceptFileTypes
                               if t.endswith(ext)])
       else:
-        expandedTypes.add(fileType)
+        expandedTypes.add(ft)
     # Remove __exceptFileTypes only if not explicitly required
     # print "Obtained", fileTypes, expandedTypes
     gLogger.verbose("BKQuery.__fileType: requested %s, expanded %s, except %s" % (allRequested,
@@ -526,8 +526,7 @@ class BKQuery():
     gLogger.verbose("BKQuery.__fileType: result %s" % sorted(expandedTypes))
     if len(expandedTypes) == 1 and not returnList:
       return list(expandedTypes)[0]
-    else:
-      return list(expandedTypes)
+    return list(expandedTypes)
 
   def __getAllBKFileTypes(self):
     """Returns the file types from the bookkeeping database."""
@@ -631,9 +630,9 @@ class BKQuery():
     fileTypes = query.getFileTypeList()
     nbFiles = 0
     size = 0
-    for fileType in fileTypes:
-      if fileType:
-        res = self.__bkClient.getFilesSummary(query.setFileType(fileType))
+    for ft in fileTypes:
+      if ft:
+        res = self.__bkClient.getFilesSummary(query.setFileType(ft))
         # print query, res
         if res['OK']:
           res = res['Value']
@@ -642,7 +641,7 @@ class BKQuery():
             nbFiles += res['Records'][0][ind]
             ind1 = res['ParameterNames'].index('FileSize')
             size += res['Records'][0][ind1]
-            # print 'Visible',query.isVisible(),fileType, 'Files:',
+            # print 'Visible',query.isVisible(),ft, 'Files:',
             # res['Records'][0][ind], 'Size:', res['Records'][0][ind1]
     return {'NumberOfLFNs': nbFiles, 'LFNSize': size}
 

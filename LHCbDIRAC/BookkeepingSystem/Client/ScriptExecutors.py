@@ -26,8 +26,6 @@ jobEventInputStat = {}
 
 __RCSID__ = "$Id$"
 
-#==================================================================================
-
 
 def executeFileMetadata(dmScript):
   """Get a list of LFNs, their BK metadata and print it out.
@@ -102,8 +100,6 @@ def executeFileMetadata(dmScript):
       exitCode = 2
 
   diracExit(exitCode)
-
-#==================================================================================
 
 
 def __buildPath(bkDict):
@@ -274,8 +270,6 @@ def executeFilePath(dmScript):
   if printList:
     gLogger.notice('\nList of %s values' % groupBy)
     gLogger.notice(','.join(sorted([item.replace('%s ' % groupBy, '') for item in res['Value']['Successful']])))
-
-#==================================================================================
 
 
 def _updateFileLumi(fileDict, retries=5):
@@ -461,8 +455,6 @@ def executeFixLuminosity(dmScript):
         if result is not None:
           gLogger.notice('Update done %s' % ('with errors' if result else 'successfully'))
 
-#==================================================================================
-
 
 def executeFileAncestors(dmScript, level=1):
   """Gets a list of LFNs and obtains from BK the list of ancestors at a certain
@@ -523,8 +515,6 @@ def executeFileAncestors(dmScript, level=1):
   progressBar.endLoop()
 
   diracExit(printDMResult(fullResult, empty="None", script="dirac-bookkeeping-get-file-ancestors"))
-
-#==================================================================================
 
 
 def executeFileDescendants(dmScript, level=1):
@@ -599,8 +589,6 @@ def executeFileDescendants(dmScript, level=1):
   progressBar.endLoop()
 
   diracExit(printDMResult(fullResult, empty="None", script="dirac-bookkeeping-get-file-descendants"))
-
-#==================================================================================
 
 
 def executeGetFiles(dmScript, maxFiles=20):
@@ -865,8 +853,6 @@ def executeFileSisters(dmScript, level=1):
       break
 
   diracExit(printDMResult(fullResult, empty="None", script="dirac-bookkeeping-get-file-sisters"))
-
-#==================================================================================
 
 
 def _intWithQuotes(val, quote="'"):
@@ -1196,7 +1182,7 @@ def executeGetStats(dmScript):
       notFinished = set(runList) - set(runs)
       if notFinished:
         gLogger.notice('%d runs not Finished (ignored), %s runs Finished (used for trigger rate)' %
-                       (len(notFinished), str(len(runs) if len(runs) else 'no')))
+                       (len(notFinished), str(len(runs) if runs else 'no')))
         gLogger.notice('These runs are not Finished: %s' % ','.join(str(run) for run in sorted(notFinished)))
       if runs:
         nevts = 0
@@ -1240,13 +1226,12 @@ def executeGetStats(dmScript):
         collBunches = 0.
         result = {}
         # FIXME: if/when the online run DB is accessible to get the number of bunches this should be re-activated
-        if False:
-          result = _getCollidingBunches(fillDuration)
-          for fill in fillDuration:
-            if fill not in result:
-              gLogger.notice("Error: no number of colliding bunches for fill %d" % fill)
-            else:
-              collBunches += result[fill] * fillDuration[fill]
+        # result = _getCollidingBunches(fillDuration)
+        # for fill in fillDuration:
+        #   if fill not in result:
+        #     gLogger.notice("Error: no number of colliding bunches for fill %d" % fill)
+        #   else:
+        #     collBunches += result[fill] * fillDuration[fill]
         if fullDuration and collBunches:
           collBunches /= fullDuration
           gLogger.notice('%s: %.1f on average' % ('Colliding bunches'.ljust(tab), collBunches))
