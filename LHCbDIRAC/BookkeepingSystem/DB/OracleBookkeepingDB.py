@@ -1039,7 +1039,7 @@ class OracleBookkeepingDB(object):
   #############################################################################
   def getFileTypes(self, configName, configVersion, conddescription=default,
                    processing=default, evt=default, runnb=default, production=default,
-                   visible=default):
+                   visible=default, replicaFlag=default):
     """
     For retrieving the file types
 
@@ -1057,7 +1057,7 @@ class OracleBookkeepingDB(object):
 
     tables = ' productionoutputfiles prod, productionscontainer cont, filetypes ftypes '
     condition = " and cont.production=prod.production %s " % self.__buildVisible(visible=visible,
-                                                                                 replicaFlag='Yes')
+                                                                                 replicaFlag=replicaFlag)
 
     retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
     if not retVal['OK']:
