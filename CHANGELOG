@@ -203,6 +203,13 @@ use DIRAC v7r0p1
 * Always use lhcb-dirac/LHCbDIRAC as a reference for the copyright check
 
 
+v9r4p18
+use DIRAC v6r22p25
+
+* do not change the behaviour of the method
+* fix code style
+* take into account the replica flag
+
 v9r4p17
 use DIRAC v6r22p24
 

@@ -528,7 +528,8 @@ class OracleBookkeepingDB(object):
 
   #############################################################################
   def getAvailableFileTypes(self):
-    """For retrieving all file types.
+    """
+    For retrieving all file types.
 
     :return: the available file types
     """
@@ -1042,8 +1043,8 @@ class OracleBookkeepingDB(object):
   #############################################################################
   def getFileTypes(self, configName, configVersion, conddescription=default,
                    processing=default, evt=default, runnb=default, production=default,
-                   visible=default):
-    """For retrieving the file types.
+                   visible=default, replicaFlag=default):
+    """For retrieving the file types
 
     :param str configName: configuration name
     :param str configVersion: configuration version
