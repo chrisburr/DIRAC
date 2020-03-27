@@ -105,11 +105,12 @@ class IBookkeepingDatabaseClient(object):
                                             processing, evt, visible, ftype, replicaFlag)
 
   #############################################################################
-  def getFileTypes(self, configName, configVersion, conddescription, processing, evt, runnb, production, visible):
+  def getFileTypes(self, configName, configVersion, conddescription, processing,
+                   evt, runnb, production, visible, replicaFlag):
     "more info in the BookkeepingClient.py"
     return self.getManager().getFileTypes(configName, configVersion,
                                           conddescription, processing,
-                                          evt, runnb, production, visible)
+                                          evt, runnb, production, visible, replicaFlag)
 
   #############################################################################
   def getFilesWithMetadata(self, configName, configVersion, conddescription,
