@@ -147,9 +147,11 @@ integration_tests:
     DOCKER_TLS_CERTDIR: "/certs"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
   rules:
-    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == null'
+    # Using rules causes "Pipelines for Merge Requests" to be triggered, so disable them explicitly
+    # https://docs.gitlab.com/ee/ci/merge_request_pipelines/
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == null && $CI_MERGE_REQUEST_ID == null'
       allow_failure: true
-    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null'
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null'
       allow_failure: false
   before_script:
     - |
