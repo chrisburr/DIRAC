@@ -26,7 +26,7 @@ from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import 
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s eventType  ' % Script.scriptName]))
 

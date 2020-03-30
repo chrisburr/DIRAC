@@ -24,7 +24,7 @@ if __name__ == "__main__":
   dmScript.registerFileSwitches()
 
   Script.registerSwitch('', 'List', '   Print out the list of LFNs')
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile]' % Script.scriptName, ]))
 

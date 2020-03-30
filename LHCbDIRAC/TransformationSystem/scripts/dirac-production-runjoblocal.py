@@ -29,7 +29,7 @@ Script.registerSwitch('D:', 'Download=', 'Defines data acquisition as DownloadIn
 Script.registerSwitch('P:', 'Protocol=', 'Defines data acquisition as InputDataByProtocol')
 Script.parseCommandLine(ignoreErrors=False)
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   '\nUsage:',
                                   'dirac-production-runjoblocal [Data imput mode] [job ID]'
                                   '\nArguments:',

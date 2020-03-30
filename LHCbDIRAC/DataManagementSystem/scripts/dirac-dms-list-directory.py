@@ -34,7 +34,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'NoDirectories', 'Only print out only files, not subdirectories')
   dmScript.registerBKSwitches()
 
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 

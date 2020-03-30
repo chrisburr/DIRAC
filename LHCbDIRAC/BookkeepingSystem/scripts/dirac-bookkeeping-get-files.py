@@ -25,7 +25,7 @@ Script.registerSwitch('', 'Output=', '  Specify a file that will contain the lis
 Script.registerSwitch('', 'OptionsFile=', '   Create a Gaudi options file')
 maxFiles = 20
 Script.registerSwitch('', 'MaxFiles=', '   Print only <MaxFiles> lines on stdout (%d if output, else All)' % maxFiles)
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s [option|cfgfile] ... ProdID Type' % Script.scriptName]))
 

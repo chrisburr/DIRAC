@@ -27,7 +27,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'Summary', '   Only give the number of files in each group (default: GroupByPath)')
   Script.registerSwitch('', 'List', '   Print a list of group keys')
   Script.registerSwitch('', 'IgnoreFileType', '   Ignore file type in path (useful for stripping)')
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... LFN|File' % Script.scriptName,
                                     'Arguments:',

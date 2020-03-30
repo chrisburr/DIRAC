@@ -29,7 +29,7 @@ Script.registerSwitch("D:", "Dir=", "  directory to be checked: mandatory argume
 Script.registerSwitch("f:", "Output=", " output file name [dirac-dms-chec-dir-cont.out]")
 Script.registerSwitch("v", "Verbose", " use this option for verbose output [False]")
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s [option|cfgfile] ...' %
                                   Script.scriptName, ]))

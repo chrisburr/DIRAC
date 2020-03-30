@@ -25,7 +25,7 @@ Examples of Usage :
 import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s [option|cfgfile] ... Prod -Option [RunNumber|RunList]' % Script.scriptName,
                                   'Arguments:',

@@ -62,7 +62,7 @@ def doParse():
   Script.registerSwitch('f', 'hot', 'shows hot production only')
   # Set script help message
   Script.setUsageMessage(
-      '\n'.join([__doc__.split('\n')[1],
+      __doc__ + '\n'.join([
                  '\nArguments:',
                  '  requestID (string): csv ID(s) of the request, if used other switches are ignored',
                  '  requestState (string): csv states, being "Active" by default',

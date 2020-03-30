@@ -25,7 +25,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'All', 'Do not restrict to ancestors with replicas')
   Script.registerSwitch('', 'Full', 'Get full metadata information on ancestors')
   Script.registerSwitch('', 'Depth=', 'Number of processing levels (default:%d)' % level)
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName,
                                     'Arguments:',
