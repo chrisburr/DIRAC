@@ -9,15 +9,16 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Help class."""
-from DIRAC                                                               import gLogger, S_OK
+from DIRAC import gLogger, S_OK
 
 __RCSID__ = "$Id$"
 
-#############################################################################
-class Help:
+
+class Help(object):
   """Class for help."""
   #############################################################################
-  def __init__( self ):
+
+  def __init__(self):
     """constructor."""
     pass
 
@@ -61,7 +62,7 @@ class Help:
 
   #############################################################################
   @staticmethod
-  def helpProcessing(treeLevels ):
+  def helpProcessing(treeLevels):
     """help."""
     if treeLevels == -1:
       print "-------------------------------------"
@@ -98,8 +99,7 @@ class Help:
 
   #############################################################################
   @staticmethod
-  def helpEventType(treeLevels ):
+  def helpEventType(treeLevels):
     gLogger.debug(treeLevels)
-    gLogger.warn( "Not Implemented!" )
+    gLogger.warn("Not Implemented!")
     return
-

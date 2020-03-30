@@ -48,6 +48,3 @@ def append(value, suffix):
     string += formats % line
     string += ' ' + suffix + ' \n'
   return string.strip('\n')
-
-#############################################################################
-

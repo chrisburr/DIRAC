@@ -16,10 +16,8 @@ from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager
 
 __RCSID__ = "$Id$"
 
-#############################################################################
 
-
-class BaseESClient:
+class BaseESClient(object):
   """Basic client."""
 
   #############################################################################
@@ -39,8 +37,7 @@ class BaseESClient:
     res = self.getManager().mergePaths(self.__currentDirectory, path)
     if res['OK']:
       return self.getManager().list(res['Value'], selectionDict, sortDict, startItem, maxitems)
-    else:
-      return S_ERROR(res['Message'])
+    return S_ERROR(res['Message'])
 
   #############################################################################
   def getManager(self):

@@ -56,7 +56,6 @@ transID=`cat TransformationID`
 # Create unique files and adding entry to the bkk"
 echo ""
 echo "Creating unique test files and adding entry to the bkk"
-# ./random_files_creator.sh --Files=5 --Name="Test_Transformation_System_" --Path=$PWD/TransformationSystemTest/
 ./client_Bookkeeping.sh --Files=5 --Name="Test_Transformation_System_" --Path=$PWD/TransformationSystemTest/
 
 # Add the random files to the transformation

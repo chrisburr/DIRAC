@@ -28,34 +28,6 @@ then
    exit $?
 fi
 echo " "
-echo "======  dirac-configuration-dump-local-cache"
-dirac-configuration-dump-local-cache
-if [ $? -ne 0 ]
-then
-   exit $?
-fi
-echo " "
-echo "======  dirac-admin-get-banned-sites"
-dirac-admin-get-banned-sites
-if [ $? -ne 0 ]
-then
-   exit $?
-fi
-echo " "
-echo "======   dirac-admin-site-info LCG.CERN.cern"
-dirac-admin-site-info LCG.CERN.cern
-if [ $? -ne 0 ]
-then
-   exit $?
-fi
-echo " "
-echo "======  dirac-dms-show-se-status"
-dirac-dms-show-se-status
-if [ $? -ne 0 ]
-then
-   exit $?
-fi
-echo " "
 echo "======  dirac-dms-lfn-replicas /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000071.raw"
 dirac-dms-lfn-replicas /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000071.raw
 if [ $? -ne 0 ]
@@ -79,6 +51,14 @@ fi
 echo " "
 echo "====== dirac-dms-lfn-metadata /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw"
 dirac-dms-lfn-metadata /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw
+if [ $? -ne 0 ]
+then
+   exit $?
+fi
+
+echo " "
+echo "====== dirac-lhcb-get-root-guid /lhcb/MC/2015/ALLSTREAMS.DST/00001164/0000/00001164_00000001_3.AllStreams.dst"
+dirac-lhcb-get-root-guid /lhcb/MC/2015/ALLSTREAMS.DST/00001164/0000/00001164_00000001_3.AllStreams.dst
 if [ $? -ne 0 ]
 then
    exit $?
@@ -109,12 +89,6 @@ if [ $? -ne 0 ]
 then
    exit $?
 fi
-echo " "
-
-echo " "
-echo " "
-echo " ########################## BEGIN OF USER FILES TEST #############################"
-echo " "
 echo " "
 
 echo "====== dirac-dms-list-directory /lhcb/user/$dir/Dirac_Scripts_Test_Directory/"
@@ -205,11 +179,4 @@ echo " "
 echo " "
 echo " ########################## END OF USER FILES TEST #############################"
 echo " "
-echo " "
-echo "======  dirac-monitoring-get-components-status"
-dirac-monitoring-get-components-status
-if [ $? -ne 0 ]
-then
-   exit $?
-fi
 echo " "
