@@ -1,3 +1,18 @@
+v10r0-pre15
+use DIRAC v7r0p18
+
+* fix performance tests
+* revert [:255] for transName
+* give job status for all final statuses
+* Pass required status to ConsistencyChecks
+* limit size of transName
+* limit trans name to 255 characters
+* fix case of /vo/vo
+* Ddocs: HowTo multiple processing
+* NagiosTopologyAgent to produce (also) topology.json
+* style
+* Docstring: scripts display the whole __doc__
+
 v10r0-pre14
 use DIRAC v7r0p17
 
