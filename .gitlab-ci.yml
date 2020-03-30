@@ -146,10 +146,13 @@ integration_tests:
     # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
     DOCKER_TLS_CERTDIR: "/certs"
     GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
-  # Support for this will be added in GitLab 12.8 which will likely be available at CERN in late March
-  # rules:
-  #   - if: 'LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == ""'
-  #     allow_failure: true
+  rules:
+    # Using rules causes "Pipelines for Merge Requests" to be triggered, so disable them explicitly
+    # https://docs.gitlab.com/ee/ci/merge_request_pipelines/
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == null && $CI_MERGE_REQUEST_ID == null'
+      allow_failure: true
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null'
+      allow_failure: false
   before_script:
     - |
       if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD:-}" ]]; then
