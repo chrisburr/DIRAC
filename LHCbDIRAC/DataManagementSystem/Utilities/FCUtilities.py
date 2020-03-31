@@ -11,7 +11,8 @@
 """This modules contains utility functions for LHCb DM."""
 __RCSID__ = "$Id$"
 from DIRAC import S_OK, S_ERROR, gLogger
-import sys, os
+import sys
+import os
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 
@@ -59,4 +60,4 @@ def createUserDirectory(user):
   if not res['OK']:
     return res
   gLogger.info('Setting ownership of directory', baseDir)
-  return chown(baseDir, user, group='lhcb_user', mode=0755, recursive=False, fcClient=dfc)
+  return chown(baseDir, user, group='lhcb_user', mode=0o755, recursive=False, fcClient=dfc)

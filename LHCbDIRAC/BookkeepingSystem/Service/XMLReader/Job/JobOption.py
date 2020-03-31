@@ -12,6 +12,7 @@
 
 __RCSID__ = "$Id$"
 
+
 class JobOption:
   """JobOption class."""
 
@@ -59,4 +60,3 @@ class JobOption:
     return result
 
   #############################################################################
-

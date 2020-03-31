@@ -14,11 +14,15 @@
 __RCSID__ = "$Id$"
 
 ########################################################################
+
+
 class Command:
   """Command inteface."""
+
   def __init__(self):
     pass
   ########################################################################
+
   def execute(self):
     """must be reimplemented."""
     pass

@@ -12,18 +12,21 @@
 
 """Controller of the Production lookup widget."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Item                          import Item
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Item import Item
 
-from PyQt4.QtGui                                                         import QMessageBox
+from PyQt4.QtGui import QMessageBox
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerProductionLookup(ControlerAbstract):
   """ControlerProductionLookup class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -37,9 +40,8 @@ class ControlerProductionLookup(ControlerAbstract):
       self.__list = []
       self.__model = message['items']
       widget = self.getWidget()
-      keys = self.__model.getChildren().keys()
+      keys = sorted(self.__model.getChildren().keys())
 
-      keys.sort()
       keys.reverse()
       for i in keys:
         self.__list += [str(i)]
@@ -68,7 +70,7 @@ class ControlerProductionLookup(ControlerAbstract):
           if str(i) in self.__model.getChildren().keys():
             selected += [self.__model.getChildren()[str(i)]]
       if len(selected) != 0:
-        message = Message({'action':'showOneProduction', 'paths':selected})
+        message = Message({'action': 'showOneProduction', 'paths': selected})
         self.getParent().messageFromChild(self, message)
     else:
       QMessageBox.information(self.getWidget(),
@@ -82,18 +84,17 @@ class ControlerProductionLookup(ControlerAbstract):
     """handles the cancel button action."""
     self.getWidget().getListView().reset()
     self.getWidget().close()
-    message = Message({'action':'configbuttonChanged'})
+    message = Message({'action': 'configbuttonChanged'})
     self.getParent().messageFromChild(self, message)
-
 
   def all(self):
     """handles the all button action."""
     widget = self.getWidget()
     data = widget.getModel().getAllData()
-    parent = Item({'fullpath':'/'}, None)
+    parent = Item({'fullpath': '/'}, None)
     for i in data:
       parent.addItem(self.__model.getChildren()[i])
-    message = Message({'action':'showAllProduction', 'items':parent})
+    message = Message({'action': 'showAllProduction', 'items': parent})
     self.getParent().messageFromChild(self, message)
     self.getWidget().close()
 

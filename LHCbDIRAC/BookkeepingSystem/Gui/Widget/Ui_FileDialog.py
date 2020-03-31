@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_FileDialog(object):
   def setupUi(self, FileDialog):
     FileDialog.setObjectName("FileDialog")
@@ -250,36 +251,157 @@ class Ui_FileDialog(object):
     QtCore.QMetaObject.connectSlotsByName(FileDialog)
 
   def retranslateUi(self, FileDialog):
-    FileDialog.setWindowTitle(QtGui.QApplication.translate("FileDialog", "Feicim FileDialog", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_7.setText(QtGui.QApplication.translate("FileDialog", "Configuration Name", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_8.setText(QtGui.QApplication.translate("FileDialog", "Configuration Version", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_9.setText(QtGui.QApplication.translate("FileDialog", "Simulation Conditions", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_10.setText(QtGui.QApplication.translate("FileDialog", "Processing pass", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_11.setText(QtGui.QApplication.translate("FileDialog", "Event Type", None, QtGui.QApplication.UnicodeUTF8))
+    FileDialog.setWindowTitle(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Feicim FileDialog",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_7.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Configuration Name",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_8.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Configuration Version",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_9.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Simulation Conditions",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_10.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Processing pass",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_11.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Event Type",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.label_12.setText(QtGui.QApplication.translate("FileDialog", "File Type", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_13.setText(QtGui.QApplication.translate("FileDialog", "Production", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_14.setText(QtGui.QApplication.translate("FileDialog", "Program Name and version", None, QtGui.QApplication.UnicodeUTF8))
-    self.groupBox.setTitle(QtGui.QApplication.translate("FileDialog", "Statistics", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_2.setText(QtGui.QApplication.translate("FileDialog", "Number Of Events", None, QtGui.QApplication.UnicodeUTF8))
-    self.label.setText(QtGui.QApplication.translate("FileDialog", "Number Of Files:", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_13.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Production",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_14.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Program Name and version",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.groupBox.setTitle(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Statistics",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_2.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Number Of Events",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Number Of Files:",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.label_5.setText(QtGui.QApplication.translate("FileDialog", "Files size", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_15.setText(QtGui.QApplication.translate("FileDialog", "EventInputStat", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_17.setText(QtGui.QApplication.translate("FileDialog", "TotalLuminosity", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_18.setText(QtGui.QApplication.translate("FileDialog", "Luminosity", None, QtGui.QApplication.UnicodeUTF8))
-    self.groupBox_2.setTitle(QtGui.QApplication.translate("FileDialog", "Selected", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_4.setText(QtGui.QApplication.translate("FileDialog", "Number Of Events", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_6.setText(QtGui.QApplication.translate("FileDialog", "Number Of Files:", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_15.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "EventInputStat",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_17.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "TotalLuminosity",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_18.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Luminosity",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.groupBox_2.setTitle(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Selected",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_4.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Number Of Events",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_6.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Number Of Files:",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.label_3.setText(QtGui.QApplication.translate("FileDialog", "Files size", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_16.setText(QtGui.QApplication.translate("FileDialog", "EventInputStat", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_19.setText(QtGui.QApplication.translate("FileDialog", "TotalLuminosity", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_20.setText(QtGui.QApplication.translate("FileDialog", "Luminosity", None, QtGui.QApplication.UnicodeUTF8))
-    self.groupBox_4.setTitle(QtGui.QApplication.translate("FileDialog", "Filter(s)", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_16.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "EventInputStat",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_19.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "TotalLuminosity",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label_20.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Luminosity",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.groupBox_4.setTitle(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Filter(s)",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.tckButton.setText(QtGui.QApplication.translate("FileDialog", "TCK", None, QtGui.QApplication.UnicodeUTF8))
     self.tckcloseButton.setText(QtGui.QApplication.translate("FileDialog", "...", None, QtGui.QApplication.UnicodeUTF8))
-    self.nextButton.setText(QtGui.QApplication.translate("FileDialog", "Next Page", None, QtGui.QApplication.UnicodeUTF8))
-    self.advancedSave.setText(QtGui.QApplication.translate("FileDialog", "Advanced Save..", None, QtGui.QApplication.UnicodeUTF8))
-    self.saveButton.setText(QtGui.QApplication.translate("FileDialog", "Save Files...", None, QtGui.QApplication.UnicodeUTF8))
+    self.nextButton.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Next Page",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.advancedSave.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Advanced Save..",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.saveButton.setText(
+        QtGui.QApplication.translate(
+            "FileDialog",
+            "Save Files...",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.closeButton.setText(QtGui.QApplication.translate("FileDialog", "Close", None, QtGui.QApplication.UnicodeUTF8))
+
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Widget.FilterWidget import FilterWidget
 import Resources_rc

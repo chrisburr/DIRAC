@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_AddBookmarks(object):
   def setupUi(self, AddBookmarks):
     AddBookmarks.setObjectName("AddBookmarks")
@@ -58,10 +59,21 @@ class Ui_AddBookmarks(object):
     QtCore.QMetaObject.connectSlotsByName(AddBookmarks)
 
   def retranslateUi(self, AddBookmarks):
-    AddBookmarks.setWindowTitle(QtGui.QApplication.translate("AddBookmarks", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+    AddBookmarks.setWindowTitle(
+        QtGui.QApplication.translate(
+            "AddBookmarks",
+            "Dialog",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.okButton.setText(QtGui.QApplication.translate("AddBookmarks", "OK", None, QtGui.QApplication.UnicodeUTF8))
-    self.cancelButton.setText(QtGui.QApplication.translate("AddBookmarks", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+    self.cancelButton.setText(
+        QtGui.QApplication.translate(
+            "AddBookmarks",
+            "Cancel",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.label_2.setText(QtGui.QApplication.translate("AddBookmarks", "Path:", None, QtGui.QApplication.UnicodeUTF8))
     self.label.setText(QtGui.QApplication.translate("AddBookmarks", "Title:", None, QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

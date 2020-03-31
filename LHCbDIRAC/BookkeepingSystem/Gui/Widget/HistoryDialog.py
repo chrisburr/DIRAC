@@ -12,20 +12,23 @@
 
 """History widget."""
 
-from PyQt4.QtGui                                import QDialog, QMessageBox, QAbstractItemView
-from PyQt4.QtCore                               import SIGNAL
+from PyQt4.QtGui import QDialog, QMessageBox, QAbstractItemView
+from PyQt4.QtCore import SIGNAL
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_HistoryDialog           import Ui_HistoryDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel                 import TableModel
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerHistoryDialog  import ControlerHistoryDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_HistoryDialog import Ui_HistoryDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel import TableModel
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerHistoryDialog import ControlerHistoryDialog
 
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class HistoryDialog(QDialog, Ui_HistoryDialog):
   """HistoryDialog class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """initialize the widget."""
     QDialog.__init__(self, parent)
@@ -112,7 +115,7 @@ class HistoryDialog(QDialog, Ui_HistoryDialog):
 
     # set the font
     #font = QFont("Courier New", 12)
-    #tableViewObject.setFont(font)
+    # tableViewObject.setFont(font)
 
     # hide vertical header
     vh = tableViewObject.verticalHeader()
@@ -128,16 +131,15 @@ class HistoryDialog(QDialog, Ui_HistoryDialog):
 
     # set row height
     #nrows = len(tabledata)
-    #for row in xrange(nrows):
+    # for row in xrange(nrows):
     #   tableViewObject.setRowHeight(row, 18)
     # enable sorting
     # this doesn't work
-    #tv.setSortingEnabled(True)
+    # tv.setSortingEnabled(True)
     return tm
 
   #############################################################################
   def clearTable(self):
     """clear the table."""
-    #tableViewObject().clear()
+    # tableViewObject().clear()
     self.__model = {}
-

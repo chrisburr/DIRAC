@@ -12,9 +12,11 @@
 
 __RCSID__ = "$Id$"
 
+
 class Quality:
   """Quality class."""
   #############################################################################
+
   def __init__(self):
     """initialize the class members."""
     self.group_ = ""
@@ -80,6 +82,4 @@ class Quality:
     result = '<Quality Group="' + self.getGroup() + '" Flag="' + self.getFlag() + '"/>\n'
     return result
 
-
   #############################################################################
-

@@ -27,34 +27,34 @@ from DIRAC.RequestManagementSystem.private.OperationHandlerBase import Operation
 from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient
 
 ########################################################################
-class WMSSecureOutputData( OperationHandlerBase ):
+
+
+class WMSSecureOutputData(OperationHandlerBase):
   """.. class:: ValidateRequest.
 
   Validate operation handler
   """
 
-  def __init__( self, operation = None, csPath = None ):
+  def __init__(self, operation=None, csPath=None):
     """c'tor.
 
     :param self: self reference
     :param Operation operation: Operation instance
     :param str csPath: CS path for this handler
     """
-    OperationHandlerBase.__init__( self, operation, csPath )
+    OperationHandlerBase.__init__(self, operation, csPath)
 
-
-  def __call__( self ):
+  def __call__(self):
     """It expects to find the reqID in operation.Arguments."""
     try:
-      decode = DEncode.decode( self.operation.Arguments )
-      self.log.debug (decode)
-      gLogger.debug ( "Validating output" )
+      decode = DEncode.decode(self.operation.Arguments)
+      self.log.debug(decode)
+      gLogger.debug("Validating output")
     except ValueError as error:
-      self.log.exception( error )
-      self.operation.Error = str( error )
+      self.log.exception(error)
+      self.operation.Error = str(error)
       self.operation.Status = "Failed"
-      return S_ERROR( str( error ) )
+      return S_ERROR(str(error))
 
     self.operation.Status = "Done"
     return S_OK()
-

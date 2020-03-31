@@ -29,11 +29,15 @@ def _createIndentedString(string, indent):
   return newstr
 
 #############################################################################
+
+
 def prepend(string, indent=DEFAULT):
   """add string."""
   return _createIndentedString(string, indent)
 
 #############################################################################
+
+
 def append(value, suffix):
   """append...."""
   lines = value.split('\n')

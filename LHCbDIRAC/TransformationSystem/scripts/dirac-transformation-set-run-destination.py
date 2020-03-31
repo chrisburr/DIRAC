@@ -124,8 +124,8 @@ if __name__ == "__main__":
   dmScript.registerBKSwitches()
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile]' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile]' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=False)
 

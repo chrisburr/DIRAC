@@ -10,7 +10,7 @@
 ###############################################################################
 """stores the data taking conditions."""
 
-from DIRAC                                                                  import gLogger
+from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
@@ -18,6 +18,7 @@ __RCSID__ = "$Id$"
 class DataTakingConditions:
   """DataTakingConditions class."""
   #############################################################################
+
   def __init__(self):
     """initialize the class memeber."""
     self.parameters_ = {}
@@ -42,4 +43,3 @@ class DataTakingConditions:
     result += '</DataTakingConditions>\n'
 
     return result
-

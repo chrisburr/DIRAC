@@ -19,21 +19,21 @@ __RCSID__ = "$Id$"
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-Script.setUsageMessage( '\n'.join( [ __doc__.split( '\n' )[1],
-                                     'Usage:',
-                                     '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
-                                     'Arguments:',
-                                     '  Start:    Start date (Format: YYYY-MM-DD)',
-                                     '  End:      End date (Format: YYYY-MM-DD). Default is Start' ] ) )
-Script.parseCommandLine( ignoreErrors = True )
+Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+                                  'Usage:',
+                                  '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
+                                  'Arguments:',
+                                  '  Start:    Start date (Format: YYYY-MM-DD)',
+                                  '  End:      End date (Format: YYYY-MM-DD). Default is Start']))
+Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 start = ''
 end = ''
-if len( args ) > 2 or not args or not args[0]:
+if len(args) > 2 or not args or not args[0]:
   Script.showHelp()
 
-if len( args ) == 2:
+if len(args) == 2:
   end = args[1]
 start = args[0]
 
@@ -53,4 +53,3 @@ else:
       print 'Processed runs:', res['Value']['ProcessedRuns']
     if 'NotProcessedRuns' in res['Value']:
       print 'Not processed runs:', res['Value']['NotProcessedRuns']
-

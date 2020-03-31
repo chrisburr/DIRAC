@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_ProcessingPassDialog(object):
   def setupUi(self, ProcessingPassDialog):
     ProcessingPassDialog.setObjectName("ProcessingPassDialog")
@@ -64,10 +65,38 @@ class Ui_ProcessingPassDialog(object):
     QtCore.QMetaObject.connectSlotsByName(ProcessingPassDialog)
 
   def retranslateUi(self, ProcessingPassDialog):
-    ProcessingPassDialog.setWindowTitle(QtGui.QApplication.translate("ProcessingPassDialog", "Feicim - Processing Pass Viewer", None, QtGui.QApplication.UnicodeUTF8))
-    self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab), QtGui.QApplication.translate("ProcessingPassDialog", "PassGroup", None, QtGui.QApplication.UnicodeUTF8))
-    self.groupBox.setTitle(QtGui.QApplication.translate("ProcessingPassDialog", "Description", None, QtGui.QApplication.UnicodeUTF8))
-    self.label.setText(QtGui.QApplication.translate("ProcessingPassDialog", "Total Processing pass", None, QtGui.QApplication.UnicodeUTF8))
-    self.closeButton.setText(QtGui.QApplication.translate("ProcessingPassDialog", "Close", None, QtGui.QApplication.UnicodeUTF8))
+    ProcessingPassDialog.setWindowTitle(
+        QtGui.QApplication.translate(
+            "ProcessingPassDialog",
+            "Feicim - Processing Pass Viewer",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.tabwidget.setTabText(
+        self.tabwidget.indexOf(
+            self.tab),
+        QtGui.QApplication.translate(
+            "ProcessingPassDialog",
+            "PassGroup",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.groupBox.setTitle(
+        QtGui.QApplication.translate(
+            "ProcessingPassDialog",
+            "Description",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.label.setText(
+        QtGui.QApplication.translate(
+            "ProcessingPassDialog",
+            "Total Processing pass",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.closeButton.setText(
+        QtGui.QApplication.translate(
+            "ProcessingPassDialog",
+            "Close",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

@@ -19,9 +19,9 @@ __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage('\n'.join([ __doc__.split('\n')[1],
-                                     'Usage:',
-                                     '  %s [option|cfgfile]' % Script.scriptName ]))
+Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+                                  'Usage:',
+                                  '  %s [option|cfgfile]' % Script.scriptName]))
 Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -47,4 +47,3 @@ else:
   print 'Unexpected choice:', value
 
 DIRAC.exit(exitCode)
-

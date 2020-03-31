@@ -28,33 +28,34 @@ from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 __RCSID__ = "$Id$"
 
 
-class NagiosConnector( object ):
+class NagiosConnector(object):
   """Bundles functions in the stomp library for sending SAMJob-Results to SAM-
   Nagios."""
-  def __init__( self ):
+
+  def __init__(self):
     self.config = {}
     self.opsHelper = Operations()
     self.conn = None
     self.message = ''
 
-  def readConfig( self ):
+  def readConfig(self):
     """get Message Broker and Queue from Configuration file."""
 
     self.config = {}
     for item in ['MsgBroker', 'MsgQueue', 'MsgPort']:
-      path = self.opsHelper.getPath( '/NagiosConnector/%s' % item )
-      self.config[ item ] = gConfig.getValue( path )
+      path = self.opsHelper.getPath('/NagiosConnector/%s' % item)
+      self.config[item] = gConfig.getValue(path)
       if not self.config[item]:
         gLogger.verbose('Required Configuration Value is empty: %s' % item)
       else:
-        gLogger.verbose( 'Read Config Values for %s: %s' % (item, self.config[item] ) )
+        gLogger.verbose('Read Config Values for %s: %s' % (item, self.config[item]))
 
     try:
-      self.config['MsgPort'] = int( self.config['MsgPort'] )
+      self.config['MsgPort'] = int(self.config['MsgPort'])
     except TypeError:
       self.config['MsgPort'] = 6163
 
-  def useDebugMessage( self ):
+  def useDebugMessage(self):
     """Load a sample message for debugging."""
     self.message = """hostName: ce.hpc.iit.bme.hu
 metricStatus: OK
@@ -72,20 +73,18 @@ serviceType: org.lhcb.CE
 detailsData: further details here:
 EOT"""
 
-  def assembleMessage( self,
-                       serviceURI = 'no serviceURI given',
-                       status = 'no status given',
-                       details = 'no details given',
-                       nagiosName = 'no nagiosName given' ):
+  def assembleMessage(self,
+                      serviceURI='no serviceURI given',
+                      status='no status given',
+                      details='no details given',
+                      nagiosName='no nagiosName given'):
     """Brings message information to the generic format required by Nagios."""
 
     statuscodes = {0: 'OK', 1: 'CRITICAL', 2: 'WARNING', 3: 'UNKNOWN'}
     if status in ['CRITICAL', 'OK', 'WARNING', 'UNKNOWN']:
       pass
     elif status in xrange(4):
-      status = statuscodes[ status ]
-
-
+      status = statuscodes[status]
 
       currentTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
       message = ""
@@ -106,12 +105,12 @@ EOT"""
       message += "EOT\n"
       self.message = message
 
-  def initializeConnection( self,
-                            _use_ssl = False,
-                            _ssl_key_file = None,
-                            _ssl_cert_file = None,
-                            _ssl_ca_certs = None,
-                            _ssl_cert_validator = None  ):
+  def initializeConnection(self,
+                           _use_ssl=False,
+                           _ssl_key_file=None,
+                           _ssl_cert_file=None,
+                           _ssl_ca_certs=None,
+                           _ssl_cert_validator=None):
     """Connect the conn object with the Broker read from configuration.
 
     Refer to the stomppy documentation for full authentication args details.
@@ -126,21 +125,21 @@ EOT"""
     :param _ssl_cert_validator:  function which performs extra validation on the client certificate
     """
     try:
-      self.conn = stomp.Connection( [ ( self.config['MsgBroker'], self.config['MsgPort'] ) ],
-                                    use_ssl = _use_ssl,
-                                    ssl_key_file = _ssl_key_file,
-                                    ssl_cert_file = _ssl_cert_file ,
-                                    ssl_ca_certs = _ssl_ca_certs,
-                                    ssl_cert_validator = _ssl_cert_validator )
+      self.conn = stomp.Connection([(self.config['MsgBroker'], self.config['MsgPort'])],
+                                   use_ssl=_use_ssl,
+                                   ssl_key_file=_ssl_key_file,
+                                   ssl_cert_file=_ssl_cert_file,
+                                   ssl_ca_certs=_ssl_ca_certs,
+                                   ssl_cert_validator=_ssl_cert_validator)
       # There may be a need to receive messages.
       # In this case there should be a class with an on_message method
       # conn.set_listener('',MyListener()) python-messaging provides a useful class.
       self.conn.start()
       self.conn.connect()
-    except stomp.exception.ConnectFailedException, e:
-      gLogger.error( 'Error establishing connection: %s' % e )
+    except stomp.exception.ConnectFailedException as e:
+      gLogger.error('Error establishing connection: %s' % e)
 
-  def sendMessage( self ):
+  def sendMessage(self):
     """Use the conn object to send a message to the broker.
 
     If the format and the configurations are correct, the message
@@ -148,14 +147,13 @@ EOT"""
     """
 
     if not self.message:
-      gLogger.error(  'The message string is empty!' )
-    self.conn.send( destination = self.config[ 'MsgQueue' ], body = self.message  )
-    gLogger.verbose( 'Message sent to %s on %s' % ( self.config[ 'MsgBroker' ],
-                                                    self.config[ 'MsgQueue'] ) )
-    gLogger.verbose( 'Message content %s' %  self.message )
+      gLogger.error('The message string is empty!')
+    self.conn.send(destination=self.config['MsgQueue'], body=self.message)
+    gLogger.verbose('Message sent to %s on %s' % (self.config['MsgBroker'],
+                                                  self.config['MsgQueue']))
+    gLogger.verbose('Message content %s' % self.message)
 
-
-  def endConnection( self ):
+  def endConnection(self):
     """Call disconnect() on the conn object."""
     self.conn.disconnect()
-    gLogger.verbose( 'Connection successfully terminated' )
+    gLogger.verbose('Connection successfully terminated')

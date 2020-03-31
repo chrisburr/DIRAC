@@ -10,7 +10,7 @@
 ###############################################################################
 """stores the simulation condition."""
 
-from DIRAC                                                                  import gLogger
+from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
@@ -18,6 +18,7 @@ __RCSID__ = "$Id$"
 class SimulationConditions:
   """SimulationConditions class."""
   #############################################################################
+
   def __init__(self):
     """initialize the class member."""
     self.parameters_ = {}
@@ -42,4 +43,3 @@ class SimulationConditions:
     result += '</SimulationCondition>\n'
 
     return result
-

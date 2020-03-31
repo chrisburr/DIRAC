@@ -12,23 +12,26 @@
 
 """Tree widget."""
 
-from PyQt4.QtCore  import SIGNAL, Qt
-from PyQt4.QtGui   import QWidget, QHeaderView
+from PyQt4.QtCore import SIGNAL, Qt
+from PyQt4.QtGui import QWidget, QHeaderView
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_TreeWidget              import Ui_TreeWidget
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerTree           import ControlerTree
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.InfoDialog                 import InfoDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.ProcessingPassDialog       import ProcessingPassDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.FileDialog                 import FileDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_TreeWidget import Ui_TreeWidget
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerTree import ControlerTree
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.InfoDialog import InfoDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.ProcessingPassDialog import ProcessingPassDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.FileDialog import FileDialog
 
 __RCSID__ = "$Id$"
 
 #from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreePanel    import TreePanel
 
 #############################################################################
+
+
 class TreeWidget(QWidget, Ui_TreeWidget):
   """TreeWidget class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """Constructor.
 
@@ -74,8 +77,8 @@ class TreeWidget(QWidget, Ui_TreeWidget):
     self.Bookmarks.setupControler(self)
     self.__controler.addChild('Bookmarks', self.Bookmarks.getControler())
 
-    #self.__dialog.show()
-    #self.__dialog.hide()
+    # self.__dialog.show()
+    # self.__dialog.hide()
 
 #    self.__bkClient = LHCB_BKKDBClient()
 #    item = self.__bkClient.get()
@@ -89,8 +92,8 @@ class TreeWidget(QWidget, Ui_TreeWidget):
     self.tree.header().setResizeMode(1, QHeaderView.ResizeToContents)
     self.tree.header().setResizeMode(0, QHeaderView.ResizeToContents)
 
-
   #############################################################################
+
   def showBookmarks(self):
     """shows the bookmarks."""
     self.bookmarksButton.hide()

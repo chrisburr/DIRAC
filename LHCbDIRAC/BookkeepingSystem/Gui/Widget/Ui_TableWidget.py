@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_TableWidget(object):
   def setupUi(self, TableWidget):
     TableWidget.setObjectName("TableWidget")
@@ -35,5 +36,9 @@ class Ui_TableWidget(object):
     QtCore.QMetaObject.connectSlotsByName(TableWidget)
 
   def retranslateUi(self, TableWidget):
-    TableWidget.setWindowTitle(QtGui.QApplication.translate("TableWidget", "TableWidget", None, QtGui.QApplication.UnicodeUTF8))
-
+    TableWidget.setWindowTitle(
+        QtGui.QApplication.translate(
+            "TableWidget",
+            "TableWidget",
+            None,
+            QtGui.QApplication.UnicodeUTF8))

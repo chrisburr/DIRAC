@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_ProductionLookup(object):
   def setupUi(self, ProductionLookup):
     ProductionLookup.setObjectName("ProductionLookup")
@@ -56,9 +57,30 @@ class Ui_ProductionLookup(object):
     QtCore.QMetaObject.connectSlotsByName(ProductionLookup)
 
   def retranslateUi(self, ProductionLookup):
-    ProductionLookup.setWindowTitle(QtGui.QApplication.translate("ProductionLookup", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-    self.allButton.setText(QtGui.QApplication.translate("ProductionLookup", "All", None, QtGui.QApplication.UnicodeUTF8))
-    self.pushButton.setText(QtGui.QApplication.translate("ProductionLookup", "OK", None, QtGui.QApplication.UnicodeUTF8))
-    self.pushButton_2.setText(QtGui.QApplication.translate("ProductionLookup", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+    ProductionLookup.setWindowTitle(
+        QtGui.QApplication.translate(
+            "ProductionLookup",
+            "Dialog",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.allButton.setText(
+        QtGui.QApplication.translate(
+            "ProductionLookup",
+            "All",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.pushButton.setText(
+        QtGui.QApplication.translate(
+            "ProductionLookup",
+            "OK",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.pushButton_2.setText(
+        QtGui.QApplication.translate(
+            "ProductionLookup",
+            "Cancel",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

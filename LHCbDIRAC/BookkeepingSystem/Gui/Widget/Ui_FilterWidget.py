@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_FilterWidget(object):
   def setupUi(self, FilterWidget):
     FilterWidget.setObjectName("FilterWidget")
@@ -50,8 +51,19 @@ class Ui_FilterWidget(object):
     QtCore.QMetaObject.connectSlotsByName(FilterWidget)
 
   def retranslateUi(self, FilterWidget):
-    FilterWidget.setWindowTitle(QtGui.QApplication.translate("FilterWidget", "Form", None, QtGui.QApplication.UnicodeUTF8))
+    FilterWidget.setWindowTitle(
+        QtGui.QApplication.translate(
+            "FilterWidget",
+            "Form",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.allButton.setText(QtGui.QApplication.translate("FilterWidget", "All", None, QtGui.QApplication.UnicodeUTF8))
-    self.okButton.setText(QtGui.QApplication.translate("FilterWidget", "ApplyFilter", None, QtGui.QApplication.UnicodeUTF8))
+    self.okButton.setText(
+        QtGui.QApplication.translate(
+            "FilterWidget",
+            "ApplyFilter",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

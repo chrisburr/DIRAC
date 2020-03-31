@@ -510,8 +510,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'UnknownSE=', "   Force using a non-existing SE name")
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ...' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=False)
 

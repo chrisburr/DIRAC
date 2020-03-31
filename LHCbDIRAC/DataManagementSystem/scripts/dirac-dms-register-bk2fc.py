@@ -24,11 +24,15 @@ if __name__ == "__main__":
   dmScript.registerFileSwitches()
   dmScript.registerSiteSwitches()
 
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] [--SE] Dest[,Dest2[,...]] ' % Script.scriptName,
-                                    'Arguments:',
-                                    '  Dest:     Valid DIRAC SE(s)']))
+  Script.setUsageMessage(
+      '\n'.join(
+          [
+              __doc__,
+              'Usage:',
+              '  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] [--SE] Dest[,Dest2[,...]] ' %
+              Script.scriptName,
+              'Arguments:',
+              '  Dest:     Valid DIRAC SE(s)']))
   Script.parseCommandLine(ignoreErrors=True)
 
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRegisterBK2FC

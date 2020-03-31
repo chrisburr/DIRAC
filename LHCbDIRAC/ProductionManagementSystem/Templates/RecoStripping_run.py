@@ -87,7 +87,8 @@ recoAncestorDepth = int('{{recoAncestorDepth#PROD-1: Ancestor Depth#0}}')
 recoCompressionLvl = '{{recoCompressionLvl#PROD-1: compression level#LOW}}'
 recoOutputVisFlag = '{{recoOutputVisFlag#PROD-1: Visibility flag of output files #Y}}'
 try:
-  recoOutputVisFlagSpecial = ast.literal_eval('{{recoOutputVisFlagSpecial#PROD-1: Special Visibility flag of output files (dict FType:Y|N )#}}')
+  recoOutputVisFlagSpecial = ast.literal_eval(
+      '{{recoOutputVisFlagSpecial#PROD-1: Special Visibility flag of output files (dict FType:Y|N )#}}')
 except SyntaxError:
   recoOutputVisFlagSpecial = {}
 
@@ -105,7 +106,8 @@ strippAncestorDepth = int('{{strippAncestorDepth#PROD-2: Ancestor Depth#0}}')
 strippCompressionLvl = '{{strippCompressionLvl#PROD-2: compression level#LOW}}'
 strippOutputVisFlag = '{{strippOutputVisFlag#PROD-2: Visibility flag of output files#N}}'
 try:
-  strippOutputVisFlagSpecial = ast.literal_eval('{{strippOutputVisFlagSpecial#PROD-2: Special Visibility flag of output files (dict FType:Y|N)#}}')
+  strippOutputVisFlagSpecial = ast.literal_eval(
+      '{{strippOutputVisFlagSpecial#PROD-2: Special Visibility flag of output files (dict FType:Y|N)#}}')
 except SyntaxError:
   strippOutputVisFlagSpecial = {}
 
@@ -123,7 +125,8 @@ mergingRemoveInputsFlag = '{{MergeRemoveFlag#PROD-3:Merging: remove input data f
 mergeCompressionLvl = '{{mergeCompressionLvl#PROD-3: compression level#HIGH}}'
 mergeOutputVisFlag = '{{mergeOutputVisFlag#PROD-3: Visibility flag of output files#Y}}'
 try:
-  mergeOutputVisFlagSpecial = ast.literal_eval('{{mergeOutputVisFlagSpecial#PROD-3: Special Visibility flag of output files (dict FType:Y|N)#}}')
+  mergeOutputVisFlagSpecial = ast.literal_eval(
+      '{{mergeOutputVisFlagSpecial#PROD-3: Special Visibility flag of output files (dict FType:Y|N)#}}')
 except SyntaxError:
   mergeOutputVisFlagSpecial = {}
 
@@ -257,7 +260,7 @@ elif w2:
   pr.multicore = [strippMulticoreFlag, mergeMulticoreFlag]
   pr.outputModes = ['Run', 'Run']
   pr.ancestorDepths = [strippAncestorDepth, 0]
-  pr.compressionLvl = [strippCompressionLvl] * len( pr.stepsInProds[0] ) + \
+  pr.compressionLvl = [strippCompressionLvl] * len(pr.stepsInProds[0]) + \
                       [mergeCompressionLvl] * len(pr.stepsInProds[1])
   pr.outputVisFlag = [{"1": strippOutputVisFlag}, {"2": mergeOutputVisFlag}]
   pr.specialOutputVisFlag = [{"1": strippOutputVisFlagSpecial}, {"2": mergeOutputVisFlagSpecial}]

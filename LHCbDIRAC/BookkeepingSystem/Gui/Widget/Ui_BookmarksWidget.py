@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_BookmarksWidget(object):
   def setupUi(self, BookmarksWidget):
     BookmarksWidget.setObjectName("BookmarksWidget")
@@ -68,8 +69,19 @@ class Ui_BookmarksWidget(object):
     QtCore.QMetaObject.connectSlotsByName(BookmarksWidget)
 
   def retranslateUi(self, BookmarksWidget):
-    BookmarksWidget.setWindowTitle(QtGui.QApplication.translate("BookmarksWidget", "Form", None, QtGui.QApplication.UnicodeUTF8))
-    self.removeButton.setText(QtGui.QApplication.translate("BookmarksWidget", "Remove", None, QtGui.QApplication.UnicodeUTF8))
+    BookmarksWidget.setWindowTitle(
+        QtGui.QApplication.translate(
+            "BookmarksWidget",
+            "Form",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.removeButton.setText(
+        QtGui.QApplication.translate(
+            "BookmarksWidget",
+            "Remove",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.addButton.setText(QtGui.QApplication.translate("BookmarksWidget", "Add", None, QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

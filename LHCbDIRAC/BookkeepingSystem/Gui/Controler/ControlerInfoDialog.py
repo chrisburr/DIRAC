@@ -10,15 +10,18 @@
 ###############################################################################
 """Controller of the Info dialog window."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract    import ControlerAbstract
-from DIRAC                                                          import gLogger
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerInfoDialog(ControlerAbstract):
   """ControlerInfoDialog class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -50,8 +53,7 @@ class ControlerInfoDialog(ControlerAbstract):
   #############################################################################
   def close(self):
     """handles the close action of the window."""
-    #self.getWidget().hide()
+    # self.getWidget().hide()
     self.getWidget().close()
 
   #############################################################################
-

@@ -19,6 +19,7 @@ __RCSID__ = "$Id$"
 class BookkeepingDatabaseClient(IBookkeepingDatabaseClient):
   """simple class."""
   #############################################################################
+
   def __init__(self, databaseManager=None):
     if not databaseManager:
       databaseManager = OracleBookkeepingDB()

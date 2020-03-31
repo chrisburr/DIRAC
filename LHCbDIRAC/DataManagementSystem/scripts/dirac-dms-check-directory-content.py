@@ -30,9 +30,9 @@ Script.registerSwitch("f:", "Output=", " output file name [dirac-dms-chec-dir-co
 Script.registerSwitch("v", "Verbose", " use this option for verbose output [False]")
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ...' %
-                                  Script.scriptName, ]))
+    'Usage:',
+    '  %s [option|cfgfile] ...' %
+    Script.scriptName, ]))
 
 Script.parseCommandLine(ignoreErrors=False)
 

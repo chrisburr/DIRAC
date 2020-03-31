@@ -26,11 +26,15 @@ if __name__ == "__main__":
 
   Script.registerSwitch('', 'RemoveSource', '   If set, the source replica(s) will be removed')
 
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] Dest[,Dest2[,...]] [Source [Cache]]' % Script.scriptName,
-                                    'Arguments:',
-                                    '  Dest:     Valid DIRAC SE(s)']))
+  Script.setUsageMessage(
+      '\n'.join(
+          [
+              __doc__,
+              'Usage:',
+              '  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] Dest[,Dest2[,...]] [Source [Cache]]' %
+              Script.scriptName,
+              'Arguments:',
+              '  Dest:     Valid DIRAC SE(s)']))
   Script.parseCommandLine(ignoreErrors=True)
 
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeReplicateToRunDestination

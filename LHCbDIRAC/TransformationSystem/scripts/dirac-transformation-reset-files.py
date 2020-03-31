@@ -29,8 +29,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'Status=', "Select files with a given status from %s" % str(statusList))
   Script.registerSwitch('', 'NewStatus=', "New status to be set (default: %s)" % newStatus)
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] <TransID> <Status>' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] <TransID> <Status>' % Script.scriptName, ]))
   Script.parseCommandLine()
 
   switches = Script.getUnprocessedSwitches()

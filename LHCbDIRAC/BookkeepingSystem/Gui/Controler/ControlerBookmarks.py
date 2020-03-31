@@ -16,32 +16,35 @@
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
-from DIRAC.Core.DISET.RPCClient                                          import RPCClient
-from DIRAC.FrameworkSystem.Client.UserProfileClient                      import UserProfileClient
-from PyQt4.QtGui                                                         import QMessageBox
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
+from DIRAC.Core.DISET.RPCClient import RPCClient
+from DIRAC.FrameworkSystem.Client.UserProfileClient import UserProfileClient
+from PyQt4.QtGui import QMessageBox
 
-from DIRAC                                                               import gLogger, S_OK, S_ERROR
+from DIRAC import gLogger, S_OK, S_ERROR
 
 #############################################################################
+
+
 class ControlerBookmarks(ControlerAbstract):
   """ControlerBookmarks class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
     self.__selectedFiles = []
 
-#sim+adv//
-#sim+std//
-#evt+adv
-#evt+std
-#prd
-#run
-
+# sim+adv//
+# sim+std//
+# evt+adv
+# evt+std
+# prd
+# run
 
   #############################################################################
+
   def messageFromParent(self, message):
     """handles the messages sent by parent."""
     if message.action() == 'showValues':
@@ -92,7 +95,7 @@ class ControlerBookmarks(ControlerAbstract):
     bookmarks = upc.retrieveVar("Bookmarks")
     self.getWidget().arrowCursor()
     return bookmarks
-    #return S_ERROR('FIGYELEM!!!')
+    # return S_ERROR('FIGYELEM!!!')
 
   #############################################################################
   def __addBookmark(self, path, title):
@@ -157,7 +160,7 @@ class ControlerBookmarks(ControlerAbstract):
     """handles the addBookmarks action."""
     controlers = self.getChildren()
     ct = controlers['AddBookmarks']
-    message = Message({'action':'showWidget'})
+    message = Message({'action': 'showWidget'})
     ct.messageFromParent(message)
 
   #############################################################################
@@ -169,7 +172,7 @@ class ControlerBookmarks(ControlerAbstract):
         data = i.model().arraydata[row][1]
         if data not in self.__selectedFiles:
           self.__selectedFiles = [data]
-          message = Message({'action':'openPathLocation', 'Path':data})
+          message = Message({'action': 'openPathLocation', 'Path': data})
           self.getParent().messageFromChild(self, message)
     if deselected:
       row = deselected.indexes()[0].row()
@@ -182,4 +185,3 @@ class ControlerBookmarks(ControlerAbstract):
   def doubleclick(self, item):
     """handles the double clicks."""
     pass
-

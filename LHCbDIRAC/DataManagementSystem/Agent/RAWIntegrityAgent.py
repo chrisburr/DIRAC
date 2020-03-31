@@ -64,7 +64,7 @@ class RAWIntegrityAgent(AgentModule):
     # We also remove the BK catalog because some files are not registered there
     # (detector calibration files for example). The real data are registered in
     # the bookeeping by the DataMover
-    self.fileCatalog = FileCatalog(catalogs = 'FileCatalog')
+    self.fileCatalog = FileCatalog(catalogs='FileCatalog')
 
     gMonitor.registerActivity("Iteration", "Agent Loops/min", "RAWIntegriryAgent", "Loops",
                               gMonitor.OP_SUM)

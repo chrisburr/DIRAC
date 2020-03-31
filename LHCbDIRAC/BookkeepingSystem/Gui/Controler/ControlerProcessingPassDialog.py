@@ -10,15 +10,18 @@
 ###############################################################################
 """It controlles the Processing Pass dialog."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerProcessingPassDialog(ControlerAbstract):
   """ControlerProcessingPassDialog class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -42,7 +45,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
   #############################################################################
   def close(self):
     """handles the close action."""
-    #self.getWidget().hide()
+    # self.getWidget().hide()
     self.getWidget().close()
 
   #############################################################################
@@ -58,7 +61,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
     widget = self.getWidget()
     widget.setTotalProccesingPass(proc)
     tabwidget = widget.getTabWidget()
-    tabwidget.clear()# cleaning, I have to delete the existing tabs
+    tabwidget.clear()  # cleaning, I have to delete the existing tabs
 
     tabs = {}
     for i in records:
@@ -70,7 +73,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
     for i in tabs:
       tab = tabs[i]
       desc = tab.getGroupDesc()
-      if mainWidget.has_key(desc):
+      if desc in mainWidget:
         main = mainWidget[desc]
         main.addTab(tab, i)
       else:
@@ -84,7 +87,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
     """It sends a message to its parent controller in order to retrieve the
     processing pass informations."""
     item = message['items']
-    message = Message({'action':'procDescription', 'groupdesc':item['name']})
+    message = Message({'action': 'procDescription', 'groupdesc': item['name']})
     feedback = self.getParent().messageFromChild(self, message)
     self.__fillWidget(feedback, item['name'])
 
@@ -96,7 +99,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
 
     bkDict = item['selection']
     bkDict['FileType'] = item['name']
-    message = Message({'action':'detailedProcessingPassDescription', 'bkDict':bkDict})
+    message = Message({'action': 'detailedProcessingPassDescription', 'bkDict': bkDict})
     feedback = self.getParent().messageFromChild(self, message)
 
     self.__fillWidget(feedback, bkDict['ProcessingPass'])
@@ -104,11 +107,11 @@ class ControlerProcessingPassDialog(ControlerAbstract):
   #############################################################################
   def __fillWidget(self, feedback, processingPass):
     """It creates the widgets used to show the processing pass."""
-    if feedback != None:
+    if feedback is not None:
       widget = self.getWidget()
       widget.setTotalProccesingPass(processingPass)
       tabwidget = widget.getTabWidget()
-      tabwidget.clear()# cleaning, I have to delete the existing tabs
+      tabwidget.clear()  # cleaning, I have to delete the existing tabs
       records = feedback['Records']
       parameters = feedback['Parameters']
       tabs = {}
@@ -121,7 +124,7 @@ class ControlerProcessingPassDialog(ControlerAbstract):
       for i in tabs:
         tab = tabs[i]
         desc = tab.getGroupDesc()
-        if mainWidget.has_key(desc):
+        if desc in mainWidget:
           main = mainWidget[desc]
           main.addTab(tab, i)
         else:

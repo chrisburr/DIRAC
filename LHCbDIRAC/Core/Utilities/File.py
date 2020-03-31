@@ -38,9 +38,9 @@ def getRootFileGUID(fileName):
     f = uproot.open(fileName)
     branch = f['Refs']['Params']
     for item in branch.array():
-        item = item.decode()
-        if item.startswith('FID='):
-            return S_OK(item.split('=')[1])
+      item = item.decode()
+      if item.startswith('FID='):
+        return S_OK(item.split('=')[1])
     return S_ERROR('GUID not found')
   except Exception as e:
     errorMsg = 'Error extracting GUID'

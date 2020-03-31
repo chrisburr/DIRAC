@@ -163,15 +163,15 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
 
   res = bkClient.getProcessingPass(bkDict, processingPass)
   if not res['OK']:
-    gLogger.error('Cannot load the processing passes for head % in Version %s Data taking condition %s' % (processingPass,
-                                                                                                           bkDict['ConfigVersion'],
-                                                                                                           bkDict['ConditionDescription']))
+    gLogger.error('Cannot load the processing passes for head % in Version %s Data taking condition %s' %
+                  (processingPass, bkDict['ConfigVersion'], bkDict['ConditionDescription']))
     gLogger.error(res['Message'])
     return res
 
   records = res['Value'][0]  # 0 contains the processing passes 1 contains the event types
   if 'Name' in records['ParameterNames']:  # this mean we have processing passes
-    index = records['ParameterNames'].index('Name')  # this is the name of the processing pass: 'ParameterNames': ['Name']
+    # this is the name of the processing pass: 'ParameterNames': ['Name']
+    index = records['ParameterNames'].index('Name')
     passes = sorted([os.path.join(processingPass, record[index]) for record in records['Records']])
   else:
     passes = []
@@ -197,11 +197,11 @@ Script.registerSwitch("p:", "processingPass=", "Processing pass for which a run 
 Script.registerSwitch("q:", "dataqualityflag=", "Data quality flag")
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  '\nArguments:',
-                                  '  lfnfile (string) : [LFN|filename]',
-                                  '  processingPass (string) : porcessing pass(es)',
-                                  '  runNumber (int): run number to be flagged',
-                                  '  dataqualityflag (string): data quality\n', ]))
+    '\nArguments:',
+    '  lfnfile (string) : [LFN|filename]',
+    '  processingPass (string) : porcessing pass(es)',
+    '  runNumber (int): run number to be flagged',
+    '  dataqualityflag (string): data quality\n', ]))
 
 
 Script.parseCommandLine(ignoreErrors=True)

@@ -12,18 +12,21 @@
 
 """This widget used to view a key/value pair dataset."""
 
-from PyQt4.QtGui                                import QDialog
-from PyQt4.QtCore                               import SIGNAL
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_InfoDialog           import Ui_InfoDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel              import TableModel
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerInfoDialog  import ControlerInfoDialog
+from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import SIGNAL
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_InfoDialog import Ui_InfoDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel import TableModel
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerInfoDialog import ControlerInfoDialog
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class InfoDialog(QDialog, Ui_InfoDialog):
   """InfoDialog class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """initialize the widget."""
     QDialog.__init__(self, parent)
@@ -46,11 +49,11 @@ class InfoDialog(QDialog, Ui_InfoDialog):
 
     for item in data.keys():
       if item not in noheader:
-        if data[item] == None:
+        if data[item] is None:
           i = ''
         else:
           i = data[item]
-        tabledata += [ [item, i] ]
+        tabledata += [[item, i]]
 
     if len(tabledata) > 0:
       self.filltable(header, tabledata)
@@ -60,13 +63,12 @@ class InfoDialog(QDialog, Ui_InfoDialog):
   def showDictionary(self, data):
     """shows the dictionary content."""
     header = ['FileName', 'Ancestor1', 'Ancestor2', 'Ancestor3', 'Ancestor4', 'Ancestor5', 'Ancestor6']
-    keys = data.keys()
-    keys.sort()
+    keys = sorted(data.keys())
     tabledata = []
     for i in keys:
       j = data[i]
       if len(j) == 0:
-        tabledata += [ [i, '', '', '', '', '', '']]
+        tabledata += [[i, '', '', '', '', '', '']]
       else:
         tmp = ['', '', '', '', '', '', '']
         k = 1
@@ -94,7 +96,7 @@ class InfoDialog(QDialog, Ui_InfoDialog):
 
     # set the font
     #font = QFont("Courier New", 8)
-    #self.tableView.setFont(font)
+    # self.tableView.setFont(font)
 
     self.tableView.setSortingEnabled(True)
 
@@ -116,7 +118,7 @@ class InfoDialog(QDialog, Ui_InfoDialog):
 
     # enable sorting
     # this doesn't work
-    #tv.setSortingEnabled(True)
+    # tv.setSortingEnabled(True)
 
 
 #############################################################################

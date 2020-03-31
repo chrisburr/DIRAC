@@ -1605,12 +1605,12 @@ class LHCbBookkeepingManager(BaseESManager):
         return result
 
     return S_OK({'TotalRecords': totalrecords,
-            'ParameterNames': parametersNames,
-            'Records': records,
-            'Extras': {'Selection': selection,
-                       'GlobalStatistics': {'Number of Events': nbOfEvents,
-                                            'Files Size': filesSize,
-                                            'Luminosity': lumi}}})
+                 'ParameterNames': parametersNames,
+                 'Records': records,
+                 'Extras': {'Selection': selection,
+                            'GlobalStatistics': {'Number of Events': nbOfEvents,
+                                                 'Files Size': filesSize,
+                                                 'Luminosity': lumi}}})
 
   #############################################################################
   def getAncestors(self, files, depth):

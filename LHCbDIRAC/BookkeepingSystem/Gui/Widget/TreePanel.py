@@ -15,20 +15,23 @@
 from PyQt4.QtCore import SIGNAL, QString, Qt
 from PyQt4.QtGui import QTreeWidget, QIcon, QStyle, QAbstractItemView, QPixmap, QCursor, QMenu, QAction
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreeNode         import TreeNode
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreeNode import TreeNode
 
 
 try:
   _fromUtf8 = QString.fromUtf8
 except AttributeError:
-  _fromUtf8 = lambda s: s
+  def _fromUtf8(s): return s
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class TreePanel(QTreeWidget):
   """TreePanel class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """initialize the widget."""
     QTreeWidget.__init__(self, parent)
@@ -36,8 +39,8 @@ class TreePanel(QTreeWidget):
     #labels = QStringList()
     #labels << self.tr("Title") << self.tr("Location")
 
-    #self.header().setResizeMode(QHeaderView.Stretch)
-    #self.setHeaderLabels(labels)
+    # self.header().setResizeMode(QHeaderView.Stretch)
+    # self.setHeaderLabels(labels)
 
     self.folderIcon = QIcon()
     self.bookmarkIcon = QIcon()
@@ -81,7 +84,7 @@ class TreePanel(QTreeWidget):
     self.__controler = self.parentWidget().getControler()
 
     self.connect(self, SIGNAL('itemExpanded(QTreeWidgetItem *)'),
-            self.__controler.on_item_expanded)
+                 self.__controler.on_item_expanded)
 
 
 #    self.connect(self,
@@ -95,10 +98,7 @@ class TreePanel(QTreeWidget):
     self.setContextMenuPolicy(Qt.CustomContextMenu)
 
     self.connect(self, SIGNAL('customContextMenuRequested(QPoint)'),
-               self.popUpMenu)
-
-
-
+                 self.popUpMenu)
 
 
 #  #############################################################################
@@ -126,30 +126,28 @@ class TreePanel(QTreeWidget):
 #    print 'wqwqwq'
 
   #############################################################################
+
   def showTree(self, item, parent=None):
     """shows a tree."""
-    #self.clear()
+    # self.clear()
 
-    #self.disconnect(self, QtCore.SIGNAL("itemChanged(QTreeWidgetItem *, int)"),
+    # self.disconnect(self, QtCore.SIGNAL("itemChanged(QTreeWidgetItem *, int)"),
     #               self.updateDomElement)
 
     children = item.getChildren()
 
-    keys = children.keys()
-    keys.sort()
+    keys = sorted(children.keys())
     node = children[keys[0]]
-    if node.has_key('level'):
-      self.createdumyNode({'name':node['level']}, parent)
+    if 'level' in node:
+      self.createdumyNode({'name': node['level']}, parent)
 
-    if node.has_key('level2'):
-      self.createdumyNode({'name':node['level2']}, parent)
+    if 'level2' in node:
+      self.createdumyNode({'name': node['level2']}, parent)
 
     for child in keys:
       self.parseFolderElement(children[child], parent)
 
-
-
-    #self.connect(self, QtCore.SIGNAL("itemChanged(QTreeWidgetItem *, int)"),
+    # self.connect(self, QtCore.SIGNAL("itemChanged(QTreeWidgetItem *, int)"),
     #             self.updateDomElement)
     self.repaint()
     return True
@@ -159,7 +157,7 @@ class TreePanel(QTreeWidget):
     """adds a leaf to the current node."""
     item = self.createItem(parentItem)
     item.setUserObject(element)
-    #print '!!!!!!!!!',parentItem.getUserObject()
+    # print '!!!!!!!!!',parentItem.getUserObject()
     nbfiles = element['Number of files']
     nbevents = element['Nuber of Events']
     item.setIcon(0, self.filesIcon_)
@@ -172,21 +170,19 @@ class TreePanel(QTreeWidget):
     self.repaint()
     item.setFlags(item.flags() | Qt.ItemIsEditable)
 
-
   def parseFolderElement(self, element, parentItem=None):
     """creates the elements of the tree."""
 
     item = self.createItem(parentItem)
     item.setUserObject(element)
     title = element.name()
-    if element.has_key('level'):
+    if 'level' in element:
       if element['level'] == 'Production(s)/Run(s)':
         if element.name() != 'ALL':
-          title = str(abs(long(element.name()))) #['fullpath']
+          title = str(abs(long(element.name())))  # ['fullpath']
 
-    #if title != '':
+    # if title != '':
     #    title = QtCore.QObject.tr("Folder")
-
 
     item.setIcon(0, self.folderIcon)
     item.setText(0, title)
@@ -194,9 +190,9 @@ class TreePanel(QTreeWidget):
     #self.setItemExpanded(item, False)
 
     userobj = item.getUserObject()
-    if userobj.has_key('level'):
+    if 'level' in userobj:
       if userobj['level'] == 'Event types':
-        if userobj.has_key('Description'):
+        if 'Description' in userobj:
           item.setText(1, userobj['Description'])
         else:
           item.setText(1, '')
@@ -228,11 +224,11 @@ class TreePanel(QTreeWidget):
 #
 #        child = child.nextSiblingElement()
 
-
   #############################################################################
+
   def createdumyNode(self, element, parent):
     """creates a dumy node."""
-    if parent != None:
+    if parent is not None:
       dumy = self.createItem(parent)
       dumy.setUserObject(None)
       self.setItemExpanded(dumy, False)
@@ -245,12 +241,12 @@ class TreePanel(QTreeWidget):
   #############################################################################
   def createItem(self, parentItem=None):
     """create an item."""
-    item = TreeNode()#QTreeWidgetItem()
+    item = TreeNode()  # QTreeWidgetItem()
 
     if parentItem is not None:
-      item = TreeNode(parentItem)#QtGui.QTreeWidgetItem(parentItem)
+      item = TreeNode(parentItem)  # QtGui.QTreeWidgetItem(parentItem)
     else:
-      item = TreeNode(self)#QtGui.QTreeWidgetItem(self)
+      item = TreeNode(self)  # QtGui.QTreeWidgetItem(self)
     return item
 
   #############################################################################
@@ -267,31 +263,27 @@ class TreePanel(QTreeWidget):
       self.__currentItem = item
       self.__popUp.popup(QCursor.pos())
 
-
-
   #############################################################################
+
   def __createPopUpMenu(self):
     """creates the menu."""
     self.__popUp = QMenu(self)
 
     self.__jobAction = QAction(self.tr("More Information"), self)
-    self.connect (self.__jobAction, SIGNAL("triggered()"), self.__controler.moreInformations)
+    self.connect(self.__jobAction, SIGNAL("triggered()"), self.__controler.moreInformations)
     self.__popUp.addAction(self.__jobAction)
 
-
     self.__bookmarksAction = QAction(self.tr("Bookmarks"), self)
-    self.connect (self.__bookmarksAction, SIGNAL("triggered()"), self.__controler.bookmarks)
+    self.connect(self.__bookmarksAction, SIGNAL("triggered()"), self.__controler.bookmarks)
     self.__popUp.addAction(self.__bookmarksAction)
-
 
 
 #    self.__closeAction = QAction(self.tr("Close"), self)
 #    self.connect (self.__closeAction, SIGNAL("triggered()"), self.__controler.close)
 #    self.__popUp.addAction(self.__closeAction)
 
-
   #############################################################################
+
   def getCurrentItem(self):
     """returns the current node."""
     return self.__currentItem
-

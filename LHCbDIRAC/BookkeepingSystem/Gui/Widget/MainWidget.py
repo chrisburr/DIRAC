@@ -13,24 +13,27 @@
 """Main bookkeeping widget."""
 
 from PyQt4.QtCore import SIGNAL, SLOT, Qt
-from PyQt4.QtGui  import QMainWindow
+from PyQt4.QtGui import QMainWindow
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_MainWidget                 import Ui_MainWidget
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerMain              import ControlerMain
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.ProductionLookup              import ProductionLookup
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.DataQualityDialog             import DataQualityDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_MainWidget import Ui_MainWidget
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerMain import ControlerMain
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.ProductionLookup import ProductionLookup
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.DataQualityDialog import DataQualityDialog
 
 __RCSID__ = "$Id$"
 
 #from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreeWidget import TreeWidget
 
 #############################################################################
+
+
 class MainWidget(QMainWindow, Ui_MainWidget):
   """MainWidget class Constructor.
 
   @param parent parent widget (QWidget)
   """
   #############################################################################
+
   def __init__(self, fileName, savepath=None, parent=None):
     super(MainWidget, self).__init__()
     QMainWindow.__init__(self, parent)
@@ -42,7 +45,7 @@ class MainWidget(QMainWindow, Ui_MainWidget):
 
     self.__controler.addChild('TreeWidget', self.tree.getControler())
     self.connect(self.actionExit, SIGNAL("triggered()"),
-                     self, SLOT("close()"))
+                 self, SLOT("close()"))
 
     self.connect(self.actionDataQuality, SIGNAL("triggered()"), self.__controler.dataQuality)
 
@@ -58,8 +61,8 @@ class MainWidget(QMainWindow, Ui_MainWidget):
 
     #self.__controler.addChild('TableWidget', self.tableWidget.getControler())
 
-
   #############################################################################
+
   def getControler(self):
     """returs the controller."""
     return self.__controler
@@ -88,4 +91,3 @@ class MainWidget(QMainWindow, Ui_MainWidget):
   def arrowCursor(self):
     """shows the normal cursor."""
     self.setCursor(Qt.ArrowCursor)
-

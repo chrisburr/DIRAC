@@ -79,8 +79,8 @@ def execute():
   Script.registerSwitch('', 'GaudiVerbose', '   Set Gaudi verbose when parsing option files')
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... ' % Script.scriptName]))
+      'Usage:',
+      '  %s [option|cfgfile] ... ' % Script.scriptName]))
   Script.parseCommandLine(ignoreErrors=True)
 
   from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers

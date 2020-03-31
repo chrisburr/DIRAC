@@ -23,10 +23,10 @@ import DIRAC
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s <Production ID> |<Production ID>' % Script.scriptName,
-                                  'Arguments:',
-                                  '  <Production ID>:      DIRAC Production Id']))
+    'Usage:',
+    '  %s <Production ID> |<Production ID>' % Script.scriptName,
+    'Arguments:',
+    '  <Production ID>:      DIRAC Production Id']))
 
 Script.registerSwitch('t', 'start', "Start the production")
 Script.registerSwitch('p', 'stop', "Stop the production")

@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_TreeWidget(object):
   def setupUi(self, TreeWidget):
     TreeWidget.setObjectName("TreeWidget")
@@ -101,21 +102,65 @@ class Ui_TreeWidget(object):
 
   def retranslateUi(self, TreeWidget):
     TreeWidget.setWindowTitle(QtGui.QApplication.translate("TreeWidget", "Form", None, QtGui.QApplication.UnicodeUTF8))
-    self.standardQuery.setText(QtGui.QApplication.translate("TreeWidget", "Standard", None, QtGui.QApplication.UnicodeUTF8))
-    self.advancedQuery.setText(QtGui.QApplication.translate("TreeWidget", "Advanced Queries", None, QtGui.QApplication.UnicodeUTF8))
+    self.standardQuery.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "Standard",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.advancedQuery.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "Advanced Queries",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.pageSize.setText(QtGui.QApplication.translate("TreeWidget", "ALL", None, QtGui.QApplication.UnicodeUTF8))
     self.label.setText(QtGui.QApplication.translate("TreeWidget", "Page Size:", None, QtGui.QApplication.UnicodeUTF8))
-    self.bookmarksButton.setText(QtGui.QApplication.translate("TreeWidget", "Bookmarks", None, QtGui.QApplication.UnicodeUTF8))
+    self.bookmarksButton.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "Bookmarks",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.closeButton.setText(QtGui.QApplication.translate("TreeWidget", "...", None, QtGui.QApplication.UnicodeUTF8))
     self.tree.setSortingEnabled(False)
-    self.tree.headerItem().setText(0, QtGui.QApplication.translate("TreeWidget", "                                Tree                                                     ", None, QtGui.QApplication.UnicodeUTF8))
-    self.tree.headerItem().setText(1, QtGui.QApplication.translate("TreeWidget", "Description", None, QtGui.QApplication.UnicodeUTF8))
+    self.tree.headerItem().setText(
+        0,
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "                                Tree                                                     ",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.tree.headerItem().setText(1, QtGui.QApplication.translate(
+        "TreeWidget", "Description", None, QtGui.QApplication.UnicodeUTF8))
     self.selection.setTitle(QtGui.QApplication.translate("TreeWidget", "Queries", None, QtGui.QApplication.UnicodeUTF8))
-    self.configNameRadioButton.setText(QtGui.QApplication.translate("TreeWidget", "SimCond/ProcessingPass/Eventtype/Production/FileType/Program/Files", None, QtGui.QApplication.UnicodeUTF8))
-    self.radioButton_2.setText(QtGui.QApplication.translate("TreeWidget", "Event type/SimCond/ProcessingPass/Production/FileType/Program/Files", None, QtGui.QApplication.UnicodeUTF8))
-    self.productionRadioButton.setText(QtGui.QApplication.translate("TreeWidget", "Production lookup", None, QtGui.QApplication.UnicodeUTF8))
-    self.runLookup.setText(QtGui.QApplication.translate("TreeWidget", "Run lookup", None, QtGui.QApplication.UnicodeUTF8))
-    self.configNameRadioButton1.setText(QtGui.QApplication.translate("TreeWidget", "config_click", None, QtGui.QApplication.UnicodeUTF8))
+    self.configNameRadioButton.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "SimCond/ProcessingPass/Eventtype/Production/FileType/Program/Files",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.radioButton_2.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "Event type/SimCond/ProcessingPass/Production/FileType/Program/Files",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.productionRadioButton.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "Production lookup",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.runLookup.setText(
+        QtGui.QApplication.translate(
+            "TreeWidget",
+            "Run lookup",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.configNameRadioButton1.setText(QtGui.QApplication.translate(
+        "TreeWidget", "config_click", None, QtGui.QApplication.UnicodeUTF8))
+
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreePanel import TreePanel
 from LHCbDIRAC.BookkeepingSystem.Gui.Widget.BookmarksWidget import BookmarksWidget

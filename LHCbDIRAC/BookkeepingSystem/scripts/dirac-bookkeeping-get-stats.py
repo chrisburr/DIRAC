@@ -21,14 +21,14 @@ if __name__ == "__main__":
   dmScript.registerBKSwitches()
   dmScript.registerFileSwitches()
 
-  Script.registerSwitch( '', 'TriggerRate', '   For RAW files, returns the trigger rate' )
-  Script.registerSwitch( '', 'ListRuns', '   Give a list of runs (to be used with --Trigger)' )
-  Script.registerSwitch( '', 'ListFills', '   Give a list of fills (to be used with --Trigger)' )
-  Script.setUsageMessage( '\n'.join( [ __doc__.split( '\n' )[1],
-                                       'Usage:',
-                                       '  %s [option|cfgfile]' % Script.scriptName, ] ) )
+  Script.registerSwitch('', 'TriggerRate', '   For RAW files, returns the trigger rate')
+  Script.registerSwitch('', 'ListRuns', '   Give a list of runs (to be used with --Trigger)')
+  Script.registerSwitch('', 'ListFills', '   Give a list of fills (to be used with --Trigger)')
+  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+                                    'Usage:',
+                                    '  %s [option|cfgfile]' % Script.scriptName, ]))
 
-  Script.parseCommandLine( ignoreErrors = False )
+  Script.parseCommandLine(ignoreErrors=False)
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeGetStats
-  executeGetStats( dmScript )
+  executeGetStats(dmScript)

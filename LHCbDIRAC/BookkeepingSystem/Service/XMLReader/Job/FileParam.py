@@ -12,10 +12,12 @@
 
 __RCSID__ = "$Id$"
 
+
 class FileParam:
 
   """FileParam class."""
   #############################################################################
+
   def __init__(self):
     """initialize the class members."""
     self.name_ = ""
@@ -51,6 +53,6 @@ class FileParam:
   #############################################################################
   def writeToXML(self):
     """creates an xml string."""
-    return '    <Parameter  Name="'+ self.getParamName() +'"     Value="'+self.getParamValue()+'"/>\n'
+    return '    <Parameter  Name="' + self.getParamName() + '"     Value="' + self.getParamValue() + '"/>\n'
 
   #############################################################################

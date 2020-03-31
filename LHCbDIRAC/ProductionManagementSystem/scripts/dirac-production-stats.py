@@ -30,12 +30,12 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'NoPrint', '   No printout')
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ...' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] ...' % Script.scriptName, ]))
   Script.parseCommandLine(ignoreErrors=False)
 
   switches = Script.getUnprocessedSwitches()
