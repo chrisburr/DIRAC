@@ -19,8 +19,8 @@ from DIRAC.Core.Base import Script
 Script.registerSwitch("f:", "XMLSummary=", "Path to XML summary you wish to analyze (mandatory)")
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... CE' % Script.scriptName]))
+    'Usage:',
+    '  %s [option|cfgfile] ... CE' % Script.scriptName]))
 Script.parseCommandLine(ignoreErrors=True)
 
 from DIRAC import gLogger

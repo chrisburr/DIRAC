@@ -15,9 +15,12 @@ from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import Controle
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerTable(ControlerAbstract):
   """ControlerTable class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -29,4 +32,3 @@ class ControlerTable(ControlerAbstract):
   #############################################################################
   def messageFromChild(self, sender, message):
     pass
-

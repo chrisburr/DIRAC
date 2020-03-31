@@ -13,9 +13,12 @@
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class Message(dict):
   """Message class."""
   #############################################################################
+
   def __init__(self, message):
     """inherits from the dictionary."""
     dict.__init__(self, message)

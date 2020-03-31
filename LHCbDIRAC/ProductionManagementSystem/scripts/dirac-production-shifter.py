@@ -63,18 +63,18 @@ def doParse():
   # Set script help message
   Script.setUsageMessage(
       __doc__ + '\n'.join([
-                 '\nArguments:',
-                 '  requestID (string): csv ID(s) of the request, if used other switches are ignored',
-                 '  requestState (string): csv states, being "Active" by default',
-                 '  requestType (string): csv types, being "Stripping,Reconstruction" by default',
-                 '  simCondition (string): csv conditions, being None by default',
-                 '  proPath (string): csv paths, being None by default',
-                 '  eventType (string): csv events, being None by default',
-                 '  sortKey(string) : requests sort key [RequestID,RequestState,RequestType,\
+          '\nArguments:',
+          '  requestID (string): csv ID(s) of the request, if used other switches are ignored',
+          '  requestState (string): csv states, being "Active" by default',
+          '  requestType (string): csv types, being "Stripping,Reconstruction" by default',
+          '  simCondition (string): csv conditions, being None by default',
+          '  proPath (string): csv paths, being None by default',
+          '  eventType (string): csv events, being None by default',
+          '  sortKey(string) : requests sort key [RequestID,RequestState,RequestType,\
                  SimCondition,ProPath,EventType]',
-                 '  groupMerge: group merge productions in one line',
-                 '  omitMerge: omit merge productions on summary',
-                 '  noFiles: do not report file status\n']))
+          '  groupMerge: group merge productions in one line',
+          '  omitMerge: omit merge productions on summary',
+          '  noFiles: do not report file status\n']))
 
   # Get switches and options from command line
   Script.parseCommandLine()
@@ -311,7 +311,7 @@ def printResults(request, mergeAction):
       if groupedMerge['Merged'] == 1:
         groupedMerge['Path'] = filesDict['Path']
       elif groupedMerge['Path'] != filesDict['Path']:
-          groupedMerge['Path'] = 'Multiple'
+        groupedMerge['Path'] = 'Multiple'
 
       if filesDict['Total'] > 0:
 
@@ -326,7 +326,7 @@ def printResults(request, mergeAction):
 
       continue
 
-    #prints only the HOT production
+    # prints only the HOT production
     if mergeAction == 'hot':
       if filesDict['Total'] > 0 and filesDict['Hot'] == 1:
 
@@ -456,4 +456,4 @@ if __name__ == "__main__":
   DIRACExit(0)
 
 ################################################################################
-#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF
+# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

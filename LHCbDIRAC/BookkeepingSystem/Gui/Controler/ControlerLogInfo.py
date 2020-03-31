@@ -15,9 +15,12 @@ from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import Controle
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerLogInfo(ControlerAbstract):
   """ControlerLogInfo class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     ControlerAbstract.__init__(self, widget, parent)
 
@@ -38,8 +41,7 @@ class ControlerLogInfo(ControlerAbstract):
   #############################################################################
   def close(self):
     """handle the close action."""
-    #self.getWidget().hide()
+    # self.getWidget().hide()
     self.getWidget().close()
 
   #############################################################################
-

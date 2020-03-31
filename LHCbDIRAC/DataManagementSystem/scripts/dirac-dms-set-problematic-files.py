@@ -27,8 +27,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'NoAction', '   No action taken, just give stats')
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=False)
 

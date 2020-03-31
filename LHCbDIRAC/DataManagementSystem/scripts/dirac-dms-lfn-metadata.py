@@ -23,10 +23,10 @@ if __name__ == "__main__":
   dmScript.registerFileSwitches()
   dmScript.registerSiteSwitches()
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]]' % Script.scriptName,
-                                    'Arguments:',
-                                    '  LFN:      Logical File Name or file containing LFNs']))
+      'Usage:',
+      '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]]' % Script.scriptName,
+      'Arguments:',
+      '  LFN:      Logical File Name or file containing LFNs']))
   Script.parseCommandLine(ignoreErrors=True)
 
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeLfnMetadata

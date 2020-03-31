@@ -12,23 +12,26 @@
 
 """main controller of the widgets."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Item                          import Item
-from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient                 import LHCB_BKKDBClient
-from DIRAC.Interfaces.API.Dirac                                          import Dirac
-from DIRAC                                                               import gLogger, S_OK, S_ERROR
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Item import Item
+from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient import LHCB_BKKDBClient
+from DIRAC.Interfaces.API.Dirac import Dirac
+from DIRAC import gLogger, S_OK, S_ERROR
 
 import sys
 
-from PyQt4.QtGui                                                         import QMessageBox
+from PyQt4.QtGui import QMessageBox
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerMain(ControlerAbstract):
   """ControlerMain class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the main controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -54,6 +57,7 @@ class ControlerMain(ControlerAbstract):
     #self.__progressBar = ProgressThread(False, 'Query on database...',self.getWidget())
     self.__bkClient.setDataQualities(self.__qualityFlags)
   #############################################################################
+
   def messageFromParent(self, message):
     """delivers the messages to the children controllers."""
     controlers = self.getChildren()
@@ -64,10 +68,10 @@ class ControlerMain(ControlerAbstract):
   #############################################################################
   def messageFromChild(self, sender, message):
     """handles the messages sent by the children controllers."""
-    gLogger.debug(str(self.__class__)+' Sender' + str(sender.__class__))
-    gLogger.debug(str(self.__class__)+' Message'+str(message))
+    gLogger.debug(str(self.__class__) + ' Sender' + str(sender.__class__))
+    gLogger.debug(str(self.__class__) + ' Message' + str(message))
 
-    if sender.__class__.__name__  == 'ControlerTree':
+    if sender.__class__.__name__ == 'ControlerTree':
       return self.handleTreewidget(sender, message)
     elif sender.__class__.__name__ == 'ControlerProductionLookup':
       return self.handleProductionlookup(sender, message)
@@ -96,7 +100,7 @@ class ControlerMain(ControlerAbstract):
 
     elif message.action() == 'showAllProduction':
       items = message['items']
-      message = Message({'action':'removeTree', 'items':items})
+      message = Message({'action': 'removeTree', 'items': items})
       controlers = self.getChildren()
       ct = controlers['TreeWidget']
       ct.messageFromParent(message)
@@ -104,7 +108,7 @@ class ControlerMain(ControlerAbstract):
     elif message.action() == 'error':
       QMessageBox.information(self.getWidget(),
                               "Error", 'Please select a production or more productions!',
-                               QMessageBox.Ok)
+                              QMessageBox.Ok)
 
     elif message.action() == 'showOneProduction':
       paths = message['paths']
@@ -118,7 +122,7 @@ class ControlerMain(ControlerAbstract):
         childItems = Item(item1, items)
         items.addItem(childItems)
 
-      message = Message({'action':'removeTree', 'items':items})
+      message = Message({'action': 'removeTree', 'items': items})
       controlers = self.getChildren()
       ct = controlers['TreeWidget']
       ct.messageFromParent(message)
@@ -196,10 +200,10 @@ class ControlerMain(ControlerAbstract):
 
     elif message.action() == "detailedProcessingPassDescription":
       result = self.__getDetailedProcessingPass(message)
-    
+
     elif message.action() == 'SaveToCSV':
-      result = self.__saveToCSVformat( message )
-    
+      result = self.__saveToCSVformat(message)
+
     else:
       message = "Unknown message sent by %s. Message:%s" % (str(sender.__class__), str(message))
       gLogger.error(message)
@@ -212,9 +216,9 @@ class ControlerMain(ControlerAbstract):
     """It expands a given tree node (It opens a directory)"""
     self.getWidget().waitCursor()
     path = message['node']
-    items = Item({'fullpath':path}, None)
+    items = Item({'fullpath': path}, None)
 
-    if message.has_key('StartItem') and message.has_key('MaxItem'):
+    if 'StartItem' in message and 'MaxItem' in message:
       self.__StartItem = message['StartItem']
       self.__Maxitems = message['MaxItem']
     for entity in self.__bkClient.list(str(path),
@@ -226,7 +230,7 @@ class ControlerMain(ControlerAbstract):
       items.addItem(childItem)
 
     self.getWidget().arrowCursor()
-    message = Message({'action':'showNode', 'items':items})
+    message = Message({'action': 'showNode', 'items': items})
     return message
 
   #############################################################################
@@ -236,7 +240,7 @@ class ControlerMain(ControlerAbstract):
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
     items = self.root()
-    message = Message({'action':'removeTree', 'items':items})
+    message = Message({'action': 'removeTree', 'items': items})
     gLogger.debug('ControlerMain:Remove Tree')
     return ct.messageFromParent(message)
 
@@ -247,7 +251,7 @@ class ControlerMain(ControlerAbstract):
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
     items = self.root()
-    message = Message({'action':'removeTree', 'items':items})
+    message = Message({'action': 'removeTree', 'items': items})
     return ct.messageFromParent(message)
 
   #############################################################################
@@ -257,7 +261,7 @@ class ControlerMain(ControlerAbstract):
     controlers = self.getChildren()
     items = self.root()
     ctProd = controlers['ProductionLookup']
-    message = Message({'action':'list', 'items':items})
+    message = Message({'action': 'list', 'items': items})
     return ctProd.messageFromParent(message)
 
   #############################################################################
@@ -267,7 +271,7 @@ class ControlerMain(ControlerAbstract):
     controlers = self.getChildren()
     items = self.root()
     ctProd = controlers['ProductionLookup']
-    message = Message({'action':'list', 'items':items})
+    message = Message({'action': 'list', 'items': items})
     return ctProd.messageFromParent(message)
 
   #############################################################################
@@ -310,7 +314,7 @@ class ControlerMain(ControlerAbstract):
   def __getJobInformation(self, message):
     """It returns the information of a job which created a given file."""
     files = self.__bkClient.getJobInfo(message['fileName'])
-    message = Message({'action':'showJobInfos', 'items':files})
+    message = Message({'action': 'showJobInfos', 'items': files})
     return message
 
   #############################################################################
@@ -320,7 +324,7 @@ class ControlerMain(ControlerAbstract):
     It returns only a limited number of files.
     """
     path = message['node']
-    result = self.__bkClient.getLimitedFiles({'fullpath':str(path)}, ['nb'], -1, -1)
+    result = self.__bkClient.getLimitedFiles({'fullpath': str(path)}, ['nb'], -1, -1)
     if result['OK']:
       return result['Value']
     else:
@@ -334,7 +338,7 @@ class ControlerMain(ControlerAbstract):
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
     items = self.root()
-    message = Message({'action':'removeTree', 'items':items})
+    message = Message({'action': 'removeTree', 'items': items})
     return ct.messageFromParent(message)
 
   #############################################################################
@@ -344,7 +348,7 @@ class ControlerMain(ControlerAbstract):
     items = self.root()
     controlers = self.getChildren()
     ct = controlers['TreeWidget']
-    message = Message({'action':'removeTree', 'items':items})
+    message = Message({'action': 'removeTree', 'items': items})
     return ct.messageFromParent(message)
 
   #############################################################################
@@ -352,26 +356,27 @@ class ControlerMain(ControlerAbstract):
     """It used to navigate through the creation history of files."""
     files = message['files']
     if len(files) == 0:
-      message = Message({'action':'error', 'message':'Please select a file or files!'})
+      message = Message({'action': 'error', 'message': 'Please select a file or files!'})
       return message
     res = self.__bkClient.getFileHistory(files)
     if not res['OK']:
-      message = Message({'action':'error', 'message':res['Message']})
+      message = Message({'action': 'error', 'message': res['Message']})
       return message
     else:
-      return Message({'action':'showAncestors', 'files':res['Value']})
+      return Message({'action': 'showAncestors', 'files': res['Value']})
 
   #############################################################################
   def __getProcessingPass(self, message):
     """It returns the processing pass for a given step description."""
     desc = message['groupdesc']
-    retVal = self.__bkClient.getProcessingPassSteps({'StepName':desc})
+    retVal = self.__bkClient.getProcessingPassSteps({'StepName': desc})
     if not retVal['OK']:
       gLogger.error(retVal['Message'])
       return None
     else:
       return retVal['Value']
   #############################################################################
+
   def __getDetailedProcessingPass(self, message):
     """It returns the corresponding steps created by the productions."""
     bkDict = message['bkDict']
@@ -385,7 +390,7 @@ class ControlerMain(ControlerAbstract):
   #############################################################################
   def __getProductionSteps(self, message):
     """It returns the steps and processing passes of a given production."""
-    res = self.__bkClient.getProductionProcessingPassSteps({'Production':int(message['production'])})
+    res = self.__bkClient.getProductionProcessingPassSteps({'Production': int(message['production'])})
     if res['OK']:
       return res['Value']
     else:
@@ -406,12 +411,12 @@ class ControlerMain(ControlerAbstract):
     """It returns the log file of the job which created the selected file."""
     files = message['fileName']
     if len(files) == 0:
-      message = Message({'action':'error', 'message':'Please select a file'})
+      message = Message({'action': 'error', 'message': 'Please select a file'})
       return message
     else:
       res = self.__bkClient.getLogfile(files[0])
       if not res['OK']:
-        message = Message({'action':'error', 'message':res['Message']})
+        message = Message({'action': 'error', 'message': res['Message']})
         return message
       else:
         value = res['Value']
@@ -426,7 +431,7 @@ class ControlerMain(ControlerAbstract):
         if logfile.find('/' + str(name[2])) < 0:
           logfile += '/' + str(name[2])
 
-        message = Message({'action':'showLog', 'fileName':logfile})
+        message = Message({'action': 'showLog', 'fileName': logfile})
         return message
 
   #############################################################################
@@ -453,7 +458,7 @@ class ControlerMain(ControlerAbstract):
       if retVal['OK']:
         slist = {}
         faild = {}
-        if 'Successful' in retVal['Value']: 
+        if 'Successful' in retVal['Value']:
           slist = retVal['Value']['Successful']
         if 'Failed' in retVal['Value']:
           faild = retVal['Value']['Failed']
@@ -477,10 +482,10 @@ class ControlerMain(ControlerAbstract):
                                           catalog=catalog,
                                           dataset=dataset)
         message = 'Total files:' + str(totalFiles) + '\n'
-        if site != None:
+        if site is not None:
           message += str(nbofsuccsessful) + ' found ' + str(site.split('.')[1]) + '\n'
           message += str(nboffaild) + ' not found ' + str(site.split('.')[1])
-        QMessageBox.information(self.getWidget(), "Information", message , QMessageBox.Ok)
+        QMessageBox.information(self.getWidget(), "Information", message, QMessageBox.Ok)
       else:
         QMessageBox.information(self.getWidget(), "Error", retVal['Message'], QMessageBox.Ok)
 
@@ -503,15 +508,15 @@ class ControlerMain(ControlerAbstract):
   def start(self):
     """send the messages to the appropiate controllers."""
     items = self.root()
-    if items != None:
-      message = Message({'action':'list', 'items':items})
+    if items is not None:
+      message = Message({'action': 'list', 'items': items})
       controlers = self.getChildren()
       for controler in controlers:
         if controler == 'TreeWidget':
           ct = controlers[controler]
           ct.messageFromParent(message)
     #message = Message({'action':'list','items':items})
-    #self.getControler().messageFromParent(message)
+    # self.getControler().messageFromParent(message)
   #############################################################################
 
   #############################################################################
@@ -529,14 +534,14 @@ class ControlerMain(ControlerAbstract):
     """handles the data quality related actions."""
     controlers = self.getChildren()
     ct = controlers['DataQuality']
-    message = Message({'action':'list', 'Values':self.__qualityFlags})
+    message = Message({'action': 'list', 'Values': self.__qualityFlags})
     ct.messageFromParent(message)
 
   #############################################################################
   def dataQualityFlagChecked(self, flag, value):
     """handles the actions of the data quality check boxes."""
     self.__qualityFlags[flag] = value
-    
+
   def __saveToCSVformat(self, message):
     """This method is used to save a list of selected lfns and their
     metadata."""
@@ -547,21 +552,21 @@ class ControlerMain(ControlerAbstract):
       fileName = message['fileName']
 
     lfns = message['lfns']
-    retVal = self.__bkClient.getFilesWithMetadata( dataset )
+    retVal = self.__bkClient.getFilesWithMetadata(dataset)
     if not retVal['OK']:
-      QMessageBox.information( self.getWidget(), "Error", retVal['Message'], QMessageBox.Ok )
+      QMessageBox.information(self.getWidget(), "Error", retVal['Message'], QMessageBox.Ok)
       return False
     else:
-      with open( fileName, 'w' ) as fd:
-        fd.write( ','.join( retVal['Value']['ParameterNames'] ) )
-        fd.write( '\n' )
-        if len( lfns ) != retVal['Value']['TotalRecords']:
+      with open(fileName, 'w') as fd:
+        fd.write(','.join(retVal['Value']['ParameterNames']))
+        fd.write('\n')
+        if len(lfns) != retVal['Value']['TotalRecords']:
           for record in retVal['Value']['Records']:
             if record[0] in lfns:
-              fd.write( ','.join( str(metadata) for metadata in record ) )
-              fd.write( '\n' )
+              fd.write(','.join(str(metadata) for metadata in record))
+              fd.write('\n')
         else:
           for record in retVal['Value']['Records']:
-            fd.write( ','.join( str(metadata) for metadata in record ) )
-            fd.write( '\n' )
+            fd.write(','.join(str(metadata) for metadata in record))
+            fd.write('\n')
     return True

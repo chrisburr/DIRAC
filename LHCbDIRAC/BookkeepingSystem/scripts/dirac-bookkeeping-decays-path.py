@@ -27,8 +27,8 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s eventType  ' % Script.scriptName]))
+    'Usage:',
+    '  %s eventType  ' % Script.scriptName]))
 
 Script.registerSwitch('p', 'production', "Obtain the paths in ``Production format'' for Ganga")
 Script.parseCommandLine(ignoreErrors=True)

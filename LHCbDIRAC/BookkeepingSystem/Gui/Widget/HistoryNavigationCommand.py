@@ -10,7 +10,7 @@
 ###############################################################################
 """history navigation command."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Command                      import Command
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Command import Command
 __RCSID__ = "$Id$"
 
 
@@ -18,6 +18,7 @@ __RCSID__ = "$Id$"
 class HistoryNavigationCommand(Command):
   """HistoryNavigationCommand class."""
   ########################################################################
+
   def __init__(self, widget, tableView, tableModel):
     """iniztialize the concrete command."""
     Command.__init__(self)

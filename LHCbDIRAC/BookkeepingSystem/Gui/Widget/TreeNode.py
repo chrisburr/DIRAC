@@ -12,14 +12,17 @@
 
 """Tree node widget."""
 
-from PyQt4.QtGui           import QTreeWidgetItem
+from PyQt4.QtGui import QTreeWidgetItem
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class TreeNode(QTreeWidgetItem):
   """TreeNode class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """initialize a node."""
     QTreeWidgetItem.__init__(self, parent)
@@ -36,4 +39,3 @@ class TreeNode(QTreeWidgetItem):
     return self.__item
 
   #############################################################################
-

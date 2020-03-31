@@ -24,8 +24,8 @@ if __name__ == "__main__":
   dmScript.registerFileSwitches()
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
 
   Script.registerSwitch("", "Size", "   Get the LFN size [No]")
   Script.registerSwitch('', 'DumpNoReplicas', '   Print list of files without a replica [No]')

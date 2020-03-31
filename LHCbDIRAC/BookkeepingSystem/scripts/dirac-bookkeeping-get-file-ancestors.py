@@ -26,12 +26,12 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'Full', 'Get full metadata information on ancestors')
   Script.registerSwitch('', 'Depth=', 'Number of processing levels (default:%d)' % level)
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName,
-                                    'Arguments:',
-                                    '  LFN:      Logical File Name',
-                                    '  File:     Name of the file with a list of LFNs',
-                                    '  Level:    Number of levels to search (default: %d)' % level]))
+      'Usage:',
+      '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName,
+      'Arguments:',
+      '  LFN:      Logical File Name',
+      '  File:     Name of the file with a list of LFNs',
+      '  Level:    Number of levels to search (default: %d)' % level]))
 
   Script.parseCommandLine(ignoreErrors=True)
 

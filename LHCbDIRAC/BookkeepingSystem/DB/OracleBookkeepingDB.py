@@ -2960,7 +2960,7 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
     records = []
     nbRecords = 0
     for record in dbResult:
-      if record[2] != None:
+      if record[2] is not None:
         conddesc = record[2]
       else:
         conddesc = record[3]
@@ -3228,7 +3228,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     if retVal['OK']:
       records = retVal['Value']
       for record in records:
-        if record[0] != None:
+        if record[0] is not None:
           runIds += [record[0]]
     else:
       return S_ERROR(retVal['Message'])
@@ -4127,7 +4127,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     for param in condition:
       if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
         command += str(param) + ' is NULL and '
-      elif condition[param] != None:
+      elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
       else:
         command += str(param) + ' is NULL and '
@@ -4141,7 +4141,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           if param != 'Description':
             if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
               command += str(param) + ' is NULL and '
-            elif condition[param] != None:
+            elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
             else:
               command += str(param) + ' is NULL and '
@@ -4166,7 +4166,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     for param in condition:
       if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
         command += str(param) + ' is NULL and '
-      elif condition[param] != None:
+      elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
       else:
         command += str(param) + ' is NULL and '
@@ -4180,7 +4180,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           if param != 'Description':
             if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
               command += str(param) + ' is NULL and '
-            elif condition[param] != None:
+            elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
             else:
               command += str(param) + ' is NULL and '

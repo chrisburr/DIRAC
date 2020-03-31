@@ -17,11 +17,11 @@
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC.Core.Base                                               import Script
+from DIRAC.Core.Base import Script
 
-Script.setUsageMessage('\n'.join([ __doc__.split('\n')[1],
-                                     'Usage:',
-                                     '  %s [option|cfgfile]' % Script.scriptName ]))
+Script.setUsageMessage(__doc__ + '\n'.join([
+    'Usage:',
+    '  %s [option|cfgfile]' % Script.scriptName]))
 Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -39,4 +39,3 @@ if res['OK']:
     print str(record[0]).ljust(30) + str(record[1])
 
 DIRAC.exit(exitCode)
-

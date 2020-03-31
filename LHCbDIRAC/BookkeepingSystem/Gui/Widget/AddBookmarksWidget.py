@@ -12,11 +12,11 @@
 
 """AddBookmarks widget."""
 ########################################################################
-from PyQt4.QtCore  import SIGNAL, Qt
-from PyQt4.QtGui   import QDialog
+from PyQt4.QtCore import SIGNAL, Qt
+from PyQt4.QtGui import QDialog
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_AddBookmarks           import Ui_AddBookmarks
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAddBookmarks  import ControlerAddBookmarks
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_AddBookmarks import Ui_AddBookmarks
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAddBookmarks import ControlerAddBookmarks
 
 __RCSID__ = "$Id$"
 
@@ -25,7 +25,8 @@ __RCSID__ = "$Id$"
 class AddBookmarksWidget(QDialog, Ui_AddBookmarks):
   """AddBookmarksWidget class."""
   #############################################################################
-  def __init__(self, parent = None):
+
+  def __init__(self, parent=None):
     """Constructor.
 
     @param parent parent widget (QWidget)
@@ -40,8 +41,8 @@ class AddBookmarksWidget(QDialog, Ui_AddBookmarks):
     self.connect(self.cancelButton, SIGNAL("clicked()"), self.__controler.cancelButton)
     self.__model = None
 
-
   #############################################################################
+
   def getControler(self):
     """returns the controller."""
     return self.__controler

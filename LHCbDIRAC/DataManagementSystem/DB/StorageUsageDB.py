@@ -136,7 +136,7 @@ class StorageUsageDB(DB):
     #                                     }
 
     for tableName in self.__tablesDesc:
-      if not tableName in tablesInDB:
+      if tableName not in tablesInDB:
         tablesToCreate[tableName] = self.__tablesDesc[tableName]
     return self._createTables(tablesToCreate)
 

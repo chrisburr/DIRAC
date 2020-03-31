@@ -25,7 +25,8 @@ __RCSID__ = "$Id$"
 #
 #...............................................................................
 
-class NagiosProbesPolicy( PolicyBase ):
+
+class NagiosProbesPolicy(PolicyBase):
   """The NagiosProbesPolicy checks the nagios probes.
 
   NagiosProbesPolicy, given the Nagios probes in activeMQ for this
@@ -39,41 +40,41 @@ class NagiosProbesPolicy( PolicyBase ):
     have a clarification.
     """
 
-    _KNOWN_METRIC_STATUS = [ 'OK', 'WARNING', 'CRITICAL', 'UNKNOWN' ]
+    _KNOWN_METRIC_STATUS = ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN']
 
-    commandResult   = super( NagiosProbesPolicy, self ).evaluate()
+    commandResult = super(NagiosProbesPolicy, self).evaluate()
     result = {}
-    result[ 'Status' ] = 'Unknown'
-    result[ 'Reason' ] = 'No values to take a decision'
+    result['Status'] = 'Unknown'
+    result['Reason'] = 'No values to take a decision'
 
     if commandResult is None:
-      result[ 'Status' ] = 'Error'
-      result[ 'Reason' ] = 'Command evaluation returned None'
+      result['Status'] = 'Error'
+      result['Reason'] = 'Command evaluation returned None'
       return result
 
-    if not commandResult[ 'OK' ]:
-      result[ 'Status' ] = 'Error'
-      result[ 'Reason' ] = commandResult[ 'Message' ]
+    if not commandResult['OK']:
+      result['Status'] = 'Error'
+      result['Reason'] = commandResult['Message']
       return result
 
-    commandResult = commandResult[ 'Value' ]
+    commandResult = commandResult['Value']
 
     for k in commandResult.keys():
-      if not k in _KNOWN_METRIC_STATUS:
-        result[ 'Status' ] = 'Error'
-        result[ 'Reason' ] = '%s is not a valid MetricStatus' % k
+      if k not in _KNOWN_METRIC_STATUS:
+        result['Status'] = 'Error'
+        result['Reason'] = '%s is not a valid MetricStatus' % k
         return result
 
-    if commandResult.has_key( 'CRITICAL' ):
-      result[ 'Status' ] = 'Banned'
-      result[ 'Reason' ] = '%d CRITICAL Nagios probes' % commandResult[ 'CRITICAL' ][ 1 ]
+    if 'CRITICAL' in commandResult:
+      result['Status'] = 'Banned'
+      result['Reason'] = '%d CRITICAL Nagios probes' % commandResult['CRITICAL'][1]
 
-    #Only if there is all Ok we return Active
-    elif commandResult.keys() == [ 'OK' ]:
-      result[ 'Status' ] = 'Active'
-      result[ 'Reason' ] = 'All OK Nagios probes'
+    # Only if there is all Ok we return Active
+    elif commandResult.keys() == ['OK']:
+      result['Status'] = 'Active'
+      result['Reason'] = 'All OK Nagios probes'
 
     return result
 
 #...............................................................................
-#EOF
+# EOF

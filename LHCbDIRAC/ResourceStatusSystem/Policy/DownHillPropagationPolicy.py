@@ -25,7 +25,8 @@ __RCSID__ = "$Id$"
 #
 #...............................................................................
 
-class DownHillPropagationPolicy( PolicyBase ):
+
+class DownHillPropagationPolicy(PolicyBase):
   """The DownHillPropagationPolicy module is a policy module used to update the
   status of an element, based on how its element in the upper part of the
   hierarchy is behaving in the RSS.
@@ -48,29 +49,29 @@ class DownHillPropagationPolicy( PolicyBase ):
       }
     """
 
-    commandResult = super( DownHillPropagationPolicy, self ).evaluate()
+    commandResult = super(DownHillPropagationPolicy, self).evaluate()
     result = {}
 
     if commandResult is None:
-      result[ 'Status' ] = 'Error'
-      result[ 'Reason' ] = 'Command evaluation returned None'
+      result['Status'] = 'Error'
+      result['Reason'] = 'Command evaluation returned None'
       return result
 
-    if not commandResult[ 'OK' ]:
-      result[ 'Status' ] = 'Error'
-      result[ 'Reason' ] = commandResult[ 'Message' ]
+    if not commandResult['OK']:
+      result['Status'] = 'Error'
+      result['Reason'] = commandResult['Message']
       return result
 
-    commandResult = commandResult[ 'Value' ]
+    commandResult = commandResult['Value']
 
     if commandResult is None:
-      result[ 'Status' ] = 'Unknown'
-      result[ 'Reason' ] = 'No values to take a decission'
+      result['Status'] = 'Unknown'
+      result['Reason'] = 'No values to take a decission'
       return result
 
-    result[ 'Status' ] = commandResult
-    result[ 'Reason' ] = 'DownHill propagated status: %s' % commandResult
+    result['Status'] = commandResult
+    result['Reason'] = 'DownHill propagated status: %s' % commandResult
     return result
 
 #...............................................................................
-#EOF
+# EOF

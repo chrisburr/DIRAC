@@ -12,24 +12,27 @@
 
 """File dialog widget."""
 
-from PyQt4.QtGui                                import QDialog, QMenu, QAction, \
-                                                       QSortFilterProxyModel, QMessageBox, \
-                                                       QAbstractItemView, QFileDialog, QCursor
-from PyQt4.QtCore                               import SIGNAL, Qt, QDir, QVariant
+from PyQt4.QtGui import QDialog, QMenu, QAction, \
+    QSortFilterProxyModel, QMessageBox, \
+    QAbstractItemView, QFileDialog, QCursor
+from PyQt4.QtCore import SIGNAL, Qt, QDir, QVariant
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_FileDialog           import Ui_FileDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel              import TableModel
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.AdvancedSave            import AdvancedSave
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerFileDialog  import ControlerFileDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.HistoryDialog           import HistoryDialog
-from DIRAC                                                          import gLogger
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_FileDialog import Ui_FileDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel import TableModel
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.AdvancedSave import AdvancedSave
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerFileDialog import ControlerFileDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.HistoryDialog import HistoryDialog
+from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class FileDialog(QDialog, Ui_FileDialog):
   """FileDialog class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """initialize the widget."""
     QDialog.__init__(self, parent)
@@ -51,21 +54,20 @@ class FileDialog(QDialog, Ui_FileDialog):
     self.__popUp = QMenu(self.tableView)
 
     self.__jobAction = QAction(self.tr("Job Info"), self.tableView)
-    self.connect (self.__jobAction, SIGNAL("triggered()"), self.__controler.jobinfo)
+    self.connect(self.__jobAction, SIGNAL("triggered()"), self.__controler.jobinfo)
     self.__popUp.addAction(self.__jobAction)
 
     self.__ancesstorsAction = QAction(self.tr("Get Anccestors"), self.tableView)
-    self.connect (self.__ancesstorsAction, SIGNAL("triggered()"), self.__controler.getancesstots)
+    self.connect(self.__ancesstorsAction, SIGNAL("triggered()"), self.__controler.getancesstots)
     self.__popUp.addAction(self.__ancesstorsAction)
 
     self.__loginfoAction = QAction(self.tr("Logginig informations"), self.tableView)
-    self.connect (self.__loginfoAction, SIGNAL("triggered()"), self.__controler.loggininginfo)
+    self.connect(self.__loginfoAction, SIGNAL("triggered()"), self.__controler.loggininginfo)
     self.__popUp.addAction(self.__loginfoAction)
 
     self.__copyAction = QAction(self.tr("Copy data"), self.tableView)
-    self.connect (self.__copyAction, SIGNAL("triggered()"), self.__controler.copy)
+    self.connect(self.__copyAction, SIGNAL("triggered()"), self.__controler.copy)
     self.__popUp.addAction(self.__copyAction)
-
 
     self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
     self.connect(self.tableView, SIGNAL('customContextMenuRequested(QPoint)'), self.popUpMenu)
@@ -87,9 +89,9 @@ class FileDialog(QDialog, Ui_FileDialog):
     self.filterWidget.setupControler(self)
     self.__controler.addChild('TckFilterWidget', self.filterWidget.getControler())
 
-
   #############################################################################
-  def closeEvent (self, event):
+
+  def closeEvent(self, event):
     """handles the close action."""
     gLogger.debug(event)
     self.getControler().close()
@@ -199,14 +201,13 @@ class FileDialog(QDialog, Ui_FileDialog):
               'WorkerNode', 'RunNumber', 'FillNumber', 'FullStat', 'DataqualityFlag',
               'EventInputStat', 'TotalLuminosity', 'Luminosity', 'InstLuminosity', 'TCK']
     data.update(self.__model)
-    keys = data.keys()
-    keys.sort()
+    keys = sorted(data.keys())
     for item in keys:
       lfn = data[item]
       i = []
       for info in header:
         value = lfn[info]
-        if value == None:
+        if value is None:
           value = ''
         i += [value]
       tabledata += [i]
@@ -225,7 +226,6 @@ class FileDialog(QDialog, Ui_FileDialog):
 
     self.__proxy.setSourceModel(tm)
 
-
     self.tableView.setModel(self.__proxy)
     self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
     self.tableView.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -243,7 +243,7 @@ class FileDialog(QDialog, Ui_FileDialog):
 
     # set the font
     #font = QFont("Courier New", 12)
-    #self.tableView.setFont(font)
+    # self.tableView.setFont(font)
 
     # hide vertical header
     vh = self.tableView.verticalHeader()
@@ -262,17 +262,17 @@ class FileDialog(QDialog, Ui_FileDialog):
     for row in xrange(nrows):
       self.tableView.setRowHeight(row, 18)
 
-    self.__proxy.sort (0, Qt.AscendingOrder)
+    self.__proxy.sort(0, Qt.AscendingOrder)
     # enable sorting
     # this doesn't work
-    #tv.setSortingEnabled(True)
+    # tv.setSortingEnabled(True)
 
   #############################################################################
   def saveAs(self, filename=''):
     """saves the selected files."""
-    saveDialog = QFileDialog (self, 'Feicim Save file(s) dialog',
-                              QDir.currentPath(),
-                              'Python option(*.py);;Option file (*.opts);;Text file (*.txt);;CSV (*.csv)')
+    saveDialog = QFileDialog(self, 'Feicim Save file(s) dialog',
+                             QDir.currentPath(),
+                             'Python option(*.py);;Option file (*.opts);;Text file (*.txt);;CSV (*.csv)')
     saveDialog.setAcceptMode(QFileDialog.AcceptSave)
 
     saveDialog.selectFile(filename)
@@ -280,33 +280,33 @@ class FileDialog(QDialog, Ui_FileDialog):
     ##saveDialog.setDirectory (QDir.currentPath())
     #filters = ['Option file (*.opts)' ,'Pool xml file (*.xml)','*.txt']
     #filters = ['Option file (*.opts)','*.py','*.txt']
-    #saveDialog.setFilter(';;'.join(filters))
+    # saveDialog.setFilter(';;'.join(filters))
     #saveDialog.setFilter('Option file (*.opts);;Text file (*.txt);;Python option')
-    #saveDialog.setFileMode(QFileDialog.AnyFile)
-    #saveDialog.setViewMode(QFileDialog.Detail)
+    # saveDialog.setFileMode(QFileDialog.AnyFile)
+    # saveDialog.setViewMode(QFileDialog.Detail)
 
     ext = ''
     if saveDialog.exec_():
-      filename = str( saveDialog.selectedFiles()[0] )
+      filename = str(saveDialog.selectedFiles()[0])
       ext = saveDialog.selectedFilter()
       if 'Text file (*.txt)' in ext:
-        if not filename.endswith( '.txt' ):
+        if not filename.endswith('.txt'):
           filename += '.txt'
       elif 'Option file (*.opts)' in ext:
-        if not filename.endswith( '.opts' ):
+        if not filename.endswith('.opts'):
           filename += '.opts'
       elif 'Python option(*.py)' in ext:
-        if not filename.endswith( '.py' ):
+        if not filename.endswith('.py'):
           filename += '.py'
       elif 'CSV (*.csv)' in ext:
-        if not filename.endswith( '.csv' ):
+        if not filename.endswith('.csv'):
           filename += '.csv'
       try:
-        open( filename )
+        open(filename)
       except IOError:
         pass
       else:
-        response = QMessageBox.warning( self, "File dialog", "File exists, overwrite?", QMessageBox.Ok, QMessageBox.No )
+        response = QMessageBox.warning(self, "File dialog", "File exists, overwrite?", QMessageBox.Ok, QMessageBox.No)
         if response == QMessageBox.No:
           filename = ''
     if filename == '':
@@ -323,25 +323,25 @@ class FileDialog(QDialog, Ui_FileDialog):
   def showSelection(self, in_dict):
     """shows the Bookkeeping query, the selected dataset."""
 
-    if in_dict.has_key('ConfigName'):
+    if 'ConfigName' in in_dict:
       self.configname.setText(in_dict["ConfigName"])
 
-    if in_dict.has_key('ConfigVersion'):
+    if 'ConfigVersion' in in_dict:
       self.configversion.setText(in_dict["ConfigVersion"])
 
-    if in_dict.has_key('ConditionDescription'):
+    if 'ConditionDescription' in in_dict:
       self.simulation.setText(in_dict["ConditionDescription"])
 
-    if in_dict.has_key('ProcessingPass'):
+    if 'ProcessingPass' in in_dict:
       self.processing.setText(in_dict["ProcessingPass"])
 
-    if in_dict.has_key('EventTypeId'):
+    if 'EventTypeId' in in_dict:
       self.eventtype.setText(in_dict["EventTypeId"])
 
-    if in_dict.has_key('Production'):
+    if 'Production' in in_dict:
       self.production.setText('')
 
-    if in_dict.has_key('FileType'):
+    if 'FileType' in in_dict:
       self.filetype.setText(in_dict["FileType"])
 
     self.progrnameandversion.setText('')
@@ -349,7 +349,7 @@ class FileDialog(QDialog, Ui_FileDialog):
   #############################################################################
   def clearTable(self):
     """clear the elements from the table."""
-    #self.tableView().clear()
+    # self.tableView().clear()
     self.__model = {}
 
   #############################################################################
@@ -360,11 +360,11 @@ class FileDialog(QDialog, Ui_FileDialog):
     self.tckcombo.clear()
     j = 0
     for i in tcks:
-      self.tckcombo.addItem (i, QVariant(i))
+      self.tckcombo.addItem(i, QVariant(i))
       if i == 'All':
         self.tckcombo.setCurrentIndex(j)
       j += 1
-    #self.tckcombo.view().setSelectionMode(QAbstractItemView.MultiSelection)
+    # self.tckcombo.view().setSelectionMode(QAbstractItemView.MultiSelection)
 
   #############################################################################
   def applyFilter(self, data):
@@ -374,7 +374,7 @@ class FileDialog(QDialog, Ui_FileDialog):
       self.__proxy.clear()
       self.__proxy.invalidateFilter()
       filterCondition = "^\\S+$"
-      gLogger.debug('Filter condition:'+filterCondition)
+      gLogger.debug('Filter condition:' + filterCondition)
       self.__proxy.setFilterKeyColumn(15)
       self.__proxy.setFilterRegExp(filterCondition)
       for row in xrange(self.__proxy.rowCount()):
@@ -383,7 +383,7 @@ class FileDialog(QDialog, Ui_FileDialog):
       gLogger.debug('applyFilter-Selected')
       self.__proxy.setFilterKeyColumn(15)
       filterCondition = '%s' % (data)
-      gLogger.debug('Filter condition:'+filterCondition)
+      gLogger.debug('Filter condition:' + filterCondition)
       self.__proxy.setFilterRegExp(filterCondition)
       for row in xrange(self.__proxy.rowCount()):
         self.tableView.setRowHeight(row, 18)
@@ -398,14 +398,14 @@ class FileDialog(QDialog, Ui_FileDialog):
       cond += '|'
     cond = cond[:-1]
     filterCondition += cond + ')\\b'
-    gLogger.debug('Filter condition:'+filterCondition)
+    gLogger.debug('Filter condition:' + filterCondition)
     self.__proxy.setFilterKeyColumn(15)
     self.__proxy.setFilterRegExp(filterCondition)
     for row in xrange(self.__proxy.rowCount()):
       self.tableView.setRowHeight(row, 18)
 
-
   #############################################################################
+
   def showTckFilter(self):
     """shows the tcks."""
     self.tckButton.hide()
@@ -426,7 +426,7 @@ class FileDialog(QDialog, Ui_FileDialog):
     """returns the lfns."""
     lfns = []
     for row in xrange(self.__proxy.rowCount()):
-      index = self.__proxy.index(row, 0) # this add the files to my selected list
+      index = self.__proxy.index(row, 0)  # this add the files to my selected list
       lfns += [str(self.__proxy.data(index).toString())]
     return lfns
 
@@ -439,4 +439,3 @@ class FileDialog(QDialog, Ui_FileDialog):
   def arrowCursor(self):
     """shows the normal cursor."""
     self.setCursor(Qt.ArrowCursor)
-

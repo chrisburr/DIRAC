@@ -13,9 +13,12 @@
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerAbstract(object):
   """abstarct class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialie the class member."""
     self.__widget = widget
@@ -61,4 +64,3 @@ class ControlerAbstract(object):
   def setParent(self, parent):
     """sets the parent of the current controller."""
     self.__parent = parent
-

@@ -12,17 +12,20 @@
 
 """Controls the data quality widget."""
 
-from PyQt4.QtCore                                                             import Qt
+from PyQt4.QtCore import Qt
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerDataQualityDialog(ControlerAbstract):
   """ControlerDataQualityDialog class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -52,9 +55,8 @@ class ControlerDataQualityDialog(ControlerAbstract):
         values[str(i.text())] = True
       elif i.checkState() == Qt.Unchecked:
         values[str(i.text())] = False
-    message = Message({'action':'changeQualities', 'Values':values})
+    message = Message({'action': 'changeQualities', 'Values': values})
     self.getParent().messageFromChild(self, message)
     self.getWidget().close()
 
   #############################################################################
-

@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_MainWidget(object):
   def setupUi(self, MainWidget):
     MainWidget.setObjectName("MainWidget")
@@ -63,13 +64,37 @@ class Ui_MainWidget(object):
     QtCore.QMetaObject.connectSlotsByName(MainWidget)
 
   def retranslateUi(self, MainWidget):
-    MainWidget.setWindowTitle(QtGui.QApplication.translate("MainWidget", "Feicim - LHCb Bookkeeping browser", None, QtGui.QApplication.UnicodeUTF8))
-    self.tree.headerItem().setText(0, QtGui.QApplication.translate("MainWidget", "BookkeepingTree", None, QtGui.QApplication.UnicodeUTF8))
-    self.tree.headerItem().setText(1, QtGui.QApplication.translate("MainWidget", "Description", None, QtGui.QApplication.UnicodeUTF8))
+    MainWidget.setWindowTitle(
+        QtGui.QApplication.translate(
+            "MainWidget",
+            "Feicim - LHCb Bookkeeping browser",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.tree.headerItem().setText(
+        0,
+        QtGui.QApplication.translate(
+            "MainWidget",
+            "BookkeepingTree",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+    self.tree.headerItem().setText(1, QtGui.QApplication.translate(
+        "MainWidget", "Description", None, QtGui.QApplication.UnicodeUTF8))
     self.menuFile.setTitle(QtGui.QApplication.translate("MainWidget", "File", None, QtGui.QApplication.UnicodeUTF8))
-    self.menuSetings.setTitle(QtGui.QApplication.translate("MainWidget", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+    self.menuSetings.setTitle(
+        QtGui.QApplication.translate(
+            "MainWidget",
+            "Settings",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.actionExit.setText(QtGui.QApplication.translate("MainWidget", "Exit", None, QtGui.QApplication.UnicodeUTF8))
-    self.actionFile_dialog_paging_size.setText(QtGui.QApplication.translate("MainWidget", "File dialog page size", None, QtGui.QApplication.UnicodeUTF8))
-    self.actionDataQuality.setText(QtGui.QApplication.translate("MainWidget", "DataQuality", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionFile_dialog_paging_size.setText(QtGui.QApplication.translate(
+        "MainWidget", "File dialog page size", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionDataQuality.setText(
+        QtGui.QApplication.translate(
+            "MainWidget",
+            "DataQuality",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+
 
 from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreeWidget import TreeWidget

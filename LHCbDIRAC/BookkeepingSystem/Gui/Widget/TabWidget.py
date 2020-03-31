@@ -12,21 +12,24 @@
 
 """Tab widget."""
 
-from PyQt4.QtGui                                                    import  QWidget, QGridLayout, \
-                                                                            QTableView, QMenu, QAction,\
-                                                                            QCursor, QApplication
-from PyQt4.QtCore                                                   import SIGNAL, Qt
+from PyQt4.QtGui import QWidget, QGridLayout, \
+    QTableView, QMenu, QAction,\
+    QCursor, QApplication
+from PyQt4.QtCore import SIGNAL, Qt
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel              import TableModel
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel import TableModel
 
-from DIRAC                                                          import gLogger
+from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class TabWidget(QWidget):
   """TabWidget class."""
   #############################################################################
+
   def __init__(self, data, parent=None):
     """initialize the widget."""
     QWidget.__init__(self, parent)
@@ -49,7 +52,7 @@ class TabWidget(QWidget):
     self.__popUp = QMenu(tableView)
 
     self.__copyAction = QAction(self.tr("Copy data"), tableView)
-    self.connect (self.__copyAction, SIGNAL("triggered()"), self.copy)
+    self.connect(self.__copyAction, SIGNAL("triggered()"), self.copy)
     self.__popUp.addAction(self.__copyAction)
 
     tableView.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -69,7 +72,7 @@ class TabWidget(QWidget):
 
     # set the font
     #font = QFont("Courier New", 12)
-    #self.tableView.setFont(font)
+    # self.tableView.setFont(font)
 
     # hide vertical header
     vh = tableView.verticalHeader()
@@ -82,7 +85,7 @@ class TabWidget(QWidget):
     # set column width to fit contents
     tableView.resizeColumnsToContents()
     tableView.setSortingEnabled(True)
-    tableView.sortByColumn (0, Qt.AscendingOrder)
+    tableView.sortByColumn(0, Qt.AscendingOrder)
 
     # set row height
     nrows = len(tabledata)
@@ -92,7 +95,7 @@ class TabWidget(QWidget):
   #############################################################################
   def getGroupDesc(self):
     """retuns the description."""
-    if self.__data == None:
+    if self.__data is None:
       gLogger.error('Wrong tab!')
     else:
       return str(self.__data[1][1])
@@ -110,5 +113,3 @@ class TabWidget(QWidget):
       text += '%s \t %s \n' % (i[0], i[1])
     clipboard = QApplication.clipboard()
     clipboard.setText(text)
-
-

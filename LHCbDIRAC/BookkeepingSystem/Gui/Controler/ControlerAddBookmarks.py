@@ -14,15 +14,18 @@
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
 
-from DIRAC                                                               import gLogger, S_OK, S_ERROR
+from DIRAC import gLogger, S_OK, S_ERROR
 
 #############################################################################
+
+
 class ControlerAddBookmarks(ControlerAbstract):
   """class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -57,7 +60,7 @@ class ControlerAddBookmarks(ControlerAbstract):
     title = self.getWidget().getTitle()
     path = self.getWidget().getPath()
     if len(path.split(':/')) > 0:
-      message = Message({'action':'addBookmarks', 'bookmark':{'Title':title, 'Path':path}})
+      message = Message({'action': 'addBookmarks', 'bookmark': {'Title': title, 'Path': path}})
       feedback = self.getParent().messageFromChild(self, message)
       if not feedback['OK']:
         gLogger.error(feedback['Message'])
@@ -67,6 +70,7 @@ class ControlerAddBookmarks(ControlerAbstract):
       gLogger.error('Wrong path!')
     self.getWidget().arrowCursor()
   #############################################################################
+
   def cancelButton(self):
     """handles the action when the close button pressed."""
     self.getWidget().close()

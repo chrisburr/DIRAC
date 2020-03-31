@@ -16,16 +16,18 @@ from PyQt4.QtCore import Qt, QVariant, QAbstractListModel, QModelIndex
 from DIRAC import gLogger
 __RCSID__ = "$Id$"
 
+
 class ListModel(QAbstractListModel):
   """List Model class."""
   #############################################################################
+
   def __init__(self, datain=None, parent=None, *args):
     """initialize the class members."""
     QAbstractListModel.__init__(self, parent, *args)
     self.__listdata = datain
 
-
   #############################################################################
+
   def rowCount(self, parent=QModelIndex()):
     """counts the number of rows."""
     gLogger.debug(parent)

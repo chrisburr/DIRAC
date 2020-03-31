@@ -12,18 +12,21 @@
 
 """Data quality widget."""
 
-from PyQt4.QtGui                                                              import QCheckBox, QDialog, QApplication
-from PyQt4.QtCore                                                             import SIGNAL
+from PyQt4.QtGui import QCheckBox, QDialog, QApplication
+from PyQt4.QtCore import SIGNAL
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_DataQualityDialog              import Ui_DataQualityDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerDataQualityDialog     import ControlerDataQualityDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_DataQualityDialog import Ui_DataQualityDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerDataQualityDialog import ControlerDataQualityDialog
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class DataQualityDialog(QDialog, Ui_DataQualityDialog):
   """DataQualityDialog class."""
   #############################################################################
+
   def __init__(self, parent=None):
     """initialize the widget."""
     QDialog.__init__(self, parent)
@@ -58,5 +61,3 @@ class DataQualityDialog(QDialog, Ui_DataQualityDialog):
       self.__checkboses[j].setText(QApplication.translate("DataQualityDialog", i, None, QApplication.UnicodeUTF8))
       self.__checkboses[j].setChecked(values[i])
       j += 1
-
-

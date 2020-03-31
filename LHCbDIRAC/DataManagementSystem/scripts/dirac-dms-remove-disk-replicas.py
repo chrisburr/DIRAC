@@ -22,7 +22,7 @@ if __name__ == "__main__":
   dmScript.registerBKSwitches()
 
   Script.registerSwitch("", "Force", " use this option for force the removal of files without ARCHIVE")
-  Script.setUsageMessage('\n'.join(__doc__.split('\n') + [
+  Script.setUsageMessage('\n'.join([__doc__,
       'Usage:',
       '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]' % Script.scriptName]))
   Script.parseCommandLine()

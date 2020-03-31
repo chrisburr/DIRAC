@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_HistoryDialog(object):
   def setupUi(self, HistoryDialog):
     HistoryDialog.setObjectName("HistoryDialog")
@@ -67,9 +68,20 @@ class Ui_HistoryDialog(object):
     QtCore.QMetaObject.connectSlotsByName(HistoryDialog)
 
   def retranslateUi(self, HistoryDialog):
-    HistoryDialog.setWindowTitle(QtGui.QApplication.translate("HistoryDialog", "Feicim File History dialog window", None, QtGui.QApplication.UnicodeUTF8))
+    HistoryDialog.setWindowTitle(
+        QtGui.QApplication.translate(
+            "HistoryDialog",
+            "Feicim File History dialog window",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.backButton.setText(QtGui.QApplication.translate("HistoryDialog", "Back", None, QtGui.QApplication.UnicodeUTF8))
     self.nextButton.setText(QtGui.QApplication.translate("HistoryDialog", "Next", None, QtGui.QApplication.UnicodeUTF8))
-    self.closeButton.setText(QtGui.QApplication.translate("HistoryDialog", "Close", None, QtGui.QApplication.UnicodeUTF8))
+    self.closeButton.setText(
+        QtGui.QApplication.translate(
+            "HistoryDialog",
+            "Close",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

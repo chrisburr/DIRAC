@@ -48,8 +48,8 @@ def getProcessingPasses(bkDict, headPass):
     for thisId in xrange(len(parNames)):
       parName = parNames[thisId]
       if parName == 'Name':
-          found = True
-          break
+        found = True
+        break
     if found:
       for reco in recordList['Records']:
         recoName = headPass + '/' + reco[0]

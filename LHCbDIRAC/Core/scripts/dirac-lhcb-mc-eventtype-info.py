@@ -26,8 +26,8 @@ from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery
 Script.registerSwitch('', 'FileType=', 'FileType to search [ALLSTREAMS.DST]')
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option] eventType  ' % Script.scriptName]))
+    'Usage:',
+    '  %s [option] eventType  ' % Script.scriptName]))
 fileType = 'ALLSTREAMS.DST'
 Script.parseCommandLine(ignoreErrors=True)
 for switch in Script.getUnprocessedSwitches():

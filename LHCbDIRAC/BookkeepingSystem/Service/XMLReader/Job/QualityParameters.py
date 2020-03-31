@@ -12,9 +12,11 @@
 
 __RCSID__ = "$Id$"
 
+
 class QualityParameters:
   """QualityParameters class."""
   #############################################################################
+
   def __init__(self):
     """initialize the class members."""
     self.name_ = ""
@@ -50,10 +52,8 @@ class QualityParameters:
   def writeToXML(self):
     """creates an xml string."""
     result = '  <Parameter Name="' + str(self.getName()) + \
-                     '" Value="' + str(self.getValue()) + '"/>\n'
+        '" Value="' + str(self.getValue()) + '"/>\n'
 
     return result
 
-
   #############################################################################
-

@@ -13,9 +13,12 @@
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class Item(dict):
   """Item class."""
   #############################################################################
+
   def __init__(self, properties, parent):
     """initializes the class member."""
     super(Item, self).__init__(properties)
@@ -24,6 +27,7 @@ class Item(dict):
     self.__childrenNumber = 0
     self.__childmap = {}
   #############################################################################
+
   def getParent(self):
     """returns the parent of a node."""
     return self.__parent
@@ -36,8 +40,8 @@ class Item(dict):
     self.__childmap[self.__childrenNumber] = item
     self.__childrenNumber = self.__childrenNumber + 1
 
-
   #############################################################################
+
   def getChildren(self):
     """returns the children."""
     return self.__children

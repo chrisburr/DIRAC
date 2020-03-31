@@ -62,7 +62,7 @@ class XMLFilesReaderManager(object):
 
       docType = doc.doctype  # job or replica
       xmltype = docType.name.encode('ascii')  # pylint: disable=no-member
-    except NameError, ex:
+    except NameError as ex:
       gLogger.error("XML reading error", filename)
       return S_ERROR(ex)
 
@@ -90,7 +90,7 @@ class XMLFilesReaderManager(object):
           return result
         else:
           gLogger.error("unknown XML file!!!")
-    except ExpatError, ex:
+    except ExpatError as ex:
       gLogger.error("XML reading error", repr(ex))
       return S_ERROR(ex)
 

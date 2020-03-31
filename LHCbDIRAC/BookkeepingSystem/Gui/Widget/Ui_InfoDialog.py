@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_InfoDialog(object):
   def setupUi(self, InfoDialog):
     InfoDialog.setObjectName("InfoDialog")
@@ -47,7 +48,13 @@ class Ui_InfoDialog(object):
     QtCore.QMetaObject.connectSlotsByName(InfoDialog)
 
   def retranslateUi(self, InfoDialog):
-    InfoDialog.setWindowTitle(QtGui.QApplication.translate("InfoDialog", "Feicim Info dialog", None, QtGui.QApplication.UnicodeUTF8))
+    InfoDialog.setWindowTitle(
+        QtGui.QApplication.translate(
+            "InfoDialog",
+            "Feicim Info dialog",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.pushButton.setText(QtGui.QApplication.translate("InfoDialog", "Close", None, QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

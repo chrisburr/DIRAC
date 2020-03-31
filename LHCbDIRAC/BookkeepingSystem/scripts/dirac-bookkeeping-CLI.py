@@ -16,8 +16,8 @@
 
 """Bookkeeping Command line interface."""
 
-from DIRAC.Core.Base                                      import Script
-Script.parseCommandLine( ignoreErrors = True )
+from DIRAC.Core.Base import Script
+Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingCLI import LHCbBookkeepingCLI
 

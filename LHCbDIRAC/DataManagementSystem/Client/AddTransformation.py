@@ -86,7 +86,7 @@ def executeAddTransformation(pluginScript):
       gLogger.fatal("Can't get proxy info", res['Message'])
       exit(1)
     properties = res['Value'].get('groupProperties', [])
-    if not 'FileCatalogManagement' in properties:
+    if 'FileCatalogManagement' not in properties:
       gLogger.error("You need to use a proxy from a group with FileCatalogManagement")
       exit(5)
 

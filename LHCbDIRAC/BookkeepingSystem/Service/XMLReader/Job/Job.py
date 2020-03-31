@@ -63,7 +63,7 @@ class Job:
   #############################################################################
   def getJobParams(self):
     """returns the job parameters."""
-    return  self.jobParameters_
+    return self.jobParameters_
 
   #############################################################################
   def exists(self, jobParam):
@@ -115,7 +115,7 @@ class Job:
     """returns the parameters of a output file."""
     for i in self.jobOutputfiles_:
       param = i.getParam(paramName)
-      if param != None:
+      if param is not None:
         return param
     return None
 
@@ -177,7 +177,7 @@ class Job:
     for option in self.jobOptions_:
       result += str(option)
     result += '\n'
-    for param in  self.jobParameters_:
+    for param in self.jobParameters_:
       result += str(param)
     result += '\n'
     for jobinput in self.jobInputFiles_:
@@ -196,7 +196,7 @@ class Job:
     string += '<!DOCTYPE Job SYSTEM "book.dtd">\n'
 
     string = "%s%s" % (string, self.getJobConfiguration().writeToXML())
-    for param in  self.jobParameters_:
+    for param in self.jobParameters_:
       string = "%s%s" % (string, param.writeToXML())
 
     for inputFile in self.jobInputFiles_:
@@ -206,11 +206,11 @@ class Job:
       string = "%s%s" % (string, output.writeToXML())
 
     sim = self.getSimulationCond()
-    if sim != None:
+    if sim is not None:
       string = "%s%s" % (string, sim.writeToXML())
 
     daq = self.getDataTakingCond()
-    if daq != None:
+    if daq is not None:
       string = "%s%s" % (string, daq.writeToXML())
 
     string += '</Job>'

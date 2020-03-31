@@ -12,16 +12,19 @@
 
 """Controller of the Filter widget."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
 
-from PyQt4.QtGui                                                         import QMessageBox
+from PyQt4.QtGui import QMessageBox
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerFilterWidget(ControlerAbstract):
   """ControlerFilterWidget class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -49,8 +52,8 @@ class ControlerFilterWidget(ControlerAbstract):
     new_list = [item for item in self.__model if item.find(pattern) == 0]
     widget.getModel().setAllData(new_list)
 
-
   #############################################################################
+
   def okPressed(self):
     """handles the action of the ok button."""
     widget = self.getWidget()
@@ -61,7 +64,7 @@ class ControlerFilterWidget(ControlerAbstract):
         item = str(i.data().toString())
         selected += [item]
       if len(selected) != 0:
-        message = Message({'action':'applyFilter', 'items':selected})
+        message = Message({'action': 'applyFilter', 'items': selected})
         self.getParent().messageFromChild(self, message)
     else:
       QMessageBox.information(self.getWidget(), "More information...", "Please select TCKs", QMessageBox.Ok)
@@ -70,6 +73,5 @@ class ControlerFilterWidget(ControlerAbstract):
   def allPressed(self):
     """handless the all button acction."""
     flist = self.getWidget().getModel().getAllData()
-    message = Message({'action':'applyFilter', 'items':flist})
+    message = Message({'action': 'applyFilter', 'items': flist})
     self.getParent().messageFromChild(self, message)
-

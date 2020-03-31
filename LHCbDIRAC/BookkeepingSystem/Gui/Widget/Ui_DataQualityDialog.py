@@ -21,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+
 class Ui_DataQualityDialog(object):
   def setupUi(self, DataQualityDialog):
     DataQualityDialog.setObjectName("DataQualityDialog")
@@ -44,8 +45,19 @@ class Ui_DataQualityDialog(object):
     QtCore.QMetaObject.connectSlotsByName(DataQualityDialog)
 
   def retranslateUi(self, DataQualityDialog):
-    DataQualityDialog.setWindowTitle(QtGui.QApplication.translate("DataQualityDialog", "Data quality settings dialog", None, QtGui.QApplication.UnicodeUTF8))
+    DataQualityDialog.setWindowTitle(
+        QtGui.QApplication.translate(
+            "DataQualityDialog",
+            "Data quality settings dialog",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
     self.OkButton.setText(QtGui.QApplication.translate("DataQualityDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
-    self.groupBox.setTitle(QtGui.QApplication.translate("DataQualityDialog", "Flags", None, QtGui.QApplication.UnicodeUTF8))
+    self.groupBox.setTitle(
+        QtGui.QApplication.translate(
+            "DataQualityDialog",
+            "Flags",
+            None,
+            QtGui.QApplication.UnicodeUTF8))
+
 
 import Resources_rc

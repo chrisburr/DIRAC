@@ -19,13 +19,13 @@ __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage('\n'.join([ __doc__.split('\n')[1],
-                                     'Usage:',
-                                     '  %s [option|cfgfile] ... LFN|File Flag' % Script.scriptName,
-                                     'Arguments:',
-                                     '  LFN:      Logical File Name',
-                                     '  File:     Name of the file with a list of LFNs',
-                                     '  Flag:     Quality Flag' ]))
+Script.setUsageMessage(__doc__ + '\n'.join([
+    'Usage:',
+    '  %s [option|cfgfile] ... LFN|File Flag' % Script.scriptName,
+    'Arguments:',
+    '  LFN:      Logical File Name',
+    '  File:     Name of the file with a list of LFNs',
+    '  Flag:     Quality Flag']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
@@ -51,7 +51,7 @@ try:
   files = open(filename)
   for f in files:
     lfns += [f.strip()]
-except Exception, ex:
+except Exception as ex:
   lfns = [filename]
 
 result = bk.setFileDataQuality(lfns, flag)
@@ -72,4 +72,3 @@ else:
       print i
 
 DIRAC.exit(exitCode)
-

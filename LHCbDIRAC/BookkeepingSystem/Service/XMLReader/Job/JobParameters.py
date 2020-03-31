@@ -12,6 +12,7 @@
 
 __RCSID__ = "$Id$"
 
+
 class JobParameters:
   """JobParameters class."""
 
@@ -62,7 +63,6 @@ class JobParameters:
   def writeToXML(self):
     """creates an xml string."""
     result = '  <TypedParameter Name="' + str(self.getName()) + \
-                     '" Value="' + str(self.getValue()) + '" Type="' + str(self.getType()) + '"/>\n'
+        '" Value="' + str(self.getValue()) + '" Type="' + str(self.getType()) + '"/>\n'
     return result
   #############################################################################
-

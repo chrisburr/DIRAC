@@ -15,16 +15,18 @@
 It used to create a Gaudi card.
 """
 
-from PyQt4.QtGui                                                              import QDialog
-from PyQt4.QtCore                                                             import SIGNAL, QVariant, Qt
+from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import SIGNAL, QVariant, Qt
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_AdvancedSave                   import Ui_AdvancedSave
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAdvancedSave          import ControlerAdvancedSave
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_AdvancedSave import Ui_AdvancedSave
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAdvancedSave import ControlerAdvancedSave
 
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class AdvancedSave(QDialog, Ui_AdvancedSave):
   """AdvancedSave class."""
 
@@ -34,7 +36,6 @@ class AdvancedSave(QDialog, Ui_AdvancedSave):
     QDialog.__init__(self, parent)
     Ui_AdvancedSave.__init__(self)
     self.setupUi(self)
-
 
     self.__controler = ControlerAdvancedSave(self, parent.getControler())
     self.setLFNbutton()
@@ -54,7 +55,7 @@ class AdvancedSave(QDialog, Ui_AdvancedSave):
     self.comboBox.clear()
     j = 0
     for i in sites:
-      self.comboBox.addItem (i, QVariant(str(sites[i])))
+      self.comboBox.addItem(i, QVariant(str(sites[i])))
       if i == 'Select a site':
         self.comboBox.setCurrentIndex(j)
       j += 1

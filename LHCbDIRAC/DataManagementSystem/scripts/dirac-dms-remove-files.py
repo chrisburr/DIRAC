@@ -20,7 +20,10 @@ if __name__ == "__main__":
   dmScript.registerBKSwitches()
   dmScript.registerFileSwitches()
 
-  Script.registerSwitch('', 'IncludeProcessedFiles', '  Forced to set Removed the files in status Processed (default:not reset)')
+  Script.registerSwitch(
+      '',
+      'IncludeProcessedFiles',
+      '  Forced to set Removed the files in status Processed (default:not reset)')
   Script.setUsageMessage('\n'.join([__doc__,
                                     'Usage:',
                                     '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))

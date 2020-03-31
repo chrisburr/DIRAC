@@ -12,19 +12,22 @@
 
 """Production Lookup."""
 
-from PyQt4.QtGui                                                              import QDialog, QAbstractItemView
-from PyQt4.QtCore                                                             import SIGNAL
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_ProductionLookup               import Ui_ProductionLookup
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.ProductionListModel               import ProductionListModel
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerProductionLookup      import ControlerProductionLookup
+from PyQt4.QtGui import QDialog, QAbstractItemView
+from PyQt4.QtCore import SIGNAL
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_ProductionLookup import Ui_ProductionLookup
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.ProductionListModel import ProductionListModel
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerProductionLookup import ControlerProductionLookup
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ProductionLookup(QDialog, Ui_ProductionLookup):
   """ProductionLookup class."""
   #############################################################################
-  def __init__(self, data = None, parent = None):
+
+  def __init__(self, data=None, parent=None):
     QDialog.__init__(self, parent)
     Ui_ProductionLookup.__init__(self)
     self.setupUi(self)
@@ -35,7 +38,7 @@ class ProductionLookup(QDialog, Ui_ProductionLookup):
     self.connect(self.pushButton_2, SIGNAL("clicked()"), self.__controler.cancel)
 
     self.connect(self.lineEdit, SIGNAL("textChanged(QString)"),
-                     self.__controler.textChanged)
+                 self.__controler.textChanged)
 
     self.connect(self.allButton, SIGNAL("clicked()"), self.__controler.all)
 

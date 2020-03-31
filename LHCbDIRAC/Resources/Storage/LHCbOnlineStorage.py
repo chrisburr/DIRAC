@@ -38,7 +38,7 @@ class LHCbOnlineStorage(StorageBase):
     self.server = xmlrpclib.Server(serverString)
 
   def getFileSize(self, urls):
-    #FIXME: What the hell is this method doing ??
+    # FIXME: What the hell is this method doing ??
     """Get a fake file size."""
     if not urls:
       return S_ERROR("LHCbOnline.getFileSize: No surls supplied.")
@@ -67,9 +67,9 @@ class LHCbOnlineStorage(StorageBase):
           errStr = "LHCbOnline.requestRetransfer: Failed to request file from RunDB: %s" % error
           failed[pfn] = errStr
           gLogger.error(errStr, pfn)
-      except Exception as x:  #pylint: disable=broad-except
+      except Exception as x:  # pylint: disable=broad-except
         errStr = "LHCbOnline.requestRetransfer: Exception while requesting file from RunDB."
-        gLogger.exception(errStr, lException = x)
+        gLogger.exception(errStr, lException=x)
         failed[pfn] = errStr
     resDict = {'Failed': failed, 'Successful': successful}
     return S_OK(resDict)
@@ -104,9 +104,9 @@ class LHCbOnlineStorage(StorageBase):
             fullUrl = filesToUrls[fn]
             failed[fullUrl] = errStr
           gLogger.error(errStr, urls)
-      except Exception as x:  #pylint: disable=broad-except
+      except Exception as x:  # pylint: disable=broad-except
         errStr = "LHCbOnline.getFile: Exception for chunck while issuing removal to RunDB."
-        gLogger.exception(errStr, lException = x)
+        gLogger.exception(errStr, lException=x)
         for fn in filenameChunck:
           fullUrl = filesToUrls[fn]
           failed[fullUrl] = errStr

@@ -20,10 +20,10 @@ import DIRAC
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s <Production ID> |<Production ID>' % Script.scriptName,
-                                  'Arguments:',
-                                  '  <Production ID>:      DIRAC Production Id']))
+    'Usage:',
+    '  %s <Production ID> |<Production ID>' % Script.scriptName,
+    'Arguments:',
+    '  <Production ID>:      DIRAC Production Id']))
 
 Script.registerSwitch('a', 'automatic', "Set automatic agent type")
 Script.registerSwitch('m', 'manual', "Set manual agent type")

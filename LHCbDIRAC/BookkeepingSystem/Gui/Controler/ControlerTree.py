@@ -12,19 +12,22 @@
 
 """Controls the Bookkeeping trees."""
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
-from DIRAC                                                               import gLogger
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
+from DIRAC import gLogger
 
-from PyQt4.QtGui   import QMessageBox
-from PyQt4.QtCore  import Qt
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtCore import Qt
 import types
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ControlerTree(ControlerAbstract):
   """ControlerTree class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the controller."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -32,6 +35,7 @@ class ControlerTree(ControlerAbstract):
     self.__option = None
     self.__offset = 0
   #############################################################################
+
   def messageFromParent(self, message):
     """handles the messages sent by the parent controller."""
     gLogger.debug(message)
@@ -50,10 +54,10 @@ class ControlerTree(ControlerAbstract):
   def messageFromChild(self, sender, message):
     """handles the messages sent by the children controllers."""
     if message.action() == 'getLimitedFiles':
-      message = Message({'action':'expande',
-                         'node':message['path'],
-                         'StartItem':self.__pagesize,
-                         'MaxItem':(self.__pagesize + self.__offset)})
+      message = Message({'action': 'expande',
+                         'node': message['path'],
+                         'StartItem': self.__pagesize,
+                         'MaxItem': (self.__pagesize + self.__offset)})
 
       self.__pagesize += self.__offset
       feedback = self.getParent().messageFromChild(self, message)
@@ -61,7 +65,7 @@ class ControlerTree(ControlerAbstract):
       if feedback.action() == 'showNode':
         controlers = self.getChildren()
         ct = controlers['FileDialog']
-        message = Message({'action':'listNextFiles', 'items':feedback['items']})
+        message = Message({'action': 'listNextFiles', 'items': feedback['items']})
         ct.messageFromParent(message)
     elif message.action() == 'PageSizeIsNull':
       self.__offset = 0
@@ -70,23 +74,23 @@ class ControlerTree(ControlerAbstract):
       path = message['Path']
       self.browsePath(path)
     else:
-      return self.getParent().messageFromChild(self, message) # send to main controler!
+      return self.getParent().messageFromChild(self, message)  # send to main controler!
 
   #############################################################################
   def configButton(self):
     """handles the action of the configuration button."""
-    message = Message({'action':'configbuttonChanged'})
+    message = Message({'action': 'configbuttonChanged'})
     self.getParent().messageFromChild(self, message)
 
   def productionRadioButton(self):
     """handles the action of the production radio button."""
-    message = Message({'action':'productionButtonChanged'})
+    message = Message({'action': 'productionButtonChanged'})
     self.getParent().messageFromChild(self, message)
 
   #############################################################################
   def runRadioButton(self):
     """handles the action of the run button."""
-    message = Message({'action':'runLookup'})
+    message = Message({'action': 'runLookup'})
     self.getParent().messageFromChild(self, message)
 
   #############################################################################
@@ -104,7 +108,7 @@ class ControlerTree(ControlerAbstract):
     widget = self.getWidget()
 
     if not widget.runLookupRadioButtonIsChecked() and not widget.productionLookupradiobuttonIschecked():
-      message = Message({'action':'StandardQuery'})
+      message = Message({'action': 'StandardQuery'})
       self.getParent().messageFromChild(self, message)
       self.getWidget().setAdvancedQueryValue()
     else:
@@ -116,7 +120,7 @@ class ControlerTree(ControlerAbstract):
     widget = self.getWidget()
 
     if not widget.runLookupRadioButtonIsChecked() and not widget.productionLookupradiobuttonIschecked():
-      message = Message({'action':'AdvancedQuery'})
+      message = Message({'action': 'AdvancedQuery'})
       self.getParent().messageFromChild(self, message)
       self.getWidget().setStandardQueryValue()
     else:
@@ -125,7 +129,7 @@ class ControlerTree(ControlerAbstract):
   #############################################################################
   def eventTypeButton(self):
     """handles the action of the event type button."""
-    message = Message({'action':'eventbuttonChanged'})
+    message = Message({'action': 'eventbuttonChanged'})
     self.getParent().messageFromChild(self, message)
 
   #############################################################################
@@ -133,85 +137,84 @@ class ControlerTree(ControlerAbstract):
     """expand on node of the tree."""
     gLogger.debug('On item expanded', parentItem.getUserObject())
     node = parentItem.getUserObject()
-    if node != None:
+    if node is not None:
       path = node['fullpath']
       if parentItem.childCount() != 1:
         return
-        #parentItem.takeChild(0) # I have to remove the dumychildren!
+        # parentItem.takeChild(0) # I have to remove the dumychildren!
       else:
         if parentItem.childCount() == 1:
           child = parentItem.child(0)
           gLogger.debug('Childcount:', child.getUserObject())
           parentItem.takeChild(0)
 
-        if node.has_key('showFiles'):
-          message = Message({'action':'waitCursor', 'type':None})
+        if 'showFiles' in node:
+          message = Message({'action': 'waitCursor', 'type': None})
           self.getParent().messageFromChild(self, message)
 
-          message = Message({'action':'getNbEventsAndFiles', 'node':path})
+          message = Message({'action': 'getNbEventsAndFiles', 'node': path})
           feedback = self.getParent().messageFromChild(self, message)
 
           statistics = feedback['Extras']['GlobalStatistics']
           files = feedback['TotalRecords']
           nbev = statistics['Number of Events']
-          show = {'Number of files':files, 'Nuber of Events':nbev}
+          show = {'Number of files': files, 'Nuber of Events': nbev}
           #show={'Number of files':feedback['TotalRecords'],'Nuber of Events':feedback['Extras']['Number of Events']}
           self.getWidget().getTree().addLeaf(show, parentItem)
-          message = Message({'action':'arrowCursor', 'type':None})
+          message = Message({'action': 'arrowCursor', 'type': None})
           self.getParent().messageFromChild(self, message)
         else:
-          message = Message({'action':'expande','node':path})
+          message = Message({'action': 'expande', 'node': path})
           feedback = self.getParent().messageFromChild(self, message)
           if feedback.action() == 'showNode':
             if feedback['items'].childnum() > 0:
               child = feedback['items'].child(0)
               if not child['expandable']:
-                message = Message({'action':'waitCursor', 'type':None})
+                message = Message({'action': 'waitCursor', 'type': None})
                 self.getParent().messageFromChild(self, message)
                 controlers = self.getChildren()
                 ct = controlers['FileDialog']
-                message = Message({'action':'list',
-                                   'items':feedback['items'],
-                                   'StartItem':0,
-                                   'MaxItem':self.getPageSize()})
+                message = Message({'action': 'list',
+                                   'items': feedback['items'],
+                                   'StartItem': 0,
+                                   'MaxItem': self.getPageSize()})
                 ct.messageFromParent(message)
-                message = Message({'action':'arrowCursor', 'type':None})
+                message = Message({'action': 'arrowCursor', 'type': None})
                 self.getParent().messageFromChild(self, message)
               else:
                 self.getWidget().getTree().showTree(feedback['items'], parentItem)
 
-
-
   #############################################################################
+
   def _on_item_clicked(self, parentItem):
     """handles the action generated by clicking one of the tree node."""
     gLogger.debug('One item clicked')
     parentnode = parentItem.parent()
-    if parentnode != None:
+    if parentnode is not None:
       parent = parentnode.getUserObject()
       controlers = self.getChildren()
-      if parent.has_key('level') and parent.has_key('showFiles'):
+      if 'level' in parent and 'showFiles' in parent:
         path = parent['fullpath']
-        message = Message({'action':'expande', 'node':path, 'StartItem':0, 'MaxItem':self.getPageSize()})
+        message = Message({'action': 'expande', 'node': path, 'StartItem': 0, 'MaxItem': self.getPageSize()})
         self.__pagesize += self.__offset
         feedback = self.getParent().messageFromChild(self, message)
         if feedback.action() == 'showNode':
-          message = Message({'action':'waitCursor', 'type':None})
+          message = Message({'action': 'waitCursor', 'type': None})
           self.getParent().messageFromChild(self, message)
-          message = Message({'action':'list', 'items':feedback['items']})
+          message = Message({'action': 'list', 'items': feedback['items']})
           ct = controlers['FileDialog']
           ct.messageFromParent(message)
-          message = Message({'action':'arrowCursor', 'type':None})
+          message = Message({'action': 'arrowCursor', 'type': None})
           self.getParent().messageFromChild(self, message)
 
   #############################################################################
   def __openPath(self, name, item):
     """open a specific sub tree."""
-    if item != None:
+    if item is not None:
       for i in xrange(item.childCount()):
         node = item.child(i)
         userObject = node.getUserObject()
-        if userObject != None:
+        if userObject is not None:
           if userObject['name'] == name:
             self.getWidget().getTree().expandItem(node)
             return node
@@ -226,7 +229,7 @@ class ControlerTree(ControlerAbstract):
     if len(info) > 1:
       prefix = info[0]
       path = info[1]
-      message = Message({'action':'BookmarksPrefices'})
+      message = Message({'action': 'BookmarksPrefices'})
       feedback = self.getParent().messageFromChild(self, message)
       if feedback['OK']:
         curentprefix = feedback['Value']
@@ -287,8 +290,8 @@ class ControlerTree(ControlerAbstract):
         item = self.__openPath(node, parentItem)
         parentItem = item
 
-    if parentItem != None and parentItem.childCount() > 0:
-      node = parentItem.child(0) # this two line open the File Dialog window
+    if parentItem is not None and parentItem.childCount() > 0:
+      node = parentItem.child(0)  # this two line open the File Dialog window
       self._on_item_clicked(node)
 
   #############################################################################
@@ -296,8 +299,8 @@ class ControlerTree(ControlerAbstract):
     """handles the action of the double click."""
     self._on_item_clicked(parentItem)
 
-
   #############################################################################
+
   def moreInformations(self):
     """handles the more information action."""
     currentItem = self.getWidget().getTree().getCurrentItem()
@@ -306,24 +309,24 @@ class ControlerTree(ControlerAbstract):
     controlers = self.getChildren()
     ct = controlers['InfoDialog']
 
-    if node != None:
+    if node is not None:
       if 'level' in node and node['level'] == 'Processing Pass':
         ctproc = controlers['ProcessingPassDialog']
-        message = Message({'action':'list', 'items':node})
+        message = Message({'action': 'list', 'items': node})
         ctproc.messageFromParent(message)
       elif 'level' in node and node['level'] == 'FileTypes':
         ctproc = controlers['ProcessingPassDialog']
-        message = Message({'action':'deatiledList', 'items':node})
+        message = Message({'action': 'deatiledList', 'items': node})
         ctproc.messageFromParent(message)
-      elif node.has_key('level') and node['level'] == 'Production(s)/Run(s)':
-        message = Message({'action':'ProductionInformations', 'production':node['name']})
+      elif 'level' in node and node['level'] == 'Production(s)/Run(s)':
+        message = Message({'action': 'ProductionInformations', 'production': node['name']})
         feedback = self.getParent().messageFromChild(self, message)
-        if feedback != None:
-          message = Message({'action':'showprocessingpass', 'items':feedback})
+        if feedback is not None:
+          message = Message({'action': 'showprocessingpass', 'items': feedback})
           ctproc = controlers['ProcessingPassDialog']
           ctproc.messageFromParent(message)
-      elif type(node) != types.DictType and node.expandable() :
-        message = Message({'action':'list', 'items':node})
+      elif not isinstance(node, types.DictType) and node.expandable():
+        message = Message({'action': 'list', 'items': node})
         ct.messageFromParent(message)
     else:
       QMessageBox.critical(self.getWidget(),
@@ -337,19 +340,19 @@ class ControlerTree(ControlerAbstract):
     currentItem = self.getWidget().getTree().getCurrentItem()
     curent = currentItem
     path = ''
-    nodes = [ curent ]
-    while curent != None:
+    nodes = [curent]
+    while curent is not None:
       curent = curent.parent()
       nodes += [curent]
 
     nodes.reverse()
-    for i in  nodes:
-      if i != None:
+    for i in nodes:
+      if i is not None:
         node = i.getUserObject()
-        if node != None and node.has_key('name'):
+        if node is not None and 'name' in node:
           path += '/' + node['name']
 
-    message = Message({'action':'BookmarksPrefices'})
+    message = Message({'action': 'BookmarksPrefices'})
     feedback = self.getParent().messageFromChild(self, message)
     if not feedback['OK']:
       gLogger.error(feedback['Message'])
@@ -358,7 +361,7 @@ class ControlerTree(ControlerAbstract):
       controlers = self.getChildren()
       ct = controlers['Bookmarks']
       fullpath = values + ':/' + path
-      message = Message({'action':'showValues', 'paths':{'Title':path, 'Path':fullpath}})
+      message = Message({'action': 'showValues', 'paths': {'Title': path, 'Path': fullpath}})
       feedback = ct.messageFromParent(message)
       if not feedback['OK']:
         gLogger.error(feedback['Message'])
@@ -370,6 +373,5 @@ class ControlerTree(ControlerAbstract):
     if value == 'ALL':
       self.__offset = 0
     else:
-      self.__offset = int( value )
+      self.__offset = int(value)
     return self.__offset
-

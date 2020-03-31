@@ -10,13 +10,13 @@
 ###############################################################################
 """stores the replica information."""
 
-from DIRAC                                           import gLogger
+from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
+
 class ReplicaParam:
   """ReplicaParam class."""
-
 
   #############################################################################
   def __init__(self):
@@ -91,7 +91,7 @@ class ReplicaParam:
     """creates an XML string."""
     # job replica param
     gLogger.info("replica param", str(flag))
-    if flag == True:
+    if flag:
       result = '     <Replica Name="' + self.getName() + '" Location="' + self.getLocation() + '"/>\n'
 
     else:
@@ -103,4 +103,3 @@ class ReplicaParam:
     return result
 
   #############################################################################
-

@@ -30,11 +30,11 @@ Script.registerSwitch('P:', 'Protocol=', 'Defines data acquisition as InputDataB
 Script.parseCommandLine(ignoreErrors=False)
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  '\nUsage:',
-                                  'dirac-production-runjoblocal [Data imput mode] [job ID]'
-                                  '\nArguments:',
-                                  '  Download (Job ID): Defines data aquisition as DownloadInputData',
-                                  '  Protocol (Job ID): Defines data acquisition as InputDataByProtocol\n']))
+    '\nUsage:',
+    'dirac-production-runjoblocal [Data imput mode] [job ID]'
+    '\nArguments:',
+    '  Download (Job ID): Defines data aquisition as DownloadInputData',
+    '  Protocol (Job ID): Defines data acquisition as InputDataByProtocol\n']))
 
 from DIRAC.Core.Utilities.File import mkDir
 

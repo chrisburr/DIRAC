@@ -13,20 +13,23 @@
 """Bookmarks widget."""
 ########################################################################
 
-from PyQt4.QtCore  import SIGNAL, Qt
-from PyQt4.QtGui   import QAbstractItemView, QWidget
+from PyQt4.QtCore import SIGNAL, Qt
+from PyQt4.QtGui import QAbstractItemView, QWidget
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_BookmarksWidget                      import Ui_BookmarksWidget
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerBookmarks                   import ControlerBookmarks
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel                              import TableModel
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.AddBookmarksWidget                      import AddBookmarksWidget
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_BookmarksWidget import Ui_BookmarksWidget
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerBookmarks import ControlerBookmarks
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TableModel import TableModel
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.AddBookmarksWidget import AddBookmarksWidget
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class BookmarksWidget(QWidget, Ui_BookmarksWidget):
   """BookmarksWidget."""
   #############################################################################
+
   def __init__(self, parent=None):
     """Constructor.
 
@@ -63,8 +66,8 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
     """hides the widget."""
     self.hide()
 
-
   #############################################################################
+
   def filltable(self, header, tabledata):
     """fills the table."""
     # set the table model
@@ -87,7 +90,7 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
 
     # set the font
     #font = QFont("Courier New", 12)
-    #self.bookmarks.setFont(font)
+    # self.bookmarks.setFont(font)
 
     # hide vertical header
     vh = self.bookmarks.verticalHeader()
@@ -108,8 +111,7 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
 
     # enable sorting
     # this doesn't work
-    #tv.setSortingEnabled(True)
-
+    # tv.setSortingEnabled(True)
 
   def getSelectedRow(self):
     """returns the selected rows."""
@@ -117,7 +119,7 @@ class BookmarksWidget(QWidget, Ui_BookmarksWidget):
       row = i.row()
       title = i.model().arraydata[row][0]
       path = i.model().arraydata[row][1]
-    return {'Title':title, 'Path':path}
+    return {'Title': title, 'Path': path}
 
   #############################################################################
   def waitCursor(self):

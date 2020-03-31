@@ -24,19 +24,20 @@ from DIRAC.Core.Utilities import List
 
 __RCSID__ = "$Id$"
 
-class UserStorageUsageAgent( StorageUsageAgent ):
+
+class UserStorageUsageAgent(StorageUsageAgent):
   """
   .. class:: UserStorageUsageAgent
 
   """
-  def removeEmptyDir( self, dirPath ):
+
+  def removeEmptyDir(self, dirPath):
     """remove empty directories, but skip home.
 
     :param self: self reference
     :param str dirPath: directory to remove
     """
     # Do not remove user's home dir
-    if len( List.fromChar( dirPath, "/" ) ) > 4:
-      return StorageUsageAgent.removeEmptyDir( self, dirPath )
+    if len(List.fromChar(dirPath, "/")) > 4:
+      return StorageUsageAgent.removeEmptyDir(self, dirPath)
     return S_OK()
-

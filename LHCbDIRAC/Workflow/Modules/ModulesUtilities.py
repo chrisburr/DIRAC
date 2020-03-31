@@ -255,10 +255,10 @@ def _multicoreWN(siteName, gridCE, queue):
   processing is allowed (by having Tag "MultiProcessor")"""
   # Tags of the CE
   tags = fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Tag' % (siteName.split('.')[0], siteName, gridCE),
-                  ''))
+                                   ''))
   # Tags of the Queue
   tags += fromChar(gConfig.getValue('/Resources/Sites/%s/%s/CEs/%s/Queues/%s/Tag' % (siteName.split('.')[0], siteName,
                                                                                      gridCE, queue),
-                   ''))
+                                    ''))
 
   return bool(tags and 'MultiProcessor' in tags)

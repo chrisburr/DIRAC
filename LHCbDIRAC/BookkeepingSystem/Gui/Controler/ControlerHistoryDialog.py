@@ -14,16 +14,19 @@
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract         import ControlerAbstract
-from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message                       import Message
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.HistoryNavigationCommand     import HistoryNavigationCommand
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerAbstract import ControlerAbstract
+from LHCbDIRAC.BookkeepingSystem.Gui.Basic.Message import Message
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.HistoryNavigationCommand import HistoryNavigationCommand
 
-from DIRAC                                                           import gLogger, S_ERROR
+from DIRAC import gLogger, S_ERROR
 
 #############################################################################
+
+
 class ControlerHistoryDialog(ControlerAbstract):
   """ControlerHistoryDialog class."""
   #############################################################################
+
   def __init__(self, widget, parent):
     """initialize the constructor."""
     ControlerAbstract.__init__(self, widget, parent)
@@ -55,9 +58,9 @@ class ControlerHistoryDialog(ControlerAbstract):
 
       for i in values.keys():
         j = values[i]
-        if j == None:
+        if j is None:
           j = ''
-        data += [ [i, j] ]
+        data += [[i, j]]
 
       self.getWidget().filltable(headers, data, self.getWidget().getJobTableView())
       self.getWidget().show()
@@ -66,8 +69,8 @@ class ControlerHistoryDialog(ControlerAbstract):
       gLogger.error('Unkown message')
       return S_ERROR('Unkown message')
 
-
   #############################################################################
+
   def messageFromChild(self, sender, message):
     """pass the messages to the parent which are sent by the children."""
     return self.getParent().messageFromChild(self, message)
@@ -81,7 +84,7 @@ class ControlerHistoryDialog(ControlerAbstract):
         data = i.model().arraydata[row][1]
         if data not in self.__selectedFiles:
           self.__selectedFiles = [data]
-      message = Message({'action':'JobInfo', 'fileName':self.__selectedFiles[0]})
+      message = Message({'action': 'JobInfo', 'fileName': self.__selectedFiles[0]})
       feedback = self.getParent().messageFromChild(self, message)
       if feedback.action() == 'showJobInfos':
         values = feedback['items']
@@ -90,9 +93,9 @@ class ControlerHistoryDialog(ControlerAbstract):
 
         for i in values.keys():
           j = values[i]
-          if j == None:
+          if j is None:
             j = ''
-          data += [ [i, j] ]
+          data += [[i, j]]
 
         self.getWidget().filltable(headers, data, self.getWidget().getJobTableView())
         self.getWidget().setNextButtonState(enable=True)
@@ -121,7 +124,7 @@ class ControlerHistoryDialog(ControlerAbstract):
     if len(self.__selectedFiles) > 0:
       self.__current += 1
       if len(self.__comands) < self.__current:
-        message = Message({'action':'getAnccestors', 'files':self.__selectedFiles[0]})
+        message = Message({'action': 'getAnccestors', 'files': self.__selectedFiles[0]})
         feedback = self.getParent().messageFromChild(self, message)
         values = feedback['files']
         headers = values['ParameterNames']
@@ -139,15 +142,13 @@ class ControlerHistoryDialog(ControlerAbstract):
     else:
       self.getWidget().showError('Please select a file!')
 
-
   #############################################################################
+
   def back(self):
     """handles the back button action."""
     self.__current -= 1
-    hcommand = self.__comands[self.__current - 1 ]
+    hcommand = self.__comands[self.__current - 1]
     hcommand.execute()
     self.getWidget().setNextButtonState(enable=True)
     if self.__current == 1:
       self.getWidget().setBackButtonSatate(enable=False)
-
-

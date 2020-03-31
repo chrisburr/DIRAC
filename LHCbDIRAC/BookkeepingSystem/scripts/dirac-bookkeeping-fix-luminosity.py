@@ -22,10 +22,13 @@ if __name__ == "__main__":
   dmScript.registerBKSwitches()
 
   Script.registerSwitch('', 'DoIt', '   Fix the BK database (default No)')
-  Script.registerSwitch('', 'Force', '   Force checking all descendants and not only those of files with bad lumi (default No)')
+  Script.registerSwitch(
+      '',
+      'Force',
+      '   Force checking all descendants and not only those of files with bad lumi (default No)')
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile]' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile]' % Script.scriptName, ]))
 
   Script.addDefaultOptionValue('LogLevel', 'error')
   Script.parseCommandLine(ignoreErrors=False)

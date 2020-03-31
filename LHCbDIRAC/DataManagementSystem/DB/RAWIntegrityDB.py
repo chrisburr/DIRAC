@@ -51,7 +51,7 @@ class RAWIntegrityDB(DB):
   # LastMonitor table
   _tablesDict['LastMonitor'] = {'Fields': {'LastMonitorTime': 'DATETIME NOT NULL PRIMARY KEY'}}
 
-  def __init__(self, systemInstance = 'Default'):
+  def __init__(self, systemInstance='Default'):
     DB.__init__(self, 'RAWIntegrityDB', 'DataManagement/RAWIntegrityDB')
 
   def _checkTable(self):
@@ -140,7 +140,7 @@ class RAWIntegrityDB(DB):
         return S_OK(fileDict)
     except Exception as x:
       errStr = "RAWIntegrityDB.getActiveFiles: Exception while getting files from database."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def getFiles(self, status):
@@ -181,7 +181,7 @@ class RAWIntegrityDB(DB):
       return S_OK(fileDict)
     except Exception as x:
       errStr = "RAWIntegrityDB.getActiveFiles: Exception while getting files from database."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def getUnmigratedFiles(self):
@@ -207,7 +207,7 @@ class RAWIntegrityDB(DB):
       return res
     except Exception as x:
       errStr = "RAWIntegrityDB.setFileStatus: Exception while updating file status."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def removeFile(self, lfn):
@@ -223,7 +223,7 @@ class RAWIntegrityDB(DB):
       return res
     except Exception as x:
       errStr = "RAWIntegrityDB.removeFile: Exception while removing file."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def addFile(self, lfn, pfn, size, se, guid, checksum):
@@ -240,7 +240,7 @@ class RAWIntegrityDB(DB):
       return res
     except Exception as x:
       errStr = "RAWIntegrityDB.addFile: Exception while updating file status."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def setLastMonitorTime(self):
@@ -258,7 +258,7 @@ class RAWIntegrityDB(DB):
       return res
     except Exception as x:
       errStr = "RAWIntegrityDB.setLastMonitorTime: Exception while updating migration marker."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def getLastMonitorTimeDiff(self):
@@ -279,7 +279,7 @@ class RAWIntegrityDB(DB):
         return S_OK(timediff)
     except Exception as x:
       errStr = "RAWIntegrityDB.getLastMonitorTimeDiff: Exception while getting migration marker."
-      gLogger.exception(errStr, lException = x)
+      gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
   def getGlobalStatistics(self):
@@ -311,18 +311,18 @@ class RAWIntegrityDB(DB):
       selDict['Status'].append(resValue[0])
     return S_OK(selDict)
 
-  def __buildCondition(self, condDict, older = None, newer = None, timeStamp = 'SubmitTime'):
+  def __buildCondition(self, condDict, older=None, newer=None, timeStamp='SubmitTime'):
     """build SQL condition statement from provided condDict and other extra
     conditions."""
     condition = ''
     conjunction = "WHERE"
-    if condDict != None:
+    if condDict is not None:
       for attrName, attrValue in condDict.items():
         ret = self._escapeString(attrName)
         if not ret['OK']:
           return ret
         attrName = "`" + ret['Value'][1:-1] + "`"
-        if type(attrValue) == types.ListType:
+        if isinstance(attrValue, types.ListType):
           multiValueList = []
           for x in attrValue:
             ret = self._escapeString(x)
@@ -356,10 +356,10 @@ class RAWIntegrityDB(DB):
 
   def selectFiles(self,
                   selectDict,
-                  orderAttribute = 'LFN',
-                  newer = None,
-                  older = None,
-                  limit = None):
+                  orderAttribute='LFN',
+                  newer=None,
+                  older=None,
+                  limit=None):
     """Select the files which match the selection criteria."""
     condition = self.__buildCondition(selectDict, older, newer)
     if orderAttribute:

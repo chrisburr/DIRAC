@@ -12,16 +12,19 @@
 
 """Table widget used by most widgets."""
 
-from PyQt4.QtGui   import QWidget
+from PyQt4.QtGui import QWidget
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_TableWidget     import Ui_TableWidget
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerTable  import ControlerTable
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_TableWidget import Ui_TableWidget
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerTable import ControlerTable
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class TableWidget(QWidget, Ui_TableWidget):
   """TableWidget class."""
+
   def __init__(self, parent=None):
     """Constructor.
 
@@ -58,4 +61,3 @@ class TableWidget(QWidget, Ui_TableWidget):
     return self.__controler
 
   #############################################################################
-

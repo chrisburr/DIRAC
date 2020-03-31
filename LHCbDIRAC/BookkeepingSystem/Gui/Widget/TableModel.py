@@ -12,16 +12,20 @@
 
 """Table model used most of the widget."""
 
-from PyQt4.QtCore                import Qt, SIGNAL, QAbstractTableModel, QVariant
+from PyQt4.QtCore import Qt, SIGNAL, QAbstractTableModel, QVariant
 
-import operator, datetime
+import operator
+import datetime
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class TableModel(QAbstractTableModel):
   """TableModel class."""
   #############################################################################
+
   def __init__(self, datain, headerdata, parent=None, *args):
     QAbstractTableModel.__init__(self, parent, *args)
     self.arraydata = datain
@@ -44,13 +48,13 @@ class TableModel(QAbstractTableModel):
     result = None
     data = None
     if not index.isValid():
-      result =  QVariant()
+      result = QVariant()
     elif role != Qt.DisplayRole:
-      result =  QVariant()
+      result = QVariant()
     else:
       data = self.arraydata[index.row()][index.column()]
-      if type(data) == datetime.datetime:
-        result =  QVariant(str(data))
+      if isinstance(data, datetime.datetime):
+        result = QVariant(str(data))
       else:
         result = QVariant(data)
 
@@ -65,7 +69,7 @@ class TableModel(QAbstractTableModel):
         return QVariant(self.headerdata[col])
       elif orientation == Qt.Vertical and role == Qt.DisplayRole:
         return QVariant(col + 1)
-    except Exception, ex:
+    except Exception as ex:
       print 'ERRRHHHH', ex
     return QVariant()
 

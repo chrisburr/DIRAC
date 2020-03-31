@@ -12,19 +12,22 @@
 
 """Processing pass widget."""
 
-from PyQt4.QtGui                                                              import QDialog, QHBoxLayout, QTabWidget
-from PyQt4.QtCore                                                             import SIGNAL
+from PyQt4.QtGui import QDialog, QHBoxLayout, QTabWidget
+from PyQt4.QtCore import SIGNAL
 
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_ProcessingPassDialog           import Ui_ProcessingPassDialog
-from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TabWidget                         import TabWidget
-from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerProcessingPassDialog  import ControlerProcessingPassDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.Ui_ProcessingPassDialog import Ui_ProcessingPassDialog
+from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TabWidget import TabWidget
+from LHCbDIRAC.BookkeepingSystem.Gui.Controler.ControlerProcessingPassDialog import ControlerProcessingPassDialog
 
 __RCSID__ = "$Id$"
 
 #############################################################################
+
+
 class ProcessingPassDialog(QDialog, Ui_ProcessingPassDialog):
   """ProcessingPassDialog."""
   #############################################################################
+
   def __init__(self, parent=None):
     QDialog.__init__(self, parent)
     Ui_ProcessingPassDialog.__init__(self)
@@ -51,7 +54,6 @@ class ProcessingPassDialog(QDialog, Ui_ProcessingPassDialog):
     hboxlayout = QHBoxLayout(tab)
     hboxlayout.setObjectName("hboxlayout")
 
-
     tabWidget = QTabWidget(tab)
     tabWidget.setObjectName("tabWidget")
     hboxlayout.addWidget(tabWidget)
@@ -65,7 +67,7 @@ class ProcessingPassDialog(QDialog, Ui_ProcessingPassDialog):
     tab = TabWidget(userObject)
     tab.setObjectName("tab")
     return tab
-    #tab.createTable
+    # tab.createTable
 
 
 #    www = self.createEmptyTabWidget('Proba')
@@ -84,6 +86,8 @@ class ProcessingPassDialog(QDialog, Ui_ProcessingPassDialog):
 #    self.tabwidget.addTab(negy,"negy")
 
   #############################################################################
+
+
   def setTotalProccesingPass(self, text):
     """sets the total processing pass."""
     self.lineEdit.setText(text)
