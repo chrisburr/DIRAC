@@ -19,10 +19,10 @@ import DIRAC
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... ProdID' % Script.scriptName,
-                                  'Arguments:',
-                                  '  ProdID:   Production ID']))
+    'Usage:',
+    '  %s [option|cfgfile] ... ProdID' % Script.scriptName,
+    'Arguments:',
+    '  ProdID:   Production ID']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 import types

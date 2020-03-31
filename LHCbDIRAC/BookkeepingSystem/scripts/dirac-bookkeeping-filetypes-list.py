@@ -20,8 +20,8 @@ import DIRAC
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile]' % Script.scriptName]))
+    'Usage:',
+    '  %s [option|cfgfile]' % Script.scriptName]))
 Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

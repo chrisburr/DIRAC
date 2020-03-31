@@ -241,7 +241,8 @@ class PopularityAnalysisAgent(AgentModule):
         dsDecrease = row.pop('DecreaseReplicas')
 
         line_str = "<tr>" + \
-            "<td>" + "<a title='" + '&#10;'.join([':'.join(t) for t in row.iteritems()]) + "'>" + dsName + "</a></td>" + \
+            "<td>" + "<a title='" + '&#10;'.join([':'.join(t) for t in row.iteritems()]) + "'>"\
+            + dsName + "</a></td>" + \
             "<td>" + str(dsSize) + "</td>" + \
             "<td>" + str(dsReplicas) + "</td>" + \
             "<td>" + str(dsDecrease) + "</td>" + \

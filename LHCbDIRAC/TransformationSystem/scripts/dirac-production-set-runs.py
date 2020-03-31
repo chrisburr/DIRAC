@@ -35,7 +35,8 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     'Examples:\n',
     'dirac-production-set-run.py 92 --List                        (show the list of runs for transformation 92)\n',
     'dirac-production-set-run.py 92 --AddRuns 98200,98201             (add some discrete run to transformation 92)\n',
-    'dirac-production-set-run.py 92 --AddRuns 98200,98201,99000:99100 (add some discrete run and a range of runs to transformation 92)\n',
+    'dirac-production-set-run.py 92 --AddRuns 98200,98201,99000:99100 (add some discrete run and\
+       a range of runs to transformation 92)\n',
     'dirac-production-set-run.py 92 --StartRun 98200                 (change the start run for transformation 92)\n',
     'dirac-production-set-run.py 92 --EndRun   98200                 (change the end run  for transformation 92)\n'
 ]))

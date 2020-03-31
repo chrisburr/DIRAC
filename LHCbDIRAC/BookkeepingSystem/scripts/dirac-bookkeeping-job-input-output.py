@@ -28,11 +28,11 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'InputFiles', '  Only input files')
   Script.registerSwitch('', 'OutputFiles', '  Only output files')
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... [DIRACJobid|File]' % Script.scriptName,
-                                    'Arguments:',
-                                    '  DIRACJobid:      DIRAC Jobids',
-                                    '  File:     Name of the file with contains a list of DIRACJobids']))
+      'Usage:',
+      '  %s [option|cfgfile] ... [DIRACJobid|File]' % Script.scriptName,
+      'Arguments:',
+      '  DIRACJobid:      DIRAC Jobids',
+      '  File:     Name of the file with contains a list of DIRACJobids']))
 
   Script.parseCommandLine(ignoreErrors=True)
   args = Script.getPositionalArgs()

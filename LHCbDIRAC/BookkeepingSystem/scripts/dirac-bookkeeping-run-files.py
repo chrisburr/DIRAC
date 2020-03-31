@@ -19,10 +19,10 @@ import DIRAC
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... Run' % Script.scriptName,
-                                  'Arguments:',
-                                  '  Run:      Run number (integer)']))
+    'Usage:',
+    '  %s [option|cfgfile] ... Run' % Script.scriptName,
+    'Arguments:',
+    '  Run:      Run number (integer)']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 

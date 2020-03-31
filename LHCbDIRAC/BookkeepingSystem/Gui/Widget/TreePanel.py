@@ -21,7 +21,8 @@ from LHCbDIRAC.BookkeepingSystem.Gui.Widget.TreeNode import TreeNode
 try:
   _fromUtf8 = QString.fromUtf8
 except AttributeError:
-  def _fromUtf8(s): return s
+  def _fromUtf8(s):
+    return s
 
 __RCSID__ = "$Id$"
 

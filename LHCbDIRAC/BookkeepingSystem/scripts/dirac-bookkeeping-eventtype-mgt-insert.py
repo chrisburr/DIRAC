@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 ###############################################################################
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
@@ -19,6 +20,7 @@ The "<File>" lists the event types on which to operate. Each line must
 have the following format: EVTTYPEID="<evant id>",
 DESCRIPTION="<description>", PRIMARY="<primary description>"
 """
+
 __RCSID__ = "$Id$"
 
 import re
@@ -57,7 +59,7 @@ def process_event(eventline):
     Script.showHelp()
   result = {}
   ma = re.match(
-      "^ *?((?P<id00>EVTTYPEID) *?= *?(?P<value00>[0-9]+)|(?P<id01>DESCRIPTION|PRIMARY) *?= *?\"(?P<value01>.*?)\") *?, *?((?P<id10>EVTTYPEID) *?= *?(?P<value10>[0-9]+)|(?P<id11>DESCRIPTION|PRIMARY) *?= *?\"(?P<value11>.*?)\") *?, *?((?P<id20>EVTTYPEID) *?= *?(?P<value20>[0-9]+)|(?P<id21>DESCRIPTION|PRIMARY) *?= *?\"(?P<value21>.*?)\") *?$",
+      "^ *?((?P<id00>EVTTYPEID) *?= *?(?P<value00>[0-9]+)|(?P<id01>DESCRIPTION|PRIMARY) *?= *?\"(?P<value01>.*?)\") *?, *?((?P<id10>EVTTYPEID) *?= *?(?P<value10>[0-9]+)|(?P<id11>DESCRIPTION|PRIMARY) *?= *?\"(?P<value11>.*?)\") *?, *?((?P<id20>EVTTYPEID) *?= *?(?P<value20>[0-9]+)|(?P<id21>DESCRIPTION|PRIMARY) *?= *?\"(?P<value21>.*?)\") *?$",  # noqa # pylint: disable=line-too-long
       eventline)
   if not ma:
     gLogger.error("syntax error at: \n" + eventline)

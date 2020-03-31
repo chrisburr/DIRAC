@@ -17,11 +17,11 @@
 __RCSID__ = "$Id$"
 from DIRAC.Core.Base import Script
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... ProdID Type' % Script.scriptName,
-                                  'Arguments:',
-                                  '  ProdID:   Production ID (integer)',
-                                  '  Type:     File Type (For example: ALL, DST, SIM, DIGI, RDST, MDF)']))
+    'Usage:',
+    '  %s [option|cfgfile] ... ProdID Type' % Script.scriptName,
+    'Arguments:',
+    '  ProdID:   Production ID (integer)',
+    '  Type:     File Type (For example: ALL, DST, SIM, DIGI, RDST, MDF)']))
 Script.parseCommandLine()
 args = Script.getPositionalArgs()
 

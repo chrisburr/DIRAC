@@ -22,8 +22,8 @@ from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 dmScript = DMScript()
 dmScript.registerBKSwitches()
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ...' % Script.scriptName]))
+    'Usage:',
+    '  %s [option|cfgfile] ...' % Script.scriptName]))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 

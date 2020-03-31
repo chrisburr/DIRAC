@@ -20,11 +20,11 @@ import DIRAC
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... Run Flag' % Script.scriptName,
-                                  'Arguments:',
-                                  '  Run:      Run number',
-                                  '  Flag:     Quality Flag']))
+    'Usage:',
+    '  %s [option|cfgfile] ... Run Flag' % Script.scriptName,
+    'Arguments:',
+    '  Run:      Run number',
+    '  Flag:     Quality Flag']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 

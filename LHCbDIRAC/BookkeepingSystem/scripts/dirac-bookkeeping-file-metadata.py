@@ -23,11 +23,11 @@ if __name__ == "__main__":
   dmScript.registerFileSwitches()
   Script.registerSwitch('', 'Full', '   Print out all metadata')
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... LFN|File' % Script.scriptName,
-                                    'Arguments:',
-                                    '  LFN:      Logical File Name',
-                                    '  File:     Name of the file with a list of LFNs']))
+      'Usage:',
+      '  %s [option|cfgfile] ... LFN|File' % Script.scriptName,
+      'Arguments:',
+      '  LFN:      Logical File Name',
+      '  File:     Name of the file with a list of LFNs']))
   Script.parseCommandLine()
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFileMetadata

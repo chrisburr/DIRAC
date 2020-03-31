@@ -20,11 +20,11 @@ from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
-                                  'Arguments:',
-                                  '  Start:    Start date (Format: YYYY-MM-DD)',
-                                  '  End:      End date (Format: YYYY-MM-DD). Default is Start']))
+    'Usage:',
+    '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
+    'Arguments:',
+    '  Start:    Start date (Format: YYYY-MM-DD)',
+    '  End:      End date (Format: YYYY-MM-DD). Default is Start']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 

@@ -27,10 +27,10 @@ Script.registerSwitch(
     'ByValue',
     '   if set, the information is a list of runs for each value of the information item')
 Script.setUsageMessage(__doc__ + '\n'.join([
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... Run' % Script.scriptName,
-                                  'Arguments:',
-                                  '  Run:      Run Number']))
+    'Usage:',
+    '  %s [option|cfgfile] ... Run' % Script.scriptName,
+    'Arguments:',
+    '  Run:      Run Number']))
 Script.parseCommandLine(ignoreErrors=True)
 runRanges = []
 for arg in Script.getPositionalArgs():

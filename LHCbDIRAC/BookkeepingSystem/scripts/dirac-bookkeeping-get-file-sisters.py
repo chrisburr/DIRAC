@@ -34,8 +34,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'Production=', 'Production to check for sisters (default=same production)')
   Script.registerSwitch('', 'AllFileTypes', 'Consider also files with a different type')
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName]))
+      'Usage:',
+      '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName]))
 
   Script.parseCommandLine(ignoreErrors=True)
 

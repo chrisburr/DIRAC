@@ -27,8 +27,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'RunGap=', 'Gap between run ranges, in number of runs')
   Script.registerSwitch('', 'TimeGap=', 'Gap between run ranges, in number of days')
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... ' % Script.scriptName]))
+      'Usage:',
+      '  %s [option|cfgfile] ... ' % Script.scriptName]))
 
   Script.parseCommandLine(ignoreErrors=True)
 

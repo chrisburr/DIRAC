@@ -24,8 +24,8 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'ByRange', 'List by range rather than by item value')
   Script.registerSwitch('', 'Force', 'Include runs even if no FULL stream is present')
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... ' % Script.scriptName]))
+      'Usage:',
+      '  %s [option|cfgfile] ... ' % Script.scriptName]))
 
   Script.parseCommandLine(ignoreErrors=True)
 
