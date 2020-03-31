@@ -1,3 +1,10 @@
+v10r0-pre16
+use DIRAC v7r0p18
+
+* run autopep8
+* fix use of __doc__ in script --help pages
+* use rpath based DIRACOS
+
 v10r0-pre15
 use DIRAC v7r0p18
 
