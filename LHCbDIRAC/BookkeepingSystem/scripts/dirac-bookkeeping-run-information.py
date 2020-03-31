@@ -26,7 +26,7 @@ Script.registerSwitch(
     '',
     'ByValue',
     '   if set, the information is a list of runs for each value of the information item')
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s [option|cfgfile] ... Run' % Script.scriptName,
                                   'Arguments:',

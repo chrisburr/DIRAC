@@ -29,12 +29,12 @@ if __name__ == "__main__":
       'ReduceReplicas=',
       '  specify the number of replicas you want to keep (default SE: Tier1-USER)')
   Script.registerSwitch("", "Force", " use this option for force the removal of replicas even if last one")
-  Script.setUsageMessage('\n'.join(__doc__.split('\n') + [
-      'Usage:',
-      '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]' % Script.scriptName,
-      'Arguments:',
-      '  LFN:      Logical File Name or file containing LFNs',
-      '  SE:       Valid DIRAC SE']))
+  Script.setUsageMessage('\n'.join([__doc__,
+                                    'Usage:',
+                                    '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]' % Script.scriptName,
+                                    'Arguments:',
+                                    '  LFN:      Logical File Name or file containing LFNs',
+                                    '  SE:       Valid DIRAC SE']))
   Script.parseCommandLine()
 
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveReplicas

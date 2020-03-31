@@ -19,7 +19,7 @@ __RCSID__ = "$Id$"
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
                                   'Arguments:',

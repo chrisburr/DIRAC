@@ -33,7 +33,7 @@ if __name__ == "__main__":
       level)
   Script.registerSwitch('', 'Production=', 'Production to check for sisters (default=same production)')
   Script.registerSwitch('', 'AllFileTypes', 'Consider also files with a different type')
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName]))
 

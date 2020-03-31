@@ -27,7 +27,7 @@ if __name__ == "__main__":
   bkScript.registerJobsSwitches()
   Script.registerSwitch('', 'InputFiles', '  Only input files')
   Script.registerSwitch('', 'OutputFiles', '  Only output files')
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... [DIRACJobid|File]' % Script.scriptName,
                                     'Arguments:',

@@ -24,7 +24,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'TriggerRate', '   For RAW files, returns the trigger rate')
   Script.registerSwitch('', 'ListRuns', '   Give a list of runs (to be used with --Trigger)')
   Script.registerSwitch('', 'ListFills', '   Give a list of fills (to be used with --Trigger)')
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile]' % Script.scriptName, ]))
 

@@ -16,7 +16,7 @@
 """Retrieve files of a given type for a production."""
 __RCSID__ = "$Id$"
 from DIRAC.Core.Base import Script
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+Script.setUsageMessage(__doc__ + '\n'.join([
                                   'Usage:',
                                   '  %s [option|cfgfile] ... ProdID Type' % Script.scriptName,
                                   'Arguments:',

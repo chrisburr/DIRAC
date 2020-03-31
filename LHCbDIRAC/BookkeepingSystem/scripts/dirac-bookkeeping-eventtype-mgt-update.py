@@ -26,7 +26,7 @@ import DIRAC
 from DIRAC.Core.Base import Script
 from DIRAC import gLogger
 
-Script.setUsageMessage('\n'.join(['\n'.join(__doc__.split('\n')[1:5]),
+Script.setUsageMessage('\n'.join([__doc__,
                                   'Usage:',
                                   '  %s [option|cfgfile] ... File' % Script.scriptName,
                                   'Arguments:',

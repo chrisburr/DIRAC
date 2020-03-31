@@ -26,7 +26,7 @@ if __name__ == "__main__":
   level = 1
   Script.registerSwitch('', 'Depth=', 'Number of processing levels (default:%d)' % level)
   Script.registerSwitch('', 'Production=', 'Restrict to descendants in a given production (at any depth)')
-  Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
+  Script.setUsageMessage(__doc__ + '\n'.join([
                                     'Usage:',
                                     '  %s [option|cfgfile] ... [LFN|File] [Depth]' % Script.scriptName,
                                     'Arguments:',
