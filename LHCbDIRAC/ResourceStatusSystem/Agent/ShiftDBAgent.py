@@ -223,8 +223,8 @@ class ShiftDBAgent(AgentModule):
       if not res['OK']:
         self.log.error(res['Message'])
         return res
+      self.log.info("%s added successfully to the eGroup for role %s" % (email, role))
 
-    self.log.info("%s added successfully to the eGroup for role %s" % (email, role))
     self.newShifters[role] = eGroup
 
     return S_OK()
