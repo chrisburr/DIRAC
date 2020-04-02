@@ -32,7 +32,7 @@
 <Parameter name="groupDescription" type="string" linked_module="" linked_parameter="" in="True" out="False" description="GroupDescription"><value><![CDATA[/Reco17]]></value></Parameter>
 <Parameter name="simDescription" type="string" linked_module="" linked_parameter="" in="True" out="False" description="SimDescription"><value><![CDATA[Beam6500GeV-VeloClosed-MagDown]]></value></Parameter>
 <Parameter name="eventType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Event Type of the production"><value><![CDATA[90000000]]></value></Parameter>
-<Parameter name="numberOfEvents" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Number of events requested"><value><![CDATA[-1]]></value></Parameter>
+<Parameter name="numberOfEvents" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Number of events requested"><value><![CDATA[20]]></value></Parameter>
 <Parameter name="multicore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Flag for enabling gaudi parallel"><value><![CDATA[True]]></value></Parameter>
 <Parameter name="InputDataPolicy" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified input data policy"><value><![CDATA[DIRAC.WorkloadManagementSystem.Client.DownloadInputData]]></value></Parameter>
 <Parameter name="processingPass" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Processing pass of input for the request"><value><![CDATA[Real Data]]></value></Parameter>
