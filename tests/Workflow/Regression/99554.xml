@@ -12,7 +12,7 @@
 <Parameter name="Origin" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Origin of client"><value><![CDATA[DIRAC]]></value></Parameter>
 <Parameter name="StdOutput" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Standard output file"><value><![CDATA[std.out]]></value></Parameter>
 <Parameter name="StdError" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Standard error file"><value><![CDATA[std.err]]></value></Parameter>
-<Parameter name="InputData" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Input data specified by LFN"><value><![CDATA[/lhcb/data/2017/RAW/FULL/LHCb/COLLISION17/200740/200740_0000000887.raw]]></value></Parameter>
+<Parameter name="InputData" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Input data specified by LFN"><value><![CDATA[/lhcb/data/2017/RAW/FULL/LHCb/COLLISION17/196418/196418_0000000725.raw]]></value></Parameter>
 <Parameter name="LogLevel" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified logging level"><value><![CDATA[verbose]]></value></Parameter>
 <Parameter name="arguments" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Arguments to executable Step"><value><![CDATA[]]></value></Parameter>
 <Parameter name="ParametricInputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Default null parametric input data value"><value><![CDATA[]]></value></Parameter>
@@ -49,7 +49,7 @@
 <Parameter name="persistency" type="String" linked_module="" linked_parameter="" in="True" out="False" description="Persistency type of the inputs"><value><![CDATA[MDF]]></value></Parameter>
 <Parameter name="runMetadata" type="String" linked_module="" linked_parameter="" in="True" out="False" description="Input run metadata"><value><![CDATA[{'CondDb': 'cond-20170724', 'Duration': '3608', 'DDDB': 'dddb-20150724', 'TCK': '0x11611709'}]]></value></Parameter>
 <Parameter name="Status" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Optional JDL parameter added"><value><![CDATA[Created]]></value></Parameter>
-<Parameter name="TransformationID" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Optional JDL parameter added"><value><![CDATA[99554]]></value></Parameter>
+<Parameter name="TransformationID" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Optional JDL parameter added"><value><![CDATA[856]]></value></Parameter>
 <Parameter name="TaskID" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Optional JDL parameter added"><value><![CDATA[127]]></value></Parameter>
 <Parameter name="LogTargetPath" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Optional JDL parameter added"><value><![CDATA[/lhcb/LHCb/Collision17/LOG/00099554/0000/00099554_00000127.tar]]></value></Parameter>
 <Parameter name="LogFilePath" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Optional JDL parameter added"><value><![CDATA[/lhcb/LHCb/Collision17/LOG/00099554/0000/00000127]]></value></Parameter>
