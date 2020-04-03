@@ -121,6 +121,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     self.inFailover = []
 
     self.absentLFNsInFC = []
+    self.inSEbutNotInFC = {}
     self.existLFNsNoSE = {}
     self.existLFNsBadReplicas = {}
     self.existLFNsBadFiles = {}
@@ -847,18 +848,32 @@ class ConsistencyChecks(DiracConsistencyChecks):
   def checkFC2BK(self, bkCheck=True):
     """ check that files present in the FC are also in the BK
     """
-    present, _notPresent = self.__getLFNsFromFC()
+    present, notPresent = self.__getLFNsFromFC()
+    foundInSE = {}
     if not self.lfns:
       prStr = ' are in the FC but'
     else:
-      if not present:
+      if notPresent and self._seList:
+        gLogger.notice('Found %d files not in FC, check if they are in specified SEs' % len(notPresent))
+        for se in self._seList:
+          seObj = StorageElement(se)
+          res = seObj.exists(notPresent)
+          if not res['OK']:
+            gLogger.error('Error checking file in SE', res['Message'])
+          else:
+            for lfn, ex in res['Value']['Successful'].iteritems():
+              if ex:
+                foundInSE.setdefault(lfn, []).append(se)
+        if foundInSE:
+          self.inSEbutNotInFC = foundInSE
+      elif not present:
         if bkCheck:
           gLogger.notice('No files are in the FC, no check in the BK. Use dirac-dms-check-bkk2fc instead')
         return
       prStr = ''
 
-    if bkCheck:
-      res = self._getBKMetadata(present)
+    if bkCheck and (present or foundInSE):
+      res = self._getBKMetadata(present + foundInSE.keys())
       self.existLFNsNotInBK = res[0]
       self.existLFNsBKRepNo = res[1]
       self.existLFNsBKRepYes = res[2]
