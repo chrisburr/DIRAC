@@ -1,3 +1,14 @@
+v9r4p19
+use DIRAC v6r22p26
+
+* code style
+* .keys() -> list()
+* show logger headers in case subLogger is used
+* get BK metadata in chunks for file-path
+* accept Completed transformations in TS scripts
+* add a check for files not in FC but in SE
+* get all file types for prod (even if no existing files)
+
 v9r4p18
 use DIRAC v6r22p25
 
