@@ -10,11 +10,13 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 
-"""Test a plugin."""
+"""
+ Test a plugin
+"""
 
 __RCSID__ = "$Id$"
 
-from DIRAC import S_OK
+from DIRAC import S_OK, gLogger
 
 
 class fakeClient:
@@ -145,10 +147,8 @@ class fakeClient:
       if transID == self.transID:
         for fileDict in self.transFiles:
           runID = fileDict['RunNumber']
-          counters[transID][runID]['Unused'] = counters.setdefault(
-              transID, {}).setdefault(
-              runID, {}).setdefault(
-              'Unused', 0) + 1
+          counters[transID][runID]['Unused'] = \
+              counters.setdefault(transID, {}).setdefault(runID, {}).setdefault('Unused', 0) + 1
         for runID in counters[transID]:
           counters[transID][runID]['Total'] = counters[transID][runID]['Unused']
       else:
@@ -253,6 +253,8 @@ if __name__ == "__main__":
                                     '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=True)
+  # FIXME: can be removed when the subLoggers can do it...
+  gLogger.showHeaders()
 
   asIfProd = None
   allFiles = False
@@ -291,8 +293,8 @@ if __name__ == "__main__":
   transformation.setType(transType)
 
   visible = 'Yes'
-  if allFiles or not plugin or plugin == "DestroyDataset" or pluginScript.getOption(
-          'Productions') or transType == 'Processing':
+  if allFiles or not plugin or plugin == "DestroyDataset" or \
+          pluginScript.getOption('Productions') or transType == 'Processing':
     visible = 'All'
   bkQueryDict = {}
   checkReplica = True
@@ -343,8 +345,10 @@ if __name__ == "__main__":
     lfns = requestedLFNs
   else:
     print "Getting the files from BK"
-    lfns = bkQuery.getLFNs(printSEUsage=((transType == 'Removal' or not plugin) and not pluginScript.getOption(
-        'Runs') and not pluginScript.getOption('DQFlags')), printOutput=checkReplica, visible=visible)
+    lfns = bkQuery.getLFNs(printSEUsage=((transType == 'Removal' or not plugin)
+                                         and not pluginScript.getOption('Runs')
+                                         and not pluginScript.getOption('DQFlags')),
+                           printOutput=checkReplica, visible=visible)
     if not checkReplica:
       bkQuery.setOption('ReplicaFlag', "No")
       lfns += bkQuery.getLFNs(printSEUsage=False, printOutput=False, visible=visible)
@@ -377,11 +381,8 @@ if __name__ == "__main__":
   fakeClient = fakeClient(transformation, transID, lfns, asIfProd)
   from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
   from DIRAC.DataManagementSystem.Client.DataManager import DataManager
-  oplugin = TransformationPlugin(
-      plugin,
-      transClient=fakeClient,
-      dataManager=DataManager(),
-      bkClient=BookkeepingClient())
+  oplugin = TransformationPlugin(plugin, transClient=fakeClient,
+                                 dataManager=DataManager(), bkClient=BookkeepingClient())
   pluginParams['TransformationID'] = transID
   pluginParams.update(pluginSEParams)
   oplugin.setParameters(pluginParams)
@@ -421,10 +422,10 @@ if __name__ == "__main__":
       i += 1
       location = []
       for lfn in task[1]:
-        loc = ','.join(sorted(replicas.get(lfn, ['Unknown'])))
+        ll = ','.join(sorted(replicas.get(lfn, ['Unknown'])))
         # print "LFN", lfn, l
-        if loc not in location:
-          location.append(loc)
+        if ll not in location:
+          location.append(ll)
       if len(task[1]) == 1:
         # Only 1 file in task
         if previousTask['Tasks']:
@@ -435,19 +436,17 @@ if __name__ == "__main__":
           else:
             # Print out previous tasks
             if previousTask['First'] == i - 1:
-              print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'],\
-                  "- 1 file", " - Current locations:", previousTask['Location']
+              print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'],
+              '- 1 file - Current locations:', previousTask['Location']
             else:
-              print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']
-                                          ), '- Target SEs:', previousTask['SEs'],\
-                  "- 1 file", " - Current locations:", previousTask['Location']
+              print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+              '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
             printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
         previousTask = {'First': i, 'SEs': task[0], 'Location': location, 'Tasks': 1}
       else:
         if previousTask['Tasks']:
-          print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']
-                                      ), '- Target SEs:', previousTask['SEs'],\
-              "- 1 file", " - Current locations:", previousTask['Location']
+          print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+          '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
           printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
           previousTask = {'First': 0, 'SEs': None, 'Location': None, 'Tasks': 0}
         print i, '- Target SEs:', task[0], "- %d files" % len(task[1]), " - Current locations:", location
@@ -455,12 +454,11 @@ if __name__ == "__main__":
     if previousTask['Tasks']:
       i += 1
       if i - previousTask['First'] == 1:
-        print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'],\
-            "- 1 file", " - Current locations:", previousTask['Location']
+        print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], "- 1 file",
+        " - Current locations:", previousTask['Location']
       else:
-        print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']
-                                    ), '- Target SEs:', previousTask['SEs'],\
-            "- 1 file", " - Current locations:", previousTask['Location']
+        print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+        '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
       printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
   else:
     print res['Message']

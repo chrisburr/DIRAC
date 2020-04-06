@@ -827,6 +827,7 @@ class BKQuery():
       else:
         bkDict = bkDict.copy()
       bkDict.setdefault('Visible', 'All')
+      bkDict['ReplicaFlag'] = 'All'
       bkDict.pop('RunNumber', None)
       fileTypes = []
       eventTypes = bkDict.get('EventType')

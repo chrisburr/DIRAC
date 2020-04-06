@@ -33,7 +33,7 @@ def _getTransformationID(transName):
       return None
     status = result['Value']['Status']
     # If the status is still compatible, accept
-    if status in ('Active', 'Idle', 'New', 'Stopped'):
+    if status in ('Active', 'Idle', 'New', 'Stopped', 'Completed'):
       return result['Value']['TransformationID']
     # If transformationID was given, return error
     if isinstance(transName, (long, int)) or transName.isdigit():

@@ -165,23 +165,30 @@ def executeFilePath(dmScript):
       gLogger.notice('Directory metadata:', ', '.join(dirMetadata))
       gLogger.notice('File metadata:', ', '.join(fileMetadata))
       diracExit(1)
-    res = bkClient.getFileMetadata(lfnList)
-    if res['OK']:
-      paths = {'Successful': {}, 'Failed': []}
-      for lfn, metadata in res['Value']['Successful'].iteritems():
-        group = metadata.get(groupBy)
-        paths['Successful'].setdefault('%s %s' % (groupBy, group), set()).add(lfn)
-        lfnList.remove(lfn)
-      paths['Failed'].extend(lfnList)
-      if summary:
-        pathSummary = {'Successful': {}}
-        for groupStr in paths['Successful']:
-          pathSummary['Successful'][groupStr] = '%d files' % len(paths['Successful'][groupStr])
-        if paths['Failed']:
-          pathSummary['Failed'] = len(paths['Failed'])
-        res = S_OK(pathSummary)
-      else:
-        res = S_OK(paths)
+    paths = {'Successful': {}, 'Failed': []}
+    chunkSize = 1000
+    progressBar = ProgressBar(
+        len(lfnList), title='Getting %s from BK for %d files' %
+        (groupBy, len(lfnList)), chunk=chunkSize)
+    for lfnChunk in breakListIntoChunks(lfnList, chunkSize):
+      res = bkClient.getFileMetadata(lfnChunk)
+      progressBar.loop()
+      if res['OK']:
+        for lfn, metadata in res['Value']['Successful'].iteritems():
+          group = metadata.get(groupBy)
+          paths['Successful'].setdefault('%s %s' % (groupBy, group), set()).add(lfn)
+          lfnChunk.remove(lfn)
+        paths['Failed'].extend(lfnChunk)
+    progressBar.endLoop()
+    if summary:
+      pathSummary = {'Successful': {}}
+      for groupStr in paths['Successful']:
+        pathSummary['Successful'][groupStr] = '%d files' % len(paths['Successful'][groupStr])
+      if paths['Failed']:
+        pathSummary['Failed'] = len(paths['Failed'])
+      res = S_OK(pathSummary)
+    else:
+      res = S_OK(paths)
   else:
     directories = {}
     for lfn in lfnList:
@@ -508,7 +515,10 @@ def executeFileAncestors(dmScript, level=1):
         for lfn in okResult:
           fullResult['Value'].setdefault('Successful', {})[lfn] = \
               dict((desc, 'Replica-%s' % meta['GotReplica']) for desc, meta in okResult[lfn].iteritems())
-      fullResult['Value'].setdefault('Failed', {}).update(result['Value']['Failed'])
+      failed = result['Value']['Failed']
+      if isinstance(failed, list):
+        failed = dict.fromkeys(failed, 'Not found')
+      fullResult['Value'].setdefault('Failed', {}).update(failed)
     else:
       fullResult = result
       break
