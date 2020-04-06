@@ -15,10 +15,11 @@ Set of functions used by the DMS checking scripts
 __RCSID__ = "$Id$"
 
 import os
-from DIRAC import gLogger
+from DIRAC import gLogger, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import removeFiles, removeReplicas
+from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import removeFiles, removeReplicas, \
+    registerBK2FC, printDMResult
 
 
 def __removeFile(lfns):
@@ -121,12 +122,43 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
     maxFiles = 20
   fileName = _getUniqueFileName('CheckFC2SE')
   fp = None
+  if cc.inSEbutNotInFC:
+    gLogger.notice('>>>>')
+    gLogger.notice("Some files found in SE but not in FC")
+    if fixIt:
+      gLogger.notice("Going to register files from BK to FC")
+      regResult = {'Successful': [], 'Failed': {}}
+    for lfn, seList in cc.inSEbutNotInFC.iteritems():
+      inBK = lfn in cc.existLFNsBKRepNo or lfn in cc.existLFNsBKRepYes
+      gLogger.notice('\t%s (%s): %s' % (lfn, 'in BK' if inBK else 'not in BK', ','.join(seList)))
+      if fixIt:
+        if inBK:
+          res = registerBK2FC([lfn], seList)
+          if res['OK']:
+            regResult['Successful'] += res['Value']['Successful']
+            regResult['Failed'].update(res['Value']['Failed'])
+          else:
+            regResult['Failed'][lfn] = res['Message']
+        else:
+          regResult['Failed'][lfn] = 'Not in BK'
+
+    if fixIt:
+      # We can remove these files from the BK-No list as we just set it back
+      for lfn in regResult['Successful']:
+        cc.existLFNsBKRepNo.pop(lfn, None)
+      printDMResult(S_OK(regResult))
+    else:
+      gLogger.notice("Use --FixIt to register files to the FC if they are in BK")
+    gLogger.notice('<<<<')
+  elif cc.seList:
+    gLogger.notice("None of the files absent in FC were found at specified SEs")
+
   if cc.existLFNsBKRepNo:
     gLogger.notice('>>>>')
     affectedRuns = set(str(run) for run in cc.existLFNsBKRepNo.itervalues() if run)
-    title = "%d files are in the FC but have replica = NO in BK:\nAffected runs: %s" % \
+    title = "%d files are in the FC (or SE) but have replica = NO in BK:\nAffected runs: %s" % \
         (len(cc.existLFNsBKRepNo),
-         ','.join(sorted(affectedRuns) if affectedRuns else 'None'))
+         ','.join(sorted(affectedRuns)) if affectedRuns else 'None')
     fp = _dumpErrorAndFiles(title, cc.existLFNsBKRepNo, maxFiles, 'InFCButBKNo', fileName, fp)
     if fixIt:
       gLogger.notice("Going to fix them, setting the replica flag")

@@ -121,6 +121,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     self.inFailover = []
 
     self.absentLFNsInFC = []
+    self.inSEbutNotInFC = {}
     self.existLFNsNoSE = {}
     self.existLFNsBadReplicas = {}
     self.existLFNsBadFiles = {}
@@ -151,7 +152,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     lfnsReplicaNo, lfnsReplicaYes = (0, 0)
     if self.lfns:
       lfnsNotInBK, lfnsReplicaNo, lfnsReplicaYes = self._getBKMetadata(self.lfns)
-      lfnsReplicaNo = lfnsReplicaNo.keys() + lfnsNotInBK
+      lfnsReplicaNo = list(lfnsReplicaNo) + lfnsNotInBK
     else:
       bkQuery = self.__getBKQuery()
       gLogger.notice('Getting files for BK query %s...' % str(bkQuery))
@@ -586,7 +587,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
             # Check if file has a daughter and how many per file type
             if lfn in descDict:
               # Assign the daughters list to the initial LFN
-              filesWithDescendants[lfn] = descDict[lfn].keys()
+              filesWithDescendants[lfn] = list(descDict[lfn])
               # Is there a file type with more than one daughter of a given file type?
               multi = dict((ft, ftc) for ft, ftc in ft_count[lfn].iteritems() if ftc > 1)
               if multi:
@@ -619,7 +620,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     if isinstance(lfns, basestring):
       lfns = [lfns]
     elif isinstance(lfns, dict):
-      lfns = lfns.keys()
+      lfns = list(lfns)
     filesWithDescendants = {}
     filesWithoutDescendants = {}
     filesWithMultipleDescendants = {}
@@ -696,7 +697,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
           inBKNotInFC += notPresent
           # Remove descendants that are not in FC, and if no descendants remove ancestor as well
           for anc in list(notPresentDescendants):
-            for desc in notPresentDescendants[anc].keys():
+            for desc in list(notPresentDescendants[anc]):
               if desc in notPresent:
                 notPresentDescendants[anc].pop(desc)
             if not notPresentDescendants[anc]:
@@ -768,7 +769,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
     # File files without descendants don't exist, not important
     if filesWithoutDescendants:
-      present, removedFiles = self.getReplicasPresence(filesWithoutDescendants.keys(), ignoreFailover=True)
+      present, removedFiles = self.getReplicasPresence(list(filesWithoutDescendants), ignoreFailover=True)
       filesWithoutDescendants = dict.fromkeys(present)
     else:
       removedFiles = []
@@ -847,18 +848,32 @@ class ConsistencyChecks(DiracConsistencyChecks):
   def checkFC2BK(self, bkCheck=True):
     """ check that files present in the FC are also in the BK
     """
-    present, _notPresent = self.__getLFNsFromFC()
+    present, notPresent = self.__getLFNsFromFC()
+    foundInSE = {}
     if not self.lfns:
       prStr = ' are in the FC but'
     else:
-      if not present:
+      if notPresent and self._seList:
+        gLogger.notice('Found %d files not in FC, check if they are in specified SEs' % len(notPresent))
+        for se in self._seList:
+          seObj = StorageElement(se)
+          res = seObj.exists(notPresent)
+          if not res['OK']:
+            gLogger.error('Error checking file in SE', res['Message'])
+          else:
+            for lfn, ex in res['Value']['Successful'].iteritems():
+              if ex:
+                foundInSE.setdefault(lfn, []).append(se)
+        if foundInSE:
+          self.inSEbutNotInFC = foundInSE
+      elif not present:
         if bkCheck:
           gLogger.notice('No files are in the FC, no check in the BK. Use dirac-dms-check-bkk2fc instead')
         return
       prStr = ''
 
-    if bkCheck:
-      res = self._getBKMetadata(present)
+    if bkCheck and (present or foundInSE):
+      res = self._getBKMetadata(present + list(foundInSE))
       self.existLFNsNotInBK = res[0]
       self.existLFNsBKRepNo = res[1]
       self.existLFNsBKRepYes = res[2]
@@ -989,7 +1004,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
   def checkFC2SE(self, bkCheck=True):  # pylint: disable=arguments-differ
     self.checkFC2BK(bkCheck=bkCheck)
     if self.existLFNsBKRepYes or self.existLFNsBKRepNo:
-      repDict = self.compareChecksum(self.existLFNsBKRepYes + self.existLFNsBKRepNo.keys())
+      repDict = self.compareChecksum(self.existLFNsBKRepYes + list(self.existLFNsBKRepNo))
       self.existLFNsNoSE = repDict['MissingReplica']
       self.existLFNsNotExisting = repDict['MissingAllReplicas']
       self.existLFNsBadReplicas = repDict['SomeReplicasCorrupted']
