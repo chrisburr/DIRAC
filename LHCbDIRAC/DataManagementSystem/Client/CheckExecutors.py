@@ -18,7 +18,8 @@ import os
 from DIRAC import gLogger, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import removeFiles, removeReplicas, registerBK2FC, printDMResult
+from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import removeFiles, removeReplicas, \
+    registerBK2FC, printDMResult
 
 
 def __removeFile(lfns):

@@ -225,13 +225,13 @@ def printFinalSEs(transType, location, targets):
   if transType == "Removal":
     remain = []
     for l in location:
-      r = ','.join([se for se in l.split(',') if not se in targets])
+      r = ','.join([se for se in l.split(',') if se not in targets])
       remain.append(r)
     print "    Remaining SEs:", remain
   if transType == "Replication":
     total = []
     for l in location:
-      r = l + ',' + ','.join([se for se in targets if not se in l.split(',')])
+      r = l + ',' + ','.join([se for se in targets if se not in l.split(',')])
       total.append(r)
     print "    Final SEs:", total
 
@@ -348,7 +348,8 @@ if __name__ == "__main__":
     print "Getting the files from BK"
     lfns = bkQuery.getLFNs(printSEUsage=((transType == 'Removal' or not plugin)
                                          and not pluginScript.getOption('Runs')
-                                         and not pluginScript.getOption('DQFlags')), printOutput=checkReplica, visible=visible)
+                                         and not pluginScript.getOption('DQFlags')),
+                           printOutput=checkReplica, visible=visible)
     if not checkReplica:
       bkQuery.setOption('ReplicaFlag', "No")
       lfns += bkQuery.getLFNs(printSEUsage=False, printOutput=False, visible=visible)
@@ -422,10 +423,10 @@ if __name__ == "__main__":
       i += 1
       location = []
       for lfn in task[1]:
-        l = ','.join(sorted(replicas.get(lfn, ['Unknown'])))
+        ll = ','.join(sorted(replicas.get(lfn, ['Unknown'])))
         # print "LFN", lfn, l
-        if not l in location:
-          location.append(l)
+        if ll not in location:
+          location.append(ll)
       if len(task[1]) == 1:
         # Only 1 file in task
         if previousTask['Tasks']:
@@ -436,14 +437,17 @@ if __name__ == "__main__":
           else:
             # Print out previous tasks
             if previousTask['First'] == i - 1:
-              print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
+              print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'],
+              '- 1 file - Current locations:', previousTask['Location']
             else:
-              print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']), '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
+              print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+              '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
             printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
         previousTask = {'First': i, 'SEs': task[0], 'Location': location, 'Tasks': 1}
       else:
         if previousTask['Tasks']:
-          print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']), '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
+          print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+          '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
           printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
           previousTask = {'First': 0, 'SEs': None, 'Location': None, 'Tasks': 0}
         print i, '- Target SEs:', task[0], "- %d files" % len(task[1]), " - Current locations:", location
@@ -451,9 +455,11 @@ if __name__ == "__main__":
     if previousTask['Tasks']:
       i += 1
       if i - previousTask['First'] == 1:
-        print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
+        print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], "- 1 file",
+        " - Current locations:", previousTask['Location']
       else:
-        print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']), '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
+        print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+        '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
       printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
   else:
     print res['Message']
