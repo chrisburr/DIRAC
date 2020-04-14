@@ -122,6 +122,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
     self.absentLFNsInFC = []
     self.inSEbutNotInFC = {}
+    self.notRegisteredAtSE = {}
     self.existLFNsNoSE = {}
     self.existLFNsBadReplicas = {}
     self.existLFNsBadFiles = {}
@@ -845,6 +846,19 @@ class ConsistencyChecks(DiracConsistencyChecks):
       present, notPresent = self.getReplicasPresence(self.lfns)
     return present, notPresent
 
+  def _checkFilesInSE(self, notPresent, seList):
+    foundInSE = {}
+    for se in seList:
+      seObj = StorageElement(se)
+      res = seObj.exists(notPresent)
+      if not res['OK']:
+        gLogger.error('Error checking file in SE', res['Message'])
+      else:
+        for lfn, ex in res['Value']['Successful'].iteritems():
+          if ex:
+            foundInSE.setdefault(lfn, []).append(se)
+    return foundInSE
+
   def checkFC2BK(self, bkCheck=True):
     """ check that files present in the FC are also in the BK
     """
@@ -855,15 +869,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     else:
       if notPresent and self._seList:
         gLogger.notice('Found %d files not in FC, check if they are in specified SEs' % len(notPresent))
-        for se in self._seList:
-          seObj = StorageElement(se)
-          res = seObj.exists(notPresent)
-          if not res['OK']:
-            gLogger.error('Error checking file in SE', res['Message'])
-          else:
-            for lfn, ex in res['Value']['Successful'].iteritems():
-              if ex:
-                foundInSE.setdefault(lfn, []).append(se)
+        foundInSE = self._checkFilesInSE(notPresent, self._seList)
         if foundInSE:
           self.inSEbutNotInFC = foundInSE
       elif not present:
@@ -1009,6 +1015,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
       self.existLFNsNotExisting = repDict['MissingAllReplicas']
       self.existLFNsBadReplicas = repDict['SomeReplicasCorrupted']
       self.existLFNsBadFiles = repDict['AllReplicasCorrupted']
+      self.notRegisteredAtSE = repDict['NotRegisteredAtSE']
 
   def checkSE(self, seList):
     """
@@ -1040,7 +1047,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
                'SomeReplicasCorrupted': {},
                'MissingReplica': {},
                'MissingAllReplicas': {},
-               'NoReplicas': {}}
+               'NoReplicas': {},
+               'NotRegisteredAtSE': {}}
 
     chunkSize = 100
     replicas = {}
@@ -1066,14 +1074,24 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
     # Reduce the set of files to those at requested SEs if specified
     if self._seList:
-      notAtSE = 0
+      notAtSE = []
       for lfn, ses in replicas.items():
         replicas[lfn] = set(ses) & self._seList
         if not replicas[lfn]:
-          notAtSE += 1
-          del replicas[lfn]
+          notAtSE.append(lfn)
       if notAtSE:
-        gLogger.notice("%d files are not at requested SEs, ignored..." % notAtSE)
+        gLogger.notice("%d files are not registered at requested SEs, check if they exist in SE..." % len(notAtSE))
+        foundInSE = self._checkFilesInSE(notAtSE, self._seList)
+        if foundInSE:
+          gLogger.notice("Of these, %d files were found at requested SEs but are not registered" % len(foundInSE))
+          retDict['NotRegisteredAtSE'] = foundInSE
+        else:
+          gLogger.notice("None of them were found at requested SEs, ignore them")
+        for lfn in [lfn for lfn in notAtSE if lfn not in foundInSE]:
+          del replicas[lfn]
+
+    if not replicas:
+      return retDict
     progressBar = ProgressBar(len(replicas),
                               title="Get FC metadata for %d files to be checked: " % len(replicas),
                               chunk=chunkSize, interactive=self.interactive)
