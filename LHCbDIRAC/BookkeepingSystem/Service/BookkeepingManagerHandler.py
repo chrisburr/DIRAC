@@ -1708,8 +1708,8 @@ class BookkeepingManagerHandler(RequestHandler):
     visible = values.get('Visible', default)
     filesize = values.get('FileSize', False)
     tck = values.get('TCK')
-    jobStart = in_dict.get('JobStartDate', None)
-    jobEnd = in_dict.get('JobEndDate', None)
+    jobStart = values.get('JobStartDate', None)
+    jobEnd = values.get('JobEndDate', None)
 
     if 'ProductionID' in values:
       gLogger.verbose('ProductionID will be removed. It will changed to Production')
