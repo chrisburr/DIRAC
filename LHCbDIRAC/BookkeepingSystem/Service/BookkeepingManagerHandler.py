@@ -1708,6 +1708,8 @@ class BookkeepingManagerHandler(RequestHandler):
     visible = values.get('Visible', default)
     filesize = values.get('FileSize', False)
     tck = values.get('TCK')
+    jobStart = in_dict.get('JobStartDate', None)
+    jobEnd = in_dict.get('JobEndDate', None)
 
     if 'ProductionID' in values:
       gLogger.verbose('ProductionID will be removed. It will changed to Production')
@@ -1726,7 +1728,7 @@ class BookkeepingManagerHandler(RequestHandler):
                                 nbofevents, startRunID,
                                 endRunID, runNbs,
                                 replicaFlag, visible,
-                                filesize, tck)
+                                filesize, tck, jobStart, jobEnd)
     if not retVal['OK']:
       return S_ERROR(retVal['Message'])
     else:
