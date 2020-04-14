@@ -3793,7 +3793,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     """it adds the start and end date to the files table.
 
     :param datetime startDate:  file insert start date
-    :param datetime endDate: file insert end date
+    :param datetime jobStartDate:  file insert start date
+    :param datetime jobEndDate: file insert end date
     :param str condition: condition string
     :param str tables: tables used by join
     :return: condition and tables
