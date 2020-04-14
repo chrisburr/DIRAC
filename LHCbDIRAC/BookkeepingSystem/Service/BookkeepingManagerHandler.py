@@ -543,6 +543,8 @@ class BookkeepingManagerHandler(RequestHandler):
     visible = in_dict.get('Visible', default)
     filesize = in_dict.get('FileSize', False)
     tck = in_dict.get('TCK', [])
+    jobStart = in_dict.get('JobStartDate', None)
+    jobEnd = in_dict.get('JobEndDate', None)
 
     if 'ProductionID' in in_dict:
       gLogger.verbose('ProductionID will be removed. It will changed to Production')
@@ -561,7 +563,7 @@ class BookkeepingManagerHandler(RequestHandler):
                                 nbofevents, startRunID,
                                 endRunID, runNbs,
                                 replicaFlag, visible,
-                                filesize, tck)
+                                filesize, tck, jobStart, jobEnd)
     if not retVal['OK']:
       result = retVal
     else:
@@ -596,6 +598,8 @@ class BookkeepingManagerHandler(RequestHandler):
     startRunID = in_dict.get('StartRun', None)
     endRunID = in_dict.get('EndRun', None)
     tcks = in_dict.get('TCK')
+    jobStart = in_dict.get('JobStartDate', None)
+    jobEnd = in_dict.get('JobEndDate', None)
 
     if 'EventTypeId' in in_dict:
       gLogger.verbose('The EventTypeId has to be replaced by EventType!')
@@ -618,7 +622,9 @@ class BookkeepingManagerHandler(RequestHandler):
                                             runnumbers,
                                             startRunID,
                                             endRunID,
-                                            tcks)
+                                            tcks,
+                                            jobStart,
+                                            jobEnd)
     if retVal['OK']:
       records = []
       parameters = ['FileName', 'EventStat', 'FileSize',
@@ -676,6 +682,8 @@ class BookkeepingManagerHandler(RequestHandler):
     runNumbers = in_dict.get('RunNumber', in_dict.get('RunNumbers', []))
     replicaFlag = in_dict.get('ReplicaFlag', 'Yes')
     tcks = in_dict.get('TCK')
+    jobStart = in_dict.get('JobStartDate', None)
+    jobEnd = in_dict.get('JobEndDate', None)
 
     if 'EventTypeId' in in_dict:
       gLogger.verbose('The EventTypeId has to be replaced by EventType!')
@@ -698,7 +706,9 @@ class BookkeepingManagerHandler(RequestHandler):
                                        endDate=endDate,
                                        runNumbers=runNumbers,
                                        replicaFlag=replicaFlag,
-                                       tcks=tcks)
+                                       tcks=tcks,
+                                       jobStart=jobStart,
+                                       jobEnd=jobEnd)
     if retVal['OK']:
       records = []
       parameters = ['NbofFiles', 'NumberOfEvents', 'FileSize', 'Luminosity', 'InstLuminosity']
@@ -1756,6 +1766,8 @@ class BookkeepingManagerHandler(RequestHandler):
     replicaFlag = in_dict.get('ReplicaFlag', 'Yes')
     tck = in_dict.get('TCK', [])
     visible = in_dict.get('Visible', 'Y')
+    jobStart = in_dict.get('JobStartDate', None)
+    jobEnd = in_dict.get('JobEndDate', None)
 
     if ftype == default:
       return S_ERROR('FileType is missing!')
@@ -1786,7 +1798,9 @@ class BookkeepingManagerHandler(RequestHandler):
                                             runnumbers=runNbs,
                                             startRunID=startRunID,
                                             endRunID=endRunID,
-                                            tcks=tck)
+                                            tcks=tck,
+                                            jobStart=jobStart,
+                                            jobEnd=jobEnd)
 
     summary = 0
 

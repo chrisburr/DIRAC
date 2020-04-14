@@ -1116,7 +1116,8 @@ class OracleBookkeepingDB(object):
                            filetype=default, quality=default,
                            visible=default, replicaflag=default,
                            startDate=None, endDate=None, runnumbers=None,
-                           startRunID=None, endRunID=None, tcks=default, selection=None):
+                           startRunID=None, endRunID=None, tcks=default, jobStart=None,
+                           jobEnd=None, selection=None):
     """For retrieving files with meta data.
 
     :param str configName: configuration name
@@ -1129,12 +1130,14 @@ class OracleBookkeepingDB(object):
     :param str quality: data quality flag
     :param str visible: visibility flag
     :param str replicaflag: replica flag
-    :param datetime startDate: job/run start time stamp
-    :param datetime endDate: job/run end time stamp
+    :param datetime startDate: job/run insert start time stamp
+    :param datetime endDate: job/run end insert time stamp
     :param list runnumbers: run numbers
     :param long startRunID: start run
     :param long endRunID: end run
     :param str tcks: TCK number
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :return: a list of files with their metadata
     """
 
@@ -1153,6 +1156,11 @@ class OracleBookkeepingDB(object):
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible=visible, replicaFlag=replicaflag)
 
     retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
+    if not retVal['OK']:
+      return retVal
+    condition, tables = retVal['Value']
+
+    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3369,7 +3377,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                startDate=None, endDate=None,
                nbofEvents=False, startRunID=None,
                endRunID=None, runnumbers=None,
-               replicaFlag=default, visible=default, filesize=False, tcks=None):
+               replicaFlag=default, visible=default, filesize=False, tcks=None,
+               jobStart=None, jobEnd=None):
     """returns a list of lfns.
 
     :param str simdesc: simulation condition description
@@ -3381,8 +3390,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param long production: production number
     :param str flag: data quality flag
-    :param datetime startDate: job/run start time stamp
-    :param datetime endDate: job/run end time stamp
+    :param datetime startDate: job/run insert start time stamp
+    :param datetime endDate: job/run insert end time stamp
     :param bool nbofEvents: count number of events
     :param long startRunID: start run number
     :param long endRunID: end run number
@@ -3391,6 +3400,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str visible: file visibility flag
     :param bool filesize: only sum the files size
     :param list tcks: list of run TCKs
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :returns: list of files
     """
 
@@ -3439,6 +3450,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     condition, tables = retVal['Value']
 
     retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
+    if not retVal['OK']:
+      return retVal
+    condition, tables = retVal['Value']
+
+    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3772,6 +3788,27 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_OK((condition, tables))
 
   #############################################################################
+  @staticmethod
+  def __buildJobsStartJobEndDate(jobStartDate, jobEndDate, condition, tables):
+    """it adds the start and end date to the files table.
+
+    :param datetime startDate:  file insert start date
+    :param datetime endDate: file insert end date
+    :param str condition: condition string
+    :param str tables: tables used by join
+    :return: condition and tables
+    """
+    if jobStartDate not in [None, default, []]:
+      condition += " and j.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobStartDate))
+
+    if jobEndDate not in [None, default, []]:
+      condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobEndDate))
+    elif jobStartDate not in [None, default, []] and jobEndDate in [None, default, []]:
+      currentTimeStamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+      condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
+    return S_OK((condition, tables))
+
+  #############################################################################
   def __buildDataquality(self, flag, condition, tables):
     """it adds the data quality to the files table.
 
@@ -3876,7 +3913,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                                   production=default, flag=default,
                                   startDate=None, endDate=None,
                                   nbofEvents=False, startRunID=None,
-                                  endRunID=None, runnumbers=None, replicaFlag='Yes', tcks=None):
+                                  endRunID=None, runnumbers=None, replicaFlag='Yes',
+                                  tcks=None, jobStart=None, jobEnd=None):
     """For  retrieving only visible files.
 
     :param str simdesc: simulation desctription
@@ -3888,13 +3926,15 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param long production: production number
     :param str flag: data quality
-    :param datetime startDate: job start time stamp
-    :param datetime endDate: job end time stamp
+    :param datetime startDate: job start insert time stamp
+    :param datetime endDate: job end insert time stamp
     :param bool nbofEvemts: count number of events
     :param long startRunID: start run number
     :param long endRunID: end run number
     :param str replicaFlag: file replica flag
     :param list tcks: run TCKs
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :return: the visible files
     """
     conddescription = datataking
@@ -3920,13 +3960,15 @@ and files.qualityid= dataquality.qualityid" % lfn
                                      startRunID,
                                      endRunID,
                                      tcks,
+                                     jobStart,
+                                     jobEnd,
                                      selection)
 
   #############################################################################
   def getFilesSummary(self, configName, configVersion, conditionDescription=default, processingPass=default,
                       eventType=default, production=default, fileType=default, dataQuality=default,
                       startRun=default, endRun=default, visible=default, startDate=None, endDate=None,
-                      runNumbers=None, replicaFlag=default, tcks=default):
+                      runNumbers=None, replicaFlag=default, tcks=default, jobStart=None, jobEnd=None):
     """File summary for a given data set.
 
     :param str configName: configuration name
@@ -3940,11 +3982,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long startRun: satart run number
     :param long endRun: end run number
     :param str visible: visibility flag
-    :param datetime startDate: job start time stamp
-    :param datetime endDate: job end time stamp
+    :param datetime startDate: job start insert time stamp
+    :param datetime endDate: job end insert time stamp
     :param list runNumbers: list of run numbers
     :param str replicaFlag: file replica flag
     :param list tcks: list of run TCKs
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :retun: the number of event, files, etc for a given data set
     """
 
@@ -3957,6 +4001,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible=visible, replicaFlag=replicaFlag)
 
     retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
+    if not retVal['OK']:
+      return retVal
+    condition, tables = retVal['Value']
+
+    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']

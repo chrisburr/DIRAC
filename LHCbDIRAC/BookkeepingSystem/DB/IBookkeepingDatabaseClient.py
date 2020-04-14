@@ -114,24 +114,25 @@ class IBookkeepingDatabaseClient(object):
   def getFilesWithMetadata(self, configName, configVersion, conddescription,
                            processing, evt, production, filetype, quality, visible,
                            replicaflag, startDate, endDate,
-                           runnumbers, startRunID, endRunID, tcks):
+                           runnumbers, startRunID, endRunID, tcks, jobStart, jobEnd):
     """more info in the BookkeepingClient.py."""
     return self.getManager().getFilesWithMetadata(configName, configVersion,
                                                   conddescription, processing,
                                                   evt, production, filetype,
                                                   quality, visible, replicaflag,
                                                   startDate, endDate,
-                                                  runnumbers, startRunID, endRunID, tcks)
+                                                  runnumbers, startRunID, endRunID,
+                                                  tcks, jobStart, jobEnd)
 
   #############################################################################
   def getFilesSummary(self, configName, configVersion, conditionDescription, processingPass, eventType,
                       production, fileType, dataQuality, startRun, endRun, visible, startDate,
-                      endDate, runNumbers, replicaFlag, tcks):
+                      endDate, runNumbers, replicaFlag, tcks, jobStart, jobEnd):
     """more info in the BookkeepingClient.py."""
     return self.getManager().getFilesSummary(configName, configVersion,
                                              conditionDescription, processingPass, eventType,
                                              production, fileType, dataQuality, startRun, endRun, visible, startDate,
-                                             endDate, runNumbers, replicaFlag, tcks)
+                                             endDate, runNumbers, replicaFlag, tcks, jobStart, jobEnd)
 
   #############################################################################
   def getLimitedFiles(self, configName, configVersion, conddescription,
@@ -476,24 +477,27 @@ class IBookkeepingDatabaseClient(object):
   def getFiles(self, simdesc, datataking, procPass, ftype, evt, configName,
                configVersion, production, flag, startDate,
                endDate, nbofEvents, startRunID, endRunID,
-               runnumbers, replicaFlag, visible, filesize, tck):
+               runnumbers, replicaFlag, visible, filesize, tck, jobStart, jobEnd):
     """more info in the BookkeepingClient.py."""
     return self.getManager().getFiles(simdesc, datataking, procPass,
                                       ftype, evt, configName, configVersion, production,
                                       flag, startDate, endDate, nbofEvents, startRunID,
-                                      endRunID, runnumbers, replicaFlag, visible, filesize, tck)
+                                      endRunID, runnumbers, replicaFlag, visible, filesize, tck,
+                                      jobStart, jobEnd)
 
   #############################################################################
   def getVisibleFilesWithMetadata(self, simdesc, datataking, procPass, ftype, evt, configName,
                                   configVersion, production, flag, startDate, endDate,
-                                  nbofEvents, startRunID, endRunID, runnumbers, replicaFlag, tcks):
+                                  nbofEvents, startRunID, endRunID, runnumbers, replicaFlag,
+                                  tcks, jobStart, jobEnd):
     """more info in the BookkeepingClient.py."""
     return self.getManager().getVisibleFilesWithMetadata(simdesc, datataking, procPass,
                                                          ftype, evt, configName, configVersion,
                                                          production, flag, startDate,
                                                          endDate, nbofEvents, startRunID,
                                                          endRunID, runnumbers,
-                                                         replicaFlag, tcks)
+                                                         replicaFlag, tcks,
+                                                         jobStart, jobEnd)
 
   #############################################################################
   def getDataTakingCondId(self, condition):
