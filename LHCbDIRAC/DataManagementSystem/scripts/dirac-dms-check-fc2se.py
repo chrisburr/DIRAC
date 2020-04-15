@@ -9,14 +9,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""Check if the files are in the BK, the FC and the SEs they are supposed to be
-in.
+""" Check if the files are in the BK, the FC and the SEs they are supposed to be in.
 
     Uses the DM script switches, and, unless a list of LFNs is provided:
     1) If --Directory is used: get files in FC directories
     2) If --Production or --BK options is used get files in the FC directories from the BK
 
-    If an (list of) SE or SE-group is specified option --SE) and the file is not in the FC, check if it is in these SEs:
+    If an (list of) SE or SE-group is specified option --SE) and the file is not in the FC,
+    check if it is in these SEs:
       - If the file is in the SE and in the BK, it can be registered in the FC using --FixIt
 
     If --FixIt is set, takes actions:

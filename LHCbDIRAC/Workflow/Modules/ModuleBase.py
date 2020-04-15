@@ -296,10 +296,9 @@ class ModuleBase(object):
     if isinstance(multicoreJob, bool):
       self.multicoreJob = multicoreJob
     else:
+      self.multicoreJob = False
       if isinstance(multicoreJob, str) and multicoreJob.lower() in ('true', 'y', 'yes'):
         self.multicoreJob = True
-      else:
-        self.multicoreJob = False
 
     self.processingPass = self.workflow_commons.get('processingPass', self.processingPass)
 
@@ -424,10 +423,9 @@ class ModuleBase(object):
     if isinstance(multicoreStep, bool):
       self.multicoreStep = multicoreStep
     else:
+      self.multicoreStep = False
       if isinstance(multicoreStep, str) and multicoreStep.lower() in ('true', 'y', 'yes'):
         self.multicoreStep = True
-      else:
-        self.multicoreStep = False
 
     if self.multicoreJob and self.multicoreStep:
       # the parameter 'MaxNumberOfProcessors' is in the workflow commons:

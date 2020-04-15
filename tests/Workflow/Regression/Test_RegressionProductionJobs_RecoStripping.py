@@ -43,41 +43,26 @@ class RegressionTestCase(IntegrationTest):
 
 class RecoSuccess(RegressionTestCase):
   def test_Regression_Production(self):
-    # Reco from Reco17 #  FIXME: the input file is not there.
+    # from request 62444 - Collision17-MagDown-Reco17
     try:
-      location63284 = find_all('63284.xml', os.environ['WORKSPACE'], '/LHCbDIRAC/tests/Workflow/Regression')[0]
+      location99554 = find_all('99554.xml', os.environ['WORKSPACE'], '/LHCbDIRAC/tests/Workflow/Regression')[0]
     except (IndexError, KeyError):
-      location63284 = find_all('63284.xml', rootPath, '/LHCbDIRAC/tests/Workflow/Regression')[0]
+      location99554 = find_all('99554.xml', rootPath, '/LHCbDIRAC/tests/Workflow/Regression')[0]
 
-    j_reco_63284 = LHCbJob(location63284)
-    j_reco_63284.setConfigArgs('pilot.cfg')
+    j_reco_99554 = LHCbJob(location99554)
+    j_reco_99554.setConfigArgs('pilot.cfg')
 
-    res = j_reco_63284.runLocal(self.diracLHCb)
+    res = j_reco_99554.runLocal(self.diracLHCb)
     self.assertTrue(res['OK'])
-
-
-class StrippSuccess(RegressionTestCase):
-  def test_Regression_Production(self):
-    # Turbo Stripping Collision15em
-    try:
-      location46403 = find_all('46403.xml', os.environ['WORKSPACE'], '/LHCbDIRAC/tests/Workflow/Regression')[0]
-    except (IndexError, KeyError):
-      location46403 = find_all('46403.xml', rootPath, '/LHCbDIRAC/tests/Workflow/Regression')[0]
-
-    j_stripp_46403 = LHCbJob(location46403)
-    j_stripp_46403.setConfigArgs('pilot.cfg')
-
-    res = j_stripp_46403.runLocal(self.diracLHCb)
-    self.assertTrue(res['OK'])
-
 
 #############################################################################
 # Test Suite run
 #############################################################################
 
+
 if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegressionTestCase)
-  # suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(RecoSuccess))
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(StrippSuccess))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(RecoSuccess))
+  # suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(StrippSuccess))
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)
   sys.exit(not testResult.wasSuccessful())
