@@ -1,3 +1,21 @@
+v10r0-pre17
+use DIRAC v7r0p20
+
+* added the copyright to SQL files
+* linting
+* smaller file
+* update events
+* new Reco job
+* correct position of debug option
+* v9r4p19
+* code style
+* .keys() -> list()
+* show logger headers in case subLogger is used
+* get BK metadata in chunks for file-path
+* accept Completed transformations in TS scripts
+* add a check for files not in FC but in SE
+* get all file types for prod (even if no existing files)
+
 v10r0-pre16
 use DIRAC v7r0p18
 
