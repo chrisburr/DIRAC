@@ -18,18 +18,18 @@
 
 
 echo -e '****************************************'
-echo -e '********' "LHCb server tests" '*********\n'
+echo -e '********** LHCb server tests ***********\n'
 
 
 #-------------------------------------------------------------------------------#
-echo -e '***' $(date -u) "**** LHCb Accounting TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/AccountingSystem/Test_Plotter.py 2>&1 | tee -a $SERVER_TEST_OUTPUT; (( ERR |= $? ))
+echo -e "*** $(date -u) **** LHCb Accounting TESTS ****\n"
+python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/AccountingSystem/Test_Plotter.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
-echo -e '***' $(date -u)  "**** LHCb DMS TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/DataManagementSystem/Test_RAWIntegrity.py 2>&1 | tee -a $SERVER_TEST_OUTPUT; (( ERR |= $? ))
+echo -e "*** $(date -u) **** LHCb DMS TESTS ****\n"
+python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/DataManagementSystem/Test_RAWIntegrity.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
-echo -e '***' $(date -u)  "**** LHCb PMS TESTS ****\n"
-python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_MCStatsElasticDB.py 2>&1 | tee -a $SERVER_TEST_OUTPUT; (( ERR |= $? ))
-TESTCODE=$TESTCODE python $SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py 2>&1 | tee -a $SERVER_TEST_OUTPUT; (( ERR |= $? ))
+echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
+python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_MCStatsElasticDB.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+TESTCODE=$TESTCODE python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
