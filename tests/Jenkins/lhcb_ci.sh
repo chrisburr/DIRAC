@@ -45,9 +45,9 @@ function findRelease(){
   echo '[findRelease]'
 
   # store the current branch
-  currentBranch=$(git --git-dir="${TESTCODE}/LHCbDIRAC/.git rev-parse" --abbrev-ref HEAD)
+  currentBranch=$(git --git-dir=${TESTCODE}/LHCbDIRAC/.git rev-parse --abbrev-ref HEAD)
 
-  if [[ "${currentBranch}" == 'devel' ]]; then
+  if [[ "${currentBranch}" = 'devel' ]]; then
     echo 'we were already on devel, no need to change'
     # get the releases.cfg file
     cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
@@ -152,10 +152,10 @@ diracServices(){
 
   services=$(cat services |  cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
 
-  for serv in $services
+  for serv in ${services}
   do
 
-    if [[ "${serv}" == "Bookkeeping/BookkeepingManager" ]]; then
+    if [[ "${serv}" = 'Bookkeeping/BookkeepingManager' ]]; then
       setupBKKDB
 
       if [[ -z "${DIRACOSVER}" ]]; then
@@ -165,7 +165,7 @@ diracServices(){
     fi
 
     echo "==> calling dirac-install-component ${serv} $DEBUG"
-    dirac-install-component "${serv} $DEBUG"
+    dirac-install-component "${serv}" "$DEBUG"
   done
 
 }
@@ -183,20 +183,20 @@ diracAgents(){
 
   agents=$(cat agents | cut -d '.' -f 1 | grep -Ev '(FTSAgent|CleanFTSDBAgent|MyProxy|CAUpdate|GOCDB2CS|Bdii2CS|StatesMonitoringAgent|DataProcessingProgressAgent|RAWIntegrityAgent|Nagios|AncestorFiles|BKInputData|LHCbPRProxyAgent|StorageUsageAgent|PopularityAnalysisAgent|SEUsageAgent|NotifyAgent|ShiftDBAgent)' | sed 's/System / /g' | sed 's/ /\//g')
 
-  for agent in $agents
-  do
-    if [[ $agent == *" JobAgent"* ]]; then
+  for agent in $agents; do
+    if [[ $agent = *'JobAgent'* ]]; then
       echo '==> '
     else
       echo "==> calling dirac-cfg-add-option agent $agent"
-      python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-add-option.py" agent "$agent"
-      echo "==> calling dirac-agent $agent -o MaxCycles=1 $DEBUG"
-      dirac-agent "$agent"  -o MaxCycles=1 "$DEBUG"
+      python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-add-option.py" "agent" "$agent"
+      echo "==> calling dirac-agent $agent -o MaxCycles=1 ${DEBUG}"
+      if ! dirac-agent "$agent"  -o MaxCycles=1 "${DEBUG}"; then
+        echo 'ERROR: dirac-agent failed'
+        exit 1
+      fi
     fi
   done
-
 }
-
 
 #-------------------------------------------------------------------------------
 # Here is where the real functions start
