@@ -1,4 +1,4 @@
-###############################################################################
+/* ---------------------------------------------------------------------------#
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
@@ -6,8 +6,7 @@
 #                                                                             #
 # In applying this licence, CERN does not waive the privileges and immunities #
 # granted to it by virtue of its status as an Intergovernmental Organization  #
-# or submit itself to any jurisdiction.                                       #
-###############################################################################
+# or submit itself to any jurisdiction.                                      */
 
 create or replace package BKUTILITIES as
   TYPE numberarray  IS TABLE OF NUMBER INDEX BY PLS_INTEGER;
