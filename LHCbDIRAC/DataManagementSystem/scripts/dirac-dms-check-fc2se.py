@@ -9,22 +9,25 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Check if the files are in the BK, the FC and the SEs they are supposed to be in.
+"""Check if the files are in the BK, the FC and the SEs they are supposed to be
+in.
 
-    Uses the DM script switches, and, unless a list of LFNs is provided:
-    1) If --Directory is used: get files in FC directories
-    2) If --Production or --BK options is used get files in the FC directories from the BK
+Uses the DM script switches, and, unless a list of LFNs is provided
 
-    If an (list of) SE or SE-group is specified option --SE) and the file is not in the FC,
-    check if it is in these SEs:
-      - If the file is in the SE and in the BK, it can be registered in the FC using --FixIt
+1) If --Directory is used: get files in FC directories
+2) If --Production or --BK options is used get files in the FC directories from the BK
 
-    If --FixIt is set, takes actions:
-      Missing files: remove from SE and FC
-      No replica flag: set it (in the BK)
-      Not existing in SE: remove replica or file from the catalog
-      Existing in SE and BK: register it in the FC
-      Bad checksum: remove replica or file from SE and catalogs if no good replica
+If an (list of) SE or SE-group is specified option --SE) and the file is not in the FC,
+check if it is in these SEs
+
+- If the file is in the SE and in the BK, it can be registered in the FC using --FixIt
+
+If --FixIt is set, takes actions:
+  Missing files: remove from SE and FC
+  No replica flag: set it (in the BK)
+  Not existing in SE: remove replica or file from the catalog
+  Existing in SE and BK: register it in the FC
+  Bad checksum: remove replica or file from SE and catalogs if no good replica
 """
 __RCSID__ = "$Id$"
 
