@@ -356,6 +356,9 @@ class BookkeepingReport(ModuleBase):
     <InputFile Name=""/>
     """
 
+    self.log.debug("Adding InputData: bkLFNs = %s" % bkLFNs)
+    self.log.debug("Adding InputData: self.stepInputData = %s" % self.stepInputData)
+
     if self.stepInputData:
       intermediateInputs = False
       for inputname in self.stepInputData:
