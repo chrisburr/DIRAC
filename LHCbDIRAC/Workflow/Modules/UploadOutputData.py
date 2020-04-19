@@ -203,11 +203,11 @@ class UploadOutputData(ModuleBase):
       bkFiles = [bk[0] for bk in sorted(bkFilesListTuples, key=itemgetter(1))]
 
       self.log.info("The following BK records will be sent", ": %s" % (', '.join(bkFiles)))
-      if self._enableModule():
-        for bkFile in bkFiles:
-          with open(bkFile, 'r') as fd:
-            bkXML = fd.read()
-          self.log.info("Sending BK record", ":\n%s" % (bkXML))
+      for bkFile in bkFiles:
+        with open(bkFile, 'r') as fd:
+          bkXML = fd.read()
+        self.log.info("Sending BK record", ":\n%s" % (bkXML))
+        if self._enableModule():
           result = self.bkClient.sendXMLBookkeepingReport(bkXML)
           self.log.verbose(result)
           if result['OK']:
@@ -221,8 +221,8 @@ class UploadOutputData(ModuleBase):
             bkDISETReq.Arguments = DEncode.encode(result['rpcStub'])
             self.request.addOperation(bkDISETReq)
             self.workflow_commons['Request'] = self.request  # update each time, just in case
-      else:
-        self.log.info("Would have attempted to send bk records, but module is disabled")
+        else:
+          self.log.info("Would have attempted to send a bk record, but the module is disabled")
 
       # ## 4. Transfer output files in their destination, register in the FC (with failover)
       # ##
