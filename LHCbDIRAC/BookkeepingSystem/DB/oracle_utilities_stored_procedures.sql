@@ -20,6 +20,7 @@ create or replace package BKUTILITIES as
   procedure insertProtoPordoutput(v_production number);
   procedure updateProtoPordoutput(v_production number);
   PROCEDURE updateProdOutputFiles;
+  
 end;
 /
 
@@ -170,6 +171,12 @@ FOR prod IN(SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotrepl
     dbms_output.put_line('Try update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
     if nb = 0 then -- we whant to update only the row, which has modified...
         -- we have to see which rows can be updated
+        --we have tocheck if being updated row in the productionoutputfiles table
+        --it can happen that the productionoutputfiles table contains more row, but the actual row which being updated is not in the table
+        select count(*) into nb from productionoutputfiles where production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid;
+        if nb = 0 then
+         INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(prod.production,prod.stepid, prod.filetypeid, prod.visibilityflag,prod.eventtypeid, prod.gotreplica);
+        end if;
         for toupdate in (select * from (select production, stepid, eventtypeid, filetypeid, gotreplica, visible as visibilityflag from productionoutputfiles where production=v_production) minus
              SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag FROM jobs j, files f WHERE
             j.jobid = f.jobid AND
