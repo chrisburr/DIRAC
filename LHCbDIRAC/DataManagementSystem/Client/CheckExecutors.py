@@ -15,6 +15,9 @@ __RCSID__ = "$Id$"
 import os
 from DIRAC import gLogger, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
+from DIRAC.Resources.Storage.StorageElement import StorageElement
+from DIRAC.DataManagementSystem.Client.DataManager import DataManager
+from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 
 from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import removeFiles, removeReplicas, \
     registerBK2FC, printDMResult
@@ -110,6 +113,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
     maxFiles = 20
   fileName = _getUniqueFileName('CheckFC2SE')
   fp = None
+
   if cc.inSEbutNotInFC:
     gLogger.notice('>>>>')
     gLogger.notice("Some files found in SE but not in FC")
@@ -140,6 +144,32 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
     gLogger.notice('<<<<')
   elif cc.seList:
     gLogger.notice("None of the files absent in FC were found at specified SEs")
+
+  if cc.notRegisteredAtSE:
+    gLogger.notice('>>>>')
+    gLogger.notice("Some files found in SE but not registered in FC")
+    if fixIt:
+      gLogger.notice("Going to register files in FC")
+      registrationProtocol = DMSHelpers().getRegistrationProtocols()
+      dm = DataManager()
+      replicaTuples = []
+      regRepResult = {'Successful': {}, 'Failed': {}}
+      for lfn, seList in cc.notRegisteredAtSE.items():
+        for se in seList:
+          res = StorageElement(se).getURL(lfn, protocol=registrationProtocol)
+          if res['OK']:
+            pfn = res['Value']['Successful'][lfn]
+            replicaTuples.append((lfn, pfn, se))
+      res = dm.registerReplica(replicaTuples)
+      if res['OK']:
+        regRepResult['Successful'].update(res['Value']['Successful'])
+        regRepResult['Failed'].update(res['Value']['Failed'])
+      else:
+        regRepResult['Failed'][lfn] = res['Message']
+      printDMResult(S_OK(regRepResult))
+    else:
+      gLogger.notice("Use --FixIt to register replicas in the FC")
+    gLogger.notice('<<<<')
 
   if cc.existLFNsBKRepNo:
     gLogger.notice('>>>>')
