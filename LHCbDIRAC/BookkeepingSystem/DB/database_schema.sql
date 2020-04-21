@@ -11,85 +11,85 @@
 -- Bookkeeping DB schema (Oracle)
 
 
-create or replace type stepobj is object (
-    stepid  number,
-    STEPNAME  VARCHAR2(256),
-    APPLICATIONNAME   VARCHAR2(128),
-    APPLICATIONVERSION   VARCHAR2(128),
-    OPTIONFILES   VARCHAR2(1000),
-    DDDB   VARCHAR2(256),
-    CONDDB VARCHAR2(256),
-    EXTRAPACKAGES   VARCHAR2(256),
-    VISIBLE   CHAR(1),
-    PROCESSINGPASS VARCHAR2(256),
-    USABLE VARCHAR2(10),
-    DQTag VARCHAR2(256),
-    OptionsFormat VARCHAR2(30),
-    ISMULTICORE CHAR(1),
-    SYSTEMCONFIG VARCHAR2(256),
-    mcTCK VARCHAR2(256),
-    rstepid number,
-    rSTEPNAME   VARCHAR2(256),
-    rAPPLICATIONNAME   VARCHAR2(128),
-    rAPPLICATIONVERSION   VARCHAR2(128),
-    rOPTIONFILES   VARCHAR2(1000),
-    rDDDB   VARCHAR2(256),
-    rCONDDB VARCHAR2(256),
-    rEXTRAPACKAGES   VARCHAR2(256),
-    rVISIBLE   CHAR(1),
-    rPROCESSINGPASS VARCHAR2(256),
-    rUSABLE VARCHAR2(10),
-    rDQTag VARCHAR2(256),
-    rOptionsFormat VARCHAR2(30),
-    riSMULTICORE CHAR(1),
-    rSYSTEMCONFIG VARCHAR2(256),
-    RmcTCK VARCHAR2(256)
+CREATE OR replace TYPE stepobj IS object (
+  stepid              NUMBER,
+  stepname            VARCHAR2(256),
+  applicationname     VARCHAR2(128),
+  applicationversion  VARCHAR2(128),
+  optionfiles         VARCHAR2(1000),
+  dddb                VARCHAR2(256),
+  conddb              VARCHAR2(256),
+  extrapackages       VARCHAR2(256),
+  visible             CHAR(1),
+  processingpass      VARCHAR2(256),
+  usable              VARCHAR2(10),
+  dqtag               VARCHAR2(256),
+  optionsformat       VARCHAR2(30),
+  ismulticore         CHAR(1),
+  systemconfig        VARCHAR2(256),
+  mctck               VARCHAR2(256),
+  rstepid             NUMBER,
+  rstepname           VARCHAR2(256),
+  rapplicationname    VARCHAR2(128),
+  rapplicationversion VARCHAR2(128),
+  roptionfiles        VARCHAR2(1000),
+  rdddb               VARCHAR2(256),
+  rconddb             VARCHAR2(256),
+  rextrapackages      VARCHAR2(256),
+  rvisible            CHAR(1),
+  rprocessingpass     VARCHAR2(256),
+  rusable             VARCHAR2(10),
+  rdqtag              VARCHAR2(256),
+  roptionsformat      VARCHAR2(30),
+  rismulticore        CHAR(1),
+  rsystemconfig       VARCHAR2(256),
+  rmctck              VARCHAR2(256)
 );
 /
 
-create or replace type step_table is table of stepobj;
+CREATE OR REPLACE TYPE step_table is table of stepobj;
 /
 
-create or replace type runnb_quality_eventtype is object (runnumber number, dataqualityflag varchar2(256), eventtypeid number);
+CREATE OR REPLACE TYPE runnb_quality_eventtype is object (runnumber number, dataqualityflag VARCHAR2(256), eventtypeid number);
 /
 
-create or replace type runnb_proc is object (runnumber number, processingpass varchar2(256));
+CREATE OR REPLACE TYPE runnb_proc is object (runnumber number, processingpass VARCHAR2(256));
 /
 
-create or replace type run_proc_table is table of runnb_proc;
+CREATE OR REPLACE TYPE run_proc_table is table of runnb_proc;
 /
 
-create or replace type metadata0bj is object(
-    FILENAME varchar2(256),
-    ADLER32 varchar2(256),
-    CREATIONDATE timestamp(6),
-    EVENTSTAT NUMBER,
-    EVENTTYPEID NUMBER,
-    Name varchar2(256),
-    GOTREPLICA varchar2(3),
-    GUID varchar2(256),
-    MD5SUM varchar2(256),
-    FILESIZE number,
-    FullStat number,
-    DATAQUALITYFLAG varchar2(256),
-    jobid number(38,0),
-    runnumber number,
-    inserttimestamp timestamp(6),
-    luminosity number,
-    instluminosity number ,
-    VISIBILITYFLAG CHAR(1),
-    fileid number,
-    filetypeid number
+CREATE OR replace TYPE metadata0bj IS object(
+  filename        VARCHAR2(256),
+  adler32         VARCHAR2(256),
+  creationdate    TIMESTAMP(6),
+  eventstat       NUMBER,
+  eventtypeid     NUMBER,
+  name            VARCHAR2(256),
+  gotreplica      VARCHAR2(3),
+  guid            VARCHAR2(256),
+  md5sum          VARCHAR2(256),
+  filesize        NUMBER,
+  fullstat        NUMBER,
+  dataqualityflag VARCHAR2(256),
+  jobid           NUMBER(38,0),
+  runnumber       NUMBER,
+  inserttimestamp TIMESTAMP(6),
+  luminosity      NUMBER,
+  instluminosity  NUMBER,
+  visibilityflag  CHAR(1),
+  fileid          NUMBER,
+  filetypeid      NUMBER
 );
  /
 
-create or replace type metadata_table is table of metadata0bj;
+CREATE OR REPLACE TYPE metadata_table is table of metadata0bj;
 /
 
-create or replace type lists IS TABLE OF VARCHAR2(256);
+CREATE OR REPLACE TYPE lists IS TABLE OF VARCHAR2(256);
 /
 
-create or replace type jobMetadata is object(lfn varchar2(256),
+CREATE OR REPLACE TYPE jobMetadata is object(lfn VARCHAR2(256),
     DiracJobId                  NUMBER,
     DiracVersion                VARCHAR2(256),
     EventInputStat              NUMBER,
@@ -104,7 +104,7 @@ create or replace type jobMetadata is object(lfn varchar2(256),
     WNCache                     VARCHAR2(256),
     WNMemory                    VARCHAR2(256),
     WNModel                     VARCHAR2(256),
-    WORKERNODE                  varchar2(256),
+    WORKERNODE                  VARCHAR2(256),
     WNCPUHS06                   FLOAT,
     jobid                       number,
     totalLuminosity             NUMBER,
@@ -115,50 +115,48 @@ create or replace type jobMetadata is object(lfn varchar2(256),
 );
 /
 
-create or replace type ftype as object(
-name varchar2(256),
-visible char(1)
+CREATE OR REPLACE TYPE ftype AS object(
+  name VARCHAR2(256),
+  visible char(1)
 );
 /
 
-create or replace TYPE filetypesARRAY is VARRAY(30) OF ftype;
+CREATE OR REPLACE TYPE filetypesARRAY is VARRAY(30) OF ftype;
 /
 
-create or replace type
-directoryMetadata_new is object
-(lfn varchar2(256),
-production number,
-configname varchar2(256),
-configversion  varchar2(256),
-eventtypeid number,
-filetype varchar2(256),
-processingpass varchar2(256),
-ConditionDescription varchar2(256),
-VISIBILITYFLAG CHAR(1));
+CREATE OR REPLACE TYPE directoryMetadata_new is object(
+  lfn                   VARCHAR2(256),
+  production            NUMBER,
+  configname            VARCHAR2(256),
+  configversion         VARCHAR2(256),
+  eventtypeid           NUMBER,
+  filetype              VARCHAR2(256),
+  processingpass        VARCHAR2(256),
+  ConditionDescription  VARCHAR2(256),
+  VISIBILITYFLAG        CHAR(1));
 /
 
-create or replace type
-directoryMetadata is object
-(production number,
-configname varchar2(256),
-configversion  varchar2(256),
-eventtypeid number,
-filetype varchar2(256),
-processingpass varchar2(256),
-ConditionDescription varchar2(256),
-VISIBILITYFLAG CHAR(1));
+CREATE OR REPLACE TYPE directoryMetadata is object(
+  production            NUMBER,
+  configname            VARCHAR2(256),
+  configversion         VARCHAR2(256),
+  eventtypeid           NUMBER,
+  filetype              VARCHAR2(256),
+  processingpass        VARCHAR2(256),
+  ConditionDescription  VARCHAR2(256),
+  VISIBILITYFLAG        CHAR(1));
 /
 
-create or replace type bulk_collect_run_quality_evt is table of runnb_quality_eventtype;
+CREATE OR REPLACE TYPE bulk_collect_run_quality_evt is table of runnb_quality_eventtype;
 /
 
-create or replace type bulk_collect_jobMetadata is table of jobMetadata;
+CREATE OR REPLACE TYPE bulk_collect_jobMetadata is table of jobMetadata;
 /
 
-create or replace type bulk_collect_directoryMetadata is table of directoryMetadata;
+CREATE OR REPLACE TYPE bulk_collect_directoryMetadata is table of directoryMetadata;
 /
 
-create or replace type bulk_collect_directoryMet_new is table of directoryMetadata_new;
+CREATE OR REPLACE TYPE bulk_collect_directoryMet_new is table of directoryMetadata_new;
 /
 
 CREATE SEQUENCE  APPLICATIONS_INDEX_SEQ MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
@@ -179,7 +177,6 @@ CREATE SEQUENCE  SIMULATIONCONDID_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999
 
 CREATE SEQUENCE  TAGS_INDEX_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-################################################################################################
 CREATE GLOBAL TEMPORARY TABLE Stepstmp(
     stepid              NUMBER,
     stepname            VARCHAR2(256 BYTE),
@@ -215,7 +212,7 @@ CREATE GLOBAL TEMPORARY TABLE Stepstmp(
     rmctck              VARCHAR2(256 BYTE)
 ) ON COMMIT DELETE ROWS;
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Tags(
     tagid           NUMBER,
     name            VARCHAR2(256 BYTE),
@@ -223,7 +220,7 @@ CREATE TABLE Tags(
     inserttimestamp TIMESTAMP (6) DEFAULT SYSTIMESTAMP
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Processing(
     id       NUMBER,
     parentid NUMBER,
@@ -249,10 +246,10 @@ BEFORE INSERT
   END if;
 END;
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Filetypes(
-    description VARCHAR2(256 BYTE),
     filetypeid  NUMBER,
+    description VARCHAR2(256 BYTE),
     name        VARCHAR2(256 BYTE),
     version     VARCHAR2(256 BYTE),
     PRIMARY KEY (filetypeid),
@@ -260,7 +257,7 @@ CREATE TABLE Filetypes(
     CONSTRAINT FILETYPES_ID_NAME_UK UNIQUE (filetypeid, name)
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Applications(
     applicationid      NUMBER,
     applicationname    VARCHAR2(128 BYTE) NOT NULL,
@@ -272,7 +269,7 @@ CREATE TABLE Applications(
     PRIMARY KEY (applicationid)
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Configurations(
     configurationid NUMBER,
     configname      VARCHAR2(128 BYTE) NOT NULL,
@@ -281,7 +278,7 @@ CREATE TABLE Configurations(
     CONSTRAINT CONFIGURATION_UK UNIQUE (configname, configversion)
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Data_taking_conditions(
     daqperiodid   NUMBER,
     description   VARCHAR2(256 BYTE),
@@ -307,7 +304,7 @@ CREATE TABLE Data_taking_conditions(
 CREATE INDEX DATA_TAKING_CONDITION_ID_DESC
   ON DATA_TAKING_CONDITIONS (daqperiodid, description);
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE Dataquality(
     qualityid       NUMBER,
     dataqualityflag VARCHAR2(256 BYTE),
@@ -319,7 +316,7 @@ INSERT INTO Dataquality (qualityid,dataqualityflag) SELECT 2,'OK' FROM DUAL WHER
 INSERT INTO Dataquality (qualityid,dataqualityflag) SELECT 3,'BAD' FROM DUAL WHERE NOT EXISTS (SELECT * FROM dataquality WHERE (qualityid=3 AND dataqualityflag='BAD'));
 COMMIT;
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE EVENTTYPES(
     DESCRIPTION VARCHAR2(256 BYTE),
     EVENTTYPEID NUMBER,
@@ -327,7 +324,7 @@ CREATE TABLE EVENTTYPES(
     PRIMARY KEY (EVENTTYPEID)
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE SIMULATIONCONDITIONS(
     SIMID NUMBER,
     SIMDESCRIPTION VARCHAR2(256 BYTE),
@@ -345,7 +342,7 @@ CREATE TABLE SIMULATIONCONDITIONS(
     CHECK (visible in ('N','Y'))
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE PRODUCTIONSCONTAINER(
     PRODUCTION NUMBER,
     PROCESSINGID NUMBER,
@@ -365,7 +362,7 @@ CREATE INDEX PRODCONTPSIM ON PRODUCTIONSCONTAINER (SIMID, PRODUCTION);
 CREATE INDEX PRODCONT_PROC ON PRODUCTIONSCONTAINER (PROCESSINGID);
 CREATE INDEX PRODCONT_PROC_PROD ON PRODUCTIONSCONTAINER (PROCESSINGID, PRODUCTION);
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE STEPS(
     STEPID NUMBER,
     STEPNAME VARCHAR2(256 BYTE),
@@ -449,7 +446,7 @@ end if;
 end;
 /
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE JOBS(
     JOBID               NUMBER,
     CONFIGURATIONID     NUMBER,
@@ -535,7 +532,7 @@ CREATE INDEX RUNNUMBER
   ON JOBS (RUNNUMBER);
 
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE FILES(
     FILEID          NUMBER,
     ADLER32         VARCHAR2(256 BYTE),
@@ -560,14 +557,10 @@ CREATE TABLE FILES(
     CONSTRAINT FILES_FILENAME_UNIQUE UNIQUE (FILENAME),
     CONSTRAINT CHECK_PHYSICSTAT CHECK (physicstat < 0),
     CHECK (visibilityFlag IN ('N', 'Y')),
-    CONSTRAINT FILES_FK11 FOREIGN KEY (EVENTTYPEID) REFERENCES EVENTTYPES (
-    EVENTTYPEID),
-    CONSTRAINT FILES_FK21 FOREIGN KEY (FILETYPEID) REFERENCES FILETYPES (
-    FILETYPEID),
-    CONSTRAINT FK_QUALITYID FOREIGN KEY (QUALITYID) REFERENCES DATAQUALITY (
-    QUALITYID),
-    CONSTRAINT FILES_FK31 FOREIGN KEY (JOBID) REFERENCES JOBS (JOBID) ON DELETE
-    CASCADE
+    CONSTRAINT FILES_FK11 FOREIGN KEY (EVENTTYPEID) REFERENCES EVENTTYPES (EVENTTYPEID),
+    CONSTRAINT FILES_FK21 FOREIGN KEY (FILETYPEID) REFERENCES FILETYPES (FILETYPEID),
+    CONSTRAINT FK_QUALITYID FOREIGN KEY (QUALITYID) REFERENCES DATAQUALITY (QUALITYID),
+    CONSTRAINT FILES_FK31 FOREIGN KEY (JOBID) REFERENCES JOBS (JOBID) ON DELETE CASCADE
 ) PARTITION BY RANGE (JOBID) (
     PARTITION SECT_0020M VALUES LESS THAN (20000000),
     PARTITION SECT_0040M VALUES LESS THAN (40000000),
@@ -617,7 +610,7 @@ CREATE INDEX F_GOTREPLICA
   ON FILES (GOTREPLICA, VISIBILITYFLAG, JOBID) local;
 
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE INPUTFILES(
     FILEID NUMBER,
     JOBID  NUMBER,
@@ -657,7 +650,7 @@ CREATE INDEX inputfiles_jobid_test ON inputfiles (jobid, fileid)
  PARTITION SECT_0520M  VALUES LESS THAN (520000000),
  PARTITION p_greater_than_520000000 VALUES LESS THAN (maxvalue));
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE NEWRUNQUALITY(
     RUNNUMBER    NUMBER,
     QUALITYID    NUMBER,
@@ -719,7 +712,7 @@ FOR EACH ROW
   END;
 
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE PRODUCTIONOUTPUTFILES(
     PRODUCTION  NUMBER,
     STEPID      NUMBER,
@@ -727,20 +720,16 @@ CREATE TABLE PRODUCTIONOUTPUTFILES(
     FILETYPEID  NUMBER,
     VISIBLE     CHAR(1 BYTE) DEFAULT 'Y',
     GOTREPLICA  VARCHAR2(3 BYTE) DEFAULT 'No',
-    CONSTRAINT PK_PRODUCTIONOUTPUTFILES_P PRIMARY KEY (PRODUCTION, STEPID,
-    FILETYPEID, EVENTTYPEID, VISIBLE),
-    CONSTRAINT FK_PRODUCTIONOUTPUTFILES_STEPS FOREIGN KEY (STEPID) REFERENCES
-    STEPS (STEPID),
-    CONSTRAINT FK_PRODUCTIONOUTPUTFILES_EVT FOREIGN KEY (EVENTTYPEID)
-    REFERENCES EVENTTYPES (EVENTTYPEID),
-    CONSTRAINT FK_PRODUCTIONOUTPUTFILES_FT FOREIGN KEY (FILETYPEID) REFERENCES
-    FILETYPES (FILETYPEID),
+    CONSTRAINT PK_PRODUCTIONOUTPUTFILES_P PRIMARY KEY (PRODUCTION, STEPID, FILETYPEID, EVENTTYPEID, VISIBLE),
+    CONSTRAINT FK_PRODUCTIONOUTPUTFILES_STEPS FOREIGN KEY (STEPID) REFERENCES STEPS (STEPID),
+    CONSTRAINT FK_PRODUCTIONOUTPUTFILES_EVT FOREIGN KEY (EVENTTYPEID) REFERENCES EVENTTYPES (EVENTTYPEID),
+    CONSTRAINT FK_PRODUCTIONOUTPUTFILES_FT FOREIGN KEY (FILETYPEID) REFERENCES FILETYPES (FILETYPEID),
     CONSTRAINT FK_PRODUCTIONOUTPUTFILES_PROD FOREIGN KEY (PRODUCTION)
     REFERENCES PRODUCTIONSCONTAINER (PRODUCTION) ON DELETE CASCADE
 );
 
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE RUNSTATUS(
     RUNNUMBER NUMBER,
     JOBID NUMBER,
@@ -758,7 +747,7 @@ FOR EACH ROW
      BOOKKEEPINGORACLEDB.updateLuminosity(:new.runnumber);
   END;
 
-################################################################################################
+---------------------------------------------------------------------------------------
 CREATE TABLE RUNTIMEPROJECTS(
     STEPID           NUMBER,
     RUNTIMEPROJECTID NUMBER,
@@ -774,7 +763,7 @@ CREATE TABLE prodrunview_table (
   CONSTRAINT prod_run_const UNIQUE (production, runnumber)
 );
 
-################################################################################################
+---------------------------------------------------------------------------------------
 BEGIN
   DBMS_SCHEDULER.CREATE_JOB (
      job_name             => 'produpdatejob',
