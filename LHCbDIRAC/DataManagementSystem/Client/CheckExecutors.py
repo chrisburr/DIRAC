@@ -165,7 +165,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
       registrationProtocol = DMSHelpers().getRegistrationProtocols()
       dm = DataManager()
       replicaTuples = []
-      regResult = {'Successful': [], 'Failed': {}}
+      regRepResult = {'Successful': {}, 'Failed': {}}
       for lfn, seList in cc.notRegisteredAtSE.items():
         for se in seList:
           res = StorageElement(se).getURL(lfn, protocol=registrationProtocol)
@@ -174,11 +174,11 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
             replicaTuples.append((lfn, pfn, se))
       res = dm.registerReplica(replicaTuples)
       if res['OK']:
-        regResult['Successful'].update(res['Value']['Successful'])
-        regResult['Failed'].update(res['Value']['Failed'])
+        regRepResult['Successful'].update(res['Value']['Successful'])
+        regRepResult['Failed'].update(res['Value']['Failed'])
       else:
-        regResult['Failed'][lfn] = res['Message']
-      printDMResult(S_OK(regResult))
+        regRepResult['Failed'][lfn] = res['Message']
+      printDMResult(S_OK(regRepResult))
     else:
       gLogger.notice("Use --FixIt to register replicas in the FC")
     gLogger.notice('<<<<')
