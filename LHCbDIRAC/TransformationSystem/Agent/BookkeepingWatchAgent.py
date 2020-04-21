@@ -253,7 +253,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
             if not result['OK']:
               self._logError("Failed to add %d lfns to transformation" % len(lfnChunk), result['Message'],
                              transID=transID)
-              return result
+              continue
             else:
               # Handle errors
               errors = {}
@@ -271,8 +271,8 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
                                for lfn in addedLfns)
                 res = self.transClient.setParameterToTransformationFiles(transID, lfnDict)
                 if not res['OK']:
-                  self._logError("Failed to set transformation files metadata", res['Message'])
-                  return res
+                  self._logError("Failed to set transformation files metadata", res['Message'], transID=transID)
+                  continue
                 # Add run information if it exists
                 if runID:
                   self._logInfo("Added %d files to transformation for run %d, now including run information"
@@ -282,7 +282,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
                   if not res['OK']:
                     self._logError("Failed to associate %d files to run %d" % (len(addedLfns), runID),
                                    res['Message'], transID=transID)
-                    return res
+                    continue
                 else:
                   self._logInfo("Added %d files to transformation" % len(addedLfns), transID=transID)
 
