@@ -694,5 +694,5 @@ create materialized view prodrunview
 PARALLEL 4
 build immediate
 refresh next sysdate+3/24
-as select distinct jobs.Production, jobs.runnumber from jobs, files where files.jobid=jobs.jobid and files.gotreplica='Yes' and files.visibilityflag='Y' and jobs.runnumber is not NULL;
+as select  distinct jobs.Production, jobs.runnumber from jobs, productionoutputfiles prod where jobs.production=prod.production and prod.visible='Y' and prod.gotreplica='Yes' and jobs.runnumber is not null;
 
