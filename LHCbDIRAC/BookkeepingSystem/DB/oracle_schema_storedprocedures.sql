@@ -203,7 +203,7 @@ procedure getAllMetadata(v_jobid NUMBER, v_prod number, a_Cursor  out udt_RefCur
 function getProducedEvents(v_prodid number) return number;
 procedure bulkgetIdsFromFiles(lfns varchararray,  a_Cursor out udt_RefCursor);
 PROCEDURE insertProdnOutputFtypes(v_production number, v_stepid number, v_filetypeid number, v_visible char, v_eventtype number);
-function getJobIdWithoutReplicaCheck(v_FileNamevarchar2)return number;
+function getJobIdWithoutReplicaCheck(v_FileName varchar2) return number;
 end;
 /
 
@@ -2151,7 +2151,6 @@ function getJobIdWithoutReplicaCheck(
    return (jId);
    EXCEPTION WHEN OTHERS THEN
   return 0;
-  end;
 end;
 END; 
 /
