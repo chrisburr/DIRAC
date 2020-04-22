@@ -539,7 +539,7 @@ class TestMethods(unittest.TestCase):
   def test_getRunsGroupedByDataTaking(self):
     retVal = self.bk.getRunsGroupedByDataTaking()
     self.assertTrue(retVal['OK'])
-    self.assertEqual(len(retVal['Value']), 195)
+    self.assertEqual(len(retVal['Value']), 196)
 
 
 if __name__ == '__main__':
