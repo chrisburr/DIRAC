@@ -203,6 +203,7 @@ procedure getAllMetadata(v_jobid NUMBER, v_prod number, a_Cursor  out udt_RefCur
 function getProducedEvents(v_prodid number) return number;
 procedure bulkgetIdsFromFiles(lfns varchararray,  a_Cursor out udt_RefCursor);
 PROCEDURE insertProdnOutputFtypes(v_production number, v_stepid number, v_filetypeid number, v_visible char, v_eventtype number);
+function getJobIdWithoutReplicaCheck(v_FileNamevarchar2)return number;
 end;
 /
 
@@ -2136,6 +2137,21 @@ EXCEPTION
     UPDATE productionoutputfiles SET stepid=v_stepid WHERE production=v_production and filetypeid=v_filetypeid and visible =v_visible and eventtypeid=v_eventtype;
     commit;
 END;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+function getJobIdWithoutReplicaCheck(
+  v_FileName             varchar2
+ )return number
+ is
+ jId number;
+ begin
+  select jobs.jobid into jId from files,jobs where
+       files.jobid=jobs.jobid and
+       files.FileName=v_FileName;
 
+   return (jId);
+   EXCEPTION WHEN OTHERS THEN
+  return 0;
+  end;
+end;
 END; 
 /

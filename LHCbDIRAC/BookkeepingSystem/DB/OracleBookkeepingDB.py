@@ -1887,7 +1887,7 @@ class OracleBookkeepingDB(object):
     if depth:
       depth -= 1
       result = self.dbR_.executeStoredFunctions(
-          'BKK_MONITORING.getJobIdWithoutReplicaCheck', types.LongType, [fileName])
+          'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', types.LongType, [fileName])
 
       if not result["OK"]:
         gLogger.error('Error getting jobID', result['Message'])

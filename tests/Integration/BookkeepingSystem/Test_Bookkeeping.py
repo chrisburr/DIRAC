@@ -3110,5 +3110,6 @@ if __name__ == '__main__':
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMethods))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestBookkeepingUserInterface))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestRemoveFiles))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestDestoryDataset))
   testResult = unittest.TextTestRunner(verbosity=2, failfast=True).run(suite)
   sys.exit(not testResult.wasSuccessful())
