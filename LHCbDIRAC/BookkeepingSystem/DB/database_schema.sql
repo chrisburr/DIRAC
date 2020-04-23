@@ -253,7 +253,7 @@ BEFORE INSERT
     RAISE_APPLICATION_ERROR(-20001,'The processing pass name can not contain / characther!!!');
   END IF;
 END;
-
+/
 ---------------------------------------------------------------------------------------
 CREATE TABLE filetypes(
     filetypeid  NUMBER,
@@ -427,15 +427,13 @@ END;
 /
 
 CREATE OR REPLACE EDITIONABLE TRIGGER steps_before_insert
-BEFORE INSERT
-   ON steps
-   FOR EACH ROW
+BEFORE INSERT ON steps
+FOR EACH ROW
 DECLARE
 BEGIN
   IF INSTR(:new.processingpass,'/') > 0 then
     RAISE_APPLICATION_ERROR(-20001,'The processing pass name can not contain / characther!!!');
   END IF;
-
 END;
 /
 
@@ -444,7 +442,6 @@ BEFORE UPDATE ON steps
 referencing new AS new old AS old
 FOR EACH ROW DECLARE rowcnt NUMBER;
 BEGIN
-
   SELECT COUNT(*) INTO rowcnt FROM stepscontainer s WHERE s.stepid=:new.stepid;
     IF rowcnt > 0 THEN
        DBMS_OUTPUT.PUT_LINE('      Tag: '||:new.Visible||:old.stepname);
@@ -461,7 +458,6 @@ BEGIN
        :new.processingpass:=:old.processingpass;
        --raise_application_error (-20999,'You are not allowed to modify already used steps!');
     END IF;
-
 END;
 /
 
@@ -595,11 +591,13 @@ CREATE TABLE files(
     PARTITION SECT_0520M VALUES LESS THAN (520000000)
 ) NOLOGGING;
 
-CREATE INDEX files_filetypeid ON files (filetypeid); ALTER INDEX files_filetypeid UNUSABLE;
+CREATE INDEX files_filetypeid ON files (filetypeid);
+ALTER INDEX files_filetypeid UNUSABLE;
 CREATE INDEX files_guid ON files (guid);
-CREATE INDEX files_job_event_filetype ON files (jobid, eventtypeid, filetypeid) local;
-CREATE INDEX files_time_gotreplica ON files (inserttimestamp, gotreplica); ALTER INDEX files_time_gotreplica invisible;
-CREATE INDEX f_gotreplica ON files (gotreplica, visibilityflag, jobid) local;
+CREATE INDEX files_job_event_filetype ON files (jobid, eventtypeid, filetypeid) LOCAL;
+CREATE INDEX files_time_gotreplica ON files (inserttimestamp, gotreplica);
+ALTER INDEX files_time_gotreplica INVISIBLE;
+CREATE INDEX f_gotreplica ON files (gotreplica, visibilityflag, jobid) LOCAL;
 
 
 ---------------------------------------------------------------------------------------
@@ -702,7 +700,7 @@ FOR EACH ROW
 	  )
       );
   END;
-
+/
 
 ---------------------------------------------------------------------------------------
 CREATE TABLE productionoutputfiles(

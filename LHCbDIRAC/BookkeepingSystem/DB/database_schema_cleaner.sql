@@ -10,6 +10,18 @@
 
 -- Bookkeeping DB schema cleaner (Oracle)
 
+set serveroutput on
+
+--- DROP DBMS_SCHEDULER.JOB
+BEGIN
+  DBMS_SCHEDULER.drop_job(job_name => 'produpdatejob');
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -27475 THEN
+      RAISE;
+    END IF;
+END;
+/
 
 --- DROP VIEW
 BEGIN
@@ -20,34 +32,35 @@ EXCEPTION
       RAISE;
     END IF;
 END;
-
+/
 
 --- DROP TABLEs
 DECLARE table_names sys.dbms_debug_vc2coll
-  := sys.dbms_debug_vc2coll('applications',
-			    'jobs',
-			    'productionscontainer',
-			    'configurations',
-			    'data_taking_conditions',
-			    'dataquality',
-			    'tags',
-			    'processing',
-			    'filetypes',
-			    'files',
-			    'productionoutputfiles',
-			    'stepscontainer',
-			    'eventtypes',
+  := sys.dbms_debug_vc2coll(
+			    'applications',
 			    'inputfiles',
+			    'files',
+			    'tags',
+			    'stepscontainer',
 			    'newrunquality',
-			    'runstatus',
+			    'productionoutputfiles',
+			    'filetypes',
+			    'dataquality',
+			    'eventtypes',
 			    'runtimeprojects',
-			    'simulationconditions',
+			    'runstatus',
+			    'stepstmp',
+			    'jobs',
 			    'steps',
-			    'tags');
+			    'productionscontainer',
+			    'processing',
+			    'configurations',
+			    'simulationconditions',
+			    'data_taking_conditions'
+			    );
 BEGIN
   FOR tn IN table_names.first..table_names.last
   LOOP
-
     BEGIN
       EXECUTE IMMEDIATE 'DROP TABLE ' || table_names(tn);
     EXCEPTION
@@ -56,8 +69,6 @@ BEGIN
 	  RAISE;
 	END IF;
     END;
-
-
   END LOOP;
 END;
 /
@@ -77,17 +88,14 @@ DECLARE type_names sys.dbms_debug_vc2coll
 BEGIN
   FOR tn IN type_names.first..type_names.last
   LOOP
-
     BEGIN
       EXECUTE IMMEDIATE 'DROP SEQUENCE ' || type_names(tn);
     EXCEPTION
       WHEN OTHERS THEN
-	IF SQLCODE != -4043 THEN
+	IF SQLCODE != -2289 THEN
 	  RAISE;
 	END IF;
     END;
-
-
   END LOOP;
 END;
 /
@@ -116,7 +124,6 @@ DECLARE type_names sys.dbms_debug_vc2coll
 BEGIN
   FOR tn IN type_names.first..type_names.last
   LOOP
-
     BEGIN
       EXECUTE IMMEDIATE 'DROP TYPE ' || type_names(tn);
     EXCEPTION
@@ -125,8 +132,6 @@ BEGIN
 	  RAISE;
 	END IF;
     END;
-
-
   END LOOP;
 END;
 /
