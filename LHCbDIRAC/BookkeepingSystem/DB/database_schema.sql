@@ -678,6 +678,12 @@ CREATE TABLE STEPSCONTAINER
 
   CREATE INDEX STEPS_ID ON STEPSCONTAINER (STEPID);
 
+CREATE TABLE prodrunview_table (
+  production number NOT NULL,
+  runnumber number NOT NULL,
+  CONSTRAINT prod_run_const UNIQUE (production, runnumber)
+);
+
 BEGIN
   DBMS_SCHEDULER.CREATE_JOB (
      job_name             => 'produpdatejob',
@@ -690,3 +696,14 @@ BEGIN
 END;
 /
 
+BEGIN
+	DBMS_SCHEDULER.CREATE_JOB (
+			job_name             => 'produpdatejob',
+			job_type             => 'PLSQL_BLOCK',
+			job_action           => 'BEGIN BKUTILITIES.updateProdOutputFiles(); END;',
+			repeat_interval      => 'FREQ=MINUTELY; interval=10',
+			start_date           => systimestamp,
+			enabled              =>  TRUE
+			);
+	END;
+/
