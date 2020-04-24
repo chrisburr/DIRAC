@@ -678,6 +678,12 @@ CREATE TABLE STEPSCONTAINER
 
   CREATE INDEX STEPS_ID ON STEPSCONTAINER (STEPID);
 
+CREATE TABLE prodrunview_table (
+  production number NOT NULL,
+  runnumber number NOT NULL,
+  CONSTRAINT prod_run_const UNIQUE (production, runnumber)
+);
+
 BEGIN
   DBMS_SCHEDULER.CREATE_JOB (
      job_name             => 'produpdatejob',
@@ -690,9 +696,14 @@ BEGIN
 END;
 /
 
-create materialized view prodrunview
-PARALLEL 4
-build immediate
-refresh next sysdate+3/24
-as select distinct jobs.Production, jobs.runnumber from jobs, files where files.jobid=jobs.jobid and files.gotreplica='Yes' and files.visibilityflag='Y' and jobs.runnumber is not NULL;
-
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+     job_name             => 'prodrunupdatejob',
+     job_type             => 'PLSQL_BLOCK',
+     job_action           => 'BEGIN BKUTILITIES.updateprodrunview(); END;',
+     repeat_interval      => 'FREQ=MINUTELY; interval=20',
+     start_date           => systimestamp,
+     enabled              =>  TRUE
+     );
+END;
+/

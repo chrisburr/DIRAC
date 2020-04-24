@@ -332,6 +332,38 @@ use the following queries for debug:
 	
 	commit;
 
+===============================================
+Automatic updating of the prodrunview
+===============================================
+Create an oracle periodic job:
+
+.. code-block:: sql
+
+  BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+     job_name             => 'prodrunupdatejob',
+     job_type             => 'PLSQL_BLOCK',
+     job_action           => 'BEGIN BKUTILITIES.updateprodrunview(); END;',
+     repeat_interval      => 'FREQ=MINUTELY; interval=20',
+     start_date           => systimestamp,
+     enabled              =>  TRUE
+     );
+  END;
+  /
+
+For monitoring:
+
+.. code-block:: sql
+
+    select JOB_NAME, STATE, LAST_START_DATE, LAST_RUN_DURATION, NEXT_RUN_DATE, RUN_COUNT, FAILURE_COUNT from USER_SCHEDULER_JOBS;
+
+Debugging the produpdatejob in case of failure:
+
+- sqlplus LHCB_DIRACBOOKKEEPING/xxxxx@LHCB_DIRACBOOKKEEPING
+- set serveroutput on
+- exec BKUTILITIES.updateprodrunview();
+
+You will see the problematic production, which you will need to fix.
 
 ====================
 Managing partitions

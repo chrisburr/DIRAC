@@ -91,7 +91,7 @@ class OracleBookkeepingDB(object):
       else:
         return S_ERROR('isMulticore is not Y or N!')
     result = S_ERROR()
-    if len(in_dict) > 0:
+    if in_dict:
       infiletypes = in_dict.get('InputFileTypes', default)
       outfiletypes = in_dict.get('OutputFileTypes', default)
       matching = in_dict.get('Equal', 'YES')
@@ -372,7 +372,7 @@ class OracleBookkeepingDB(object):
         step = list(record[0:16])
         runtimeProject = []
         runtimeProject = [rec for rec in list(record[16:]) if rec is not None]
-        if len(runtimeProject) > 0:
+        if runtimeProject:
           runtimeProject = [runtimeProject]
         step += [{'ParameterNames': rParameters, 'Records': runtimeProject, 'TotalRecords': len(runtimeProject) + 1}]
         records += [step]
@@ -445,7 +445,7 @@ class OracleBookkeepingDB(object):
     :param list fileTypes: file types
     """
     fileTypes = sorted(fileTypes, key=lambda k: k['FileType'])
-    if len(fileTypes) == 0:
+    if not fileTypes:
       values = 'null'
     else:
       values = 'filetypesARRAY('
@@ -467,7 +467,7 @@ class OracleBookkeepingDB(object):
     :param list fileTypes: list of file types
     """
     fileTypes = sorted(fileTypes, key=lambda k: k['FileType'])
-    if len(fileTypes) == 0:
+    if not fileTypes:
       values = 'null'
     else:
       values = 'filetypesARRAY('
@@ -693,7 +693,7 @@ class OracleBookkeepingDB(object):
     ok = True
     rProjects = in_dict.get('RuntimeProjects', default)
     if rProjects != default:
-      if len(rProjects) > 0:
+      if rProjects:
         for i in rProjects:
           if 'StepId' not in in_dict:
             result = S_ERROR('The runtime project can not changed, because the StepId is missing!')
@@ -723,7 +723,7 @@ class OracleBookkeepingDB(object):
           if isinstance(in_dict[i], basestring):
             command += " %s='%s'," % (i, str(in_dict[i]))
           else:
-            if len(in_dict[i]) > 0:
+            if in_dict[i]:
               values = 'filetypesARRAY('
               ftypes = in_dict[i]
               ftypes = sorted(ftypes, key=lambda k: k['FileType'])
@@ -965,7 +965,7 @@ class OracleBookkeepingDB(object):
     command = 'select DAQPERIODID from data_taking_conditions where DESCRIPTION=\'' + str(desc) + '\''
     retVal = self.dbR_.query(command)
     if retVal['OK']:
-      if len(retVal['Value']) > 0:
+      if retVal['Value']:
         return S_OK(retVal['Value'][0][0])
       else:
         return S_OK(-1)
@@ -983,7 +983,7 @@ class OracleBookkeepingDB(object):
     command = "select simid from simulationconditions where simdescription='%s'" % (desc)
     retVal = self.dbR_.query(command)
     if retVal['OK']:
-      if len(retVal['Value']) > 0:
+      if retVal['Value']:
         return S_OK(retVal['Value'][0][0])
       else:
         return S_OK(-1)
@@ -1061,7 +1061,7 @@ class OracleBookkeepingDB(object):
 
     tables = ' productionoutputfiles prod, productionscontainer cont, filetypes ftypes '
     condition = " and cont.production=prod.production %s " % self.__buildVisible(visible=visible,
-                                                                                 replicaFlag='Yes')
+                                                                                 replicaFlag=replicaFlag)
 
     retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
     if not retVal['OK']:
@@ -1116,7 +1116,8 @@ class OracleBookkeepingDB(object):
                            filetype=default, quality=default,
                            visible=default, replicaflag=default,
                            startDate=None, endDate=None, runnumbers=None,
-                           startRunID=None, endRunID=None, tcks=default, selection=None):
+                           startRunID=None, endRunID=None, tcks=default, jobStart=None,
+                           jobEnd=None, selection=None):
     """For retrieving files with meta data.
 
     :param str configName: configuration name
@@ -1129,12 +1130,14 @@ class OracleBookkeepingDB(object):
     :param str quality: data quality flag
     :param str visible: visibility flag
     :param str replicaflag: replica flag
-    :param datetime startDate: job/run start time stamp
-    :param datetime endDate: job/run end time stamp
+    :param datetime startDate: job/run insert start time stamp
+    :param datetime endDate: job/run end insert time stamp
     :param list runnumbers: run numbers
     :param long startRunID: start run
     :param long endRunID: end run
     :param str tcks: TCK number
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :return: a list of files with their metadata
     """
 
@@ -1153,6 +1156,11 @@ class OracleBookkeepingDB(object):
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible=visible, replicaFlag=replicaflag)
 
     retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
+    if not retVal['OK']:
+      return retVal
+    condition, tables = retVal['Value']
+
+    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1336,7 +1344,7 @@ class OracleBookkeepingDB(object):
       return retVal
     else:
       value = retVal['Value']
-      if len(value) != 0:
+      if value:
         simdesc = value[0][0]
         daqdesc = value[0][1]
       else:
@@ -1778,7 +1786,7 @@ class OracleBookkeepingDB(object):
       result = retVal
     else:
 
-      if len(retVal['Value']) == 0:
+      if not retVal['Value']:
         result = S_ERROR('This ' + str(runNb) + ' run is missing in the BKK DB!')
       else:
         retVal = self.__getDataQualityId(flag)
@@ -1829,7 +1837,7 @@ class OracleBookkeepingDB(object):
       result = retVal
     else:
 
-      if len(retVal['Value']) == 0:
+      if not retVal['Value']:
         result = S_ERROR('This ' + str(prod) + ' production is missing in the BKK DB!')
       else:
         retVal = self.__getDataQualityId(flag)
@@ -1879,7 +1887,7 @@ class OracleBookkeepingDB(object):
     if depth:
       depth -= 1
       result = self.dbR_.executeStoredFunctions(
-          'BKK_MONITORING.getJobIdWithoutReplicaCheck', types.LongType, [fileName])
+          'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', types.LongType, [fileName])
 
       if not result["OK"]:
         gLogger.error('Error getting jobID', result['Message'])
@@ -1929,7 +1937,7 @@ class OracleBookkeepingDB(object):
       files = []
       failed += self.getFileAncestorHelper(fileName, files, depth, replica)
       logicalFileNames['Failed'] = failed
-      if len(files) > 0:
+      if files:
         ancestorList[fileName] = files
         tmpfiles = {}
         for i in files:
@@ -2035,7 +2043,7 @@ class OracleBookkeepingDB(object):
     result = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.checkfile', [fileName])
     if result['OK']:
       res = result['Value']
-      if len(res) != 0:
+      if res:
         return S_OK(res)
       else:
         gLogger.warn("File not found! ", "%s" % fileName)
@@ -2068,7 +2076,7 @@ class OracleBookkeepingDB(object):
     retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.checkEventType', [eventTypeId])
     if retVal['OK']:
       value = retVal['Value']
-      if len(value) != 0:
+      if value:
         result = S_OK(value)
       else:
         gLogger.error("Event type not found:", "%s" % eventTypeId)
@@ -2394,7 +2402,7 @@ class OracleBookkeepingDB(object):
       for i in retVal['Value']:
         failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
         fileNames.remove(i[0])
-      if len(fileNames) > 0:
+      if fileNames:
         retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
                                                   parameters=['No'],
                                                   output=False,
@@ -2502,7 +2510,7 @@ class OracleBookkeepingDB(object):
     nbOfEvents = 0
     filesSize = 0
     ftype = ftypeDict['type']
-    if len(sortDict) > 0:
+    if sortDict:
       res = self.__getProductionStatisticsForUsers(prod)
       if not res['OK']:
         gLogger.error(res['Message'])
@@ -2594,7 +2602,7 @@ class OracleBookkeepingDB(object):
       for i in retVal['Value']:
         failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
         fileNames.remove(i[0])
-      if len(fileNames) > 0:
+      if fileNames:
         retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
                                                   parameters=['Yes'],
                                                   output=False,
@@ -2632,7 +2640,7 @@ class OracleBookkeepingDB(object):
       result = retVal
     else:
       value = retVal['Value']
-      if len(value) == 0:
+      if not value:
         result = S_ERROR('This run is missing in the BKK DB!')
       else:
         values = {'Configuration Name': value[0][1], 'Configuration Version': value[0][2], 'FillNumber': value[0][0]}
@@ -2658,7 +2666,7 @@ class OracleBookkeepingDB(object):
             result = retVal
           else:
             value = retVal['Value']
-            if len(value) == 0:
+            if not value:
               result = S_ERROR('Replica flag is not set!')
             else:
               nbfile = []
@@ -2759,7 +2767,7 @@ class OracleBookkeepingDB(object):
           record = dict(zip(fields, i))
           values[rnb] = record
 
-        if len(statistics) > 0:
+        if statistics:
           filesFields = ['NBOFFILES', 'EVENTSTAT',
                          'FILESIZE', 'FULLSTAT',
                          'LUMINOSITY', 'INSTLUMINOSITY',
@@ -2822,14 +2830,14 @@ class OracleBookkeepingDB(object):
           noreplicas += [lfn[0]]
       result['replica'] = replicas
       result['noreplica'] = noreplicas
-    elif len(lfns) != 0:
+    elif lfns:
       for lfn in lfns:
         command = " select files.filename, files.gotreplica from files where filename='%s'" % (lfn)
         retVal = self.dbR_.query(command)
         if not retVal['OK']:
           return S_ERROR(retVal['Message'])
         value = retVal['Value']
-        if len(value) == 0:
+        if not value:
           missing += [lfn]
         else:
           for i in value:
@@ -2856,7 +2864,7 @@ class OracleBookkeepingDB(object):
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
       result = retVal
-    elif len(retVal['Value']) == 0:
+    elif not retVal['Value']:
       result = S_ERROR('Job not in the DB')
     else:
       jobid = retVal['Value'][0][0]
@@ -2865,7 +2873,7 @@ class OracleBookkeepingDB(object):
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
         result = retVal
-      elif len(retVal['Value']) == 0:
+      elif not retVal['Value']:
         result = S_ERROR('Log file is not exist!')
       else:
         result = S_OK(retVal['Value'][0][0])
@@ -2990,7 +2998,7 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
       return retVal
     else:
       value = retVal['Value']
-      if len(value) != 0:
+      if value:
         simdesc = value[0][0]
         daqdesc = value[0][1]
       else:
@@ -3248,7 +3256,7 @@ and files.qualityid= dataquality.qualityid" % lfn
             name = lfn[0]
             retVal = self.getFileDescendents([name], 1, 0, True)
             successful = retVal['Value']['Successful']
-            if len(successful) == 0:
+            if not successful:
               ok = False
           if ok:
             processedRuns += [i]
@@ -3369,7 +3377,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                startDate=None, endDate=None,
                nbofEvents=False, startRunID=None,
                endRunID=None, runnumbers=None,
-               replicaFlag=default, visible=default, filesize=False, tcks=None):
+               replicaFlag=default, visible=default, filesize=False, tcks=None,
+               jobStart=None, jobEnd=None):
     """returns a list of lfns.
 
     :param str simdesc: simulation condition description
@@ -3381,8 +3390,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param long production: production number
     :param str flag: data quality flag
-    :param datetime startDate: job/run start time stamp
-    :param datetime endDate: job/run end time stamp
+    :param datetime startDate: job/run insert start time stamp
+    :param datetime endDate: job/run insert end time stamp
     :param bool nbofEvents: count number of events
     :param long startRunID: start run number
     :param long endRunID: end run number
@@ -3391,6 +3400,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str visible: file visibility flag
     :param bool filesize: only sum the files size
     :param list tcks: list of run TCKs
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :returns: list of files
     """
 
@@ -3439,6 +3450,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     condition, tables = retVal['Value']
 
     retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
+    if not retVal['OK']:
+      return retVal
+    condition, tables = retVal['Value']
+
+    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3537,7 +3553,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         if 'productionoutputfiles' not in tables.lower():
           tables += ' ,productionoutputfiles prod'
 
-      if isinstance(production, list) and len(production) > 0:
+      if isinstance(production, list) and production:
         condition += ' and '
         cond = ' ( '
         for i in production:
@@ -3630,7 +3646,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     if ftype not in [default, None]:
       if tables.lower().find('filetypes') < 0:
         tables += ' ,filetypes ft'
-      if isinstance(ftype, list) and len(ftype) > 0:
+      if isinstance(ftype, list) and ftype:
         condition += ' and '
         cond = ' ( '
         for i in ftype:
@@ -3683,7 +3699,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, basestring) and runnumbers.upper() != default:
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
-    elif isinstance(runnumbers, list) and len(runnumbers) > 0:
+    elif isinstance(runnumbers, list) and runnumbers:
       cond = ' ( '
       for i in runnumbers:
         cond += ' %s.runnumber=%s or ' % (table, str(i))
@@ -3729,7 +3745,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         if 'productionoutputfiles' not in tables.lower():
           tables += ' ,productionoutputfiles prod'
 
-      if isinstance(evt, (list, tuple)) and len(evt) > 0:
+      if isinstance(evt, (list, tuple)) and evt:
         condition += ' and '
         cond = ' ( '
         for i in evt:
@@ -3739,7 +3755,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       elif isinstance(evt, (basestring, int, long)):
         condition += ' and %s.eventtypeid=%s' % (table, str(evt))
       if useMainTables:
-        if isinstance(evt, (list, tuple)) and len(evt) > 0:
+        if isinstance(evt, (list, tuple)) and evt:
           condition += ' and '
           cond = ' ( '
           for i in evt:
@@ -3772,6 +3788,28 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_OK((condition, tables))
 
   #############################################################################
+  @staticmethod
+  def __buildJobsStartJobEndDate(jobStartDate, jobEndDate, condition, tables):
+    """it adds the start and end date to the files table.
+
+    :param datetime startDate:  file insert start date
+    :param datetime jobStartDate:  file insert start date
+    :param datetime jobEndDate: file insert end date
+    :param str condition: condition string
+    :param str tables: tables used by join
+    :return: condition and tables
+    """
+    if jobStartDate not in [None, default, []]:
+      condition += " and j.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobStartDate))
+
+    if jobEndDate not in [None, default, []]:
+      condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobEndDate))
+    elif jobStartDate not in [None, default, []] and jobEndDate in [None, default, []]:
+      currentTimeStamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+      condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
+    return S_OK((condition, tables))
+
+  #############################################################################
   def __buildDataquality(self, flag, condition, tables):
     """it adds the data quality to the files table.
 
@@ -3789,7 +3827,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           res = self.dbR_.query(command)
           if not res['OK']:
             gLogger.error('Data quality problem:', res['Message'])
-          elif len(res['Value']) == 0:
+          elif not res['Value']:
             return S_ERROR('No file found! Dataquality is missing!')
           else:
             quality = res['Value'][0][0]
@@ -3801,7 +3839,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         res = self.dbR_.query(command)
         if not res['OK']:
           gLogger.error('Data quality problem:', res['Message'])
-        elif len(res['Value']) == 0:
+        elif not res['Value']:
           return S_ERROR('No file found! Dataquality is missing!')
         else:
           quality = res['Value'][0][0]
@@ -3876,7 +3914,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                                   production=default, flag=default,
                                   startDate=None, endDate=None,
                                   nbofEvents=False, startRunID=None,
-                                  endRunID=None, runnumbers=None, replicaFlag='Yes', tcks=None):
+                                  endRunID=None, runnumbers=None, replicaFlag='Yes',
+                                  tcks=None, jobStart=None, jobEnd=None):
     """For  retrieving only visible files.
 
     :param str simdesc: simulation desctription
@@ -3888,13 +3927,15 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param long production: production number
     :param str flag: data quality
-    :param datetime startDate: job start time stamp
-    :param datetime endDate: job end time stamp
+    :param datetime startDate: job start insert time stamp
+    :param datetime endDate: job end insert time stamp
     :param bool nbofEvemts: count number of events
     :param long startRunID: start run number
     :param long endRunID: end run number
     :param str replicaFlag: file replica flag
     :param list tcks: run TCKs
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :return: the visible files
     """
     conddescription = datataking
@@ -3920,13 +3961,15 @@ and files.qualityid= dataquality.qualityid" % lfn
                                      startRunID,
                                      endRunID,
                                      tcks,
+                                     jobStart,
+                                     jobEnd,
                                      selection)
 
   #############################################################################
   def getFilesSummary(self, configName, configVersion, conditionDescription=default, processingPass=default,
                       eventType=default, production=default, fileType=default, dataQuality=default,
                       startRun=default, endRun=default, visible=default, startDate=None, endDate=None,
-                      runNumbers=None, replicaFlag=default, tcks=default):
+                      runNumbers=None, replicaFlag=default, tcks=default, jobStart=None, jobEnd=None):
     """File summary for a given data set.
 
     :param str configName: configuration name
@@ -3940,11 +3983,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long startRun: satart run number
     :param long endRun: end run number
     :param str visible: visibility flag
-    :param datetime startDate: job start time stamp
-    :param datetime endDate: job end time stamp
+    :param datetime startDate: job start insert time stamp
+    :param datetime endDate: job end insert time stamp
     :param list runNumbers: list of run numbers
     :param str replicaFlag: file replica flag
     :param list tcks: list of run TCKs
+    :param datetime jobStart: job starte date
+    :param datetime jobEnd: job end date
     :retun: the number of event, files, etc for a given data set
     """
 
@@ -3957,6 +4002,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible=visible, replicaFlag=replicaFlag)
 
     retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
+    if not retVal['OK']:
+      return retVal
+    condition, tables = retVal['Value']
+
+    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -4125,7 +4175,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = 'select DaqPeriodId from data_taking_conditions where '
     for param in condition:
-      if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
+      if isinstance(condition[param], basestring) and not condition[param].strip():
         command += str(param) + ' is NULL and '
       elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4135,11 +4185,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     command = command[:-4]
     res = self.dbR_.query(command)
     if res['OK']:
-      if len(res['Value']) == 0:
+      if not res['Value']:
         command = 'select DaqPeriodId from data_taking_conditions where '
         for param in condition:
           if param != 'Description':
-            if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
+            if isinstance(condition[param], basestring) and not condition[param].strip():
               command += str(param) + ' is NULL and '
             elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4149,7 +4199,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = command[:-4]
         retVal = self.dbR_.query(command)
         if retVal['OK']:
-          if len(retVal['Value']) != 0:
+          if retVal['Value']:
             return S_ERROR('Only the Description is different, \
             the other attributes are the same and they are exists in the DB!')
     return res
@@ -4164,7 +4214,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = 'select description from data_taking_conditions where '
     for param in condition:
-      if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
+      if isinstance(condition[param], basestring) and not condition[param].strip():
         command += str(param) + ' is NULL and '
       elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4174,11 +4224,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     command = command[:-4]
     res = self.dbR_.query(command)
     if res['OK']:
-      if len(res['Value']) == 0:
+      if not res['Value']:
         command = 'select DaqPeriodId from data_taking_conditions where '
         for param in condition:
           if param != 'Description':
-            if isinstance(condition[param], basestring) and len(condition[param].strip()) == 0:
+            if isinstance(condition[param], basestring) and not condition[param].strip():
               command += str(param) + ' is NULL and '
             elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4188,7 +4238,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = command[:-4]
         retVal = self.dbR_.query(command)
         if retVal['OK']:
-          if len(retVal['Value']) != 0:
+          if retVal['Value']:
             return S_ERROR('Only the Description is different,\
              the other attributes are the same and they are exists in the DB!')
     return res
@@ -4232,7 +4282,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     and applicationversion='%s' %s " % (programName, programVersion, condition)
     retVal = self.dbR_.query(command)
     if retVal['OK']:
-      if len(retVal['Value']) == 0:
+      if not retVal['Value']:
         retVal = self.insertStep(dataset)
         if retVal['OK']:
           return S_OK([retVal['Value'], 'Real Data'])
@@ -4311,7 +4361,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = "select id from processing where name='%s' and parentid is null" % (i)
       retVal = self.dbR_.query(command)
       if retVal['OK']:
-        if len(retVal['Value']) == 0:
+        if not retVal['Value']:
           if parentid is not None:
             command = 'select max(id)+1 from processing'
             retVal = self.dbR_.query(command)

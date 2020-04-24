@@ -955,6 +955,16 @@ class TestMethods(DataInsertTestCase):
     retVal = self.bk.getFiles(bkQuery)
     self.assertEqual(len(retVal['Value']), 2314)
 
+    bkQuery['JobStartDate'] = "2011-06-03 01:14:00"
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertEqual(len(retVal['Value']), 2049)
+
+    bkQuery['JobEndDate'] = "2011-06-03 23:00:00"
+    retVal = self.bk.getFiles(bkQuery)
+    self.assertEqual(len(retVal['Value']), 31)
+    bkQuery.pop('JobStartDate')
+    bkQuery.pop('JobEndDate')
+
     bkQuery['NbOfEvents'] = True
     retVal = self.bk.getFiles(bkQuery)
     self.assertEqual(retVal['Value'], [69542587])
@@ -1131,6 +1141,24 @@ class TestMethods(DataInsertTestCase):
     self.assertEqual(retVal['Value']['TotalRecords'], 2314)
     self.assertEqual(len(retVal['Value']['Records']), 2314)
     self.assertEqual(retVal['Value']['ParameterNames'], paramNames)
+
+    bkQuery['JobStartDate'] = "2011-06-03 01:14:00"
+    retVal = self.bk.getFilesWithMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertTrue(len(retVal['Value']) > 0)
+    self.assertEqual(retVal['Value']['TotalRecords'], 2049)
+    self.assertEqual(len(retVal['Value']['Records']), 2049)
+    self.assertEqual(retVal['Value']['ParameterNames'], paramNames)
+
+    bkQuery['JobEndDate'] = "2011-06-03 23:00:00"
+    retVal = self.bk.getFilesWithMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertTrue(len(retVal['Value']) > 0)
+    self.assertEqual(retVal['Value']['TotalRecords'], 31)
+    self.assertEqual(len(retVal['Value']['Records']), 31)
+    self.assertEqual(retVal['Value']['ParameterNames'], paramNames)
+    bkQuery.pop('JobStartDate')
+    bkQuery.pop('JobEndDate')
 
     bkQuery['RunNumber'] = [90104, 92048, 87851]
     retVal = self.bk.getFilesWithMetadata(bkQuery)
@@ -3082,5 +3110,6 @@ if __name__ == '__main__':
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMethods))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestBookkeepingUserInterface))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestRemoveFiles))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestDestoryDataset))
   testResult = unittest.TextTestRunner(verbosity=2, failfast=True).run(suite)
   sys.exit(not testResult.wasSuccessful())
