@@ -32,8 +32,8 @@ class UtilitiesTestCase(unittest.TestCase):
 
     for i in _TWO:
       for j in _TWO:
-	result = enoughParams({i: 'Test', j: 'Test'})
-	self.assertEqual(result, False)
+        result = enoughParams({i: 'Test', j: 'Test'})
+        self.assertEqual(result, False)
 
     result = enoughParams({'ConfigName': 'Test', 'ConfigVersion': 'Test', 'Production': 'Test'})
     self.assertEqual(result, True)

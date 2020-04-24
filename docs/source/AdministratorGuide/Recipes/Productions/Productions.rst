@@ -59,22 +59,22 @@ Example:
     Jobs: 200059983, 200171070, 200415532, 201337455, 201397489
     Sites (CPU): LCG.IN2P3.fr (3609 s), LCG.IN2P3.fr (3635 s), LCG.IN2P3.fr (3626 s), LCG.IN2P3.fr (3617 s), LCG.IN2P3.fr (3649 s)
       5 jobs terminated with status: Failed; Job stalled: pilot not running; DaVinci step 1
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 3001. Record number within stream 1: 3001
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 4001. Record number within stream 1: 4001
-    	  2 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 5001. Record number within stream 1: 5001
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 3001. Record number within stream 1: 3001
+          1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 3001. Record number within stream 1: 3001
+          1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 4001. Record number within stream 1: 4001
+          2 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 5001. Record number within stream 1: 5001
+          1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 3001. Record number within stream 1: 3001
 
      1 LFNs: ['/lhcb/LHCb/Collision17/RDST/00066581/0007/00066581_00074330_1.rdst'] : Status of corresponding 7 jobs (sorted):
     Jobs: 200339756, 200636702, 200762354, 200913317, 200945856, 201337457, 201397490
     Sites (CPU): LCG.IN2P3.fr (32 s), LCG.IN2P3.fr (44 s), LCG.IN2P3.fr (46 s), LCG.IN2P3.fr (45 s), LCG.IN2P3.fr (44 s), LCG.IN2P3.fr (3362 s), LCG.IN2P3.fr (38 s)
       7 jobs terminated with status: Failed; Job stalled: pilot not running; DaVinci step 1
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec INFO: DIRAC JobID 200339756 is running at site LCG.IN2P3.fr
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 2001. Record number within stream 1: 2001
-    	  1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
+          1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec INFO: DIRAC JobID 200339756 is running at site LCG.IN2P3.fr
+          1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
+          1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
+          1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
+          1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
+          1 jobs stalled with last line: (LCG.IN2P3.fr) EventSelector     SUCCESS Reading Event record 2001. Record number within stream 1: 2001
+          1 jobs stalled with last line: (LCG.IN2P3.fr) dirac-jobexec/Subprocess VERBOSE: systemCall: ['lb-run', '--use-grid', '-c', 'best', '--use=AppConfig v3r [...]
 
 So 2 files have to be hospitalised. Reset them Unused:
 

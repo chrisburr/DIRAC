@@ -188,22 +188,22 @@ class BookkeepingReport(ModuleBase):
   def __makeBookkeepingXML(self, bkLFNs, logFilePath):
     """Bookkeeping xml looks like this::
 
-	<Job ConfigName="" ConfigVersion="" Date="" Time="">
-	  <TypedParameter Name="" Type="" Value=""/>
-	  ...
-	  <InputFile Name=""/>
-	  ...
-	  <OutputFile Name="" TypeName="" TypeVersion="">
-	    <Parameter Name="" Value=""/>
-	    ...
-	    <Replica Location="" Name=""/>
-	    ....
-	  </OutputFile>
-	  ...
-	  <SimulationCondition>
-	    <Parameter Name="" Value=""/>
-	  </SimulationCondition>
-	</Job>
+        <Job ConfigName="" ConfigVersion="" Date="" Time="">
+          <TypedParameter Name="" Type="" Value=""/>
+          ...
+          <InputFile Name=""/>
+          ...
+          <OutputFile Name="" TypeName="" TypeVersion="">
+            <Parameter Name="" Value=""/>
+            ...
+            <Replica Location="" Name=""/>
+            ....
+          </OutputFile>
+          ...
+          <SimulationCondition>
+            <Parameter Name="" Value=""/>
+          </SimulationCondition>
+        </Job>
 
     """
     # Generate XML document
@@ -235,7 +235,7 @@ class BookkeepingReport(ModuleBase):
   def __generateJobNode(self, doc):
     """Node looks like.this::
 
-	<Job ConfigName="" ConfigVersion="" Date="" Time="">
+        <Job ConfigName="" ConfigVersion="" Date="" Time="">
     """
 
     # Get the Config name from the environment if any
@@ -255,7 +255,7 @@ class BookkeepingReport(ModuleBase):
   def __generateTypedParams(self, jobNode):
     """TypedParameter looks like this::
 
-	<TypedParameter Name="" Type="" Value="">
+        <TypedParameter Name="" Type="" Value="">
 
       List of possible TypedParameter names
       - CPUTIME
@@ -364,7 +364,7 @@ class BookkeepingReport(ModuleBase):
   def __generateInputFiles(self, jobNode, bkLFNs):
     """InputData looks like this::
 
-	 <InputFile Name=""/>
+         <InputFile Name=""/>
     """
 
     self.log.debug("Adding InputData: bkLFNs = %s" % bkLFNs)
@@ -391,10 +391,10 @@ class BookkeepingReport(ModuleBase):
     """OutputFile looks like this::
 
        <OutputFile Name="" TypeName="" TypeVersion="">
-	 <Parameter Name="" Value=""/>
-	 ...
-	 <Replica Location="" Name=""/>
-	 ....
+         <Parameter Name="" Value=""/>
+         ...
+         <Replica Location="" Name=""/>
+         ....
        </OutputFile>
     """
 
@@ -577,9 +577,9 @@ class BookkeepingReport(ModuleBase):
   def __generateSimulationCondition(self, jobNode):
     """ SimulationCondition looks like this::
 
-	 <SimulationCondition>
-	   <Parameter Name="" Value=""/>
-	 </SimulationCondition>
+         <SimulationCondition>
+           <Parameter Name="" Value=""/>
+         </SimulationCondition>
     """
     if self.applicationName == "Gauss":
       jobNode, sim = addChildNode(jobNode, "SimulationCondition", 1, ())

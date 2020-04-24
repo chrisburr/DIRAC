@@ -9,5 +9,5 @@ will be in /home/dirac directory.
 
 Please follow `this instructions <https://dirac.readthedocs.io/en/latest/AdministratorGuide/InstallingDIRACService/index.html#additional-server-installation>`_
 and use the configuration file from /home/dirac/install.cfg
-		
+
 Make sure the dirac.cfg file is correctly created in the machine.
