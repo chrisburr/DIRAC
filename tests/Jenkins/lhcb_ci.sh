@@ -26,7 +26,7 @@
 source TestCode/DIRAC/tests/Jenkins/dirac_ci.sh
 
 #install file
-INSTALL_CFG_FILE=$TESTCODE/LHCbDIRAC/tests/Jenkins/install.cfg
+INSTALL_CFG_FILE="${TESTCODE}/LHCbDIRAC/tests/Jenkins/install.cfg"
 
 
 #.............................................................................
@@ -45,19 +45,18 @@ function findRelease(){
   echo '[findRelease]'
 
   # store the current branch
-  currentBranch=`git --git-dir=$TESTCODE/LHCbDIRAC/.git rev-parse --abbrev-ref HEAD`
+  currentBranch=$(git --git-dir=${TESTCODE}/LHCbDIRAC/.git rev-parse --abbrev-ref HEAD)
 
-  if [ $currentBranch == 'devel' ]
-  then
+  if [[ "${currentBranch}" = 'devel' ]]; then
     echo 'we were already on devel, no need to change'
     # get the releases.cfg file
-    cp $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg $TESTCODE/
+    cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
   else
-    git --git-dir=$TESTCODE/LHCbDIRAC/.git checkout devel
+    git --git-dir="${TESTCODE}/LHCbDIRAC/.git" checkout devel
     # get the releases.cfg file
-    cp $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg $TESTCODE/
+    cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
     # reset the branch
-    git --git-dir=$TESTCODE/LHCbDIRAC/.git checkout $currentBranch
+    git --git-dir="${TESTCODE}/LHCbDIRAC/.git" checkout "${currentBranch}"
   fi
 
   # Match project ( LHCbDIRAC ) version from releases.cfg
@@ -69,80 +68,74 @@ function findRelease(){
   #   LcgVer = 2013-09-24
   # }
 
-  if [ ! -z "$LHCBDIRAC_RELEASE" ]
-  then
+  if [[ -n "${LHCBDIRAC_RELEASE}" ]]; then
     echo '==> Specified release'
-    echo $LHCBDIRAC_RELEASE
-    projectVersion=$LHCBDIRAC_RELEASE
+    echo "${LHCBDIRAC_RELEASE}"
+    projectVersion="${LHCBDIRAC_RELEASE}"
   else
-    if [ ! -z "$LHCBDIRACBRANCH" ]
-    then
-      echo '==> Looking for LHCBDIRAC branch ' $LHCBDIRACBRANCH
+    if [[ -n "${LHCBDIRACBRANCH}" ]]; then
+      echo "==> Looking for LHCBDIRAC branch ${LHCBDIRACBRANCH}"
     else
       echo '==> Running on last one'
     fi
 
     # If I don't specify a LHCBDIRACBRANCH, it will get the latest "production" release
     # First, try to find if we are on a production tag
-    if [ ! -z "$LHCBDIRACBRANCH" ]
-    then
-      projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+    if [[ -n "${LHCBDIRACBRANCH}" ]]; then
+      projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep "${LHCBDIRACBRANCH}" | head -1 | sed 's/ //g')
     else
-      projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g'`
+      projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g')
     fi
 
     # The special case is when there's no 'p'... (e.g. version v8r3)
-    if [ ! "$projectVersion" ]
-    then
-      if [ ! -z "$LHCBDIRACBRANCH" ]
+    if [[ ! "$projectVersion" ]]; then
+      if [[ -n "${LHCBDIRACBRANCH}" ]]
       then
-        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep "${LHCBDIRACBRANCH}" | head -1 | sed 's/ //g')
       else
-        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g'`
+        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g')
       fi
     fi
 
     # In case there are no production tags for the branch, look for pre-releases in that branch
-    if [ ! "$projectVersion" ]
-    then
-      if [ ! -z "$LHCBDIRACBRANCH" ]
-      then
-        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep $LHCBDIRACBRANCH | head -1 | sed 's/ //g'`
+    if [[ ! "$projectVersion" ]]; then
+      if [[ -n "${LHCBDIRACBRANCH}" ]]; then
+        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep ${LHCBDIRACBRANCH} | head -1 | sed 's/ //g')
       else
-        projectVersion=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g'`
+        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g')
       fi
     fi
 
   fi
 
   # TODO: This should be made to fail to due set -u and -o pipefail
-  if [ ! "$projectVersion" ]; then
+  if [[ ! "${projectVersion}" ]]; then
     echo "Failed to set projectVersion"
     exit 1
   fi
 
-  echo PROJECT:$projectVersion && echo $projectVersion > project.version
+  echo PROJECT:"${projectVersion}" && echo "${projectVersion}" > project.version
 
   # projectVersionLine : line number where v7r15-pre2 is
-  projectVersionLine=`cat $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg | grep -n $projectVersion | cut -d ':' -f 1 | head -1`
+  projectVersionLine=$(cat "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" | grep -n "${projectVersion}" | cut -d ':' -f 1 | head -1)
   # start := line number after "{"
-  start=$(($projectVersionLine+2))
+  start=$((projectVersionLine+2))
   # end   := line number after "}"
-  end=$(($start+2))
+  end=$((start+2))
   # versions :=
   #   Modules = LHCbDIRAC:v7r15-pre2, LHCbWebDIRAC:v3r3p5
   #   Depends = DIRAC:v6r10-pre12
   #   LcgVer = 2013-09-24
-  versions=`sed -n "$start,$end p" $TESTCODE/LHCbDIRAC/LHCbDIRAC/releases.cfg`
+  versions=$(sed -n "$start,$end p" "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg")
 
   # Extract DIRAC version
-  diracVersion=`echo $versions | tr ' ' '\n' | grep ^DIRAC:v*[^,] | sed 's/,//g' | cut -d ':' -f2`
+  diracVersion=$(echo "$versions" | tr ' ' '\n' | grep "^DIRAC:v*[^,]" | sed 's/,//g' | cut -d ':' -f2)
   # Extract LHCbDIRAC version
-  lhcbdiracVersion=`echo $versions | tr ' ' '\n' | grep ^LHCbDIRAC:v* | sed 's/,//g' | cut -d ':' -f2`
+  lhcbdiracVersion=$(echo "$versions" | tr ' ' '\n' | grep "^LHCbDIRAC:v*" | sed 's/,//g' | cut -d ':' -f2)
 
   # PrintOuts
-  echo '==> ' DIRAC:$diracVersion && echo $diracVersion > dirac.version
-  echo '==> ' LHCbDIRAC:$lhcbdiracVersion && echo $lhcbdiracVersion > lhcbdirac.version
+  echo "==> DIRAC:${diracVersion}" && echo "${diracVersion}" > dirac.version
+  echo "==> LHCbDIRAC:${lhcbdiracVersion}" && echo "${lhcbdiracVersion}" > lhcbdirac.version
 }
 
 
@@ -159,22 +152,20 @@ diracServices(){
 
   services=$(cat services |  cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
 
-  for serv in $services
+  for serv in ${services}
   do
 
-    if [ "$serv" == "Bookkeeping/BookkeepingManager" ]
-    then
+    if [[ "${serv}" = 'Bookkeeping/BookkeepingManager' ]]; then
       setupBKKDB
 
-      if [ -z $DIRACOSVER ]
-      then
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/afs/cern.ch/project/oracle/amd64_linux26/prod/lib/
+      if [[ -z "${DIRACOSVER}" ]]; then
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/afs/cern.ch/project/oracle/amd64_linux26/prod/lib/"
         pip install cx_Oracle==7.2
       fi
     fi
 
-    echo '==> calling dirac-install-component' $serv $DEBUG
-    dirac-install-component $serv $DEBUG
+    echo "==> calling dirac-install-component ${serv} $DEBUG"
+    dirac-install-component "${serv}" "$DEBUG"
   done
 
 }
@@ -192,21 +183,20 @@ diracAgents(){
 
   agents=$(cat agents | cut -d '.' -f 1 | grep -Ev '(FTSAgent|CleanFTSDBAgent|MyProxy|CAUpdate|GOCDB2CS|Bdii2CS|StatesMonitoringAgent|DataProcessingProgressAgent|RAWIntegrityAgent|Nagios|AncestorFiles|BKInputData|LHCbPRProxyAgent|StorageUsageAgent|PopularityAnalysisAgent|SEUsageAgent|NotifyAgent|ShiftDBAgent)' | sed 's/System / /g' | sed 's/ /\//g')
 
-  for agent in $agents
-  do
-    if [[ $agent == *" JobAgent"* ]]
-    then
+  for agent in $agents; do
+    if [[ $agent = *'JobAgent'* ]]; then
       echo '==> '
     else
-      echo '==> calling dirac-cfg-add-option agent' $agent
-      python $TESTCODE/DIRAC/tests/Jenkins/dirac-cfg-add-option.py agent $agent
-      echo '==> calling dirac-agent' $agent -o MaxCycles=1 $DEBUG
-      dirac-agent $agent  -o MaxCycles=1 $DEBUG
+      echo "==> calling dirac-cfg-add-option agent $agent"
+      python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-add-option.py" "agent" "$agent"
+      echo "==> calling dirac-agent $agent -o MaxCycles=1 ${DEBUG}"
+      if ! dirac-agent "$agent"  -o MaxCycles=1 "${DEBUG}"; then
+        echo 'ERROR: dirac-agent failed'
+        exit 1
+      fi
     fi
   done
-
 }
-
 
 #-------------------------------------------------------------------------------
 # Here is where the real functions start
@@ -228,50 +218,43 @@ function LHCbDIRACPilotInstall(){
   prepareForPilot
   default
 
-  cp $TESTCODE/LHCbDIRAC/LHCbDIRAC/WorkloadManagementSystem/PilotAgent/LHCbPilotCommands.py $PILOTINSTALLDIR/
+  cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/WorkloadManagementSystem/PilotAgent/LHCbPilotCommands.py" "${PILOTINSTALLDIR}/"
 
-  if [ ! -z "$LHCBDIRAC_RELEASE" ]
-  then
+  if [[ -n "${LHCBDIRAC_RELEASE}" ]]; then
     echo '==> Specified release'
-    echo $LHCBDIRAC_RELEASE
+    echo "${LHCBDIRAC_RELEASE}"
     installVersion='-r'
-    installVersion+=" $LHCBDIRAC_RELEASE"
+    installVersion+=" ${LHCBDIRAC_RELEASE}"
   else
     installVersion=''
   fi
 
   #run the dirac-pilot script, only for installing, do not run the JobAgent here
   cwd=$PWD
-  cd $PILOTINSTALLDIR
-  if [ $? -ne 0 ]
-  then
-    echo 'ERROR: cannot change to ' $PILOTINSTALLDIR
-    return
+  if ! cd "${PILOTINSTALLDIR}"; then
+    echo "ERROR: cannot change to ${PILOTINSTALLDIR}"
+    return 9
   fi
 
-  commandList="LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements"
-  options="-S $DIRACSETUP -l LHCb $installVersion -g $lcgVersion -C $CSURL -N $JENKINS_CE -Q $JENKINS_QUEUE -n $JENKINS_SITE --cert --certLocation=/home/dirac/certs/ -E LHCbPilot"
+  commandList='LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements'
+  options="-S ${DIRACSETUP} -l LHCb $installVersion -C ${CSURL} -N ${JENKINS_CE} -Q ${JENKINS_QUEUE} -n ${JENKINS_SITE} --cert --certLocation=/home/dirac/certs/ -E LHCbPilot"
 
-  if [ "$customCommands" ]
-  then
+  if [[ "${customCommands}" ]]; then
     echo 'Using custom command list'
-    commandList=$customCommands
+    commandList="${customCommands}"
   fi
 
-  if [ "$customOptions" ]
-  then
+  if [[ "${customOptions}" ]]; then
     echo 'Using custom options'
-    options="$options -o $customOptions"
+    options="${options} -o ${customOptions}"
   fi
 
-  echo $( eval echo Executing python dirac-pilot.py $options -X $commandList $DEBUG)
-  python dirac-pilot.py $options -X $commandList $DEBUG
+  echo $( eval echo Executing python dirac-pilot.py "${options}" -X "${commandList}" "$DEBUG")
+  python dirac-pilot.py "${options}" -X "${commandList}" "$DEBUG"
 
-  cd $cwd
-  if [ $? -ne 0 ]
-  then
-    echo 'ERROR: cannot change to ' $cwd
-    return
+  if ! cd "${cwd}"; then
+    echo "ERROR: cannot change to ${cwd}"
+    return 9
   fi
 
   echo '==> Done LHCbDIRACPilotInstall'
@@ -287,50 +270,49 @@ function fullLHCbPilot(){
 
   #this should have been created, we source it so that we can continue (otherwise the dirac commands below are not found)
   echo '==> sourcing environmentLHCbDirac'
-  source $PILOTINSTALLDIR/environmentLHCbDirac
+  source "${PILOTINSTALLDIR}/environmentLHCbDirac"
 
-  echo -e '\n----PATH:'$PATH'\n----' | tr ":" "\n"
-  echo -e '\n----LD_LIBRARY_PATH:'$LD_LIBRARY_PATH'\n----' | tr ":" "\n"
-  echo -e '\n----DYLD_LIBRARY_PATH:'$DYLD_LIBRARY_PATH'\n----' | tr ":" "\n"
-  echo -e '\n----PYTHONPATH:'$PYTHONPATH'\n----' | tr ":" "\n"
+  echo -e "\n----PATH:${PATH}\n----" | tr ':' '\n'
+  echo -e "\n----LD_LIBRARY_PATH:${LD_LIBRARY_PATH}\n----" | tr ':' '\n'
+  echo -e "\n----DYLD_LIBRARY_PATH:${DYLD_LIBRARY_PATH}\n----" | tr ':' '\n'
+  echo -e "\n----RPATH:${RPATH}\n----" | tr ':' '\n'
+  echo -e "\n----PYTHONPATH:${PYTHONPATH}\n----" | tr ':' '\n'
 
   echo -e '\n----python'
-  echo $(python -V)
-  echo $(which python)
+  python -V
+  command -v python
 
   echo '==> Adding the LocalSE, for the subsequent tests'
-  dirac-configure -FDMH --UseServerCertificate -L CERN-SWTEST -O $PILOTINSTALLDIR/$PILOTCFG $PILOTINSTALLDIR/$PILOTCFG $DEBUG
+  dirac-configure -FDMH --UseServerCertificate -L CERN-SWTEST -O "${PILOTINSTALLDIR}/${PILOTCFG}" "${PILOTINSTALLDIR}/${PILOTCFG}" "$DEBUG"
 
   # be sure we only have pilot.cfg
 
   # check if errexit mode is set and disabling as the component may not exist
   save=$-
-  if [[ $save =~ e ]]
-  then
+  if [[ $save =~ e ]]; then
     set +e
   fi
 
-  mv $PILOTINSTALLDIR/etc/dirac.cfg $PILOTINSTALLDIR/etc/dirac.cfg-not-here
+  mv "${PILOTINSTALLDIR}/etc/dirac.cfg" "${PILOTINSTALLDIR}/etc/dirac.cfg-not-here"
 
   # re-enabling it
-  if [[ $save =~ e ]]
-  then
+  if [[ $save =~ e ]]; then
     set -e
   fi
 
   getUserProxy
 
   echo '==> Set not to use the server certificate for running the jobs'
-  dirac-configure -FDMH -o /DIRAC/Security/UseServerCertificate=False -O $PILOTINSTALLDIR/$PILOTCFG $PILOTINSTALLDIR/$PILOTCFG $DEBUG
+  dirac-configure -FDMH -o /DIRAC/Security/UseServerCertificate=False -O "${PILOTINSTALLDIR}/${PILOTCFG}" "${PILOTINSTALLDIR}/${PILOTCFG}" "$DEBUG"
 }
 
 function getUserProxy(){
 
   echo '==> Started getUserProxy'
 
-  touch $PILOTINSTALLDIR/$PILOTCFG
+  touch "${PILOTINSTALLDIR}/${PILOTCFG}"
   #Configure for CPUTimeLeft
-  python $TESTCODE/DIRAC/tests/Jenkins/dirac-cfg-update.py $PILOTINSTALLDIR/$PILOTCFG -F $PILOTINSTALLDIR/$PILOTCFG -S $DIRACSETUP -o /DIRAC/Security/UseServerCertificate=True -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem $DEBUG
+  python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-update.py" "${PILOTINSTALLDIR}/${PILOTCFG}" -F "${PILOTINSTALLDIR}/${PILOTCFG}" -S "${DIRACSETUP}" -o /DIRAC/Security/UseServerCertificate=True -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem "$DEBUG"
   #Getting a user proxy, so that we can run jobs
   downloadProxy
 
@@ -343,33 +325,30 @@ function submitAndMatch(){
   submitJob
 
   # Run the full pilot, including the JobAgent
-  cd $PILOTINSTALLDIR
-  if [ $? -ne 0 ]
-  then
-    echo 'ERROR: cannot change to ' $PILOTINSTALLDIR
-    return
+  if ! cd "${PILOTINSTALLDIR}"; then
+    echo "ERROR: cannot change to ${PILOTINSTALLDIR}"
+    return 9
   fi
   prepareForPilot
   default
   
   # Adding the LHCb pilot command files
-  cp $TESTCODE/LHCbDIRAC/LHCbDIRAC/WorkloadManagementSystem/PilotAgent/LHCbPilotCommands.py $PILOTINSTALLDIR/LHCbPilotCommands.py
+  cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/WorkloadManagementSystem/PilotAgent/LHCbPilotCommands.py" "${PILOTINSTALLDIR}/LHCbPilotCommands.py"
 
-  if [ ! -z "$PILOT_VERSION" ]
-  then
-    echo -e "==> Running python dirac-pilot.py -S $DIRACSETUP -l LHCb -r $PILOT_VERSION -g $lcgVersion -C $CSURL -N $JENKINS_CE -Q $JENKINS_QUEUE -n $JENKINS_SITE --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent $DEBUG"
-    python dirac-pilot.py -S $DIRACSETUP -l LHCb -r $PILOT_VERSION -g $lcgVersion -C $CSURL -N $JENKINS_CE -Q $JENKINS_QUEUE -n $JENKINS_SITE --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent $DEBUG
+  if [[ -n "$PILOT_VERSION" ]]; then
+    echo -e "==> Running python dirac-pilot.py -S ${DIRACSETUP} -l LHCb -r $PILOT_VERSION -C ${CSURL} -N ${JENKINS_CE} -Q ${JENKINS_QUEUE} -n ${JENKINS_SITE} --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent $DEBUG"
+    python dirac-pilot.py -S "${DIRACSETUP}" -l LHCb -r "$PILOT_VERSION" -C "${CSURL}" -N "${JENKINS_CE}" -Q "${JENKINS_QUEUE}" -n "${JENKINS_SITE}" --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent "$DEBUG"
   else
-    echo -e "==> Running python dirac-pilot.py -S $DIRACSETUP -l LHCb -g $lcgVersion -C $CSURL -N $JENKINS_CE -Q $JENKINS_QUEUE -n $JENKINS_SITE --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent $DEBUG"
-    python dirac-pilot.py -S $DIRACSETUP -l LHCb -g $lcgVersion -C $CSURL -N $JENKINS_CE -Q $JENKINS_QUEUE -n $JENKINS_SITE --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent $DEBUG
+    echo -e "==> Running python dirac-pilot.py -S ${DIRACSETUP} -l LHCb -C ${CSURL} -N ${JENKINS_CE} -Q ${JENKINS_QUEUE} -n ${JENKINS_SITE} --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent $DEBUG"
+    python dirac-pilot.py -S "${DIRACSETUP}" -l LHCb -C "${CSURL}" -N "${JENKINS_CE}" -Q "${JENKINS_QUEUE}" -n "${JENKINS_SITE}" --cert --certLocation=/home/dirac/certs/ -M 4 -E LHCbPilot -X LHCbGetPilotVersion,CheckWorkerNode,LHCbInstallDIRAC,LHCbConfigureBasics,CheckCECapabilities,CheckWNCapabilities,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements,LaunchAgent "$DEBUG"
   fi
 }
 
 function installLHCbDIRAC(){
 
-  if [ ! "$LBRUNRELEASE" ]
   findRelease
-  then
+
+  if [[ ! "${LBRUNRELEASE}" ]]; then
     echo '==> Installing client with dirac-install'
     installLHCbDIRACClient
   else
@@ -384,39 +363,36 @@ function installLHCbDIRACClient(){
   echo '==> Installing LHCbDIRAC client'
 
   # Hum, maybe we do not want to take the dirac-install from the testcode, but from integration ?
-  #curl -o $CLIENTINSTALLDIR/dirac-install -L https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py
-  cp $TESTCODE/DIRAC/Core/scripts/dirac-install.py $CLIENTINSTALLDIR/dirac-install
-  chmod +x $CLIENTINSTALLDIR/dirac-install
-  cd $CLIENTINSTALLDIR
-  if [ $? -ne 0 ]; then
-    echo 'ERROR: cannot change to ' $CLIENTINSTALLDIR
-    return
+  #curl -o ${CLIENTINSTALLDIR}/dirac-install -L https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py
+  cp "${TESTCODE}/DIRAC/Core/scripts/dirac-install.py" "${CLIENTINSTALLDIR}/dirac-install"
+  chmod +x "${CLIENTINSTALLDIR}/dirac-install"
+  if ! cd "${CLIENTINSTALLDIR}"; then
+    echo "ERROR: cannot change to ${CLIENTINSTALLDIR}"
+    return 9
   fi
 
-  echo "Installing with DIRACOS version=$DIRACOSVER";
-  ./dirac-install -l LHCb -r `cat $WORKSPACE/project.version` -e LHCb -t client --dirac-os --dirac-os-version=$DIRACOSVER $DEBUG;
+  echo "Installing with DIRACOS version=${DIRACOSVER}";
+  ./dirac-install -l LHCb -r $(cat "${WORKSPACE}"/project.version) -e LHCb -t client --dirac-os --dirac-os-version="${DIRACOSVER}" "$DEBUG";
 
   source bashrc
 
-  #mkdir $CLIENTINSTALLDIR/etc
-  #ln -s /cvmfs/lhcb.cern.ch/lib/lhcb/DIRAC/etc/dirac.cfg $CLIENTINSTALLDIR/etc/dirac.cfg
+  #mkdir ${CLIENTINSTALLDIR}/etc
+  #ln -s /cvmfs/lhcb.cern.ch/lib/lhcb/DIRAC/etc/dirac.cfg ${CLIENTINSTALLDIR}/etc/dirac.cfg
 
-  dirac-configure --UseServerCertificate -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -S $DIRACSETUP -C $CSURL -e LHCb -ddd
+  dirac-configure --UseServerCertificate -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -S "${DIRACSETUP}" -C "${CSURL}" -e LHCb -ddd
 }
 
 function setupLHCbDIRAC(){
 
-  local version=`cat project.version`
-  echo -e "==> Sourcing LHCbDirac/$version bash -norc"
-  source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac $version
-  local status=$?
-  if [ $status -ne 0 ]
-  then
+  local version=$(cat project.version)
+  echo -e "==> Sourcing LHCbDirac/${version} bash -norc"
+  source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac "${version}"
+  local status="${?}"
+  if [[ $status -ne 0 ]]; then
     echo -e "==> sourcing from prod CVMFS NOT successful, trying from CVMFS DEV"
-    source /cvmfs/lhcbdev.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac $version
-    local statusDev=$?
-    if [ $statusDev -ne 0 ]
-    then
+    source /cvmfs/lhcbdev.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac "${version}"
+    local statusDev="${?}"
+    if [[ $statusDev -ne 0 ]]; then
       echo -e "==> lb-run from DEV CVMFS NOT successful"
     fi
   fi
@@ -425,46 +401,44 @@ function setupLHCbDIRAC(){
 
 function submitJob(){
 
-  #This is is executed from the $CLIENTINSTALLDIR
+  #This is is executed from the ${CLIENTINSTALLDIR}
   echo -e "==> Submitting a simple job"
 
-  export PYTHONPATH=$TESTCODE:$PYTHONPATH
+  export PYTHONPATH="${TESTCODE}:${PYTHONPATH}"
 
   #Get a proxy and submit the job: this job will go to the certification setup, so we suppose the JobManager there is accepting jobs
 
   # check if errexit mode is set and disabling as the component may not exist
   save=$-
-  if [[ $save =~ e ]]
-  then
+  if [[ $save =~ e ]]; then
     set +e
   fi
 
   getUserProxy #this won't really download the proxy, so that's why the next command is needed
 
   # re-enabling it
-  if [[ $save =~ e ]]
-  then
+  if [[ $save =~ e ]]; then
     set -e
   fi
 
-  cp $TESTCODE/DIRAC/tests/Jenkins/dirac-proxy-download.py .
-  python dirac-proxy-download.py $DIRACUSERDN -R $DIRACUSERROLE -o /DIRAC/Security/UseServerCertificate=True -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -o /DIRAC/Setup=LHCb-Certification -ddd
-  cp $TESTCODE/LHCbDIRAC/tests/Jenkins/dirac-test-job.py .
-  python dirac-test-job.py -o /DIRAC/Setup=LHCb-Certification $DEBUG
+  cp "${TESTCODE}/DIRAC/tests/Jenkins/dirac-proxy-download.py" .
+  python dirac-proxy-download.py "$DIRACUSERDN" -R "$DIRACUSERROLE" -o /DIRAC/Security/UseServerCertificate=True -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -o /DIRAC/Setup=LHCb-Certification -ddd
+  cp "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-test-job.py" .
+  python dirac-test-job.py -o /DIRAC/Setup=LHCb-Certification "$DEBUG"
 
-  rm $PILOTINSTALLDIR/$PILOTCFG
+  rm "${PILOTINSTALLDIR}/${PILOTCFG}"
 }
 
 function sourcingEnv(){
 
   echo -e "==> Sourcing the environment"
-  source $PILOTINSTALLDIR/environmentLHCbDirac
+  source "${PILOTINSTALLDIR}/environmentLHCbDirac"
 }
 
 function setupBKKDB(){
   echo -e "==> Setting up the Bookkeeping Database"
-  if [ -n "$ORACLEDB_PASSWORD" ]; then
-    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" -p $ORACLEDB_PASSWORD $DEBUG
+  if [[ -n "$ORACLEDB_PASSWORD" ]]; then
+    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" -p "$ORACLEDB_PASSWORD" "$DEBUG"
   else
     "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" "${DEBUG}" \
       --password "bkdbpass" \

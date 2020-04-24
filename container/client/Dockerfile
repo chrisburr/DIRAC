@@ -42,12 +42,7 @@ WORKDIR /opt/dirac
 
 # Creating dirac user
 RUN useradd -ms /bin/bash dirac && \
-    mkdir -p /home/dirac/.globus && \
     chown -R dirac:dirac /opt/dirac && \
-    chown -R dirac:dirac /home/dirac
-
-# Installing LHCbDIRAC in /opt/dirac
-USER dirac
 
 RUN \
     curl -L -o dirac-install https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py && \

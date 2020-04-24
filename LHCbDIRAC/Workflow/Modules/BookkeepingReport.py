@@ -356,15 +356,21 @@ class BookkeepingReport(ModuleBase):
     <InputFile Name=""/>
     """
 
+    self.log.debug("Adding InputData: bkLFNs = %s" % bkLFNs)
+    self.log.debug("Adding InputData: self.stepInputData = %s" % self.stepInputData)
+
     if self.stepInputData:
       intermediateInputs = False
       for inputname in self.stepInputData:
         for bkLFN in bkLFNs:
-          if os.path.basename(bkLFN) == os.path.basename(inputname):
-            jobNode = addChildNode(jobNode, "InputFile", 0, (bkLFN, ))
+          if os.path.basename(bkLFN).lower() == os.path.basename(inputname).lower():
+            # preserve the case
+            inputF = os.path.join(os.path.dirname(os.path.normpath(bkLFN)),
+                                  os.path.basename(inputname))
+            jobNode = addChildNode(jobNode, "InputFile", 0, (inputF, ))
             intermediateInputs = True
         if not intermediateInputs:
-          jobNode = addChildNode(jobNode, "InputFile", 0, (inputname, ))
+          jobNode = addChildNode(jobNode, "InputFile", 0, (inputname, ))  # in this case inputname will be an LFN
 
     return jobNode
 
