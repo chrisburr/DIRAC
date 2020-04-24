@@ -255,20 +255,20 @@ Bookkeeping down time
 =====================
 The following services/agent needs to be stopped before the deep down time (SystemAdministrator can be used in order to manage the services)::
 
-	RMS:
-		RequestExecutingAgent
-			check it really stops (may take long time)
-	TS:
-		BookkeepingWatchAgent
-		TransformationAgent - Reco, DM, MergePlus (this to be checked). This was not stopped the latest deep downtime
-		TransformationCleaningAgent
-		MCSimulationTestingAgent
-	PMS:
-		ProductionStatusAgent
-		RequestTrackingAgent
-	DMS:
-		PopularityAgent
-	StorageHistoryAgents(s)
+  RMS:
+    RequestExecutingAgent
+      check it really stops (may take long time)
+  TS:
+    BookkeepingWatchAgent
+    TransformationAgent - Reco, DM, MergePlus (this to be checked). This was not stopped the latest deep downtime
+    TransformationCleaningAgent
+    MCSimulationTestingAgent
+  PMS:
+    ProductionStatusAgent
+    RequestTrackingAgent
+  DMS:
+    PopularityAgent
+  StorageHistoryAgents(s)
 
 Just before the intervention stop all Bookkeeping services.
 
@@ -310,27 +310,27 @@ use the following queries for debug:
 
 .. code-block:: sql
 
-	SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag 
-		FROM jobs j, files f WHERE 
-			j.jobid = f.jobid AND 
-			j.production=22719 and
-			f.gotreplica IS NOT NULL and
-			f.filetypeid NOT IN(9,17) GROUP BY j.production, J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag Order by f.gotreplica,f.visibilityflag asc;
-	
-	select * from files f, jobs j where 
-			j.jobid = f.jobid AND 
-			j.production=22719 and
-			f.gotreplica IS NOT NULL and
+  SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag 
+    FROM jobs j, files f WHERE 
+      j.jobid = f.jobid AND 
+      j.production=22719 and
+      f.gotreplica IS NOT NULL and
+      f.filetypeid NOT IN(9,17) GROUP BY j.production, J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag Order by f.gotreplica,f.visibilityflag asc;
+  
+  select * from files f, jobs j where 
+      j.jobid = f.jobid AND 
+      j.production=22719 and
+      f.gotreplica IS NOT NULL and
             f.eventtypeid is NULL and
-			f.filetypeid NOT IN(9,17);
+      f.filetypeid NOT IN(9,17);
 
-	update files set eventtypeid=90000000 where fileid in (select f.fileid from files f, jobs j where  j.jobid = f.jobid AND 
-	j.production=22719 and
-	f.gotreplica IS NOT NULL and
-	f.eventtypeid is NULL and
-	f.filetypeid NOT IN(9,17));
-	
-	commit;
+  update files set eventtypeid=90000000 where fileid in (select f.fileid from files f, jobs j where  j.jobid = f.jobid AND 
+  j.production=22719 and
+  f.gotreplica IS NOT NULL and
+  f.eventtypeid is NULL and
+  f.filetypeid NOT IN(9,17));
+  
+  commit;
 
 ===============================================
 Automatic updating of the prodrunview
@@ -380,22 +380,22 @@ The procedure for splitting the `prodlast` partition:
 
 .. code-block:: sql
 
-	select max(production) from jobs PARTITION(prodlast) where production!=99998;
-	ALTER TABLE jobs SPLIT PARTITION prodlast AT (xxxxx) INTO (PARTITION prodXXX, PARTITION prodlast);
+  select max(production) from jobs PARTITION(prodlast) where production!=99998;
+  ALTER TABLE jobs SPLIT PARTITION prodlast AT (xxxxx) INTO (PARTITION prodXXX, PARTITION prodlast);
 
 One of the possibility is to split the `prodlast` using the last production, which can be retrieved using the following query above.
 `xxxxx` is the result of the query. `prodXXX` is the last partition+1. For example:
 
 .. code-block:: sql
 
-	select max(production) from jobs PARTITION(prodlast) where production!=99998;
+  select max(production) from jobs PARTITION(prodlast) where production!=99998;
 
 which result is 83013
 
 .. code-block:: sql
 
-	ALTER TABLE jobs SPLIT PARTITION prodlast AT (83013) INTO (PARTITION prod4, PARTITION prodlast);
-	
+  ALTER TABLE jobs SPLIT PARTITION prodlast AT (83013) INTO (PARTITION prod4, PARTITION prodlast);
+  
 Rebuild the non partitioned indexes:
 
 .. code-block:: sql
@@ -408,17 +408,17 @@ files table partitions
 
 This table is RANGE partitioned by `jobid`, which can reach the maximum value of the existing partition. It this happen, the following error will appear::
 
-	2018-07-30 01:12:00 UTC dirac-jobexec/UploadOutputData ERROR: Could not send Bookkeeping XML file to server:
-	Unable to create file /lhcb/MC/2015/SIM/00075280/0000/00075280_00009971_1.sim ! ERROR: Excution failed.: (
-	ORA-14400: inserted partition key does not map to any partition
-	ORA-06512: at "LHCB_DIRACBOOKKEEPING.BOOKKEEPINGORACLEDB", line 976
-	ORA-06512: at line 1
+  2018-07-30 01:12:00 UTC dirac-jobexec/UploadOutputData ERROR: Could not send Bookkeeping XML file to server:
+  Unable to create file /lhcb/MC/2015/SIM/00075280/0000/00075280_00009971_1.sim ! ERROR: Excution failed.: (
+  ORA-14400: inserted partition key does not map to any partition
+  ORA-06512: at "LHCB_DIRACBOOKKEEPING.BOOKKEEPINGORACLEDB", line 976
+  ORA-06512: at line 1
 
 In order to fix the issue a new partition has to be created:
 
 .. code-block:: sql
 
-	alter table files add PARTITION SECT_0620M  VALUES LESS THAN (620000000);
+  alter table files add PARTITION SECT_0620M  VALUES LESS THAN (620000000);
 
 ===================
 Database monitoring
