@@ -697,13 +697,13 @@ END;
 /
 
 BEGIN
-	DBMS_SCHEDULER.CREATE_JOB (
-			job_name             => 'produpdatejob',
-			job_type             => 'PLSQL_BLOCK',
-			job_action           => 'BEGIN BKUTILITIES.updateProdOutputFiles(); END;',
-			repeat_interval      => 'FREQ=MINUTELY; interval=10',
-			start_date           => systimestamp,
-			enabled              =>  TRUE
-			);
-	END;
+  DBMS_SCHEDULER.CREATE_JOB (
+     job_name             => 'prodrunupdatejob',
+     job_type             => 'PLSQL_BLOCK',
+     job_action           => 'BEGIN BKUTILITIES.updateprodrunview(); END;',
+     repeat_interval      => 'FREQ=MINUTELY; interval=20',
+     start_date           => systimestamp,
+     enabled              =>  TRUE
+     );
+END;
 /
