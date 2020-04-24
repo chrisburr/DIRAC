@@ -186,14 +186,25 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __makeBookkeepingXML(self, bkLFNs, logFilePath):
-    """Bookkeeping xml looks like this:
+    """Bookkeeping xml looks like this::
 
-    <Job ConfigName="" ConfigVersion="" Date="" Time="">
-    <TypedParameter Name="" Type="" Value=""/>   ...   <InputFile
-    Name=""/>   ...   <OutputFile Name="" TypeName="" TypeVersion="">
-    <Parameter Name="" Value=""/>     ...     <Replica Location=""
-    Name=""/>     ....   </OutputFile>   ...   <SimulationCondition>
-    <Parameter Name="" Value=""/>   </SimulationCondition> </Job>
+	<Job ConfigName="" ConfigVersion="" Date="" Time="">
+	  <TypedParameter Name="" Type="" Value=""/>
+	  ...
+	  <InputFile Name=""/>
+	  ...
+	  <OutputFile Name="" TypeName="" TypeVersion="">
+	    <Parameter Name="" Value=""/>
+	    ...
+	    <Replica Location="" Name=""/>
+	    ....
+	  </OutputFile>
+	  ...
+	  <SimulationCondition>
+	    <Parameter Name="" Value=""/>
+	  </SimulationCondition>
+	</Job>
+
     """
     # Generate XML document
     doc = Document()
@@ -222,9 +233,9 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateJobNode(self, doc):
-    """Node looks like.
+    """Node looks like.this::
 
-    <Job ConfigName="" ConfigVersion="" Date="" Time="">
+	<Job ConfigName="" ConfigVersion="" Date="" Time="">
     """
 
     # Get the Config name from the environment if any
@@ -242,35 +253,35 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateTypedParams(self, jobNode):
-    """TypedParameter looks like.
+    """TypedParameter looks like this::
 
-    <TypedParameter Name="" Type="" Value="">
+	<TypedParameter Name="" Type="" Value="">
 
-    List of possible TypedParameter names
-    - CPUTIME
-    - ExecTime
-    - WNMODEL
-    - WNMEMORY
-    - WNCPUPOWER
-    - WNCACHE
-    - WNCPUHS06
-    - WNMJFHS06
-    - Production
-    - DiracJobId
-    - Name
-    - JobStart
-    - JobEnd
-    - Location
-    - JobType
-    - WorkerNode
-    - GeometryVersion
-    - ProgramName
-    - ProgramVersion
-    - DiracVersion
-    - FirstEventNumber
-    - StatisticsRequested
-    - NumberOfEvents
-    - StepID
+      List of possible TypedParameter names
+      - CPUTIME
+      - ExecTime
+      - WNMODEL
+      - WNMEMORY
+      - WNCPUPOWER
+      - WNCACHE
+      - WNCPUHS06
+      - WNMJFHS06
+      - Production
+      - DiracJobId
+      - Name
+      - JobStart
+      - JobEnd
+      - Location
+      - JobType
+      - WorkerNode
+      - GeometryVersion
+      - ProgramName
+      - ProgramVersion
+      - DiracVersion
+      - FirstEventNumber
+      - StatisticsRequested
+      - NumberOfEvents
+      - StepID
     """
 
     typedParams = []
@@ -351,9 +362,9 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateInputFiles(self, jobNode, bkLFNs):
-    """InputData looks like this.
+    """InputData looks like this::
 
-    <InputFile Name=""/>
+	 <InputFile Name=""/>
     """
 
     self.log.debug("Adding InputData: bkLFNs = %s" % bkLFNs)
@@ -377,11 +388,14 @@ class BookkeepingReport(ModuleBase):
 ################################################################################
 
   def __generateOutputFiles(self, jobNode, bkLFNs, logFilePath):
-    """OutputFile looks like this:
+    """OutputFile looks like this::
 
-    <OutputFile Name="" TypeName="" TypeVersion="">   <Parameter Name=""
-    Value=""/>   ...   <Replica Location="" Name=""/>   ....
-    </OutputFile>
+       <OutputFile Name="" TypeName="" TypeVersion="">
+	 <Parameter Name="" Value=""/>
+	 ...
+	 <Replica Location="" Name=""/>
+	 ....
+       </OutputFile>
     """
 
     if self.eventType is not None:
@@ -561,10 +575,11 @@ class BookkeepingReport(ModuleBase):
       raise KeyError("Could not find output LFN in XML summary object")
 
   def __generateSimulationCondition(self, jobNode):
-    """SimulationCondition looks like this:
+    """ SimulationCondition looks like this::
 
-    <SimulationCondition>   <Parameter Name="" Value=""/>
-    </SimulationCondition>
+	 <SimulationCondition>
+	   <Parameter Name="" Value=""/>
+	 </SimulationCondition>
     """
     if self.applicationName == "Gauss":
       jobNode, sim = addChildNode(jobNode, "SimulationCondition", 1, ())

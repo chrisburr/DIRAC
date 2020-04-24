@@ -8,7 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery
 """
 It tests the RAW data insert to the db.
 It requires an Oracle database
@@ -38,7 +37,8 @@ class DataInsertTestCase(unittest.TestCase):
     self.bk = BookkeepingClient()
     self.bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
     self.runnb = '1122'
-    self.files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (self.runnb, self.runnb, i) for i in xrange(5)]
+    self.files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (self.runnb,
+									  self.runnb, i) for i in xrange(5)]
     self.xmlJob = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE Job SYSTEM "book.dtd">
 <Job ConfigName="Test" ConfigVersion="Test01" Date="%jDate%" Time="%jTime%">
@@ -475,53 +475,58 @@ class TestMethods(DataInsertTestCase):
     self.assertEqual(retVal['Value']['TotalRecords'], 1)
     self.assertEqual(retVal['Value']['Records'][0][0], 'ALLSTREAMS.DST')
 
-    retVal = self.bk.getFiles({"ConfigName": "MC",
-                               "ConfigVersion": "2012",
-                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
-                               "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
-                               "FileType": "ALLSTREAMS.DST"})
+    retVal = self.bk.getFiles({
+	"ConfigName": "MC",
+	"ConfigVersion": "2012",
+	"SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+	"ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
+	"FileType": "ALLSTREAMS.DST"})
 
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 10)
 
-    retVal = self.bk.getFiles({"ConfigName": "MC",
-                               "ConfigVersion": "2012",
-                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
-                               "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
-                               "FileType": "ALLSTREAMS.DST",
-                               "EventType": 12442001})
+    retVal = self.bk.getFiles({
+	"ConfigName": "MC",
+	"ConfigVersion": "2012",
+	"SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+	"ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
+	"FileType": "ALLSTREAMS.DST",
+	"EventType": 12442001})
 
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 10)
 
-    retVal = self.bk.getFiles({"ConfigName": "MC",
-                               "ConfigVersion": "2012",
-                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
-                               "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
-                               "FileType": "ALLSTREAMS.DST",
-                               "EventType": 12442001,
-                               "Visible": "N"})
+    retVal = self.bk.getFiles({
+	"ConfigName": "MC",
+	"ConfigVersion": "2012",
+	"SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+	"ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
+	"FileType": "ALLSTREAMS.DST",
+	"EventType": 12442001,
+	"Visible": "N"})
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 0)
 
-    retVal = self.bk.getFiles({"ConfigName": "MC",
-                               "ConfigVersion": "2012",
-                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
-                               "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
-                               "FileType": "ALLSTREAMS.DST",
-                               "EventType": 12442001,
-                               "Visible": "All"})
+    retVal = self.bk.getFiles({
+	"ConfigName": "MC",
+	"ConfigVersion": "2012",
+	"SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+	"ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
+	"FileType": "ALLSTREAMS.DST",
+	"EventType": 12442001,
+	"Visible": "All"})
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 10)
 
-    retVal = self.bk.getFiles({"ConfigName": "MC",
-                               "ConfigVersion": "2012",
-                               "SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
-                               "ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
-                               "FileType": "ALLSTREAMS.DST",
-                               "EventType": 12442001,
-                               "Visible": "All",
-                               'NbOfEvents': True})
+    retVal = self.bk.getFiles({
+	"ConfigName": "MC",
+	"ConfigVersion": "2012",
+	"SimulationConditions": "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8",
+	"ProcessingPass": "/Sim08a/Digi13/Trig0x409f0045/Reco14a/Stripping20NoPrescalingFlagged",
+	"FileType": "ALLSTREAMS.DST",
+	"EventType": 12442001,
+	"Visible": "All",
+	'NbOfEvents': True})
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [180])
 
@@ -2690,7 +2695,7 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
     self.assertTrue(len(retVal['Value']) > 1)
 
   def test_getProductionFiles(self):
-    retVal = self.bk.getProductionFiles(2L, 'SIM')
+    retVal = self.bk.getProductionFiles(2, 'SIM')
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 1)
     self.assertTrue('/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim' in retVal['Value'])
@@ -2835,7 +2840,7 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
     self.assertTrue(retVal['Value'][fileName])
 
   def test_getRunInformations(self):
-    retVal = self.bk.getRunInformations(1122L)
+    retVal = self.bk.getRunInformations(1122)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value']['Configuration Name'], 'Test')
     self.assertEqual(retVal['Value']['Configuration Version'], 'Test01')
@@ -2853,7 +2858,7 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
     self.assertEqual(retVal['Value']['luminosity'], [6061.165])
 
   def test_getRunInformation(self):
-    retVal = self.bk.getRunInformation({'RunNumber': 1122L})
+    retVal = self.bk.getRunInformation({'RunNumber': 1122})
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'][1122]['CONDDB'], 'xy')
     self.assertEqual(retVal['Value'][1122]['ConditionDescription'], 'Beam450GeV-MagDown')
@@ -2914,37 +2919,37 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
       self.assertTrue(param in retVal['Value']['ParameterNames'])
 
   def test_getProductionNbOfJobs(self):
-    retVal = self.bk.getProductionNbOfJobs(2L)
+    retVal = self.bk.getProductionNbOfJobs(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [(8,)])
 
   def test_getProductionNbOfEvents(self):
-    retVal = self.bk.getProductionNbOfEvents(2L)
+    retVal = self.bk.getProductionNbOfEvents(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [('SIM', 411, 11104131, None), ('DIGI', 411, 11104131, 411)])
 
   def test_getProductionSizeOfFiles(self):
-    retVal = self.bk.getProductionSizeOfFiles(2L)
+    retVal = self.bk.getProductionSizeOfFiles(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [(2097119140,)])
 
   def test_getProductionNbOfFiles(self):
-    retVal = self.bk.getProductionNbOfFiles(2L)
+    retVal = self.bk.getProductionNbOfFiles(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [(1, 'SIM', 16), (7, 'DIGI', 16), (8, 'LOG', 16)])
 
   def test_getProductionInformation(self):
-    retVal = self.bk.getProductionInformation(2L)
+    retVal = self.bk.getProductionInformation(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(len(retVal['Value']), 8)
 
   def test_getNbOfJobsBySites(self):
-    retVal = self.bk.getNbOfJobsBySites(2L)
+    retVal = self.bk.getNbOfJobsBySites(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], [(8, 'LCG.CERN.ch')])
 
   def test_getProductionProcessedEvents(self):
-    retVal = self.bk.getProductionProcessedEvents(2L)
+    retVal = self.bk.getProductionProcessedEvents(2)
     self.assertTrue(retVal['OK'])
     self.assertEqual(retVal['Value'], 411)
 
