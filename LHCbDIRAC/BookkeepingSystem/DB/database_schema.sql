@@ -690,9 +690,3 @@ BEGIN
 END;
 /
 
-create materialized view prodrunview
-PARALLEL 4
-build immediate
-refresh next sysdate+3/24
-as select  distinct jobs.Production, jobs.runnumber from jobs, productionoutputfiles prod where jobs.production=prod.production and prod.visible='Y' and prod.gotreplica='Yes' and jobs.runnumber is not null;
-
