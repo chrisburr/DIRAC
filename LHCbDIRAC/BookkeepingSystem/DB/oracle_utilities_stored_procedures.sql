@@ -20,6 +20,7 @@ create or replace package BKUTILITIES as
   procedure insertProtoPordoutput(v_production number);
   procedure updateProtoPordoutput(v_production number);
   PROCEDURE updateProdOutputFiles;
+  procedure updateprodrunview;
   
 end;
 /
@@ -250,5 +251,33 @@ BEGIN
                 subject    => 'Failed to update productionoutputfiles',
                 message    => 'ERROR number:'||err_num||' error message:'||err_msg||' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
 END;
+procedure updateprodrunview is
+err_num NUMBER;
+err_msg VARCHAR2(1000);
+begin
+-- get the modified production list
+ for prod in (select j.production from jobs j, files f WHERE 
+                f.inserttimestamp >= SYSTIMESTAMP - 1 AND
+                j.jobid = f.jobid AND
+                f.gotreplica IS NOT NULL and
+                f.filetypeid NOT IN(9,17) group by j.production)
+  LOOP
+    delete prodrunview where production=prod.production;
+    for insertProd in (select j.production, j.runnumber from jobs j, files f where j.jobid=f.jobid and j.production=prod.production and f.gotreplica='Yes' 
+                                 and f.visibilityflag='Y' and j.runnumber is not null group by j.production,j.runnumber)
+    LOOP
+      insert into prodrunview(production,runnumber)values(insertProd.production,insertProd.runnumber);
+    END LOOP;
+    commit;
+  END LOOP;
+  EXCEPTION
+    WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SUBSTR(SQLERRM, 1, 1000);
+        utl_mail.send(sender => 'lhcb-geoc@cern.ch',
+                recipients => 'lhcb-bookkeeping@cern.ch',
+                subject    => 'Failed to update prodrunview',
+                message    => 'ERROR number:'||err_num||' error message:'||err_msg||' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-prodrunview');
+end;
 END;
 /
