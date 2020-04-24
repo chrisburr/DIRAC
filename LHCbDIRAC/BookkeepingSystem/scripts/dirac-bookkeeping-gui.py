@@ -14,19 +14,19 @@
    - v9r3 uses lcgBundle instead of LHCbGrid, and lcgBundle does not include Qt4
    - DIRACOS will come and we don't want to make too much effort with this temporary solution of lcgBundle
    - dirac-bookkeeping-gui is anyway set to disappear in favor of the web version
-"""
-from __future__ import print_function
 
+"""
 import os
 import time
 
+from DIRAC import gLogger
 
-print("                     WARNING        WARNING        WARNING                    ")
-print(" dirac-bookkeeping-gui is deprecated and will stop working in the near future ")
-print("                                                                              ")
-print("                     please use the Bookkeeping Web App                       ")
-print("                     https://lhcb-portal-dirac.cern.ch/                       ")
-
+gLogger.warn("                     WARNING        WARNING        WARNING                    ")
+gLogger.warn(" dirac-bookkeeping-gui is deprecated and will stop working in the near future ")
+gLogger.warn("                                                                              ")
+gLogger.warn("                     please use the Bookkeeping Web App                       ")
+gLogger.warn("                     https://lhcb-portal-dirac.cern.ch/                       ")
+gLogger.warn("                                                                              ")
 time.sleep(10)
 
 os.system("lb-run -c best LHCbDIRAC/v9r2p11 dirac-bookkeeping-gui")
