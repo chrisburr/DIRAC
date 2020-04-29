@@ -14,6 +14,7 @@ import datetime
 import random
 import time
 import sys
+import six
 
 from DIRAC import gConfig, gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities.List import breakListIntoChunks
@@ -157,7 +158,7 @@ class PluginUtilities(DIRACPluginUtilities):
       title += " (metrics is %s)" % self.shareMetrics
     log(title)
     for se in sorted(shares):
-      if isinstance(shares[se], (int, long)):
+      if isinstance(shares[se], six.integer_types):
         infoStr = "%s: %d " % (se.rjust(15), shares[se])
       else:
         infoStr = "%s: %4.1f " % (se.rjust(15), shares[se])
@@ -204,7 +205,7 @@ class PluginUtilities(DIRACPluginUtilities):
         shares[backupSE] = 100. - tier1Fraction
       else:
         return res
-      rawPercentage = dict((se, 100. * val) for se, val in rawFraction.iteritems())
+      rawPercentage = dict((se, 100. * val) for se, val in rawFraction.items())
       self.printShares("Fraction of RAW (%s) to be processed at each SE (%%):" % section,
                        rawPercentage, counters=[], log=log)
     else:
@@ -303,7 +304,7 @@ class PluginUtilities(DIRACPluginUtilities):
     if requestedSEs:
       requestedSEs = set(requestedSEs)
       seDict = {}
-      for se, count in usageDict.iteritems():
+      for se, count in usageDict.items():
         overlap = set(se.split(',')) & requestedSEs
         if overlap:
           for ov in overlap:
@@ -317,7 +318,7 @@ class PluginUtilities(DIRACPluginUtilities):
 
   def getMetadataFromTSorBK(self, lfns, param):
     """Get BK parameters from BK unless they are already present in the TS."""
-    if isinstance(lfns, basestring):
+    if isinstance(lfns, six.string_types):
       lfns = [lfns]
     filesParam = {}
     # For parameters that are in the TS files DB, no need to go to BK
@@ -522,12 +523,12 @@ get from BK" % (param, self.paramName))
     rankedSEs = []
     while weightForSEs:
       if len(weightForSEs) == 1:
-        se = weightForSEs.keys()[0]
+        se = list(weightForSEs)[0]
       else:
         weights = weightForSEs.copy()
         total = 0.
         orderedSEs = []
-        for se, weight in weights.iteritems():
+        for se, weight in weights.items():
           # Minimum space 1 GB in case all are 0
           total += max(weight, 0.001)
           weights[se] = total
@@ -681,7 +682,7 @@ get from BK" % (param, self.paramName))
     # Restrict to files with the required parameter
     if param:
       paramValues = self.getFilesParam(lfns, param)
-      lfns = [f for f, v in paramValues.iteritems() if v == paramValue]
+      lfns = [f for f, v in paramValues.items() if v == paramValue]
 
     if lfns:
       lfnToCheck = lfns[0]
@@ -698,7 +699,7 @@ get from BK" % (param, self.paramName))
     # Get number of ancestors for known files
     cachedLfns = self.cachedLFNAncestors.get(runID, {})
     # If we cached a number, clean the cache
-    if cachedLfns and True in set(isinstance(val, (long, int)) for val in cachedLfns.itervalues()):
+    if cachedLfns and True in set(isinstance(val, six.integer_types) for val in cachedLfns.values()):
       cachedLfns = {}
     setLfns = set(lfns)
     hitLfns = setLfns & set(cachedLfns)
@@ -803,7 +804,7 @@ get from BK" % (param, self.paramName))
       self.logError("Error getting ancestors", ancestors['Message'])
       return _clearTaskLFNs(taskLfns)
     ancestors = ancestors['Value']['Successful']
-    ancLfns = [anc['FileName'] for ancList in ancestors.itervalues() for anc in ancList]
+    ancLfns = [anc['FileName'] for ancList in ancestors.values() for anc in ancList]
     self.logVerbose('Checking ancestors presence at %s for %d files' % (','.join(sorted(seList)),
                                                                         len(ancLfns)))
     res = self.dm.getReplicasForJobs(ancLfns, getUrl=False)
@@ -813,7 +814,7 @@ get from BK" % (param, self.paramName))
       return _clearTaskLFNs(taskLfns)
     else:
       success = res['Value']['Successful']
-    for lfn, ancList in ancestors.iteritems():
+    for lfn, ancList in ancestors.items():
       for anc in ancList:
         if not seList & set(success[anc['FileName']]):
           # Remove the LFN from the list of lists
@@ -839,7 +840,7 @@ get from BK" % (param, self.paramName))
     condDict = {'TransformationID': transID}
     if isinstance(runs, (dict, list, tuple, set)):
       condDict['RunNumber'] = list(runs)
-    elif isinstance(runs, (int, long)):
+    elif isinstance(runs, six.integer_types):
       runs = [runs]
       condDict['RunNumber'] = runs
     result = self.transClient.getTransformationRuns(condDict)
@@ -872,22 +873,22 @@ get from BK" % (param, self.paramName))
     self.logVerbose("Starting getFilesGroupedByRunAndParam for %d files, %s" %
                     (len(files), 'by %s' % param if param else 'no param'))
     runGroups = groupByRun(files)
-    for runNumber, runLFNs in runGroups.iteritems():
+    for runNumber, runLFNs in runGroups.items():
       if not param:
         runDict[runNumber] = {None: runLFNs}
       else:
         runDict[runNumber] = {}
         resDict = self.getFilesParam(runLFNs, param)
-        for lfn, paramValue in resDict.iteritems():
+        for lfn, paramValue in resDict.items():
           runDict[runNumber].setdefault(paramValue, []).append(lfn)
 
     # If necessary fix files with run number 0
     zeroRunDict = runDict.pop(0, None)
     if zeroRunDict:
       nZero = 0
-      for paramValue, zeroRun in zeroRunDict.iteritems():
+      for paramValue, zeroRun in zeroRunDict.items():
         newRuns = self.setRunForFiles(zeroRun)
-        for newRun, runLFNs in newRuns.iteritems():
+        for newRun, runLFNs in newRuns.items():
           runDict.setdefault(newRun, {}).setdefault(paramValue, []).extend(runLFNs)
           nZero += len(runLFNs)
       self.logInfo("Set run number for %d files with run #0, which means it was not set yet" % nZero)
@@ -914,7 +915,7 @@ get from BK" % (param, self.paramName))
     if zeroRun:
       nZero = 0
       newRuns = self.setRunForFiles(zeroRun)
-      for newRun, runLFNs in newRuns.iteritems():
+      for newRun, runLFNs in newRuns.items():
         runGroups.setdefault(newRun, []).extend(runLFNs)
         nZero += len(runLFNs)
       self.logInfo("Set run number for %d files with run #0, which means it was not set yet" % nZero)
@@ -1035,7 +1036,7 @@ get from BK" % (param, self.paramName))
     res = self.bkClient.getFileMetadata(lfns)
     runFiles = {}
     if res['OK']:
-      for lfn, metadata in res['Value']['Successful'].iteritems():
+      for lfn, metadata in res['Value']['Successful'].items():
         runFiles.setdefault(metadata['RunNumber'], []).append(lfn)
       for run in sorted(runFiles):
         if not run:
@@ -1063,7 +1064,7 @@ get from BK" % (param, self.paramName))
       transQuery = res['Value']
     if 'ProcessingPass' not in transQuery:
       # Get processing pass of the first file... This assumes all have the same...
-      lfn = transReplicas.keys()[0]
+      lfn = list(transReplicas)[0]
       res = self.bkClient.getDirectoryMetadata(lfn)
       if not res['OK']:
         self.logError("Error getting directory metadata", res['Message'])
@@ -1174,7 +1175,7 @@ get from BK" % (param, self.paramName))
                      ','.join(str(prod) for prod in prodList),
                      depth))
     excludeTypes = ('LOG', 'BRUNELHIST', 'DAVINCIHIST', 'GAUSSHIST', 'HIST', 'INDEX.ROOT')
-    if isinstance(lfnSet, basestring):
+    if isinstance(lfnSet, six.string_types):
       lfnSet = {lfnSet}
     elif isinstance(lfnSet, list):
       lfnSet = set(lfnSet)
@@ -1187,7 +1188,7 @@ get from BK" % (param, self.paramName))
     success = {}
     descProd = {}
     chunkSize = self.__getChunkSize()
-    for prod, lfns in prodLfns.iteritems():
+    for prod, lfns in prodLfns.items():
       progressBar = ProgressBar(len(lfns),
                                 title="Getting descendants for %d files in production %d" %
                                 (len(lfns), prod), chunk=chunkSize,
@@ -1198,11 +1199,11 @@ get from BK" % (param, self.paramName))
         res = self.bkClient.getFileDescendants(lfnChunk, depth=1, production=int(prod), checkreplica=False)
         if not res['OK']:
           return res
-        for lfn, descDict in res['Value']['WithMetadata'].iteritems():
+        for lfn, descDict in res['Value']['WithMetadata'].items():
           # Only keep the file type as metadata in teh dict
           success.setdefault(lfn, {}).update(dict((desc, {'FileType': metadata['FileType'],
                                                           'GotReplica': metadata['GotReplica']})
-                                                  for desc, metadata in descDict.iteritems()
+                                                  for desc, metadata in descDict.items()
                                                   if metadata['FileType'] not in excludeTypes))
           # Record information about which production created each descendant
           for desc in descDict:
@@ -1211,8 +1212,8 @@ get from BK" % (param, self.paramName))
 
     # Get set of file types
     fileTypes = sorted(set(metadata['FileType']
-                           for descendants in success.itervalues()
-                           for metadata in descendants.itervalues()))
+                           for descendants in success.values()
+                           for metadata in descendants.values()))
     self.logVerbose("Will check file type%s %s" % ('s' if len(fileTypes) > 1 else '', ','.join(fileTypes)))
 
     # Try and find descendants for each file type in turn as this is sufficient
@@ -1220,10 +1221,10 @@ get from BK" % (param, self.paramName))
       # Invert list of descendants: descToCheck has descendant as key and list of parents
       descToCheck = {}
       descMetadata = {}
-      for lfn, descendants in success.iteritems():
+      for lfn, descendants in success.items():
         if lfn not in finalResult:
           descMetadata.update(descendants)
-          for desc, metadata in descendants.iteritems():
+          for desc, metadata in descendants.items():
             if metadata['FileType'] == fileType:
               descToCheck.setdefault(desc, set()).add(lfn)
       if not descToCheck:
@@ -1232,7 +1233,7 @@ get from BK" % (param, self.paramName))
       prodDesc = {}
       # Check if we found a descendant in the requested productions
       foundProds = {}
-      for desc in descToCheck.keys():  # pylint: disable=consider-iterating-dictionary
+      for desc in list(descToCheck):  # pylint: disable=consider-iterating-dictionary
         prod = descProd[desc]
         # If we found an existing descendant in the list of productions, all OK
         if descMetadata[desc]['GotReplica'] == 'Yes' and prod in prodList:
@@ -1278,7 +1279,7 @@ get from BK" % (param, self.paramName))
       res = suClient.getStorageSummary(dirName, None, None, seList)
       if not res['OK']:
         return res
-      for se, stat in res['Value'].iteritems():
+      for se, stat in res['Value'].items():
         result[se] = result.setdefault(se, 0) + stat['Files']
     return S_OK(result)
 
@@ -1333,7 +1334,7 @@ get from BK" % (param, self.paramName))
       return rawShares
     # Turn a RAW share into a share on selected SEs
     shares = {}
-    for rawSE, share in rawShares['Value'][1].iteritems():
+    for rawSE, share in rawShares['Value'][1].items():
       selectedSEs = self.closerSEs([rawSE], destSEs, local=True)
       if selectedSEs:
         share *= targetFilesAtDestination / 100.
@@ -1358,7 +1359,7 @@ get from BK" % (param, self.paramName))
 
     # Share targetFilesAtDestination on the SEs taking into account current usage
     maxFilesAtSE = {}
-    for se, share in shares.iteritems():
+    for se, share in shares.items():
       maxFilesAtSE[se] = max(0, int(share - storageUsage.get(se, 0) - recentFiles.get(se, 0)))
     self.printShares("Maximum number of files per SE:", maxFilesAtSE, counters=[], log=self.logInfo)
     return S_OK(maxFilesAtSE)
@@ -1446,7 +1447,7 @@ def getShares(sType, normalise=False):
   if not res['Value']:
     return S_ERROR("/Resources/%s option contains no shares" % optionPath)
   shares = res['Value']
-  for site, value in shares.iteritems():
+  for site, value in shares.items():
     shares[site] = float(value)
   if normalise:
     shares = normaliseShares(shares)
@@ -1506,7 +1507,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
       res = bk.getFileMetadata(lfnChunk)
       if res['OK']:
         resMeta = res['Value']['Successful']
-        for lfn, metadata in resMeta.iteritems():
+        for lfn, metadata in resMeta.items():
           runID = metadata.get('RunNumber')
           if runID:
             runDict.setdefault(int(runID), set()).add(lfn)
@@ -1522,31 +1523,31 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
         time.sleep(1)
       else:
         break
-    added = set(lfn for (lfn, status) in res['Value']['Successful'].iteritems() if status == 'Added')
+    added = set(lfn for (lfn, status) in res['Value']['Successful'].items() if status == 'Added')
     addedLfns.update(added)
     if addRunInfo and res['OK']:
       gLogger.info("Add information for %d runs to transformation %s" % (len(runDict), transID))
-      for runID, runLfns in runDict.iteritems():
+      for runID, runLfns in runDict.items():
         runLfns &= added
         if runLfns:
           res = transClient.addTransformationRunFiles(transID, runID, list(runLfns))
           if not res['OK']:
             break
       # Add run metadata if not present in TS
-      res = transClient.getRunsMetadata(runDict.keys())
+      res = transClient.getRunsMetadata(list(runDict))
       if res['OK']:
         missingRuns = []
-        for runID, meta in res['Value'].iteritems():
+        for runID, meta in res['Value'].items():
           if 'TCK' not in meta or 'CondDb' not in meta or 'DDDB' not in meta:
             missingRuns.append(runID)
       else:
-        missingRuns = runDict.keys()
+        missingRuns = list(runDict)
       if missingRuns:
         res = bk.getRunInformation({'RunNumber': missingRuns, 'Fields': ['TCK', 'CondDb', 'DDDB']})
         if not res['OK']:
           gLogger.error("Error getting run information", res['Message'])
         else:
-          for runID, meta in res['Value'].iteritems():
+          for runID, meta in res['Value'].items():
             res = transClient.addRunsMetadata(runID, meta)
             if not res['OK']:
               gLogger.error("Error setting run metadata in TS", res['Message'])
@@ -1562,6 +1563,6 @@ def stripDirectory(files, depth=None):
   LFN."""
   if depth is None:
     depth = 4
-  if isinstance(files, basestring):
+  if isinstance(files, six.string_types):
     return os.path.sep + os.path.join(*files.split(os.path.sep)[:depth + 1])
   return set(os.path.sep + os.path.join(*lfn.split(os.path.sep)[:depth + 1]) for lfn in files)
