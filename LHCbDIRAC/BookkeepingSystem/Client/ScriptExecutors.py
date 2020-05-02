@@ -441,7 +441,7 @@ def executeFixLuminosity(dmScript):
       evts = metadata['EventStat']
       runFiles.setdefault(run, []).append([lfn, evts, lumi])
     if not runChecked:
-      res = bkClient.getRunStatus(int(runFiles))
+      res = bkClient.getRunStatus(list(runFiles))
       if not res['OK']:
         gLogger.fatal('Error getting run status', res['Message'])
         diracExit(3)
