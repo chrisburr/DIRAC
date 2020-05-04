@@ -42,9 +42,8 @@ def getRootFileGUID(fileName):
       if item.startswith('FID='):
         return S_OK(item.split('=')[1])
     return S_ERROR('GUID not found')
-  except Exception as e:
+  except Exception:
     errorMsg = 'Error extracting GUID'
-    gLogger.exception(errorMsg, lException=e)
     return S_ERROR(errorMsg)
 
 
@@ -60,7 +59,7 @@ def makeGuid(fileNames):
       gLogger.verbose('GUID from ROOT', '%s' % res['Value'])
       fileGUIDs[fileName] = res['Value']
     else:
-      gLogger.error('Could not obtain GUID from file through Gaudi, using standard DIRAC method')
+      gLogger.info('Could not obtain GUID from file through Gaudi, using standard DIRAC method')
       fileGUIDs[fileName] = DIRACMakeGUID(fileName)
 
   return fileGUIDs
