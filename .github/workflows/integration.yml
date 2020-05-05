@@ -51,6 +51,8 @@ jobs:
       run: env
     - name: cat $GITHUB_EVENT_PATH
       run: cat $GITHUB_EVENT_PATH
+    - name: git status
+      run: git status
     - name: git show-ref
       run: git show-ref
     # - name: Clean up GitHub actions environment
