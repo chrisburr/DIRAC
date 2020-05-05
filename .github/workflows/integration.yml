@@ -41,8 +41,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: sleep 61
-      run: sleep 61
+    - name: sleep 30
+      run: sleep 30
     - name: git fetch --all
       run: git fetch --all
     - name: git remote -v
