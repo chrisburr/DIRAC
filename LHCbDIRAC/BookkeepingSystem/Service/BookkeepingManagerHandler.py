@@ -20,7 +20,7 @@ from LHCbDIRAC.BookkeepingSystem.DB.BookkeepingDatabaseClient import Bookkeeping
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import checkEnoughBKArguments
-from LHCbDIRAC.Core.Utilities.Pickle import pickleOrJsonDumps, pickleOrJsonLoads
+from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonDumps, pickleOrJsonLoads
 
 __RCSID__ = "$Id$"
 

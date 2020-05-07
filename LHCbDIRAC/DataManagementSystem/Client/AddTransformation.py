@@ -20,7 +20,7 @@ from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-from LHCbDIRAC.Core.Utilities.Pickle import pickleOrJsonLoads
+from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonLoads
 from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

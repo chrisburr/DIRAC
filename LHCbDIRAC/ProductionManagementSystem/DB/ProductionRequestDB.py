@@ -31,7 +31,7 @@ import threading
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 
-from LHCbDIRAC.Core.Utilities.Pickle import pickleOrJsonDumps, pickleOrJsonLoads
+from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonDumps, pickleOrJsonLoads
 from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import informPeople
 
 __RCSID__ = "$Id$"
