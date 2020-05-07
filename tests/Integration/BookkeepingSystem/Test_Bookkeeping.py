@@ -3102,6 +3102,73 @@ class TestBookkeepingUserInterface(MCInsertTestCase):
         if record[0] not in 'StepId':
           self.assertTrue(record in stepMeta)
 
+    bkQuery = {'ConfigName': 'MC',
+               'ConditionDescription': 'Beam7TeV-UpgradeML1.0-MagDown-Lumi2-25ns',
+               'EventType': '13104011',
+               'FileType': 'DST',
+               'ProcessingPass': '/Sim01/Rec03-WithTruth',
+               'ConfigVersion': 'Upgrade'}
+    retVal = self.bk.getStepsMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value']['TotalRecords'], 4)
+    self.assertEqual(list(retVal['Value']['Records']), ['Step-2158', 'Step-2159', 'Step-901', 'Step-2160'])
+
+    bkQuery = {'ConfigName': 'MC',
+               'ConditionDescription': 'Beam3500GeV-May2010-MagDown-Fix1',
+               'EventType': '30000000',
+               'FileType': 'DST',
+               'ProcessingPass': '/Sim01/Trig0x002e002aFlagged/Reco08-MINBIAS',
+               'ConfigVersion': 'MC10'}
+
+    retVal = self.bk.getStepsMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value']['TotalRecords'], 1)
+    self.assertEqual(list(retVal['Value']['Records']), ['Step-11798'])
+
+    bkQuery = {'ConfigName': 'MC',
+               'ConditionDescription': 'Beam3500GeV-May2010-MagOff-Fix1',
+               'EventType': '30000000',
+               'FileType': 'DST',
+               'ProcessingPass': '/Sim01/Reco08',
+               'ConfigVersion': 'MC10'}
+    retVal = self.bk.getStepsMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value']['TotalRecords'], 1)
+    self.assertEqual(list(retVal['Value']['Records']), ['Step-13338'])
+
+    bkQuery = {'ConfigName': 'MC',
+               'ConditionDescription': 'Beam6500GeV-2015-MagUp-Nu1.6-25ns-Pythia8',
+               'EventType': '13714010',
+               'FileType': 'ALLSTREAMS.DST',
+               'ProcessingPass': '/Sim09a/Trig0x411400a2/Reco15a/Turbo02/Stripping24NoPrescalingFlagged',
+               'ConfigVersion': '2015'}
+    retVal = self.bk.getStepsMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value']['TotalRecords'], 3)
+    self.assertEqual(list(retVal['Value']['Records']), ['Step-15153', 'Step-15155', 'Step-15154'])
+
+    bkQuery = {'ConfigName': 'LHCb',
+               'ConditionDescription': 'Beam3500GeV-VeloClosed-MagUp',
+               'EventType': '90000000',
+               'FileType': 'CHARMTOBESWUM.DST',
+               'ProcessingPass': '/Real Data/Reco12Trial/StrippingTrial/Stripping19b',
+               'ConfigVersion': 'Collision12'}
+    retVal = self.bk.getStepsMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value']['TotalRecords'], 1)
+    self.assertEqual(list(retVal['Value']['Records']), ['Step-14707'])
+
+    bkQuery = {'ConfigName': 'LHCb',
+               'ConditionDescription': 'Beam3500GeV-VeloClosed-MagDown',
+               'EventType': '90000000',
+               'FileType': 'EW.DST',
+               'ProcessingPass': '/Real Data/Reco10/Stripping13b',
+               'ConfigVersion': 'Collision11'}
+    retVal = self.bk.getStepsMetadata(bkQuery)
+    self.assertTrue(retVal['OK'])
+    self.assertEqual(retVal['Value']['TotalRecords'], 1)
+    self.assertEqual(list(retVal['Value']['Records']), ['Step-13438'])
+
 
 if __name__ == '__main__':
 

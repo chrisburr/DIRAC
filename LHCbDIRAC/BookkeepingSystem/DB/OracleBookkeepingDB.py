@@ -3077,10 +3077,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getProductionInformation', [prodid])
 
   #############################################################################
-  def getSteps(self, prodid):
+  def getSteps(self, prodid, bkQuery=None):
     """For retrieving the production step.
 
     :param long prodid: production numeber
+    :param dict bkQuery: the bk dataset
     :return: the step used by a production
     """
     result = None
@@ -3108,7 +3109,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           correctedValues += [tuple(tmp)]
         result = S_OK(correctedValues)
       else:
-        retVal = self.__resolveFromPreviousStep(prodid)
+        retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
         if retVal['OK']:
           correctedValues = []
           for i in data:
@@ -3122,34 +3123,50 @@ and files.qualityid= dataquality.qualityid" % lfn
       return result
 
   #############################################################################
-  def __resolveFromPreviousStep(self, production):
-    """It returns the database tags from the ancestor.
+  def __resolveFromPreviousStep(self, production, bkQuery):
+    """It returns the database tags from the ancestor. Productionoutputfiles 
+    table is used insted of jobs and inputfiles tables
 
     :param long production: production number
+    :param dict bkQuery: the bk dataset
     :return: database tags
     """
-    command = "select distinct production from jobs j, files f where j.jobid=f.jobid and \
-    j.production!=%d and f.fileid in (select i.fileid from inputfiles i \
-    where i.JOBID in (select jobid from jobs j where j.production=%d))" % (production, production)
+
+    bkQuery['ProcessingPass'] = '/'.join(bkQuery['ProcessingPass'].split('/')[:-1])
+    command = self.__prepareStepMetadata(bkQuery['ConfigName'],
+                                         bkQuery['ConfigVersion'],
+                                         bkQuery['ConditionDescription'],
+                                         bkQuery['ProcessingPass'],
+                                         bkQuery['EventType'],
+                                         bkQuery['Production'],
+                                         'ALL',
+                                         bkQuery['RunNumber'],
+                                         'ALL',
+                                         'ALL',
+                                         selection="prod.production")
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
-      return retVal
-    prod = retVal['Value'][0][0]
-    retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
-    if not retVal['OK']:
-      return retVal
-    data = retVal['Value']
-    found = False
-    for i in data:
-      if i[4] != "fromPreviousStep" or i[5] != "fromPreviousStep":
-        ddb = i[4]
-        conddb = i[5]
-        found = True
-        break
-    if found:
-      return S_OK([ddb, conddb])
+      result = retVal
     else:
-      return self.__resolveFromPreviousStep(prod)
+      productions = set(tuple(i[0] for i in retVal['Value'])) - set([production])
+      gLogger.debug('Input Production(s):', productions)
+      if productions:
+        for prod in productions:
+          retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
+          if not retVal['OK']:
+            return retVal
+          data = retVal['Value']
+          found = False
+          for i in data:
+            if i[4] != "fromPreviousStep" or i[5] != "fromPreviousStep":
+              ddb = i[4]
+              conddb = i[5]
+              found = True
+              break
+          if found:
+            return S_OK([ddb, conddb])
+      else:
+        return self.__resolveFromPreviousStep(production, bkQuery)
 
   #############################################################################
   def getNbOfJobsBySites(self, prodid):
@@ -4872,7 +4889,9 @@ and files.qualityid= dataquality.qualityid" % lfn
   def __prepareStepMetadata(self, configName, configVersion,
                             cond=default, procpass=default,
                             evt=default, production=default,
-                            filetype=default, runnb=default, selection=''):
+                            filetype=default, runnb=default,
+                            visible=default, replica=default,
+                            selection=''):
     """it generates the sql command depending on the selection.
 
     :param str configName: configuration name
@@ -4922,11 +4941,16 @@ and files.qualityid= dataquality.qualityid" % lfn
       tables += ', filetypes ftypes'
       condition += " and ftypes.name='%s' and prod.filetypeid=ftypes.filetypeid " % (filetype)
 
+    if visible != default:
+      condition += " and prod.visible='%s'" % visible
+
+    if replica != default:
+      condition += " and prod.gotreplica='%s'" % replica
+
     command = "select %s  from  %s \
                where \
               scont.stepid=s.stepid and \
               cont.production=prod.production and \
-              prod.visible='Y' and prod.gotreplica='Yes' and\
               c.configurationid=cont.configurationid and\
               prod.production=scont.production %s order by scont.step" % (selection, tables, condition)
     return command
@@ -4961,16 +4985,27 @@ and files.qualityid= dataquality.qualityid" % lfn
                                            production,
                                            filetype,
                                            runnb,
+                                           'Y',
+                                           'Yes',
                                            selection="prod.production")
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
         result = retVal
       else:
-        productions = tuple([i[0] for i in retVal['Value']])
+        productions = set([i[0] for i in retVal['Value']])
         gLogger.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
-        for production in productions:
-          retVal = self.getSteps(production)
+        print('HDJSDJSHDJSHDJ', productions)
+        for prod in productions:
+          print('G', prod)
+          retVal = self.getSteps(prod, {
+              'ConfigName': configName,
+              'ConfigVersion': configVersion,
+              'ConditionDescription': cond,
+              'ProcessingPass': procpass,
+              'EventType': evt,
+              'Production': production,
+              'RunNumber': runnb})
           if not retVal:
             result = retVal
           else:
@@ -5000,6 +5035,8 @@ and files.qualityid= dataquality.qualityid" % lfn
                                            production,
                                            filetype,
                                            runnb,
+                                           'Y',
+                                           'Yes',
                                            selection='distinct s.stepid,s.stepname,s.applicationname,\
                                            s.applicationversion,s.optionfiles,s.dddb,\
                                            s.conddb,s.extrapackages,s.visible, scont.step')
