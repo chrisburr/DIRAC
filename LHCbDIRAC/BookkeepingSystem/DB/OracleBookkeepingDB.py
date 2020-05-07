@@ -4995,9 +4995,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         productions = set([i[0] for i in retVal['Value']])
         gLogger.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
-        print('HDJSDJSHDJSHDJ', productions)
         for prod in productions:
-          print('G', prod)
           retVal = self.getSteps(prod, {
               'ConfigName': configName,
               'ConfigVersion': configVersion,
