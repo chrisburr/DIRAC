@@ -281,7 +281,7 @@ def executeAddTransformation(pluginScript):
         continue
     transformation.setTransformationName(transName)
     transformation.setTransformationGroup(transGroup)
-    transformation.setDescription(longName)
+    transformation.setDescription(longName[:255])
     transformation.setLongDescription(longName)
     transformation.setType(transType)
     transBody = None
