@@ -3124,7 +3124,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
   #############################################################################
   def __resolveFromPreviousStep(self, production, bkQuery):
-    """It returns the database tags from the ancestor. Productionoutputfiles 
+    """It returns the database tags from the ancestor. Productionoutputfiles
     table is used insted of jobs and inputfiles tables
 
     :param long production: production number
