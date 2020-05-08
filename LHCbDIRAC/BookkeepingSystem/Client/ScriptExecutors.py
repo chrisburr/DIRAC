@@ -174,7 +174,7 @@ def executeFilePath(dmScript):
       res = bkClient.getFileMetadata(lfnChunk)
       progressBar.loop()
       if res['OK']:
-        for lfn, metadata in res['Value']['Successful'].items():  # can be an iterator
+        for lfn, metadata in res['Value']['Successful'].items():   # can be an iterator
           group = metadata.get(groupBy)
           paths['Successful'].setdefault('%s %s' % (groupBy, group), set()).add(lfn)
           lfnChunk.remove(lfn)
@@ -515,7 +515,7 @@ def executeFileAncestors(dmScript, level=1):
         for lfn in okResult:
           fullResult['Value'].setdefault('Successful', {})[lfn] = \
               dict((desc, 'Replica-%s' % meta['GotReplica'])
-                   for desc, meta in okResult[lfn].items())  # can be an iterator
+                   for desc, meta in okResult[lfn].items())   # can be an iterator
       failed = result['Value']['Failed']
       if isinstance(failed, list):
         failed = dict.fromkeys(failed, 'Not found')
@@ -589,7 +589,7 @@ def executeFileDescendants(dmScript, level=1):
         for lfn in okResult:
           fullResult['Value'].setdefault('Successful', {})[lfn] = \
               dict((desc, 'Replica-%s' % meta['GotReplica'])
-                   for desc, meta in okResult[lfn].items())  # can be an iterator
+                   for desc, meta in okResult[lfn].items())   # can be an iterator
       failed = result['Value']['Failed']
       if isinstance(failed, list):
         failed = dict.fromkeys(failed, 'Unknown error')
@@ -800,7 +800,7 @@ def executeFileSisters(dmScript, level=1):
   fullResult = {'OK': True, 'Value': {resItem: {}, relation: set()}}
   resValue = fullResult['Value']
 
-  for prod, lfnList in prodLfns.items():  # can be an iterator
+  for prod, lfnList in prodLfns.items():   # can be an iterator
     if sameType:
       res = bkClient.getFileMetadata(lfnList)
       if not res['OK']:
@@ -821,7 +821,7 @@ def executeFileSisters(dmScript, level=1):
 
     ancestors = {}
     # More than one file in the input list may have the same ancestor(s), check if they are sisters/cousins
-    for lfn, ancList in result['Value']['Successful'].items():  # can be an iterator
+    for lfn, ancList in result['Value']['Successful'].items():   # can be an iterator
       sameAncestors = set(anc['FileName'] for anc in ancList) & set(ancestors)
       skip = False
       if sameAncestors:
@@ -840,7 +840,7 @@ def executeFileSisters(dmScript, level=1):
 
     fullResult['OK'] = res['OK']
     if res['OK']:
-      for anc, sisters in res['Value']['WithMetadata'].items():  # can be an iterator
+      for anc, sisters in res['Value']['WithMetadata'].items():   # can be an iterator
         lfns = ancestors[anc]
         found = False
         for sister in sisters:
@@ -1128,7 +1128,7 @@ def executeGetStats(dmScript):
           progressBar.loop()
           res = bkClient.getFileMetadata(lfnChunk)
           if res['OK']:
-            for lfn, metadata in res['Value']['Successful'].items():  # can be an iterator
+            for lfn, metadata in res['Value']['Successful'].items():   # can be an iterator
               try:
                 if metadata['EventStat']:
                   datasets.add((metadata['EventType'], metadata['FileType']))
@@ -1487,9 +1487,9 @@ def _getJobsEISFromAncestors(lfnList):
     if not res['OK']:
       return res
     ancWithMetadata = res['Value']['WithMetadata']
-    for lfn, ancDict in ancWithMetadata.items():  # can be an iterator
+    for lfn, ancDict in ancWithMetadata.items():   # can be an iterator
       job = _jobFromLfn(lfn)
-      for anc, meta in ancDict.items():  # can be an iterator
+      for anc, meta in ancDict.items():   # can be an iterator
         ancJob = _jobFromLfn(anc)
         ancestors.setdefault(job, []).append(ancJob)
         if ancJob in jobEventInputStat:
@@ -1512,7 +1512,7 @@ def _getJobsEISFromAncestors(lfnList):
     if not res['OK']:
       return res
     # Update the table for jobs still unknown
-    for job, ancJobs in ancestors.items():  # can be an iterator
+    for job, ancJobs in ancestors.items():   # can be an iterator
       if job not in jobEventInputStat:
         try:
           # This ancestor job is  already known

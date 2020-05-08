@@ -205,7 +205,7 @@ class PluginUtilities(DIRACPluginUtilities):
         shares[backupSE] = 100. - tier1Fraction
       else:
         return res
-      rawPercentage = dict((se, 100. * val) for se, val in rawFraction.items()) # can be an iterator
+      rawPercentage = dict((se, 100. * val) for se, val in rawFraction.items())  # can be an iterator
       self.printShares("Fraction of RAW (%s) to be processed at each SE (%%):" % section,
                        rawPercentage, counters=[], log=log)
     else:
@@ -304,7 +304,7 @@ class PluginUtilities(DIRACPluginUtilities):
     if requestedSEs:
       requestedSEs = set(requestedSEs)
       seDict = {}
-      for se, count in usageDict.items(): # can be an iterator
+      for se, count in usageDict.items():  # can be an iterator
         overlap = set(se.split(',')) & requestedSEs
         if overlap:
           for ov in overlap:
@@ -528,7 +528,7 @@ get from BK" % (param, self.paramName))
         weights = weightForSEs.copy()
         total = 0.
         orderedSEs = []
-        for se, weight in weights.items(): # can be an iterator
+        for se, weight in weights.items():  # can be an iterator
           # Minimum space 1 GB in case all are 0
           total += max(weight, 0.001)
           weights[se] = total
@@ -682,7 +682,7 @@ get from BK" % (param, self.paramName))
     # Restrict to files with the required parameter
     if param:
       paramValues = self.getFilesParam(lfns, param)
-      lfns = [f for f, v in paramValues.items() if v == paramValue] # can be an iterator
+      lfns = [f for f, v in paramValues.items() if v == paramValue]  # can be an iterator
 
     if lfns:
       lfnToCheck = lfns[0]
@@ -699,7 +699,8 @@ get from BK" % (param, self.paramName))
     # Get number of ancestors for known files
     cachedLfns = self.cachedLFNAncestors.get(runID, {})
     # If we cached a number, clean the cache
-    if cachedLfns and True in set(isinstance(val, six.integer_types) for val in cachedLfns.values()): # can be an iterator
+    if cachedLfns and True in set(isinstance(val, six.integer_types)
+                                  for val in cachedLfns.values()):  # can be an iterator
       cachedLfns = {}
     setLfns = set(lfns)
     hitLfns = setLfns & set(cachedLfns)
@@ -804,7 +805,7 @@ get from BK" % (param, self.paramName))
       self.logError("Error getting ancestors", ancestors['Message'])
       return _clearTaskLFNs(taskLfns)
     ancestors = ancestors['Value']['Successful']
-    ancLfns = [anc['FileName'] for ancList in ancestors.values() for anc in ancList] # can be an iterator
+    ancLfns = [anc['FileName'] for ancList in ancestors.values() for anc in ancList]  # can be an iterator
     self.logVerbose('Checking ancestors presence at %s for %d files' % (','.join(sorted(seList)),
                                                                         len(ancLfns)))
     res = self.dm.getReplicasForJobs(ancLfns, getUrl=False)
@@ -814,7 +815,7 @@ get from BK" % (param, self.paramName))
       return _clearTaskLFNs(taskLfns)
     else:
       success = res['Value']['Successful']
-    for lfn, ancList in ancestors.items(): # can be an iterator
+    for lfn, ancList in ancestors.items():  # can be an iterator
       for anc in ancList:
         if not seList & set(success[anc['FileName']]):
           # Remove the LFN from the list of lists
@@ -873,22 +874,22 @@ get from BK" % (param, self.paramName))
     self.logVerbose("Starting getFilesGroupedByRunAndParam for %d files, %s" %
                     (len(files), 'by %s' % param if param else 'no param'))
     runGroups = groupByRun(files)
-    for runNumber, runLFNs in runGroups.items(): # can be an iterator
+    for runNumber, runLFNs in runGroups.items():  # can be an iterator
       if not param:
         runDict[runNumber] = {None: runLFNs}
       else:
         runDict[runNumber] = {}
         resDict = self.getFilesParam(runLFNs, param)
-        for lfn, paramValue in resDict.items(): # can be an iterator
+        for lfn, paramValue in resDict.items():  # can be an iterator
           runDict[runNumber].setdefault(paramValue, []).append(lfn)
 
     # If necessary fix files with run number 0
     zeroRunDict = runDict.pop(0, None)
     if zeroRunDict:
       nZero = 0
-      for paramValue, zeroRun in zeroRunDict.items(): # can be an iterator
+      for paramValue, zeroRun in zeroRunDict.items():  # can be an iterator
         newRuns = self.setRunForFiles(zeroRun)
-        for newRun, runLFNs in newRuns.items(): # can be an iterator
+        for newRun, runLFNs in newRuns.items():  # can be an iterator
           runDict.setdefault(newRun, {}).setdefault(paramValue, []).extend(runLFNs)
           nZero += len(runLFNs)
       self.logInfo("Set run number for %d files with run #0, which means it was not set yet" % nZero)
@@ -915,7 +916,7 @@ get from BK" % (param, self.paramName))
     if zeroRun:
       nZero = 0
       newRuns = self.setRunForFiles(zeroRun)
-      for newRun, runLFNs in newRuns.items(): # can be an iterator
+      for newRun, runLFNs in newRuns.items():  # can be an iterator
         runGroups.setdefault(newRun, []).extend(runLFNs)
         nZero += len(runLFNs)
       self.logInfo("Set run number for %d files with run #0, which means it was not set yet" % nZero)
@@ -1036,7 +1037,7 @@ get from BK" % (param, self.paramName))
     res = self.bkClient.getFileMetadata(lfns)
     runFiles = {}
     if res['OK']:
-      for lfn, metadata in res['Value']['Successful'].items(): # can be an iterator
+      for lfn, metadata in res['Value']['Successful'].items():  # can be an iterator
         runFiles.setdefault(metadata['RunNumber'], []).append(lfn)
       for run in sorted(runFiles):
         if not run:
@@ -1188,7 +1189,7 @@ get from BK" % (param, self.paramName))
     success = {}
     descProd = {}
     chunkSize = self.__getChunkSize()
-    for prod, lfns in prodLfns.items(): # can be an iterator
+    for prod, lfns in prodLfns.items():  # can be an iterator
       progressBar = ProgressBar(len(lfns),
                                 title="Getting descendants for %d files in production %d" %
                                 (len(lfns), prod), chunk=chunkSize,
@@ -1199,11 +1200,11 @@ get from BK" % (param, self.paramName))
         res = self.bkClient.getFileDescendants(lfnChunk, depth=1, production=int(prod), checkreplica=False)
         if not res['OK']:
           return res
-        for lfn, descDict in res['Value']['WithMetadata'].items(): # can be an iterator
+        for lfn, descDict in res['Value']['WithMetadata'].items():  # can be an iterator
           # Only keep the file type as metadata in teh dict
           success.setdefault(lfn, {}).update(dict((desc, {'FileType': metadata['FileType'],
                                                           'GotReplica': metadata['GotReplica']})
-                                                  for desc, metadata in descDict.items() # can be an iterator
+                                                  for desc, metadata in descDict.items()  # can be an iterator
                                                   if metadata['FileType'] not in excludeTypes))
           # Record information about which production created each descendant
           for desc in descDict:
@@ -1213,7 +1214,7 @@ get from BK" % (param, self.paramName))
     # Get set of file types
     fileTypes = sorted(set(metadata['FileType']
                            for descendants in success.values()
-                           for metadata in descendants.values())) # can be an iterator
+                           for metadata in descendants.values()))  # can be an iterator
     self.logVerbose("Will check file type%s %s" % ('s' if len(fileTypes) > 1 else '', ','.join(fileTypes)))
 
     # Try and find descendants for each file type in turn as this is sufficient
@@ -1221,10 +1222,10 @@ get from BK" % (param, self.paramName))
       # Invert list of descendants: descToCheck has descendant as key and list of parents
       descToCheck = {}
       descMetadata = {}
-      for lfn, descendants in success.items(): # can be an iterator
+      for lfn, descendants in success.items():  # can be an iterator
         if lfn not in finalResult:
           descMetadata.update(descendants)
-          for desc, metadata in descendants.items(): # can be an iterator
+          for desc, metadata in descendants.items():  # can be an iterator
             if metadata['FileType'] == fileType:
               descToCheck.setdefault(desc, set()).add(lfn)
       if not descToCheck:
@@ -1279,7 +1280,7 @@ get from BK" % (param, self.paramName))
       res = suClient.getStorageSummary(dirName, None, None, seList)
       if not res['OK']:
         return res
-      for se, stat in res['Value'].items(): # can be an iterator
+      for se, stat in res['Value'].items():  # can be an iterator
         result[se] = result.setdefault(se, 0) + stat['Files']
     return S_OK(result)
 
@@ -1334,7 +1335,7 @@ get from BK" % (param, self.paramName))
       return rawShares
     # Turn a RAW share into a share on selected SEs
     shares = {}
-    for rawSE, share in rawShares['Value'][1].items(): # can be an iterator
+    for rawSE, share in rawShares['Value'][1].items():  # can be an iterator
       selectedSEs = self.closerSEs([rawSE], destSEs, local=True)
       if selectedSEs:
         share *= targetFilesAtDestination / 100.
@@ -1359,7 +1360,7 @@ get from BK" % (param, self.paramName))
 
     # Share targetFilesAtDestination on the SEs taking into account current usage
     maxFilesAtSE = {}
-    for se, share in shares.items(): # can be an iterator
+    for se, share in shares.items():  # can be an iterator
       maxFilesAtSE[se] = max(0, int(share - storageUsage.get(se, 0) - recentFiles.get(se, 0)))
     self.printShares("Maximum number of files per SE:", maxFilesAtSE, counters=[], log=self.logInfo)
     return S_OK(maxFilesAtSE)
@@ -1447,7 +1448,7 @@ def getShares(sType, normalise=False):
   if not res['Value']:
     return S_ERROR("/Resources/%s option contains no shares" % optionPath)
   shares = res['Value']
-  for site, value in shares.items(): # can be an iterator
+  for site, value in shares.items():  # can be an iterator
     shares[site] = float(value)
   if normalise:
     shares = normaliseShares(shares)
@@ -1507,7 +1508,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
       res = bk.getFileMetadata(lfnChunk)
       if res['OK']:
         resMeta = res['Value']['Successful']
-        for lfn, metadata in resMeta.items(): # can be an iterator
+        for lfn, metadata in resMeta.items():  # can be an iterator
           runID = metadata.get('RunNumber')
           if runID:
             runDict.setdefault(int(runID), set()).add(lfn)
@@ -1523,11 +1524,11 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
         time.sleep(1)
       else:
         break
-    added = set(lfn for (lfn, status) in res['Value']['Successful'].items() if status == 'Added') # can be an iterator
+    added = set(lfn for (lfn, status) in res['Value']['Successful'].items() if status == 'Added')  # can be an iterator
     addedLfns.update(added)
     if addRunInfo and res['OK']:
       gLogger.info("Add information for %d runs to transformation %s" % (len(runDict), transID))
-      for runID, runLfns in runDict.items(): # can be an iterator
+      for runID, runLfns in runDict.items():  # can be an iterator
         runLfns &= added
         if runLfns:
           res = transClient.addTransformationRunFiles(transID, runID, list(runLfns))
@@ -1537,7 +1538,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
       res = transClient.getRunsMetadata(list(runDict))
       if res['OK']:
         missingRuns = []
-        for runID, meta in res['Value'].items(): # can be an iterator
+        for runID, meta in res['Value'].items():  # can be an iterator
           if 'TCK' not in meta or 'CondDb' not in meta or 'DDDB' not in meta:
             missingRuns.append(runID)
       else:
@@ -1547,7 +1548,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
         if not res['OK']:
           gLogger.error("Error getting run information", res['Message'])
         else:
-          for runID, meta in res['Value'].items(): # can be an iterator
+          for runID, meta in res['Value'].items():  # can be an iterator
             res = transClient.addRunsMetadata(runID, meta)
             if not res['OK']:
               gLogger.error("Error setting run metadata in TS", res['Message'])

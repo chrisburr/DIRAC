@@ -225,7 +225,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
       if assignedBuffer:
         assignedBuffer = list(assignedBuffer)[0]
       updated = False
-      for replicaSE, lfns in replicaGroups.items(): # can be an iterator
+      for replicaSE, lfns in replicaGroups.items():  # can be an iterator
         replicaSE = set(replicaSE.split(','))
         if not assignedRAW:
           # Files are not yet at a Tier1-RAW, if a destination already exists, use it
@@ -364,7 +364,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
       replicaGroups = getFileGroups(dict((lfn, self.transReplicas[lfn])
                                          for lfn in runLfns if lfn in self.transReplicas))
       notAtSE = 0
-      for replicaSE, lfns in replicaGroups.items(): # can be an iterator
+      for replicaSE, lfns in replicaGroups.items():  # can be an iterator
         targetSEs = set(replicaSE.split(',')) & fromSEs
         if targetSEs:
           # The files are at at least one of the requested SEs, set in run site for transformation
@@ -529,7 +529,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     # Check that the total number of files we got for that run is equal to the number of Unused files
     nRunsLeft = len(runNumbers)
     for runID in list(runNumbers):
-      runFiles = sum(len(lfns) for lfns in runFileDict[runID].values()) # can be an iterator
+      runFiles = sum(len(lfns) for lfns in runFileDict[runID].values())  # can be an iterator
       if runFiles != unusedFilesPerRun.get(runID, 0):
         runNumbers.remove(runID)
     if nRunsLeft != len(runNumbers):
@@ -671,7 +671,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
               okDict.setdefault(tuple(okSEs), []).append(task[1])
           # Create the real tasks now
           tasks = []
-          for okSEs, taskLfns in okDict.items(): # can be an iterator
+          for okSEs, taskLfns in okDict.items():  # can be an iterator
             if addAncestors:
               # taskLfns is modified by this method: lfns are eventually removed
               missing = self.util.checkAncestorsAtSE(taskLfns, fromSEs)
@@ -864,7 +864,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     fileTargetSEs = {}
     alreadyCompleted = []
     # Consider all runs in turn
-    for runID, runLfns in runFileDict.items(): # can be an iterator
+    for runID, runLfns in runFileDict.items():  # can be an iterator
       # Check if the run is already assigned
       stringTargetSEs = runSEDict.get(runID, None)
       # No SE assigned yet, determine them
@@ -900,7 +900,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
     # Now group all of the files by their target SEs
     storageElementGroups = {}
-    for lfn, stringTargetSEs in fileTargetSEs.items(): # can be an iterator
+    for lfn, stringTargetSEs in fileTargetSEs.items():  # can be an iterator
       storageElementGroups.setdefault(stringTargetSEs, []).append(lfn)
 
     return S_OK(self.util.createTasks(storageElementGroups))
@@ -925,7 +925,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     # Filter file types
     if excludedFileTypes:
       excludedLfns = []
-      for lfn, fileType in self.util.getMetadataFromTSorBK(self.transReplicas, 'FileType').items(): # can be an iterator
+      for lfn, fileType in self.util.getMetadataFromTSorBK(
+              self.transReplicas, 'FileType').items():  # can be an iterator
         if fileType in excludedFileTypes:
           self.transReplicas.pop(lfn)
           excludedLfns.append(lfn)
@@ -937,7 +938,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
           return res
 
     storageElementGroups = {}
-    for replicaSE, lfnGroup in getFileGroups(self.transReplicas).items(): # can be an iterator
+    for replicaSE, lfnGroup in getFileGroups(self.transReplicas).items():  # can be an iterator
       existingSEs = [se for se in replicaSE.split(',') if not self.util.dmsHelper.isSEFailover(se)]
       for lfns in breakListIntoChunks(lfnGroup, 100):
 
@@ -1063,7 +1064,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
     alreadyCompleted = []
     fileTargetSEs = {}
-    for replicaSE, lfnGroup in getFileGroups(self.transReplicas).items(): # can be an iterator
+    for replicaSE, lfnGroup in getFileGroups(self.transReplicas).items():  # can be an iterator
       existingSEs = [se for se in replicaSE.split(',') if not self.util.dmsHelper.isSEFailover(se)]
       # If a FromSEs parameter is given, only keep the files that are at one of those SEs, mark the others NotProcessed
       if fromSEs:
@@ -1127,7 +1128,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
     # Now group all of the files by their target SEs
     storageElementGroups = {}
-    for lfn, stringTargetSEs in fileTargetSEs.items(): # can be an iterator
+    for lfn, stringTargetSEs in fileTargetSEs.items():  # can be an iterator
       storageElementGroups.setdefault(stringTargetSEs, []).append(lfn)
 
     self.util.logDebug("Storage Element Groups created: %s" % storageElementGroups)
@@ -1140,7 +1141,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     Used only for tests!
     """
     storageElementGroups = {}
-    for replicaSE, lfnGroup in getFileGroups(self.transReplicas).items(): # can be an iterator
+    for replicaSE, lfnGroup in getFileGroups(self.transReplicas).items():  # can be an iterator
       existingSEs = replicaSE.split(',')
       for lfns in breakListIntoChunks(lfnGroup, 100):
         stringTargetSEs = existingSEs[0]
@@ -1184,7 +1185,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
           self.util.logInfo("%d files are being removed but were already"
                             " Processed or Removed in other transformations" %
                             len(processedFiles))
-        for trans, lfns in transDict.items(): # can be an iterator
+        for trans, lfns in transDict.items():  # can be an iterator
           # Do not actually take action for a fake transformation (dirac-test-plugin)
           if self.transID > 0:
             res = self.transClient.setFileStatusForTransformation(trans, 'Removed', lfns)
@@ -1234,9 +1235,9 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
     # Consider all runs in turn
     tasks = []
-    for runID, runLfns in runFileDict.items(): # can be an iterator
-      replicas = dict((lfn, ses) for lfn, ses in self.transReplicas.items() if lfn in runLfns) # can be an iterator
-      existingSEs = set(se for ses in replicas.values() for se in ses if se not in keepSEs) # can be an iterator
+    for runID, runLfns in runFileDict.items():  # can be an iterator
+      replicas = dict((lfn, ses) for lfn, ses in self.transReplicas.items() if lfn in runLfns)  # can be an iterator
+      existingSEs = set(se for ses in replicas.values() for se in ses if se not in keepSEs)  # can be an iterator
       destinationSE = self.util.getSEForDestination(runID, existingSEs)
       if destinationSE is None:
         # If there is no replica at destination, remove randomly
@@ -1245,8 +1246,10 @@ class TransformationPlugin(DIRACTransformationPlugin):
         replicasNoKeep = replicas
       else:
         self.util.logVerbose("Preparing tasks for run %d, destination %s" % (runID, destinationSE))
-        replicasWithKeep = dict((lfn, ses) for lfn, ses in replicas.items() if destinationSE in ses) # can be an iterator
-        replicasNoKeep = dict((lfn, ses) for lfn, ses in replicas.items() if destinationSE not in ses) # can be an iterator
+        replicasWithKeep = dict((lfn, ses) for lfn, ses in replicas.items()
+                                if destinationSE in ses)  # can be an iterator
+        replicasNoKeep = dict((lfn, ses) for lfn, ses in replicas.items()
+                              if destinationSE not in ses)  # can be an iterator
       # We keep one more replica @ destinationSE, therefore decrease the number to be kept
       for reps, keep, kSEs in ((replicasNoKeep,
                                 minKeep,
@@ -1314,7 +1317,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
     storageElementGroups = {}
     notInKeepSEs = []
-    for replicaSE, lfns in getFileGroups(replicas).items(): # can be an iterator
+    for replicaSE, lfns in getFileGroups(replicas).items():  # can be an iterator
       replicaSE = replicaSE.split(',')
       if minKeep == 0 and keepSEs:
         # Check that the dataset exists at least at 1 keepSE
@@ -1420,7 +1423,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
       self.util.logVerbose("Using %d input files, in %d groups" % (len(self.transReplicas), len(replicaGroups)))
       storageElementGroups = {}
       newGroups = {}
-      for stringSEs, lfns in replicaGroups.items(): # can be an iterator
+      for stringSEs, lfns in replicaGroups.items():  # can be an iterator
         replicaSEs = set(stringSEs.split(','))
         if replicaSEs & bannedSEs:
           # Ignore these files
@@ -1537,7 +1540,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
     if not ancestors['OK']:
       self.util.logError("Error getting ancestors", ancestors['Message'])
       return ancestors
-    ancestors = [anc['FileName'] for ancList in ancestors['Value']['Successful'].values() for anc in ancList] # can be an iterator
+    ancestors = [anc['FileName'] for ancList in ancestors['Value']['Successful'].values()
+                 for anc in ancList]  # can be an iterator
     return S_OK(ancestors)
 
   def __addAncestors(self, pluginMethod=None):
@@ -1561,13 +1565,14 @@ class TransformationPlugin(DIRACTransformationPlugin):
           self.util.logError('Failed to add files to transformation', res['Message'])
           return res
         # Only put added files in tasks
-        addedLfns = [lfn for (lfn, status) in res['Value']['Successful'].items() if status == 'Added'] # can be an iterator
+        addedLfns = [lfn for (lfn, status) in res['Value']['Successful'].items()
+                     if status == 'Added']  # can be an iterator
         addedAncestors += addedLfns
       else:
         addedLfns = []
       newTasks.append((targetSE, lfns + addedLfns))
     # This dict is those files already processed by the initial plugin (i.e. no need to process them)
-    for targetSE, lfns in self._alreadyProcessedLFNs.items(): # can be an iterator
+    for targetSE, lfns in self._alreadyProcessedLFNs.items():  # can be an iterator
       ancestors = self.__getAncestorLFNs(lfns)
       if not ancestors['OK']:
         return ancestors
@@ -1577,7 +1582,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
         if not res['OK']:
           self.util.logError('Failed to add files to transformation', res['Message'])
           return res
-        addedLfns = [lfn for (lfn, status) in res['Value']['Successful'].items() if status == 'Added'] # can be an iterator
+        addedLfns = [lfn for (lfn, status) in res['Value']['Successful'].items()
+                     if status == 'Added']  # can be an iterator
         self.util.logVerbose("Found %d ancestors of Processed files: add them to tasks" % len(addedLfns))
         addedAncestors += addedLfns
         for ancChunk in breakListIntoChunks(addedLfns, 2 * maxFiles):
@@ -1599,7 +1605,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     destSEs = set(maxFilesAtSE)
     storageElementGroups = {}
 
-    for replicaSE, lfns in getFileGroups(self.transReplicas).items(): # can be an iterator
+    for replicaSE, lfns in getFileGroups(self.transReplicas).items():  # can be an iterator
       replicaSEs = set(se for se in replicaSE.split(',') if not self.util.dmsHelper.isSEFailover(se))
       if not replicaSEs:
         continue
@@ -1665,7 +1671,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     self.util.cleanFiles(self.transFiles, self.transReplicas)
     storageElementGroups = {}
 
-    for replicaSE, lfns in getFileGroups(self.transReplicas).items(): # can be an iterator
+    for replicaSE, lfns in getFileGroups(self.transReplicas).items():  # can be an iterator
       replicaSE = set(se for se in replicaSE.split(',') if not self.util.dmsHelper.isSEFailover(se))
       if not replicaSE:
         self.util.logInfo("Found %d files that don't have a suitable source replica. Set Problematic" % len(lfns))
