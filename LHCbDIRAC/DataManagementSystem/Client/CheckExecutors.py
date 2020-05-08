@@ -37,7 +37,7 @@ def __removeReplica(lfnDict):
   for lfn in lfnDict:
     for se in lfnDict[lfn]:
       seLFNs.setdefault(se, []).append(lfn)
-  for se, lfns in seLFNs.items():
+  for se, lfns in seLFNs.items():  # can be an iterator
     removeReplicas(lfns, [se])
   return seLFNs
 
@@ -49,7 +49,7 @@ def __replaceReplica(dm, seLFNs):
     gLogger.notice("Now replicating bad replicas...")
     success = {}
     failed = {}
-    for se, lfns in seLFNs.items():
+    for se, lfns in seLFNs.items():  # can be an iterator
       for lfn in lfns:
         res = dm.replicateAndRegister(lfn, se)
         if res['OK']:
@@ -60,7 +60,7 @@ def __replaceReplica(dm, seLFNs):
 
     failures = 0
     errors = {}
-    for lfn, reason in failed.items():
+    for lfn, reason in failed.items():  # can be an iterator
       reason = str(reason)
       errors[reason] = errors.setdefault(reason, 0) + 1
       failures += 1
@@ -121,7 +121,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
     if fixIt:
       gLogger.notice("Going to register files from BK to FC")
       regResult = {'Successful': [], 'Failed': {}}
-    for lfn, seList in cc.inSEbutNotInFC.items():
+    for lfn, seList in cc.inSEbutNotInFC.items():  # can be an iterator
       inBK = lfn in cc.existLFNsBKRepNo or lfn in cc.existLFNsBKRepYes
       gLogger.notice('\t%s (%s): %s' % (lfn, 'in BK' if inBK else 'not in BK', ','.join(seList)))
       if fixIt:
@@ -155,7 +155,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
       dm = DataManager()
       replicaTuples = []
       regRepResult = {'Successful': {}, 'Failed': {}}
-      for lfn, seList in cc.notRegisteredAtSE.items():
+      for lfn, seList in cc.notRegisteredAtSE.items():  # can be an iterator
         for se in seList:
           res = StorageElement(se).getURL(lfn, protocol=registrationProtocol)
           if res['OK']:
@@ -174,7 +174,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
 
   if cc.existLFNsBKRepNo:
     gLogger.notice('>>>>')
-    affectedRuns = set(str(run) for run in cc.existLFNsBKRepNo.values() if run)
+    affectedRuns = set(str(run) for run in cc.existLFNsBKRepNo.values() if run)  # can be an iterator
     title = "%d files are in the FC (or SE) but have replica = NO in BK:\nAffected runs: %s" % \
         (len(cc.existLFNsBKRepNo),
          ','.join(sorted(affectedRuns)) if affectedRuns else 'None')
@@ -220,7 +220,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
       gLogger.notice("Going to fix, " + fixStr)
       removeLfns = []
       replicasToRemove = {}
-      for lfn, ses in cc.existLFNsNoSE.items():
+      for lfn, ses in cc.existLFNsNoSE.items():  # can be an iterator
         if ses == 'All':
           removeLfns.append(lfn)
         else:
@@ -264,7 +264,7 @@ def doCheckFC2SE(cc, bkCheck=True, fixIt=False, replace=False, maxFiles=None, fi
     seOK = False
     title = "%d replicas have a bad checksum" % len(cc.existLFNsBadReplicas)
     badChecksum = ['%s @ %s' % (lfn, ','.join(sorted(se)))
-                   for lfn, se in cc.existLFNsBadReplicas.items()]
+                   for lfn, se in cc.existLFNsBadReplicas.items()]  # can be an iterator
     fp = _dumpErrorAndFiles(title, badChecksum, maxFiles, 'BadChecksum', fileName, fp)
     fixStr = "remove replicas from SE and catalogs" if not replace else "re-replicating them"
     if fixIt:
@@ -303,7 +303,7 @@ def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False, checkFC2S
   if cc.existLFNsBKRepNo:
     gLogger.notice('>>>>')
 
-    affectedRuns = list(set(str(run) for run in cc.existLFNsBKRepNo.values()))
+    affectedRuns = list(set(str(run) for run in cc.existLFNsBKRepNo.values()))  # can be an iterator
     gLogger.error("%d files are in the FC but have replica = NO in BK" % len(cc.existLFNsBKRepNo))
     if checkFC2SE:
       from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
@@ -329,7 +329,8 @@ def doCheckFC2BK(cc, fixFC=False, fixBK=False, listAffectedRuns=False, checkFC2S
       if res['Value']['Failed']:
         gLogger.error("No metadata found for some files", '%d files' % len(res['Value']['Failed']))
       success = res['Value']['Successful']
-      filesInvisible = set(lfn for lfn, meta in success.items() if meta['VisibilityFlag'][0].upper() == 'N')
+      filesInvisible = set(lfn for lfn, meta in success.items()
+                           if meta['VisibilityFlag'][0].upper() == 'N')  # can be an iterator
       filesVisible = set(success) - filesInvisible
       gLogger.notice('%d files are visible, %d files are invisible' %
                      (len(filesVisible), len(filesInvisible)))

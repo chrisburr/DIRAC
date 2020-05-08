@@ -608,7 +608,7 @@ class TransformationDebug(object):
       res = self.bkClient.getFileMetadata(filesToFix)
       if res['OK']:
         runFiles = {}
-        for lfn, metadata in res['Value']['Successful'].items():
+        for lfn, metadata in res['Value']['Successful'].items(): # can be an iterator
           runFiles.setdefault(metadata['RunNumber'], []).append(lfn)
         for run in runFiles:
           if not run:
@@ -882,7 +882,7 @@ class TransformationDebug(object):
               fts3FileStatusCount[fts3File.status] += 1
 
           prStr = []
-          for stat, statusCount in fts3FileStatusCount.items():
+          for stat, statusCount in fts3FileStatusCount.items(): # can be an iterator
             prStr.append('%s:%d' % (stat, statusCount))
           gLogger.notice('\tFTS files statuses: %s' % ', '.join(prStr))
 
@@ -1007,7 +1007,7 @@ class TransformationDebug(object):
     nonExistingReplicas = {}
     if error:
       gLogger.notice("Could not get information for some problematic files from SEs:")
-      for se, err in error.items():
+      for se, err in error.items(): # can be an iterator
         gLogger.notice("\t%s: %s" % (se, err))
       gLogger.notice("This check may be totally meaningless, thus no report is made")
       return
@@ -1145,7 +1145,7 @@ class TransformationDebug(object):
     removed = 0
     for fd in res['Value']:
       transFiles.setdefault(fd['TransformationID'], []).append(fd['LFN'])
-    for transID, lfns in transFiles.items():
+    for transID, lfns in transFiles.items(): # can be an iterator
       res = self.transClient.setFileStatusForTransformation(transID, 'Removed', lfns, force=True)
       if not res['OK']:
         gLogger.notice('Error setting %d files Removed' % len(lfns), res['Message'])
@@ -1271,7 +1271,7 @@ class TransformationDebug(object):
     jobLogURL = {}
     jobSites = {}
     jobCPU = {}
-    for lfnStr, allJobs in jobsForLfn.items():
+    for lfnStr, allJobs in jobsForLfn.items(): # can be an iterator
       lfnList = lfnStr.split(',')
       exitedJobs = {}
       allJobs.sort()
@@ -1376,7 +1376,7 @@ class TransformationDebug(object):
               lfnsFound &= set(lfns)
             if lfnsFound:
               for lfn, job, reason in [(l, job, badLfns[job][l])
-                                       for job, lfns in badLfns.items() for l in set(lfns) & lfnsFound]:
+                                       for job, lfns in badLfns.items() for l in set(lfns) & lfnsFound]: # can be an iterator
                 if job in exitedJobs:
                   exitStatus = exitedJobs[job].split('status ')
                   if len(exitStatus) == 2:
@@ -1387,7 +1387,7 @@ class TransformationDebug(object):
           exitedJobs = {}
     if idrLfns:
       gLogger.notice("\nSummary of failures due to Input Data Resolution")
-      for(lfn, jobs) in idrLfns.items():
+      for(lfn, jobs) in idrLfns.items(): # can be an iterator
         jobs = sorted(set(jobs))
         js = set(jobSites.get(job, 'Unknown') for job in jobs)
         if len(js) == 1:
@@ -1413,10 +1413,10 @@ class TransformationDebug(object):
         else:
           lastEvent = int(reason.split(partial)[1][:-1])
           lfnDict[lfn] = (otherReasons[0][:-1] + ',%d)' % lastEvent, otherReasons[1] + jobs)
-      for lfn, (reason, jobs) in lfnDict.items():
+      for lfn, (reason, jobs) in lfnDict.items(): # can be an iterator
         failedLfns[(lfn, reason)] = jobs
 
-      for (lfn, reason), jobs in failedLfns.items():
+      for (lfn, reason), jobs in failedLfns.items(): # can be an iterator
         js = set(jobSites.get(job, 'Unknown') for job in jobs)
         # If only one site, print it once only
         if len(js) == 1:
@@ -1516,9 +1516,9 @@ class TransformationDebug(object):
           gLogger.notice("Error getting files metadata", res['Message'])
         else:
           metadata = res['Value']['Successful']
-          runRAWFiles = set(lfn for lfn, meta in metadata.items()
+          runRAWFiles = set(lfn for lfn, meta in metadata.items() # can be an iterator
                             if meta['EventType'] == evtType and meta['GotReplica'] == 'Yes')
-          badRAWFiles = set(lfn for lfn, meta in metadata.items()
+          badRAWFiles = set(lfn for lfn, meta in metadata.items() # can be an iterator
                             if meta['EventType'] == evtType) - runRAWFiles
           # print len( runRAWFiles ), 'RAW files'
           allAncestors = set()
