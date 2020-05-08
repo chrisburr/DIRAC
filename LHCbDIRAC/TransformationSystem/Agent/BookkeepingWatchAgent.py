@@ -242,7 +242,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
 
         # There is no need to add the run information for a transformation that doesn't need it
         if transPlugin not in self.pluginsWithNoRunInfo:
-          for lfn, metadata in filesMetadata.items():
+          for lfn, metadata in filesMetadata.items():  # can be an iterator
             runID = metadata.get('RunNumber', None)
             if isinstance(runID, (six.string_types, six.integer_types)):
               runDict.setdefault(int(runID), []).append(lfn)
@@ -272,13 +272,13 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
             else:
               # Handle errors
               errors = {}
-              for lfn, error in result['Value']['Failed'].items():
+              for lfn, error in result['Value']['Failed'].items():  # can be an iterator
                 errors.setdefault(error, []).append(lfn)
-              for error, lfns in errors.items():
+              for error, lfns in errors.items(): # can be an iterator
                 self._logWarn("Failed to add files to transformation", error, transID=transID)
                 self._logVerbose("\n\t".join([''] + lfns))
               # Add the metadata and RunNumber to the newly inserted files
-              addedLfns = [lfn for (lfn, status) in result['Value']['Successful'].items() if status == 'Added']
+              addedLfns = [lfn for (lfn, status) in result['Value']['Successful'].items() if status == 'Added'] # can be an iterator
               if addedLfns:
                 # Add files metadata: size and file type
                 lfnDict = dict((lfn, {'Size': filesMetadata[lfn]['FileSize'],
@@ -364,7 +364,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
       if not res['OK']:
         raise RuntimeError(res['Message'])
       else:
-        for run, runMeta in res['Value'].items():
+        for run, runMeta in res['Value'].items(): # can be an iterator
           res = self.transClient.addRunsMetadata(run, runMeta)
           if not res['OK']:
             raise RuntimeError(res['Message'])
@@ -379,7 +379,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
       if not res['OK']:
         raise RuntimeError(res['Message'])
       else:
-        for run, runMeta in res['Value'].items():
+        for run, runMeta in res['Value'].items(): # can be an iterator
           duration = (runMeta['JobEnd'] - runMeta['JobStart']).seconds
           res = self.transClient.addRunsMetadata(run, {'Duration': duration})
           if not res['OK']:
