@@ -300,20 +300,17 @@ new procedure for installing on cvmfs-lhcb
 Only members of the e-group lhcb-cvmfs-librarians have the karma to make releases on CVMFS.
 The version to be deployed is vArBpC. Login on aivoadm.cern.ch and follow the sequence::
 
-  ssh cvmfs-lhcb
-  sudo -i -u cvlhcb
-  cd /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/
-  cvmfs_transaction
-  source lhcbdirac pro (pro is the actual version)
-  export DIRAC=/cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/pro
-  dirac-install -v -r vArBpC -t server -l LHCb -e LHCb --createLink
-  source lhcbdirac vArBpC
-  pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip
-  pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org ipython
-  cd /
-  cvmfs_publish
-  exit
-  exit
+    ssh cvmfs-lhcb
+    sudo -i -u cvlhcb
+    cd /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/
+    cvmfs_transaction
+    curl -O -L https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py
+    chmod +x dirac-install.py
+    ./dirac-install.py -v -r vArBpC -t server -l LHCb -e LHCb --createLink
+    cd /
+    cvmfs_publish
+    exit
+    exit
 
 
 Server
