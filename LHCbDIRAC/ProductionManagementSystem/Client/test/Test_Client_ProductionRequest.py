@@ -42,6 +42,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["123['SDST']", "456['BHADRON.DST']"],
                  'events': -1,
                  'multicore': 'False',
+                 'processors': 4,
                  'outputMode': 'Any',
                  'ancestorDepth': 0
                  },
@@ -67,6 +68,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["456['CALIBRATION.DST']"],
                  'events': -1,
                  'multicore': 'False',
+                 'processors': 2,
                  'outputMode': 'Local',
                  'ancestorDepth': 0
                  },
@@ -92,6 +94,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["456['PID.MDST']"],
                  'events': -1,
                  'multicore': 'True',
+                 'processors': 0,
                  'outputMode': 'Any',
                  'ancestorDepth': 0
                  },
@@ -117,6 +120,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["789['DAVINCIHIST', 'BRUNELHIST']"],
                  'events': -1,
                  'multicore': 'True',
+                 'processors': 0,
                  'outputMode': 'Any',
                  'ancestorDepth': 0
                  }
@@ -316,7 +320,8 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.compressionLvl = ['LOW', 'LOW', 'HIGH', 'HIGH']
     pr.resolveSteps()
     self.assertEqual(pr.stepsListDict, [{'StepId': 123, 'StepName': 'Stripping14-Stripping',
-                                         'ApplicationName': 'DaVinci', 'ApplicationVersion': 'v2r2', 'ExtraOptions': '',
+                                         'ApplicationName': 'DaVinci', 'ApplicationVersion': 'v2r2',
+                                         'ExtraOptions': '',
                                          'OptionFiles': 'optsFiles;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py',
                                          'Visible': 'Yes', 'ExtraPackages': 'eps',
                                          'ProcessingPass': 'procPass', 'OptionsFormat': '', 'SystemConfig': '',
@@ -547,7 +552,8 @@ class ProductionRequestSuccess(ClientTestCase):
                                          'OptionFiles': optionFilesStep1098,
                                          'Visible': 'Yes', 'Usable': 'Yes', 'ProcessingPass': 'Stripping28',
                                          'SystemConfig': 'x86_64-slc6-gcc49-opt',
-                                         'ExtraPackages': 'AppConfig.v3r306', 'mcTCK': '', 'prodStepID': "1098['SDST']",
+                                         'ExtraPackages': 'AppConfig.v3r306',
+                                         'mcTCK': '', 'prodStepID': "1098['SDST']",
                                          'DDDB': 'dddb-20150724', 'CONDDB': 'cond-20161011', 'DQTag': '',
                                          'isMulticore': 'N', 'fileTypesIn': ['SDST'],
                                          'visibilityFlag':[{'Visible': 'Y', 'FileType': 'BHADRON.DST'},
@@ -604,7 +610,8 @@ class ProductionRequestSuccess(ClientTestCase):
                                          'OptionFiles': '$APPCONFIGOPTS/Brunel/DataType-2016.py;',
                                          'Visible': 'Yes', 'Usable': 'Yes', 'ProcessingPass': 'Stripping28',
                                          'SystemConfig': 'x86_64-slc6-gcc49-opt',
-                                         'ExtraPackages': 'AppConfig.v3r306', 'mcTCK': '', 'prodStepID': "1098['SDST']",
+                                         'ExtraPackages': 'AppConfig.v3r306',
+                                         'mcTCK': '', 'prodStepID': "1098['SDST']",
                                          'DDDB': 'dddb-20150724', 'CONDDB': 'cond-20161011', 'DQTag': '',
                                          'isMulticore': 'N', 'fileTypesIn': ['SDST'],
                                          'visibilityFlag':[{'Visible': 'N', 'FileType': 'BHADRON.DST'},
@@ -651,7 +658,8 @@ class ProductionRequestSuccess(ClientTestCase):
                                          'OptionFiles': '$APPCONFIGOPTS/Brunel/DataType-2016.py;',
                                          'Visible': 'Yes', 'Usable': 'Yes', 'ProcessingPass': 'Stripping28',
                                          'SystemConfig': 'x86_64-slc6-gcc49-opt',
-                                         'ExtraPackages': 'AppConfig.v3r306', 'mcTCK': '', 'prodStepID': "1098['SDST']",
+                                         'ExtraPackages': 'AppConfig.v3r306',
+                                         'mcTCK': '', 'prodStepID': "1098['SDST']",
                                          'DDDB': 'dddb-20150724', 'CONDDB': 'cond-20161011', 'DQTag': '',
                                          'isMulticore': 'N', 'fileTypesIn': ['SDST'],
                                          'visibilityFlag':[{'Visible': 'N', 'FileType': 'BHADRON.DST'},
@@ -663,7 +671,8 @@ class ProductionRequestSuccess(ClientTestCase):
                                          'OptionFiles': optionFilesStep996,
                                          'Visible': 'Yes', 'Usable': 'Yes', 'ProcessingPass': 'Stripping28',
                                          'SystemConfig': 'x86_64-slc6-gcc49-opt',
-                                         'ExtraPackages': 'AppConfig.v3r306', 'mcTCK': '', 'prodStepID': "996['SDST']",
+                                         'ExtraPackages': 'AppConfig.v3r306',
+                                         'mcTCK': '', 'prodStepID': "996['SDST']",
                                          'DDDB': 'dddb-20150724', 'CONDDB': 'cond-20161011', 'DQTag': '',
                                          'isMulticore': 'N', 'fileTypesIn': ['SDST'],
                                          'visibilityFlag':[{'Visible': 'Y', 'FileType': 'BHADRON.DST'},
@@ -675,7 +684,8 @@ class ProductionRequestSuccess(ClientTestCase):
                                          'OptionFiles': optionFilesStep997,
                                          'Visible': 'Yes', 'Usable': 'Yes', 'ProcessingPass': 'Stripping28',
                                          'SystemConfig': 'x86_64-slc6-gcc49-opt',
-                                         'ExtraPackages': 'AppConfig.v3r306', 'mcTCK': '', 'prodStepID': "997['SDST']",
+                                         'ExtraPackages': 'AppConfig.v3r306',
+                                         'mcTCK': '', 'prodStepID': "997['SDST']",
                                          'DDDB': 'dddb-20150724', 'CONDDB': 'cond-20161011', 'DQTag': '',
                                          'isMulticore': 'N', 'fileTypesIn': ['SDST'],
                                          'visibilityFlag':[{'Visible': 'N', 'FileType': 'BHADRON.DST'},
@@ -730,6 +740,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
+    pr.processors = [2, 0]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [0, 1]
     pr._applyOptionalCorrections()
@@ -752,6 +763,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1, -1, -1]
     targetsExpected = ['Target1', 'Target2', 'Target2', 'Target2']
     multicoreExpected = ['False', 'True', 'True', 'True']
+    processorsExpected = [2, 0, 0, 0]
     outputModeExpected = ['Local', 'Any', 'Any', 'Any']
     ancestorDepthsExpected = [0, 1, 1, 1]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -773,6 +785,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -797,6 +810,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
+    pr.processors = [2, 0]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [0, 0]
     pr._applyOptionalCorrections()
@@ -819,6 +833,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1]
     targetsExpected = ['Target1', 'Target2']
     multicoreExpected = ['False', 'True']
+    processorsExpected = [2, 0]
     outputModeExpected = ['Local', 'Any']
     ancestorDepthsExpected = [0, 0]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -840,6 +855,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -863,6 +879,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['fromPreviousProd', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
+    pr.processors = [2, 0]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [1, 0]
     pr._applyOptionalCorrections()
@@ -885,6 +902,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1, -1, -1]
     targetsExpected = ['Target1', 'Target1', 'Target1', 'Target2']
     multicoreExpected = ['False', 'False', 'False', 'True']
+    processorsExpected = [2, 2, 2, 0]
     outputModeExpected = ['Local', 'Local', 'Local', 'Any']
     ancestorDepthsExpected = [1, 1, 1, 0]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -906,6 +924,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -929,6 +948,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full']
     pr.targets = ['Target1']
     pr.multicore = ['False']
+    pr.processors = [2]
     pr.outputModes = ['Local']
     pr.ancestorDepths = [1]
     pr._applyOptionalCorrections()
@@ -950,6 +970,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1]
     targetsExpected = ['Target1']
     multicoreExpected = ['False']
+    processorsExpected = [2]
     outputModeExpected = ['Local']
     ancestorDepthsExpected = [1]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -970,6 +991,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -993,6 +1015,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.events = [-1, -1, -1]
     pr.targets = ['Target1', 'Target2', 'Target3']
     pr.multicore = ['False', 'True', 'False']
+    pr.processors = [2, 0, 4]
     pr.outputModes = ['Local', 'Any', 'Any']
     pr.ancestorDepths = [1, 2, 3]
     pr._applyOptionalCorrections()
@@ -1014,6 +1037,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1, -1, -1, -1]
     targetsExpected = ['Target1', 'Target2', 'Target2', 'Target2', 'Target3']
     multicoreExpected = ['False', 'True', 'True', 'True', 'False']
+    processorsExpected = [2, 0, 0, 0, 4]
     outputModeExpected = ['Local', 'Any', 'Any', 'Any', 'Any']
     ancestorDepthsExpected = [1, 2, 2, 2, 3]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1034,6 +1058,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -1057,6 +1082,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
+    pr.processors = [2, 0]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [1, 0]
     pr._applyOptionalCorrections()
@@ -1078,6 +1104,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1, -1, -1]
     targetsExpected = ['Target1', 'Target2', 'Target2', 'Target2']
     multicoreExpected = ['False', 'True', 'True', 'True']
+    processorsExpected = [2, 0, 0, 0]
     outputModeExpected = ['Local', 'Any', 'Any', 'Any']
     ancestorDepthsExpected = [1, 0, 0, 0]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1098,6 +1125,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -1121,6 +1149,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full']
     pr.targets = ['Target1']
     pr.multicore = ['False']
+    pr.processors = [2]
     pr.outputModes = ['Local']
     pr.ancestorDepths = [1]
     pr._applyOptionalCorrections()
@@ -1142,6 +1171,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1]
     targetsExpected = ['Target1']
     multicoreExpected = ['False']
+    processorsExpected = [2]
     outputModeExpected = ['Local']
     ancestorDepthsExpected = [1]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1162,6 +1192,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -1184,6 +1215,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
+    pr.processors = [2, 0]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [1, 0]
     pr._applyOptionalCorrections()
@@ -1205,6 +1237,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1, -1, -1]
     targetsExpected = ['Target1', 'Target1', 'Target1', 'Target2']
     multicoreExpected = ['False', 'False', 'False', 'True']
+    processorsExpected = [2, 2, 2, 0]
     outputModeExpected = ['Local', 'Local', 'Local', 'Any']
     ancestorDepthsExpected = [1, 1, 1, 0]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1225,6 +1258,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -1247,6 +1281,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
+    pr.processors = [2, 0]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [1, 0]
     pr._applyOptionalCorrections()
@@ -1268,6 +1303,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [100, -1]
     targetsExpected = ['Target1', 'Target2']
     multicoreExpected = ['False', 'True']
+    processorsExpected = [2, 0]
     outputModeExpected = ['Local', 'Any']
     ancestorDepthsExpected = [1, 0]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1288,6 +1324,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -1310,6 +1347,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['', 'fromPreviousProd', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2', 'T3']
     pr.multicore = ['False', 'True', 'True']
+    pr.processors = [2, 0, 0]
     pr.outputModes = ['Local', 'Any', 'Any']
     pr.ancestorDepths = [1, 0, 0]
     pr._applyOptionalCorrections()
@@ -1331,6 +1369,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [100, -1, -1]
     targetsExpected = ['Target1', 'Target2', 'T3']
     multicoreExpected = ['False', 'True', 'True']
+    processorsExpected = [2, 0, 0]
     outputModeExpected = ['Local', 'Any', 'Any']
     ancestorDepthsExpected = [1, 0, 0]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1351,6 +1390,7 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(pr.events, eventsExpected)
     self.assertEqual(pr.targets, targetsExpected)
     self.assertEqual(pr.multicore, multicoreExpected)
+    self.assertEqual(pr.processors, processorsExpected)
     self.assertEqual(pr.outputModes, outputModeExpected)
     self.assertEqual(pr.ancestorDepths, ancestorDepthsExpected)
 
@@ -1376,6 +1416,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.previousProds = [None, 1, 1, 1]
     pr.events = [-1, -1, -1, -1]
     pr.multicore = ['False', 'False', 'True', 'True']
+    pr.processors = [4, 2, 0, 0]
     pr.outputModes = ['Any', 'Local', 'Any', 'Any']
     pr.ancestorDepths = [0, 0, 0, 0]
 

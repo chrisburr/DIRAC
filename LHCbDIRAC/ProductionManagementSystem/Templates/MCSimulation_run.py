@@ -129,7 +129,8 @@ extraOptions = '{{extraOptions#GENERAL: extra options as python dict stepID:opti
 targets = '{{Target#PROD-1:MC: Target for MC (e.g. Tier2, ALL, LCG.CERN.cern or BAN:site1:site2#ALL}}'
 eventsPerJob = '{{eventsPerJob#PROD-1:MC: Number of events per job#-1}}'
 MCPriority = '{{MCPriority#PROD-1:MC: Production priority#0}}'
-MCmulticoreFlag = '{{MCMulticoreFLag#PROD-1: multicore flag#True}}'
+MCmulticoreFlag = '{{MCMulticoreFLag#PROD-1:MC multicore flag#True}}'
+MCNumberOfProcessors = '{{MCNumberOfProcessors#PROD-1:MC jobs max n of processors#0}}'
 MCSimulationType = '{{MCSimulationType#PROD-1:MC: type of MCSimulation#MCSimulation}}'
 simulationCompressionLvl = '{{simulationCompressionLvl#PROD-1: Compression level#LOW}}'
 simVisFlag = '{{simulationOutputVisFlag'
@@ -149,6 +150,7 @@ selectionPriority = '{{selectionPriority#PROD-2:Selection: Job Priority e.g. 8 b
 selectionCPU = '{{selectionCPU#PROD-2:Selection: Max CPU time in secs#100000}}'
 removeInputSelection = '{{removeInputSelection#PROD-2:Selection: remove inputs#True}}'
 selmulticoreFlag = '{{selMulticoreFLag#PROD-2:Selection: multicore flag#True}}'
+selNumberOfProcessors = '{{selNumberOfProcessors#PROD-2:Selection jobs max n of processors#0}}'
 selectionCompressionLvl = '{{selectionCompressionLvl#PROD-2:Selection: Compression level#LOW}}'
 selectionOutputVisFlag = ast.literal_eval(
     '{{selectionOutputVisFlag#PROD-2: Selection visibility flag dictionary ({"step n": "Y|N"})# {} }}')
@@ -165,7 +167,7 @@ mergingPriority = '{{MergingPriority#PROD-3:Merging: Job Priority e.g. 8 by defa
 mergingCPU = '{{mergingCPU#PROD-3:Merging: Max CPU time in secs#100000}}'
 removeInputMerge = '{{removeInputMerge#PROD-3:Merging: remove inputs#True}}'
 mergemulticoreFlag = '{{mergeMulticoreFLag#PROD-3:Merging: multicore flag#True}}'
-
+mergeNumberOfProcessors = '{{mergeNumberOfProcessors#PROD-3:Merging jobs max n of processors#0}}'
 mergeCompressionLvl = '{{mergeCompressionLvl#PROD-3:Merging: Compression level#HIGH}}'
 mergeOutputVisFlag = ast.literal_eval(
     '{{mergeOutputVisFlag#PROD-3: Merge visibility flag dictionary ({"step":"Y|N"}) # {} }}')
@@ -235,6 +237,7 @@ elif w1:
   pr.inputDataPolicies = ['']
   pr.bkQueries = ['']
   pr.multicore = [MCmulticoreFlag]
+  pr.processors = [MCNumberOfProcessors]
 
   pr.compressionLvl = [simulationCompressionLvl] * len(pr.stepsInProds[0])
   simulationOutputVisFlag = fillVisList(simulationOutputVisFlag, pr.stepsInProds[0])
@@ -263,6 +266,8 @@ elif w2:
   pr.inputDataPolicies = ['', 'download']
   pr.bkQueries = ['', 'fromPreviousProd']
   pr.multicore = [MCmulticoreFlag, selmulticoreFlag]
+  pr.processors = [MCNumberOfProcessors, selNumberOfProcessors]
+
   pr.compressionLvl = [simulationCompressionLvl] * len(pr.stepsInProds[0]) + \
                       [selectionCompressionLvl] * len(pr.stepsInProds[1])
 
@@ -302,6 +307,7 @@ elif w3:
   pr.inputDataPolicies = ['', 'download', 'download']
   pr.bkQueries = ['', 'fromPreviousProd', 'fromPreviousProd']
   pr.multicore = [MCmulticoreFlag, selmulticoreFlag, mergemulticoreFlag]
+  pr.processors = [MCNumberOfProcessors, selNumberOfProcessors, mergeNumberOfProcessors]
 
 # Temporary solution: should depend from the output file visibility
   # pr.compressionLvl = [compressionLvlDefault]*(len( pr.stepsList )-1) + [compressionLvlLast]
