@@ -130,7 +130,7 @@ targets = '{{Target#PROD-1:MC: Target for MC (e.g. Tier2, ALL, LCG.CERN.cern or 
 eventsPerJob = '{{eventsPerJob#PROD-1:MC: Number of events per job#-1}}'
 MCPriority = '{{MCPriority#PROD-1:MC: Production priority#0}}'
 MCmulticoreFlag = '{{MCMulticoreFLag#PROD-1:MC multicore flag#True}}'
-MCNumberOfProcessors = '{{MCNumberOfProcessors#PROD-1:MC jobs max n of processors#0}}'
+MCNumberOfProcessors = '{{MCNumberOfProcessors#PROD-1:MC jobs min/max n of processors#0,0}}'
 MCSimulationType = '{{MCSimulationType#PROD-1:MC: type of MCSimulation#MCSimulation}}'
 simulationCompressionLvl = '{{simulationCompressionLvl#PROD-1: Compression level#LOW}}'
 simVisFlag = '{{simulationOutputVisFlag'
@@ -150,7 +150,7 @@ selectionPriority = '{{selectionPriority#PROD-2:Selection: Job Priority e.g. 8 b
 selectionCPU = '{{selectionCPU#PROD-2:Selection: Max CPU time in secs#100000}}'
 removeInputSelection = '{{removeInputSelection#PROD-2:Selection: remove inputs#True}}'
 selmulticoreFlag = '{{selMulticoreFLag#PROD-2:Selection: multicore flag#True}}'
-selNumberOfProcessors = '{{selNumberOfProcessors#PROD-2:Selection jobs max n of processors#0}}'
+selNumberOfProcessors = '{{selNumberOfProcessors#PROD-2:Selection jobs min/max n of processors#0,0}}'
 selectionCompressionLvl = '{{selectionCompressionLvl#PROD-2:Selection: Compression level#LOW}}'
 selectionOutputVisFlag = ast.literal_eval(
     '{{selectionOutputVisFlag#PROD-2: Selection visibility flag dictionary ({"step n": "Y|N"})# {} }}')
@@ -167,7 +167,7 @@ mergingPriority = '{{MergingPriority#PROD-3:Merging: Job Priority e.g. 8 by defa
 mergingCPU = '{{mergingCPU#PROD-3:Merging: Max CPU time in secs#100000}}'
 removeInputMerge = '{{removeInputMerge#PROD-3:Merging: remove inputs#True}}'
 mergemulticoreFlag = '{{mergeMulticoreFLag#PROD-3:Merging: multicore flag#True}}'
-mergeNumberOfProcessors = '{{mergeNumberOfProcessors#PROD-3:Merging jobs max n of processors#0}}'
+mergeNumberOfProcessors = '{{mergeNumberOfProcessors#PROD-3:Merging jobs min/max n of processors#0,0}}'
 mergeCompressionLvl = '{{mergeCompressionLvl#PROD-3:Merging: Compression level#HIGH}}'
 mergeOutputVisFlag = ast.literal_eval(
     '{{mergeOutputVisFlag#PROD-3: Merge visibility flag dictionary ({"step":"Y|N"}) # {} }}')
@@ -198,6 +198,10 @@ mergingPriority = int(mergingPriority)
 
 removeInputMerge = ast.literal_eval(removeInputMerge)
 removeInputSelection = ast.literal_eval(removeInputSelection)
+
+MCNumberOfProcessors = tuple(int(x) for x in MCNumberOfProcessors.replace(' ', '').split(','))
+selNumberOfProcessors = tuple(int(x) for x in selNumberOfProcessors.replace(' ', '').split(','))
+mergeNumberOfProcessors = tuple(int(x) for x in mergeNumberOfProcessors.replace(' ', '').split(','))
 
 ###########################################
 # LHCb conventions implied by the above

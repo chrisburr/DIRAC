@@ -112,7 +112,8 @@ class ProductionRequest(object):
     self.inputDataPolicies = []
     self.previousProds = [None]  # list of productions from which to take the inputs (the first is always None)
     self.multicore = []  # list of flags to override the multi core flags of the steps
-    self.processors = []  # list of max number of processors allowed for the jobs (0 = unlimited)
+    # list of tuples with min and max number of processors allowed for the jobs ((0,0) = unlimited)
+    self.processors = []
 
     self.outputSEs = []  # a list of StorageElements
     self.specialOutputSEs = []  # a list of dictionaries - might be empty
@@ -493,7 +494,7 @@ class ProductionRequest(object):
       self.multicore = ['True'] * len(self.prodsTypeList)
 
     if not self.processors:
-      self.processors = [0] * len(self.prodsTypeList)
+      self.processors = [(0, 0)] * len(self.prodsTypeList)
 
     if not self.specialOutputSEs:
       self.specialOutputSEs = [{}] * len(self.prodsTypeList)
@@ -697,7 +698,7 @@ class ProductionRequest(object):
                        transformationFamily=0,
                        events=-1,
                        multicore='True',
-                       processors=0,
+                       processors=(0, 0),
                        ancestorDepth=0):
     """Wrapper around Production API to build a production, given the needed
     parameters.
@@ -730,8 +731,11 @@ class ProductionRequest(object):
     prod.setParameter('numberOfEvents', 'string', str(events), 'Number of events requested')
 
     prod.setParameter('multicore', 'string', multicore, 'Flag for enabling gaudi parallel')
-    if processors:
-      prod.LHCbJob.setNumberOfProcessors(maxNumberOfProcessors=processors)
+    if processors[0] or processors[1]:
+      minProcs = processors[0] if processors[0] else None
+      maxProcs = processors[1] if processors[1] else None
+      prod.LHCbJob.setNumberOfProcessors(minNumberOfProcessors=minProcs,
+                                         maxNumberOfProcessors=maxProcs)
     prod.prodGroup = self.prodGroup
     prod.priority = priority
     prod.LHCbJob.workflow.setDescrShort('prodDescription')

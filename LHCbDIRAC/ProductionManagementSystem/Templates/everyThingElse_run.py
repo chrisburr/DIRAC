@@ -127,7 +127,7 @@ p1RemoveInputs = ast.literal_eval('{{p1RemoveInputs#PROD-P1: removeInputs flag#F
 p1StepMask = '{{P1StepMask#PROD-P1: step output to save, semicolon separated (default is last)#}}'
 p1FileMask = '{{P1FileMask#PROD-P1: file types in output to save, semicolon separated (default is all)#}}'
 p1multicoreFlag = '{{P1MulticoreFLag#PROD-P1: multicore flag#True}}'
-p1NumberOfProcessors = '{{p1NumberOfProcessors#PROD-P1: jobs max n of processors#0}}'
+p1NumberOfProcessors = '{{p1NumberOfProcessors#PROD-P1: jobs min/max n of processors#0,0}}'
 p1outputMode = '{{P1OutputMode#PROD-P1: output mode#Local}}'
 p1eventsRequested = '{{P1EventsRequested#PROD-P1: events requested (-1 = ALL)#-1}}'
 p1ancestorDepth = int('{{P1AncestorDepth#PROD-P1: ancestor depth#0}}')
@@ -160,7 +160,7 @@ p2RemoveInputs = ast.literal_eval('{{p2RemoveInputs#PROD-P2: removeInputs flag#F
 p2StepMask = '{{P2StepMask#PROD-P2: step output to save, semicolon separated (default is last#}}'
 p2FileMask = '{{P2FileMask#PROD-P2: file types in output to save, semicolon separated (default is all)#}}'
 p2multicoreFlag = '{{P2MulticoreFLag#PROD-P2: multicore flag#True}}'
-p2NumberOfProcessors = '{{p2NumberOfProcessors#PROD-P2: jobs max n of processors#0}}'
+p2NumberOfProcessors = '{{p2NumberOfProcessors#PROD-P2: jobs min/max n of processors#0,0}}'
 p2outputMode = '{{P2OutputMode#PROD-P2: output mode#Local}}'
 p2eventsRequested = '{{P2EventsRequested#PROD-P2: events requested (-1 = ALL)#-1}}'
 p2ancestorDepth = int('{{P2AncestorDepth#PROD-P2: ancestor depth#0}}')
@@ -193,7 +193,7 @@ p3RemoveInputs = ast.literal_eval('{{p3RemoveInputs#PROD-P3: removeInputs flag#F
 p3StepMask = '{{P3StepMask#PROD-P3: step output to save, semicolon separated (default is last#}}'
 p3FileMask = '{{P3FileMask#PROD-P3: file types in output to save, semicolon separated (default is all)#}}'
 p3multicoreFlag = '{{P3MulticoreFLag#PROD-P3: multicore flag#True}}'
-p3NumberOfProcessors = '{{p3NumberOfProcessors#PROD-P3: jobs max n of processors#0}}'
+p3NumberOfProcessors = '{{p3NumberOfProcessors#PROD-P3: jobs min/max n of processors#0,0}}'
 p3outputMode = '{{P3OutputMode#PROD-P3: output mode#Any}}'
 p3eventsRequested = '{{P3EventsRequested#PROD-P3: events requested (-1 = ALL)#-1}}'
 p3ancestorDepth = int('{{P3AncestorDepth#PROD-P3: ancestor depth#0}}')
@@ -292,6 +292,10 @@ if not p3StepMask:
     p3StepMask = len(pr.stepsInProds[2])
   except IndexError:
     p3StepMask = ''
+
+p1NumberOfProcessors = tuple(int(x) for x in p1NumberOfProcessors.replace(' ', '').split(','))
+p2NumberOfProcessors = tuple(int(x) for x in p2NumberOfProcessors.replace(' ', '').split(','))
+p3NumberOfProcessors = tuple(int(x) for x in p3NumberOfProcessors.replace(' ', '').split(','))
 
 pr.outputSEs = [x for x in [p1DataSE, p2DataSE, p3DataSE] if x != '']
 pr.specialOutputSEs = [p1DataSESpecial, p2DataSESpecial, p3DataSESpecial]

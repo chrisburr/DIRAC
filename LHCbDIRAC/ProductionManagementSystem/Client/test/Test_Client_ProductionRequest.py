@@ -42,7 +42,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["123['SDST']", "456['BHADRON.DST']"],
                  'events': -1,
                  'multicore': 'False',
-                 'processors': 4,
+                 'processors': (4, 4),
                  'outputMode': 'Any',
                  'ancestorDepth': 0
                  },
@@ -68,7 +68,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["456['CALIBRATION.DST']"],
                  'events': -1,
                  'multicore': 'False',
-                 'processors': 2,
+                 'processors': (2, 2),
                  'outputMode': 'Local',
                  'ancestorDepth': 0
                  },
@@ -94,7 +94,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["456['PID.MDST']"],
                  'events': -1,
                  'multicore': 'True',
-                 'processors': 0,
+                 'processors': (0, 2),
                  'outputMode': 'Any',
                  'ancestorDepth': 0
                  },
@@ -120,7 +120,7 @@ prodsDict = {1: {'productionType': 'DataStripping',
                  'stepsInProd-ProdName': ["789['DAVINCIHIST', 'BRUNELHIST']"],
                  'events': -1,
                  'multicore': 'True',
-                 'processors': 0,
+                 'processors': (0, 0),
                  'outputMode': 'Any',
                  'ancestorDepth': 0
                  }
@@ -740,7 +740,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.bkQueries = ['Full', 'fromPreviousProd']
     pr.targets = ['Target1', 'Target2']
     pr.multicore = ['False', 'True']
-    pr.processors = [2, 0]
+    pr.processors = [(2, 4), (0, 0)]
     pr.outputModes = ['Local', 'Any']
     pr.ancestorDepths = [0, 1]
     pr._applyOptionalCorrections()
@@ -763,7 +763,7 @@ class ProductionRequestSuccess(ClientTestCase):
     eventsExpected = [-1, -1, -1, -1]
     targetsExpected = ['Target1', 'Target2', 'Target2', 'Target2']
     multicoreExpected = ['False', 'True', 'True', 'True']
-    processorsExpected = [2, 0, 0, 0]
+    processorsExpected = [(2, 4), (0, 0), (0, 0), (0, 0)]
     outputModeExpected = ['Local', 'Any', 'Any', 'Any']
     ancestorDepthsExpected = [0, 1, 1, 1]
     self.assertEqual(pr.prodsTypeList, prodsTypeListExpected)
@@ -1416,7 +1416,7 @@ class ProductionRequestSuccess(ClientTestCase):
     pr.previousProds = [None, 1, 1, 1]
     pr.events = [-1, -1, -1, -1]
     pr.multicore = ['False', 'False', 'True', 'True']
-    pr.processors = [4, 2, 0, 0]
+    pr.processors = [(4, 4), (2, 2), (0, 2), (0, 0)]
     pr.outputModes = ['Any', 'Local', 'Any', 'Any']
     pr.ancestorDepths = [0, 0, 0, 0]
 
