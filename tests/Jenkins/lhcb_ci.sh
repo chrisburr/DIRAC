@@ -45,7 +45,6 @@ function findRelease(){
   echo '[findRelease]'
 
   # store the current branch
-  git remote -v
   currentBranch=$(git --git-dir="${TESTCODE}/LHCbDIRAC/.git" rev-parse --abbrev-ref HEAD)
 
   if [[ "${currentBranch}" = 'devel' ]]; then
