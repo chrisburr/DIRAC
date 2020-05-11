@@ -45,18 +45,19 @@ function findRelease(){
   echo '[findRelease]'
 
   # store the current branch
-  currentBranch=$(git --git-dir=${TESTCODE}/LHCbDIRAC/.git rev-parse --abbrev-ref HEAD)
+  git remote -v
+  currentBranch=$(git --git-dir="${TESTCODE}/LHCbDIRAC/.git" rev-parse --abbrev-ref HEAD)
 
   if [[ "${currentBranch}" = 'devel' ]]; then
     echo 'we were already on devel, no need to change'
     # get the releases.cfg file
     cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
   else
-    git --git-dir="${TESTCODE}/LHCbDIRAC/.git" checkout devel
-    # get the releases.cfg file
-    cp "${TESTCODE}/LHCbDIRAC/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
-    # reset the branch
-    git --git-dir="${TESTCODE}/LHCbDIRAC/.git" checkout "${currentBranch}"
+    (cd "${TESTCODE}/LHCbDIRAC"
+     git remote add "ci-upstream" "https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git" || true
+     git remote -v
+     git fetch --all || true
+     git show "remotes/ci-upstream/devel:LHCbDIRAC/releases.cfg" > "${TESTCODE}/releases.cfg")
   fi
 
   # Match project ( LHCbDIRAC ) version from releases.cfg
