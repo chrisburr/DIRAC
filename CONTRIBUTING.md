@@ -47,4 +47,4 @@ Unit tests are provided within the source code. Integration, regression and syst
 Packages
 ========
 
-On top of what's required for DIRAC, LHCbDIRAC needs `uproot` (which can also be found in conda-forge), and `LbPlatformUtils`.
+On top of what's required for DIRAC, LHCbDIRAC needs `uproot`, `LbPlatformUtils` and `LbEnv`. These can be found from either PyPI or conda-forge.
