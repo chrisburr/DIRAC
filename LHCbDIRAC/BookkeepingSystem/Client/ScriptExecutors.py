@@ -174,7 +174,7 @@ def executeFilePath(dmScript):
       res = bkClient.getFileMetadata(lfnChunk)
       progressBar.loop()
       if res['OK']:
-        for lfn, metadata in res['Value']['Successful'].iteritems():
+        for lfn, metadata in res['Value']['Successful'].items():   # can be an iterator
           group = metadata.get(groupBy)
           paths['Successful'].setdefault('%s %s' % (groupBy, group), set()).add(lfn)
           lfnChunk.remove(lfn)
@@ -246,7 +246,7 @@ def executeFilePath(dmScript):
           paths['Successful'].setdefault(prStr, set()).update(directories[dirName])
         elif groupBy:
           gLogger.notice('Invalid metadata item: %s' % groupBy)
-          gLogger.notice('Available are: %s' % str(bkDict.keys()))
+          gLogger.notice('Available are: %s' % str(list(bkDict)))
           diracExit(1)
         else:
           success[dirName] = bkDict['Path']
@@ -316,7 +316,7 @@ def _updateDescendantsLumi(parentLumi, doIt=False, force=False):
     return None
   # Get descendants:
   error = False
-  res = bkClient.getFileDescendants(parentLumi.keys(), depth=1, checkreplica=False)
+  res = bkClient.getFileDescendants(list(parentLumi), depth=1, checkreplica=False)
   if not res['OK']:
     gLogger.error('Error getting descendants', res['Message'])
     return True
@@ -441,7 +441,7 @@ def executeFixLuminosity(dmScript):
       evts = metadata['EventStat']
       runFiles.setdefault(run, []).append([lfn, evts, lumi])
     if not runChecked:
-      res = bkClient.getRunStatus(runFiles.keys())
+      res = bkClient.getRunStatus(list(runFiles))
       if not res['OK']:
         gLogger.fatal('Error getting run status', res['Message'])
         diracExit(3)
@@ -514,7 +514,8 @@ def executeFileAncestors(dmScript, level=1):
         okResult = result['Value']['WithMetadata']
         for lfn in okResult:
           fullResult['Value'].setdefault('Successful', {})[lfn] = \
-              dict((desc, 'Replica-%s' % meta['GotReplica']) for desc, meta in okResult[lfn].iteritems())
+              dict((desc, 'Replica-%s' % meta['GotReplica'])
+                   for desc, meta in okResult[lfn].items())   # can be an iterator
       failed = result['Value']['Failed']
       if isinstance(failed, list):
         failed = dict.fromkeys(failed, 'Not found')
@@ -587,7 +588,8 @@ def executeFileDescendants(dmScript, level=1):
         okResult = result['Value']['WithMetadata']
         for lfn in okResult:
           fullResult['Value'].setdefault('Successful', {})[lfn] = \
-              dict((desc, 'Replica-%s' % meta['GotReplica']) for desc, meta in okResult[lfn].iteritems())
+              dict((desc, 'Replica-%s' % meta['GotReplica'])
+                   for desc, meta in okResult[lfn].items())   # can be an iterator
       failed = result['Value']['Failed']
       if isinstance(failed, list):
         failed = dict.fromkeys(failed, 'Unknown error')
@@ -632,7 +634,7 @@ def executeGetFiles(dmScript, maxFiles=20):
   bkQuery = dmScript.getBKQuery()
   bkQueries = [bkQuery] if bkQuery else []
   if bkFile and os.path.exists(bkFile):
-    with open(bkFile, 'r') as fd:
+    with open(bkFile, 'rt') as fd:
       bkQueries += [BKQuery(ll.strip().split()[0]) for ll in fd.readlines()]
 
   if not bkQueries:
@@ -672,7 +674,7 @@ def executeGetFiles(dmScript, maxFiles=20):
   # Now print out
   nFiles = len(fileDict)
   if output:
-    fd = open(output, 'w')
+    fd = open(output, 'wt')
     if not nMax:
       nMax = maxFiles
   else:
@@ -778,7 +780,7 @@ def executeFileSisters(dmScript, level=1):
     directories = {}
     for lfn in lfnList:
       directories.setdefault(os.path.dirname(lfn), []).append(lfn)
-    res = bkClient.getDirectoryMetadata(directories.keys())
+    res = bkClient.getDirectoryMetadata(list(directories))
     if not res['OK']:
       gLogger.error("Error getting directories metadata", res['Message'])
       diracExit(1)
@@ -798,7 +800,7 @@ def executeFileSisters(dmScript, level=1):
   fullResult = {'OK': True, 'Value': {resItem: {}, relation: set()}}
   resValue = fullResult['Value']
 
-  for prod, lfnList in prodLfns.iteritems():
+  for prod, lfnList in prodLfns.items():   # can be an iterator
     if sameType:
       res = bkClient.getFileMetadata(lfnList)
       if not res['OK']:
@@ -812,14 +814,14 @@ def executeFileSisters(dmScript, level=1):
       lfnTypes = dict.fromkeys(lfnList, None)
 
     # First get ancestors
-    result = bkClient.getFileAncestors(lfnTypes.keys(), level, replica=False)
+    result = bkClient.getFileAncestors(list(lfnTypes), level, replica=False)
     if not result['OK']:
       gLogger.error("Error getting ancestors:", res['Message'])
       diracExit(1)
 
     ancestors = {}
     # More than one file in the input list may have the same ancestor(s), check if they are sisters/cousins
-    for lfn, ancList in result['Value']['Successful'].iteritems():
+    for lfn, ancList in result['Value']['Successful'].items():   # can be an iterator
       sameAncestors = set(anc['FileName'] for anc in ancList) & set(ancestors)
       skip = False
       if sameAncestors:
@@ -834,11 +836,11 @@ def executeFileSisters(dmScript, level=1):
           ancestors.setdefault(anc['FileName'], []).append(lfn)
     # print ancestors
 
-    res = bkClient.getFileDescendants(ancestors.keys(), depth=999999, production=prod, checkreplica=checkreplica)
+    res = bkClient.getFileDescendants(list(ancestors), depth=999999, production=prod, checkreplica=checkreplica)
 
     fullResult['OK'] = res['OK']
     if res['OK']:
-      for anc, sisters in res['Value']['WithMetadata'].iteritems():
+      for anc, sisters in res['Value']['WithMetadata'].items():   # can be an iterator
         lfns = ancestors[anc]
         found = False
         for sister in sisters:
@@ -1116,7 +1118,7 @@ def executeGetStats(dmScript):
               runList[run][2] += metadata['FileSize']
               nbFiles += 1
             except (KeyError, ValueError) as e:
-              gLogger.exception('Exception for %s' % str(metadata.keys()), lException=e)
+              gLogger.exception('Exception for %s' % str(list(metadata)), lException=e)
         progressBar.endLoop()
       if lfns:
         gLogger.notice("Getting info from files...")
@@ -1126,7 +1128,7 @@ def executeGetStats(dmScript):
           progressBar.loop()
           res = bkClient.getFileMetadata(lfnChunk)
           if res['OK']:
-            for lfn, metadata in res['Value']['Successful'].iteritems():
+            for lfn, metadata in res['Value']['Successful'].items():   # can be an iterator
               try:
                 if metadata['EventStat']:
                   datasets.add((metadata['EventType'], metadata['FileType']))
@@ -1141,7 +1143,7 @@ def executeGetStats(dmScript):
                 runList[run][2] += metadata['FileSize']
                 nbFiles += 1
               except (KeyError, ValueError) as e:
-                gLogger.exception('Exception for %s' % lfn, str(metadata.keys()), lException=e)
+                gLogger.exception('Exception for %s' % lfn, str(list(metadata)), lException=e)
           else:
             gLogger.error("Error getting files metadata:", res['Message'])
             continue
@@ -1332,7 +1334,7 @@ def executeRunInfo(item):
     if not res['OK']:
       gLogger.fatal("Error getting run list", res['Message'])
       diracExit(1)
-    runsList = res['Value']['Successful'].keys()
+    runsList = list(res['Value']['Successful'])
 
   if dqFlag:
     nruns = len(runsList)
@@ -1475,7 +1477,7 @@ def _getJobsEISFromAncestors(lfnList):
       jobDict.setdefault(job, lfn)
   lfnList = jobDict.values()
   # Get ancestors of these files
-  gLogger.verbose("\nGet EIS for %d jobs like %s" % (len(jobDict), str(jobDict.items()[0])))
+  gLogger.verbose("\nGet EIS for %d jobs like %s" % (len(jobDict), str(list(jobDict.items())[0])))
   gLogger.verbose("\t%d unique files" % len(set(lfnList)))
   ancToCheck = set()
   ancestors = {}
@@ -1485,9 +1487,9 @@ def _getJobsEISFromAncestors(lfnList):
     if not res['OK']:
       return res
     ancWithMetadata = res['Value']['WithMetadata']
-    for lfn, ancDict in ancWithMetadata.iteritems():
+    for lfn, ancDict in ancWithMetadata.items():   # can be an iterator
       job = _jobFromLfn(lfn)
-      for anc, meta in ancDict.iteritems():
+      for anc, meta in ancDict.items():   # can be an iterator
         ancJob = _jobFromLfn(anc)
         ancestors.setdefault(job, []).append(ancJob)
         if ancJob in jobEventInputStat:
@@ -1510,7 +1512,7 @@ def _getJobsEISFromAncestors(lfnList):
     if not res['OK']:
       return res
     # Update the table for jobs still unknown
-    for job, ancJobs in ancestors.iteritems():
+    for job, ancJobs in ancestors.items():   # can be an iterator
       if job not in jobEventInputStat:
         try:
           # This ancestor job is  already known

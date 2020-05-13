@@ -13,6 +13,7 @@ them and sets flags The module also provides a function for printing pretty
 results from DMS queries."""
 
 import os
+import six
 import sys
 import time
 import tempfile
@@ -41,7 +42,7 @@ def __printDictionary(dictionary, offset=0, shift=0, empty="Empty directory", de
     value = dictionary[key]
     if isinstance(value, dict):
       if not depth:
-        value = value.keys()
+        value = list(value)
       elif value != {}:
         gLogger.notice('%s%s : ' % (offset * ' ', key))
         __printDictionary(value, offset=newOffset, shift=shift, empty=empty, depth=depth - 1)
@@ -356,7 +357,7 @@ class DMScript(object):
   def setDirectory(self, arg):
     """Setter."""
     if os.path.exists(arg) and not os.path.isdir(arg):
-      with open(arg, 'r') as inFile:
+      with open(arg, 'rt') as inFile:
         directories = [line.split()[0] for line in inFile.read().splitlines() if line.strip()]
     else:
       directories = arg.split(',')
@@ -396,7 +397,7 @@ class DMScript(object):
     occurence of /<vo>/ in the file name and ends with a set of delimiters If
     directories is True, only normalized directories (ending with a "/" are
     returned."""
-    if isinstance(lfns, basestring):
+    if isinstance(lfns, six.string_types):
       lfnList = lfns.strip().split(',')
     elif isinstance(lfns, (list, set, dict)):
       lfnList = [lfn.strip() for lfn1 in lfns for lfn in lfn1.split(',')]
@@ -422,7 +423,7 @@ class DMScript(object):
   def getJobIDsFromList(jobids):
     """it returns a list of jobids using a string."""
     jobidsList = []
-    if isinstance(jobids, basestring):
+    if isinstance(jobids, six.string_types):
       jobidsList = jobids.split(',')
     elif isinstance(jobids, list):
       jobidsList = [jobid for jobid1 in jobids for jobid in jobid1.split(',')]
@@ -439,10 +440,10 @@ class DMScript(object):
   def setLFNsFromFile(self, arg):
     """Reads the content of a file or from stdin (in which case a temporary
     file will be created) LFNs are not parsed at this stage."""
-    if isinstance(arg, basestring) and arg.lower() == 'last':
+    if isinstance(arg, six.string_types) and arg.lower() == 'last':
       arg = self.lastFile
     # Make a list of files
-    if isinstance(arg, basestring):
+    if isinstance(arg, six.string_types):
       files = arg.split(',')
     elif isinstance(arg, list):
       files = arg
@@ -451,7 +452,7 @@ class DMScript(object):
     nfiles = 0
     for fName in files:
       try:
-        with open(fName if fName else '/dev/stdin', 'r') as inFile:
+        with open(fName if fName else '/dev/stdin', 'rt') as inFile:
           lfns = inFile.read().splitlines()
         nfiles += len(lfns)
       except (EOFError, IOError):
@@ -488,7 +489,7 @@ class DMScript(object):
         gLogger.always("Got %d LFNs" % len(value))
         if self.setLastFile != self.lastFile:
           self. setLastFile = False
-          with open(self.lastFile, 'w') as tmpFile:
+          with open(self.lastFile, 'wt') as tmpFile:
             tmpFile.write('\n'.join(sorted(value)))
     if isinstance(value, set):
       # Return a sorted list from a set
@@ -517,7 +518,7 @@ class DMScript(object):
     bkQueryDict = self.bkClientQuery.getQueryDict()
     found = False
     for key in mandatoryKeys:
-      if isinstance(key, basestring) and key in bkQueryDict:
+      if isinstance(key, six.string_types) and key in bkQueryDict:
         found = True
         break
       elif isinstance(key, (list, tuple)) and not set(key) - set(bkQueryDict):
@@ -546,7 +547,7 @@ class DMScript(object):
     if not prod:
       prod = self.options.get('Productions', [])
     requestID = None
-    if isinstance(prod, basestring):
+    if isinstance(prod, six.string_types):
       prods = [prod]
     else:
       prods = prod
@@ -561,7 +562,7 @@ class DMScript(object):
     NOTE: The file format is equivalent to the file format when the content is
     a list of LFNs."""
     try:
-      with open(arg if arg else '/dev/stdin', 'r') as inFile:
+      with open(arg if arg else '/dev/stdin', 'rt') as inFile:
         jobids = self.getJobIDsFromList(inFile.read().splitlines())
     except IOError as error:
       gLogger.exception('Reading jobids from a file is failed with exception:', repr(error))

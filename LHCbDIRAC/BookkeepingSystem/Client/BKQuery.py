@@ -14,6 +14,7 @@ __RCSID__ = "$Id$"
 
 import os
 import sys
+import six
 from fnmatch import fnmatch
 from DIRAC import gLogger
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -78,11 +79,11 @@ def parseRuns(bkQuery, runs):
   :param runs: a string, an int, or a list,dict,tuple of run numbers
   :type runs: string or int/long, iterable
   """
-  if isinstance(runs, basestring):
+  if isinstance(runs, six.string_types):
     runs = runs.split(',')
   elif isinstance(runs, (dict, tuple)):
     runs = list(runs)
-  elif isinstance(runs, (int, long)):
+  elif isinstance(runs, six.integer_types):
     runs = [str(runs)]
   if len(runs) > 1:
     runList = []
@@ -145,7 +146,7 @@ class BKQuery():
       bkQueryDict = bkQuery.getQueryDict().copy()
     elif isinstance(bkQuery, dict):
       bkQueryDict = bkQuery.copy()
-    elif isinstance(bkQuery, basestring):
+    elif isinstance(bkQuery, six.string_types):
       bkPath = bkQuery
     bkQueryDict = self.buildBKQuery(bkPath=bkPath, bkQueryDict=bkQueryDict,
                                     prods=prods, runs=runs,
@@ -305,7 +306,7 @@ class BKQuery():
 
     # Remove all "ALL"'s in the dict, if any
     for i in self.__bkQueryDict:
-      if isinstance(bkQuery[i], basestring) and bkQuery[i] == 'ALL':
+      if isinstance(bkQuery[i], six.string_types) and bkQuery[i] == 'ALL':
         bkQuery.pop(i)
 
     # If there is only one production, make it faster with a single value rather than a list
@@ -348,7 +349,7 @@ class BKQuery():
     # There are two items in the dictionary: ConditionDescription and Simulation/DataTaking-Conditions
     eventType = self.__bkQueryDict.get('EventType', 'ALL')
     if self.__bkQueryDict.get('ConfigName') == 'MC' or \
-        (isinstance(eventType, basestring) and eventType.upper() != 'ALL' and
+        (isinstance(eventType, six.string_types) and eventType.upper() != 'ALL' and
          eventType[0] != '9'):
       conditionsKey = 'SimulationConditions'
     else:
@@ -362,7 +363,7 @@ class BKQuery():
 
   def setDQFlag(self, dqFlag='OK'):
     """Sets the data quality."""
-    if isinstance(dqFlag, basestring):
+    if isinstance(dqFlag, six.string_types):
       dqFlag = dqFlag.upper()
     elif isinstance(dqFlag, list):
       dqFlag = [dq.upper() for dq in dqFlag]
@@ -383,7 +384,7 @@ class BKQuery():
   def setEventType(self, eventTypes=None):
     """Sets the event type."""
     if eventTypes:
-      if isinstance(eventTypes, basestring):
+      if isinstance(eventTypes, six.string_types):
         eventTypes = eventTypes.split(',')
       elif not isinstance(eventTypes, list):
         eventTypes = [eventTypes]
@@ -399,7 +400,7 @@ class BKQuery():
 
   def setVisible(self, visible=None):
     """Sets the visibility flag."""
-    if visible is True or (isinstance(visible, basestring) and visible[0].lower() == 'y'):
+    if visible is True or (isinstance(visible, six.string_types) and visible[0].lower() == 'y'):
       visible = 'Yes'
     if visible is False:
       visible = 'No'
