@@ -9,6 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Utilities used by LHCb TS scripts."""
+import six
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
@@ -26,7 +27,7 @@ def _getTransformationID(transName):
   testName = transName
   trClient = TransformationClient()
   # We can try out a long range of indices, as when the transformation is not found, it returns None
-  for ind in xrange(1, 100):
+  for ind in range(1, 100):
     result = trClient.getTransformation(testName)
     if not result['OK']:
       # Transformation doesn't exist
@@ -36,7 +37,7 @@ def _getTransformationID(transName):
     if status in ('Active', 'Idle', 'New', 'Stopped', 'Completed'):
       return result['Value']['TransformationID']
     # If transformationID was given, return error
-    if isinstance(transName, (long, int)) or transName.isdigit():
+    if isinstance(transName, six.integer_types) or transName.isdigit():
       gLogger.error("Transformation in incorrect status", "%s, status %s" % (str(testName), status))
       return None
     # Transformation name given, try out adding an index

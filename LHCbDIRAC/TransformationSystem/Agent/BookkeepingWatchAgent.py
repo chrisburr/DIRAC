@@ -20,6 +20,7 @@ import time
 import datetime
 import pickle
 import Queue
+import six
 
 from DIRAC import S_OK
 from DIRAC.Core.Base.AgentModule import AgentModule
@@ -116,7 +117,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     maxNumberOfThreads = self.am_getOption('maxThreadsInPool', 1)
     threadPool = ThreadPool(maxNumberOfThreads, maxNumberOfThreads)
 
-    for i in xrange(maxNumberOfThreads):
+    for i in range(maxNumberOfThreads):
       threadPool.generateJobAndQueueIt(self._execute, [i])
 
     gMonitor.registerActivity("Iteration", "Agent Loops", AGENT_NAME, "Loops/min", gMonitor.OP_SUM)
@@ -153,7 +154,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     if not result['OK']:
       self._logError("Failed to get transformations.", result['Message'])
       return S_OK()
-    transIDsList = [long(transDict['TransformationID']) for transDict in result['Value']]
+    transIDsList = [int(transDict['TransformationID']) for transDict in result['Value']]
     res = self.transClient.getTransformationsWithBkQueries(transIDsList)
     if not res['OK']:
       self._logError("Failed to get transformations with Bk Queries.", res['Message'])
@@ -229,23 +230,31 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
                            res['Message'], transID=transID)
             # No need to return as we only consider files that are successful...
           else:
-            filesMetadata.update(res['Value']['Successful'])
+            success = res['Value']['Successful']
+            # Test if the list of returned LFNs is within the supplied chunk
+            invalid = set(success) - set(lfnChunk)
+            if invalid:
+              self._logError("Invalid LFNs returned by getFileMetadata", ','.join(sorted(invalid)),
+                             transID=transID)
+              for inv in invalid:
+                success.pop(inv)
+            filesMetadata.update(success)
 
         # There is no need to add the run information for a transformation that doesn't need it
         if transPlugin not in self.pluginsWithNoRunInfo:
-          for lfn, metadata in filesMetadata.iteritems():
+          for lfn, metadata in filesMetadata.items():   # can be an iterator
             runID = metadata.get('RunNumber', None)
-            if isinstance(runID, (basestring, int, long)):
+            if isinstance(runID, (six.string_types, six.integer_types)):
               runDict.setdefault(int(runID), []).append(lfn)
           try:
-            self.__addRunsMetadata(transID, runDict.keys())
+            self.__addRunsMetadata(transID, list(runDict))
           except RuntimeError as e:
             self._logException("Failure adding runs metadata",
                                method="__addRunsMetadata",
                                lException=e,
                                transID=transID)
         else:
-          runDict[None] = filesMetadata.keys()
+          runDict[None] = list(filesMetadata)
 
         # Add all new files to the transformation
         for runID in sorted(runDict):
@@ -263,13 +272,14 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
             else:
               # Handle errors
               errors = {}
-              for lfn, error in result['Value']['Failed'].iteritems():
+              for lfn, error in result['Value']['Failed'].items():   # can be an iterator
                 errors.setdefault(error, []).append(lfn)
-              for error, lfns in errors.iteritems():
+              for error, lfns in errors.items():   # can be an iterator
                 self._logWarn("Failed to add files to transformation", error, transID=transID)
                 self._logVerbose("\n\t".join([''] + lfns))
               # Add the metadata and RunNumber to the newly inserted files
-              addedLfns = [lfn for (lfn, status) in result['Value']['Successful'].iteritems() if status == 'Added']
+              addedLfns = [lfn for (lfn, status) in result['Value']['Successful'].items()
+                           if status == 'Added']  # can be an iterator
               if addedLfns:
                 # Add files metadata: size and file type
                 lfnDict = dict((lfn, {'Size': filesMetadata[lfn]['FileSize'],
@@ -355,7 +365,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
       if not res['OK']:
         raise RuntimeError(res['Message'])
       else:
-        for run, runMeta in res['Value'].iteritems():
+        for run, runMeta in res['Value'].items():  # can be an iterator
           res = self.transClient.addRunsMetadata(run, runMeta)
           if not res['OK']:
             raise RuntimeError(res['Message'])
@@ -370,7 +380,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
       if not res['OK']:
         raise RuntimeError(res['Message'])
       else:
-        for run, runMeta in res['Value'].iteritems():
+        for run, runMeta in res['Value'].items():  # can be an iterator
           duration = (runMeta['JobEnd'] - runMeta['JobStart']).seconds
           res = self.transClient.addRunsMetadata(run, {'Duration': duration})
           if not res['OK']:

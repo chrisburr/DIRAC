@@ -1,3 +1,20 @@
+v10r0p1
+use DIRAC v7r0p24
+
+* added doc tools reqs
+* Added possibility to specify max/min number of processors per job
+* added notice of LHCb packages
+* Fix findRelease in lhcb_ci.sh
+* Get releases.cfg from main fork's devel branch
+* prepare for python3
+* protect spurious bad return of getFileMetadata
+* Transformation description: max 255 chars
+* use the productionoutputfiles table instead of jobs and inputfiles tables for retrieving step metadata
+* add new index for performin getStepMetada method
+* Fix LHCBDIRAC-881
+* Update instructions for installing on cvmfs-lhcb
+
+
 v10r0
 use DIRAC v7r0p22
 

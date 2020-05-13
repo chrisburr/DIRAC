@@ -39,7 +39,12 @@ Pylint is run regularly on the source code. The .pylintrc file defines the expec
 
 
 Testing
-======
+=======
 
 Unit tests are provided within the source code. Integration, regression and system tests are instead in the tests directory.
 
+
+Packages
+========
+
+On top of what's required for DIRAC, LHCbDIRAC needs `uproot`, `LbPlatformUtils` and `LbEnv`. These can be found from either PyPI or conda-forge.

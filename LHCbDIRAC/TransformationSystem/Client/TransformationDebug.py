@@ -21,6 +21,7 @@ import ssl
 import tarfile
 from fnmatch import fnmatch
 import tempfile
+import six
 
 from collections import defaultdict
 
@@ -178,7 +179,7 @@ def _getLog(urlBase, logFile, debug=False):
     if os.path.exists(tmp):
       os.remove(tmp)
     urlOpener.retrieve(logURL, tmp)
-    with open(tmp, "r") as fd:
+    with open(tmp, "rt") as fd:
       cc = fd.read()
     if "404 Not Found" in cc:
       return ""
@@ -262,7 +263,7 @@ def _getSandbox(job, logFile, debug=False):
         if fnmatch(lf, logFile):
           if debug:
             print file, 'matched', logFile
-          with open(os.path.join(tmpDir, lf), 'r') as fd:
+          with open(os.path.join(tmpDir, lf), 'rt') as fd:
             return fd.readlines()
       return ''
   except IOError as e:
@@ -607,7 +608,7 @@ class TransformationDebug(object):
       res = self.bkClient.getFileMetadata(filesToFix)
       if res['OK']:
         runFiles = {}
-        for lfn, metadata in res['Value']['Successful'].iteritems():
+        for lfn, metadata in res['Value']['Successful'].items():  # can be an iterator
           runFiles.setdefault(metadata['RunNumber'], []).append(lfn)
         for run in runFiles:
           if not run:
@@ -649,7 +650,7 @@ class TransformationDebug(object):
               Use --KickRequests to reset them Unused" % (notMissing, status))
           else:
             res = self.transClient.setFileStatusForTransformation(self.transID, 'Unused',
-                                                                  replicas.keys(), force=True)
+                                                                  list(replicas), force=True)
             if res['OK']:
               gLogger.notice("%d files were %s but indeed are in the FC - Reset to Unused" % (notMissing, status))
             else:
@@ -881,7 +882,7 @@ class TransformationDebug(object):
               fts3FileStatusCount[fts3File.status] += 1
 
           prStr = []
-          for stat, statusCount in fts3FileStatusCount.iteritems():
+          for stat, statusCount in fts3FileStatusCount.items():  # can be an iterator
             prStr.append('%s:%d' % (stat, statusCount))
           gLogger.notice('\tFTS files statuses: %s' % ', '.join(prStr))
 
@@ -1006,7 +1007,7 @@ class TransformationDebug(object):
     nonExistingReplicas = {}
     if error:
       gLogger.notice("Could not get information for some problematic files from SEs:")
-      for se, err in error.iteritems():
+      for se, err in error.items():  # can be an iterator
         gLogger.notice("\t%s: %s" % (se, err))
       gLogger.notice("This check may be totally meaningless, thus no report is made")
       return
@@ -1144,7 +1145,7 @@ class TransformationDebug(object):
     removed = 0
     for fd in res['Value']:
       transFiles.setdefault(fd['TransformationID'], []).append(fd['LFN'])
-    for transID, lfns in transFiles.iteritems():
+    for transID, lfns in transFiles.items():  # can be an iterator
       res = self.transClient.setFileStatusForTransformation(transID, 'Removed', lfns, force=True)
       if not res['OK']:
         gLogger.notice('Error setting %d files Removed' % len(lfns), res['Message'])
@@ -1173,9 +1174,9 @@ class TransformationDebug(object):
     """
     Get the status of a (list of) job, return it formated <major>;<minor>;<application>
     """
-    if isinstance(job, basestring):
+    if isinstance(job, six.string_types):
       jobs = [int(job)]
-    elif isinstance(job, (long, int)):
+    elif isinstance(job, six.integer_types):
       jobs = [job]
     else:
       jobs = list(int(jid) for jid in job)
@@ -1202,9 +1203,9 @@ class TransformationDebug(object):
     """
     Get the status of a (list of) job, return it formated <major>;<minor>;<application>
     """
-    if isinstance(job, basestring):
+    if isinstance(job, six.string_types):
       jobs = [int(job)]
-    elif isinstance(job, (long, int)):
+    elif isinstance(job, six.integer_types):
       jobs = [job]
     else:
       jobs = list(int(jid) for jid in job)
@@ -1221,9 +1222,9 @@ class TransformationDebug(object):
     """
     Get the status of a (list of) job, return it formated <major>;<minor>;<application>
     """
-    if isinstance(job, basestring):
+    if isinstance(job, six.string_types):
       jobs = [int(job)]
-    elif isinstance(job, (long, int)):
+    elif isinstance(job, six.integer_types):
       jobs = [job]
     else:
       jobs = list(int(jid) for jid in job)
@@ -1270,7 +1271,7 @@ class TransformationDebug(object):
     jobLogURL = {}
     jobSites = {}
     jobCPU = {}
-    for lfnStr, allJobs in jobsForLfn.iteritems():
+    for lfnStr, allJobs in jobsForLfn.items():  # can be an iterator
       lfnList = lfnStr.split(',')
       exitedJobs = {}
       allJobs.sort()
@@ -1375,7 +1376,8 @@ class TransformationDebug(object):
               lfnsFound &= set(lfns)
             if lfnsFound:
               for lfn, job, reason in [(l, job, badLfns[job][l])
-                                       for job, lfns in badLfns.iteritems() for l in set(lfns) & lfnsFound]:
+                                       for job, lfns in badLfns.items()
+                                       for l in set(lfns) & lfnsFound]:  # can be an iterator
                 if job in exitedJobs:
                   exitStatus = exitedJobs[job].split('status ')
                   if len(exitStatus) == 2:
@@ -1386,7 +1388,7 @@ class TransformationDebug(object):
           exitedJobs = {}
     if idrLfns:
       gLogger.notice("\nSummary of failures due to Input Data Resolution")
-      for(lfn, jobs) in idrLfns.iteritems():
+      for(lfn, jobs) in idrLfns.items():  # can be an iterator
         jobs = sorted(set(jobs))
         js = set(jobSites.get(job, 'Unknown') for job in jobs)
         if len(js) == 1:
@@ -1412,10 +1414,10 @@ class TransformationDebug(object):
         else:
           lastEvent = int(reason.split(partial)[1][:-1])
           lfnDict[lfn] = (otherReasons[0][:-1] + ',%d)' % lastEvent, otherReasons[1] + jobs)
-      for lfn, (reason, jobs) in lfnDict.iteritems():
+      for lfn, (reason, jobs) in lfnDict.items():  # can be an iterator
         failedLfns[(lfn, reason)] = jobs
 
-      for (lfn, reason), jobs in failedLfns.iteritems():
+      for (lfn, reason), jobs in failedLfns.items():  # can be an iterator
         js = set(jobSites.get(job, 'Unknown') for job in jobs)
         # If only one site, print it once only
         if len(js) == 1:
@@ -1515,9 +1517,9 @@ class TransformationDebug(object):
           gLogger.notice("Error getting files metadata", res['Message'])
         else:
           metadata = res['Value']['Successful']
-          runRAWFiles = set(lfn for lfn, meta in metadata.iteritems()
+          runRAWFiles = set(lfn for lfn, meta in metadata.items()  # can be an iterator
                             if meta['EventType'] == evtType and meta['GotReplica'] == 'Yes')
-          badRAWFiles = set(lfn for lfn, meta in metadata.iteritems()
+          badRAWFiles = set(lfn for lfn, meta in metadata.items()  # can be an iterator
                             if meta['EventType'] == evtType) - runRAWFiles
           # print len( runRAWFiles ), 'RAW files'
           allAncestors = set()

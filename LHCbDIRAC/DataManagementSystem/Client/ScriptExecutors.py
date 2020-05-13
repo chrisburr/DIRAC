@@ -14,6 +14,7 @@ import sys
 import os
 import time
 import random
+import six
 
 from DIRAC import gLogger, gConfig, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
@@ -91,7 +92,7 @@ def parseArguments(dmScript, allSEs=False, printOutput=True):
       bkFile = bkQuery.getPath()
       # Trick to be able to pass a file containing BKpaths
       if os.path.exists(bkFile):
-        with open(bkFile, 'r') as fc:
+        with open(bkFile, 'rt') as fc:
           lines = fc.read().splitlines()
         bkQueries = [BKQuery(ll.strip().split()[0]) for ll in lines]
         gLogger.notice("Executing %d BKQueries" % len(bkQueries))
@@ -191,7 +192,7 @@ def removeReplicas(lfnList, seList, minReplicas=1, checkFC=True, allDisk=False, 
 
   if fullyRemoved or allDisk:
     lfnList = fullyRemoved
-    for lfns in [lfns for reason, siteLFNs in errorReasons.iteritems()
+    for lfns in [lfns for reason, siteLFNs in errorReasons.items()  # can be an iterator
                  for lfns in siteLFNs.itervalues() if reason == 'Only ARCHIVE replicas']:
       lfnList.update(dict.fromkeys(lfns, []))
     if lfnList:
@@ -200,12 +201,12 @@ def removeReplicas(lfnList, seList, minReplicas=1, checkFC=True, allDisk=False, 
   # Print result
   if verbose:
     if successfullyRemoved:
-      for se, rep in successfullyRemoved.iteritems():
+      for se, rep in successfullyRemoved.items():  # can be an iterator
         nrep = len(rep)
         if nrep:
           gLogger.notice("Successfully removed %d replicas from %s" % (nrep, se))
-    for reason, seDict in errorReasons.iteritems():
-      for se, lfns in seDict.iteritems():
+    for reason, seDict in errorReasons.items():  # can be an iterator
+      for se, lfns in seDict.items():  # can be an iterator
         gLogger.error("Failed to remove %d replicas from %s with reason: %s" % (len(lfns), se, reason))
     if not successfullyRemoved and not errorReasons and not checkFC:
       gLogger.notice("Replicas were found at no SE in %s" % str(seList))
@@ -292,7 +293,7 @@ def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=Fa
       if not res['OK']:
         gLogger.fatal("Failed to remove files", res['Message'])
         return -2
-      for lfn, reason in res['Value']['Failed'].iteritems():
+      for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
         reason = str(reason)
         if 'File does not exist' not in reason:
           errorReasons.setdefault(str(reason), {}).setdefault('AllSEs', []).append(lfn)
@@ -300,7 +301,7 @@ def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=Fa
       fullyRemoved.update(res['Value']['Successful'])
 
     # Now remove replicas at required SEs
-    for removeSEs, lfns in repsToRemove.iteritems():
+    for removeSEs, lfns in repsToRemove.items():  # can be an iterator
       for seName in removeSEs:
         if savedLevel not in ('DEBUG', 'VERBOSE'):
           gLogger.setLevel('FATAL')
@@ -310,7 +311,7 @@ def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=Fa
           gLogger.verbose("Failed to remove replica", res['Message'])
           errorReasons.setdefault(res['Message'], {}).setdefault(seName, []).extend(lfns)
         else:
-          for lfn, reason in res['Value']['Failed'].iteritems():
+          for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
             reason = str(reason)
             if 'No such file or directory' in reason:
               notExisting.setdefault(lfn, set()).add(seName)
@@ -321,23 +322,23 @@ def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=Fa
 
   # Remove replicas from FC if they do not exist physically
   if notExisting:
-    res = dm.getReplicas(notExisting.keys())
+    res = dm.getReplicas(list(notExisting))
     if not res['OK']:
       gLogger.error("Error getting replicas of %d non-existing files" % len(notExisting), res['Message'])
-      errorReasons.setdefault(str(res['Message']), {}).setdefault('getReplicas', []).extend(notExisting.keys())
+      errorReasons.setdefault(str(res['Message']), {}).setdefault('getReplicas', []).extend(list(notExisting))
     else:
-      for lfn, reason in res['Value']['Failed'].iteritems():
+      for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
         errorReasons.setdefault(str(reason), {}).setdefault(None, []).append(lfn)
         notExisting.pop(lfn, None)
       replicas = res['Value']['Successful']
-      for lfn, ses in notExisting.iteritems():
+      for lfn, ses in notExisting.items():  # can be an iterator
         for se in ses & set(replicas.get(lfn, [])):
           res = FileCatalog().removeReplica({lfn: {'SE': se, 'PFN': replicas[lfn][se]}})
           if not res['OK']:
             gLogger.error('Error removing replica in the FC for a non-existing replica', res['Message'])
             errorReasons.setdefault(str(res['Message']), {}).setdefault(se, []).append(lfn)
           elif res['Value']['Failed']:
-            for lfn, reason in res['Value']['Failed'].iteritems():
+            for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
               errorReasons.setdefault(str(reason), {}).setdefault(se, []).append(lfn)
               notExisting.pop(lfn, None)
       if notExisting:
@@ -373,7 +374,7 @@ def removeReplicasNoFC(lfnList, seList):
     progressBar.loop()
     res = dm.getReplicas(lfnChunk, getUrl=False)
     if res['OK'] and res['Value']['Failed']:
-      bkToRemove = res['Value']['Failed'].keys()
+      bkToRemove = list(res['Value']['Failed'])
       notInFC.update(bkToRemove)
       res = bk.removeFiles(bkToRemove)
       if not res['OK']:
@@ -385,13 +386,13 @@ def removeReplicasNoFC(lfnList, seList):
       else:
         bkFailed = res['Value'].get('Failed', [])
         if isinstance(bkFailed, dict):
-          for lfn, reason in bkFailed.iteritems():
+          for lfn, reason in bkFailed.items():  # can be an iterator
             notInBK.setdefault(str(reason), []).append(lfn)
         elif isinstance(bkFailed, list):
           notInBK.setdefault('Not in BK', []).extend(bkFailed)
         bkOK += len(bkToRemove) - len(bkFailed)
   progressBar.endLoop(message=('Removed replica flag for %d files' % bkOK) if bkOK else 'No such files found')
-  for reason, lfns in notInBK.iteritems():
+  for reason, lfns in notInBK.items():  # can be an iterator
     gLogger.notice("Failed to remove replica flag in BK for %d files with error: %s" % (len(lfns), reason))
 
   inFC = {}
@@ -422,8 +423,8 @@ def removeReplicasNoFC(lfnList, seList):
       if not res['OK']:
         gLogger.error('\nERROR checking storage files', res['Message'])
         continue
-      lfns = [lfn for lfn, exists in res['Value']['Successful'].iteritems() if exists]
-      lfns += [lfn for lfn, reason in res['Value']['Failed'].iteritems() if 'SRM_FILE_BUSY' in reason]
+      lfns = [lfn for lfn, exists in res['Value']['Successful'].items() if exists]  # can be an iterator
+      lfns += [lfn for lfn, reason in res['Value']['Failed'].items() if 'SRM_FILE_BUSY' in reason]  # can be an iterator
       if not lfns:
         continue
       gLogger.setLevel('FATAL')
@@ -433,7 +434,7 @@ def removeReplicasNoFC(lfnList, seList):
         gLogger.error('\nERROR removing storage file: ', res['Message'])
       else:
         failed = res['Value']['Failed']
-        for lfn, reason in failed.iteritems():
+        for lfn, reason in failed.items():  # can be an iterator
           if 'No such file or directory' in str(reason):
             successfullyRemoved.setdefault(seName, set()).add(lfn)
           else:
@@ -442,7 +443,7 @@ def removeReplicasNoFC(lfnList, seList):
     removed = len(successfullyRemoved.get(seName, []))
     progressBar.endLoop(message=('%d files removed' % removed) if removed else 'No replicas found to be removed')
   if inFC:
-    for se, lfns in inFC.iteritems():
+    for se, lfns in inFC.items():  # can be an iterator
       gLogger.notice('%d files have replica in FC at %s, not removed' % (len(lfns), se))
   return S_OK({'Successful': successfullyRemoved, 'FullyRemoved': notInFC, 'Failed': errorReasons})
 
@@ -483,7 +484,7 @@ def getAccessURL(lfnList, seList, protocol=None):
   dm = DataManager()
   res = dm.getReplicas(lfnList, getUrl=False)
   replicas = res.get('Value', {}).get('Successful', {})
-  if isinstance(seList, basestring):
+  if isinstance(seList, six.string_types):
     seList = seList.split(',')
   if not seList:
     seList = sorted(set(se for lfn in lfnList for se in replicas.get(lfn, {})))
@@ -496,7 +497,7 @@ def getAccessURL(lfnList, seList, protocol=None):
   gLogger.setLevel('FATAL')
   # Check if files are MDF
   bkRes = bk.getFileTypeVersion(lfnList)
-  mdfFiles = set(lfn for lfn, fileType in bkRes.get('Value', {}).iteritems() if fileType == 'MDF')
+  mdfFiles = set(lfn for lfn, fileType in bkRes.get('Value', {}).items() if fileType == 'MDF')  # can be an iterator
   for se in seList:
     lfns = [lfn for lfn in lfnList if se in replicas.get(lfn, [])]
     if lfns:
@@ -515,7 +516,7 @@ def getAccessURL(lfnList, seList, protocol=None):
         results['Value']['Failed'].setdefault(se, {}).update(dict.fromkeys(lfns, res['Message']))
   gLogger.setLevel(savedLevel)
 
-  for se, failed in results['Value']['Failed'].iteritems():
+  for se, failed in results['Value']['Failed'].items():  # can be an iterator
     for lfn in list(failed):
       if lfn not in notFoundLfns:
         failed.pop(lfn)
@@ -560,7 +561,7 @@ def removeFiles(lfnList, setProcessed=False):
     if not res['OK']:
       gLogger.error("\nFailed to remove data", res['Message'])
       continue
-    for lfn, reason in res['Value']['Failed'].iteritems():
+    for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
       reasonStr = str(reason)
       if isinstance(reason, dict) and str(reason) == "{'BookkeepingDB': 'File does not exist'}":
         pass
@@ -568,7 +569,7 @@ def removeFiles(lfnList, setProcessed=False):
         notExisting.append(lfn)
       else:
         errorReasons.setdefault(reasonStr, []).append(lfn)
-    successfullyRemoved += res['Value']['Successful'].keys()
+    successfullyRemoved += list(res['Value']['Successful'])
   progressBar.endLoop()
 
   if successfullyRemoved + notExisting:
@@ -595,7 +596,7 @@ def removeFiles(lfnList, setProcessed=False):
               gLogger.error('\nError removing replica in the FC for a non-existing file', res['Message'])
               errorReasons.setdefault(str(res['Message']), []).append(lfn)
             else:
-              for lfn, reason in res['Value']['Failed'].iteritems():
+              for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
                 errorReasons.setdefault(str(reason), []).append(lfn)
                 lfnChunk.remove(lfn)
         if lfnChunk:
@@ -604,7 +605,7 @@ def removeFiles(lfnList, setProcessed=False):
             gLogger.error("\nError removing %d non-existing files from the FC" % len(lfnChunk), res['Message'])
             errorReasons.setdefault(str(res['Message']), []).extend(lfnChunk)
           else:
-            for lfn, reason in res['Value']['Failed'].iteritems():
+            for lfn, reason in res['Value']['Failed'].items():  # can be an iterator
               if isinstance(reason, dict) and str(reason) == "{'BookkeepingDB': 'File does not exist'}":
                 pass
               else:
@@ -619,7 +620,7 @@ def removeFiles(lfnList, setProcessed=False):
   if successfullyRemoved:
     gLogger.notice("Successfully removed %d files" % len(successfullyRemoved))
   maxLfns = 20
-  for reason, lfns in errorReasons.iteritems():
+  for reason, lfns in errorReasons.items():  # can be an iterator
     nbLfns = len(lfns)
     gLogger.notice(
         "Failed to remove %d files with error: %s%s" %
@@ -646,13 +647,13 @@ def removeFilesInTransformations(lfns, setProcessed=False):
       for fileDict in [fileDict for fileDict in transFiles if fileDict['Status'] == 'Processed']:
         ignoredFiles.setdefault(fileDict['TransformationID'], []).append(fileDict['LFN'])
       if ignoredFiles:
-        for transID, lfns in ignoredFiles.iteritems():
+        for transID, lfns in ignoredFiles.items():  # can be an iterator
           gLogger.notice('%d files in status Processed in transformation %d: status unchanged' % (len(lfns), transID))
 
     for fileDict in [tf for tf in transFiles if tf['Status'] not in ignoreStatus]:
       lfnsToSet.setdefault(fileDict['TransformationID'], []).append(fileDict['LFN'])
     # If required, set files Removed in transformations
-    for transID, lfns in lfnsToSet.iteritems():
+    for transID, lfns in lfnsToSet.items():  # can be an iterator
       res = transClient.setFileStatusForTransformation(transID, 'Removed', lfns, force=True)
       if not res['OK']:
         gLogger.error('Error setting %d files to Removed' % len(lfns), res['Message'])
@@ -847,9 +848,9 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
     from collections import defaultdict
     failed = {}
     success = {}
-    for lfn, reason in metadata['Failed'].iteritems():
+    for lfn, reason in metadata['Failed'].items():  # can be an iterator
       nFiles += 1
-      if isinstance(reason, basestring):
+      if isinstance(reason, six.string_types):
         failed.setdefault('FC', defaultdict(int))
         if reason == 'FC: No active replicas':
           failed['FC']['No active replicas'] += 1
@@ -866,7 +867,7 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
             failed[se]['Exists'] += 1
           else:
             failed[se]['Not existing'] += 1
-    for lfn, seDict in metadata['Successful'].iteritems():
+    for lfn, seDict in metadata['Successful'].items():  # can be an iterator
       nFiles += 1
       for se in seDict:
         if seDict[se]['MatchLFN'] is True:
@@ -1013,7 +1014,7 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
         lfnSize.update(res['Value']['Successful'])
     progressBar.endLoop()
     totSize += sum(lfnSize.itervalues())
-  for lfn, replicas in lfnReplicas.iteritems():
+  for lfn, replicas in lfnReplicas.items():  # can be an iterator
     seList = set(replicas)
     dumpSE = seList & prSEList
     if ((not isinstance(prWithReplicas, list) and not prFailover) or
@@ -1251,7 +1252,7 @@ def executeReplicateToRunDestination(dmScript):
       groupByRun.setdefault(runNumber, []).append(lfn)
   dmsHelper = DMSHelpers()
   groupBySE = {}
-  for runNumber, lfns in groupByRun.iteritems():
+  for runNumber, lfns in groupByRun.items():  # can be an iterator
     res = tsClient.getDestinationForRun(runNumber)
     if not res['OK'] or runNumber not in res['Value']:
       finalResult['Value']['Failed'].update(dict.fromkeys(lfns, res['Message']))
@@ -1263,7 +1264,7 @@ def executeReplicateToRunDestination(dmScript):
         groupBySE.setdefault(destSE, []).extend(lfns)
       else:
         finalResult['Value']['Failed'].update(dict.fromkeys(lfns, res['Message']))
-  for destSE, lfns in groupBySE.iteritems():
+  for destSE, lfns in groupBySE.items():  # can be an iterator
     result = replicateLfn(lfns, '', [destSE], removeSource=removeSource, verbose=True)
     finalResult['Value']['Successful'].update(result['Value']['Successful'])
     finalResult['Value']['Failed'].update(result['Value']['Failed'])
@@ -1287,9 +1288,9 @@ def replicateLfn(lfnList, sourceSE, destList, localCache=None, removeSource=Fals
       for lfn in lfnList:
         finalResult['Value']["Failed"].setdefault('Remove', {}).update({lfn: result['Message']})
     else:
-      for lfn, reason in result['Value']['Failed'].iteritems():
+      for lfn, reason in result['Value']['Failed'].items():  # can be an iterator
         finalResult['Value']['Failed'].setdefault('Remove', {}).update({lfn, reason})
-      for lfn, seList in result['Value']['Successful'].iteritems():
+      for lfn, seList in result['Value']['Successful'].items():  # can be an iterator
         replicasToRemove.setdefault(','.join(sorted(seList)), []).append(lfn)
 
   # Perform the actual replication
@@ -1311,15 +1312,15 @@ def replicateLfn(lfnList, sourceSE, destList, localCache=None, removeSource=Fals
           finalResult['Value']['Successful'].setdefault(seName, {}).update(success)
 
   # If there are replicas to remove, do it
-  for ses, lfnList in replicasToRemove.iteritems():
+  for ses, lfnList in replicasToRemove.items():  # can be an iterator
     gLogger.info("Removing %d files from %s" % (len(lfnList), ses))
     seList = ses.split(',')
     lfnList = list(set(lfnList) & replicated)
     code, errorReasons = removeReplicas(lfnList, seList, verbose=False)
     # There were errors, add them
     if not code:
-      for reason, seDict in errorReasons.iteritems():
-        for se, lfns in seDict.iteritems():
+      for reason, seDict in errorReasons.items():  # can be an iterator
+        for se, lfns in seDict.items():  # can be an iterator
           for lfn in lfns:
             finalResult['Value']['Failed'].setdefault('Remove from %s' % se, {}).update({lfn: reason})
           if se in seList:
@@ -1452,7 +1453,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
       else:
         nreps += sum(len(reps) for reps in chunkDict.itervalues())
     progressBar.endLoop("%d replicas set %s in FC" % (nreps, status))
-    for error, nb in errors.iteritems():
+    for error, nb in errors.items():  # can be an iterator
       gLogger.error("Error setting replica %s in FC for %d files" % (status, nb), error)
 
   if bkToggle and reset:
@@ -1479,7 +1480,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
       else:
         success += len(lfnChunk)
     progressBar.endLoop("Replica flag %s in BK for %d files" % (status, success))
-    for error, nb in errors.iteritems():
+    for error, nb in errors.items():  # can be an iterator
       gLogger.error("Replica flag not %s in BK for %d files:" % (status, nb), error)
 
   if transDict:
@@ -1641,7 +1642,7 @@ def executeAddFile():
   if len(args) == 1:
     inputFileName = args[0]
     if os.path.exists(inputFileName):
-      inputFile = open(inputFileName, 'r')
+      inputFile = open(inputFileName, 'rt')
       for line in inputFile:
         items = line.rstrip().split()
         items[0] = items[0].replace('LFN:', '').replace('lfn:', '')
@@ -1834,10 +1835,10 @@ def executeListDirectory(dmScript, days=0, months=0, years=0, wildcard=None, dep
     filesInDirs[baseDir] = allFiles
   progressBar.endLoop()
 
-  for baseDir, allFiles in filesInDirs.iteritems():
+  for baseDir, allFiles in filesInDirs.items():  # can be an iterator
     if outputFlag:
       outputFileName = '%s.lfns' % baseDir[1:].replace('/', '-')
-      outputFile = open(outputFileName, 'w')
+      outputFile = open(outputFileName, 'wt')
       outputFile.write('\n'.join(sorted(allFiles)))
       outputFile.close()
       gLogger.notice('%d matched files have been put in %s' % (len(allFiles), outputFileName))
@@ -1846,7 +1847,7 @@ def executeListDirectory(dmScript, days=0, months=0, years=0, wildcard=None, dep
 
     if emptyDirsFlag:
       outputFileName = '%s.emptydirs' % baseDir[1:].replace('/', '-')
-      outputFile = open(outputFileName, 'w')
+      outputFile = open(outputFileName, 'wt')
       outputFile.write('\n'.join(sorted(emptyDirs)))
       outputFile.close()
       gLogger.notice('%d empty directories have been put in %s' % (len(emptyDirs), outputFileName))
@@ -1907,7 +1908,7 @@ def registerBK2FC(lfnList, seList, printResult=False):
         gLogger.error('Error accessing SE', se)
         continue
       success = res['Value']['Successful']
-      for lfn, metadata in success.iteritems():
+      for lfn, metadata in success.items():  # can be an iterator
         if metadata.get('Cached', metadata['Accessible']):
           checksum = metadata['Checksum']
           size = metadata['Size']
