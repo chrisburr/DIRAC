@@ -112,6 +112,8 @@ class ProductionRequest(object):
     self.inputDataPolicies = []
     self.previousProds = [None]  # list of productions from which to take the inputs (the first is always None)
     self.multicore = []  # list of flags to override the multi core flags of the steps
+    # list of tuples with min and max number of processors allowed for the jobs ((0,0) = unlimited)
+    self.processors = []
 
     self.outputSEs = []  # a list of StorageElements
     self.specialOutputSEs = []  # a list of dictionaries - might be empty
@@ -314,10 +316,11 @@ class ProductionRequest(object):
       prodsLaunched.append(prodID)
 
       if self.publishFlag:
-        self.logger.notice("For request %d, submitted Production %d, of type %s, ID = %s" % (self.requestID,
-                                                                                             prodIndex,
-                                                                                             prodDict['productionType'],
-                                                                                             str(prodID)))
+        self.logger.notice("For request %d, submitted Production %d, of type %s, ID = %s" % (
+            self.requestID,
+            prodIndex,
+            prodDict['productionType'],
+            str(prodID)))
     return S_OK(prodsLaunched)
 
   #############################################################################
@@ -490,6 +493,9 @@ class ProductionRequest(object):
     if not self.multicore:
       self.multicore = ['True'] * len(self.prodsTypeList)
 
+    if not self.processors:
+      self.processors = [(0, 0)] * len(self.prodsTypeList)
+
     if not self.specialOutputSEs:
       self.specialOutputSEs = [{}] * len(self.prodsTypeList)
 
@@ -524,6 +530,7 @@ class ProductionRequest(object):
         events = self.events[index]
         targets = self.targets[index]
         multicore = self.multicore[index]
+        processors = self.processors[index]
         outputMode = self.outputModes[index]
         ancestorDepth = self.ancestorDepths[index]
         if plugin.lower() != 'byrunfiletypesizewithflush' and 'rootmerging' not in plugin.lower():
@@ -547,6 +554,7 @@ class ProductionRequest(object):
           self.events.pop(index)
           self.targets.pop(index)
           self.multicore.pop(index)
+          self.processors.pop(index)
           self.outputModes.pop(index)
           self.ancestorDepths.pop(index)
           newSteps = _splitIntoProductionSteps(stepToSplit)
@@ -574,6 +582,7 @@ class ProductionRequest(object):
             self.events.insert(index, events)
             self.targets.insert(index, targets)
             self.multicore.insert(index, multicore)
+            self.processors.insert(index, processors)
             self.outputModes.insert(index, outputMode)
             self.ancestorDepths.insert(index, ancestorDepth)
 
@@ -599,25 +608,27 @@ class ProductionRequest(object):
 
     for prodType, stepsInProd, bkQuery, removeInputsFlag, outputSE, priority, \
         cpu, inputD, outputMode, outFileMask, outFileStep, target, groupSize, plugin, idp, \
-        previousProd, events, multicore, ancestorDepth in itertools.izip(self.prodsTypeList,
-                                                                         self.stepsInProds,
-                                                                         self.bkQueries,
-                                                                         self.removeInputsFlags,
-                                                                         self.outputSEsPerFileType,
-                                                                         self.priorities,
-                                                                         self.cpus,
-                                                                         self.inputs,
-                                                                         self.outputModes,
-                                                                         self.outputFileMasks,
-                                                                         self.outputFileSteps,
-                                                                         self.targets,
-                                                                         self.groupSizes,
-                                                                         self.plugins,
-                                                                         self.inputDataPolicies,
-                                                                         self.previousProds,
-                                                                         self.events,
-                                                                         self.multicore,
-                                                                         self.ancestorDepths):
+        previousProd, events, multicore, processors, ancestorDepth in itertools.izip(
+            self.prodsTypeList,
+            self.stepsInProds,
+            self.bkQueries,
+            self.removeInputsFlags,
+            self.outputSEsPerFileType,
+            self.priorities,
+            self.cpus,
+            self.inputs,
+            self.outputModes,
+            self.outputFileMasks,
+            self.outputFileSteps,
+            self.targets,
+            self.groupSizes,
+            self.plugins,
+            self.inputDataPolicies,
+            self.previousProds,
+            self.events,
+            self.multicore,
+            self.processors,
+            self.ancestorDepths):
 
       if not self.parentRequestID and self.requestID:
         transformationFamily = self.requestID
@@ -648,6 +659,7 @@ class ProductionRequest(object):
                                'stepsInProd-ProdName': stepsInProdProdNameList,
                                'events': events,
                                'multicore': multicore,
+                               'processors': processors,
                                'ancestorDepth': ancestorDepth}
       prodNumber += 1
 
@@ -686,6 +698,7 @@ class ProductionRequest(object):
                        transformationFamily=0,
                        events=-1,
                        multicore='True',
+                       processors=(0, 0),
                        ancestorDepth=0):
     """Wrapper around Production API to build a production, given the needed
     parameters.
@@ -718,6 +731,11 @@ class ProductionRequest(object):
     prod.setParameter('numberOfEvents', 'string', str(events), 'Number of events requested')
 
     prod.setParameter('multicore', 'string', multicore, 'Flag for enabling gaudi parallel')
+    if processors[0] or processors[1]:
+      minProcs = processors[0] if processors[0] else None
+      maxProcs = processors[1] if processors[1] else None
+      prod.LHCbJob.setNumberOfProcessors(minNumberOfProcessors=minProcs,
+                                         maxNumberOfProcessors=maxProcs)
     prod.prodGroup = self.prodGroup
     prod.priority = priority
     prod.LHCbJob.workflow.setDescrShort('prodDescription')
