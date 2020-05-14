@@ -1,6 +1,8 @@
 v10r0p1
 use DIRAC v7r0p24
 
+* CI: revert behaviour of create_tarball to take the correct releases.cfg
+* Tests: disable perf tests of RAWIntegrity
 * added doc tools reqs
 * Added possibility to specify max/min number of processors per job
 * added notice of LHCb packages

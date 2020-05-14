@@ -311,69 +311,71 @@ class RAWIntegrityDBTest(unittest.TestCase):
       res = self.db.removeFile('lfn%s' % i)
       self.assertTrue(res['OK'], res)
 
-  def test_05_perf(self):
-    """ Performance tests
-
-        For reminder, this is more ore less
-        the timing that were obtained on a super crapy
-        virtualMachine. Let's hope we never go above them..
-        criticalInsertTime = 34
-        criticalRetrieveTime = 1
-        criticalUpdateTime = 5
-        criticalRemoveTime = 30
-     """
-
-    nbFiles = 5000
-
-    # Inserting files
-    startTime = time.time()
-    for i in xrange(nbFiles):
-      res = self.db.addFile('lfn%s' % i, 'pfn%s' % i, i, 'se%s' % (i % 2), 'GUID%s' % i,
-                            'Checksum%s' % i)
-      self.assertTrue(res['OK'], res)
-    insertTime = time.time() - startTime
-
-    # Sleep 2 seconds so that the DB has
-    # a consistant commited state
-    time.sleep(2)
-
-    # getting all of them
-    startTime = time.time()
-    res = self.db.getFiles('Active')
-    self.assertTrue(res['OK'], res)
-    self.assertEqual(len(res['Value']), nbFiles)
-    getFileTime = time.time() - startTime
-
-    # Setting some of them
-    startTime = time.time()
-    rndIds = set()
-    for _ in xrange(nbFiles / 10):
-      rndId = random.randint(1, nbFiles)
-      rndIds.add(rndId)
-      self.db.setFileStatus('lfn%s' % rndId, 'Done')
-      self.assertTrue(res['OK'], res)
-    updateStatusTime = time.time() - startTime
-
-    # getting less of them
-    startTime = time.time()
-    res = self.db.getFiles('Active')
-    self.assertTrue(res['OK'], res)
-    self.assertEqual(len(res['Value']), nbFiles - len(rndIds))
-    getFileTime2 = time.time() - startTime
-
-    # deleting all of them
-    startTime = time.time()
-    for i in xrange(1, nbFiles):
-      res = self.db.removeFile('lfn%s' % i)
-      self.assertTrue(res['OK'], res)
-    removeTime = time.time() - startTime
-
-    print "Performance result"
-    print "Inserting %s files: %s" % (nbFiles, insertTime)
-    print "Getting all active files: %s" % getFileTime
-    print "Updating %s status: %s" % (nbFiles / 10, updateStatusTime)
-    print "Getting again active files: %s" % getFileTime2
-    print "Removing all files: %s" % removeTime
+# CHRIS: 13.05.20
+# Disable until can be ran reliably
+#  def test_05_perf(self):
+#    """ Performance tests
+#
+#        For reminder, this is more ore less
+#        the timing that were obtained on a super crapy
+#        virtualMachine. Let's hope we never go above them..
+#        criticalInsertTime = 34
+#        criticalRetrieveTime = 1
+#        criticalUpdateTime = 5
+#        criticalRemoveTime = 30
+#     """
+#
+#    nbFiles = 5000
+#
+#    # Inserting files
+#    startTime = time.time()
+#    for i in xrange(nbFiles):
+#      res = self.db.addFile('lfn%s' % i, 'pfn%s' % i, i, 'se%s' % (i % 2), 'GUID%s' % i,
+#                            'Checksum%s' % i)
+#      self.assertTrue(res['OK'], res)
+#    insertTime = time.time() - startTime
+#
+#    # Sleep 2 seconds so that the DB has
+#    # a consistant commited state
+#    time.sleep(2)
+#
+#    # getting all of them
+#    startTime = time.time()
+#    res = self.db.getFiles('Active')
+#    self.assertTrue(res['OK'], res)
+#    self.assertEqual(len(res['Value']), nbFiles)
+#    getFileTime = time.time() - startTime
+#
+#    # Setting some of them
+#    startTime = time.time()
+#    rndIds = set()
+#    for _ in xrange(nbFiles / 10):
+#      rndId = random.randint(1, nbFiles)
+#      rndIds.add(rndId)
+#      self.db.setFileStatus('lfn%s' % rndId, 'Done')
+#      self.assertTrue(res['OK'], res)
+#    updateStatusTime = time.time() - startTime
+#
+#    # getting less of them
+#    startTime = time.time()
+#    res = self.db.getFiles('Active')
+#    self.assertTrue(res['OK'], res)
+#    self.assertEqual(len(res['Value']), nbFiles - len(rndIds))
+#    getFileTime2 = time.time() - startTime
+#
+#    # deleting all of them
+#    startTime = time.time()
+#    for i in xrange(1, nbFiles):
+#      res = self.db.removeFile('lfn%s' % i)
+#      self.assertTrue(res['OK'], res)
+#    removeTime = time.time() - startTime
+#
+#    print "Performance result"
+#    print "Inserting %s files: %s" % (nbFiles, insertTime)
+#    print "Getting all active files: %s" % getFileTime
+#    print "Updating %s status: %s" % (nbFiles / 10, updateStatusTime)
+#    print "Getting again active files: %s" % getFileTime2
+#    print "Removing all files: %s" % removeTime
 
 
 class RAWIntegrityAgentTest(unittest.TestCase):
