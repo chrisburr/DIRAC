@@ -10,8 +10,6 @@
 ###############################################################################
 """BookkeepingManager service is the front-end to the Bookkeeping database."""
 
-import cPickle
-
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceSection
@@ -22,6 +20,7 @@ from LHCbDIRAC.BookkeepingSystem.DB.BookkeepingDatabaseClient import Bookkeeping
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import checkEnoughBKArguments
+from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonDumps, pickleOrJsonLoads
 
 __RCSID__ = "$Id$"
 
@@ -496,7 +495,8 @@ class BookkeepingManagerHandler(RequestHandler):
       in_dict = JEncoder.loads(parameters)
     except Exception as _:
       iscPickleFormat = True
-      in_dict = cPickle.loads(parameters)
+      gLogger.exception("Failed to serialise data with JSON", parameters)
+      in_dict = pickleOrJsonLoads(parameters)
     gLogger.verbose("The following dictionary received:", "%s" % in_dict)
     methodName = in_dict.get('MethodName', default)
     if methodName == 'getFiles':
@@ -505,7 +505,7 @@ class BookkeepingManagerHandler(RequestHandler):
       retVal = self.__getFilesWithMetadata(in_dict)
 
     if iscPickleFormat:
-      fileString = cPickle.dumps(retVal, protocol=2)
+      fileString = pickleOrJsonDumps(retVal, protocol=2)
     else:
       fileString = JEncoder.dumps(retVal)
 

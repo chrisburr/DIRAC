@@ -25,13 +25,13 @@ containing Production Requests and other related tables."""
 #'Done'
 #'Cancelled'
 
-import cPickle
 import time
 import threading
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 
+from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonDumps, pickleOrJsonLoads
 from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import informPeople
 
 __RCSID__ = "$Id$"
@@ -285,9 +285,9 @@ class ProductionRequestDB(DB):
     pickledProdDetail = requestDict.get('ProDetail')
     if pickledProdDetail is not None:
       try:
-        proDetail = cPickle.loads(pickledProdDetail)
-      except cPickle.UnpicklingError:
-        return S_ERROR('Content of ProDetail field cannot be unpickled')
+        proDetail = pickleOrJsonLoads(pickledProdDetail)
+      except Exception:
+        return S_ERROR('Content of ProDetail field cannot be loaded')
       for i in xrange(20):
         outputKey = 'p' + str(i) + 'OFT'
         inputKey = 'p' + str(i + 1) + 'IFT'
@@ -711,8 +711,8 @@ class ProductionRequestDB(DB):
     for x in rec:
       if x in ('ProDetail', 'SimCondDetail'):
         try:
-          recx = cPickle.loads(rec[x])
-          oldx = cPickle.loads(old[x])
+          recx = pickleOrJsonLoads(rec[x])
+          oldx = pickleOrJsonLoads(old[x])
           if recx == oldx:
             continue
         except TypeError:
@@ -945,7 +945,7 @@ class ProductionRequestDB(DB):
     """clear processing pass section."""
     rec['ProID'] = None
     nd = {}
-    rec['ProDetail'] = cPickle.dumps(nd)
+    rec['ProDetail'] = pickleOrJsonDumps(nd)
 
   def __duplicateDeep(self, requestID, masterID, parentID, creds, connection, clearpp):
     """recurcive duplication function.
@@ -1368,7 +1368,7 @@ class ProductionRequestDB(DB):
     for x in result['Value']:
       res = dict(zip(self.requestFields[:-7], x))
       if res['SimCondDetail']:
-        res.update(cPickle.loads(res['SimCondDetail']))
+        res.update(pickleOrJsonLoads(res['SimCondDetail']))
       else:
         continue
       del res['SimCondDetail']
