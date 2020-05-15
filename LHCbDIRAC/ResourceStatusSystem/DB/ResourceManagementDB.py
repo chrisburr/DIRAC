@@ -29,7 +29,7 @@ import datetime
 from sqlalchemy.dialects.mysql import INTEGER, TIMESTAMP, TINYINT, BIGINT
 from sqlalchemy import Column, String, DateTime, Text, text, BLOB
 
-from DIRAC.ResourceStatusSystem.DB.ResourceManagementDB import rmsBase, TABLESLIST
+from DIRAC.ResourceStatusSystem.DB.ResourceManagementDB import  rmsBase, TABLESLIST, ResourceManagementDB as DIRACRMDB
 
 
 TABLESLIST = TABLESLIST + ['MonitoringTest',
@@ -212,3 +212,12 @@ class SLSLogSE(rmsBase):
     """Simply returns a list of column values."""
     return [self.name, self.timestamp, self.availability,
             self.datapartitiontotal, self.datapartitionused, self.validityduration]
+
+
+class ResourceManagementDB(DIRACRMDB):
+  def __init__(self):
+    """c'tor
+
+    :param self: self reference
+    """
+    super(ResourceManagementDB, self).__init__()
