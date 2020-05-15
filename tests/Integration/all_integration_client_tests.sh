@@ -31,10 +31,6 @@ python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem
 python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
-echo -e "*** $(date -u) **** LHCb RSS TESTS ****\n"
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ResourceStatusSystem/Test_ResourceManagement.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-
-#-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb TS TESTS ****\n"
 python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/TransformationSystem/Test_ClientTransformation.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
