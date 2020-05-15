@@ -103,4 +103,7 @@ Developer tools
 You are free to choose the editor or IDE you prefer. I know `Emacs <www.gnu.org/s/emacs/>`_ is a great tool,
 and someone can't just leave without it. And that also `vim <http://www.vim.org/>`_ is great.
 `Eclipse <http://www.eclipse.org/>`_ with `pydev <http://pydev.org/>`_ is another good choice.
-Other possibilities include `PyCharm (IntelliJIDEA) <https://www.jetbrains.com/pycharm/>`_ and `atom <https://atom.io/>`_
+Other possibilities include `PyCharm (IntelliJIDEA) <https://www.jetbrains.com/pycharm/>`_
+and `atom <https://atom.io/>`_. 
+My personal favourites are anyway `Sublime <https://www.sublimetext.com/3>`_ with the *Anaconda* package,
+and `Visual Studio <https://code.visualstudio.com/download>`_ which is now also for Linux.
