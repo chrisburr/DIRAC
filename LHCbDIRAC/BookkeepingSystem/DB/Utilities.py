@@ -81,7 +81,7 @@ def checkEnoughBKArguments(func):
         subject = '%s method!' % funcName
         body = '%s user has not provided enough input parameters! \n \
                 the input parameters:%s ' % (userName, str(arguments))
-        NotificationClient().sendMail(address, subject, body, 'zmathe@cern.ch')
+	NotificationClient().sendMail(address, subject, body, 'lhcb-bookkeeping@cern.ch')
         gLogger.error('Got you: %s ---> %s' % (userName, str(arguments)))
         if self.forceExecution:  # we can force to execute the methods even the user does not
           # provide enough parameter

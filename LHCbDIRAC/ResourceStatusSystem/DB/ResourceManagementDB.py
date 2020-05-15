@@ -29,7 +29,7 @@ import datetime
 from sqlalchemy.dialects.mysql import INTEGER, TIMESTAMP, TINYINT, BIGINT
 from sqlalchemy import Column, String, DateTime, Text, text, BLOB
 
-from DIRAC.ResourceStatusSystem.DB.ResourceManagementDB import  rmsBase, TABLESLIST, ResourceManagementDB as DIRACRMDB
+from DIRAC.ResourceStatusSystem.DB.ResourceManagementDB import rmsBase, TABLESLIST, ResourceManagementDB as DIRACRMDB
 
 
 TABLESLIST = TABLESLIST + ['MonitoringTest',
