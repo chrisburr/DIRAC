@@ -10,6 +10,8 @@
 ###############################################################################
 """BookkeepingManager service is the front-end to the Bookkeeping database."""
 
+import six
+
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceSection
@@ -76,7 +78,7 @@ class BookkeepingManagerHandler(RequestHandler):
   # types_<methodname> global variable is a list which defines for each exposed
   # method the types of its arguments, the argument types are ignored if the list is empty.
 
-  types_echo = [basestring]
+  types_echo = [six.string_types]
 
   @staticmethod
   def export_echo(inputstring):
@@ -84,14 +86,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK(inputstring)
 
   #############################################################################
-  types_sendBookkeeping = [basestring, basestring]
+  types_sendBookkeeping = [six.string_types, six.string_types]
 
   def export_sendBookkeeping(self, name, xml):
     """more info in the BookkeepingClient.py."""
     return self.export_sendXMLBookkeepingReport(xml)
 
   #############################################################################
-  types_sendXMLBookkeepingReport = [basestring]
+  types_sendXMLBookkeepingReport = [six.string_types]
 
   @staticmethod
   def export_sendXMLBookkeepingReport(xml):
@@ -205,7 +207,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getAvailableFileTypes()
 
   #############################################################################
-  types_insertFileTypes = [basestring, basestring, basestring]
+  types_insertFileTypes = [six.string_types, six.string_types, six.string_types]
 
   @staticmethod
   def export_insertFileTypes(ftype, desc, fileType):
@@ -366,7 +368,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return result
 
   #############################################################################
-  types_getProcessingPass = [dict, basestring]
+  types_getProcessingPass = [dict, six.string_types]
 
   @staticmethod
   def export_getProcessingPass(in_dict, path=None):
@@ -390,7 +392,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProcessingPass(configName, configVersion, conddescription, runnb, prod, evt, path)
 
   ############################################################################
-  types_getStandardProcessingPass = [dict, basestring]
+  types_getStandardProcessingPass = [dict, six.string_types]
 
   def export_getStandardProcessingPass(self, in_dict, path):
     """more info in the BookkeepingClient.py."""
@@ -825,7 +827,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getMoreProductionInformations(prodid)
 
   #############################################################################
-  types_getJobInfo = [basestring]
+  types_getJobInfo = [six.string_types]
 
   @staticmethod
   def export_getJobInfo(lfn):
@@ -851,7 +853,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getJobInformation(in_dict)
 
   #############################################################################
-  types_getRunNumber = [basestring]
+  types_getRunNumber = [six.string_types]
 
   @staticmethod
   def export_getRunNumber(lfn):
@@ -859,7 +861,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getRunNumber(lfn)
 
   #############################################################################
-  types_getRunNbAndTck = [basestring]
+  types_getRunNbAndTck = [six.string_types]
 
   @staticmethod
   def export_getRunNbAndTck(lfn):
@@ -867,7 +869,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getRunNbAndTck(lfn)
 
   #############################################################################
-  types_getProductionFiles = [(long, int), basestring]
+  types_getProductionFiles = [six.integer_types, six.string_types]
 
   @staticmethod
   def export_getProductionFiles(prod, fileType, replica=default):
@@ -891,7 +893,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getRunFiles(runid)
 
   #############################################################################
-  types_updateFileMetaData = [basestring, dict]
+  types_updateFileMetaData = [six.string_types, dict]
 
   @staticmethod
   def export_updateFileMetaData(filename, fileAttr):
@@ -903,7 +905,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.updateFileMetaData(filename, fileAttr)
 
   #############################################################################
-  types_renameFile = [basestring, basestring]
+  types_renameFile = [six.string_types, six.string_types]
 
   @staticmethod
   def export_renameFile(oldLFN, newLFN):
@@ -912,7 +914,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.renameFile(oldLFN, newLFN)
 
   #############################################################################
-  types_getProductionProcessingPassID = [(int, long)]
+  types_getProductionProcessingPassID = [six.integer_types]
 
   @staticmethod
   def export_getProductionProcessingPassID(prodid):
@@ -920,7 +922,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionProcessingPassID(prodid)
 
   #############################################################################
-  types_getProductionProcessingPass = [(long, int)]
+  types_getProductionProcessingPass = [six.integer_types]
 
   @staticmethod
   def export_getProductionProcessingPass(prodid):
@@ -954,14 +956,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK({'Successfull': successfull, 'Faild': faild})
 
   #############################################################################
-  types_setQuality = [list, basestring]
+  types_setQuality = [list, six.string_types]
 
   def export_setQuality(self, lfns, flag):
     """more info in the BookkeepingClient.py."""
     return self.export_setFileDataQuality(lfns, flag)
 
   #############################################################################
-  types_setFileDataQuality = [list, basestring]
+  types_setFileDataQuality = [list, six.string_types]
 
   @staticmethod
   def export_setFileDataQuality(lfns, flag):
@@ -969,7 +971,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.setFileDataQuality(lfns, flag)
 
   #############################################################################
-  types_setRunAndProcessingPassDataQuality = [long, basestring, basestring]
+  types_setRunAndProcessingPassDataQuality = [six.integer_types, six.string_types, six.string_types]
 
   @staticmethod
   def export_setRunAndProcessingPassDataQuality(runNB, procpass, flag):
@@ -983,14 +985,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
   #############################################################################
-  types_setRunQualityWithProcessing = [long, basestring, basestring]
+  types_setRunQualityWithProcessing = [six.integer_types, six.string_types, six.string_types]
 
   def export_setRunQualityWithProcessing(self, runNB, procpass, flag):
     """more info in the BookkeepingClient.py."""
     return self.export_setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
   #############################################################################
-  types_setRunDataQuality = [int, basestring]
+  types_setRunDataQuality = [int, six.string_types]
 
   @staticmethod
   def export_setRunDataQuality(runNb, flag):
@@ -1001,7 +1003,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.setRunDataQuality(runNb, flag)
 
   #############################################################################
-  types_setQualityRun = [int, basestring]
+  types_setQualityRun = [int, six.string_types]
 
   @staticmethod
   def export_setQualityRun(runNb, flag):
@@ -1009,7 +1011,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.setRunDataQuality(runNb, flag)
 
   #############################################################################
-  types_setProductionDataQuality = [int, basestring]
+  types_setProductionDataQuality = [int, six.string_types]
 
   @staticmethod
   def export_setProductionDataQuality(prod, flag):
@@ -1017,7 +1019,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.setProductionDataQuality(prod, flag)
 
   #############################################################################
-  types_setQualityProduction = [int, basestring]
+  types_setQualityProduction = [int, six.string_types]
 
   def export_setQualityProduction(self, prod, flag):
     """more info in the BookkeepingClient.py."""
@@ -1110,7 +1112,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getFileDescendents(lfn, depth, production, checkreplica)
 
   #############################################################################
-  types_checkfile = [basestring]
+  types_checkfile = [six.string_types]
 
   @staticmethod
   def export_checkfile(fileName):
@@ -1118,7 +1120,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.checkfile(fileName)
 
   #############################################################################
-  types_checkFileTypeAndVersion = [basestring, basestring]
+  types_checkFileTypeAndVersion = [six.string_types, six.string_types]
 
   @staticmethod
   def export_checkFileTypeAndVersion(ftype, version):
@@ -1126,7 +1128,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.checkFileTypeAndVersion(ftype, version)
 
   #############################################################################
-  types_checkEventType = [long]
+  types_checkEventType = [six.integer_types]
 
   @staticmethod
   def export_checkEventType(eventTypeId):
@@ -1160,7 +1162,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getSimConditions()
 
   #############################################################################
-  types_removeReplica = [basestring]
+  types_removeReplica = [six.string_types]
 
   @staticmethod
   def export_removeReplica(fileName):
@@ -1200,7 +1202,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getFileMetaDataForWeb(lfns)
 
   #############################################################################
-  types_getProductionFilesForUsers = [int, dict, dict, long, long]
+  types_getProductionFilesForUsers = [int, dict, dict, six.integer_types, six.integer_types]
 
   @staticmethod
   def export_getProductionFilesForUsers(prod, ftype, sortDict, startItem, maxitems):
@@ -1209,7 +1211,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return res
 
   #############################################################################
-  types_getProductionFilesForWeb = [long, dict, dict, long, long]
+  types_getProductionFilesForWeb = [six.integer_types, dict, dict, six.integer_types, six.integer_types]
 
   @staticmethod
   def export_getProductionFilesWeb(prod, ftype, sortDict, startItem, maxitems):
@@ -1226,7 +1228,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.exists(lfns)
 
   #############################################################################
-  types_addReplica = [basestring]
+  types_addReplica = [six.string_types]
 
   @staticmethod
   def export_addReplica(fileName):
@@ -1234,7 +1236,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.addReplica(fileName)
 
   #############################################################################
-  types_getRunInformations = [(long, int)]
+  types_getRunInformations = [six.integer_types]
 
   @staticmethod
   def export_getRunInformations(runnb):
@@ -1250,7 +1252,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getRunInformation(runnb)
 
   #############################################################################
-  types_getFileCreationLog = [basestring]
+  types_getFileCreationLog = [six.string_types]
 
   @staticmethod
   def export_getFileCreationLog(lfn):
@@ -1258,7 +1260,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getFileCreationLog(lfn)
 
   #############################################################################
-  types_getLogfile = [basestring]
+  types_getLogfile = [six.string_types]
 
   @staticmethod
   def export_getLogfile(lfn):
@@ -1266,7 +1268,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getFileCreationLog(lfn)
 
   #############################################################################
-  types_insertEventType = [long, basestring, basestring]
+  types_insertEventType = [six.integer_types, six.string_types, six.string_types]
 
   @staticmethod
   def export_insertEventType(evid, desc, primary):
@@ -1285,14 +1287,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return result
 
   #############################################################################
-  types_addEventType = [long, basestring, basestring]
+  types_addEventType = [six.integer_types, six.string_types, six.string_types]
 
   def export_addEventType(self, evid, desc, primary):
     """more info in the BookkeepingClient.py."""
     return self.export_insertEventType(evid, desc, primary)
 
   #############################################################################
-  types_updateEventType = [long, basestring, basestring]
+  types_updateEventType = [six.integer_types, six.string_types, six.string_types]
 
   @staticmethod
   def export_updateEventType(evid, desc, primary):
@@ -1345,14 +1347,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return retVal
 
   #############################################################################
-  types_getProductionInformations_new = [long]
+  types_getProductionInformations_new = [six.integer_types]
 
   def export_getProductionInformations_new(self, prodid):
     """more info in the BookkeepingClient.py."""
     return self.export_getProductionInformations(prodid)
 
   #############################################################################
-  types_getProductionInformations = [(long, int)]
+  types_getProductionInformations = [six.integer_types]
 
   @staticmethod
   def export_getProductionInformations(prodid):
@@ -1427,7 +1429,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK(result)
 
   #############################################################################
-  types_getFileHistory = [basestring]
+  types_getFileHistory = [six.string_types]
 
   @staticmethod
   def export_getFileHistory(lfn):
@@ -1460,7 +1462,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK(result)
 
   #############################################################################
-  types_getJobsNb = [long]
+  types_getJobsNb = [six.integer_types]
 
   @staticmethod
   def export_getJobsNb(prodid):
@@ -1468,7 +1470,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfJobs(prodid)
 
   #############################################################################
-  types_getProductionNbOfJobs = [long]
+  types_getProductionNbOfJobs = [six.integer_types]
 
   @staticmethod
   def export_getProductionNbOfJobs(prodid):
@@ -1476,7 +1478,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfJobs(prodid)
 
   #############################################################################
-  types_getNumberOfEvents = [long]
+  types_getNumberOfEvents = [six.integer_types]
 
   @staticmethod
   def export_getNumberOfEvents(prodid):
@@ -1484,7 +1486,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfEvents(prodid)
 
   #############################################################################
-  types_getProductionNbOfEvents = [long]
+  types_getProductionNbOfEvents = [six.integer_types]
 
   @staticmethod
   def export_getProductionNbOfEvents(prodid):
@@ -1492,7 +1494,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfEvents(prodid)
 
   #############################################################################
-  types_getSizeOfFiles = [long]
+  types_getSizeOfFiles = [six.integer_types]
 
   @staticmethod
   def export_getSizeOfFiles(prodid):
@@ -1500,7 +1502,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionSizeOfFiles(prodid)
 
   #############################################################################
-  types_getProductionSizeOfFiles = [long]
+  types_getProductionSizeOfFiles = [six.integer_types]
 
   @staticmethod
   def export_getProductionSizeOfFiles(prodid):
@@ -1508,7 +1510,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionSizeOfFiles(prodid)
 
   #############################################################################
-  types_getNbOfFiles = [long]
+  types_getNbOfFiles = [six.integer_types]
 
   @staticmethod
   def export_getNbOfFiles(prodid):
@@ -1516,7 +1518,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfFiles(prodid)
 
   #############################################################################
-  types_getProductionNbOfFiles = [long]
+  types_getProductionNbOfFiles = [six.integer_types]
 
   @staticmethod
   def export_getProductionNbOfFiles(prodid):
@@ -1524,7 +1526,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfFiles(prodid)
 
   #############################################################################
-  types_getProductionInformation = [long]
+  types_getProductionInformation = [six.integer_types]
 
   @staticmethod
   def export_getProductionInformation(prodid):
@@ -1532,7 +1534,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionInformation(prodid)
 
   #############################################################################
-  types_getNbOfJobsBySites = [long]
+  types_getNbOfJobsBySites = [six.integer_types]
 
   @staticmethod
   def export_getNbOfJobsBySites(prodid):
@@ -1549,7 +1551,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getAvailableTags()
 
   #############################################################################
-  types_getProcessedEvents = [(long, int)]
+  types_getProcessedEvents = [six.integer_types]
 
   @staticmethod
   def export_getProcessedEvents(prodid):
@@ -1557,7 +1559,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionProcessedEvents(prodid)
 
   #############################################################################
-  types_getProductionProcessedEvents = [(long, int)]
+  types_getProductionProcessedEvents = [six.integer_types]
 
   @staticmethod
   def export_getProductionProcessedEvents(prodid):
@@ -1631,14 +1633,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.setFilesVisible(lfns)
 
   #############################################################################
-  types_getRunFlag = [long, long]
+  types_getRunFlag = [six.integer_types, six.integer_types]
 
   def export_getRunFlag(self, runnb, processing):
     """more info in the BookkeepingClient.py."""
     return self.export_getRunAndProcessingPassDataQuality(runnb, processing)
 
   #############################################################################
-  types_getRunAndProcessingPassDataQuality = [long, long]
+  types_getRunAndProcessingPassDataQuality = [six.integer_types, six.integer_types]
 
   @staticmethod
   def export_getRunAndProcessingPassDataQuality(runnb, processing):
@@ -1654,7 +1656,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getAvailableConfigurations()
 
   #############################################################################
-  types_getRunProcessingPass = [long]
+  types_getRunProcessingPass = [six.integer_types]
 
   @staticmethod
   def export_getRunProcessingPass(runnumber):
@@ -1974,7 +1976,7 @@ class BookkeepingManagerHandler(RequestHandler):
       return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
-  types_getRunQuality = [basestring, basestring]
+  types_getRunQuality = [six.string_types, six.string_types]
 
   def export_getRunQuality(self, procpass, flag=default):
     """more info in the BookkeepingClient.py."""
@@ -1982,7 +1984,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getRunWithProcessingPassAndDataQuality(procpass, flag)
 
   #############################################################################
-  types_getRunWithProcessingPassAndDataQuality = [basestring, basestring]
+  types_getRunWithProcessingPassAndDataQuality = [six.string_types, six.string_types]
 
   @staticmethod
   def export_getRunWithProcessingPassAndDataQuality(procpass, flag=default):
@@ -2030,7 +2032,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return result
 
   #############################################################################
-  types_getProcessingPassId = [basestring]
+  types_getProcessingPassId = [six.string_types]
 
   @staticmethod
   def export_getProcessingPassId(fullpath):
@@ -2177,7 +2179,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getDirectoryMetadata(lfn)
 
   #############################################################################
-  types_getFilesForGUID = [basestring]
+  types_getFilesForGUID = [six.string_types]
 
   @staticmethod
   def export_getFilesForGUID(guid):
@@ -2206,7 +2208,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getListOfFills(configName, configVersion, conddescription)
 
   #############################################################################
-  types_getRunsForFill = [long]
+  types_getRunsForFill = [six.integer_types]
 
   @staticmethod
   def export_getRunsForFill(fillid):
@@ -2256,7 +2258,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.updateSimulationConditions(in_dict)
 
   #############################################################################
-  types_deleteSimulationConditions = [long]
+  types_deleteSimulationConditions = [six.integer_types]
 
   @staticmethod
   def export_deleteSimulationConditions(simid):
@@ -2278,14 +2280,14 @@ class BookkeepingManagerHandler(RequestHandler):
     """It returns the input and output files for a given DIRAC jobid."""
     return dataMGMT_.getJobInputOutputFiles(diracjobids)
 
-  types_setRunOnlineFinished = [long]
+  types_setRunOnlineFinished = [six.integer_types]
 
   @staticmethod
   def export_setRunOnlineFinished(runnumber):
     """It is used to set the run finished..."""
     return dataMGMT_.setRunStatusFinished(runnumber, 'Y')
 
-  types_setRunOnlineNotFinished = [long]
+  types_setRunOnlineNotFinished = [six.integer_types]
 
   @staticmethod
   def export_setRunOnlineNotFinished(runnumber):
@@ -2313,7 +2315,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.fixRunLuminosity(runnumbers)
 
   #############################################################################
-  types_getProductionProducedEvents = [(long, int)]
+  types_getProductionProducedEvents = [six.integer_types]
 
   @staticmethod
   def export_getProductionProducedEvents(prodid):
@@ -2361,7 +2363,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.bulkupdateEventType(eventtypes)
 
   #############################################################################
-  types_getRunConfigurationsAndDataTakingCondition = [long]
+  types_getRunConfigurationsAndDataTakingCondition = [six.integer_types]
 
   @staticmethod
   def export_getRunConfigurationsAndDataTakingCondition(runnumber):

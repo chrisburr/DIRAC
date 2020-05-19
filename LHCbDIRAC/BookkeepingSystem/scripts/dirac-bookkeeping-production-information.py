@@ -14,7 +14,11 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve information from the Bookkeeping for a given production."""
+
 __RCSID__ = "$Id$"
+
+import six
+
 import DIRAC
 from DIRAC.Core.Base import Script
 
@@ -25,7 +29,6 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     '  ProdID:   Production ID']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
-import types
 
 if len(args) < 1:
   Script.showHelp()
@@ -52,7 +55,7 @@ if res['OK']:
 
   steps = val['Steps']
 
-  if isinstance(steps, basestring):
+  if isinstance(steps, six.string_types):
     print steps
   else:
 
