@@ -3112,9 +3112,9 @@ and files.qualityid= dataquality.qualityid" % lfn
         if bkQuery is None:
           bkQuery = {}
         if bkQuery.get('ProcessingPass', None) is None:
-          # we can have a situation when we want to know the steps for a hiven production
+          # we can have a situation where we want to know the steps for a given production
           retVal = self.getProductionProcessingPass(prodid)
-          if not retVal:
+          if not retVal['OK']:
             return retVal
           else:
             bkQuery['ProcessingPass'] = retVal['Value']
