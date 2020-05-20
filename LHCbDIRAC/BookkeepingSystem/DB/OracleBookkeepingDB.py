@@ -3176,7 +3176,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           if found:
             return S_OK([ddb, conddb])
           else:
-            return S_OK([None, None])
+            return self.__resolveFromPreviousStep(production, bkQuery)
       else:
         return self.__resolveFromPreviousStep(production, bkQuery)
 
