@@ -272,7 +272,7 @@ class StorageUsageAgent(AgentModule):
       elapsedTime = time.time() - self.__startExecutionTime
       outdatedSeconds = max(max(self.am_getOption("PollingTime"), elapsedTime) * 2, 86400)
       result = self.storageUsage.purgeOutdatedEntries(self.__baseDir,
-                                                      long(outdatedSeconds),
+                                                      int(outdatedSeconds),
                                                       self.__ignoreDirsList)
       if not result['OK']:
         return result
