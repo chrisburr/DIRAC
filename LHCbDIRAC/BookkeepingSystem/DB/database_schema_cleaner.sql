@@ -10,53 +10,53 @@
 
 -- Bookkeeping DB schema cleaner (Oracle)
 
-set serveroutput on
+SET serveroutput ON
 
 --- DROP package BOOKKEEPINGORACLEDB
 BEGIN
   EXECUTE IMMEDIATE 'DROP PACKAGE BOOKKEEPINGORACLEDB';
 EXCEPTION
-  WHEN OTHERS THEN
+  WHEN others THEN
     IF SQLCODE != -4043 THEN
       RAISE;
     END IF;
 END;
-/
+ /
 
---- DROP package BKUTILITIES
+ --- DROP package BKUTILITIES
 BEGIN
   EXECUTE IMMEDIATE 'DROP PACKAGE BKUTILITIES';
 EXCEPTION
-  WHEN OTHERS THEN
+  WHEN others THEN
     IF SQLCODE != -4043 THEN
       RAISE;
     END IF;
 END;
-/
+ /
 
---- DROP DBMS_SCHEDULER.JOB
+ --- DROP DBMS_SCHEDULER.JOB
 BEGIN
-  DBMS_SCHEDULER.drop_job(job_name => 'produpdatejob');
+  dbms_scheduler.drop_job(job_name => 'produpdatejob');
 EXCEPTION
-  WHEN OTHERS THEN
+  WHEN others THEN
     IF SQLCODE != -27475 THEN
       RAISE;
     END IF;
 END;
-/
+ /
 
---- DROP VIEW
+ --- DROP VIEW
 BEGIN
   EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW prodrunview';
 EXCEPTION
-  WHEN OTHERS THEN
+  WHEN others THEN
     IF SQLCODE != -12003 THEN
       RAISE;
     END IF;
 END;
-/
+ /
 
---- DROP TABLEs
+ --- DROP TABLEs
 DECLARE table_names sys.dbms_debug_vc2coll
   := sys.dbms_debug_vc2coll(
 			    'applications',
@@ -86,17 +86,17 @@ BEGIN
     BEGIN
       EXECUTE IMMEDIATE 'DROP TABLE ' || table_names(tn);
     EXCEPTION
-      WHEN OTHERS THEN
+      WHEN others THEN
 	IF SQLCODE != -942 THEN
 	  RAISE;
 	END IF;
     END;
   END LOOP;
 END;
-/
+ /
 
 
---- DROP SEQUENCEs
+ --- DROP SEQUENCEs
 DECLARE type_names sys.dbms_debug_vc2coll
   := sys.dbms_debug_vc2coll('applications_index_seq',
 			    'configurationid_seq',
@@ -113,17 +113,17 @@ BEGIN
     BEGIN
       EXECUTE IMMEDIATE 'DROP SEQUENCE ' || type_names(tn);
     EXCEPTION
-      WHEN OTHERS THEN
+      WHEN others THEN
 	IF SQLCODE != -2289 THEN
 	  RAISE;
 	END IF;
     END;
   END LOOP;
 END;
-/
+ /
 
 
---- DROP TYPEs
+ --- DROP TYPEs
 DECLARE type_names sys.dbms_debug_vc2coll
   := sys.dbms_debug_vc2coll('bulk_collect_directoryMetadata',
 			    'bulk_collect_directoryMet_new',
@@ -149,11 +149,11 @@ BEGIN
     BEGIN
       EXECUTE IMMEDIATE 'DROP TYPE ' || type_names(tn);
     EXCEPTION
-      WHEN OTHERS THEN
+      WHEN others THEN
 	IF SQLCODE != -4043 THEN
 	  RAISE;
 	END IF;
     END;
   END LOOP;
 END;
-/
+ /

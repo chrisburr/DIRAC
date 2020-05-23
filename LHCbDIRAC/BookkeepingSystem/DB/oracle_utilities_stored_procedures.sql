@@ -8,55 +8,55 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                      */
 
-CREATE OR REPLACE package BKUTILITIES AS
-  TYPE numberarray IS TABLE OF NUMBER INDEX BY PLS_INTEGER;
+CREATE OR REPLACE PACKAGE bkutilities AS
+  TYPE numberarray IS TABLE OF NUMBER INDEX BY pls_integer;
 
-  PROCEDURE updateNbevt(v_production NUMBER);
-  PROCEDURE updateJobNbofevt(v_jobid NUMBER);
-  PROCEDURE updateEventInputStat(v_production NUMBER, fixstripping BOOLEAN);
-  PROCEDURE updateJobEvtinpStat(v_jobid NUMBER, fixstripping BOOLEAN);
-  PROCEDURE destroyDatasets;
-  PROCEDURE insertProtoPordoutput(v_production NUMBER);
-  PROCEDURE updateProtoPordoutput(v_production NUMBER);
-  PROCEDURE updateProdOutputFiles;
+  PROCEDURE updatenbevt(v_production NUMBER);
+  PROCEDURE updatejobnbofevt(v_jobid NUMBER);
+  PROCEDURE updateeventinputstat(v_production NUMBER, fixstripping BOOLEAN);
+  PROCEDURE updatejobevtinpstat(v_jobid NUMBER, fixstripping BOOLEAN);
+  PROCEDURE destroydatasets;
+  PROCEDURE insertprotopordoutput(v_production NUMBER);
+  PROCEDURE updateprotopordoutput(v_production NUMBER);
+  PROCEDURE updateprodoutputfiles;
   PROCEDURE updateprodrunview;
 END;
-/
+ /
 
-CREATE OR REPLACE package body BKUTILITIES AS
-PROCEDURE updateNbevt(
+ CREATE OR REPLACE PACKAGE BODY bkutilities AS
+PROCEDURE updatenbevt(
   v_production NUMBER
 ) IS
 BEGIN
 /* It updates the NUMBER of events for a given production*/
   FOR c IN (SELECT j.jobid
 	    FROM jobs j
-	    WHERE j.production=v_production)
+	    WHERE j.production = v_production)
    LOOP
-    updateJobNbofevt(c.jobid);
+    updatejobnbofevt(c.jobid);
    END LOOP;
 END;
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE updateJobNbofevt(v_jobid NUMBER)is
+PROCEDURE updatejobnbofevt(v_jobid NUMBER)IS
 sumevt NUMBER;
 BEGIN
 /* UPDATE the NUMBER of event for a given job.
 The NUMBER of events is the sum of the eventstat of the input files */
-SELECT SUM(f.eventstat) INTO sumevt
+SELECT sum(f.eventstat) INTO sumevt
   FROM jobs j,
        files f,
        inputfiles i
    WHERE
-      i.jobid=v_jobid AND
-      i.fileid=f.fileid AND
-      f.jobid=j.jobid  AND
+      i.jobid = v_jobid AND
+      i.fileid = f.fileid AND
+      f.jobid = j.jobid  AND
       f.eventstat IS NOT NULL AND
       f.filetypeid NOT IN (SELECT filetypeid
 			   FROM filetypes
-			   WHERE name='RAW');
+			   WHERE name = 'RAW');
   IF sumevt > 0 THEN
-    UPDATE jobs SET numberofevents=sumevt WHERE jobid=v_jobid;
+    UPDATE jobs SET numberofevents = sumevt WHERE jobid = v_jobid;
   --for c in (SELECT j.jobid
   --            FROM jobs j, files f, inputfiles i
   --              WHERE
@@ -71,7 +71,7 @@ SELECT SUM(f.eventstat) INTO sumevt
 END;
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE updateEventInputStat(
+PROCEDURE updateeventinputstat(
   v_production NUMBER,
   fixstripping BOOLEAN
 ) IS
@@ -84,56 +84,56 @@ for example: If we want to fix the eventinputstat of reconstructed files (FULL.D
     FOR c IN (SELECT j.jobid
 	      FROM jobs j,
 		   files f
-	      WHERE j.jobid=f.jobid
-		AND j.production=v_production
+	      WHERE j.jobid = f.jobid
+		AND j.production = v_production
 	      )
       LOOP
-	updateJobEvtinpStat(c.jobid, fixstripping);
+	updatejobevtinpstat(c.jobid, fixstripping);
       END LOOP;
   ELSE
-    for c IN (SELECT j.jobid
+    FOR c IN (SELECT j.jobid
 	      FROM jobs j,
 		   files f
-	      WHERE j.jobid=f.jobid AND
-		    j.production=v_production AND
-		    f.gotreplica='Yes' AND
-		    f.visibilityflag='Y')
+	      WHERE j.jobid = f.jobid AND
+		    j.production = v_production AND
+		    f.gotreplica = 'Yes' AND
+		    f.visibilityflag = 'Y')
       LOOP
-	updateJobEvtinpStat(c.jobid, fixstripping);
+	updatejobevtinpstat(c.jobid, fixstripping);
       END LOOP;
   END IF;
 END;
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE updateJobEvtinpStat(
+PROCEDURE updatejobevtinpstat(
   v_jobid NUMBER,
   fixstripping BOOLEAN
 ) IS
 /*It updates the eventinputstat for a given job */
 sumevtinp NUMBER;
 BEGIN
-  IF fixstripping=TRUE THEN
-    SELECT sum(j.eventinputstat) into sumevtinp
+  IF fixstripping = TRUE THEN
+    SELECT sum(j.eventinputstat) INTO sumevtinp
     FROM jobs j,
 	 files f,
 	 inputfiles i
-    WHERE i.jobid=v_jobid AND
-	  i.fileid=f.fileid AND
-	  f.jobid=j.jobid;
+    WHERE i.jobid = v_jobid AND
+	  i.fileid = f.fileid AND
+	  f.jobid = j.jobid;
   ELSE
-    SELECT sum(f.eventstat) into sumevtinp
+    SELECT sum(f.eventstat) INTO sumevtinp
     FROM jobs j,
 	 files f,
 	 inputfiles i
-    WHERE i.jobid=v_jobid AND
-	  i.fileid=f.fileid AND
-	  f.jobid=j.jobid;
+    WHERE i.jobid = v_jobid AND
+	  i.fileid = f.fileid AND
+	  f.jobid = j.jobid;
   END IF;
   IF sumevtinp > 0 THEN
-    UPDATE jobs SET eventinputstat=sumevtinp WHERE jobid=v_jobid;
+    UPDATE jobs SET eventinputstat = sumevtinp WHERE jobid = v_jobid;
   END IF;
 END;
-PROCEDURE destroyDatasets IS
+PROCEDURE destroydatasets IS
 runsteps numberarray;
 productionsteps numberarray;
 i NUMBER;
@@ -141,47 +141,47 @@ v_production NUMBER;
 BEGIN
     v_production:=2; /*this must be same as in the integration test: LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping.py*/
     /*DELETE run data*/
-    DELETE productionscontainer WHERE production=3;
-    DELETE stepscontainer WHERE production=3;
-    DELETE productionscontainer WHERE production=-1122;
+    DELETE productionscontainer WHERE production = 3;
+    DELETE stepscontainer WHERE production = 3;
+    DELETE productionscontainer WHERE production = -1122;
     i:=1;/*before we DELETE the steps FROM the stepcontainer table, the steps must be saved*/
     FOR step IN (SELECT stepid
 		 FROM stepscontainer
-		 WHERE production=-1122) LOOP
+		 WHERE production = -1122) LOOP
       runsteps(i):=step.stepid;
-      i:=i+1;
+      i:=i + 1;
       dbms_output.put_line('run Step:' || step.stepid);
     END LOOP;
-    DELETE stepscontainer WHERE production=-1122;
-    DELETE runstatus WHERE runnumber=1122;
-    DELETE files WHERE jobid in (SELECT jobid FROM jobs WHERE runnumber=1122);
-    DELETE jobs WHERE runnumber=1122;
-    FOR i in 1 .. runsteps.COUNT LOOP
+    DELETE stepscontainer WHERE production = -1122;
+    DELETE runstatus WHERE runnumber = 1122;
+    DELETE files WHERE jobid IN (SELECT jobid FROM jobs WHERE runnumber = 1122);
+    DELETE jobs WHERE runnumber = 1122;
+    FOR i IN 1 .. runsteps.count LOOP
       dbms_output.put_line('run step DELETE:' || runsteps(i));
-      DELETE steps WHERE stepid=runsteps(i);
+      DELETE steps WHERE stepid = runsteps(i);
     END LOOP;
     /* DELETE production data */
     i:=1;
     /*before we DELETE the steps FROM the stepcontainer table, the steps must be saved*/
-    FOR step IN (SELECT stepid FROM stepscontainer WHERE production=v_production) LOOP
+    FOR step IN (SELECT stepid FROM stepscontainer WHERE production = v_production) LOOP
       productionsteps(i):=step.stepid;
-      i:=i+1;
+      i:=i + 1;
       dbms_output.put_line('production step:' || step.stepid);
     END LOOP;
-    DELETE productionscontainer WHERE production=v_production;
-    DELETE stepscontainer WHERE production=v_production;
-    DELETE files WHERE jobid in (SELECT jobid FROM jobs WHERE production=v_production);
-    DELETE jobs WHERE production=v_production;
-    FOR i in 1 .. productionsteps.COUNT LOOP
+    DELETE productionscontainer WHERE production = v_production;
+    DELETE stepscontainer WHERE production = v_production;
+    DELETE files WHERE jobid IN (SELECT jobid FROM jobs WHERE production = v_production);
+    DELETE jobs WHERE production = v_production;
+    FOR i IN 1 .. productionsteps.count LOOP
       dbms_output.put_line('production step DELETE:' || productionsteps(i));
-      DELETE steps WHERE stepid=productionsteps(i);
+      DELETE steps WHERE stepid = productionsteps(i);
     END LOOP;
     COMMIT;
 END;
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertProtoPordoutput(
+PROCEDURE insertprotopordoutput(
   v_production NUMBER
 ) IS
 BEGIN
@@ -194,7 +194,7 @@ BEGIN
 	      FROM jobs j,
 		   files f
 	      WHERE j.jobid = f.jobid AND
-		    j.production=v_production AND
+		    j.production = v_production AND
 		    f.gotreplica IS NOT NULL AND
 		    f.filetypeid NOT IN(9,17)
 	      GROUP BY j.production,
@@ -206,7 +206,7 @@ BEGIN
 	      ORDER BY f.gotreplica,
 		       f.visibilityflag
 	      ASC) LOOP
-    dbms_output.put_line('Inserting -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
+    dbms_output.put_line('Inserting -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
     INSERT INTO productionoutputfiles(production,
 				      stepid,
 				      filetypeid,
@@ -223,9 +223,9 @@ BEGIN
 END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE updateProtoPordoutput(
+PROCEDURE updateprotopordoutput(
   v_production NUMBER
-) is
+) IS
 nb NUMBER;
 BEGIN
   FOR prod IN(SELECT j.production,
@@ -237,7 +237,7 @@ BEGIN
 	      FROM jobs j,
 		   files f
 	      WHERE j.jobid = f.jobid AND
-		    j.production=v_production AND
+		    j.production = v_production AND
 		    f.gotreplica IS NOT NULL AND
 		    f.filetypeid NOT IN(9,17)
 	      GROUP BY j.production,
@@ -249,8 +249,8 @@ BEGIN
 	      ORDER BY f.gotreplica,
 		       f.visibilityflag
 	      ASC) LOOP
-    SELECT count(*) into nb FROM productionoutputfiles WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid AND visible=prod.visibilityflag AND gotreplica=prod.gotreplica;
-    dbms_output.put_line('Try UPDATE -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
+    SELECT count(*) INTO nb FROM productionoutputfiles WHERE production = prod.production AND eventtypeid = prod.eventtypeid AND filetypeid = prod.filetypeid AND stepid = prod.stepid AND visible = prod.visibilityflag AND gotreplica = prod.gotreplica;
+    dbms_output.put_line('Try UPDATE -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
     IF nb = 0 THEN -- we want to UPDATE only the row, which has modified...
       -- we have to see which rows can be updated
       FOR toupdate IN (SELECT * FROM (SELECT production,
@@ -260,8 +260,8 @@ BEGIN
 					     gotreplica,
 					     visible AS visibilityflag
 				      FROM productionoutputfiles
-				      WHERE production=v_production)
-			 minus
+				      WHERE production = v_production)
+			 MINUS
 		       SELECT j.production,
 			      j.stepid,
 			      f.eventtypeid,
@@ -271,7 +271,7 @@ BEGIN
 		       FROM jobs j,
 			    files f
 		       WHERE j.jobid = f.jobid AND
-			     j.production= v_production AND
+			     j.production = v_production AND
 			     f.gotreplica IS NOT NULL AND
 			     f.filetypeid NOT IN(9,17)
 		       GROUP BY j.production,
@@ -280,8 +280,8 @@ BEGIN
 				f.filetypeid,
 				f.gotreplica,
 				f.visibilityflag) LOOP
-	dbms_output.put_line('Update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:'||prod.visibilityflag||'->event type:'||prod.eventtypeid||'->replica flag:'||prod.gotreplica);
-	UPDATE productionoutputfiles SET visible=prod.visibilityflag, gotreplica=prod.gotreplica WHERE production=prod.production AND eventtypeid=prod.eventtypeid AND filetypeid=prod.filetypeid AND stepid=prod.stepid AND visible=toupdate.visibilityflag AND gotreplica=toupdate.gotreplica;
+	dbms_output.put_line('Update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
+	UPDATE productionoutputfiles SET visible = prod.visibilityflag, gotreplica = prod.gotreplica WHERE production = prod.production AND eventtypeid = prod.eventtypeid AND filetypeid = prod.filetypeid AND stepid = prod.stepid AND visible = toupdate.visibilityflag AND gotreplica = toupdate.gotreplica;
       END LOOP;
     END IF;
   END LOOP;
@@ -289,26 +289,26 @@ END;
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE updateProdOutputFiles IS
+PROCEDURE updateprodoutputfiles IS
 nbrows NUMBER;
 nbrowstobeprocessed NUMBER;
 nb NUMBER;
 err_num NUMBER;
-err_msg VARCHAR2(1000);
+err_msg varchar2(1000);
 BEGIN
 --FOR toprod in (SELECT distinct j.production FROM jobs j, files f WHERE f.jobid=j.jobid AND j.production>0 AND f.gotreplica='Yes') LOOP
   FOR c IN (SELECT j.production
 	    FROM jobs j,
 		 files f
-	    WHERE f.inserttimestamp >= SYSTIMESTAMP - 1 AND
+	    WHERE f.inserttimestamp >= systimestamp - 1 AND
 		  j.jobid = f.jobid AND
 		  --j.production=toprod.production AND
 		  f.gotreplica IS NOT NULL AND
-		  f.filetypeid NOT IN(9,17) group by j.production) LOOP
-    SELECT COUNT(*) INTO nbrows
+		  f.filetypeid NOT IN(9,17) GROUP BY j.production) LOOP
+    SELECT count(*) INTO nbrows
     FROM  productionoutputfiles
-    WHERE production=c.production;
-    SELECT COUNT(*) INTO nbrowstobeprocessed
+    WHERE production = c.production;
+    SELECT count(*) INTO nbrowstobeprocessed
     FROM (SELECT j.production,
 		 j.stepid,
 		 f.eventtypeid,
@@ -317,7 +317,7 @@ BEGIN
 		 f.visibilityflag
 	  FROM jobs j, files f
 	  WHERE j.jobid = f.jobid AND
-		j.production= c.production AND
+		j.production = c.production AND
 		f.gotreplica IS NOT NULL AND
 		f.filetypeid NOT IN(9,17)
 	  GROUP BY j.production,
@@ -331,18 +331,18 @@ BEGIN
 	 );
     IF nbrows > 0 THEN
       IF nbrows = nbrowstobeprocessed THEN
-	updateProtoPordoutput(c.production);
-      ELSIF nbrows>nbrowstobeprocessed THEN
-	updateProtoPordoutput(c.production);
-	FOR toDelete IN (SELECT * FROM (SELECT production,
+	updateprotopordoutput(c.production);
+      elsif nbrows > nbrowstobeprocessed THEN
+	updateprotopordoutput(c.production);
+	FOR todelete IN (SELECT * FROM (SELECT production,
 					       stepid,
 					       eventtypeid,
 					       filetypeid,
 					       gotreplica,
 					       visible AS visibilityflag
 					FROM productionoutputfiles
-					WHERE production=c.production)
-			   minus
+					WHERE production = c.production)
+			   MINUS
 			 SELECT j.production,
 				j.stepid,
 				f.eventtypeid,
@@ -352,7 +352,7 @@ BEGIN
 			 FROM jobs j,
 			      files f
 			 WHERE j.jobid = f.jobid AND
-			       j.production= c.production AND
+			       j.production = c.production AND
 			       f.gotreplica IS NOT NULL AND
 			       f.filetypeid NOT IN(9,17)
 			 GROUP BY j.production,
@@ -361,63 +361,63 @@ BEGIN
 				  f.filetypeid,
 				  f.gotreplica,
 				  f.visibilityflag) LOOP
-	  dbms_output.put_line('Delete -> Production:' || toDelete.production || '->step:' || toDelete.stepid || '->file type:' || toDelete.filetypeid || '->visible:'||toDelete.visibilityflag||'->event type:'||toDelete.eventtypeid||'->replica flag:'||toDelete.gotreplica);
-	  DELETE productionoutputfiles WHERE production=toDelete.production AND eventtypeid=toDelete.eventtypeid AND filetypeid=toDelete.filetypeid AND stepid=toDelete.stepid AND visible=toDelete.visibilityflag AND gotreplica=toDelete.gotreplica;
+	  dbms_output.put_line('Delete -> Production:' || todelete.production || '->step:' || todelete.stepid || '->file type:' || todelete.filetypeid || '->visible:' || todelete.visibilityflag || '->event type:' || todelete.eventtypeid || '->replica flag:' || todelete.gotreplica);
+	  DELETE productionoutputfiles WHERE production = todelete.production AND eventtypeid = todelete.eventtypeid AND filetypeid = todelete.filetypeid AND stepid = todelete.stepid AND visible = todelete.visibilityflag AND gotreplica = todelete.gotreplica;
       END LOOP;
-      ELSIF nbrows < nbrowstobeprocessed THEN
-	updateProtoPordoutput(c.production);
-	FOR toInsert IN(SELECT * FROM (SELECT j.production,j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag FROM jobs j, files f WHERE
+      elsif nbrows < nbrowstobeprocessed THEN
+	updateprotopordoutput(c.production);
+	FOR toinsert IN(SELECT * FROM (SELECT j.production,j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag FROM jobs j, files f WHERE
             j.jobid = f.jobid AND
-	    j.production= c.production AND
+	    j.production = c.production AND
 	    f.gotreplica IS NOT NULL AND
-	    f.filetypeid NOT IN(9,17) GROUP BY j.production, j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag ORDER BY f.gotreplica,f.visibilityflag)  minus
-		   SELECT production, stepid, eventtypeid, filetypeid, gotreplica, visible as visibilityflag FROM productionoutputfiles WHERE production=c.production) LOOP
-		dbms_output.put_line('Inserting -> Production:' || toInsert.production || '->step:' || toInsert.stepid || '->file type:' || toInsert.filetypeid || '->visible:'||toInsert.visibilityflag||'->event type:'||toInsert.eventtypeid||'->replica flag:'||toInsert.gotreplica);
-		INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(toInsert.production,toInsert.stepid, toInsert.filetypeid, toInsert.visibilityflag,toInsert.eventtypeid, toInsert.gotreplica);
+	    f.filetypeid NOT IN(9,17) GROUP BY j.production, j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag ORDER BY f.gotreplica,f.visibilityflag)  MINUS
+		   SELECT production, stepid, eventtypeid, filetypeid, gotreplica, visible AS visibilityflag FROM productionoutputfiles WHERE production = c.production) LOOP
+		dbms_output.put_line('Inserting -> Production:' || toinsert.production || '->step:' || toinsert.stepid || '->file type:' || toinsert.filetypeid || '->visible:' || toinsert.visibilityflag || '->event type:' || toinsert.eventtypeid || '->replica flag:' || toinsert.gotreplica);
+		INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(toinsert.production,toinsert.stepid, toinsert.filetypeid, toinsert.visibilityflag,toinsert.eventtypeid, toinsert.gotreplica);
 	END LOOP;
-      END if;
+      END IF;
     ELSE
-	insertProtoPordoutput(c.production);
-    END if;
+	insertprotopordoutput(c.production);
+    END IF;
     COMMIT;
   END LOOP;
 --END LOOP;
   EXCEPTION
-  WHEN OTHERS THEN
+  WHEN others THEN
     err_num := SQLCODE;
-    err_msg := SUBSTR(SQLERRM, 1, 1000);
+    err_msg := substr(sqlerrm, 1, 1000);
     utl_mail.send(sender => 'lhcb-geoc@cern.ch',
 	    recipients => 'lhcb-bookkeeping@cern.ch',
 	    subject    => 'Failed to UPDATE productionoutputfiles',
-	    message    => 'ERROR NUMBER:'||err_num||' error message:'||err_msg||' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
+	    message    => 'ERROR NUMBER:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
 END;
-procedure updateprodrunview is
+PROCEDURE updateprodrunview IS
 err_num NUMBER;
-err_msg VARCHAR2(1000);
-begin
+err_msg varchar2(1000);
+BEGIN
 -- get the modified production list
- for prod in (select j.production from jobs j, files f WHERE 
-                f.inserttimestamp >= SYSTIMESTAMP - 1 AND
+ FOR prod IN (SELECT j.production FROM jobs j, files f WHERE
+		f.inserttimestamp >= systimestamp - 1 AND
                 j.jobid = f.jobid AND
-                f.gotreplica IS NOT NULL and
-                f.filetypeid NOT IN(9,17) group by j.production)
+		f.gotreplica IS NOT NULL AND
+		f.filetypeid NOT IN(9,17) GROUP BY j.production)
   LOOP
-    delete prodrunview where production=prod.production;
-    for insertProd in (select j.production, j.runnumber from jobs j, files f where j.jobid=f.jobid and j.production=prod.production and f.gotreplica='Yes' 
-                                 and f.visibilityflag='Y' and j.runnumber is not null group by j.production,j.runnumber)
+    DELETE prodrunview WHERE production = prod.production;
+    FOR insertprod IN (SELECT j.production, j.runnumber FROM jobs j, files f WHERE j.jobid = f.jobid AND j.production = prod.production AND f.gotreplica = 'Yes'
+				 AND f.visibilityflag = 'Y' AND j.runnumber IS NOT NULL GROUP BY j.production,j.runnumber)
     LOOP
-      insert into prodrunview(production,runnumber)values(insertProd.production,insertProd.runnumber);
+      INSERT INTO prodrunview(production,runnumber)VALUES(insertprod.production,insertprod.runnumber);
     END LOOP;
-    commit;
+    COMMIT;
   END LOOP;
   EXCEPTION
-    WHEN OTHERS THEN
+    WHEN others THEN
         err_num := SQLCODE;
-        err_msg := SUBSTR(SQLERRM, 1, 1000);
+	err_msg := substr(sqlerrm, 1, 1000);
         utl_mail.send(sender => 'lhcb-geoc@cern.ch',
                 recipients => 'lhcb-bookkeeping@cern.ch',
                 subject    => 'Failed to update prodrunview',
-                message    => 'ERROR number:'||err_num||' error message:'||err_msg||' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-prodrunview');
-end;
+		message    => 'ERROR number:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-prodrunview');
 END;
-/
+END;
+ /
