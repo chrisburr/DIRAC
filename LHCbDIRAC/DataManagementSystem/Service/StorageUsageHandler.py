@@ -16,6 +16,8 @@
 :synopsis: Implementation of the Storage Usage service in the DISET framework.
 """
 # imports
+import six
+
 # from DIRAC
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
@@ -46,12 +48,12 @@ class StorageUsageHandler(RequestHandler):
     """export of publishDirectories."""
     return gStorageUsageDB.publishDirectories(directoryDict)
 
-  types_removeDirectory = [[basestring, list, tuple]]
+  types_removeDirectory = [[six.string_types, list, tuple]]
 
   @staticmethod
   def export_removeDirectory(dirPaths):
     """export of removeDirectory."""
-    if isinstance(dirPaths, basestring):
+    if isinstance(dirPaths, six.string_types):
       dirPaths = (dirPaths, )
     for dirPath in dirPaths:
       result = gStorageUsageDB.removeDirectory(dirPath)
@@ -229,7 +231,7 @@ class StorageUsageHandler(RequestHandler):
   # Catalog
   ####
 
-  types_getSummary = [basestring]
+  types_getSummary = [six.string_types]
 
   @staticmethod
   def export_getSummary(path, fileType=False, production=False):
@@ -247,7 +249,7 @@ class StorageUsageHandler(RequestHandler):
   # Purge
   ####
 
-  types_purgeOutdatedEntries = [basestring, int]
+  types_purgeOutdatedEntries = [six.string_types, int]
 
   @staticmethod
   def export_purgeOutdatedEntries(rootDir, outdatedSeconds, preserveDirsList=None):

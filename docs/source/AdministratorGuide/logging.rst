@@ -60,7 +60,7 @@ Centralized logging
 TL;DR
 -----
 
-All the logs (up to the VERBOSE level) from the Agents and services are visible on `https://es-lhcb-dirac-logs.cern.ch/kibana/app/kibana`.
+All the logs (up to the VERBOSE level) from the Agents and services are visible on `this kibana instance <https://es-lhcb-dirac-logs.cern.ch/kibana/app/kibana>`_.
 
 
 ------------
