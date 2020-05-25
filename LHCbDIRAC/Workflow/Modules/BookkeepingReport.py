@@ -12,6 +12,7 @@
 (which is done in the uploadOutput)"""
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import division
 
 __RCSID__ = "$Id$"
 
@@ -142,13 +143,13 @@ class BookkeepingReport(ModuleBase):
       bkLFNs = result['Value']['BookkeepingLFNs']
       logFilePath = result['Value']['LogFilePath'][0]
 
-    self.ldate = time.strftime("%Y-%m-%d", time.localtime(time.time()))
-    self.ltime = time.strftime("%H:%M", time.localtime(time.time()))
+    self.ldate = time.strftime("%Y-%m-%d", time.gmtime(time.time()))
+    self.ltime = time.strftime("%H:%M:%S", time.gmtime(time.time()))
 
     if 'StartTime' in self.step_commons:
       startTime = self.step_commons['StartTime']
-      self.ldatestart = time.strftime("%Y-%m-%d", time.localtime(startTime))
-      self.ltimestart = time.strftime("%H:%M", time.localtime(startTime))
+      self.ldatestart = time.strftime("%Y-%m-%d", time.gmtime(startTime))
+      self.ltimestart = time.strftime("%H:%M:%S", time.gmtime(startTime))
 
     try:
       self.xf_o = self.step_commons['XMLSummary_o']
@@ -521,8 +522,8 @@ class BookkeepingReport(ModuleBase):
       oFile = addChildNode(oFile, "Parameter", 0, ("FileSize", outputsize))
 
       oFile = addChildNode(oFile, "Parameter", 0, ("CreationDate",
-                                                   time.strftime('%Y-%m-%d %H:%M',
-                                                                 time.localtime(time.time()))))
+                                                   time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                 time.gmtime(time.time()))))
 
       ############################################################
       # Log file replica information

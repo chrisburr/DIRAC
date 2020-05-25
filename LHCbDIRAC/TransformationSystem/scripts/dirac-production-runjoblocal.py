@@ -19,8 +19,17 @@ Usage:
   dirac-production-runjoblocal (job ID) (Data imput mode) -  No parenthesis
 """
 
+import sys
 import os
 import shutil
+import ssl
+
+if sys.version_info < (3,):
+  from urllib2 import urlopen as url_library_urlopen  # pylint: disable=no-name-in-module,import-error
+  from urllib2 import URLError as url_library_URLError  # pylint: disable=no-name-in-module,import-error
+else:
+  from urllib.request import urlopen as url_library_urlopen  # pylint: disable=no-name-in-module,import-error
+  from urllib.error import URLError as url_library_URLError  # pylint: disable=no-name-in-module,import-error
 
 from DIRAC import S_OK
 from DIRAC.Core.Base import Script
@@ -38,7 +47,7 @@ Script.setUsageMessage(__doc__ + '\n'.join([
 
 from DIRAC.Core.Utilities.File import mkDir
 
-__RCSID__ = "$Id:$"
+__RCSID__ = "$Id$"
 
 _downloadinputdata = False
 _jobID = None
@@ -85,44 +94,38 @@ def __modifyJobDescription(jobID, basepath, downloadinputdata):
 
 
 def __downloadPilotScripts(basepath):
-  """Downloads the scripts necessary to configure the pilot."""
-  # include retry function
-  out = os.system(
-      "wget -P " + basepath
-      + " https://gitlab.cern.ch/lhcb-dirac/LHCbPilot/raw/master/LHCbPilot/LHCbPilotCommands.py")
-  if not out:
-    S_OK("LHCbPilotCommands.py script successfully download.\n")
-  else:
-    print "LHCbPilotCommands.py script download error.\n"
+  """
+  Downloads the scripts necessary to configure the pilot
 
-  out = os.system(
-      "wget -P " + basepath
-      + " https://raw.githubusercontent.com/DIRACGrid/Pilot/master/Pilot/dirac-pilot.py")
-  if not out:
-    S_OK("dirac-pilot.py script successfully download.\n")
-  else:
-    print "download error.\n"
+  """
 
-  out = os.system(
-      "wget -P " + basepath
-      + " https://raw.githubusercontent.com/DIRACGrid/Pilot/master/Pilot/pilotCommands.py")
-  if not out:
-    S_OK("pilotCommands.py script successfully download.\n")
-  else:
-    print "download error.\n"
+  context = ssl._create_unverified_context()
+  for fileName in ['dirac-pilot.py', 'dirac-install.py',
+                   'pilotCommands.py', 'pilotTools',
+                   'MessageSender', 'PilotLogger.py', 'PilotLoggerTools.py']:
+    remoteFile = url_library_urlopen(
+        os.path.join('https://raw.githubusercontent.com/DIRACGrid/Pilot/master/Pilot/', fileName),
+        timeout=10,
+        context=context)
+    with open(fileName, 'wb') as localFile:
+      localFile.write(remoteFile.read())
 
-  out = os.system(
-      "wget -P " + basepath
-      + " https://raw.githubusercontent.com/DIRACGrid/Pilot/master/Pilot/pilotTools.py")
-  if not out:
-    S_OK("pilotTools.py script successfully download.\n")
-  else:
-    print "download error.\n"
+  remoteFile = url_library_urlopen(
+      os.path.join('https://gitlab.cern.ch/lhcb-dirac/LHCbPilot/-/raw/master/LHCbPilot/LHCbPilotCommands.py'),
+      timeout=10,
+      context=context)
+  with open('LHCbPilotCommands.py', 'wb') as localFile:
+    localFile.write(remoteFile.read())
 
 
 def __configurePilot(basepath):
   """Configures the pilot."""
-  out = os.system("python " + basepath + "dirac-pilot.py -S LHCb-Production -l LHCb -C dips://lhcb-conf-dirac.cern.ch:9135/Configuration/Server -N ce.debug.ch -Q default -n DIRAC.JobDebugger.cern -M 1 -E LHCbPilot -X LHCbConfigureBasics,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements -dd")
+  pilotCmd = "dirac-pilot.py -S LHCb-Production -l LHCb "
+  pilotCmd += "-C dips://lhcb-conf-dirac.cern.ch:9135/Configuration/Server "
+  pilotCmd += "-N ce.debug.ch -Q default -n DIRAC.JobDebugger.cern -M 1 "
+  pilotCmd += "-E LHCbPilot "
+  pilotCmd += "-X LHCbConfigureBasics,LHCbConfigureSite,LHCbConfigureArchitecture,LHCbConfigureCPURequirements -dd"
+  out = os.system("python " + basepath + pilotCmd)
   if not out:
     directory = os.path.expanduser('~') + os.path.sep
     os.rename(directory + '.dirac.cfg', directory + '.dirac.cfg.old')
