@@ -3109,6 +3109,16 @@ and files.qualityid= dataquality.qualityid" % lfn
           correctedValues += [tuple(tmp)]
         result = S_OK(correctedValues)
       else:
+        if bkQuery is None:
+          bkQuery = {}
+        if bkQuery.get('ProcessingPass', None) is None:
+          # we can have a situation where we want to know the steps for a given production
+          retVal = self.getProductionProcessingPass(prodid)
+          if not retVal['OK']:
+            return retVal
+          else:
+            bkQuery['ProcessingPass'] = retVal['Value']
+
         retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
         if retVal['OK']:
           correctedValues = []
@@ -3133,14 +3143,14 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
 
     bkQuery['ProcessingPass'] = '/'.join(bkQuery['ProcessingPass'].split('/')[:-1])
-    command = self.__prepareStepMetadata(bkQuery['ConfigName'],
-                                         bkQuery['ConfigVersion'],
-                                         bkQuery['ConditionDescription'],
-                                         bkQuery['ProcessingPass'],
-                                         bkQuery['EventType'],
-                                         bkQuery['Production'],
+    command = self.__prepareStepMetadata(bkQuery.get('ConfigName', default),
+                                         bkQuery.get('ConfigVersion', default),
+                                         bkQuery.get('ConditionDescription', default),
+                                         bkQuery.get('ProcessingPass', default),
+                                         bkQuery.get('EventType', default),
+                                         bkQuery.get('Production', default),
                                          'ALL',
-                                         bkQuery['RunNumber'],
+                                         bkQuery.get('RunNumber', default),
                                          'ALL',
                                          'ALL',
                                          selection="prod.production")
@@ -3165,6 +3175,8 @@ and files.qualityid= dataquality.qualityid" % lfn
               break
           if found:
             return S_OK([ddb, conddb])
+          else:
+            return self.__resolveFromPreviousStep(production, bkQuery)
       else:
         return self.__resolveFromPreviousStep(production, bkQuery)
 
