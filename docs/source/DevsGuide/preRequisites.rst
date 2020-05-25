@@ -100,10 +100,6 @@ Every development should be tracked there. Jira is a very powerfool tool, but re
 Developer tools
 ----------------
 
-You are free to choose the editor or IDE you prefer. I know `Emacs <www.gnu.org/s/emacs/>`_ is a great tool,
-and someone can't just leave without it. And that also `vim <http://www.vim.org/>`_ is great.
-`Eclipse <http://www.eclipse.org/>`_ with `pydev <http://pydev.org/>`_ is another good choice.
-Other possibilities include `PyCharm (IntelliJIDEA) <https://www.jetbrains.com/pycharm/>`_
-and `atom <https://atom.io/>`_. 
-My personal favourites are anyway `Sublime <https://www.sublimetext.com/3>`_ with the *Anaconda* package,
-and `Visual Studio <https://code.visualstudio.com/download>`_ which is now also for Linux.
+You are free to choose the editor or IDE you prefer. If you don't already have a preference the best starting point is `Visual Studio Code <https://code.visualstudio.com/download>`_ which is a very popular modern editor. It has many advanced features, plugins and excellent support for developing remotely via SSH.
+Some other commonly used programs are `vim <http://www.vim.org/>`_, `Emacs <www.gnu.org/s/emacs/>`_, `Sublime <https://www.sublimetext.com/3>`_ with the *Anaconda* package and `PyCharm (IntelliJIDEA) <https://www.jetbrains.com/pycharm/>`_ .
+
