@@ -1,3 +1,13 @@
+v10r0p2
+use DIRAC v7r0p25
+
+* use pilot3
+* continue to navigate through the processing passes even the db tags are not found
+* allow to get step metadata for production without bkQuery
+* docs update
+* UTC instead of local time
+
+
 v10r0p1
 use DIRAC v7r0p24
 
