@@ -72,8 +72,8 @@ Otherwise, simply click the "Accept merge request" button for each of them.
 Then, from the LHCbDIRAC local fork you need to update some files::
 
   # if you start from scratch otherwise skip the first 2 commands
-  mkdir $(date +20%y%m%d) && cd $(date +20%y%m%d)
   git clone https://:@gitlab.cern.ch:8443/lhcb-dirac/LHCbDIRAC.git
+  cd LHCbDIRAC
   git remote add upstream https://:@gitlab.cern.ch:8443/lhcb-dirac/LHCbDIRAC.git
   # update your "local" upstream/master branch
   git fetch upstream
@@ -88,12 +88,13 @@ Then, from the LHCbDIRAC local fork you need to update some files::
   # Update the version in the Dockerfile file:
   vim container/lhcbdirac/Dockerfile
   # For updating the CHANGELOG, get what's changed since the last tag
-  #please use the proper LHCbDIRAC tag; replace v8r2p46
+  # please use the proper LHCbDIRAC tag; replace v8r2p46
+  # CHRIS: I guess the proper DIRAC tag is the latest pre-release. 
+  # However the trick here is to know which commit belong the the previous patch
+  # release. Anyway, all this should go once we use the proper CHANGELOG script
   git log --pretty=oneline ${t}..HEAD | grep -Ev "($(git log --pretty=oneline  ${t}..v8r2p46 | awk {'print $1'} | tr '\n' '|')BOOM)"
   # copy the output, add it to the CHANGELOG (please also add the DIRAC version)
   vim CHANGELOG # please, remove comments like "fix" or "pylint" or "typo"...
-  #If needed, change the versions of the packages
-  vim dist-tools/projectConfig.json
   # Commit in your local newDevel branch the 3 files you modified
   git add -A && git commit -av -m "<YourNewTag>"
 

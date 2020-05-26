@@ -11,12 +11,9 @@ Prerequisites
 The release manager needs to:
 
 - be aware of the LHCbDIRAC repository structure and branching as highlighted in the  `contribution guide <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/CONTRIBUTING.md>`_.
-- have forked LHCbDIRAC on GitLab as a "personal project" (called "origin" from now on)
-- have cloned origin locally
-- have added `<https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC>`_ as "upstream" repository to the local clone
 - have push access to the master branch of "upstream" (being part of the project "owners")
 - have DIRAC installed
-- have been grated write access to <webService>
+- have been granted write access to <webService>
 - have "lhcb_admin" or "diracAdmin" role.
 - have a Proxy
 
@@ -71,16 +68,13 @@ Otherwise, simply click the "Accept merge request" button for each of them.
 
 If you are making a Major release please merge devel to master follow the instruction: :ref:`devel_to_master`.
 
-Then, from the LHCbDIRAC local fork you need to update some files::
+Then, starting from a clean LHCbDIRAC local fork you need to update some files::
 
 
-  # if you start from scratch otherwise skip the first 2 commands
-  mkdir $(date +20%y%m%d) && cd $(date +20%y%m%d)
+  # Checkout LHCbDIRAC
   git clone https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
   cd LHCbDIRAC
   git remote rename origin upstream
-  # update your "local" upstream/master branch
-  git fetch upstream
   # create a "newMaster" branch which from the upstream/master branch
   git checkout -b newMaster upstream/master
   # determine the tag you're going to create by checking what was the last one from the following list (add 1 to the "p"):
@@ -129,9 +123,9 @@ Now, you need to make sure that what's merged in master is propagated to the dev
 The last operation may result in potential conflicts.
 If happens, you'll need to manually update the conflicting files (see e.g. this `guide <https://githowto.com/resolving_conflicts>`_).
 As a general rule, prefer the master fixes to the "HEAD" (devel) fixes. Remember to add and commit once fixed.
-Note: For porting the LHCbDIRAC.init.py from master to devel, we prefer the HEAD version (only for this file!!!)
+Note: For porting the `LHCbDIRAC/__init__.py` from master to devel, we prefer the HEAD version (only for this file!!!)
 
-Plase fix the conflict if some files are conflicting. Do not forget to to execute the following::
+Please fix the conflict if some files are conflicting. Do not forget to to execute the following::
 
   git add -A && git commit -m " message"
 
