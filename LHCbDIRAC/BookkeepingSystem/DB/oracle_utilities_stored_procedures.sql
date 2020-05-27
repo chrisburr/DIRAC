@@ -391,6 +391,8 @@ BEGIN
 	    subject    => 'Failed to UPDATE productionoutputfiles',
 	    message    => 'ERROR NUMBER:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
 END;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE updateprodrunview IS
 err_num NUMBER;
 err_msg varchar2(1000);

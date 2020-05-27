@@ -45,16 +45,17 @@ EXCEPTION
 END;
  /
 
- --- DROP VIEW
+ --- DROP DBMS_SCHEDULER.JOB
 BEGIN
-  EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW prodrunview';
+  dbms_scheduler.drop_job(job_name => 'prodrunupdatejob');
 EXCEPTION
   WHEN others THEN
-    IF SQLCODE != -12003 THEN
+    IF SQLCODE != -27475 THEN
       RAISE;
     END IF;
 END;
  /
+
 
  --- DROP TABLEs
 DECLARE table_names sys.dbms_debug_vc2coll
@@ -78,7 +79,8 @@ DECLARE table_names sys.dbms_debug_vc2coll
 			    'processing',
 			    'configurations',
 			    'simulationconditions',
-			    'data_taking_conditions'
+			    'data_taking_conditions',
+			    'prodrunview'
 			    );
 BEGIN
   FOR tn IN table_names.first..table_names.last

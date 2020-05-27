@@ -736,7 +736,7 @@ FOR EACH ROW
   BEGIN
      bookkeepingoracledb.updateluminosity(:new.runnumber);
   END;
-
+ /
 ---------------------------------------------------------------------------------------
 CREATE TABLE runtimeprojects(
     stepid           NUMBER,
@@ -748,7 +748,7 @@ CREATE TABLE runtimeprojects(
 
 
 ---------------------------------------------------------------------------------------
-CREATE TABLE prodrunview_table (
+CREATE TABLE prodrunview (
   production number NOT NULL,
   runnumber number NOT NULL,
   CONSTRAINT prod_run_const UNIQUE (production, runnumber)
