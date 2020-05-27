@@ -49,9 +49,10 @@ def execute():
     type = tr.getTransformation(prod).get('Value', {}).get('Type', 'Unknown')
     productions[prod] = type
     parent = tr.getBookkeepingQuery(prod).get('Value', {}).get('ProductionID', '')
-    if parent:
+    while isinstance(parent, long):
       type = tr.getTransformation(parent).get('Value', {}).get('Type', 'Unknown')
       parents[parent] = type
+      parent = tr.getBookkeepingQuery(parent).get('Value', {}).get('ProductionID', '')
 
   gLogger.notice("For BK path %s:" % bkQuery.getPath())
   if not prods:
