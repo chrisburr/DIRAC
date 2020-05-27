@@ -110,7 +110,7 @@ function findRelease(){
 
   # TODO: This should be made to fail to due set -u and -o pipefail
   if [[ ! "${projectVersion}" ]]; then
-    echo "Failed to set projectVersion"
+    echo "Failed to set projectVersion" >&2
     exit 1
   fi
 
@@ -191,7 +191,7 @@ diracAgents(){
       python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-add-option.py" "agent" "$agent"
       echo "==> calling dirac-agent $agent -o MaxCycles=1 ${DEBUG}"
       if ! dirac-agent "$agent"  -o MaxCycles=1 "${DEBUG}"; then
-        echo 'ERROR: dirac-agent failed'
+	echo 'ERROR: dirac-agent failed' >&2
         exit 1
       fi
     fi
@@ -232,7 +232,7 @@ function LHCbDIRACPilotInstall(){
   #run the dirac-pilot script, only for installing, do not run the JobAgent here
   cwd=$PWD
   if ! cd "${PILOTINSTALLDIR}"; then
-    echo "ERROR: cannot change to ${PILOTINSTALLDIR}"
+    echo "ERROR: cannot change to ${PILOTINSTALLDIR}" >&2
     return 9
   fi
 
@@ -253,7 +253,7 @@ function LHCbDIRACPilotInstall(){
   python dirac-pilot.py "${options}" -X "${commandList}" "$DEBUG"
 
   if ! cd "${cwd}"; then
-    echo "ERROR: cannot change to ${cwd}"
+    echo "ERROR: cannot change to ${cwd}" >&2
     return 9
   fi
 
@@ -367,7 +367,7 @@ function installLHCbDIRACClient(){
   cp "${TESTCODE}/DIRAC/Core/scripts/dirac-install.py" "${CLIENTINSTALLDIR}/dirac-install"
   chmod +x "${CLIENTINSTALLDIR}/dirac-install"
   if ! cd "${CLIENTINSTALLDIR}"; then
-    echo "ERROR: cannot change to ${CLIENTINSTALLDIR}"
+    echo "ERROR: cannot change to ${CLIENTINSTALLDIR}" >&2
     return 9
   fi
 
