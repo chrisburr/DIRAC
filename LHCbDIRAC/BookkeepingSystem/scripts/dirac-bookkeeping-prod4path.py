@@ -14,6 +14,7 @@
 __RCSID__ = "$Id$"
 
 import time
+import six
 from DIRAC.Core.Base import Script
 from DIRAC import gLogger, exit
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
@@ -46,12 +47,12 @@ def execute():
   parents = {}
   productions = {}
   for prod in prods:
-    type = tr.getTransformation(prod).get('Value', {}).get('Type', 'Unknown')
-    productions[prod] = type
+    ptype = tr.getTransformation(prod).get('Value', {}).get('Type', 'Unknown')
+    productions[prod] = ptype
     parent = tr.getBookkeepingQuery(prod).get('Value', {}).get('ProductionID', '')
-    while isinstance(parent, long):
-      type = tr.getTransformation(parent).get('Value', {}).get('Type', 'Unknown')
-      parents[parent] = type
+    while isinstance(parent, six.integer_types[1]):
+      ptype = tr.getTransformation(parent).get('Value', {}).get('Type', 'Unknown')
+      parents[parent] = ptype
       parent = tr.getBookkeepingQuery(parent).get('Value', {}).get('ProductionID', '')
 
   gLogger.notice("For BK path %s:" % bkQuery.getPath())
