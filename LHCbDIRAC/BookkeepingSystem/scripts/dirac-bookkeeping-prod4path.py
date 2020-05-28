@@ -50,7 +50,7 @@ def execute():
     ptype = tr.getTransformation(prod).get('Value', {}).get('Type', 'Unknown')
     productions[prod] = ptype
     parent = tr.getBookkeepingQuery(prod).get('Value', {}).get('ProductionID', '')
-    while isinstance(parent, six.integer_types[1]):
+    while isinstance(parent, six.integer_types):
       ptype = tr.getTransformation(parent).get('Value', {}).get('Type', 'Unknown')
       parents[parent] = ptype
       parent = tr.getBookkeepingQuery(parent).get('Value', {}).get('ProductionID', '')
