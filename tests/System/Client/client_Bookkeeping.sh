@@ -34,13 +34,13 @@ Options:
 numberOfFiles=10
 filesName="random_content_"
 stime=$(date +"%H%M%S")
-extra=$PWD
+extra=${PWD}
 bkpath=$extra/BKReportsSamples/
 # if [ $DIRAC ]
 # then
 #   diracDir=$DIRAC
 # else
-diracDir=$PWD
+diracDir=${PWD}
 # fi
 echo $diracDir
 # Parsing arguments
@@ -51,49 +51,49 @@ then
       case $i in
 
         -h|--help|-?)
-        echo -e $helpmessage
-        exit 0
-        ;;
+	  echo -e ${helpmessage}
+	  exit 0
+	  ;;
 
         -f=*|--Files=*)
-        numberOfFiles="${i#*=}"
-        shift # past argument=value
-        ;;
+	  numberOfFiles="${i#*=}"
+	  shift # past argument=value
+	  ;;
 
         -n=*|--Name=*)
-        filesName="${i#*=}"
-        shift # past argument=value
-        ;;
+	  filesName="${i#*=}"
+	  shift # past argument=value
+	  ;;
 
         -p=*|--Path=*)
-        temporaryPath="${i#*=}"
-        if [ ! -d "$temporaryPath" ]
-          then
-          mkdir -p $temporaryPath
-        fi
-        shift # past argument=value
-        ;;
+	  temporaryPath="${i#*=}"
+	  if [ ! -d "${temporaryPath}" ]
+	    then
+	    mkdir -p ${temporaryPath}
+	  fi
+	  shift # past argument=value
+	  ;;
 
         *)
-        echo -e $helpmessage
-        exit 0
-            # unknown option
-        ;;
+	  echo -e ${helpmessage}
+	  exit 0
+	      # unknown option
+	  ;;
       esac
     done
 fi
 
 # Default temporary path
-if [ -z "$temporaryPath" ]
+if [ -z "${temporaryPath}" ]
 then
   temporaryPath=$(mktemp -d)
 fi
 
 # Move to a tmp directory
-cd $temporaryPath
+cd ${temporaryPath}
 if [ $? -ne 0 ]
 then
-  echo $(tput setaf 1)"ERROR: cannot change to directory: " $temporaryPath$(tput sgr 0)
+  echo $(tput setaf 1)"ERROR: cannot change to directory: " ${temporaryPath}$(tput sgr 0)
   exit $?
 fi
 
@@ -120,7 +120,7 @@ fi
 # The names will be "random_content_X" and be between 1 and 10 Mb
 
 # array of fileNames
-$DIRAC/tests/System/random_files_creator.sh --Files=$numberOfFiles --Name=$filesName --Path=$temporaryPath
+$DIRAC/tests/System/random_files_creator.sh --Files=${numberOfFiles} --Name=${filesName} --Path=${temporaryPath}
 
 # fileNames=()
 # for n in {1..10}
@@ -143,7 +143,7 @@ $DIRAC/tests/System/random_files_creator.sh --Files=$numberOfFiles --Name=$files
 # python $extra/dirac-add-bkk-ft.py FOO "just a desc for a test file type (FOO)" 1
 # python $extra/dirac-add-bkk-ft.py BAR "just a desc for a test file type (BAR)" 1
 #touch LFNlist.txt
-files=$(ls $temporaryPath)
+files=$(ls ${temporaryPath})
 # Copy initXMLReport.xml template in tmpDir
 # cp $diracDir/tests/System/Client/BKReportsSamples/InitXMLReport.xml .
 #cp $diracDir/BKReportsSamples/InitXMLReport.xml
@@ -172,28 +172,28 @@ do
   cp $extra/BKReportsSamples/InitXMLReport.xml $extra/BKReportsSamples/$xmlName
   chmod 777 $extra/BKReportsSamples/$xmlName
   # Getting the info
-  size=$(stat --printf="%s" $file)
+  size=$(stat --printf="%s" ${file})
   # guid=$(python $diracDir/tests/System/Client/dirac-get-guid.py $tmpDir/$fileName -o LogLevel=FATAL)
-  guid=$(python $extra/dirac-get-guid.py $temporaryPath/$file -o LogLevel=FATAL)  
+  guid=$(python $extra/dirac-get-guid.py ${temporaryPath}/${file} -o LogLevel=FATAL)
   location=$HOSTNAME
   start=$(date -u +"20%y-%m-%d %R")
   end=$(date +"20%y-%m-%d %R")
 
   # Applying the info
-  sed -i s/VAR_Name/${file%.*}/g $bkpath$xmlName
-  sed -i s/VAR_Location/$location/g $bkpath$xmlName
-  sed -i s/VAR_ProgramVersion/$version/g $bkpath$xmlName
-  sed -i s/VAR_FileName/$file/g $bkpath$xmlName
-  sed -i s/VAR_FileSize/$size/g $bkpath$xmlName
-  sed -i "s/VAR_JobStart/$start/g" $bkpath$xmlName
-  sed -i "s/VAR_JobEnd/$end/g" $bkpath$xmlName
-  sed -i s/VAR_Date/$tdate/g $bkpath$xmlName
-  sed -i s/VAR_Time/$ttime/g $bkpath$xmlName
-  sed -i s/VAR_ShortenTime/$stime/g $bkpath$xmlName
-  sed -i s/VAR_Guid/$guid/g $bkpath$xmlName
+  sed -i s/VAR_Name/${{file}%.*}/g ${bkpath}${xmlName}
+  sed -i s/VAR_Location/${location}/g ${bkpath}${xmlName}
+  sed -i s/VAR_ProgramVersion/$version/g ${bkpath}${xmlName}
+  sed -i s/VAR_FileName/${file}/g ${bkpath}${xmlName}
+  sed -i s/VAR_FileSize/${size}/g ${bkpath}${xmlName}
+  sed -i "s/VAR_JobStart/${start}/g" ${bkpath}${xmlName}
+  sed -i "s/VAR_JobEnd/${end}/g" ${bkpath}${xmlName}
+  sed -i s/VAR_Date/${tdate}/g ${bkpath}${xmlName}
+  sed -i s/VAR_Time/${ttime}/g ${bkpath}${xmlName}
+  sed -i s/VAR_ShortenTime/${stime}/g ${bkpath}${xmlName}
+  sed -i s/VAR_Guid/${guid}/g ${bkpath}${xmlName}
 
-  echo "/lhcb/Certification/Test/INIT/$version/$tdate/$stime/$file \
-  $temporaryPath$file" >> $extra/LFNlist.txt
+  echo "/lhcb/Certification/Test/INIT/${version}/${tdate}/${stime}/${file} \
+  ${temporaryPath}${file}" >> ${extra}/LFNlist.txt
 #  python $diracDir/tests/System/Client/dirac-send-bk-report.py $xmlName -ddd
-  python $extra/dirac-send-bk-report.py $bkpath$xmlName -ddd
+  python ${extra}/dirac-send-bk-report.py ${bkpath}${xmlName} -ddd
 done
