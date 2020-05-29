@@ -13,8 +13,7 @@
 #
 echo "lhcb-proxy-init -g lhcb_prmgr"
 lhcb-proxy-init -g lhcb_prmgr
-if [ ${?} -ne 0 ]
-then
+if [[ ${?} -ne 0 ]]; then
    exit ${?}
 fi
 echo " "
@@ -35,8 +34,7 @@ directory=/lhcb/certification/Test/INIT/${version}/${tdate}/${stime}
 SEs=$(dirac-dms-show-se-status |grep BUFFER |grep -v 'Banned\|Degraded\|-new' | awk '{print $1}')
 
 x=0
-for n in $SEs
-do
+for n in ${SEs}; do
   arrSE[x]=${n}
   let x++
 done
@@ -46,9 +44,8 @@ done
 echo ""
 echo "Submitting test production"
 python ${DIRAC}/LHCbDIRAC/tests/System/Client/dirac-test-production.py -ddd
-if [ $? -ne 0 ]
-then
-   exit $?
+if [[ ${?} -ne 0 ]]; then
+   exit ${?}
 fi
 
 transID=`cat TransformationID`
@@ -71,8 +68,7 @@ echo "Adding files to Storage Element $randomSE"
 #        >> TransformationSystemTest/LFNlist.txt
 # done
 
-while IFS= read -r line
-do
+while IFS= read -r line; do
   random=$[ ${RANDOM} % $x ]
   randomSE=${arrSE[$random]}
   echo "${line} ${randomSE}"
@@ -86,8 +82,7 @@ echo ""
 echo "Adding the files to the test production:" ${transID}
 dirac-transformation-add-files ${transID} --LFNs ${LFNlist}
 
-if [ ${?} -ne 0 ]
-then
+if [[ ${?} -ne 0 ]]; then
   exit ${?}
 fi
 

@@ -44,75 +44,68 @@ diracDir=${PWD}
 # fi
 echo $diracDir
 # Parsing arguments
-if [ $# -gt 0 ]
-then
-  for i in "$@"
-    do
-      case $i in
+if [[ $# -gt 0 ]]; then
+  for i in "$@"; do
+    case $i in
 
-        -h|--help|-?)
-	  echo -e ${helpmessage}
-	  exit 0
-	  ;;
+      -h|--help|-?)
+	echo -e ${helpmessage}
+	exit 0
+	;;
 
-        -f=*|--Files=*)
-	  numberOfFiles="${i#*=}"
-	  shift # past argument=value
-	  ;;
+      -f=*|--Files=*)
+	numberOfFiles="${i#*=}"
+	shift # past argument=value
+	;;
 
-        -n=*|--Name=*)
-	  filesName="${i#*=}"
-	  shift # past argument=value
-	  ;;
+      -n=*|--Name=*)
+	filesName="${i#*=}"
+	shift # past argument=value
+	;;
 
-        -p=*|--Path=*)
-	  temporaryPath="${i#*=}"
-	  if [ ! -d "${temporaryPath}" ]
-	    then
-	    mkdir -p ${temporaryPath}
-	  fi
-	  shift # past argument=value
-	  ;;
+      -p=*|--Path=*)
+	temporaryPath="${i#*=}"
+	if [[ ! -d "${temporaryPath}" ]]; then
+	  mkdir -p ${temporaryPath}
+	fi
+	shift # past argument=value
+	;;
 
-        *)
-	  echo -e ${helpmessage}
-	  exit 0
-	      # unknown option
-	  ;;
-      esac
-    done
+      *)
+	echo -e "${helpmessage}"
+	exit 0
+	    # unknown option
+	;;
+    esac
+  done
 fi
 
 # Default temporary path
-if [ -z "${temporaryPath}" ]
-then
+if [[ -z "${temporaryPath}" ]]; then
   temporaryPath=$(mktemp -d)
 fi
 
 # Move to a tmp directory
 cd ${temporaryPath}
-if [ $? -ne 0 ]
-then
+if [[ $? -ne 0 ]]; then
   echo $(tput setaf 1)"ERROR: cannot change to directory: " ${temporaryPath}$(tput sgr 0)
   exit $?
 fi
 
 
-# if [ $DIRAC ]
-# then
-#   diracDir=$DIRAC
+# if [[ ${DIRAC} ]]; then
+#   diracDir=${DIRAC}
 # else
-#   diracDir=$PWD
+#   diracDir=${PWD}
 # fi
 
 # Move to a tmp directory
 # tmpDir=$(mktemp -d)
-# echo $tmpDir
+# echo ${tmpDir}
 
 # cd $tmpDir
-# if [ $? -ne 0 ]
-# then
-#   echo 'ERROR: cannot change to ' $tmpDir
+# if [[ ${?} -ne 0 ]]; then
+#   echo 'ERROR: cannot change to ' ${tmpDir}
 #   return
 # fi
 
@@ -155,14 +148,12 @@ tdate=$(date +"20%y-%m-%d")
 ttime=$(date +"%R")
 
 #if we have a specific client installation (not AFS,CVMFS), the directory structure can be different.
-#I decided to use a default version. 
-if [ -z "$version" ]
-then
-version="v0r0"
+#I decided to use a default version.
+if [[ -z "${version}" ]]; then
+  version="v0r0"
 fi;
 
-for file in $files
-do
+for file in ${files}; do
   # Names of files
   
 #  files=$filesName${fileNames[$n-1]}.init
@@ -180,7 +171,7 @@ do
   end=$(date +"20%y-%m-%d %R")
 
   # Applying the info
-  sed -i s/VAR_Name/${{file}%.*}/g ${bkpath}${xmlName}
+  sed -i s/VAR_Name/${file%.*}/g ${bkpath}${xmlName}
   sed -i s/VAR_Location/${location}/g ${bkpath}${xmlName}
   sed -i s/VAR_ProgramVersion/$version/g ${bkpath}${xmlName}
   sed -i s/VAR_FileName/${file}/g ${bkpath}${xmlName}
