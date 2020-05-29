@@ -262,7 +262,7 @@ BEGIN
   END IF;
   EXCEPTION
     WHEN found_name THEN
-    raise_application_error(-20001,'The ' || v_name || ' file type is already exist!!!');
+      raise_application_error(-20001,'The ' || v_name || ' file type already exists!!!');
     WHEN no_data_found THEN
       SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
       INSERT INTO filetypes(filetypeid,

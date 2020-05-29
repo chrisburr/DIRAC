@@ -77,7 +77,7 @@ maxConnectRetry = 100
 maxArraysize = 5000  # max allowed
 
 
-class OracleDB:
+class OracleDB(object):
   """Basic multithreaded DIRAC Oracle Client Class."""
 
   def __init__(self, userName, password='', tnsEntry='', maxQueueSize=100):
@@ -107,6 +107,15 @@ class OracleDB:
 
     self.__initialized = True
     self._connect()
+
+    if not self._connected:
+      raise RuntimeError("Can not connect, exiting...")
+
+    self.logger.info("===================== Oracle =====================")
+    self.logger.info("User:           " + self.__userName)
+    self.logger.info("TNS:            " + self.__tnsName)
+    self.logger.debug("Password:       " + self.__passwd)
+    self.logger.info("==================================================")
 
   def __del__(self):
     global gInstancesCount
@@ -138,11 +147,11 @@ class OracleDB:
     try:
       raise x
     except cx_Oracle.Error as e:
-      self.logger.debug('%s: %s' % (methodName, err),
+      self.logger.error('%s: %s' % (methodName, err),
                         '%s' % (e))
       return S_ERROR('%s: ( %s )' % (err, e))
     except Exception as x:
-      self.logger.debug('%s: %s' % (methodName, err), str(x))
+      self.logger.error('%s: %s' % (methodName, err), str(x))
       return S_ERROR('%s: (%s)' % (err, str(x)))
 
   def _connect(self):

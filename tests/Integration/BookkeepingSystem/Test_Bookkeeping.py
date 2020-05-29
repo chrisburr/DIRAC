@@ -28,107 +28,17 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 __RCSID__ = "$Id$"
 
 
-class DataInsertTestCase(unittest.TestCase):
-  """ Tests for the DB part of the RAWIntegrity system
+class BaseTestCase(unittest.TestCase):
+  """ Base
   """
 
   def setUp(self):
-    super(DataInsertTestCase, self).setUp()
+    super(BaseTestCase, self).setUp()
     self.bk = BookkeepingClient()
     self.bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
-    self.runnb = '1122'
-    self.files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (self.runnb,
-                                                                          self.runnb, i) for i in xrange(5)]
-    self.xmlJob = """<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE Job SYSTEM "book.dtd">
-<Job ConfigName="Test" ConfigVersion="Test01" Date="%jDate%" Time="%jTime%">
-  <TypedParameter Name="Production" Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="Name" Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="Location" Value="LHCb Online" Type="Info"/>
-  <TypedParameter Name="ProgramName" Value="Moore" Type="Info"/>
-  <TypedParameter Name="ProgramVersion" Value="v0r111" Type="Info"/>
-  <TypedParameter Name="NumberOfEvents" Value="500321" Type="Info"/>
-  <TypedParameter Name="ExecTime" Value="90000.0" Type="Info"/>
-  <TypedParameter Name="JobStart"        Value="%jStart%" Type="Info"/>
-  <TypedParameter Name="JobEnd"          Value="%jEnd%" Type="Info"/>
-  <TypedParameter Name="FirstEventNumber"          Value="29" Type="Info"/>
-  <TypedParameter Name="RunNumber"          Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="FillNumber"         Value="29" Type="Info"/>
-  <TypedParameter Name="JobType"         Value="Merge" Type="Info"/>
-  <TypedParameter Name="TotalLuminosity"         Value="121222.33" Type="Info"/>
-  <TypedParameter Name="Tck"             Value="-2137784319" Type="Info"/>
-  <TypedParameter Name="HLT2Tck" Type="Info" Value="0xaa10c"/>
-  <TypedParameter Name="CondDB"             Value="xy" Type="Info"/>
- <TypedParameter Name="DDDB"             Value="xyz" Type="Info"/>
-"""
-    self.xmlFile = """
-<Quality Group="Production Manager" Flag="Not Checked"/>
-  <OutputFile Name="%filename%" TypeName="RAW" TypeVersion="MDF">
-   <Parameter Name="MD5Sum" Value="24F71879BA006B91FB8ADC529ACB7CC6"/>
-   <Parameter Name="EventTypeId" Value="30000000"/>
-   <Parameter Name="EventStat" Value="9000"/>
-   <Parameter Name="FileSize" Value="1640316586"/>
-   <Parameter Name="Guid" Value="3cc1b6fe-63c8-11dd-852f-00188b8565aa"/>
-   <Parameter Name="FullStat"          Value="429"/>
-   <Parameter Name="CreationDate"        Value="%fileCreation%"/>
-   <Parameter Name="Luminosity"          Value="1212.233"/>
- </OutputFile>
- """
-
-    self.dqCond = """
-  <DataTakingConditions>
-  <Parameter Name="Description" Value="Real data"/>
-  <Parameter Name="BeamCond"   Value="Collisions"/>
-  <Parameter Name="BeamEnergy" Value="450.0"/>
-  <Parameter Name="MagneticField" Value="Down"/>
-  <Parameter Name="VELO"          Value="INCLUDED"/>
-  <Parameter Name="IT"          Value="string"/>
-  <Parameter Name="TT"          Value="string"/>
-  <Parameter Name="OT"          Value=""/>
-  <Parameter Name="RICH1"          Value="string"/>
-  <Parameter Name="RICH2"          Value="string"/>
-  <Parameter Name="SPD_PRS"          Value="string"/>
-  <Parameter Name="ECAL"          Value="string"/>
-  <Parameter Name="HCAL"          Value="string"/>
-  <Parameter Name="MUON"          Value="string"/>
-  <Parameter Name="L0"          Value="string"/>
-  <Parameter Name="HLT"          Value="string"/>
-  <Parameter Name="VeloPosition"          Value="Open"/>
-</DataTakingConditions>
-</Job>"""
 
 
-class RAWDataInsert(DataInsertTestCase):
-
-  def test_echo(self):
-    """make sure we are able to use the bkk"
-    """
-
-    retVal = self.bk.echo("Test")
-    self.assertTrue(retVal['OK'])
-    self.assertEqual(retVal['Value'], "Test")
-
-  def test_sendXMLBookkeepingReport(self):
-    """
-    insert a run to the db
-    """
-    currentTime = datetime.datetime.now()
-    jobXML = self.xmlJob.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    jobXML = jobXML.replace("%jTime%", currentTime.strftime('%H:%M'))
-    jobXML = jobXML.replace("%runnb%", self.runnb)
-    jobXML = jobXML.replace("%jStart%", currentTime.strftime('%Y-%m-%d %H:%M'))
-    jobXML = jobXML.replace("%jEnd%", currentTime.strftime('%Y-%m-%d %H:%M'))
-    xmlReport = jobXML
-    for f in self.files:
-      xmlReport += self.xmlFile.replace("%filename%", f).replace('%fileCreation%',
-                                                                 currentTime.strftime('%Y-%m-%d %H:%M'))
-
-    xmlReport += self.dqCond
-    retVal = self.bk.sendXMLBookkeepingReport(xmlReport)
-    self.assertTrue(retVal['OK'])
-
-
-class TestMethods(DataInsertTestCase):
+class TestMethods(BaseTestCase):
 
   def test_addFiles(self):
     """
@@ -1277,7 +1187,7 @@ class TestMethods(DataInsertTestCase):
                                   'ConfigVersion': 'Test01'})
 
 
-class TestRemoveFiles(DataInsertTestCase):
+class TestRemoveFiles(BaseTestCase):
 
   def test_removeFiles(self):
     """
@@ -1296,7 +1206,7 @@ class TestRemoveFiles(DataInsertTestCase):
     self.assertEqual(retVal['Value']['Failed'], ['test.txt'])
 
 
-class TestDestoryDataset(DataInsertTestCase):
+class TestDestoryDataset(BaseTestCase):
   """
   clean the db contetnt
   """
@@ -3178,8 +3088,7 @@ if __name__ == '__main__':
   mcTestSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCXMLReportInsert))
   mcTestSuite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCProductionTest))
   unittest.TextTestRunner(verbosity=2, failfast=True).run(mcTestSuite)
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(RAWDataInsert)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestMethods))
+  suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestMethods)
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestBookkeepingUserInterface))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestRemoveFiles))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestDestoryDataset))
