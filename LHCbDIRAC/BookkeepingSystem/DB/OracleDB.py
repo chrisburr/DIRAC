@@ -209,10 +209,10 @@ class OracleDB(object):
     except Exception as x:
 
       self.logger.debug('_query:', cmd)
-      retDict = self._except('_query', x, 'Excution failed.')
-      self.logger.debug('Start Roolback transaktio!')
+      retDict = self._except('_query', x, 'Execution failed.')
+      self.logger.debug('Start Rollback transaction')
       connection.rollback()
-      self.logger.debug('End Roolback transaktio!')
+      self.logger.debug('End Rollback transaction')
 
     try:
       connection.commit()
@@ -275,7 +275,7 @@ class OracleDB(object):
     except Exception as x:
 
       self.logger.debug('_query:', packageName + "(" + str(parameters) + ")")
-      retDict = self._except('_query', x, 'Excution failed.')
+      retDict = self._except('_query', x, 'Execution failed.')
       connection.rollback()
 
     try:
@@ -302,7 +302,7 @@ class OracleDB(object):
       retDict = S_OK(result)
     except Exception as x:
       self.logger.debug('_query:', packageName + "(" + str(parameters) + ")")
-      retDict = self._except('_query', x, 'Excution failed.')
+      retDict = self._except('_query', x, 'Execution failed.')
       connection.rollback()
 
     try:

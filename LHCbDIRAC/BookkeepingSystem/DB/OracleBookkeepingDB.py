@@ -3025,8 +3025,7 @@ where files.fileid in ( select inputfiles.fileid from files,inputfiles where \
 files.jobid= inputfiles.jobid and files.filename='%s')\
 and files.qualityid= dataquality.qualityid" % lfn
 
-    res = self.dbR_.query(command)
-    return res
+    return self.dbR_.query(command)
 
   #############################################################################
   #
@@ -3333,8 +3332,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param list runs: list of run numbers
     :retun: the files with data quality
     """
-    retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getRunQuality', [], True, runs)
-    return retVal
+    return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getRunQuality', [], True, runs)
 
   #############################################################################
   def getRunAndProcessingPassDataQuality(self, runnb, processing):

@@ -25,11 +25,16 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 __RCSID__ = "$Id$"
 
 
-bk = BookkeepingClient()
+#############################################################################
+# Test data
+
 runnb = '1122'
+# 5 fake files
 files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (runnb,
 								 runnb, i) for i in xrange(5)]
 
+# Construction of an XML Job report
+# (this should be similar to what comes from online)
 xmlJob = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE Job SYSTEM "book.dtd">
 <Job ConfigName="Test" ConfigVersion="Test01" Date="%jDate%" Time="%jTime%">
@@ -40,17 +45,17 @@ xmlJob = """<?xml version="1.0" encoding="ISO-8859-1"?>
   <TypedParameter Name="ProgramVersion" Value="v0r111" Type="Info"/>
   <TypedParameter Name="NumberOfEvents" Value="500321" Type="Info"/>
   <TypedParameter Name="ExecTime" Value="90000.0" Type="Info"/>
-  <TypedParameter Name="JobStart"        Value="%jStart%" Type="Info"/>
-  <TypedParameter Name="JobEnd"          Value="%jEnd%" Type="Info"/>
-  <TypedParameter Name="FirstEventNumber"          Value="29" Type="Info"/>
-  <TypedParameter Name="RunNumber"          Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="FillNumber"         Value="29" Type="Info"/>
-  <TypedParameter Name="JobType"         Value="Merge" Type="Info"/>
-  <TypedParameter Name="TotalLuminosity"         Value="121222.33" Type="Info"/>
-  <TypedParameter Name="Tck"             Value="-2137784319" Type="Info"/>
+  <TypedParameter Name="JobStart" Value="%jStart%" Type="Info"/>
+  <TypedParameter Name="JobEnd" Value="%jEnd%" Type="Info"/>
+  <TypedParameter Name="FirstEventNumber" Value="29" Type="Info"/>
+  <TypedParameter Name="RunNumber" Value="%runnb%" Type="Info"/>
+  <TypedParameter Name="FillNumber" Value="29" Type="Info"/>
+  <TypedParameter Name="JobType" Value="Merge" Type="Info"/>
+  <TypedParameter Name="TotalLuminosity" Value="121222.33" Type="Info"/>
+  <TypedParameter Name="Tck" Value="-2137784319" Type="Info"/>
   <TypedParameter Name="HLT2Tck" Type="Info" Value="0xaa10c"/>
-  <TypedParameter Name="CondDB"             Value="xy" Type="Info"/>
- <TypedParameter Name="DDDB"             Value="xyz" Type="Info"/>
+  <TypedParameter Name="CondDB" Value="xy" Type="Info"/>
+  <TypedParameter Name="DDDB" Value="xyz" Type="Info"/>
 """
 
 xmlFile = """
@@ -61,22 +66,22 @@ xmlFile = """
    <Parameter Name="EventStat" Value="9000"/>
    <Parameter Name="FileSize" Value="1640316586"/>
    <Parameter Name="Guid" Value="3cc1b6fe-63c8-11dd-852f-00188b8565aa"/>
-   <Parameter Name="FullStat"          Value="429"/>
-   <Parameter Name="CreationDate"        Value="%fileCreation%"/>
-   <Parameter Name="Luminosity"          Value="1212.233"/>
+   <Parameter Name="FullStat" Value="429"/>
+   <Parameter Name="CreationDate" Value="%fileCreation%"/>
+   <Parameter Name="Luminosity" Value="1212.233"/>
  </OutputFile>
  """
 
 dqCond = """
   <DataTakingConditions>
   <Parameter Name="Description" Value="Real data"/>
-  <Parameter Name="BeamCond"   Value="Collisions"/>
+  <Parameter Name="BeamCond" Value="Collisions"/>
   <Parameter Name="BeamEnergy" Value="450.0"/>
   <Parameter Name="MagneticField" Value="Down"/>
-  <Parameter Name="VELO"          Value="INCLUDED"/>
-  <Parameter Name="IT"          Value="string"/>
-  <Parameter Name="TT"          Value="string"/>
-  <Parameter Name="OT"          Value=""/>
+  <Parameter Name="VELO" Value="INCLUDED"/>
+  <Parameter Name="IT" Value="string"/>
+  <Parameter Name="TT" Value="string"/>
+  <Parameter Name="OT" Value=""/>
   <Parameter Name="RICH1"          Value="string"/>
   <Parameter Name="RICH2"          Value="string"/>
   <Parameter Name="SPD_PRS"          Value="string"/>
@@ -90,6 +95,14 @@ dqCond = """
 </Job>"""
 
 
+#############################################################################
+
+# What's used for the tests
+bk = BookkeepingClient()
+
+#############################################################################
+
+
 def test_echo():
   """make sure we are able to use the bkk"
   """
@@ -101,14 +114,16 @@ def test_echo():
 
 def test_sendXMLBookkeepingReport():
   """
-  Send different XML reports
+  Send online XML report
   """
 
-  # insert
-
-  # FIXME: this fails even if it's already removed (by hand)
-  # need to understand why, prob related to how the stored procedure works
+  # NOTE: this fails even if it's already removed (by hand)
+  # prob related to how the stored procedure works
   res = bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
+  # so, the following test is commented out...
+  # assert res['OK']
+
+  res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
   assert res['OK']
 
   currentTime = datetime.datetime.now()
@@ -125,5 +140,3 @@ def test_sendXMLBookkeepingReport():
   xmlReport += dqCond
   res = bk.sendXMLBookkeepingReport(xmlReport)
   assert res['OK']
-
-  # ToDO: now remove the file type

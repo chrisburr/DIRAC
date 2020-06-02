@@ -207,7 +207,7 @@ END;
  /
 
 
- CREATE OR REPLACE PACKAGE BODY bookkeepingoracledb AS
+CREATE OR REPLACE PACKAGE BODY bookkeepingoracledb AS
 FUNCTION ext RETURN udt_refcursor IS
 cur udt_refcursor;
 BEGIN
@@ -230,7 +230,7 @@ FUNCTION insertfiletypes(
 ) RETURN NUMBER IS
 id NUMBER;
 FOUND NUMBER;
-ecode    varchar2(256);
+ecode varchar2(256);
 thisproc constant varchar2(50) := 'trap_errmesg';
 found_name EXCEPTION;
 descr varchar2(256);
@@ -814,7 +814,7 @@ BEGIN
 END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION getqflagbyrunandprocid(
+FUNCTION getqflagbyrunandprocid (
   rnumber NUMBER,
   procid NUMBER)
 RETURN VARCHAR2 IS RESULT varchar2(256);
@@ -842,7 +842,7 @@ BEGIN
       FROM newrunquality
       WHERE processingid = procid AND qualityid = flag;
   ELSE
-    OPEN a_cursor FOR SELECT runnumber   FROM newrunquality WHERE processingid = procid;
+    OPEN a_cursor FOR SELECT runnumber FROM newrunquality WHERE processingid = procid;
   END IF;
 END;
 
@@ -986,12 +986,13 @@ FUNCTION checkfiletypeandversion (
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE checkeventtype (
     v_eventtypeid                  NUMBER,
-    a_cursor                        OUT udt_refcursor
- )IS
+    a_cursor                       OUT udt_refcursor
+ ) IS
  BEGIN
    OPEN a_cursor FOR
-    SELECT description,PRIMARY FROM eventtypes WHERE
-      eventtypeid = v_eventtypeid;
+    SELECT description, PRIMARY
+    FROM eventtypes
+    WHERE eventtypeid = v_eventtypeid;
  END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FUNCTION insertjobsrow (
@@ -1472,7 +1473,7 @@ OPEN a_cursor FOR SELECT * FROM table(lfnmeta);
 END;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION fileexists(
+FUNCTION fileexists (
     v_filename            VARCHAR2
   )RETURN NUMBER IS
   fid NUMBER;
@@ -1491,11 +1492,12 @@ PROCEDURE inserteventtypes (
  )
  IS
  BEGIN
-   INSERT INTO eventtypes(description,eventtypeid,PRIMARY) VALUES (v_description, v_eventtypeid, v_primary);
+   INSERT INTO eventtypes(description, eventtypeid, PRIMARY)
+   VALUES (v_description, v_eventtypeid, v_primary);
    COMMIT;
  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE  updateeventtypes(
+PROCEDURE  updateeventtypes (
 	v_description           VARCHAR2,
 	v_eventtypeid           NUMBER,
 	v_primary               VARCHAR2
@@ -1506,7 +1508,7 @@ PROCEDURE  updateeventtypes(
    COMMIT;
  END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE setfileinvisible(
+PROCEDURE setfileinvisible (
   lfn VARCHAR2
  )IS
  BEGIN
