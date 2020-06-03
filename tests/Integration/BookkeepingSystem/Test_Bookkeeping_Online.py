@@ -82,15 +82,15 @@ dqCond = """
   <Parameter Name="IT" Value="string"/>
   <Parameter Name="TT" Value="string"/>
   <Parameter Name="OT" Value=""/>
-  <Parameter Name="RICH1"          Value="string"/>
-  <Parameter Name="RICH2"          Value="string"/>
-  <Parameter Name="SPD_PRS"          Value="string"/>
-  <Parameter Name="ECAL"          Value="string"/>
-  <Parameter Name="HCAL"          Value="string"/>
-  <Parameter Name="MUON"          Value="string"/>
-  <Parameter Name="L0"          Value="string"/>
-  <Parameter Name="HLT"          Value="string"/>
-  <Parameter Name="VeloPosition"          Value="Open"/>
+  <Parameter Name="RICH1" Value="string"/>
+  <Parameter Name="RICH2" Value="string"/>
+  <Parameter Name="SPD_PRS" Value="string"/>
+  <Parameter Name="ECAL" Value="string"/>
+  <Parameter Name="HCAL" Value="string"/>
+  <Parameter Name="MUON" Value="string"/>
+  <Parameter Name="L0" Value="string"/>
+  <Parameter Name="HLT" Value="string"/>
+  <Parameter Name="VeloPosition" Value="Open"/>
 </DataTakingConditions>
 </Job>"""
 
@@ -140,3 +140,116 @@ def test_sendXMLBookkeepingReport():
   xmlReport += dqCond
   res = bk.sendXMLBookkeepingReport(xmlReport)
   assert res['OK']
+
+
+def test_getRunInformation():
+  """
+  Test the run metadata
+  """
+  retVal = bk.getRunInformation({'RunNumber': runnb})
+  assert retVal['OK'] is True
+  assert runnb not in retVal['Value']
+  assert sorted(retVal['Value'][int(runnb)]) == sorted(['ConfigName',
+							'JobEnd',
+							'ConditionDescription',
+							'ProcessingPass',
+							'FillNumber',
+							'DDDB',
+							'JobStart',
+							'TCK',
+							'CONDDB',
+							'ConfigVersion'])
+  result = dict(retVal['Value'][int(runnb)])
+  result.pop('JobStart')
+  result.pop('JobEnd')
+  assert result == {'ConfigName': 'Test',
+		    'ConditionDescription': 'Beam450GeV-MagDown',
+		    'ProcessingPass': '/Real Data',
+		    'FillNumber': 29,
+		    'DDDB': 'xyz',
+		    'TCK': '-0x7f6bffff',
+		    'CONDDB': 'xy',
+		    'ConfigVersion': 'Test01'}
+
+
+def test_getListOfFills():
+  retVal = bk.getListOfFills({'ConfigName': 'Test', 'ConfigVersion': 'Test01'})
+  assert retVal['OK'] is True
+  assert retVal['Value'] == [29]
+
+
+def test_getRunsForFill():
+  retVal = bk.getRunsForFill(29)
+  assert retVal['OK'] is True
+  assert retVal['Value'] == [1122]
+
+
+def test_getRunInformations():
+  retVal = bk.getRunInformations(1123)
+  assert retVal['OK'] is False
+
+  res = bk.addReplica('test')
+  assert res['OK'] is False
+
+  res = bk.addReplica(files)
+  assert res['OK'] is True
+  assert res['Value']['Failed'] == []
+  assert res['Value']['Successful'] == files
+
+  retVal = bk.getRunInformations(1122)
+  assert retVal['OK'] is True
+  assert retVal['Value']['Configuration Name'] == 'Test'
+  assert retVal['Value']['Configuration Version'] == 'Test01'
+  assert retVal['Value']['DataTakingDescription'] == 'Beam450GeV-MagDown'
+  assert retVal['Value']['File size'] == [8201582930]
+  assert retVal['Value']['FillNumber'] == 29
+  assert retVal['Value']['FullStat'] == [2145]
+  assert retVal['Value']['InstLuminosity'] == [0]
+  assert retVal['Value']['Number of events'] == [45000]
+  assert retVal['Value']['Number of file'] == [5]
+  assert retVal['Value']['ProcessingPass'] == '/Real Data'
+  assert retVal['Value']['Stream'] == [30000000]
+  assert retVal['Value']['Tck'] == '-0x7f6bffff'
+  assert retVal['Value']['TotalLuminosity'] == 121222.33
+  assert retVal['Value']['luminosity'] == [6061.165]
+
+
+def test_getRunFiles():
+  retVal = bk.getRunFiles(1122)
+  assert retVal['OK'] is True
+  assert len(retVal['Value']) == 5
+
+  files = ['/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw',
+	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_0.raw',
+	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_4.raw',
+	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_3.raw',
+	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_2.raw']
+
+  runMeta = ['FullStat',
+	     'Luminosity',
+	     'FileSize',
+	     'EventStat',
+	     'GotReplica',
+	     'GUID',
+	     'InstLuminosity']
+  for rec in retVal['Value']:
+    assert rec in files
+    assert sorted(retVal['Value'][rec]) == sorted(runMeta)
+
+
+def test_getRunNbAndTck():
+  retVal = bk.getRunNbAndTck('/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw')
+  assert retVal['OK'] is True
+  assert retVal['Value'] == [(1122, '-0x7f6bffff')]
+
+
+def test_getRunFilesDataQuality():
+  retVal = bk.getRunFilesDataQuality(1122)
+  assert retVal['OK'] is True
+  assert retVal['Value'] == [(1122, 'UNCHECKED', 30000000)]
+
+
+def test_getNbOfRawFiles():
+  retVal = bk.getNbOfRawFiles({'RunNumber': 1122})
+  assert retVal['OK'] is True
+  assert retVal['Value'] == 5
