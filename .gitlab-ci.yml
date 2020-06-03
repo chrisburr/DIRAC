@@ -39,7 +39,7 @@ stages:
     - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq
     - export PYCURL_SSL_LIBRARY=openssl
      # last version supporting python 2
-    - pip install 'setuptools==v44.0.0'
+    - pip install 'setuptools<45'
     - pip install --upgrade pip
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
@@ -55,7 +55,7 @@ stages:
     - virtualenv DIRAC_VENV
     - source DIRAC_VENV/bin/activate
      # last version supporting python 2
-    - pip install 'setuptools==v44.0.0'
+    - pip install 'setuptools<v45'
     - pip install --upgrade pip
     - pip install -r DIRAC/requirements.txt
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4
@@ -100,7 +100,7 @@ check_docs:
     - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel
     - export PYCURL_SSL_LIBRARY=openssl
      # last version supporting python 2
-    - pip install 'setuptools==v44.0.0'
+    - pip install 'setuptools<45'
     - pip install --upgrade pip
   script:
     # We need to use m2crypto, otherwise it looks for GSI, which is annoying
