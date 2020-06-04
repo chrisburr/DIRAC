@@ -83,10 +83,10 @@ xmlStep1 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	  <Parameter Name="Guid" Value="546014C4-55C6-E611-8E94-02163E00F6B2"/>
   </OutputFile>
   <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	  <Parameter Name="FileSize" Value="319867"/>
 	  <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log"/>
 	  <Parameter Name="MD5Sum" Value="e4574c9083d1163d43ba6ac033cbd769"/>
 	  <Parameter Name="Guid" Value="E4574C90-83D1-163D-43BA-6AC033CBD769"/>
   </OutputFile>
@@ -130,10 +130,10 @@ xmlStep2 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	  <Parameter Name="Guid" Value="7EF857D2-AAC6-E611-BBBC-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Boole_00056438_00001025_test_2.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	  <Parameter Name="FileSize" Value="131897"/>
 	  <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Boole_00056438_00001025_test_2.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Boole_00056438_00001025_test_2.log"/>
 	  <Parameter Name="MD5Sum" Value="2d9cdd2116535cd484cf06cdb1620d75"/>
 	  <Parameter Name="Guid" Value="2D9CDD21-1653-5CD4-84CF-06CDB1620D75"/>
 </OutputFile>
@@ -174,10 +174,10 @@ xmlStep3 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	  <Parameter Name="Guid" Value="6A6A5873-ABC6-E611-A680-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_3.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	  <Parameter Name="FileSize" Value="57133"/>
 	  <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_3.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_3.log"/>
 	  <Parameter Name="MD5Sum" Value="c62640e23c464305ff1c3b7b58b3027c"/>
 	  <Parameter Name="Guid" Value="C62640E2-3C46-4305-FF1C-3B7B58B3027C"/>
 </OutputFile>
@@ -218,10 +218,10 @@ xmlStep4 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	    <Parameter Name="Guid" Value="48911F46-ADC6-E611-BD04-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_4.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	    <Parameter Name="FileSize" Value="1621948"/>
 	    <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_4.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_4.log"/>
 	    <Parameter Name="MD5Sum" Value="ea8bc998c1905a1c6ff192393a931766"/>
 	    <Parameter Name="Guid" Value="EA8BC998-C190-5A1C-6FF1-92393A931766"/>
 </OutputFile>
@@ -262,10 +262,10 @@ xmlStep5 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	    <Parameter Name="Guid" Value="E88994D2-AEC6-E611-9D2C-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Noether_00056438_00001025_test_5.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	    <Parameter Name="FileSize" Value="30967"/>
 	    <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Noether_00056438_00001025_test_5.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Noether_00056438_00001025_test_5.log"/>
 	    <Parameter Name="MD5Sum" Value="bbe1d585f4961281968c48ed6f115f98"/>
 	    <Parameter Name="Guid" Value="BBE1D585-F496-1281-968C-48ED6F115F98"/>
 </OutputFile>
@@ -306,10 +306,10 @@ xmlStep6 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	    <Parameter Name="Guid" Value="58DB8F37-B0C6-E611-9B3C-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_6.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	    <Parameter Name="FileSize" Value="56250"/>
 	    <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_6.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_6.log"/>
 	    <Parameter Name="MD5Sum" Value="6521d54c12608adc7b06c92e43d7d824"/>
 	    <Parameter Name="Guid" Value="6521D54C-1260-8ADC-7B06-C92E43D7D824"/>
 </OutputFile>
@@ -350,10 +350,10 @@ xmlStep7 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	    <Parameter Name="Guid" Value="EAB2A0D4-B1C6-E611-A70C-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_7.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	    <Parameter Name="FileSize" Value="1709809"/>
 	    <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_7.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Moore_00056438_00001025_test_7.log"/>
 	    <Parameter Name="MD5Sum" Value="a2209db13ee25ba252c6c52839232999"/>
 	    <Parameter Name="Guid" Value="A2209DB1-3EE2-5BA2-52C6-C52839232999"/>
 </OutputFile>
@@ -394,10 +394,10 @@ xmlStep8 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 	    <Parameter Name="Guid" Value="342F831B-B3C6-E611-94AA-02163E00F6B2"/>
 </OutputFile>
 <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Noether_00056438_00001025_test_8.log" """ +\
-	"""TypeName="LOG" TypeVersion="1">
+    """TypeName="LOG" TypeVersion="1">
 	    <Parameter Name="FileSize" Value="31116"/>
 	    <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-	"""storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Noether_00056438_00001025_test_8.log"/>
+    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Noether_00056438_00001025_test_8.log"/>
 	    <Parameter Name="MD5Sum" Value="0a622440c036b46811912e48ceee076f"/>
 	    <Parameter Name="Guid" Value="0A622440-C036-B468-1191-2E48CEEE076F"/>
 </OutputFile>
