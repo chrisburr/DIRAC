@@ -80,7 +80,7 @@ class LHCbsubmitSuccess(GridSubmissionTestCase, DIRACGridSubmissionTestCase):
 
   def test_LHCbsubmit(self):
 
-    for uName, uGroup in [('chaen', 'lhcb_user'), ('zmathe', 'lhcb_admin')]:
+    for uName, uGroup in [('cburr', 'lhcb_user'), ('chaen', 'lhcb_admin')]:
 
       res = helloWorldTestT2s(proxyUserName=uName, proxyUserGroup=uGroup)  # pylint: disable=unexpected-keyword-arg
       self.assertTrue(res['OK'])

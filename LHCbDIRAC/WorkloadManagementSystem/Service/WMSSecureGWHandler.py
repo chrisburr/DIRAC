@@ -30,10 +30,10 @@ from DIRAC.Core.DISET.RPCClient import RPCClient
 from DIRAC.WorkloadManagementSystem.Client.MatcherClient import MatcherClient
 from DIRAC.WorkloadManagementSystem.Client.JobStateUpdateClient import JobStateUpdateClient
 from DIRAC.WorkloadManagementSystem.Client.JobManagerClient import JobManagerClient
-from DIRAC.WorkloadManagementSystem.Client.WMSAdministratorClient import WMSAdministratorClient
+from DIRAC.WorkloadManagementSystem.Client.PilotManagerClient import PilotManagerClient
 from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 
-__RCSID__ = "$Id: $"
+__RCSID__ = "$Id$"
 
 # pylint: disable=no-self-use
 
@@ -69,13 +69,13 @@ class WMSSecureGWHandler(RequestHandler):
     from DIRAC.WorkloadManagementSystem.Service.JobManagerHandler import JobManagerHandler
     if JobManagerHandler.types_rescheduleJob != cls.types_rescheduleJob:
       raise Exception("JobManager rescheduleJob types has been changed.")
-    from DIRAC.WorkloadManagementSystem.Service.WMSAdministratorHandler import WMSAdministratorHandler
-    if WMSAdministratorHandler.types_setPilotStatus != cls.types_setPilotStatus:
-      raise Exception("WMSAdministrator setPilotStatus types has been changed.")
-    if WMSAdministratorHandler.types_setJobForPilot != cls.types_setJobForPilot:
-      raise Exception("WMSAdministrator setJobForPilot types has been changed.")
-    if WMSAdministratorHandler.types_setPilotBenchmark != cls.types_setPilotBenchmark:
-      raise Exception("WMSAdministrator setPilotBenchmark types has been changed.")
+    from DIRAC.WorkloadManagementSystem.Service.PilotManagerHandler import PilotManagerHandler
+    if PilotManagerHandler.types_setPilotStatus != cls.types_setPilotStatus:
+      raise Exception("PilotManager setPilotStatus types has been changed.")
+    if PilotManagerHandler.types_setJobForPilot != cls.types_setJobForPilot:
+      raise Exception("PilotManager setJobForPilot types has been changed.")
+    if PilotManagerHandler.types_setPilotBenchmark != cls.types_setPilotBenchmark:
+      raise Exception("PilotManager setPilotBenchmark types has been changed.")
     from DIRAC.WorkloadManagementSystem.Service.JobMonitoringHandler import JobMonitoringHandler
     if JobMonitoringHandler.types_getJobParameter != cls.types_getJobParameter:
       raise Exception("JobMonitoring getJobParameter types has been changed.")
@@ -177,7 +177,7 @@ class WMSSecureGWHandler(RequestHandler):
 
   def export_setPilotStatus(self, pilotRef, status, destination=None, reason=None, gridSite=None, queue=None):
     """Set the pilot agent status."""
-    result = WMSAdministratorClient().setPilotStatus(pilotRef, status, destination, reason, gridSite, queue)
+    result = PilotManagerClient().setPilotStatus(pilotRef, status, destination, reason, gridSite, queue)
     return result
 
   ##############################################################################
@@ -185,7 +185,7 @@ class WMSSecureGWHandler(RequestHandler):
 
   def export_setJobForPilot(self, jobID, pilotRef, destination=None):
     """Report the DIRAC job ID which is executed by the given pilot job."""
-    result = WMSAdministratorClient().setJobForPilot(jobID, pilotRef, destination)
+    result = PilotManagerClient().setJobForPilot(jobID, pilotRef, destination)
     return result
 
   ##########################################################################################
@@ -193,7 +193,7 @@ class WMSSecureGWHandler(RequestHandler):
 
   def export_setPilotBenchmark(self, pilotRef, mark):
     """Set the pilot agent benchmark."""
-    result = WMSAdministratorClient().setPilotBenchmark(pilotRef, mark)
+    result = PilotManagerClient().setPilotBenchmark(pilotRef, mark)
     return result
 
   ##############################################################################

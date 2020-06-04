@@ -21,10 +21,12 @@ from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
 _IGNORE_PARAMETERS = ['ReplicaFlag', 'Visible', 'MethodName']
 
 # The following parameters can not used to build the query, it requires at least one more parameter.
-_ONE = ['FileType', 'ProcessingPass', 'EventType', 'DataQuality', 'ConfigName', 'ConfigVersion', 'ConditionDescription']
+_ONE = ['FileType', 'ProcessingPass', 'EventType',
+        'DataQuality', 'ConfigName', 'ConfigVersion', 'ConditionDescription']
 
 # Two parameter in the list not enough to build the query.
-_TWO = ['ConfigName', 'ConfigVersion', 'ConditionDescription', 'EventType', 'ProcessingPass', 'FileType', 'DataQuality']
+_TWO = ['ConfigName', 'ConfigVersion', 'ConditionDescription',
+        'EventType', 'ProcessingPass', 'FileType', 'DataQuality']
 
 
 def enoughParams(in_dict):
@@ -42,11 +44,11 @@ def enoughParams(in_dict):
     return False
 
   if len(checkingDict) == 1:
-    if not set(checkingDict.keys()) - set(_ONE):
+    if not set(checkingDict) - set(_ONE):
       return False
 
   if len(checkingDict) == 2:
-    if not set(checkingDict.keys()) - set(_TWO):
+    if not set(checkingDict) - set(_TWO):
       return False
   return True
 
@@ -81,7 +83,7 @@ def checkEnoughBKArguments(func):
         subject = '%s method!' % funcName
         body = '%s user has not provided enough input parameters! \n \
                 the input parameters:%s ' % (userName, str(arguments))
-        NotificationClient().sendMail(address, subject, body, 'zmathe@cern.ch')
+        NotificationClient().sendMail(address, subject, body, 'lhcb-bookkeeping@cern.ch')
         gLogger.error('Got you: %s ---> %s' % (userName, str(arguments)))
         if self.forceExecution:  # we can force to execute the methods even the user does not
           # provide enough parameter
