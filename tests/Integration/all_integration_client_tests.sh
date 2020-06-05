@@ -22,7 +22,6 @@ echo -e '******' "LHCb client -> server tests" '******\n'
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
-pytest "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_Online.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 pytest "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_Files.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 pytest "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_MCProds.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
