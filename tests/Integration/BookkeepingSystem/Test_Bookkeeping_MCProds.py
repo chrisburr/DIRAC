@@ -19,6 +19,7 @@ production to db requites:
 # pylint: disable=invalid-name,wrong-import-position
 
 import io
+import os
 import datetime
 
 from DIRAC.Core.Base.Script import parseCommandLine
@@ -599,8 +600,6 @@ def test_registerProduction():
   with open(bkFile + '.temp', 'w') as fd:
     fd.write(filedata)
 
-
-
   retVal = bk.insertStep(
       {'Step': {'ApplicationName': 'Moore',
 		'Usable': 'Yes',
@@ -676,6 +675,13 @@ def test_registerProduction():
 
 
 def test_sendMCXMLBookkeepingReport():
+
+  # preparing
+  bk.insertFileTypes('SIM', 'sim', 'ROOT')
+  bk.insertFileTypes('DIGI', 'digi', 'ROOT')
+  bk.insertFileTypes('LOG', 'log', '1')
+  bk.insertEventType(27165000, 'This is 11104131', 'something GammaBeta Xyz (blah)')
+
   jobStart = jobEnd = datetime.datetime.now()
   jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)
 
@@ -810,6 +816,7 @@ def test_sendJobReport():
       bkXML = fd.read()
     res = bk.sendXMLBookkeepingReport(bkXML)
     assert res['OK']
+    os.remove(bkFile)
 
 
 def test_getSimConditions():
