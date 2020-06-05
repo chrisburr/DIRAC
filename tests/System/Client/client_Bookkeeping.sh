@@ -49,33 +49,33 @@ if [[ $# -gt 0 ]]; then
     case $i in
 
       -h|--help|-?)
-	echo -e ${helpmessage}
-	exit 0
-	;;
+        echo -e ${helpmessage}
+        exit 0
+        ;;
 
       -f=*|--Files=*)
-	numberOfFiles="${i#*=}"
-	shift # past argument=value
-	;;
+        numberOfFiles="${i#*=}"
+        shift # past argument=value
+        ;;
 
       -n=*|--Name=*)
-	filesName="${i#*=}"
-	shift # past argument=value
-	;;
+        filesName="${i#*=}"
+        shift # past argument=value
+        ;;
 
       -p=*|--Path=*)
-	temporaryPath="${i#*=}"
-	if [[ ! -d "${temporaryPath}" ]]; then
-	  mkdir -p ${temporaryPath}
-	fi
-	shift # past argument=value
-	;;
+        temporaryPath="${i#*=}"
+        if [[ ! -d "${temporaryPath}" ]]; then
+          mkdir -p ${temporaryPath}
+        fi
+        shift # past argument=value
+        ;;
 
       *)
-	echo -e "${helpmessage}"
-	exit 0
-	    # unknown option
-	;;
+        echo -e "${helpmessage}"
+        exit 0
+            # unknown option
+        ;;
     esac
   done
 fi

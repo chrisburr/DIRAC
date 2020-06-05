@@ -341,7 +341,7 @@ IF iftypes.COUNT>0 THEN
          FOR i in iftypes.FIRST .. iftypes.LAST LOOP
            FOR j in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST LOOP
              IF iftypes(i)=c.inputfiletypes(j).NAME THEN
-	             input:=TRUE;
+                     input:=TRUE;
                EXIT;
              END IF;
            END LOOP;
@@ -371,7 +371,7 @@ IF iftypes.COUNT>0 THEN
              FOR i in oftypes.FIRST .. oftypes.LAST LOOP
                FOR j in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
                  IF oftypes(i)=c.outputfiletypes(j).NAME THEN
-	           output:=TRUE;
+                   output:=TRUE;
                    EXIT;
                  END IF;
                END LOOP;
@@ -417,7 +417,7 @@ ELSE
         FOR i in oftypes.FIRST .. oftypes.LAST LOOP
           FOR j in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
             IF oftypes(i)=c.outputfiletypes(j).NAME THEN
-	      output:=TRUE;
+              output:=TRUE;
               EXIT;
             END IF;
           END LOOP;
@@ -446,7 +446,7 @@ ELSE
            FOR i in iftypes.FIRST .. iftypes.LAST LOOP
              FOR j in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST LOOP
                IF iftypes(i)=c.inputfiletypes(j).NAME THEN
-	               input:=TRUE;
+                       input:=TRUE;
                  EXIT;
                END IF;
              END LOOP;
@@ -1473,7 +1473,7 @@ EXCEPTION
    dbms_output.put_line(v_prod || 'already in the steps container table');
    SELECT count(*) INTO alreadyExists FROM stepscontainer WHERE production=v_prod AND stepid=v_stepid AND step=v_step;
    IF alreadyExists > 0 then
-   	raise_application_error(-20005, 'The production already exists in the steps container table!');
+           raise_application_error(-20005, 'The production already exists in the steps container table!');
    END IF;
 end;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2128,8 +2128,8 @@ END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE insertProdnOutputFtypes(v_production number, v_stepid number, v_filetypeid number, v_visible char, v_eventtype number)IS
 BEGIN
-	INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid)VALUES(v_production,v_stepid, v_filetypeid, v_visible,v_eventtype);
-	COMMIT;
+        INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid)VALUES(v_production,v_stepid, v_filetypeid, v_visible,v_eventtype);
+        COMMIT;
 EXCEPTION
   WHEN DUP_VAL_ON_INDEX THEN
     DBMS_OUTPUT.put_line ('EXISTS:'||v_production||'->'||v_stepid||'->'||v_filetypeid||'->'||v_visible||'->'||v_eventtype);

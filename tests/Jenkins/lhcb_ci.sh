@@ -191,7 +191,7 @@ diracAgents(){
       python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-add-option.py" "agent" "$agent"
       echo "==> calling dirac-agent $agent -o MaxCycles=1 ${DEBUG}"
       if ! dirac-agent "$agent"  -o MaxCycles=1 "${DEBUG}"; then
-	echo 'ERROR: dirac-agent failed' >&2
+        echo 'ERROR: dirac-agent failed' >&2
         exit 1
       fi
     fi
