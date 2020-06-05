@@ -26,7 +26,7 @@
 source TestCode/DIRAC/tests/Jenkins/dirac_ci.sh
 
 #install file
-INSTALL_CFG_FILE="${TESTCODE}/LHCbDIRAC/tests/Jenkins/install.cfg"
+readonly INSTALL_CFG_FILE="${TESTCODE}/LHCbDIRAC/tests/Jenkins/install.cfg"
 
 
 #.............................................................................
@@ -41,7 +41,7 @@ INSTALL_CFG_FILE="${TESTCODE}/LHCbDIRAC/tests/Jenkins/install.cfg"
 #
 #.............................................................................
 
-function findRelease(){
+findRelease(){
   echo '[findRelease]'
 
   # store the current branch
@@ -110,7 +110,7 @@ function findRelease(){
 
   # TODO: This should be made to fail to due set -u and -o pipefail
   if [[ ! "${projectVersion}" ]]; then
-    echo "Failed to set projectVersion"
+    echo "Failed to set projectVersion" >&2
     exit 1
   fi
 
@@ -150,7 +150,7 @@ function findRelease(){
 diracServices(){
   echo '==> [diracServices]'
 
-  services=$(cat services |  cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
+  services=$(cat services | cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
 
   for serv in ${services}
   do
@@ -191,7 +191,7 @@ diracAgents(){
       python "${TESTCODE}/DIRAC/tests/Jenkins/dirac-cfg-add-option.py" "agent" "$agent"
       echo "==> calling dirac-agent $agent -o MaxCycles=1 ${DEBUG}"
       if ! dirac-agent "$agent"  -o MaxCycles=1 "${DEBUG}"; then
-        echo 'ERROR: dirac-agent failed'
+	echo 'ERROR: dirac-agent failed' >&2
         exit 1
       fi
     fi
@@ -211,7 +211,7 @@ diracAgents(){
 #
 #...............................................................................
 
-function LHCbDIRACPilotInstall(){
+LHCbDIRACPilotInstall() {
 
   echo '==> Starting LHCbDIRACPilotInstall'
 
@@ -232,7 +232,7 @@ function LHCbDIRACPilotInstall(){
   #run the dirac-pilot script, only for installing, do not run the JobAgent here
   cwd=$PWD
   if ! cd "${PILOTINSTALLDIR}"; then
-    echo "ERROR: cannot change to ${PILOTINSTALLDIR}"
+    echo "ERROR: cannot change to ${PILOTINSTALLDIR}" >&2
     return 9
   fi
 
@@ -249,11 +249,11 @@ function LHCbDIRACPilotInstall(){
     options="${options} -o ${customOptions}"
   fi
 
-  echo $( eval echo Executing python dirac-pilot.py "${options}" -X "${commandList}" "$DEBUG")
-  python dirac-pilot.py "${options}" -X "${commandList}" "$DEBUG"
+  echo $( eval echo Executing python dirac-pilot.py "${options}" -X "${commandList}" "${DEBUG}")
+  python dirac-pilot.py "${options}" -X "${commandList}" "${DEBUG}"
 
   if ! cd "${cwd}"; then
-    echo "ERROR: cannot change to ${cwd}"
+    echo "ERROR: cannot change to ${cwd}" >&2
     return 9
   fi
 
@@ -261,7 +261,7 @@ function LHCbDIRACPilotInstall(){
 }
 
 
-function fullLHCbPilot(){
+fullLHCbPilot() {
 
   # This supposes that the version to install is got already
 
@@ -283,7 +283,7 @@ function fullLHCbPilot(){
   command -v python
 
   echo '==> Adding the LocalSE, for the subsequent tests'
-  dirac-configure -FDMH --UseServerCertificate -L CERN-SWTEST -O "${PILOTINSTALLDIR}/${PILOTCFG}" "${PILOTINSTALLDIR}/${PILOTCFG}" "$DEBUG"
+  dirac-configure -FDMH --UseServerCertificate -L CERN-SWTEST -O "${PILOTINSTALLDIR}/${PILOTCFG}" "${PILOTINSTALLDIR}/${PILOTCFG}" "${DEBUG}"
 
   # be sure we only have pilot.cfg
 
@@ -303,10 +303,10 @@ function fullLHCbPilot(){
   getUserProxy
 
   echo '==> Set not to use the server certificate for running the jobs'
-  dirac-configure -FDMH -o /DIRAC/Security/UseServerCertificate=False -O "${PILOTINSTALLDIR}/${PILOTCFG}" "${PILOTINSTALLDIR}/${PILOTCFG}" "$DEBUG"
+  dirac-configure -FDMH -o /DIRAC/Security/UseServerCertificate=False -O "${PILOTINSTALLDIR}/${PILOTCFG}" "${PILOTINSTALLDIR}/${PILOTCFG}" "${DEBUG}"
 }
 
-function getUserProxy(){
+getUserProxy() {
 
   echo '==> Started getUserProxy'
 
@@ -319,7 +319,7 @@ function getUserProxy(){
   echo '==> Done getUserProxy'
 }
 
-function submitAndMatch(){
+submitAndMatch() {
 
   installLHCbDIRAC
   submitJob
@@ -344,7 +344,7 @@ function submitAndMatch(){
   fi
 }
 
-function installLHCbDIRAC(){
+installLHCbDIRAC() {
 
   findRelease
 
@@ -358,7 +358,7 @@ function installLHCbDIRAC(){
 
 }
 
-function installLHCbDIRACClient(){
+installLHCbDIRACClient() {
 
   echo '==> Installing LHCbDIRAC client'
 
@@ -367,7 +367,7 @@ function installLHCbDIRACClient(){
   cp "${TESTCODE}/DIRAC/Core/scripts/dirac-install.py" "${CLIENTINSTALLDIR}/dirac-install"
   chmod +x "${CLIENTINSTALLDIR}/dirac-install"
   if ! cd "${CLIENTINSTALLDIR}"; then
-    echo "ERROR: cannot change to ${CLIENTINSTALLDIR}"
+    echo "ERROR: cannot change to ${CLIENTINSTALLDIR}" >&2
     return 9
   fi
 
@@ -382,7 +382,7 @@ function installLHCbDIRACClient(){
   dirac-configure --UseServerCertificate -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -S "${DIRACSETUP}" -C "${CSURL}" -e LHCb -ddd
 }
 
-function setupLHCbDIRAC(){
+setupLHCbDIRAC() {
 
   local version=$(cat project.version)
   echo -e "==> Sourcing LHCbDirac/${version} bash -norc"
@@ -399,7 +399,7 @@ function setupLHCbDIRAC(){
 }
 
 
-function submitJob(){
+submitJob() {
 
   #This is is executed from the ${CLIENTINSTALLDIR}
   echo -e "==> Submitting a simple job"
@@ -417,28 +417,28 @@ function submitJob(){
   getUserProxy #this won't really download the proxy, so that's why the next command is needed
 
   # re-enabling it
-  if [[ $save =~ e ]]; then
+  if [[ ${save} =~ e ]]; then
     set -e
   fi
 
   cp "${TESTCODE}/DIRAC/tests/Jenkins/dirac-proxy-download.py" .
-  python dirac-proxy-download.py "$DIRACUSERDN" -R "$DIRACUSERROLE" -o /DIRAC/Security/UseServerCertificate=True -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -o /DIRAC/Setup=LHCb-Certification -ddd
+  python dirac-proxy-download.py "${DIRACUSERDN}" -R "${DIRACUSERROLE}" -o /DIRAC/Security/UseServerCertificate=True -o /DIRAC/Security/CertFile=/home/dirac/certs/hostcert.pem -o /DIRAC/Security/KeyFile=/home/dirac/certs/hostkey.pem -o /DIRAC/Setup=LHCb-Certification -ddd
   cp "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-test-job.py" .
-  python dirac-test-job.py -o /DIRAC/Setup=LHCb-Certification "$DEBUG"
+  python dirac-test-job.py -o /DIRAC/Setup=LHCb-Certification "${DEBUG}"
 
   rm "${PILOTINSTALLDIR}/${PILOTCFG}"
 }
 
-function sourcingEnv(){
+sourcingEnv() {
 
   echo -e "==> Sourcing the environment"
   source "${PILOTINSTALLDIR}/environmentLHCbDirac"
 }
 
-function setupBKKDB(){
+setupBKKDB() {
   echo -e "==> Setting up the Bookkeeping Database"
-  if [[ -n "$ORACLEDB_PASSWORD" ]]; then
-    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" -p "$ORACLEDB_PASSWORD" "$DEBUG"
+  if [[ -n "${ORACLEDB_PASSWORD}" ]]; then
+    "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" -p "${ORACLEDB_PASSWORD}" "${DEBUG}"
   else
     "${TESTCODE}/LHCbDIRAC/tests/Jenkins/dirac-bkk-cfg-update.py" "${DEBUG}" \
       --password "bkdbpass" \
