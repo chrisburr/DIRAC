@@ -70,7 +70,7 @@ def test_setAndGetandRemove():
   result = mcStatsClient.set(typeName, data2)
   assert result['OK'] is True
 
-  time.sleep(1)
+  time.sleep(5)
 
   # Get data1
   result = mcStatsClient.get(id1)
@@ -91,14 +91,14 @@ def test_setAndGetandRemove():
 
   # Remove data1
   mcStatsClient.remove(id1)
-  time.sleep(3)
+  time.sleep(5)
   result = mcStatsClient.get(id1)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove data2
   mcStatsClient.remove(id2)
-  time.sleep(3)
+  time.sleep(5)
   result = mcStatsClient.get(id2)
   assert result['OK'] is True
   assert result['Value'] == {}
