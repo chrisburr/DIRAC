@@ -63,6 +63,7 @@ __RCSID__ = "$Id$"
 import Queue
 import time
 import threading
+import six
 
 import cx_Oracle  # pylint: disable=import-error
 
@@ -229,7 +230,7 @@ class OracleDB:
       results = None
       if array:
         fArray = array[0]
-        if isinstance(fArray, basestring):
+        if isinstance(fArray, six.string_types):
           result = cursor.arrayvar(cx_Oracle.STRING, array)
           parameters += [result]
         elif isinstance(fArray, (int, long)):
@@ -237,13 +238,13 @@ class OracleDB:
           parameters += [result]
         elif isinstance(fArray, list):
           for i in array:
-            if isinstance(i, (bool, basestring, int, long)):
+            if isinstance(i, (bool, six.string_types, int, long)):
               parameters += [i]
             elif i:
-              if isinstance(i[0], basestring):
+              if isinstance(i[0], six.string_types):
                 result = cursor.arrayvar(cx_Oracle.STRING, i)
                 parameters += [result]
-              elif isinstance(i[0], (long, int)):
+              elif isinstance(i[0], six.integer_types):
                 result = cursor.arrayvar(cx_Oracle.NUMBER, i)
                 parameters += [result]
               else:

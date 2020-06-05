@@ -13,12 +13,12 @@
 import types
 import datetime
 import re
+import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.Core.Utilities.List import breakListIntoChunks
-# from DIRAC.Core.Utilities.OracleDB                                   import OracleDB
 from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 
 __RCSID__ = "$Id$"
@@ -105,9 +105,9 @@ class OracleBookkeepingDB(object):
         return S_ERROR('Wrong Equal value!')
 
       if infiletypes != default or outfiletypes != default:
-        if isinstance(infiletypes, basestring):
+        if isinstance(infiletypes, six.string_types):
           infiletypes = []
-        if isinstance(outfiletypes, basestring):
+        if isinstance(outfiletypes, six.string_types):
           outfiletypes = []
         infiletypes.sort()
         outfiletypes.sort()
@@ -130,7 +130,7 @@ class OracleBookkeepingDB(object):
 
       stepId = in_dict.get('StepId', default)
       if stepId != default:
-        if isinstance(stepId, (basestring, int, long)):
+        if isinstance(stepId, (six.string_types, six.integer_types)):
           condition += ' and s.stepid= %s' % (str(stepId))
         elif isinstance(stepId, (list, tuple)):
           condition += 'and s.stepid in (%s)' % ",".join([str(sid) for sid in stepId])
@@ -139,7 +139,7 @@ class OracleBookkeepingDB(object):
 
       stepName = in_dict.get('StepName', default)
       if stepName != default:
-        if isinstance(stepName, basestring):
+        if isinstance(stepName, six.string_types):
           condition += " and s.stepname='%s'" % (stepName)
         elif isinstance(stepName, list):
           values = ' and ('
@@ -149,7 +149,7 @@ class OracleBookkeepingDB(object):
 
       appName = in_dict.get('ApplicationName', default)
       if appName != default:
-        if isinstance(appName, basestring):
+        if isinstance(appName, six.string_types):
           condition += " and s.applicationName='%s'" % (appName)
         elif isinstance(appName, list):
           values = ' and ('
@@ -159,7 +159,7 @@ class OracleBookkeepingDB(object):
 
       appVersion = in_dict.get('ApplicationVersion', default)
       if appVersion != default:
-        if isinstance(appVersion, basestring):
+        if isinstance(appVersion, six.string_types):
           condition += " and s.applicationversion='%s'" % (appVersion)
         elif isinstance(appVersion, list):
           values = ' and ('
@@ -169,7 +169,7 @@ class OracleBookkeepingDB(object):
 
       optFile = in_dict.get('OptionFiles', default)
       if optFile != default:
-        if isinstance(optFile, basestring):
+        if isinstance(optFile, six.string_types):
           condition += " and s.optionfiles='%s'" % (optFile)
         elif isinstance(optFile, list):
           values = ' and ('
@@ -179,7 +179,7 @@ class OracleBookkeepingDB(object):
 
       dddb = in_dict.get('DDDB', default)
       if dddb != default:
-        if isinstance(dddb, basestring):
+        if isinstance(dddb, six.string_types):
           condition += " and s.dddb='%s'" % (dddb)
         elif isinstance(dddb, list):
           values = ' and ('
@@ -189,7 +189,7 @@ class OracleBookkeepingDB(object):
 
       conddb = in_dict.get('CONDDB', default)
       if conddb != default:
-        if isinstance(conddb, basestring):
+        if isinstance(conddb, six.string_types):
           condition += " and s.conddb='%s'" % (conddb)
         elif isinstance(conddb, list):
           values = ' and ('
@@ -199,7 +199,7 @@ class OracleBookkeepingDB(object):
 
       extraP = in_dict.get('ExtraPackages', default)
       if extraP != default:
-        if isinstance(extraP, basestring):
+        if isinstance(extraP, six.string_types):
           condition += " and s.extrapackages='%s'" % (extraP)
         elif isinstance(extraP, list):
           values = ' and ('
@@ -209,7 +209,7 @@ class OracleBookkeepingDB(object):
 
       visible = in_dict.get('Visible', default)
       if visible != default:
-        if isinstance(visible, basestring):
+        if isinstance(visible, six.string_types):
           condition += " and s.visible='%s'" % (visible)
         elif isinstance(visible, list):
           values = ' and ('
@@ -219,7 +219,7 @@ class OracleBookkeepingDB(object):
 
       procPass = in_dict.get('ProcessingPass', default)
       if procPass != default:
-        if isinstance(procPass, basestring):
+        if isinstance(procPass, six.string_types):
           condition += " and s.processingpass like'%%%s%%'" % (procPass)
         elif isinstance(procPass, list):
           values = ' and ('
@@ -229,7 +229,7 @@ class OracleBookkeepingDB(object):
 
       usable = in_dict.get('Usable', default)
       if usable != default:
-        if isinstance(usable, basestring):
+        if isinstance(usable, six.string_types):
           condition += " and s.usable='%s'" % (usable)
         elif isinstance(usable, list):
           values = ' and ('
@@ -243,7 +243,7 @@ class OracleBookkeepingDB(object):
 
       dqtag = in_dict.get('DQTag', default)
       if dqtag != default:
-        if isinstance(dqtag, basestring):
+        if isinstance(dqtag, six.string_types):
           condition += " and s.dqtag='%s'" % (dqtag)
         elif isinstance(dqtag, list):
           values = ' and ('
@@ -253,7 +253,7 @@ class OracleBookkeepingDB(object):
 
       optsf = in_dict.get('OptionsFormat', default)
       if optsf != default:
-        if isinstance(optsf, basestring):
+        if isinstance(optsf, six.string_types):
           condition += " and s.optionsFormat='%s'" % (optsf)
         elif isinstance(optsf, list):
           values = ' and ('
@@ -287,7 +287,7 @@ class OracleBookkeepingDB(object):
           for item in items:
             order += 's.%s,' % (item)
           condition += ' %s %s' % (order[:-1], order)
-        elif isinstance(items, basestring):
+        elif isinstance(items, six.string_types):
           condition += ' s.%s %s' % (items, order)
         else:
           result = S_ERROR('SortItems is not properly defined!')
@@ -720,7 +720,7 @@ class OracleBookkeepingDB(object):
         condition = " where stepid=%s" % (str(stepid))
         command = 'update steps set '
         for i in in_dict:
-          if isinstance(in_dict[i], basestring):
+          if isinstance(in_dict[i], six.string_types):
             command += " %s='%s'," % (i, str(in_dict[i]))
           else:
             if in_dict[i]:
@@ -1466,21 +1466,21 @@ class OracleBookkeepingDB(object):
     tables = ' jobs j, files f, configurations c'
     result = None
     if production != default:
-      if isinstance(production, (basestring, long, int)):
+      if isinstance(production, (six.string_types, six.integer_types)):
         condition += " and j.production=%d " % (int(production))
       elif isinstance(production, list):
         condition += ' and j.production in ( ' + ','.join([str(p) for p in production]) + ')'
       else:
         result = S_ERROR("The production type is invalid. It can be a list, integer or string!")
     elif lfn != default:
-      if isinstance(lfn, basestring):
+      if isinstance(lfn, six.string_types):
         condition += " and f.filename='%s' " % (lfn)
       elif isinstance(lfn, list):
         condition += ' and (' + ' or '.join(["f.filename='%s'" % l for l in lfn]) + ')'
       else:
         result = S_ERROR("You must provide an LFN or a list of LFNs!")
     elif diracJobids != default:
-      if isinstance(diracJobids, (basestring, long, int)):
+      if isinstance(diracJobids, (six.string_types, six.integer_types)):
         condition += " and j.DIRACJOBID=%s " % diracJobids
       elif isinstance(diracJobids, list):
         condition += ' and j.DIRACJOBID in ( ' + ','.join([str(djobid) for djobid in diracJobids]) + ')'
@@ -2710,7 +2710,7 @@ class OracleBookkeepingDB(object):
     if runnb == default:
       result = S_ERROR('The RunNumber must be given!')
     else:
-      if isinstance(runnb, (basestring, int, long)):
+      if isinstance(runnb, (six.string_types, six.integer_types)):
         runnb = [runnb]
       runs = ''
       for i in runnb:
@@ -3589,7 +3589,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += ' %s.production=%s or ' % (table, str(i))
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(production, (basestring, int, long)):
+      elif isinstance(production, (six.string_types, six.integer_types)):
         condition += ' and %s.production=%s' % (table, str(production))
 
     return S_OK((condition, tables))
@@ -3611,7 +3611,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           tcks.remove(default)
         if tcks:
           condition += ' and ( ' + ' or '.join([" j.tck='%s'" % i for i in tcks]) + ')'
-      elif isinstance(tcks, basestring):
+      elif isinstance(tcks, six.string_types):
         condition += " and j.tck='%s'" % (tcks)
       else:
         return S_ERROR('The TCK should be a list or a string')
@@ -3682,7 +3682,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += " ft.name='%s' or " % (i)
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(ftype, basestring):
+      elif isinstance(ftype, six.string_types):
         condition += " and ft.name='%s'" % (ftype)
       else:
         return S_ERROR('File type problem!')
@@ -3692,7 +3692,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       else:
         condition += ' and ft.filetypeid=prod.filetypeid'
 
-    if isinstance(ftype, basestring) and ftype == 'RAW' and 'jobs' in tables:
+    if isinstance(ftype, six.string_types) and ftype == 'RAW' and 'jobs' in tables:
       # we know the production of a run is lees than 0.
       # this is needed to speed up the queries when the file type is raw
       # (we reject all recostructed + stripped jobs/files. ).
@@ -3724,9 +3724,9 @@ and files.qualityid= dataquality.qualityid" % lfn
       if 'productionscontainer' not in tables.lower():
         tables += ' ,productionscontainer cont'
     cond = None
-    if isinstance(runnumbers, (int, long)):
+    if isinstance(runnumbers, six.integer_types):
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
-    elif isinstance(runnumbers, basestring) and runnumbers.upper() != default:
+    elif isinstance(runnumbers, six.string_types) and runnumbers.upper() != default:
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, list) and runnumbers:
       cond = ' ( '
@@ -3744,11 +3744,11 @@ and files.qualityid= dataquality.qualityid" % lfn
       elif startRunID is None or endRunID is None:
         condition += " and %s " % (cond)
     else:
-      if (isinstance(startRunID, basestring) and startRunID.upper() is not default) or\
-              (isinstance(startRunID, (int, long)) and startRunID is not None):
+      if (isinstance(startRunID, six.string_types) and startRunID.upper() is not default) or\
+              (isinstance(startRunID, six.integer_types) and startRunID is not None):
         condition += ' and %s.runnumber>=%s' % (table, str(startRunID))
-      if (isinstance(endRunID, basestring) and endRunID.upper() is not default) or\
-              (isinstance(endRunID, (int, long)) and endRunID is not None):
+      if (isinstance(endRunID, six.string_types) and endRunID.upper() is not default) or\
+              (isinstance(endRunID, six.integer_types) and endRunID is not None):
         condition += ' and %s.runnumber<=%s' % (table, str(endRunID))
     return S_OK((condition, tables))
 
@@ -3781,7 +3781,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += " %s.eventtypeid=%s or " % (table, (str(i)))
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(evt, (basestring, int, long)):
+      elif isinstance(evt, (six.string_types, six.integer_types)):
         condition += ' and %s.eventtypeid=%s' % (table, str(evt))
       if useMainTables:
         if isinstance(evt, (list, tuple)) and evt:
@@ -3791,7 +3791,7 @@ and files.qualityid= dataquality.qualityid" % lfn
             cond += " %s.eventtypeid=%s or " % (table, (str(i)))
           cond = cond[:-3] + ')'
           condition += cond
-        elif isinstance(evt, (basestring, int, long)):
+        elif isinstance(evt, (six.string_types, six.integer_types)):
           condition += ' and %s.eventtypeid=%s' % (table, str(evt))
     return S_OK((condition, tables))
 
@@ -4204,7 +4204,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = 'select DaqPeriodId from data_taking_conditions where '
     for param in condition:
-      if isinstance(condition[param], basestring) and not condition[param].strip():
+      if isinstance(condition[param], six.string_types) and not condition[param].strip():
         command += str(param) + ' is NULL and '
       elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4218,7 +4218,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select DaqPeriodId from data_taking_conditions where '
         for param in condition:
           if param != 'Description':
-            if isinstance(condition[param], basestring) and not condition[param].strip():
+            if isinstance(condition[param], six.string_types) and not condition[param].strip():
               command += str(param) + ' is NULL and '
             elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4243,7 +4243,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = 'select description from data_taking_conditions where '
     for param in condition:
-      if isinstance(condition[param], basestring) and not condition[param].strip():
+      if isinstance(condition[param], six.string_types) and not condition[param].strip():
         command += str(param) + ' is NULL and '
       elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4257,7 +4257,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select DaqPeriodId from data_taking_conditions where '
         for param in condition:
           if param != 'Description':
-            if isinstance(condition[param], basestring) and not condition[param].strip():
+            if isinstance(condition[param], six.string_types) and not condition[param].strip():
               command += str(param) + ' is NULL and '
             elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4583,7 +4583,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     fileTypeMap = {'RAW': 'MDF'}
     eventtypes = []
     if eventType:
-      if isinstance(eventType, (basestring, int, long)):
+      if isinstance(eventType, (six.string_types, six.integer_types)):
         eventtypes.append(long(eventType))
       elif isinstance(eventType, list):
         eventtypes = eventType
@@ -5289,7 +5289,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         for item in items:
           order += 'sim.%s,' % (item)
         condition += ' %s' % order[:-1]
-      elif isinstance(items, basestring):
+      elif isinstance(items, six.string_types):
         condition += ' sim.%s %s' % (items, order)
       else:
         result = S_ERROR('SortItems is not properly defined!')
