@@ -2604,15 +2604,15 @@ class OracleBookkeepingDB(object):
       fileNames.remove(i[0])
     if fileNames:
       retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
-						parameters=['Yes'],
-						output=False,
-						array=fileNames)
+                                                parameters=['Yes'],
+                                                output=False,
+                                                array=fileNames)
       if not retVal['OK']:
-	result = retVal
+        result = retVal
       else:
-	failed['Failed'] = list(failed)
-	failed['Successful'] = fileNames
-	result = S_OK(failed)
+        failed['Failed'] = list(failed)
+        failed['Successful'] = fileNames
+        result = S_OK(failed)
     else:  # when no files are exists
       files = {'Failed': [i[0] for i in retVal['Value']], 'Successful': []}
       result = S_OK(files)
@@ -2656,42 +2656,42 @@ class OracleBookkeepingDB(object):
       values['ProcessingPass'] = retVal['Value']
       command = ' select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.fullstat), \
       files.eventtypeid , sum(files.luminosity), sum(files.instLuminosity)  from files,jobs \
-	   where files.JobId=jobs.JobId and  \
-	   files.gotReplica=\'Yes\' and \
-	   jobs.production<0 and \
-	   jobs.runnumber=' + str(runnb) + ' Group by files.eventtypeid'
+           where files.JobId=jobs.JobId and  \
+           files.gotReplica=\'Yes\' and \
+           jobs.production<0 and \
+           jobs.runnumber=' + str(runnb) + ' Group by files.eventtypeid'
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
-	result = retVal
+        result = retVal
       else:
-	value = retVal['Value']
-	if not value:
-	  result = S_ERROR('Replica flag is not set!')
+        value = retVal['Value']
+        if not value:
+          result = S_ERROR('Replica flag is not set!')
         else:
-	  nbfile = []
-	  nbevent = []
-	  fsize = []
-	  fstat = []
-	  stream = []
-	  luminosity = []
-	  ilumi = []
-	  for i in value:
-	    nbfile += [i[0]]
-	    nbevent += [i[1]]
-	    fsize += [i[2]]
-	    fstat += [i[3]]
-	    stream += [i[4]]
-	    luminosity += [i[5]]
-	    ilumi += [i[6]]
+          nbfile = []
+          nbevent = []
+          fsize = []
+          fstat = []
+          stream = []
+          luminosity = []
+          ilumi = []
+          for i in value:
+            nbfile += [i[0]]
+            nbevent += [i[1]]
+            fsize += [i[2]]
+            fstat += [i[3]]
+            stream += [i[4]]
+            luminosity += [i[5]]
+            ilumi += [i[6]]
 
-	  values['Number of file'] = nbfile
-	  values['Number of events'] = nbevent
-	  values['File size'] = fsize
-	  values['FullStat'] = fstat
-	  values['Stream'] = stream
-	  values['luminosity'] = luminosity
-	  values['InstLuminosity'] = ilumi
-	  result = S_OK(values)
+          values['Number of file'] = nbfile
+          values['Number of events'] = nbevent
+          values['File size'] = fsize
+          values['FullStat'] = fstat
+          values['Stream'] = stream
+          values['luminosity'] = luminosity
+          values['InstLuminosity'] = ilumi
+          result = S_OK(values)
 
     return result
 

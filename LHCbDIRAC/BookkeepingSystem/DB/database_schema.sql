@@ -664,13 +664,13 @@ FOR EACH ROW
     WHERE
       jobid IN
       (
-	SELECT
-	  j.jobid
-	FROM
-	  jobs j
-	WHERE
-	  j.runnumber = :NEW.runnumber
-	  AND j.production < 0
+        SELECT
+          j.jobid
+        FROM
+          jobs j
+        WHERE
+          j.runnumber = :NEW.runnumber
+          AND j.production < 0
       );
     UPDATE
       files
@@ -680,24 +680,24 @@ FOR EACH ROW
     WHERE
       files.fileid IN
       (
-	SELECT
-	  f.fileid
-	FROM
-	  files f,
-	  jobs j
-	WHERE
-	  j.jobid = f.jobid
-	  AND j.runnumber = :NEW.runnumber
-	  AND f.gotreplica = 'Yes'
-	  AND j.production IN
-	  (
-	    SELECT
-	      prod.production
-	    FROM
-	      productionscontainer prod
-	    WHERE
-	      prod.processingid = :NEW.processingid
-	  )
+        SELECT
+          f.fileid
+        FROM
+          files f,
+          jobs j
+        WHERE
+          j.jobid = f.jobid
+          AND j.runnumber = :NEW.runnumber
+          AND f.gotreplica = 'Yes'
+          AND j.production IN
+          (
+            SELECT
+              prod.production
+            FROM
+              productionscontainer prod
+            WHERE
+              prod.processingid = :NEW.processingid
+          )
       );
   END;
  /

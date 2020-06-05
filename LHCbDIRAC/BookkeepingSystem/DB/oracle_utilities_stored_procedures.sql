@@ -30,8 +30,8 @@ PROCEDURE updatenbevt(
 BEGIN
 /* It updates the NUMBER of events for a given production*/
   FOR c IN (SELECT j.jobid
-	    FROM jobs j
-	    WHERE j.production = v_production)
+            FROM jobs j
+            WHERE j.production = v_production)
    LOOP
     updatejobnbofevt(c.jobid);
    END LOOP;
@@ -53,8 +53,8 @@ SELECT sum(f.eventstat) INTO sumevt
       f.jobid = j.jobid  AND
       f.eventstat IS NOT NULL AND
       f.filetypeid NOT IN (SELECT filetypeid
-			   FROM filetypes
-			   WHERE name = 'RAW');
+                           FROM filetypes
+                           WHERE name = 'RAW');
   IF sumevt > 0 THEN
     UPDATE jobs SET numberofevents = sumevt WHERE jobid = v_jobid;
   --for c in (SELECT j.jobid
@@ -82,24 +82,24 @@ eventinputstat for the input jobs, othetwise we use the eventstat for the input 
 for example: If we want to fix the eventinputstat of reconstructed files (FULL.DST), fixstripping equal False*/
   IF fixstripping = TRUE THEN
     FOR c IN (SELECT j.jobid
-	      FROM jobs j,
-		   files f
-	      WHERE j.jobid = f.jobid
-		AND j.production = v_production
-	      )
+              FROM jobs j,
+                   files f
+              WHERE j.jobid = f.jobid
+                AND j.production = v_production
+              )
       LOOP
-	updatejobevtinpstat(c.jobid, fixstripping);
+        updatejobevtinpstat(c.jobid, fixstripping);
       END LOOP;
   ELSE
     FOR c IN (SELECT j.jobid
-	      FROM jobs j,
-		   files f
-	      WHERE j.jobid = f.jobid AND
-		    j.production = v_production AND
-		    f.gotreplica = 'Yes' AND
-		    f.visibilityflag = 'Y')
+              FROM jobs j,
+                   files f
+              WHERE j.jobid = f.jobid AND
+                    j.production = v_production AND
+                    f.gotreplica = 'Yes' AND
+                    f.visibilityflag = 'Y')
       LOOP
-	updatejobevtinpstat(c.jobid, fixstripping);
+        updatejobevtinpstat(c.jobid, fixstripping);
       END LOOP;
   END IF;
 END;
@@ -115,19 +115,19 @@ BEGIN
   IF fixstripping = TRUE THEN
     SELECT sum(j.eventinputstat) INTO sumevtinp
     FROM jobs j,
-	 files f,
-	 inputfiles i
+         files f,
+         inputfiles i
     WHERE i.jobid = v_jobid AND
-	  i.fileid = f.fileid AND
-	  f.jobid = j.jobid;
+          i.fileid = f.fileid AND
+          f.jobid = j.jobid;
   ELSE
     SELECT sum(f.eventstat) INTO sumevtinp
     FROM jobs j,
-	 files f,
-	 inputfiles i
+         files f,
+         inputfiles i
     WHERE i.jobid = v_jobid AND
-	  i.fileid = f.fileid AND
-	  f.jobid = j.jobid;
+          i.fileid = f.fileid AND
+          f.jobid = j.jobid;
   END IF;
   IF sumevtinp > 0 THEN
     UPDATE jobs SET eventinputstat = sumevtinp WHERE jobid = v_jobid;
@@ -146,8 +146,8 @@ BEGIN
     DELETE productionscontainer WHERE production = -1122;
     i:=1;/*before we DELETE the steps FROM the stepcontainer table, the steps must be saved*/
     FOR step IN (SELECT stepid
-		 FROM stepscontainer
-		 WHERE production = -1122) LOOP
+                 FROM stepscontainer
+                 WHERE production = -1122) LOOP
       runsteps(i):=step.stepid;
       i:=i + 1;
       dbms_output.put_line('run Step:' || step.stepid);
@@ -186,39 +186,39 @@ PROCEDURE insertprotopordoutput(
 ) IS
 BEGIN
   FOR prod IN(SELECT j.production,
-		     j.stepid,
-		     f.eventtypeid,
-		     f.filetypeid,
-		     f.gotreplica,
-		     f.visibilityflag
-	      FROM jobs j,
-		   files f
-	      WHERE j.jobid = f.jobid AND
-		    j.production = v_production AND
-		    f.gotreplica IS NOT NULL AND
-		    f.filetypeid NOT IN(9,17)
-	      GROUP BY j.production,
-		       j.stepid,
-		       f.eventtypeid,
-		       f.filetypeid,
-		       f.gotreplica,
-		       f.visibilityflag
-	      ORDER BY f.gotreplica,
-		       f.visibilityflag
-	      ASC) LOOP
+                     j.stepid,
+                     f.eventtypeid,
+                     f.filetypeid,
+                     f.gotreplica,
+                     f.visibilityflag
+              FROM jobs j,
+                   files f
+              WHERE j.jobid = f.jobid AND
+                    j.production = v_production AND
+                    f.gotreplica IS NOT NULL AND
+                    f.filetypeid NOT IN(9,17)
+              GROUP BY j.production,
+                       j.stepid,
+                       f.eventtypeid,
+                       f.filetypeid,
+                       f.gotreplica,
+                       f.visibilityflag
+              ORDER BY f.gotreplica,
+                       f.visibilityflag
+              ASC) LOOP
     dbms_output.put_line('Inserting -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
     INSERT INTO productionoutputfiles(production,
-				      stepid,
-				      filetypeid,
-				      visible,
-				      eventtypeid,
-				      gotreplica)
-	   VALUES(prod.production,
-		  prod.stepid,
-		  prod.filetypeid,
-		  prod.visibilityflag,
-		  prod.eventtypeid,
-		  prod.gotreplica);
+                                      stepid,
+                                      filetypeid,
+                                      visible,
+                                      eventtypeid,
+                                      gotreplica)
+           VALUES(prod.production,
+                  prod.stepid,
+                  prod.filetypeid,
+                  prod.visibilityflag,
+                  prod.eventtypeid,
+                  prod.gotreplica);
   END LOOP;
 END;
 
@@ -229,59 +229,59 @@ PROCEDURE updateprotopordoutput(
 nb NUMBER;
 BEGIN
   FOR prod IN(SELECT j.production,
-		     j.stepid,
-		     f.eventtypeid,
-		     f.filetypeid,
-		     f.gotreplica,
-		     f.visibilityflag
-	      FROM jobs j,
-		   files f
-	      WHERE j.jobid = f.jobid AND
-		    j.production = v_production AND
-		    f.gotreplica IS NOT NULL AND
-		    f.filetypeid NOT IN(9,17)
-	      GROUP BY j.production,
-		       j.stepid,
-		       f.eventtypeid,
-		       f.filetypeid,
-		       f.gotreplica,
-		       f.visibilityflag
-	      ORDER BY f.gotreplica,
-		       f.visibilityflag
-	      ASC) LOOP
+                     j.stepid,
+                     f.eventtypeid,
+                     f.filetypeid,
+                     f.gotreplica,
+                     f.visibilityflag
+              FROM jobs j,
+                   files f
+              WHERE j.jobid = f.jobid AND
+                    j.production = v_production AND
+                    f.gotreplica IS NOT NULL AND
+                    f.filetypeid NOT IN(9,17)
+              GROUP BY j.production,
+                       j.stepid,
+                       f.eventtypeid,
+                       f.filetypeid,
+                       f.gotreplica,
+                       f.visibilityflag
+              ORDER BY f.gotreplica,
+                       f.visibilityflag
+              ASC) LOOP
     SELECT count(*) INTO nb FROM productionoutputfiles WHERE production = prod.production AND eventtypeid = prod.eventtypeid AND filetypeid = prod.filetypeid AND stepid = prod.stepid AND visible = prod.visibilityflag AND gotreplica = prod.gotreplica;
     dbms_output.put_line('Try UPDATE -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
     IF nb = 0 THEN -- we want to UPDATE only the row, which has modified...
       -- we have to see which rows can be updated
       FOR toupdate IN (SELECT * FROM (SELECT production,
-					     stepid,
-					     eventtypeid,
-					     filetypeid,
-					     gotreplica,
-					     visible AS visibilityflag
-				      FROM productionoutputfiles
-				      WHERE production = v_production)
-			 MINUS
-		       SELECT j.production,
-			      j.stepid,
-			      f.eventtypeid,
-			      f.filetypeid,
-			      f.gotreplica,
-			      f.visibilityflag
-		       FROM jobs j,
-			    files f
-		       WHERE j.jobid = f.jobid AND
-			     j.production = v_production AND
-			     f.gotreplica IS NOT NULL AND
-			     f.filetypeid NOT IN(9,17)
-		       GROUP BY j.production,
-				j.stepid,
-				f.eventtypeid,
-				f.filetypeid,
-				f.gotreplica,
-				f.visibilityflag) LOOP
-	dbms_output.put_line('Update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
-	UPDATE productionoutputfiles SET visible = prod.visibilityflag, gotreplica = prod.gotreplica WHERE production = prod.production AND eventtypeid = prod.eventtypeid AND filetypeid = prod.filetypeid AND stepid = prod.stepid AND visible = toupdate.visibilityflag AND gotreplica = toupdate.gotreplica;
+                                             stepid,
+                                             eventtypeid,
+                                             filetypeid,
+                                             gotreplica,
+                                             visible AS visibilityflag
+                                      FROM productionoutputfiles
+                                      WHERE production = v_production)
+                         MINUS
+                       SELECT j.production,
+                              j.stepid,
+                              f.eventtypeid,
+                              f.filetypeid,
+                              f.gotreplica,
+                              f.visibilityflag
+                       FROM jobs j,
+                            files f
+                       WHERE j.jobid = f.jobid AND
+                             j.production = v_production AND
+                             f.gotreplica IS NOT NULL AND
+                             f.filetypeid NOT IN(9,17)
+                       GROUP BY j.production,
+                                j.stepid,
+                                f.eventtypeid,
+                                f.filetypeid,
+                                f.gotreplica,
+                                f.visibilityflag) LOOP
+        dbms_output.put_line('Update -> Production:' || prod.production || '->step:' || prod.stepid || '->file type:' || prod.filetypeid || '->visible:' || prod.visibilityflag || '->event type:' || prod.eventtypeid || '->replica flag:' || prod.gotreplica);
+        UPDATE productionoutputfiles SET visible = prod.visibilityflag, gotreplica = prod.gotreplica WHERE production = prod.production AND eventtypeid = prod.eventtypeid AND filetypeid = prod.filetypeid AND stepid = prod.stepid AND visible = toupdate.visibilityflag AND gotreplica = toupdate.gotreplica;
       END LOOP;
     END IF;
   END LOOP;
@@ -298,86 +298,86 @@ err_msg varchar2(1000);
 BEGIN
 --FOR toprod in (SELECT distinct j.production FROM jobs j, files f WHERE f.jobid=j.jobid AND j.production>0 AND f.gotreplica='Yes') LOOP
   FOR c IN (SELECT j.production
-	    FROM jobs j,
-		 files f
-	    WHERE f.inserttimestamp >= systimestamp - 1 AND
-		  j.jobid = f.jobid AND
-		  --j.production=toprod.production AND
-		  f.gotreplica IS NOT NULL AND
-		  f.filetypeid NOT IN(9,17) GROUP BY j.production) LOOP
+            FROM jobs j,
+                 files f
+            WHERE f.inserttimestamp >= systimestamp - 1 AND
+                  j.jobid = f.jobid AND
+                  --j.production=toprod.production AND
+                  f.gotreplica IS NOT NULL AND
+                  f.filetypeid NOT IN(9,17) GROUP BY j.production) LOOP
     SELECT count(*) INTO nbrows
     FROM  productionoutputfiles
     WHERE production = c.production;
     SELECT count(*) INTO nbrowstobeprocessed
     FROM (SELECT j.production,
-		 j.stepid,
-		 f.eventtypeid,
-		 f.filetypeid,
-		 f.gotreplica,
-		 f.visibilityflag
-	  FROM jobs j, files f
-	  WHERE j.jobid = f.jobid AND
-		j.production = c.production AND
-		f.gotreplica IS NOT NULL AND
-		f.filetypeid NOT IN(9,17)
-	  GROUP BY j.production,
-		   j.stepid,
-		   f.eventtypeid,
-		   f.filetypeid,
-		   f.gotreplica,
-		   f.visibilityflag
-	  ORDER BY f.gotreplica,
-		   f.visibilityflag
-	 );
+                 j.stepid,
+                 f.eventtypeid,
+                 f.filetypeid,
+                 f.gotreplica,
+                 f.visibilityflag
+          FROM jobs j, files f
+          WHERE j.jobid = f.jobid AND
+                j.production = c.production AND
+                f.gotreplica IS NOT NULL AND
+                f.filetypeid NOT IN(9,17)
+          GROUP BY j.production,
+                   j.stepid,
+                   f.eventtypeid,
+                   f.filetypeid,
+                   f.gotreplica,
+                   f.visibilityflag
+          ORDER BY f.gotreplica,
+                   f.visibilityflag
+         );
     IF nbrows > 0 THEN
       IF nbrows = nbrowstobeprocessed THEN
-	updateprotopordoutput(c.production);
+        updateprotopordoutput(c.production);
       elsif nbrows > nbrowstobeprocessed THEN
-	updateprotopordoutput(c.production);
-	FOR todelete IN (SELECT * FROM (SELECT production,
-					       stepid,
-					       eventtypeid,
-					       filetypeid,
-					       gotreplica,
-					       visible AS visibilityflag
-					FROM productionoutputfiles
-					WHERE production = c.production)
-			   MINUS
-			 SELECT j.production,
-				j.stepid,
-				f.eventtypeid,
-				f.filetypeid,
-				f.gotreplica,
-				f.visibilityflag
-			 FROM jobs j,
-			      files f
-			 WHERE j.jobid = f.jobid AND
-			       j.production = c.production AND
-			       f.gotreplica IS NOT NULL AND
-			       f.filetypeid NOT IN(9,17)
-			 GROUP BY j.production,
-				  j.stepid,
-				  f.eventtypeid,
-				  f.filetypeid,
-				  f.gotreplica,
-				  f.visibilityflag) LOOP
-	  dbms_output.put_line('Delete -> Production:' || todelete.production || '->step:' || todelete.stepid || '->file type:' || todelete.filetypeid || '->visible:' || todelete.visibilityflag || '->event type:' || todelete.eventtypeid || '->replica flag:' || todelete.gotreplica);
-	  DELETE productionoutputfiles WHERE production = todelete.production AND eventtypeid = todelete.eventtypeid AND filetypeid = todelete.filetypeid AND stepid = todelete.stepid AND visible = todelete.visibilityflag AND gotreplica = todelete.gotreplica;
+        updateprotopordoutput(c.production);
+        FOR todelete IN (SELECT * FROM (SELECT production,
+                                               stepid,
+                                               eventtypeid,
+                                               filetypeid,
+                                               gotreplica,
+                                               visible AS visibilityflag
+                                        FROM productionoutputfiles
+                                        WHERE production = c.production)
+                           MINUS
+                         SELECT j.production,
+                                j.stepid,
+                                f.eventtypeid,
+                                f.filetypeid,
+                                f.gotreplica,
+                                f.visibilityflag
+                         FROM jobs j,
+                              files f
+                         WHERE j.jobid = f.jobid AND
+                               j.production = c.production AND
+                               f.gotreplica IS NOT NULL AND
+                               f.filetypeid NOT IN(9,17)
+                         GROUP BY j.production,
+                                  j.stepid,
+                                  f.eventtypeid,
+                                  f.filetypeid,
+                                  f.gotreplica,
+                                  f.visibilityflag) LOOP
+          dbms_output.put_line('Delete -> Production:' || todelete.production || '->step:' || todelete.stepid || '->file type:' || todelete.filetypeid || '->visible:' || todelete.visibilityflag || '->event type:' || todelete.eventtypeid || '->replica flag:' || todelete.gotreplica);
+          DELETE productionoutputfiles WHERE production = todelete.production AND eventtypeid = todelete.eventtypeid AND filetypeid = todelete.filetypeid AND stepid = todelete.stepid AND visible = todelete.visibilityflag AND gotreplica = todelete.gotreplica;
       END LOOP;
       elsif nbrows < nbrowstobeprocessed THEN
-	updateprotopordoutput(c.production);
-	FOR toinsert IN(SELECT * FROM (SELECT j.production,j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag FROM jobs j, files f WHERE
+        updateprotopordoutput(c.production);
+        FOR toinsert IN(SELECT * FROM (SELECT j.production,j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag FROM jobs j, files f WHERE
             j.jobid = f.jobid AND
-	    j.production = c.production AND
-	    f.gotreplica IS NOT NULL AND
-	    f.filetypeid NOT IN(9,17) GROUP BY j.production, j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag ORDER BY f.gotreplica,f.visibilityflag)  MINUS
-		   SELECT production, stepid, eventtypeid, filetypeid, gotreplica, visible AS visibilityflag FROM productionoutputfiles WHERE production = c.production) LOOP
-		dbms_output.put_line('Inserting -> Production:' || toinsert.production || '->step:' || toinsert.stepid || '->file type:' || toinsert.filetypeid || '->visible:' || toinsert.visibilityflag || '->event type:' || toinsert.eventtypeid || '->replica flag:' || toinsert.gotreplica);
-		INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(toinsert.production,toinsert.stepid, toinsert.filetypeid, toinsert.visibilityflag,toinsert.eventtypeid, toinsert.gotreplica);
-	END LOOP;
+            j.production = c.production AND
+            f.gotreplica IS NOT NULL AND
+            f.filetypeid NOT IN(9,17) GROUP BY j.production, j.stepid, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag ORDER BY f.gotreplica,f.visibilityflag)  MINUS
+                   SELECT production, stepid, eventtypeid, filetypeid, gotreplica, visible AS visibilityflag FROM productionoutputfiles WHERE production = c.production) LOOP
+                dbms_output.put_line('Inserting -> Production:' || toinsert.production || '->step:' || toinsert.stepid || '->file type:' || toinsert.filetypeid || '->visible:' || toinsert.visibilityflag || '->event type:' || toinsert.eventtypeid || '->replica flag:' || toinsert.gotreplica);
+                INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid,gotreplica)VALUES(toinsert.production,toinsert.stepid, toinsert.filetypeid, toinsert.visibilityflag,toinsert.eventtypeid, toinsert.gotreplica);
+        END LOOP;
       END IF;
     ELSE
-	insertprotopordoutput(c.production);
+        insertprotopordoutput(c.production);
     END IF;
     COMMIT;
   END LOOP;
@@ -387,9 +387,9 @@ BEGIN
     err_num := SQLCODE;
     err_msg := substr(sqlerrm, 1, 1000);
     utl_mail.send(sender => 'lhcb-geoc@cern.ch',
-	    recipients => 'lhcb-bookkeeping@cern.ch',
-	    subject    => 'Failed to UPDATE productionoutputfiles',
-	    message    => 'ERROR NUMBER:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
+            recipients => 'lhcb-bookkeeping@cern.ch',
+            subject    => 'Failed to UPDATE productionoutputfiles',
+            message    => 'ERROR NUMBER:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-productionoutputfiles');
 END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -399,14 +399,14 @@ err_msg varchar2(1000);
 BEGIN
 -- get the modified production list
  FOR prod IN (SELECT j.production FROM jobs j, files f WHERE
-		f.inserttimestamp >= systimestamp - 1 AND
+                f.inserttimestamp >= systimestamp - 1 AND
                 j.jobid = f.jobid AND
-		f.gotreplica IS NOT NULL AND
-		f.filetypeid NOT IN(9,17) GROUP BY j.production)
+                f.gotreplica IS NOT NULL AND
+                f.filetypeid NOT IN(9,17) GROUP BY j.production)
   LOOP
     DELETE prodrunview WHERE production = prod.production;
     FOR insertprod IN (SELECT j.production, j.runnumber FROM jobs j, files f WHERE j.jobid = f.jobid AND j.production = prod.production AND f.gotreplica = 'Yes'
-				 AND f.visibilityflag = 'Y' AND j.runnumber IS NOT NULL GROUP BY j.production,j.runnumber)
+                                 AND f.visibilityflag = 'Y' AND j.runnumber IS NOT NULL GROUP BY j.production,j.runnumber)
     LOOP
       INSERT INTO prodrunview(production,runnumber)VALUES(insertprod.production,insertprod.runnumber);
     END LOOP;
@@ -415,11 +415,11 @@ BEGIN
   EXCEPTION
     WHEN others THEN
         err_num := SQLCODE;
-	err_msg := substr(sqlerrm, 1, 1000);
+        err_msg := substr(sqlerrm, 1, 1000);
         utl_mail.send(sender => 'lhcb-geoc@cern.ch',
                 recipients => 'lhcb-bookkeeping@cern.ch',
                 subject    => 'Failed to update prodrunview',
-		message    => 'ERROR number:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-prodrunview');
+                message    => 'ERROR number:' || err_num || ' error message:' || err_msg || ' More info: https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Bookkeeping/administrate_oracle.html#automatic-updating-of-the-prodrunview');
 END;
 END;
  /

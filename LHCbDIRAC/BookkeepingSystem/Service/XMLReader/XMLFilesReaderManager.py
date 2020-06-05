@@ -149,7 +149,7 @@ class XMLFilesReaderManager(object):
 
       for param in params:
         paramName = param.getParamName()
-	gLogger.debug('ParamName check of ' + str(paramName))
+        gLogger.debug('ParamName check of ' + str(paramName))
 
         if paramName == "EventType":
           value = long(param.getParamValue())
@@ -607,8 +607,8 @@ class XMLFilesReaderManager(object):
     else:
       value = res['Value']
       if value[0][0] == 0:
-	errorMessage = "Missing processing pass and simulation conditions: "
-	errorMessage += "please fill it. Production = %s" % (str(attrList['Production']))
+        errorMessage = "Missing processing pass and simulation conditions: "
+        errorMessage += "please fill it. Production = %s" % (str(attrList['Production']))
         gLogger.warn(errorMessage)
 
     if attrList['JobStart'] is None:

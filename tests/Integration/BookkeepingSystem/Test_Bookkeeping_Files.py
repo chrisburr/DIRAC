@@ -31,7 +31,7 @@ __RCSID__ = "$Id$"
 runnb = '1122'
 # 5 fake files
 files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (runnb,
-								 runnb, i) for i in xrange(5)]
+                                                                 runnb, i) for i in xrange(5)]
 
 # Construction of an XML Job report
 # (this should be similar to what comes from online)
@@ -135,7 +135,7 @@ def test_sendXMLBookkeepingReport():
   xmlReport = jobXML
   for f in files:
     xmlReport += xmlFile.replace("%filename%", f).replace('%fileCreation%',
-							  currentTime.strftime('%Y-%m-%d %H:%M'))
+                                                          currentTime.strftime('%Y-%m-%d %H:%M'))
 
   xmlReport += dqCond
   res = bk.sendXMLBookkeepingReport(xmlReport)
@@ -150,26 +150,26 @@ def test_getRunInformation():
   assert retVal['OK'] is True
   assert runnb not in retVal['Value']
   assert sorted(retVal['Value'][int(runnb)]) == sorted(['ConfigName',
-							'JobEnd',
-							'ConditionDescription',
-							'ProcessingPass',
-							'FillNumber',
-							'DDDB',
-							'JobStart',
-							'TCK',
-							'CONDDB',
-							'ConfigVersion'])
+                                                        'JobEnd',
+                                                        'ConditionDescription',
+                                                        'ProcessingPass',
+                                                        'FillNumber',
+                                                        'DDDB',
+                                                        'JobStart',
+                                                        'TCK',
+                                                        'CONDDB',
+                                                        'ConfigVersion'])
   result = dict(retVal['Value'][int(runnb)])
   result.pop('JobStart')
   result.pop('JobEnd')
   assert result == {'ConfigName': 'Test',
-		    'ConditionDescription': 'Beam450GeV-MagDown',
-		    'ProcessingPass': '/Real Data',
-		    'FillNumber': 29,
-		    'DDDB': 'xyz',
-		    'TCK': '-0x7f6bffff',
-		    'CONDDB': 'xy',
-		    'ConfigVersion': 'Test01'}
+                    'ConditionDescription': 'Beam450GeV-MagDown',
+                    'ProcessingPass': '/Real Data',
+                    'FillNumber': 29,
+                    'DDDB': 'xyz',
+                    'TCK': '-0x7f6bffff',
+                    'CONDDB': 'xy',
+                    'ConfigVersion': 'Test01'}
 
 
 def test_getListOfFills():
@@ -220,18 +220,18 @@ def test_getRunFiles():
   assert len(retVal['Value']) == 5
 
   files = ['/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw',
-	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_0.raw',
-	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_4.raw',
-	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_3.raw',
-	   '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_2.raw']
+           '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_0.raw',
+           '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_4.raw',
+           '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_3.raw',
+           '/lhcb/data/2016/RAW/Test/test/1122/0001122_test_2.raw']
 
   runMeta = ['FullStat',
-	     'Luminosity',
-	     'FileSize',
-	     'EventStat',
-	     'GotReplica',
-	     'GUID',
-	     'InstLuminosity']
+             'Luminosity',
+             'FileSize',
+             'EventStat',
+             'GotReplica',
+             'GUID',
+             'InstLuminosity']
   for rec in retVal['Value']:
     assert rec in files
     assert sorted(retVal['Value'][rec]) == sorted(runMeta)
@@ -278,9 +278,9 @@ def test_fileMetadata():
   test the file metadata method
   """
   fileParams = ['GUID', 'ADLER32', 'FullStat', 'EventType', 'FileType',
-		'MD5SUM', 'VisibilityFlag', 'InsertTimeStamp', 'RunNumber',
-		'JobId', 'Luminosity', 'FileSize', 'EventStat', 'GotReplica',
-		'CreationDate', 'InstLuminosity', 'DataqualityFlag']
+                'MD5SUM', 'VisibilityFlag', 'InsertTimeStamp', 'RunNumber',
+                'JobId', 'Luminosity', 'FileSize', 'EventStat', 'GotReplica',
+                'CreationDate', 'InstLuminosity', 'DataqualityFlag']
   retVal = bk.getFileMetadata(files)
 
   assert retVal['OK'] is True

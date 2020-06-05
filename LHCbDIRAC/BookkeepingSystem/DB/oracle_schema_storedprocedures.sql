@@ -250,13 +250,13 @@ BEGIN
     SELECT coalesce(max(filetypeid) + 1, 1) INTO id
     FROM filetypes;
     INSERT INTO filetypes(filetypeid,
-			  name,
-			  description,
-			  VERSION)
+                          name,
+                          description,
+                          VERSION)
     VALUES(id,
-	  upper(v_name),
-	  descr,
-	  filetype);
+          upper(v_name),
+          descr,
+          filetype);
     COMMIT;
     RETURN id;
   END IF;
@@ -266,13 +266,13 @@ BEGIN
     WHEN no_data_found THEN
       SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
       INSERT INTO filetypes(filetypeid,
-			   name,
-			   description,
-			   VERSION)
+                           name,
+                           description,
+                           VERSION)
       VALUES(id,
-	    upper(v_name),
-	    description,
-	    filetype);
+            upper(v_name),
+            description,
+            filetype);
       COMMIT;
     RETURN id;
     WHEN others THEN
@@ -300,66 +300,66 @@ BEGIN
   IF iftypes.count = 0 THEN
     INSERT INTO stepstmp
       SELECT s.stepid,
-	     s.stepname,
-	     s.applicationname,
-	     s.applicationversion,
-	     s.optionfiles,
-	     s.dddb,
-	     s.conddb,
-	     s.extrapackages,
-	     s.visible,
-	     s.processingpass,
-	     s.usable,
-	     s.dqtag,
-	     s.optionsformat,
-	     s.ismulticore,
-	     s.systemconfig,
-	     s.mctck,
-	     r.stepid,
-	     r.stepname,
-	     r.applicationname,
-	     r.applicationversion,
-	     r.optionfiles,
-	     r.dddb,
-	     r.conddb,
-	     r.extrapackages,
-	     r.visible,
-	     r.processingpass,
-	     r.usable,
-	     r.dqtag,
-	     r.optionsformat,
-	     r.ismulticore,
-	     r.systemconfig,
-	     r.mctck
+             s.stepname,
+             s.applicationname,
+             s.applicationversion,
+             s.optionfiles,
+             s.dddb,
+             s.conddb,
+             s.extrapackages,
+             s.visible,
+             s.processingpass,
+             s.usable,
+             s.dqtag,
+             s.optionsformat,
+             s.ismulticore,
+             s.systemconfig,
+             s.mctck,
+             r.stepid,
+             r.stepname,
+             r.applicationname,
+             r.applicationversion,
+             r.optionfiles,
+             r.dddb,
+             r.conddb,
+             r.extrapackages,
+             r.visible,
+             r.processingpass,
+             r.usable,
+             r.dqtag,
+             r.optionsformat,
+             r.ismulticore,
+             r.systemconfig,
+             r.mctck
       FROM steps s,
-	   steps r,
-	   runtimeprojects rr
+           steps r,
+           runtimeprojects rr
       WHERE s.stepid = rr.stepid( + )
-	AND r.stepid( + ) = rr.runtimeprojectid
-	AND s.inputfiletypes IS NULL;
+        AND r.stepid( + ) = rr.runtimeprojectid
+        AND s.inputfiletypes IS NULL;
   ELSE
     --iftypes:=inputfileslist('Charm.DST','SDST');
     FOR c IN (SELECT s.stepid,
-		    s.inputfiletypes
-	      FROM steps s,
-		   table(s.inputfiletypes) i
-	      WHERE i.name = iftypes(1))
+                    s.inputfiletypes
+              FROM steps s,
+                   table(s.inputfiletypes) i
+              WHERE i.name = iftypes(1))
       LOOP
       FOR i IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
       --   DBMS_OUTPUT.PUT_LINE('      Tag: '||c.inputfiletypes.FIRST(i));
       --  DBMS_OUTPUT.PUT_LINE('      Tag: '||c.inputfiletypes(i).NAME);
-	RESULT:=iftypes(i) = c.inputfiletypes(i).name;
-	exit WHEN NOT RESULT;
+        RESULT:=iftypes(i) = c.inputfiletypes(i).name;
+        exit WHEN NOT RESULT;
       END LOOP;
       IF RESULT AND iftypes.count = c.inputfiletypes.last THEN
-	INSERT INTO stepstmp SELECT  s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.ismulticore, s.systemconfig, s.mctck,
-				     r.stepid, r.stepname, r.applicationname, r.applicationversion, r.optionfiles, r.dddb, r.conddb, r.extrapackages, r.visible, r.processingpass, r.usable, r.dqtag, r.optionsformat, r.ismulticore, r.systemconfig, r.mctck
-	FROM steps s,  steps r, runtimeprojects rr WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid;
-	dbms_output.put_line('      COOL: ' || c.stepid);
+        INSERT INTO stepstmp SELECT  s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.ismulticore, s.systemconfig, s.mctck,
+                                     r.stepid, r.stepname, r.applicationname, r.applicationversion, r.optionfiles, r.dddb, r.conddb, r.extrapackages, r.visible, r.processingpass, r.usable, r.dqtag, r.optionsformat, r.ismulticore, r.systemconfig, r.mctck
+        FROM steps s,  steps r, runtimeprojects rr WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid;
+        dbms_output.put_line('      COOL: ' || c.stepid);
       END IF;
     END LOOP;
     -- LOOP
-	--inputf(i):=ftype(iftypes(i),'Y');
+        --inputf(i):=ftype(iftypes(i),'Y');
     --    DBMS_OUTPUT.PUT_LINE('      Tag: '||iftypes(i));
     -- END LOOP;
     --FOR inputfiletypes in c1
@@ -380,8 +380,8 @@ OUTPUT BOOLEAN;
 BEGIN
 IF iftypes.count = 0 AND oftypes.count = 0 THEN
   FOR cur IN (SELECT s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.ismulticore, s.systemconfig,s.mctck,
-		     r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra,
-		     r.visible AS rvisi, r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsystemconfig, r.mctck AS rmctck
+                     r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra,
+                     r.visible AS rvisi, r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsystemconfig, r.mctck AS rmctck
   FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.inputfiletypes IS NULL AND s.usable != 'Obsolete') LOOP
   pipe row(stepobj(cur.stepid,cur.stepname,cur.applicationname, cur.applicationversion, cur.optionfiles, cur.dddb, cur.conddb, cur.extrapackages, cur.visible, cur.processingpass, cur.usable, cur.dqtag, cur.optionsformat, cur.ismulticore, cur.systemconfig, cur.mctck,
             cur.rid, cur.rsname, cur.rappname, cur.rappver, cur.roptsf, cur.rdddb, cur.rcondb, cur.rextra, cur.rvisi, cur.rproc, cur.rusab,cur.rdq,cur.ropff, cur.rmulticore, cur.rsystemconfig, cur.rmctck));
@@ -393,58 +393,58 @@ IF iftypes.count > 0 THEN
      --DBMS_OUTPUT.PUT_LINE('WHY!!? '||c.stepid);
      IF c.inputfiletypes IS NOT NULL THEN
        IF MATCH = 'YES' THEN
-	  IF c.inputfiletypes.count != iftypes.count THEN
-	     INPUT:=FALSE;
+          IF c.inputfiletypes.count != iftypes.count THEN
+             INPUT:=FALSE;
           ELSE
-	  FOR i IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
-	    IF i > iftypes.count THEN
-	      INPUT:= FALSE;
+          FOR i IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+            IF i > iftypes.count THEN
+              INPUT:= FALSE;
             ELSE
-	     INPUT:=iftypes(i) = c.inputfiletypes(i).name;
+             INPUT:=iftypes(i) = c.inputfiletypes(i).name;
             END IF;
-	    exit WHEN NOT INPUT;
+            exit WHEN NOT INPUT;
           END LOOP;
           END IF;
        ELSE
-	 INPUT:=FALSE;
-	 FOR i IN iftypes.first .. iftypes.last LOOP
-	   FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
-	     IF iftypes(i) = c.inputfiletypes(j).name THEN
-	       INPUT:=TRUE;
-	       exit;
+         INPUT:=FALSE;
+         FOR i IN iftypes.first .. iftypes.last LOOP
+           FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+             IF iftypes(i) = c.inputfiletypes(j).name THEN
+               INPUT:=TRUE;
+               exit;
              END IF;
            END LOOP;
-	 exit WHEN INPUT;
+         exit WHEN INPUT;
          END LOOP;
        END IF;
      END IF;
      IF INPUT THEN
        IF oftypes.count > 0 THEN
-	 OUTPUT:=FALSE;
-	 IF c.outputfiletypes IS NOT NULL THEN
-	   IF MATCH = 'YES' THEN
-	     IF c.outputfiletypes.count != oftypes.count THEN
-		 OUTPUT:=FALSE;
+         OUTPUT:=FALSE;
+         IF c.outputfiletypes IS NOT NULL THEN
+           IF MATCH = 'YES' THEN
+             IF c.outputfiletypes.count != oftypes.count THEN
+                 OUTPUT:=FALSE;
              ELSE
-	     FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
-	       IF i > iftypes.count THEN
-		  OUTPUT:=FALSE;
+             FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+               IF i > iftypes.count THEN
+                  OUTPUT:=FALSE;
                ELSE
-		 OUTPUT:=oftypes(i) = c.outputfiletypes(i).name;
+                 OUTPUT:=oftypes(i) = c.outputfiletypes(i).name;
                END IF;
-	       exit WHEN NOT OUTPUT;
+               exit WHEN NOT OUTPUT;
              END LOOP;
              END IF;
            ELSE
-	     OUTPUT:=FALSE;
-	     FOR i IN oftypes.first .. oftypes.last LOOP
-	       FOR j IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
-		 IF oftypes(i) = c.outputfiletypes(j).name THEN
-	     OUTPUT:=TRUE;
-		   exit;
+             OUTPUT:=FALSE;
+             FOR i IN oftypes.first .. oftypes.last LOOP
+               FOR j IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+                 IF oftypes(i) = c.outputfiletypes(j).name THEN
+             OUTPUT:=TRUE;
+                   exit;
                  END IF;
                END LOOP;
-	       exit WHEN OUTPUT;
+               exit WHEN OUTPUT;
              END LOOP;
            END IF;
          END IF;
@@ -454,9 +454,9 @@ IF iftypes.count > 0 THEN
     IF INPUT AND OUTPUT THEN
       dbms_output.put_line('Insert1: ' || c.stepid);
       FOR cur IN (SELECT s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.ismulticore, s.systemconfig,s.mctck,
-		  r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra, r.visible AS rvisi,
-		  r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsysconfig, r.mctck AS rmctck
-	FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid AND s.usable != 'Obsolete' ) LOOP
+                  r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra, r.visible AS rvisi,
+                  r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsysconfig, r.mctck AS rmctck
+        FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid AND s.usable != 'Obsolete' ) LOOP
       pipe row(stepobj(cur.stepid,cur.stepname,cur.applicationname, cur.applicationversion, cur.optionfiles, cur.dddb, cur.conddb, cur.extrapackages, cur.visible, cur.processingpass, cur.usable, cur.dqtag, cur.optionsformat, cur.ismulticore, cur.systemconfig, cur.mctck,
                cur.rid, cur.rsname, cur.rappname, cur.rappver, cur.roptsf, cur.rdddb, cur.rcondb, cur.rextra, cur.rvisi, cur.rproc, cur.rusab,cur.rdq,cur.ropff, cur.rmulticore, cur.rsysconfig, cur.mctck));
       END LOOP;
@@ -469,69 +469,69 @@ ELSE
      OUTPUT:=FALSE;
      IF c.outputfiletypes IS NOT NULL THEN
        IF MATCH = 'YES' THEN
-	 IF c.outputfiletypes.count != oftypes.count THEN
-	     OUTPUT:=FALSE;
+         IF c.outputfiletypes.count != oftypes.count THEN
+             OUTPUT:=FALSE;
          ELSE
-	 FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
-	   IF i > oftypes.count THEN
-	     OUTPUT:=FALSE;
+         FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+           IF i > oftypes.count THEN
+             OUTPUT:=FALSE;
            ELSE
-	     OUTPUT:=oftypes(i) = c.outputfiletypes(i).name;
+             OUTPUT:=oftypes(i) = c.outputfiletypes(i).name;
            END IF;
-	   exit WHEN NOT OUTPUT;
+           exit WHEN NOT OUTPUT;
          END LOOP;
          END IF;
        ELSE
-	OUTPUT:=FALSE;
-	FOR i IN oftypes.first .. oftypes.last LOOP
-	  FOR j IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
-	    IF oftypes(i) = c.outputfiletypes(j).name THEN
-	OUTPUT:=TRUE;
-	      exit;
+        OUTPUT:=FALSE;
+        FOR i IN oftypes.first .. oftypes.last LOOP
+          FOR j IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+            IF oftypes(i) = c.outputfiletypes(j).name THEN
+        OUTPUT:=TRUE;
+              exit;
             END IF;
           END LOOP;
-	  exit WHEN OUTPUT;
+          exit WHEN OUTPUT;
         END LOOP;
        END IF;
      END IF;
      IF OUTPUT THEN
        IF iftypes.count > 0 THEN
-	 INPUT:=FALSE;
-	 IF MATCH = 'YES' THEN
-	   IF c.inputfiletypes.count != iftypes.count THEN
-	      INPUT:=FALSE;
+         INPUT:=FALSE;
+         IF MATCH = 'YES' THEN
+           IF c.inputfiletypes.count != iftypes.count THEN
+              INPUT:=FALSE;
            ELSE
-	   FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
-	     IF j > iftypes.count THEN
-	       INPUT:=FALSE;
+           FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+             IF j > iftypes.count THEN
+               INPUT:=FALSE;
              ELSE
-	       INPUT:=iftypes(j) = c.inputfiletypes(j).name;
+               INPUT:=iftypes(j) = c.inputfiletypes(j).name;
              END IF;
-	     exit WHEN NOT OUTPUT;
+             exit WHEN NOT OUTPUT;
            END LOOP;
            END IF;
          ELSE
-	   INPUT:=FALSE;
-	   FOR i IN iftypes.first .. iftypes.last LOOP
-	     FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
-	       IF iftypes(i) = c.inputfiletypes(j).name THEN
-		 INPUT:=TRUE;
-		 exit;
+           INPUT:=FALSE;
+           FOR i IN iftypes.first .. iftypes.last LOOP
+             FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+               IF iftypes(i) = c.inputfiletypes(j).name THEN
+                 INPUT:=TRUE;
+                 exit;
                END IF;
              END LOOP;
-	     exit WHEN INPUT;
+             exit WHEN INPUT;
            END LOOP;
          END IF;
        ELSE
-	INPUT := TRUE;
+        INPUT := TRUE;
        END IF;
     IF INPUT AND OUTPUT THEN
       dbms_output.put_line('Insert2: ' || c.stepid);
       FOR cur2 IN (SELECT s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.ismulticore, s.systemconfig,s.mctck,
-			  r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra, r.visible AS rvisi,
-			  r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsysconfig, r.mctck AS rmctck
-	FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid AND s.usable != 'Obsolete') LOOP
-	pipe row(stepobj(cur2.stepid,cur2.stepname,cur2.applicationname, cur2.applicationversion, cur2.optionfiles, cur2.dddb, cur2.conddb, cur2.extrapackages, cur2.visible, cur2.processingpass, cur2.usable, cur2.dqtag, cur2.optionsformat, cur2.ismulticore, cur2.systemconfig,cur2.mctck,
+                          r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra, r.visible AS rvisi,
+                          r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsysconfig, r.mctck AS rmctck
+        FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid AND s.usable != 'Obsolete') LOOP
+        pipe row(stepobj(cur2.stepid,cur2.stepname,cur2.applicationname, cur2.applicationversion, cur2.optionfiles, cur2.dddb, cur2.conddb, cur2.extrapackages, cur2.visible, cur2.processingpass, cur2.usable, cur2.dqtag, cur2.optionsformat, cur2.ismulticore, cur2.systemconfig,cur2.mctck,
                           cur2.rid, cur2.rsname, cur2.rappname, cur2.rappver, cur2.roptsf, cur2.rdddb, cur2.rcondb, cur2.rextra, cur2.rvisi, cur2.rproc, cur2.rusab,cur2.rdq,cur2.ropff, cur2.rmulticore, cur2.rsysconfig, cur2.rmctck));
       END LOOP;
     END IF;
@@ -609,8 +609,8 @@ ELSE
     FOR j IN oftypes.first .. oftypes.last LOOP
       RESULT := FALSE;
       FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
-	RESULT:=oftypes(j) = c.outputfiletypes(i).name;
-	exit WHEN RESULT;
+        RESULT:=oftypes(j) = c.outputfiletypes(i).name;
+        exit WHEN RESULT;
       END LOOP;
     END LOOP;
     IF RESULT THEN
@@ -680,8 +680,8 @@ ELSE
       RESULT := FALSE;
       FOR i IN c.inputfiletypes.first .. c.inputfiletypes.last
       LOOP
-	RESULT:=iftypes(j) = c.inputfiletypes(i).name;
-	exit WHEN RESULT;
+        RESULT:=iftypes(j) = c.inputfiletypes(i).name;
+        exit WHEN RESULT;
       END LOOP;
     END LOOP;
   IF RESULT THEN
@@ -741,29 +741,29 @@ PROCEDURE getjobinfo(
 BEGIN
   OPEN a_cursor FOR
     SELECT jobs.diracjobid,
-	   jobs.diracversion,
-	   jobs.eventinputstat,
-	   jobs.exectime,
-	   jobs.firsteventnumber,
-	   jobs.location,
-	   jobs.name,
-	   jobs.numberofevents,
-	   jobs.statisticsrequested,
-	   jobs.wncpupower,
-	   jobs.cputime,
-	   jobs.wncache,
-	   jobs.wnmemory,
-	   jobs.wnmodel,
-	   jobs.workernode,
-	   jobs.wncpuhs06,
-	   jobs.jobid,
-	   jobs.totalluminosity,
-	   jobs.production,
-	   jobs.programname,
-	   jobs.programversion,
-	   jobs.wnmjfhs06,
-	   jobs.hlt2tck,
-	   jobs.numberofprocessors
+           jobs.diracversion,
+           jobs.eventinputstat,
+           jobs.exectime,
+           jobs.firsteventnumber,
+           jobs.location,
+           jobs.name,
+           jobs.numberofevents,
+           jobs.statisticsrequested,
+           jobs.wncpupower,
+           jobs.cputime,
+           jobs.wncache,
+           jobs.wnmemory,
+           jobs.wnmodel,
+           jobs.workernode,
+           jobs.wncpuhs06,
+           jobs.jobid,
+           jobs.totalluminosity,
+           jobs.production,
+           jobs.programname,
+           jobs.programversion,
+           jobs.wnmjfhs06,
+           jobs.hlt2tck,
+           jobs.numberofprocessors
     FROM jobs,files
     WHERE files.jobid = jobs.jobid
       AND files.filename = lfn;
@@ -896,8 +896,8 @@ PROCEDURE getfnamefidrepwithjid(
 BEGIN
   OPEN a_cursor FOR
     SELECT files.filename,
-	   files.fileid,
-	   files.gotreplica
+           files.fileid,
+           files.gotreplica
     FROM files
     WHERE files.jobid = v_jobid;
 END;
@@ -912,32 +912,32 @@ BEGIN
   IF NOT prod THEN
     OPEN a_cursor FOR
       SELECT files.filename,
-	     files.fileid,
-	     files.gotreplica,
-	     0,
-	     files.eventstat,
-	     files.eventtypeid,
-	     files.luminosity,
-	     files.instluminosity,
-	     filetypes.name
+             files.fileid,
+             files.gotreplica,
+             0,
+             files.eventstat,
+             files.eventtypeid,
+             files.luminosity,
+             files.instluminosity,
+             filetypes.name
       FROM files, filetypes
       WHERE files.filetypeid = filetypes.filetypeid
-	AND files.jobid = v_jobid;
+        AND files.jobid = v_jobid;
   ELSE
     OPEN a_cursor FOR
       SELECT files.filename,
-	     files.fileid,
-	     files.gotreplica,
-	     jobs.production,
-	     files.eventstat,
-	     files.eventtypeid,
-	     files.luminosity,
-	     files.instluminosity,
-	     filetypes.name
+             files.fileid,
+             files.gotreplica,
+             jobs.production,
+             files.eventstat,
+             files.eventtypeid,
+             files.luminosity,
+             files.instluminosity,
+             filetypes.name
       FROM files, jobs, filetypes
       WHERE files.filetypeid = filetypes.filetypeid
-	AND jobs.jobid = files.jobid
-	AND files.jobid = v_jobid;
+        AND jobs.jobid = files.jobid
+        AND files.jobid = v_jobid;
   END IF;
 END;
 
@@ -949,8 +949,8 @@ PROCEDURE checkfile(
 BEGIN
   OPEN a_cursor FOR
     SELECT fileid,
-	   jobid,
-	   filetypeid
+           jobid,
+           filetypeid
     FROM files
     WHERE filename = name;
 END;
@@ -963,18 +963,18 @@ FUNCTION checkfiletypeandversion (
  descr varchar2(256);
  BEGIN
    SELECT filetypeid INTO id FROM filetypes WHERE
-	   name = v_name AND
-	   VERSION = v_version;
+           name = v_name AND
+           VERSION = v_version;
    RETURN id;
    EXCEPTION
     WHEN too_many_rows THEN
      SELECT min(filetypeid) INTO id FROM filetypes WHERE name = v_name AND VERSION = v_version;RETURN id;
     WHEN others THEN
    SELECT count(*) INTO id FROM filetypes WHERE
-	   name = v_name;
+           name = v_name;
    IF id > 0 THEN
    SELECT DISTINCT description INTO descr FROM filetypes WHERE
-	   name = v_name;
+           name = v_name;
    SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
    INSERT INTO filetypes(filetypeid,name,description,VERSION) VALUES(id,v_name,descr,v_version);
    COMMIT;
@@ -1045,68 +1045,68 @@ FUNCTION insertjobsrow (
 
     SELECT jobid_seq.nextval INTO jid FROM dual;
      INSERT INTO jobs(
-	 jobid,
-	 configurationid,
-	 diracjobid,
-	 diracversion,
-	 eventinputstat,
-	 exectime,
-	 firsteventnumber,
-	 jobend,
-	 jobstart,
-	 LOCATION,
-	 name,
-	 numberofevents,
-	 production,
-	 programname,
-	 programversion,
-	 statisticsrequested,
-	 wncpupower,
-	 cputime,
-	 wncache,
-	 wnmemory,
-	 wnmodel,
-	 workernode,
-	 runnumber,
-	 fillnumber,
-	 wncpuhs06,
-	 totalluminosity,
-	 tck,
-	 stepid,
-	 wnmjfhs06,
-	 hlt2tck,
-	 numberofprocessors
+         jobid,
+         configurationid,
+         diracjobid,
+         diracversion,
+         eventinputstat,
+         exectime,
+         firsteventnumber,
+         jobend,
+         jobstart,
+         LOCATION,
+         name,
+         numberofevents,
+         production,
+         programname,
+         programversion,
+         statisticsrequested,
+         wncpupower,
+         cputime,
+         wncache,
+         wnmemory,
+         wnmodel,
+         workernode,
+         runnumber,
+         fillnumber,
+         wncpuhs06,
+         totalluminosity,
+         tck,
+         stepid,
+         wnmjfhs06,
+         hlt2tck,
+         numberofprocessors
          )
    VALUES(
           jid,
-	  configid,
-	  v_diracjobid,
-	  v_diracversion,
-	  v_eventinputstat,
-	  v_exectime,
-	  v_firsteventnumber,
-	  v_jobend,
-	  v_jobstart,
-	  v_location,
-	  v_name,
-	  v_numberofevents,
-	  v_production,
-	  v_programname,
-	  v_programversion,
-	  v_statisticsrequested,
-	  v_wncpupower,
-	  v_cputime,
-	  v_wncache,
-	  v_wnmemory,
-	  v_wnmodel,
-	  v_workernode,
-	  v_runnumber,
-	  v_fillnumber,
-	  v_wncpuhs06,
-	  v_totalluminosity,
+          configid,
+          v_diracjobid,
+          v_diracversion,
+          v_eventinputstat,
+          v_exectime,
+          v_firsteventnumber,
+          v_jobend,
+          v_jobstart,
+          v_location,
+          v_name,
+          v_numberofevents,
+          v_production,
+          v_programname,
+          v_programversion,
+          v_statisticsrequested,
+          v_wncpupower,
+          v_cputime,
+          v_wncache,
+          v_wnmemory,
+          v_wnmodel,
+          v_workernode,
+          v_runnumber,
+          v_fillnumber,
+          v_wncpuhs06,
+          v_totalluminosity,
           v_tck,
           v_stepid,
-	  v_wnmjfhs06,
+          v_wnmjfhs06,
           v_hlt2tck,
           v_numproc);
 
@@ -1126,34 +1126,34 @@ FUNCTION insertjobsrow (
       raise_application_error(ecode, 'It is not a run!');
     ELSE
        UPDATE jobs SET configurationid = configid,
-	 diracjobid = v_diracjobid,
-	 diracversion = v_diracversion,
-	 eventinputstat = v_eventinputstat,
-	 exectime = v_exectime,
-	 firsteventnumber = v_firsteventnumber,
-	 jobend = v_jobend,
-	 jobstart = v_jobstart,
-	 LOCATION = v_location,
-	 name = v_name,
-	 numberofevents = v_numberofevents,
-	 production = v_production,
-	 programname = v_programname,
-	 programversion = v_programversion,
-	 statisticsrequested = v_statisticsrequested,
-	 wncpupower = v_wncpupower,
-	 cputime = v_cputime,
-	 wncache = v_wncache,
-	 wnmemory = v_wnmemory,
-	 wnmodel = v_wnmodel,
-	 workernode = v_workernode,
-	 fillnumber = v_fillnumber,
-	 wncpuhs06 = v_wncpuhs06,
-	 totalluminosity = v_totalluminosity,
-	 stepid = v_stepid,
-	 tck = v_tck,
-	 wnmjfhs06 = v_wnmjfhs06,
-	 hlt2tck = v_hlt2tck,
-	 numberofprocessors = v_numproc WHERE jobid = jid;
+         diracjobid = v_diracjobid,
+         diracversion = v_diracversion,
+         eventinputstat = v_eventinputstat,
+         exectime = v_exectime,
+         firsteventnumber = v_firsteventnumber,
+         jobend = v_jobend,
+         jobstart = v_jobstart,
+         LOCATION = v_location,
+         name = v_name,
+         numberofevents = v_numberofevents,
+         production = v_production,
+         programname = v_programname,
+         programversion = v_programversion,
+         statisticsrequested = v_statisticsrequested,
+         wncpupower = v_wncpupower,
+         cputime = v_cputime,
+         wncache = v_wncache,
+         wnmemory = v_wnmemory,
+         wnmodel = v_wnmodel,
+         workernode = v_workernode,
+         fillnumber = v_fillnumber,
+         wncpuhs06 = v_wncpuhs06,
+         totalluminosity = v_totalluminosity,
+         stepid = v_stepid,
+         tck = v_tck,
+         wnmjfhs06 = v_wnmjfhs06,
+         hlt2tck = v_hlt2tck,
+         numberofprocessors = v_numproc WHERE jobid = jid;
       COMMIT;
     RETURN jid;
     END IF;
@@ -1186,44 +1186,44 @@ FUNCTION insertjobsrow (
     SELECT dataquality.qualityid INTO dqid FROM dataquality WHERE dataquality.dataqualityflag = dqflag;
     SELECT fileid_seq.nextval INTO fid FROM dual;
     INSERT INTO files (
-		fileid,
-		adler32,
-		creationdate,
-		eventstat,
-		eventtypeid,
-		filename,
-		filetypeid,
-		gotreplica,
-		guid,
-		jobid,
-		md5sum,
-		filesize,
-		fullstat,
-		qualityid,
+                fileid,
+                adler32,
+                creationdate,
+                eventstat,
+                eventtypeid,
+                filename,
+                filetypeid,
+                gotreplica,
+                guid,
+                jobid,
+                md5sum,
+                filesize,
+                fullstat,
+                qualityid,
                 inserttimestamp,
-		luminosity,
-		instluminosity,
-		visibilityflag
+                luminosity,
+                instluminosity,
+                visibilityflag
                 )
            VALUES (
                 fid,
-		v_adler32,
-		v_creationdate,
-		v_eventstat,
-		v_eventtypeid,
-		v_filename,
-		v_filetypeid,
-		v_gotreplica,
-		v_guid,
-		v_jobid,
-		v_md5sum,
-		v_filesize,
-		v_fullstat,
+                v_adler32,
+                v_creationdate,
+                v_eventstat,
+                v_eventtypeid,
+                v_filename,
+                v_filetypeid,
+                v_gotreplica,
+                v_guid,
+                v_jobid,
+                v_md5sum,
+                v_filesize,
+                v_fullstat,
                 dqid,
                 v_utc,
                 v_luminosity,
                 v_instluminosity,
-		v_visibilityflag
+                v_visibilityflag
                 );
   COMMIT;
   RETURN fid;
@@ -1231,20 +1231,20 @@ FUNCTION insertjobsrow (
   WHEN dup_val_on_index THEN
     SELECT fileid INTO fid FROM files WHERE filename = v_filename;
     UPDATE files SET adler32 = v_adler32,
-		creationdate = v_creationdate,
-		eventstat = v_eventstat,
-		eventtypeid = v_eventtypeid,
-		filetypeid = v_filetypeid,
-		guid = v_guid,
-		jobid = v_jobid,
-		md5sum = v_md5sum,
-		filesize = v_filesize,
-		fullstat = v_fullstat,
-		qualityid = dqid,
-		inserttimestamp = v_utc,
-		luminosity = v_luminosity,
-		instluminosity = v_instluminosity,
-		visibilityflag = v_visibilityflag WHERE fileid = fid;
+                creationdate = v_creationdate,
+                eventstat = v_eventstat,
+                eventtypeid = v_eventtypeid,
+                filetypeid = v_filetypeid,
+                guid = v_guid,
+                jobid = v_jobid,
+                md5sum = v_md5sum,
+                filesize = v_filesize,
+                fullstat = v_fullstat,
+                qualityid = dqid,
+                inserttimestamp = v_utc,
+                luminosity = v_luminosity,
+                instluminosity = v_instluminosity,
+                visibilityflag = v_visibilityflag WHERE fileid = fid;
     COMMIT;
     RETURN fid;
   END;
@@ -1252,11 +1252,11 @@ FUNCTION insertjobsrow (
 PROCEDURE insertinputfilesrow (v_fileid NUMBER, v_jobid NUMBER)IS
 BEGIN
     INSERT INTO inputfiles(
-	 fileid,
-	 jobid
+         fileid,
+         jobid
          ) VALUES(
-		v_fileid,
-		v_jobid);
+                v_fileid,
+                v_jobid);
   COMMIT;
   EXCEPTION
   WHEN dup_val_on_index THEN
@@ -1321,16 +1321,16 @@ FUNCTION insertsimconditions(
  BEGIN
   SELECT simulationcondid_seq.nextval INTO simulid FROM dual;
   INSERT INTO simulationconditions(
-	       simid,
-	       simdescription,
-	       beamcond,
-	       beamenergy,
-	       generator,
-	       magneticfield,
-	       detectorcond,
-	       luminosity,
-	       g4settings,
-	       visible)VALUES(simulid,v_simdesc,v_beamcond,v_beamenergy,v_generator,v_magneticfield,v_detectorcond,v_luminosity,v_g4settings, v_visible);
+               simid,
+               simdescription,
+               beamcond,
+               beamenergy,
+               generator,
+               magneticfield,
+               detectorcond,
+               luminosity,
+               g4settings,
+               visible)VALUES(simulid,v_simdesc,v_beamcond,v_beamenergy,v_generator,v_magneticfield,v_detectorcond,v_luminosity,v_g4settings, v_visible);
   COMMIT;
   RETURN simulid;
  END;
@@ -1370,49 +1370,49 @@ FUNCTION insertdatatakingcond(
       SELECT simulationcondid_seq.nextval INTO daq FROM dual;
       IF v_description IS NULL THEN
       INSERT /* APPEND */ INTO data_taking_conditions(daqperiodid, description, beamcond, beamenergy, magneticfield,
-				       velo, it, tt, ot, rich1, rich2, spd_prs, ecal, hcal, muon, l0, hlt,veloposition)
-				      VALUES(
+                                       velo, it, tt, ot, rich1, rich2, spd_prs, ecal, hcal, muon, l0, hlt,veloposition)
+                                      VALUES(
                                          daq,
-					 'DataTaking' || daq,
-					 v_beamcond,
-					 v_beamenergy,
-					 v_magneticfield,
-					 v_velo,
-					 v_it,
-					 v_tt,
-					 v_ot,
-					 v_rich1,
-					 v_rich2,
-					 v_spd_prs,
-					 v_ecal,
-					 v_hcal,
-					 v_muon,
-					 v_l0,
-					 v_hlt,
-					 v_veloposition);
+                                         'DataTaking' || daq,
+                                         v_beamcond,
+                                         v_beamenergy,
+                                         v_magneticfield,
+                                         v_velo,
+                                         v_it,
+                                         v_tt,
+                                         v_ot,
+                                         v_rich1,
+                                         v_rich2,
+                                         v_spd_prs,
+                                         v_ecal,
+                                         v_hcal,
+                                         v_muon,
+                                         v_l0,
+                                         v_hlt,
+                                         v_veloposition);
     COMMIT;
     ELSE
        INSERT /* APPEND */ INTO data_taking_conditions(daqperiodid, description, beamcond, beamenergy, magneticfield,
-				       velo, it, tt, ot, rich1, rich2, spd_prs, ecal, hcal, muon, l0, hlt,veloposition)
-				      VALUES(
+                                       velo, it, tt, ot, rich1, rich2, spd_prs, ecal, hcal, muon, l0, hlt,veloposition)
+                                      VALUES(
                                          daq,
-					 v_description,
-					 v_beamcond,
-					 v_beamenergy,
-					 v_magneticfield,
-					 v_velo,
-					 v_it,
-					 v_tt,
-					 v_ot,
-					 v_rich1,
-					 v_rich2,
-					 v_spd_prs,
-					 v_ecal,
-					 v_hcal,
-					 v_muon,
-					 v_l0,
-					 v_hlt,
-					 v_veloposition);
+                                         v_description,
+                                         v_beamcond,
+                                         v_beamenergy,
+                                         v_magneticfield,
+                                         v_velo,
+                                         v_it,
+                                         v_tt,
+                                         v_ot,
+                                         v_rich1,
+                                         v_rich2,
+                                         v_spd_prs,
+                                         v_ecal,
+                                         v_hcal,
+                                         v_muon,
+                                         v_l0,
+                                         v_hlt,
+                                         v_veloposition);
     COMMIT;
     END IF;
 
@@ -1429,10 +1429,10 @@ PROCEDURE getfilemetadata(
   BEGIN
    OPEN a_cursor FOR
      SELECT files.filename,files.adler32,files.creationdate,files.eventstat,files.eventtypeid,filetypes.name,files.gotreplica,files.guid,files.md5sum,files.filesize, files.fullstat, dataquality.dataqualityflag, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity FROM files,filetypes,dataquality,jobs WHERE
-	 filename = v_filename AND
-	 jobs.jobid = files.jobid AND
-	 files.filetypeid = filetypes.filetypeid AND
-	 files.qualityid = dataquality.qualityid;
+         filename = v_filename AND
+         jobs.jobid = files.jobid AND
+         files.filetypeid = filetypes.filetypeid AND
+         files.qualityid = dataquality.qualityid;
   END;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1442,11 +1442,11 @@ BEGIN
 FOR j IN iftypes.first .. iftypes.last LOOP
   dbms_output.put_line('FileName: ' || iftypes(j));
   FOR cur IN (SELECT files.filename,files.adler32,files.creationdate,files.eventstat,files.eventtypeid,filetypes.name,files.gotreplica,files.guid,files.md5sum,files.filesize, files.fullstat, dataquality.dataqualityflag, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity, files.visibilityflag FROM files,filetypes,dataquality,jobs WHERE
-	 filename = iftypes(j) AND
-	 jobs.jobid = files.jobid AND
-	 files.filetypeid = filetypes.filetypeid AND
-	 files.qualityid = dataquality.qualityid) LOOP
-	pipe row(metadata0bj(cur.filename, cur.adler32,cur.creationdate,cur.eventstat, cur.eventtypeid, cur.name, cur.gotreplica, cur.guid, cur.md5sum, cur.filesize, cur.fullstat, cur.dataqualityflag, cur.jobid, cur.runnumber, cur.inserttimestamp, cur.luminosity, cur.instluminosity, cur.visibilityflag, NULL, NULL));
+         filename = iftypes(j) AND
+         jobs.jobid = files.jobid AND
+         files.filetypeid = filetypes.filetypeid AND
+         files.qualityid = dataquality.qualityid) LOOP
+        pipe row(metadata0bj(cur.filename, cur.adler32,cur.creationdate,cur.eventstat, cur.eventtypeid, cur.name, cur.gotreplica, cur.guid, cur.md5sum, cur.filesize, cur.fullstat, cur.dataqualityflag, cur.jobid, cur.runnumber, cur.inserttimestamp, cur.luminosity, cur.instluminosity, cur.visibilityflag, NULL, NULL));
   END LOOP;
 END LOOP;
 END;
@@ -1460,10 +1460,10 @@ BEGIN
 FOR j IN iftypes.first .. iftypes.last LOOP
   dbms_output.put_line('FileName: ' || iftypes(j));
   FOR cur IN (SELECT files.filename,files.adler32,files.creationdate,files.eventstat,files.eventtypeid,filetypes.name,files.gotreplica,files.guid,files.md5sum,files.filesize, files.fullstat, dataquality.dataqualityflag, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity, files.visibilityflag FROM files,filetypes,dataquality,jobs WHERE
-	 filename = iftypes(j) AND
-	 jobs.jobid = files.jobid AND
-	 files.filetypeid = filetypes.filetypeid AND
-	 files.qualityid = dataquality.qualityid) LOOP
+         filename = iftypes(j) AND
+         jobs.jobid = files.jobid AND
+         files.filetypeid = filetypes.filetypeid AND
+         files.qualityid = dataquality.qualityid) LOOP
  lfnmeta.extend;
  n:=n + 1;
  lfnmeta (n):=metadata0bj(cur.filename, cur.adler32,cur.creationdate,cur.eventstat, cur.eventtypeid, cur.name, cur.gotreplica, cur.guid, cur.md5sum, cur.filesize, cur.fullstat, cur.dataqualityflag, cur.jobid, cur.runnumber, cur.inserttimestamp, cur.luminosity, cur.instluminosity, cur.visibilityflag, NULL, NULL);
@@ -1486,9 +1486,9 @@ FUNCTION fileexists (
 END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE inserteventtypes (
-	v_description           VARCHAR2,
-	v_eventtypeid           NUMBER,
-	v_primary               VARCHAR2
+        v_description           VARCHAR2,
+        v_eventtypeid           NUMBER,
+        v_primary               VARCHAR2
  )
  IS
  BEGIN
@@ -1498,9 +1498,9 @@ PROCEDURE inserteventtypes (
  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE  updateeventtypes (
-	v_description           VARCHAR2,
-	v_eventtypeid           NUMBER,
-	v_primary               VARCHAR2
+        v_description           VARCHAR2,
+        v_eventtypeid           NUMBER,
+        v_primary               VARCHAR2
  )
  IS
  BEGIN
@@ -1568,13 +1568,13 @@ PROCEDURE getproductioninformation(
   BEGIN
    OPEN a_cursor FOR
      SELECT DISTINCT c.configname,c.configversion,f.eventtypeid,s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, prod.step
-	  FROM steps s, stepscontainer prod, jobs j, configurations c, files f WHERE
-	   j.jobid = f.jobid AND
-	   f.eventtypeid > 0 AND
-	   j.production = prodid AND
-	   c.configurationid = j.configurationid AND
-	   prod.stepid = s.stepid AND
-	   prod.production = j.production ORDER BY prod.step;
+          FROM steps s, stepscontainer prod, jobs j, configurations c, files f WHERE
+           j.jobid = f.jobid AND
+           f.eventtypeid > 0 AND
+           j.production = prodid AND
+           c.configurationid = j.configurationid AND
+           prod.stepid = s.stepid AND
+           prod.production = j.production ORDER BY prod.step;
   END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE getnboffiles( prodid                  NUMBER,
@@ -1585,9 +1585,9 @@ PROCEDURE getnboffiles( prodid                  NUMBER,
    SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ count(*) INTO total FROM files, jobs WHERE files.jobid = jobs.jobid AND jobs.production = prodid;
    OPEN a_cursor FOR
      SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ count(*), filetypes.name,total AS totalfiles FROM files, jobs,filetypes WHERE
-	files.jobid = jobs.jobid AND
-	jobs.production = prodid AND
-	filetypes.filetypeid = files.filetypeid GROUP BY filetypes.name;
+        files.jobid = jobs.jobid AND
+        jobs.production = prodid AND
+        filetypes.filetypeid = files.filetypeid GROUP BY filetypes.name;
   END;
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE getsizeoffiles(
@@ -1606,10 +1606,10 @@ PROCEDURE getnumberofevents(
   BEGIN
   OPEN a_cursor FOR
    SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ filetypes.name,sum(files.eventstat), files.eventtypeid, sum(jobs.eventinputstat) FROM files,jobs,filetypes WHERE
-	    files.jobid = jobs.jobid AND
-	    files.gotreplica = 'Yes' AND
-	    jobs.production = prodid AND
-	    filetypes.filetypeid = files.filetypeid GROUP BY filetypes.name, files.eventtypeid;
+            files.jobid = jobs.jobid AND
+            files.gotreplica = 'Yes' AND
+            jobs.production = prodid AND
+            filetypes.filetypeid = files.filetypeid GROUP BY filetypes.name, files.eventtypeid;
   END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE getjobsnb(
@@ -2100,12 +2100,12 @@ jobmeta bulk_collect_jobmetadata := bulk_collect_jobmetadata();
 BEGIN
 FOR i IN lfns.first .. lfns.last LOOP
   FOR c IN (SELECT  jobs.diracjobid, jobs.diracversion, jobs.eventinputstat, jobs.exectime, jobs.firsteventnumber,jobs.location,  jobs.name, jobs.numberofevents,
-		 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion, jobs.wnmjfhs06
+                 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion, jobs.wnmjfhs06
    FROM jobs,files WHERE files.jobid = jobs.jobid AND  files.filename = lfns(i)) LOOP
      jobmeta.extend;
      n:=n + 1;
     jobmeta (n):= jobmetadata(lfns(i), c.diracjobid, c.diracversion, c.eventinputstat, c.exectime, c.firsteventnumber,c.location,  c.name, c.numberofevents,
-		 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
+                 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
   END LOOP;
 END LOOP;
 OPEN a_cursor FOR SELECT * FROM table(jobmeta);
@@ -2119,12 +2119,12 @@ jobmeta bulk_collect_jobmetadata := bulk_collect_jobmetadata();
 BEGIN
 FOR i IN jobnames.first .. jobnames.last LOOP
   FOR c IN (SELECT  jobs.diracjobid, jobs.diracversion, jobs.eventinputstat, jobs.exectime, jobs.firsteventnumber,jobs.location,  jobs.name, jobs.numberofevents,
-		 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion,wnmjfhs06
+                 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion,wnmjfhs06
    FROM jobs,files WHERE files.jobid = jobs.jobid AND  jobs.name = jobnames(i)) LOOP
      jobmeta.extend;
      n:=n + 1;
     jobmeta (n):= jobmetadata(jobnames(i), c.diracjobid, c.diracversion, c.eventinputstat, c.exectime, c.firsteventnumber,c.location,  c.name, c.numberofevents,
-		 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
+                 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
   END LOOP;
 END LOOP;
 OPEN a_cursor FOR SELECT * FROM table(jobmeta);
@@ -2138,12 +2138,12 @@ jobmeta bulk_collect_jobmetadata := bulk_collect_jobmetadata();
 BEGIN
 FOR i IN jobids.first .. jobids.last LOOP
   FOR c IN (SELECT  DISTINCT jobs.diracjobid, jobs.diracversion, jobs.eventinputstat, jobs.exectime, jobs.firsteventnumber,jobs.location,  jobs.name, jobs.numberofevents,
-		 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion, wnmjfhs06
+                 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion, wnmjfhs06
    FROM jobs,files WHERE files.jobid = jobs.jobid AND  jobs.diracjobid = jobids(i) ORDER BY jobs.name) LOOP
      jobmeta.extend;
      n:=n + 1;
     jobmeta (n):= jobmetadata(jobids(i), c.diracjobid, c.diracversion, c.eventinputstat, c.exectime, c.firsteventnumber,c.location,  c.name, c.numberofevents,
-		 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
+                 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
   END LOOP;
 END LOOP;
 OPEN a_cursor FOR SELECT * FROM table(jobmeta);
@@ -2157,12 +2157,12 @@ BEGIN
     IF nbrows = 0 THEN
       INSERT INTO runstatus(
          runnumber,
-	 jobid,
+         jobid,
          finished
          ) VALUES(
                 v_runnumber,
-		v_jobid,
-		v_finished);
+                v_jobid,
+                v_finished);
    COMMIT;
    END IF;
   EXCEPTION
@@ -2233,11 +2233,11 @@ PROCEDURE getallmetadata(
   IF v_prod > 0  THEN
     OPEN a_cursor FOR
     SELECT files.filename,files.fileid,files.gotreplica, jobs.production, files.eventstat,
-	   files.eventtypeid, files.luminosity, files.instluminosity, filetypes.name FROM files, jobs, filetypes WHERE files.filetypeid = filetypes.filetypeid AND jobs.jobid = files.jobid AND files.jobid = v_jobid AND jobs.production = v_prod;
+           files.eventtypeid, files.luminosity, files.instluminosity, filetypes.name FROM files, jobs, filetypes WHERE files.filetypeid = filetypes.filetypeid AND jobs.jobid = files.jobid AND files.jobid = v_jobid AND jobs.production = v_prod;
     ELSE
     OPEN a_cursor FOR
       SELECT files.filename,files.fileid,files.gotreplica, 0, files.eventstat,
-	   files.eventtypeid, files.luminosity, files.instluminosity, filetypes.name FROM files, filetypes WHERE files.filetypeid = filetypes.filetypeid AND files.jobid = v_jobid;
+           files.eventtypeid, files.luminosity, files.instluminosity, filetypes.name FROM files, filetypes WHERE files.filetypeid = filetypes.filetypeid AND files.jobid = v_jobid;
   END IF;
  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2249,15 +2249,15 @@ SELECT sum(f.eventstat) INTO retval
   FROM files f,
        jobs j,
        (SELECT scont.production, s.stepid
-	  FROM stepscontainer scont,
+          FROM stepscontainer scont,
                steps s
-	  WHERE
-	    scont.stepid = s.stepid AND
-	    scont.production = v_prodid AND
-	    scont.step = (SELECT max(step) FROM stepscontainer WHERE stepscontainer.production = v_prodid)) firsts
+          WHERE
+            scont.stepid = s.stepid AND
+            scont.production = v_prodid AND
+            scont.step = (SELECT max(step) FROM stepscontainer WHERE stepscontainer.production = v_prodid)) firsts
   WHERE j.jobid = f.jobid AND
-	j.production = firsts.production AND
-	j.stepid = firsts.stepid;
+        j.production = firsts.production AND
+        j.stepid = firsts.stepid;
 RETURN retval;
 EXCEPTION
   WHEN others THEN

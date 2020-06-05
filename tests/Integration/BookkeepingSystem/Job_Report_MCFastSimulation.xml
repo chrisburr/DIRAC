@@ -26,21 +26,21 @@
     <TypedParameter Name="StepID" Type="Info" Value="#STEP_ID#"/>
     <TypedParameter Name="NumberOfEvents" Type="Info" Value="2000"/>
     <OutputFile Name="/lhcb/MC/2016/ALLSTREAMS.MDST/12345/0015/00108705_00155740_7.AllStreams.mdst" TypeName="ALLSTREAMS.DST" TypeVersion="ROOT">
-	<Parameter Name="EventTypeId" Value="27165000"/>
-	<Parameter Name="EventStat" Value="2000"/>
-	<Parameter Name="FileSize" Value="4474551994"/>
-	<Parameter Name="CreationDate" Value="2020-06-02 14:02:53"/>
-	<Parameter Name="MD5Sum" Value="5f7283fa605c0a1853256aa4e5e75bb0"/>
-	<Parameter Name="Guid" Value="D6F52B7A-7FA4-EA11-A2DC-000101000959"/>
+        <Parameter Name="EventTypeId" Value="27165000"/>
+        <Parameter Name="EventStat" Value="2000"/>
+        <Parameter Name="FileSize" Value="4474551994"/>
+        <Parameter Name="CreationDate" Value="2020-06-02 14:02:53"/>
+        <Parameter Name="MD5Sum" Value="5f7283fa605c0a1853256aa4e5e75bb0"/>
+        <Parameter Name="Guid" Value="D6F52B7A-7FA4-EA11-A2DC-000101000959"/>
     </OutputFile>
     <OutputFile Name="/lhcb/MC/2016/LOG/12345/0029/00297228/Gauss_00108704_00297228_1.log" TypeName="LOG" TypeVersion="1">
-	<Parameter Name="FileSize" Value="5884117"/>
-	<Parameter Name="CreationDate" Value="2020-06-02 14:02:58"/>
-	<Replica Location="Web" Name="http://lhcb-logs.cern.ch/storage/lhcb/MC/2016/LOG/12345/0029/00297228/Gauss_00108704_00297228_1.log"/>
-	<Parameter Name="MD5Sum" Value="cfab8f9966fdd21a4c20dabe7d70c076"/>
-	<Parameter Name="Guid" Value="CFAB8F99-66FD-D21A-4C20-DABE7D70C076"/>
+        <Parameter Name="FileSize" Value="5884117"/>
+        <Parameter Name="CreationDate" Value="2020-06-02 14:02:58"/>
+        <Replica Location="Web" Name="http://lhcb-logs.cern.ch/storage/lhcb/MC/2016/LOG/12345/0029/00297228/Gauss_00108704_00297228_1.log"/>
+        <Parameter Name="MD5Sum" Value="cfab8f9966fdd21a4c20dabe7d70c076"/>
+        <Parameter Name="Guid" Value="CFAB8F99-66FD-D21A-4C20-DABE7D70C076"/>
     </OutputFile>
     <SimulationCondition>
-	<Parameter Name="SimDescription" Value="Beam6500GeV-2016-MagUp-Nu1.6-25ns-Pythia8"/>
+        <Parameter Name="SimDescription" Value="Beam6500GeV-2016-MagUp-Nu1.6-25ns-Pythia8"/>
     </SimulationCondition>
 </Job>
