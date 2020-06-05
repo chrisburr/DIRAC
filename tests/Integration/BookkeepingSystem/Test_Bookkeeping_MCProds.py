@@ -468,6 +468,13 @@ def test_registerProduction():
 				   'OutputFileTypes': [{'Visible': 'Y',
 							'FileType': 'SIM'}]})
 
+  bkFile = find_all('Job_Report_MCFastSimulation.xml', '..', 'BookkeepingSystem')[0]
+  with open(bkFile, 'r') as fd:
+    filedata = fd.read()
+  filedata = filedata.replace('#STEP_ID#', str(gauss_sid))
+  with open(bkFile + '.temp', 'w') as fd:
+    fd.write(filedata)
+
   retVal = bk.insertStep(
       {'Step': {'ApplicationName': 'Boole',
 		'Usable': 'Yes',
@@ -521,6 +528,21 @@ def test_registerProduction():
 				   'OutputFileTypes': [{'Visible': 'N',
 							'FileType': 'DIGI'}]})
 
+  bkFile = find_all('Job_Report_MCReconstruction_1.xml', '..', 'BookkeepingSystem')[0]
+  with open(bkFile, 'r') as fd:
+    filedata = fd.read()
+  filedata = filedata.replace('#STEP_ID#', str(moore_sid))
+  with open(bkFile + '.temp', 'w') as fd:
+    fd.write(filedata)
+
+  bkFile = find_all('Job_Report_MCReconstruction_2.xml', '..', 'BookkeepingSystem')[0]
+  with open(bkFile, 'r') as fd:
+    filedata = fd.read()
+  filedata = filedata.replace('#STEP_ID#', str(moore_sid))
+  with open(bkFile + '.temp', 'w') as fd:
+    fd.write(filedata)
+
+
   retVal = bk.insertStep(
       {'Step': {'ApplicationName': 'Moore',
 		'Usable': 'Yes',
@@ -564,10 +586,20 @@ def test_registerProduction():
 
   assert retVal['OK'] is True
   assert retVal['OK'] > 0
-  productionSteps['Steps'].append({'StepId': retVal['Value'],
+  noether_sid = retVal['Value']
+  productionSteps['Steps'].append({'StepId': noether_sid,
 				   'Visible': 'N',
 				   'OutputFileTypes': [{'Visible': 'N',
 							'FileType': 'DIGI'}]})
+
+  bkFile = find_all('Job_Report_MCMerge.xml', '..', 'BookkeepingSystem')[0]
+  with open(bkFile, 'r') as fd:
+    filedata = fd.read()
+  filedata = filedata.replace('#STEP_ID#', str(noether_sid))
+  with open(bkFile + '.temp', 'w') as fd:
+    fd.write(filedata)
+
+
 
   retVal = bk.insertStep(
       {'Step': {'ApplicationName': 'Moore',
@@ -769,10 +801,10 @@ def test_sendJobReport():
   assert res['OK']
 
   # actual test
-  for rep in ['Job_Report_MCFastSimulation.xml',
-	      'Job_Report_MCReconstruction_1.xml',
-	      'Job_Report_MCReconstruction_2.xml',
-	      'Job_Report_MCMerge.xml']:
+  for rep in ['Job_Report_MCFastSimulation.xml.temp',
+	      'Job_Report_MCReconstruction_1.xml.temp',
+	      'Job_Report_MCReconstruction_2.xml.temp',
+	      'Job_Report_MCMerge.xml.temp']:
     bkFile = find_all(rep, '..', 'BookkeepingSystem')[0]
     with io.open(bkFile, 'r') as fd:
       bkXML = fd.read()

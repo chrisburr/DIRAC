@@ -23,7 +23,7 @@
     <TypedParameter Name="DiracVersion" Type="Info" Value="v10r0p2"/>
     <TypedParameter Name="FirstEventNumber" Type="Info" Value="1"/>
     <TypedParameter Name="StatisticsRequested" Type="Info" Value="-1"/>
-    <TypedParameter Name="StepID" Type="Info" Value="6"/>
+    <TypedParameter Name="StepID" Type="Info" Value="#STEP_ID#"/>
     <TypedParameter Name="NumberOfEvents" Type="Info" Value="1766"/>
     <InputFile Name="/lhcb/MC/2016/DSTARD02HHHH.HLTFILTER.MDST/00108705/0015/00108705_00155740_8.dstard02hhhh.hltfilter.mdst"/>
     <InputFile Name="/lhcb/MC/2016/DSTARD02HHHH.HLTFILTER.MDST/00108705/0015/00108705_00155741_8.dstard02hhhh.hltfilter.mdst"/>

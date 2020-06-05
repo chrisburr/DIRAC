@@ -23,7 +23,7 @@
     <TypedParameter Name="DiracVersion" Type="Info" Value="v10r0p2"/>
     <TypedParameter Name="FirstEventNumber" Type="Info" Value="1"/>
     <TypedParameter Name="StatisticsRequested" Type="Info" Value="2000"/>
-    <TypedParameter Name="StepID" Type="Info" Value="2"/>
+    <TypedParameter Name="StepID" Type="Info" Value="#STEP_ID#"/>
     <TypedParameter Name="NumberOfEvents" Type="Info" Value="2000"/>
     <OutputFile Name="/lhcb/MC/2016/ALLSTREAMS.MDST/12345/0015/00108705_00155740_7.AllStreams.mdst" TypeName="ALLSTREAMS.DST" TypeVersion="ROOT">
 	<Parameter Name="EventTypeId" Value="27165000"/>
