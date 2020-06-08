@@ -2597,25 +2597,25 @@ class OracleBookkeepingDB(object):
                                               array=fileNames)
     failed = {}
     if not retVal['OK']:
-      result = retVal
-    else:
-      for i in retVal['Value']:
-        failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
-        fileNames.remove(i[0])
-      if fileNames:
-        retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
-                                                  parameters=['Yes'],
-                                                  output=False,
-                                                  array=fileNames)
-        if not retVal['OK']:
-          result = retVal
-        else:
-          failed['Failed'] = failed.keys()
-          failed['Successful'] = fileNames
-          result = S_OK(failed)
-      else:  # when no files are exists
-        files = {'Failed': [i[0] for i in retVal['Value']], 'Successful': []}
-        result = S_OK(files)
+      return retVal
+
+    for i in retVal['Value']:
+      failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
+      fileNames.remove(i[0])
+    if fileNames:
+      retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
+                                                parameters=['Yes'],
+                                                output=False,
+                                                array=fileNames)
+      if not retVal['OK']:
+        result = retVal
+      else:
+        failed['Failed'] = list(failed)
+        failed['Successful'] = fileNames
+        result = S_OK(failed)
+    else:  # when no files are exists
+      files = {'Failed': [i[0] for i in retVal['Value']], 'Successful': []}
+      result = S_OK(files)
 
     return result
 
@@ -2635,64 +2635,63 @@ class OracleBookkeepingDB(object):
         j.production<0 and prod.daqperiodid=daq.daqperiodid and\
          j.production=prod.production and j.runnumber=%d" % (runnb)
     retVal = self.dbR_.query(command)
+    if not retVal['OK']:
+      return retVal
 
+    value = retVal['Value']
+    if not value:
+      return S_ERROR('This run is missing in the BKK DB!')
+
+    values = {'Configuration Name': value[0][1], 'Configuration Version': value[0][2], 'FillNumber': value[0][0]}
+    values['DataTakingDescription'] = value[0][3]
+    values['RunStart'] = value[0][4]
+    values['RunEnd'] = value[0][5]
+    values['Tck'] = value[0][6]
+    values['TotalLuminosity'] = value[0][7]
+
+    retVal = self.getRunProcessingPass(runnb)
     if not retVal['OK']:
       result = retVal
     else:
-      value = retVal['Value']
-      if not value:
-        result = S_ERROR('This run is missing in the BKK DB!')
+      values['ProcessingPass'] = retVal['Value']
+      command = ' select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.fullstat), \
+      files.eventtypeid , sum(files.luminosity), sum(files.instLuminosity)  from files,jobs \
+           where files.JobId=jobs.JobId and  \
+           files.gotReplica=\'Yes\' and \
+           jobs.production<0 and \
+           jobs.runnumber=' + str(runnb) + ' Group by files.eventtypeid'
+      retVal = self.dbR_.query(command)
+      if not retVal['OK']:
+        result = retVal
       else:
-        values = {'Configuration Name': value[0][1], 'Configuration Version': value[0][2], 'FillNumber': value[0][0]}
-        values['DataTakingDescription'] = value[0][3]
-        values['RunStart'] = value[0][4]
-        values['RunEnd'] = value[0][5]
-        values['Tck'] = value[0][6]
-        values['TotalLuminosity'] = value[0][7]
-
-        retVal = self.getRunProcessingPass(runnb)
-        if not retVal['OK']:
-          result = retVal
+        value = retVal['Value']
+        if not value:
+          result = S_ERROR('Replica flag is not set!')
         else:
-          values['ProcessingPass'] = retVal['Value']
-          command = ' select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.fullstat), \
-          files.eventtypeid , sum(files.luminosity), sum(files.instLuminosity)  from files,jobs \
-               where files.JobId=jobs.JobId and  \
-               files.gotReplica=\'Yes\' and \
-               jobs.production<0 and \
-               jobs.runnumber=' + str(runnb) + ' Group by files.eventtypeid'
-          retVal = self.dbR_.query(command)
-          if not retVal['OK']:
-            result = retVal
-          else:
-            value = retVal['Value']
-            if not value:
-              result = S_ERROR('Replica flag is not set!')
-            else:
-              nbfile = []
-              nbevent = []
-              fsize = []
-              fstat = []
-              stream = []
-              luminosity = []
-              ilumi = []
-              for i in value:
-                nbfile += [i[0]]
-                nbevent += [i[1]]
-                fsize += [i[2]]
-                fstat += [i[3]]
-                stream += [i[4]]
-                luminosity += [i[5]]
-                ilumi += [i[6]]
+          nbfile = []
+          nbevent = []
+          fsize = []
+          fstat = []
+          stream = []
+          luminosity = []
+          ilumi = []
+          for i in value:
+            nbfile += [i[0]]
+            nbevent += [i[1]]
+            fsize += [i[2]]
+            fstat += [i[3]]
+            stream += [i[4]]
+            luminosity += [i[5]]
+            ilumi += [i[6]]
 
-              values['Number of file'] = nbfile
-              values['Number of events'] = nbevent
-              values['File size'] = fsize
-              values['FullStat'] = fstat
-              values['Stream'] = stream
-              values['luminosity'] = luminosity
-              values['InstLuminosity'] = ilumi
-              result = S_OK(values)
+          values['Number of file'] = nbfile
+          values['Number of events'] = nbevent
+          values['File size'] = fsize
+          values['FullStat'] = fstat
+          values['Stream'] = stream
+          values['luminosity'] = luminosity
+          values['InstLuminosity'] = ilumi
+          result = S_OK(values)
 
     return result
 
@@ -3025,8 +3024,7 @@ where files.fileid in ( select inputfiles.fileid from files,inputfiles where \
 files.jobid= inputfiles.jobid and files.filename='%s')\
 and files.qualityid= dataquality.qualityid" % lfn
 
-    res = self.dbR_.query(command)
-    return res
+    return self.dbR_.query(command)
 
   #############################################################################
   #
@@ -3333,8 +3331,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param list runs: list of run numbers
     :retun: the files with data quality
     """
-    retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getRunQuality', [], True, runs)
-    return retVal
+    return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getRunQuality', [], True, runs)
 
   #############################################################################
   def getRunAndProcessingPassDataQuality(self, runnb, processing):

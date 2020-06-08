@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE Job
+  SYSTEM "book.dtd">
+<Job ConfigName="MC" ConfigVersion="2016" Date="2020-06-02" Time="13:28:52">
+    <TypedParameter Name="CPUTIME" Type="Info" Value="12864.29"/>
+    <TypedParameter Name="ExecTime" Type="Info" Value="37083.137768"/>
+    <TypedParameter Name="WNMODEL" Type="Info" Value="Intel(R) Xeon(R) CPU E5-2695 v4 @ 2.10GHz"/>
+    <TypedParameter Name="WNCPUPOWER" Type="Info" Value="2589.230125"/>
+    <TypedParameter Name="WNCACHE" Type="Info" Value="46080 KB"/>
+    <TypedParameter Name="WorkerNode" Type="Info" Value="nid01881"/>
+    <TypedParameter Name="WNMEMORY" Type="Info" Value="1791408.0"/>
+    <TypedParameter Name="WNCPUHS06" Type="Info" Value="24.4"/>
+    <TypedParameter Name="NumberOfProcessors" Type="Info" Value="1"/>
+    <TypedParameter Name="Production" Type="Info" Value="12345"/>
+    <TypedParameter Name="DiracJobId" Type="Info" Value="375111811"/>
+    <TypedParameter Name="Name" Type="Info" Value="00108704_00297228_1"/>
+    <TypedParameter Name="JobStart" Type="Info" Value="2020-06-02 03:10:49"/>
+    <TypedParameter Name="JobEnd" Type="Info" Value="2020-06-02 13:28:52"/>
+    <TypedParameter Name="Location" Type="Info" Value="LCG.CSCS.ch"/>
+    <TypedParameter Name="JobType" Type="Info" Value="MCFastSimulation"/>
+    <TypedParameter Name="ProgramName" Type="Info" Value="Gauss"/>
+    <TypedParameter Name="ProgramVersion" Type="Info" Value="v49r15p1"/>
+    <TypedParameter Name="DiracVersion" Type="Info" Value="v10r0p2"/>
+    <TypedParameter Name="FirstEventNumber" Type="Info" Value="1"/>
+    <TypedParameter Name="StatisticsRequested" Type="Info" Value="2000"/>
+    <TypedParameter Name="StepID" Type="Info" Value="#STEP_ID#"/>
+    <TypedParameter Name="NumberOfEvents" Type="Info" Value="2000"/>
+    <OutputFile Name="/lhcb/MC/2016/ALLSTREAMS.MDST/12345/0015/00108705_00155740_7.AllStreams.mdst" TypeName="ALLSTREAMS.DST" TypeVersion="ROOT">
+        <Parameter Name="EventTypeId" Value="27165000"/>
+        <Parameter Name="EventStat" Value="2000"/>
+        <Parameter Name="FileSize" Value="4474551994"/>
+        <Parameter Name="CreationDate" Value="2020-06-02 14:02:53"/>
+        <Parameter Name="MD5Sum" Value="5f7283fa605c0a1853256aa4e5e75bb0"/>
+        <Parameter Name="Guid" Value="D6F52B7A-7FA4-EA11-A2DC-000101000959"/>
+    </OutputFile>
+    <OutputFile Name="/lhcb/MC/2016/LOG/12345/0029/00297228/Gauss_00108704_00297228_1.log" TypeName="LOG" TypeVersion="1">
+        <Parameter Name="FileSize" Value="5884117"/>
+        <Parameter Name="CreationDate" Value="2020-06-02 14:02:58"/>
+        <Replica Location="Web" Name="http://lhcb-logs.cern.ch/storage/lhcb/MC/2016/LOG/12345/0029/00297228/Gauss_00108704_00297228_1.log"/>
+        <Parameter Name="MD5Sum" Value="cfab8f9966fdd21a4c20dabe7d70c076"/>
+        <Parameter Name="Guid" Value="CFAB8F99-66FD-D21A-4C20-DABE7D70C076"/>
+    </OutputFile>
+    <SimulationCondition>
+        <Parameter Name="SimDescription" Value="Beam6500GeV-2016-MagUp-Nu1.6-25ns-Pythia8"/>
+    </SimulationCondition>
+</Job>

@@ -1228,7 +1228,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.exists(lfns)
 
   #############################################################################
-  types_addReplica = [six.string_types]
+  types_addReplica = [list]
 
   @staticmethod
   def export_addReplica(fileName):

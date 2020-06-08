@@ -380,7 +380,7 @@ files table partitions
 This table is RANGE partitioned by `jobid`, which can reach the maximum value of the existing partition. It this happen, the following error will appear::
 
   2018-07-30 01:12:00 UTC dirac-jobexec/UploadOutputData ERROR: Could not send Bookkeeping XML file to server:
-  Unable to create file /lhcb/MC/2015/SIM/00075280/0000/00075280_00009971_1.sim ! ERROR: Excution failed.: (
+  Unable to create file /lhcb/MC/2015/SIM/00075280/0000/00075280_00009971_1.sim ! ERROR: Execution failed.: (
   ORA-14400: inserted partition key does not map to any partition
   ORA-06512: at "LHCB_DIRACBOOKKEEPING.BOOKKEEPINGORACLEDB", line 976
   ORA-06512: at line 1

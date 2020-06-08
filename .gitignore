@@ -66,6 +66,7 @@ Local_*
 .hypothesis
 *.gz
 htmlcov/
+*.xml.temp
 
 #remove in case we want a specific LHCb one
 .pylintrc
