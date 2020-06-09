@@ -1,3 +1,13 @@
+v10r0p3
+use DIRAC v7r0p26
+
+* catching CalledProcessError for pre-lb-run apps
+* fix setuptools version
+* Allow all six.integer_types for transformation ID.
+* Patch script to retrieve all existing parent transformations
+* Container: add script to clean gitlab registry
+* Docs: Update release doc
+
 v10r0p2
 use DIRAC v7r0p25
 
