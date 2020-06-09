@@ -182,16 +182,16 @@ class GaudiApplication(ModuleBase):
           app = ra.applicationName + '/' + ra.applicationVersion
           envCommand = ra.lbrunCommand.split(app)[0] + ' --py -A ' + app
 
-          # FIXME: The following may raise CalledProcessError if the application is not lb-run native.
-          # The exception will be caught at the end of the module.
-          # We enter here iff the application fails, and there's a core dump, so it's ~OKish.
-          # Nevertheless, it would be better if it was handled correctly.
-          lhcbApplicationEnv = eval(subprocess.check_output(shlex.split(envCommand)))
+          try:
+            # The following may raise CalledProcessError if the application is not lb-run native.
+            lhcbApplicationEnv = eval(subprocess.check_output(shlex.split(envCommand)))
 
-          # now running the GDB command
-          gdbCommand = "gdb python core.* >> %s_Step%s_coredump.log" % (self.applicationName, self.step_number)
-          rg = RunApplication()
-          rg._runApp(gdbCommand, lhcbApplicationEnv)
+            # now running the GDB command
+            gdbCommand = "gdb python core.* >> %s_Step%s_coredump.log" % (self.applicationName, self.step_number)
+            rg = RunApplication()
+            rg._runApp(gdbCommand, lhcbApplicationEnv)
+          except subprocess.CalledProcessError:
+            self.log.warn("Could not run gdb as the application is not lb-run native")
         raise appError
 
       self.log.info("Going to manage %s output" % self.applicationName)
