@@ -8,6 +8,17 @@ use LHCbWebDIRAC v5r2-pre1
 * Test dumping production infomation with JSON as well as pickle
 * Re-enable data management tests
 
+v10r0p3
+use DIRAC v7r0p26
+
+* retag v10r0p3 with fix for CI
+* catching CalledProcessError for pre-lb-run apps
+* fix setuptools version
+* Allow all six.integer_types for transformation ID.
+* Patch script to retrieve all existing parent transformations
+* Container: add script to clean gitlab registry
+* Docs: Update release doc
+
 v10r0p2
 use DIRAC v7r0p25
 
