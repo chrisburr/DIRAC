@@ -1,6 +1,7 @@
 v10r0p3
 use DIRAC v7r0p26
 
+* retag v10r0p3 with fix for CI
 * catching CalledProcessError for pre-lb-run apps
 * fix setuptools version
 * Allow all six.integer_types for transformation ID.
