@@ -18,6 +18,7 @@ import json
 from DIRAC import S_OK, S_ERROR, gLogger
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
+from LHCbDIRAC.ProductionManagementSystem.Utilities.XMLtoJSON import XML_SUMMARY
 
 
 class UploadMC(ModuleBase):
@@ -75,6 +76,42 @@ class UploadMC(ModuleBase):
               raise ve
         else:
           self.log.info("JSON file not found", fn)
+
+
+    # looking for xml files that are 'summaryGauss_self.production_id_self.prod_job_id_1.xml'
+    xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.jobID)
+    if os.path.exists(xmlfl):
+      try:
+        xmlData = XML_SUMMARY(xmlfl)
+        xmlData.xmltojson()
+        #At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
+        jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
+        with open(jsonfl) as JS:
+          jsonData = json.load(JS)
+          ids = dict()
+          ids['JobID'] = self.jobID
+          ids['ProductionID'] = self.production_id
+          ids['prod_job_id'] = self.prod_job_id
+          jsonData['ID'] = ids
+          with open(jsonfl, 'w') as output:
+            json.dump(jsonData, output, indent=2)
+
+          self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
+          if self._enableModule():
+            mcLogGaussSummariesClient = MCStatsClient()
+            mcLogGaussSummariesClient.indexName = 'lhcb-mcstats-GaussSummaries' + self.production_id
+            res = mcLogGaussSummariesClient.set('Gauss-Summaries', jsonData)
+            if not res['OK']:
+              self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))
+          else:
+            # At this point we can see exactly what the module would have uploaded
+            self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
+        except BaseException as ve:
+          self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
+          print JS.read()
+          raise ve
+    else:
+      self.log.info("XML Gauss summary file not found", xmlfl)
 
       return S_OK()
 
