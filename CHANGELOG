@@ -1,3 +1,16 @@
+
+v10r1-pre2
+use DIRAC v7r1p5
+use LHCbDIRACOS v1r7
+use LHCbWebDIRAC v5r2-pre2
+
+* CI: check_docs done in virtualenv
+* Add script to retrieve all existing parent transformations
+* Run bkk tests in gitlab
+* Removed BKK gui
+* Fixes bash scripts
+* Fix setup tools version
+
 v10r1-pre1
 use DIRAC v7r1p2
 use LHCbDIRACOS v1r7
