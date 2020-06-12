@@ -11,10 +11,164 @@
 """Utilities to check the XML summary files."""
 
 import os
+import ast
+import json
+import xmltodict
 from DIRAC import gLogger
 from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 
 __RCSID__ = "$Id$"
+
+
+def xmltojson1(lCategory1):
+  '''e.g Transforms <counter name="MCVeloHitPacker/# PackedData">50809</counter>
+     into {"MCVeloHitPacker": {"PackedData": 50809}}
+     Let's call this category of counters category 1'''
+  dicto = {}
+  for counter in lCategory1:
+    s = counter['@name']
+    n = s.find('/')
+    key1 = s[:n]
+    key2 = s[n + 3:]
+    dicto[key1] = {key2: int(counter['#text'])}
+
+  return(dicto)
+
+
+def xmltojson2(lCategory2):
+  '''e.g Transforms   <counter name="TTHitMonitor/DeltaRay">1249</counter>
+                      <counter name="TTHitMonitor/betaGamma">28101829</counter>
+                      <counter name="TTHitMonitor/numberHits">17105</counter>
+     into {"TTHitMonitor": {"betaGamma": 28101829, "DeltaRay": 1249, "numberHits": 17105}}
+     Let's call this category of counters category 2'''
+  dicto = dict()
+  s = lCategory2[0]['@name']
+  n = s.find('/')
+  key1 = s[:n]
+  key2 = s[n + 1:]
+  dicto[key1] = {key2: int(lCategory2[0]['#text'])}
+  for i in range(1, len(lCategory2)):
+    s = lCategory2[i]['@name']
+    n = s.find('/')
+    key = s[:n]
+    if key == key1:
+      dicto[key1].update({s[n + 1:]: int(lCategory2[i]['#text'])})
+    else:
+      s = lCategory2[i]['@name']
+      n = s.find('/')
+      key1 = s[:n]
+      key2 = s[n + 1:]
+      dicto[key1] = {key2: int(lCategory2[i]['#text'])}
+
+  return(dicto)
+
+
+def xmltojson3(lCategory3):
+  '''e.g Transforms   <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
+                      <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
+
+                 into {'CheckRichOpPhot/Diff.': {'Cherenkov': {'Phi': 0, 'Theta': 0},
+                                                 'Emission Point': {'x': 0, 'y': 0, 'z': 0},
+                                                 'Energy': 0,
+                                                 'HPD In. Point': {'x': 0, 'y': 0, 'z': 0},
+                                                 'HPD QW Point': {'x': 0, 'y': 0, 'z': 0},
+                                                 'Parent Momentum': {'x': 38, 'y': 46, 'z': -33},
+                                                 'Prim. Mirr.': {'x': 0, 'y': 0, 'z': 0},
+                                                 'Sec. Mirr.': {'x': 0, 'y': 0, 'z': 0}}}
+     Let's call this category of counters category 3'''
+  dicto = dict()
+  s = lCategory3[0]['@name']
+  n = s.find('-')
+  key1 = s[:n - 1].strip()
+  key2 = s[n + 2:]
+  key2c = key2[:len(key2) - 2]
+  key3c = key2[len(key2) - 1:]
+  key2cc = key2[:len(key2) - 4]
+  key3cc = key2[len(key2) - 3:]
+  if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
+    dicto[key1] = {key2c: {key3c: int(lCategory3[0]['#text'])}}
+  elif key3cc in ['Phi', 'Eta']:
+    dicto[key1] = {key2cc: {key3cc: int(lCategory3[0]['#text'])}}
+  else:
+    dicto[key1] = {key2: int(lCategory3[0]['#text'])}
+  for i in range(1, len(lCategory3)):
+    s = lCategory3[i]['@name']
+    n = s.find('-')
+    key_1 = s[:n - 1].strip()
+    key_2 = s[n + 2:]
+    key_2c = key_2[:len(key_2) - 2]
+    key_3c = key_2[len(key_2) - 1:]
+    key_2cc = key_2[:len(key_2) - 4]
+    key_3cc = key_2[len(key_2) - 3:]
+    if key_2cc != key2cc:
+      if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
+        dicto[key_1][key_2c] = {key_3c: int(lCategory3[i]['#text'])}
+      elif key_3cc in ['Phi', 'Eta']:
+        dicto[key_1] = {key_2cc: {key_3cc: int(lCategory3[i]['#text'])}}
+      else:
+        dicto[key_1].update({key_2: int(lCategory3[i]['#text'])})
+      key2 = key_2
+      key2c = key_2c
+      key2cc = key_2cc
+      key3cc = key_3cc
+    else:
+      if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
+        dicto[key_1][key_2c].update({key_3c: int(lCategory3[i]['#text'])})
+      elif key_3cc in ['Phi', 'Eta']:
+        dicto[key_1][key_2cc].update({key_3cc: int(lCategory3[i]['#text'])})
+      else:
+        dicto[key_1].update({key_2: int(lCategory3[i]['#text'])})
+
+  return(dicto)
+
+
+def ranges(mainList):
+  ''' Returns a list containing the ranges of each category '''
+  rangesList = [mainList[0], mainList[1]]
+  for i in range(2, len(mainList)):
+    if mainList[i] == mainList[i - 1] + 1 and mainList[i - 1] == mainList[i - 2] + 1:
+      rangesList[len(rangesList) - 1] = mainList[i]
+    else:
+      rangesList.append(mainList[i])
+  return rangesList
+
+
+def difisnull(dict_3):
+  ''' Returns False if a category 3 dictionnary contains a field or a subfield that has a value different from 0 '''
+  for i in dict_3:
+    if isinstance(dict_3[i], dict):
+      for j in dict_3[i]:
+        if isinstance(dict_3[i][j], dict):
+          for x in dict_3[i][j]:
+            if dict_3[i][j][x] != 0:
+              return False
+        elif dict_3[i][j] != 0:
+          return False
+    elif dict_3[i] != 0:
+      return False
+  return True
 
 
 class XMLSummaryError(Exception):
@@ -345,5 +499,58 @@ def analyseXMLSummary(xmlFileName=None, xf_o=None, log=None, inputsOnPartOK=Fals
   if not xf_o:
     xf_o = XMLSummary(xmlFileName, log=log)
   return xf_o.analyse(inputsOnPartOK)
+  
+################################################################################
+
+
+def xmltojson(self):
+    ''' The main function that takes the name of the XMLsummary file or the path to it
+        as an entry parameter and creates a JSON file with the same name in the current directory '''
+
+    JS = dict()
+    JSO = dict()
+
+    with open(self.xmlFileName, 'r') as file:
+      fileLines = file.readlines()
+    
+    fileLines = fileLines[fileLines.index(
+        '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
+    countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
+    s = ''.join(countersLines).replace('Theta', 'Eta')
+    with open("counters.xml", "w") as output
+      output.write(s)
+    
+    with open('counters.xml') as xmlFile:
+      dicto = xmltodict.parse(xmlFile.read())
+    
+    jsonData = json.dumps(dicto)
+    l = dicto['counters']['counter']
+    os.remove("counters.xml")
+    l_1 = list()
+    l_2 = list()
+    l_3 = list()
+    for i in range(len(l)):
+      if l[i]['@name'].find('#') != -1 and l[i]['@name'].find('Prev') == -1 and l[i]['@name'].find('Next') == -1:
+        l_1.append(i)
+      if l[i]['@name'].find('/') != -1 and l[i]['@name'].find('Original') == -1 and l[i]['@name'].find('Unpacked') == -1 and l[i]['@name'].find(
+              'Diff') == -1 and l[i]['@name'].find('#') == -1 and l[i]['@name'].find('Prev') == -1 and l[i]['@name'].find('Next') == -1:
+        l_2.append(i)
+      if l[i]['@name'].find('Diff.') != -1 and l[i]['@name'].find('Prev') == -1 and l[i]['@name'].find('Next') == -1:
+        l_3.append(i)
+    for i in l_1:
+      JS.update(xmltojsonCat1(l[i:i + 1]))
+    for i in range(0, len(ranges(l_2)), 2):
+      JS.update(xmltojsonCat2(l[ranges(l_2)[i]:ranges(l_2)[i + 1] + 1]))
+    for i in range(0, len(ranges(l_3)), 2):
+      if not difisnull(xmltojsonCat3(l[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1])):
+        JS.update(xmltojsonCat2(l[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1]))
+
+    JSO['Counters'] = JS
+    txt = str(JSO).replace('Eta', 'Theta')
+    dico = ast.literal_eval(txt)
+    with open(self.xmlFileName[-36:-3] + 'json', 'w') as fp:
+      json.dump(dico, fp, indent=2)
+
+    return(dico)
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#
