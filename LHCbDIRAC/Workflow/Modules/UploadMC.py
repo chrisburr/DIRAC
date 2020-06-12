@@ -18,7 +18,7 @@ import json
 from DIRAC import S_OK, S_ERROR, gLogger
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
-from LHCbDIRAC.ProductionManagementSystem.Utilities.XMLtoJSON import XML_SUMMARY
+from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 
 
 class UploadMC(ModuleBase):
