@@ -58,7 +58,7 @@ stages:
     - pip install 'setuptools<45'
     - pip install --upgrade pip
     - pip install -r DIRAC/requirements.txt
-    - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3
+    - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
   stage: test
   only:
