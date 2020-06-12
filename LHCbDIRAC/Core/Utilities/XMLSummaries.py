@@ -517,7 +517,7 @@ def xmltojson(self):
         '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
     countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
     s = ''.join(countersLines).replace('Theta', 'Eta')
-    with open("counters.xml", "w") as output
+    with open("counters.xml", "w") as output:
       output.write(s)
     
     with open('counters.xml') as xmlFile:
