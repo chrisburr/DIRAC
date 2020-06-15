@@ -82,7 +82,7 @@ class UploadMC(ModuleBase):
       xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.jobID)
       if os.path.exists(xmlfl):
         try:
-          xmlData = XML_SUMMARY(xmlfl)
+          xmlData = XMLSummary(xmlfl)
           xmlData.xmltojson()
           #At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
           jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
