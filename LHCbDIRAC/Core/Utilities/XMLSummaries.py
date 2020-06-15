@@ -20,7 +20,7 @@ from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 __RCSID__ = "$Id$"
 
 
-def xmltojson1(lCategory1):
+def xmltojsonCat1(lCategory1):
   '''e.g Transforms <counter name="MCVeloHitPacker/# PackedData">50809</counter>
      into {"MCVeloHitPacker": {"PackedData": 50809}}
      Let's call this category of counters category 1'''
@@ -35,7 +35,7 @@ def xmltojson1(lCategory1):
   return(dicto)
 
 
-def xmltojson2(lCategory2):
+def xmltojsonCat2(lCategory2):
   '''e.g Transforms   <counter name="TTHitMonitor/DeltaRay">1249</counter>
                       <counter name="TTHitMonitor/betaGamma">28101829</counter>
                       <counter name="TTHitMonitor/numberHits">17105</counter>
@@ -63,7 +63,7 @@ def xmltojson2(lCategory2):
   return(dicto)
 
 
-def xmltojson3(lCategory3):
+def xmltojsonCat3(lCategory3):
   '''e.g Transforms   <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
                       <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
                       <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
