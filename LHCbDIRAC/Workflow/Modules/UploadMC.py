@@ -70,7 +70,7 @@ class UploadMC(ModuleBase):
               else:
                 # At this point we can see exactly what the module would have uploaded
                 self.log.info("Module disabled", "would have attempted to upload the following file %s" % fn)
-            except BaseException as ve:
+            except Exception as ve:
               self.log.verbose("Exception loading the JSON file: content of %s follows" % fn)
               print fd.read()
               raise ve
@@ -106,7 +106,7 @@ class UploadMC(ModuleBase):
             else:
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
-          except BaseException as ve:
+        except Exception as ve:
             self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
             print JS.read()
             raise ve
