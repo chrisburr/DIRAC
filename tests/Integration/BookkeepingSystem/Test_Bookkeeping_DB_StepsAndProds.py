@@ -25,7 +25,7 @@ from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 # # sut
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
-gLogger.setLevel('VERBOSE')
+gLogger.setLevel('DEBUG')
 
 __RCSID__ = "$Id$"
 

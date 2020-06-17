@@ -23,7 +23,7 @@ CREATE OR REPLACE PACKAGE bookkeepingoracledb AS
 PROCEDURE funny(a NUMBER);
 FUNCTION  ext RETURN udt_refcursor;
 PROCEDURE getavailablefiletypes(a_cursor OUT udt_refcursor );
-FUNCTION insertfiletypes( v_name VARCHAR2, description VARCHAR2,filetype VARCHAR2) RETURN NUMBER;
+FUNCTION insertfiletypes(v_name VARCHAR2, description VARCHAR2, filetype VARCHAR2) RETURN NUMBER;
 PROCEDURE getavailableconfigurations(a_cursor OUT udt_refcursor);
 PROCEDURE getstepsforspecificifiles(iftypes ifileslist, a_cursor OUT udt_refcursor);
 PROCEDURE getstepsforspecificofiles(oftypes ifileslist, a_cursor OUT udt_refcursor);
@@ -696,22 +696,29 @@ OPEN  a_cursor FOR
 END;
 
 --------------------------------------------------------------------------------------
-FUNCTION getproductionprocessingpass(prod NUMBER) RETURN VARCHAR2 IS
+FUNCTION getproductionprocessingpass(
+  prod NUMBER) RETURN VARCHAR2 IS
 retval varchar2(256);
-ecode    number(38);
+ecode number(38);
 thisproc constant varchar2(50) := 'trap_errmesg';
 BEGIN
-SELECT v.path INTO retval FROM (SELECT DISTINCT  LEVEL-1 pathlen, sys_connect_by_path(name, '/') path
-FROM processing
-WHERE LEVEL > 0 AND id = (SELECT DISTINCT processingid FROM productionscontainer prod WHERE prod.production = prod)
-CONNECT BY NOCYCLE PRIOR id = parentid ORDER BY pathlen DESC) v WHERE rownum <= 1;
-RETURN retval;
-EXCEPTION
-  WHEN others THEN
-    raise_application_error(-20004, 'error found! The processing pass does not exists!');
---ecode := SQLERRM; --SQLCODE;
---dbms_output.put_line(thisproc || ' - ' || ecode);
-  RETURN NULL;
+  SELECT v.path INTO retval
+  FROM (SELECT DISTINCT  LEVEL-1 pathlen, sys_connect_by_path(name, '/') path
+	FROM processing
+	WHERE LEVEL > 0
+	  AND id = (SELECT DISTINCT processingid
+		    FROM productionscontainer
+		    WHERE production = prod)
+	CONNECT BY NOCYCLE PRIOR id = parentid
+	ORDER BY pathlen DESC) v
+  WHERE rownum <= 1;
+  RETURN retval;
+  EXCEPTION
+    WHEN others THEN
+      raise_application_error(-20004, 'error found! The processing pass does not exists!');
+  --ecode := SQLERRM; --SQLCODE;
+  --dbms_output.put_line(thisproc || ' - ' || ecode);
+    RETURN NULL;
 END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1531,8 +1538,11 @@ PROCEDURE getconfigsandevttype(
   )IS
   BEGIN
     OPEN a_cursor FOR
-    SELECT c.configname,c.configversion,prod.eventtypeid FROM productionoutputfiles prod, configurations c,
-    productionscontainer cont WHERE prod.production = prodid AND cont.production = prod.production AND cont.configurationid = c.configurationid
+    SELECT c.configname,c.configversion,prod.eventtypeid
+    FROM productionoutputfiles prod, configurations c, productionscontainer cont
+    WHERE prod.production = prodid
+      AND cont.production = prod.production
+      AND cont.configurationid = c.configurationid
     GROUP BY c.configname,c.configversion,prod.eventtypeid;
   END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1552,9 +1562,10 @@ PROCEDURE getsteps(
   BEGIN
    OPEN a_cursor FOR
     SELECT s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.stepid, s.visible
-      FROM steps s, stepscontainer prod WHERE
-      prod.stepid = s.stepid AND
-      prod.production = prodid ORDER BY prod.step;
+    FROM steps s, stepscontainer prod
+    WHERE prod.stepid = s.stepid
+      AND prod.production = prodid
+    ORDER BY prod.step;
   EXCEPTION
   WHEN others THEN
     raise_application_error(-20003, 'error found the production does not exists  in the productionscontainer table!');
@@ -1622,32 +1633,53 @@ PROCEDURE getjobsnb(
 END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertstepscontainer(v_prod NUMBER, v_stepid NUMBER, v_step NUMBER)IS
-alreadyexists NUMBER;
-BEGIN
-INSERT INTO stepscontainer(production,stepid,step)VALUES(v_prod, v_stepid, v_step);
-COMMIT;
-EXCEPTION
-  WHEN dup_val_on_index THEN
-   dbms_output.put_line(v_prod || 'already in the steps container table');
-   SELECT count(*) INTO alreadyexists FROM stepscontainer WHERE production = v_prod AND stepid = v_stepid AND step = v_step;
-   IF alreadyexists > 0 THEN
-     raise_application_error(-20005, 'The production already exists in the steps container table!');
-   END IF;
+PROCEDURE insertstepscontainer(
+    v_prod NUMBER,
+    v_stepid NUMBER,
+    v_step NUMBER
+  )IS
+  alreadyexists NUMBER;
+  BEGIN
+  INSERT INTO stepscontainer(production,stepid,step) VALUES(v_prod, v_stepid, v_step);
+  COMMIT;
+  EXCEPTION
+    WHEN dup_val_on_index THEN
+      dbms_output.put_line(v_prod || 'already in the steps container table');
+      SELECT count(*) INTO alreadyexists
+      FROM stepscontainer
+      WHERE production = v_prod
+	AND stepid = v_stepid
+	AND step = v_step;
+     IF alreadyexists > 0 THEN
+       raise_application_error(-20005, 'The production already exists in the steps container table!');
+     END IF;
 END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertproductionscontainer_tmp(v_prod NUMBER, v_processingid NUMBER, v_simid NUMBER, v_daqperiodid NUMBER, cname VARCHAR2, cversion VARCHAR2) IS
+PROCEDURE insertproductionscontainer_tmp(
+  v_prod NUMBER,
+  v_processingid NUMBER,
+  v_simid NUMBER,
+  v_daqperiodid NUMBER,
+  cname VARCHAR2,
+  cversion VARCHAR2
+) IS
 configid NUMBER;
 existindb NUMBER;
 BEGIN
 configid := 0;
-SELECT count(*) INTO existindb FROM configurations WHERE configname = cname AND configversion = cversion;
+SELECT count(*) INTO existindb
+FROM configurations
+WHERE configname = cname
+  AND configversion = cversion;
 IF existindb = 0 THEN
   SELECT configurationid_seq.nextval INTO configid FROM dual;
   INSERT INTO configurations(configurationid,configname,configversion)VALUES(configid, cname, cversion);
   COMMIT;
 ELSE
- SELECT configurationid INTO configid FROM configurations WHERE configname = cname AND configversion = cversion;
+  SELECT configurationid INTO configid
+  FROM configurations
+  WHERE configname = cname
+    AND configversion = cversion;
 END IF;
 INSERT INTO productionscontainer(production,processingid,simid,daqperiodid, configurationid)VALUES(v_prod, v_processingid, v_simid, v_daqperiodid, configid);
 COMMIT;
@@ -1822,7 +1854,12 @@ IS
 sid NUMBER := 0;
 res NUMBER := 0;
 BEGIN
-SELECT st.stepid INTO sid FROM stepscontainer st WHERE st.production = v_prod AND st.step = (SELECT max(step) FROM stepscontainer st2 WHERE st2.production = v_prod);
+SELECT st.stepid INTO sid
+FROM stepscontainer st
+WHERE st.production = v_prod
+  AND st.step = (SELECT max(step)
+		 FROM stepscontainer st2
+		 WHERE st2.production = v_prod);
 res := isvisible(sid);
 IF res > 0 THEN
 RETURN v_prod;
