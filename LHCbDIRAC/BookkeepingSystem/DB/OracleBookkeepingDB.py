@@ -484,7 +484,7 @@ class OracleBookkeepingDB(object):
   def getStepOutputFiles(self, stepId):
     """For retrieving the step output file types.
 
-    :param int stepid: given tep id
+    :param int stepid: step id
     :return: the output file types for a given step
     """
     command = 'select outputfiletypes.name,outputfiletypes.visible from steps, \
@@ -662,7 +662,7 @@ class OracleBookkeepingDB(object):
   def deleteSetpContiner(self, prod):
     """delete a production from the step container.
 
-    :param long prod: production number
+    :param int prod: production number
     """
     result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteSetpContiner', [prod], False)
     return result
@@ -671,7 +671,7 @@ class OracleBookkeepingDB(object):
   def deleteProductionsContiner(self, prod):
     """delete a production from the productions container.
 
-    :param long prod: the production number
+    :param int prod: the production number
     """
     result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteProductionsCont', [prod], False)
     return result
@@ -831,7 +831,7 @@ class OracleBookkeepingDB(object):
     :param str configVersion: configuration version
     :param str conddescription: data taking or simulation description
     :param long runnumber: run number
-    :param long production: production number
+    :param int production: production number
     :param eventType: event type identifier
     :param str path: processing pass
     :return: the processing pass for a given dataset
@@ -1048,7 +1048,7 @@ class OracleBookkeepingDB(object):
     :param str processing: processing pass
     :param long evt: event type identifier
     :param long runnb: run number
-    :param long production: production number
+    :param int production: production number
     :param str visible: the file visibility flag
     :param str file type: file type
     :param str replicaFlag: replica flag
@@ -1121,7 +1121,7 @@ class OracleBookkeepingDB(object):
     :param str conddescription: data taking or simulation description
     :param str processing: processing pass
     :param long evt: event type identifier
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str quality: data quality flag
     :param str visible: visibility flag
@@ -1529,7 +1529,7 @@ class OracleBookkeepingDB(object):
   def getProductionFiles(self, prod, ftype, gotreplica=default):
     """For retrieving the list of LFNs for a given production.
 
-    :param long prod: production number
+    :param int prod: production number
     :param str ftype: file type
     :param str gotreplica: replica flag
     :return: the files which are belongs to a given production
@@ -1823,7 +1823,7 @@ class OracleBookkeepingDB(object):
   def setProductionDataQuality(self, prod, flag):
     """sets the data quality to a production.
 
-    :param long prod: production number
+    :param int prod: production number
     :param str flag: data quality flag
     """
     result = S_ERROR()
@@ -2478,7 +2478,7 @@ class OracleBookkeepingDB(object):
   def __getProductionStatisticsForUsers(self, prod):
     """For retrieving the statistics of a production.
 
-    :param long prod: production number
+    :param int prod: production number
     :return: number of files, evenet stat, filesize end luminosity
     """
     command = "select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.Luminosity), \
@@ -2490,7 +2490,7 @@ class OracleBookkeepingDB(object):
   def getProductionFilesForWeb(self, prod, ftypeDict, sortDict, startItem, maxitems):
     """For retrieving the production file used by WebApp.
 
-    :param long prod: production number
+    :param int prod: production number
     :param dict ftypeDict: dictionary which contains the file type.
     :param dict sortDict: the columns which will be sorted.
     :param int startItem: used for paging. The row number
@@ -2902,7 +2902,7 @@ class OracleBookkeepingDB(object):
     :param str: cVersion: configuration version
     :param str: conddesc: simulation or data taking description
     :param str processing: processing pass
-    :paran long production: production number
+    :paran int production: production number
     :param str ftype: file type
     :param long evttype: event type id
     :return: production statistics
@@ -2981,7 +2981,7 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
     """For retrieving the simulation or data taking description of a
     production.
 
-    :param long prod: production number
+    :param int prod: production number
     :return: simulation condition
     """
     simdesc = None
@@ -3031,7 +3031,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionNbOfJobs(self, prodid):
     """Number of jobs for given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the number of jobs
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getJobsNb', [prodid])
@@ -3040,7 +3040,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionNbOfEvents(self, prodid):
     """Number of event for a given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the number of events
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getNumberOfEvents', [prodid])
@@ -3049,7 +3049,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionSizeOfFiles(self, prodid):
     """Size of the files for a given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the size of files
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSizeOfFiles', [prodid])
@@ -3058,7 +3058,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionNbOfFiles(self, prodid):
     """For retrieving number of files for a given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the number of files
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getNbOfFiles', [prodid])
@@ -3067,7 +3067,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionInformation(self, prodid):
     """For retrieving production statistics.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the statistics of a production
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getProductionInformation', [prodid])
@@ -3204,7 +3204,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """the number of successfully finished jobs at different Grid sites for a
     given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: number of jobs
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getJobsbySites', [prodid])
@@ -3213,7 +3213,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getConfigsAndEvtType(self, prodid):
     """For retrieving the configuration name, version and event type.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the configurations and event type of a production
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getConfigsAndEvtType', [prodid])
@@ -3245,7 +3245,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionProcessedEvents(self, prodid):
     """For retreiving all events in specific production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the processed event by a production
     """
     return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessedEvents', types.LongType, [prodid])
@@ -3435,7 +3435,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long evt: event type
     :param str configName: configuration name
     :param str configVersion: configuration version
-    :param long production: production number
+    :param int production: production number
     :param str flag: data quality flag
     :param datetime startDate: job/run insert start time stamp
     :param datetime endDate: job/run insert end time stamp
@@ -3972,7 +3972,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str evt: event type
     :param str configName: configuration name
     :param str configVersion: configuration version
-    :param long production: production number
+    :param int production: production number
     :param str flag: data quality
     :param datetime startDate: job start insert time stamp
     :param datetime endDate: job end insert time stamp
@@ -4024,7 +4024,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: simulation or data taking condition
     :param str processingPass: processing pass
     :param long eventType: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str dataQuality: data quality
     :param long startRun: satart run number
@@ -4136,7 +4136,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: simulation or data taking condition
     :param str processing: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str quality: data quality
     :param long runnb: run number
@@ -4471,23 +4471,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_ERROR()
 
   #############################################################################
-  def insertStepsContainer(self, prod, stepid, step):
-    """inserts a step to the stepcontainer.
-
-    :param long prod: production number
-    :param long stepid: step id
-    :param long step: the step counter (a production can have more than one step)
-    """
-    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertStepsContainer', [prod, stepid, step], False)
-
-  #############################################################################
   def insertproductionscontainer(self, prod, processingid, simid, daqperiodid, configName, configVersion):
     """inserts a production to the productions container.
 
-    :param long prod: production number
-    :param long processingid: processing pass id
-    :param long simid: simulation condition id
-    :param long daqperiodid: data taking condition id
+    :param int prod: production number
+    :param int processingid: processing pass id
+    :param int simid: simulation condition id
+    :param int daqperiodid: data taking condition id
     :param str configName: configuration name
     :param str configVersion: configuration version
     """
@@ -4498,12 +4488,14 @@ and files.qualityid= dataquality.qualityid" % lfn
   def addProductionSteps(self, steps, prod):
     """adds a step to a production. The steps which used by the production.
 
-    :param list steps: list of steps
-    :param long prod: production number
+    :param list steps: list of dict of steps [{'StepId':123}, {'StepId':321}]
+    :param int prod: production number
     """
     level = 1
-    for i in steps:
-      retVal = self.insertStepsContainer(prod, i['StepId'], level)
+    for step in steps:
+      retVal = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertStepsContainer',
+						[prod, step['StepId'], level],
+						False)
       if not retVal['OK']:
         return retVal
       level += 1
@@ -4513,7 +4505,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def checkProcessingPassAndSimCond(self, production):
     """checks the processing pass and simulation condition.
 
-    :param long production: production number
+    :param int production: production number
     """
     command = ' select count(*) from productionscontainer where production=' + str(production)
     res = self.dbR_.query(command)
@@ -4524,7 +4516,7 @@ and files.qualityid= dataquality.qualityid" % lfn
                     inputproc='', configName=None, configVersion=None, eventType=None):
     """adds a production to the productions container table.
 
-    :param long production: production number
+    :param int production: production number
     :param str simcond: simulation condition description
     :param str daq: data taking description
     :param list steps: list of dictionaries of steps (min fields {'Visible': 'Y/N', 'StepID': '123'})
@@ -4539,9 +4531,9 @@ and files.qualityid= dataquality.qualityid" % lfn
         inputproc = '/' + inputproc
       path = inputproc.split('/')[1:]
 
-    for i in steps:
-      if i['Visible'] == 'Y':
-        res = self.getAvailableSteps({'StepId': i['StepId']})
+    for step in steps:
+      if step['Visible'] == 'Y':
+	res = self.getAvailableSteps({'StepId': step['StepId']})
         if not res['OK']:
           gLogger.error(res['Message'])
           return res
@@ -4637,7 +4629,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :param str configName: configuration name
     :param str configVersion: configuration version
-    :param long prod: production number
+    :param int prod: production number
     :return: event types
     """
 
@@ -4735,7 +4727,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionProcessingPassSteps(self, prod):
     """For retrieving the processing pass of a fgiven production.
 
-    :param long prod: production number
+    :param int prod: production number
     :return: the production processing pass
     """
     processing = {}
@@ -4897,7 +4889,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: data taking condition
     :param str processing: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str quality: data quality
     :param long runnb: run number
@@ -4930,7 +4922,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param str procpass: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param long runnb: run number
     :param str selection: select state
@@ -4998,7 +4990,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param str procpass: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param long runnb: run number
     :return: the steps with metadata
