@@ -77,14 +77,13 @@ class UploadMC(ModuleBase):
         else:
           self.log.info("JSON file not found", fn)
 
-
       # looking for xml files that are 'summaryGauss_self.production_id_self.prod_job_id_1.xml'
       xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.prod_job_id)
       if os.path.exists(xmlfl):
         try:
           xmlData = XMLSummary(xmlfl)
           xmlData.xmltojson()
-          #At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
+          # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
           jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
           with open(jsonfl) as JS:
             jsonData = json.load(JS)
@@ -102,7 +101,7 @@ class UploadMC(ModuleBase):
               mcLogGaussSummariesClient.indexName = 'lhcb-mcstats-GaussSummaries' + self.production_id
               res = mcLogGaussSummariesClient.set('Gauss-Summaries', jsonData)
               if not res['OK']:
-                self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))
+                self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # nopep8
             else:
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
