@@ -10,7 +10,6 @@
 ###############################################################################
 """Queries creation."""
 
-import types
 import datetime
 import re
 
@@ -538,7 +537,7 @@ class OracleBookkeepingDB(object):
   def insertFileTypes(self, ftype, desc, fileType):
     """inserts a given file type."""
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFileTypes',
-                                            types.LongType, [ftype, desc, fileType])
+					    int, [ftype, desc, fileType])
 
   #############################################################################
   def insertStep(self, in_dict):
@@ -1278,7 +1277,7 @@ class OracleBookkeepingDB(object):
     :return: processing pass
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-                                            types.StringType, [prodid])
+					    six.string_types, [prodid])
 
   #############################################################################
   def getRunProcessingPass(self, runnumber):
@@ -1288,7 +1287,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass for a given run
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-                                            types.StringType, [-1 * runnumber])
+					    six.string_types, [-1 * runnumber])
 
   #############################################################################
   def getProductionProcessingPassID(self, prodid):
@@ -1298,7 +1297,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass identifier of a production
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPassId',
-                                            types.LongType, [prodid])
+					    int, [prodid])
 
   #############################################################################
   def getMoreProductionInformations(self, prodid):
@@ -1514,7 +1513,7 @@ class OracleBookkeepingDB(object):
     :param str lfn: logical file name
     :return: the run number of a given file
     """
-    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getRunNumber', types.LongType, [lfn])
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getRunNumber', int, [lfn])
 
   #############################################################################
   def getRunNbAndTck(self, lfn):
@@ -1723,7 +1722,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass id
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessingPassId',
-                                            types.LongType, [root, fullpath])
+                                            int, [root, fullpath])
 
   #############################################################################
   def getProcessingPassId(self, fullpath):
@@ -1741,7 +1740,7 @@ class OracleBookkeepingDB(object):
     :param str name: data quality for example OK, BAD, etc.
     :return: data quality id
     """
-    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getDataQualityId', types.LongType, [name])
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getDataQualityId', int, [name])
 
   #############################################################################
   def setRunAndProcessingPassDataQuality(self, runNB, procpass, flag):
@@ -1884,7 +1883,7 @@ class OracleBookkeepingDB(object):
     if depth:
       depth -= 1
       result = self.dbR_.executeStoredFunctions(
-          'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', types.LongType, [fileName])
+	  'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', int, [fileName])
 
       if not result["OK"]:
         gLogger.error('Error getting jobID', result['Message'])
@@ -2058,7 +2057,7 @@ class OracleBookkeepingDB(object):
     :return: file type id
     """
     result = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.checkFileTypeAndVersion',
-                                              types.LongType, [filetype, version])
+					      int, [filetype, version])
     return result
 
   #############################################################################
@@ -2150,37 +2149,37 @@ class OracleBookkeepingDB(object):
       pass  # it is already defined
 
     result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertJobsRow',
-                                              types.LongType, [attrList['ConfigName'],
-                                                               attrList['ConfigVersion'],
-                                                               attrList['DiracJobId'],
-                                                               attrList['DiracVersion'],
-                                                               attrList['EventInputStat'],
-                                                               attrList['ExecTime'],
-                                                               attrList['FirstEventNumber'],
-                                                               attrList['JobEnd'],
-                                                               attrList['JobStart'],
-                                                               attrList['Location'],
-                                                               attrList['Name'],
-                                                               attrList['NumberOfEvents'],
-                                                               attrList['Production'],
-                                                               attrList['ProgramName'],
-                                                               attrList['ProgramVersion'],
-                                                               attrList['StatisticsRequested'],
-                                                               attrList['WNCPUPOWER'],
-                                                               attrList['CPUTIME'],
-                                                               attrList['WNCACHE'],
-                                                               attrList['WNMEMORY'],
-                                                               attrList['WNMODEL'],
-                                                               attrList['WorkerNode'],
-                                                               attrList['RunNumber'],
-                                                               attrList['FillNumber'],
-                                                               attrList['WNCPUHS06'],
-                                                               attrList['TotalLuminosity'],
-                                                               attrList['Tck'],
-                                                               attrList['StepID'],
-                                                               attrList['WNMJFHS06'],
-                                                               attrList['HLT2Tck'],
-                                                               attrList['NumberOfProcessors']])
+					      int, [attrList['ConfigName'],
+						    attrList['ConfigVersion'],
+						    attrList['DiracJobId'],
+						    attrList['DiracVersion'],
+						    attrList['EventInputStat'],
+						    attrList['ExecTime'],
+						    attrList['FirstEventNumber'],
+						    attrList['JobEnd'],
+						    attrList['JobStart'],
+						    attrList['Location'],
+						    attrList['Name'],
+						    attrList['NumberOfEvents'],
+						    attrList['Production'],
+						    attrList['ProgramName'],
+						    attrList['ProgramVersion'],
+						    attrList['StatisticsRequested'],
+						    attrList['WNCPUPOWER'],
+						    attrList['CPUTIME'],
+						    attrList['WNCACHE'],
+						    attrList['WNMEMORY'],
+						    attrList['WNMODEL'],
+						    attrList['WorkerNode'],
+						    attrList['RunNumber'],
+						    attrList['FillNumber'],
+						    attrList['WNCPUHS06'],
+						    attrList['TotalLuminosity'],
+						    attrList['Tck'],
+						    attrList['StepID'],
+						    attrList['WNMJFHS06'],
+						    attrList['HLT2Tck'],
+						    attrList['NumberOfProcessors']])
     return result
 
   #############################################################################
@@ -2232,7 +2231,7 @@ class OracleBookkeepingDB(object):
         attrList[param] = fileobject[param]
     utctime = datetime.datetime.utcnow()
 
-    result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', types.LongType,
+    result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', int,
                                               [attrList['Adler32'],
                                                attrList['CreationDate'],
                                                attrList['EventStat'],
@@ -2316,9 +2315,9 @@ class OracleBookkeepingDB(object):
     g4settings = in_dict.get('G4settings', None)
     visible = in_dict.get('Visible', 'Y')
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertSimConditions',
-                                            types.LongType, [simdesc, beamCond, beamEnergy,
-                                                             generator, magneticField,
-                                                             detectorCond, luminosity, g4settings, visible])
+					    int, [simdesc, beamCond, beamEnergy,
+						  generator, magneticField,
+						  detectorCond, luminosity, g4settings, visible])
 
   #############################################################################
   def getSimConditions(self):
@@ -2360,23 +2359,23 @@ class OracleBookkeepingDB(object):
       datataking[param] = conditions[param]
 
     res = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertDataTakingCond',
-                                           types.LongType, [datataking['Description'],
-                                                            datataking['BeamCond'],
-                                                            datataking['BeamEnergy'],
-                                                            datataking['MagneticField'],
-                                                            datataking['VELO'],
-                                                            datataking['IT'],
-                                                            datataking['TT'],
-                                                            datataking['OT'],
-                                                            datataking['RICH1'],
-                                                            datataking['RICH2'],
-                                                            datataking['SPD_PRS'],
-                                                            datataking['ECAL'],
-                                                            datataking['HCAL'],
-                                                            datataking['MUON'],
-                                                            datataking['L0'],
-                                                            datataking['HLT'],
-                                                            datataking['VeloPosition']])
+					   int, [datataking['Description'],
+						 datataking['BeamCond'],
+						 datataking['BeamEnergy'],
+						 datataking['MagneticField'],
+						 datataking['VELO'],
+						 datataking['IT'],
+						 datataking['TT'],
+						 datataking['OT'],
+						 datataking['RICH1'],
+						 datataking['RICH2'],
+						 datataking['SPD_PRS'],
+						 datataking['ECAL'],
+						 datataking['HCAL'],
+						 datataking['MUON'],
+						 datataking['L0'],
+						 datataking['HLT'],
+						 datataking['VeloPosition']])
     return res
 
   #############################################################################
@@ -2571,7 +2570,7 @@ class OracleBookkeepingDB(object):
     """
     result = {}
     for lfn in lfns:
-      res = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.fileExists', types.LongType, [lfn])
+      res = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.fileExists', int, [lfn])
       if not res['OK']:
         return S_ERROR(res['Message'])
       if res['Value'] == 0:
@@ -3248,7 +3247,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param int prodid: production number
     :return: the processed event by a production
     """
-    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessedEvents', types.LongType, [prodid])
+    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessedEvents', int, [prodid])
 
   #############################################################################
   def getRunsForAGivenPeriod(self, in_dict):
@@ -3363,7 +3362,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: data quality
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getQFlagByRunAndProcId',
-                                            types.StringType, [runnb, processing])
+					    six.string_types, [runnb, processing])
 
   #############################################################################
   def getRunWithProcessingPassAndDataQuality(self, procpass, flag=default):
@@ -5140,7 +5139,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: the file for a given GUID
     """
     result = S_ERROR()
-    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', types.StringType, [guid])
+    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', six.string_types, [guid])
     if retVal['OK']:
       result = S_OK(retVal['Value'])
     else:
@@ -5537,7 +5536,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long prodid: production number
     :return: produced events
     """
-    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProducedEvents', types.LongType, [prodid])
+    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProducedEvents', int, [prodid])
 
   #############################################################################
   def bulkinsertEventType(self, eventtypes):
