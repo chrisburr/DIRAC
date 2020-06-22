@@ -195,7 +195,7 @@ def test_xmltojson():
               "UnPackedData": 253748}, "MCTTHitPacker": {
                   "PackedData": 73624}, "MCRichHitPacker": {
               "PackedData": 775606}, "Generation.SignalPlain.TightCut": {
-                      "accept_events": 1, "selected marked": 203, "Efficiency for  [pi+]cc": 47, "no cuts found for gamma": 38, "Efficiency for  [D0]cc": 1, "no cuts found for pi0": 19, "accept_particles": 1}, "UnpackRichTracks": {
+                      "accept_events": 1, "selected marked": 203, "Efficiency for  [pi+]cc": 47, "no cuts found for gamma": 38, "Efficiency for  [D0]cc": 1, "no cuts found for pi0": 19, "accept_particles": 1}, "UnpackRichTracks": {  # nopep8
               "UnPackedData": 32641}, "SignalSim.SignalSimMemory": {
                           "Total Memory/MB": 177999, "Delta Memory/MB": 69}, "CounterSummarySvc": {
               "handled": 201}, "MCRichOpPhotPacker": {
@@ -235,8 +235,8 @@ def test_xmltojson():
               "Entry Point": {
                   "y": 0, "x": 0, "z": 0}, "Energy": 0, "TOF": 0, "Parent |P|": 3, "Displacement": {
                   "y": 0, "x": 0, "z": 0}}, "OTHitMonitor": {
-              "betaGamma": 338754733, "DeltaRay": 16893, "numberHits": 253748}, "GenerationSignal.SignalPlain.TightCut": {
-              "accept_events": 100, "selected marked": 1988, "Efficiency for  [pi+]cc": 405, "no cuts found for gamma": 270, "Efficiency for  [D0]cc": 100, "no cuts found for pi0": 135, "accept_particles": 100}, "CheckPuVetoHits/Diff.": {
+              "betaGamma": 338754733, "DeltaRay": 16893, "numberHits": 253748}, "GenerationSignal.SignalPlain.TightCut": {  # nopep8
+              "accept_events": 100, "selected marked": 1988, "Efficiency for  [pi+]cc": 405, "no cuts found for gamma": 270, "Efficiency for  [D0]cc": 100, "no cuts found for pi0": 135, "accept_particles": 100}, "CheckPuVetoHits/Diff.": {  # nopep8
               "Entry Point": {
                   "y": 0, "x": 0, "z": 0}, "Energy": 0, "TOF": 0, "Parent |P|": 3, "Displacement": {
                   "y": 0, "x": 0, "z": 0}}, "MCEcalHitPacker": {
