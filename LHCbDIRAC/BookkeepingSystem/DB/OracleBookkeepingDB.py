@@ -34,33 +34,34 @@ class OracleBookkeepingDB(object):
 
   def __init__(self):
     """c'tor."""
+    self.log = gLogger.getSubLogger('OracleBookkeepingDB')
     self.cs_path = getDatabaseSection('Bookkeeping/BookkeepingDB')
 
     self.dbHost = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingTNS')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: Host')
+      self.log.error('Failed to get the configuration parameters: Host')
       return
     self.dbHost = result['Value']
 
     self.dbUser = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingUser')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: User')
+      self.log.error('Failed to get the configuration parameters: User')
       return
     self.dbUser = result['Value']
 
     self.dbPass = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingPassword')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: User')
+      self.log.error('Failed to get the configuration parameters: User')
       return
     self.dbPass = result['Value']
 
     self.dbServer = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingServer')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: User')
+      self.log.error('Failed to get the configuration parameters: User')
       return
     self.dbServer = result['Value']
 
@@ -1705,7 +1706,7 @@ class OracleBookkeepingDB(object):
                                                 array=lfns)
       if not retVal['OK']:
         failed = lfns
-        gLogger.error(retVal['Message'])
+	self.log.error(retVal['Message'])
       else:
         succ = lfns
       values['Successful'] = succ
@@ -1886,16 +1887,16 @@ class OracleBookkeepingDB(object):
 	  'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', int, [fileName])
 
       if not result["OK"]:
-        gLogger.error('Error getting jobID', result['Message'])
+	self.log.error('Error getting jobID', result['Message'])
       jobID = int(result.get('Value', 0))
       if jobID:
-        command = "select files.fileName,files.jobid, files.gotreplica, files.eventstat,\
+	command = "select files.fileName,files.jobid, files.gotreplica, files.eventstat,\
          files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name \
         from inputfiles,files, filetypes where files.filetypeid=filetypes.filetypeid \
          and inputfiles.fileid=files.fileid and inputfiles.jobid=%d" % (jobID)
         res = self.dbR_.query(command)
         if not res['OK']:
-          gLogger.error('Error getting job input files', result["Message"])
+	  self.log.error('Error getting job input files', result["Message"])
         else:
           dbResult = res['Value']
           for record in dbResult:
@@ -1927,7 +1928,7 @@ class OracleBookkeepingDB(object):
     logicalFileNames = {'Failed': []}
     ancestorList = {}
     filesWithMetadata = {}
-    gLogger.debug('original', "%s" % lfn)
+    self.log.debug('original', "%s" % lfn)
     failed = []
     for fileName in lfn:
       files = []
@@ -1965,7 +1966,7 @@ class OracleBookkeepingDB(object):
 
       res = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getFileDesJobId', [fileName])
       if not res["OK"]:
-        gLogger.error('Error getting fileId', res['Message'])
+	self.log.error('Error getting fileId', res['Message'])
         failed.add(fileName)
       elif not res['Value']:
         notprocessed.add(fileName)
@@ -1975,7 +1976,7 @@ class OracleBookkeepingDB(object):
 
           res = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getFileAndJobMetadata', [jobID, getProd])
           if not res["OK"]:
-            gLogger.error('Error getting job output files', res['Message'])
+	    self.log.error('Error getting job output files', res['Message'])
             failed.add(fileName)
           elif not res['Value']:
             notprocessed.add(fileName)
@@ -2042,7 +2043,7 @@ class OracleBookkeepingDB(object):
       if res:
         return S_OK(res)
       else:
-        gLogger.warn("File not found! ", "%s" % fileName)
+	self.log.warn("File not found! ", "%s" % fileName)
         return S_ERROR("File not found: %s" % fileName)
     else:
       return S_ERROR(result['Message'])
@@ -2075,7 +2076,7 @@ class OracleBookkeepingDB(object):
       if value:
         result = S_OK(value)
       else:
-        gLogger.error("Event type not found:", "%s" % eventTypeId)
+	self.log.error("Event type not found:", "%s" % eventTypeId)
         result = S_ERROR("Event type not found: %s" % eventTypeId)
     else:
       result = retVal
@@ -2088,7 +2089,7 @@ class OracleBookkeepingDB(object):
     :param dict job: job attributes
     :returns: jobId
     """
-    gLogger.debug("Insert job into database!")
+    self.log.debug("Insert job into database!")
     attrList = {'ConfigName': None,
                 'ConfigVersion': None,
                 'DiracJobId': None,
@@ -2123,7 +2124,7 @@ class OracleBookkeepingDB(object):
 
     for param in job:
       if not attrList.__contains__(param):
-        gLogger.error("insert job error: ", " the job table not contain attribute %s" % param)
+	self.log.error("insert job error: ", " the job table not contain attribute %s" % param)
         return S_ERROR(" The job table not contain attribute %s" % param)
 
       if param == 'JobStart' or param == 'JobEnd':  # We have to convert data format
@@ -2218,7 +2219,7 @@ class OracleBookkeepingDB(object):
 
     for param in fileobject:
       if param not in attrList:
-        gLogger.error("insert file error: ", " the files table not contain attribute %s " % param)
+	self.log.error("insert file error: ", " the files table not contain attribute %s " % param)
         return S_ERROR(" The files table not contain attribute %s" % param)
 
       if param == 'CreationDate':  # We have to convert data format
@@ -2354,7 +2355,7 @@ class OracleBookkeepingDB(object):
 
     for param in conditions:
       if not datataking.__contains__(param):
-        gLogger.error("Can not insert data taking condition the files table not contains:", "%s" % param)
+	self.log.error("Can not insert data taking condition the files table not contains:", "%s" % param)
         return S_ERROR("Can not insert data taking condition the files table not contains: %s " % param)
       datataking[param] = conditions[param]
 
@@ -2509,7 +2510,7 @@ class OracleBookkeepingDB(object):
     if sortDict:
       res = self.__getProductionStatisticsForUsers(prod)
       if not res['OK']:
-        gLogger.error(res['Message'])
+	self.log.error(res['Message'])
       else:
         totalrecords = res['Value'][0][0]
         nbOfEvents = res['Value'][0][1]
@@ -3091,7 +3092,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     # This will search among the steps in the current production (might not be final)
     # We assume that dddb and conddb are both either set, or not.
     for step in reversed(steps):  # starting from the end
-      gLogger.debug("[getSteps] StepID: %s" % step[7])
+      self.log.debug("[getSteps] StepID: %s" % step[7])
 
       # dddb is in step[4], conddb in step[5]
       if step[4] != 'fromPreviousStep':
@@ -3195,8 +3196,27 @@ and files.qualityid= dataquality.qualityid" % lfn
       return self.__resolveFromPreviousStep(production, bkQuery)
 
     else:
-      gLogger.debug('No input productions found for bkQuery %s, now looping' % bkQuery)
-      return self.__resolveFromPreviousStep(production, bkQuery)
+      productions = set(tuple(i[0] for i in retVal['Value'])) - set([production])
+      self.log.debug('Input Production(s):', productions)
+      if productions:
+        for prod in productions:
+          retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
+          if not retVal['OK']:
+            return retVal
+          data = retVal['Value']
+          found = False
+          for i in data:
+            if i[4] != "fromPreviousStep" or i[5] != "fromPreviousStep":
+              ddb = i[4]
+              conddb = i[5]
+              found = True
+              break
+          if found:
+            return S_OK([ddb, conddb])
+          else:
+            return self.__resolveFromPreviousStep(production, bkQuery)
+      else:
+        return self.__resolveFromPreviousStep(production, bkQuery)
 
   #############################################################################
   def getNbOfJobsBySites(self, prodid):
@@ -3872,7 +3892,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           command = "select QualityId from dataquality where dataqualityflag='%s'" % (str(i))
           res = self.dbR_.query(command)
           if not res['OK']:
-            gLogger.error('Data quality problem:', res['Message'])
+	    self.log.error('Data quality problem:', res['Message'])
           elif not res['Value']:
             return S_ERROR('No file found! Dataquality is missing!')
           else:
@@ -3884,7 +3904,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select QualityId from dataquality where dataqualityflag=\'' + str(flag) + '\''
         res = self.dbR_.query(command)
         if not res['OK']:
-          gLogger.error('Data quality problem:', res['Message'])
+	  self.log.error('Data quality problem:', res['Message'])
         elif not res['Value']:
           return S_ERROR('No file found! Dataquality is missing!')
         else:
@@ -4417,7 +4437,7 @@ and files.qualityid= dataquality.qualityid" % lfn
               command = "insert into processing(id,parentid,name)values(%d,%d,'%s')" % (processingpassid, parentid, i)
               retVal = self.dbW_.query(command)
               if not retVal['OK']:
-                gLogger.error(retVal['Message'])
+		self.log.error(retVal['Message'])
               values.remove(i)
               self.__insertprocessing(values, processingpassid, ids)
           else:
@@ -4431,7 +4451,7 @@ and files.qualityid= dataquality.qualityid" % lfn
               command = "insert into processing(id,parentid,name)values(%d,null,'%s')" % (processingpassid, i)
               retVal = self.dbW_.query(command)
               if not retVal['OK']:
-                gLogger.error(retVal['Message'])
+		self.log.error(retVal['Message'])
               values.remove(i)
               self.__insertprocessing(values, processingpassid, ids)
         else:
@@ -4533,11 +4553,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     for step in steps:
       if step['Visible'] == 'Y':
 	res = self.getAvailableSteps({'StepId': step['StepId']})
-        if not res['OK']:
-          gLogger.error(res['Message'])
-          return res
-        if res['Value']['TotalRecords'] > 0:
-          procpas = res['Value']['Records'][0][9]
+	if not res['OK']:
+	  self.log.error(res['Message'])
+	  return res
+	if res['Value']['TotalRecords'] > 0:
+	  procpas = res['Value']['Records'][0][9]
           path += [procpas]
         else:
           gLogger.error("Missing step", "(StepID: %s)" % i['StepId'])
@@ -4551,9 +4571,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     if not retVal['OK']:
       gLogger.error("Failed adding processing", path)
       return retVal
-    if not retVal['Value']:
-      return S_ERROR('The processing pass already exists! Write to lhcb-bookkeeping@cern.ch')
-    processingid = retVal['Value'][0]
+
+    else:
+      if retVal['Value']:
+	processingid = retVal['Value'][0]
+      else:
+	return S_ERROR('The processing pass already exists! Write to lhcb-bookkeeping@cern.ch')
+
     retVal = self.addProductionSteps(steps, production)
     if not retVal['OK']:
       return retVal
@@ -4562,23 +4586,21 @@ and files.qualityid= dataquality.qualityid" % lfn
     did = None
     if daq is not None:
       retVal = self.__getDataTakingConditionId(daq)
-      if not retVal['OK']:
-        return retVal
-      if retVal['Value'] > -1:
-        did = retVal['Value']
+      if retVal['OK'] and retVal['Value'] > -1:
+	did = retVal['Value']
       else:
-        return S_ERROR('Data taking condition is missing')
+	return S_ERROR('Data taking condition is missing')
     if simcond is not None:
       retVal = self.__getSimulationConditionId(simcond)
       if retVal['OK'] and retVal['Value'] > -1:
-        sim = retVal['Value']
+	sim = retVal['Value']
       else:
-        return S_ERROR('Simulation condition is missing')
+	return S_ERROR('Simulation condition is missing')
     retVal = self.insertproductionscontainer(production, processingid, sim, did, configName, configVersion)
-    if not retVal['OK']:
-      return retVal
+    if retVal['OK']:  # now we can register the production output file types
+      return self.insertProductionOutputFiletypes(production, steps, eventType)
 
-    return self.insertProductionOutputFiletypes(production, steps, eventType)
+    return S_OK('The production processing pass is entered to the bkk')
 
   #############################################################################
   def insertProductionOutputFiletypes(self, production, steps, eventType):
@@ -5016,7 +5038,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         result = retVal
       else:
         productions = set([i[0] for i in retVal['Value']])
-        gLogger.debug('Productions:', "%s" % str(productions))
+	self.log.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
         for prod in productions:
           retVal = self.getSteps(prod, {
@@ -5504,7 +5526,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       command = "select Finished from runstatus where runnumber=%d" % i
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
-        gLogger.error(i, retVal['Message'])
+	self.log.error(i, retVal['Message'])
         status['Failed'] += [i]
       else:
         if len(retVal['Value']) > 0:
