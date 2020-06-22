@@ -501,38 +501,34 @@ class XMLSummary(object):
 
       with open(self.xmlFileName, 'r') as file:
         fileLines = file.readlines()
-      
       fileLines = fileLines[fileLines.index(
           '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
       countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
       s = ''.join(countersLines).replace('Theta', 'Eta')
       with open("counters.xml", "w") as output:
         output.write(s)
-      
       with open('counters.xml') as xmlFile:
         dicto = xmltodict.parse(xmlFile.read())
-      
       jsonData = json.dumps(dicto)
-      l = dicto['counters']['counter']
+      listCounters = dicto['counters']['counter']
       os.remove("counters.xml")
       l_1 = list()
       l_2 = list()
       l_3 = list()
       for i in range(len(l)):
-        if l[i]['@name'].find('#') != -1 and l[i]['@name'].find('Prev') == -1 and l[i]['@name'].find('Next') == -1:
+        if listCounters[i]['@name'].find('#') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:
           l_1.append(i)
-        if l[i]['@name'].find('/') != -1 and l[i]['@name'].find('Original') == -1 and l[i]['@name'].find('Unpacked') == -1 and l[i]['@name'].find(
-                'Diff') == -1 and l[i]['@name'].find('#') == -1 and l[i]['@name'].find('Prev') == -1 and l[i]['@name'].find('Next') == -1:
+        if listCounters[i]['@name'].find('/') != -1 and listCounters[i]['@name'].find('Original') == -1 and listCounters[i]['@name'].find('Unpacked') == -1 and listCounters[i]['@name'].find('Diff') == -1 and listCounters[i]['@name'].find('#') == -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
           l_2.append(i)
-        if l[i]['@name'].find('Diff.') != -1 and l[i]['@name'].find('Prev') == -1 and l[i]['@name'].find('Next') == -1:
+        if listCounters[i]['@name'].find('Diff.') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:
           l_3.append(i)
       for i in l_1:
-        JS.update(xmltojsonCat1(l[i:i + 1]))
+        JS.update(xmltojsonCat1(listCounters[i:i + 1]))
       for i in range(0, len(ranges(l_2)), 2):
-        JS.update(xmltojsonCat2(l[ranges(l_2)[i]:ranges(l_2)[i + 1] + 1]))
+        JS.update(xmltojsonCat2(listCounters[ranges(l_2)[i]:ranges(l_2)[i + 1] + 1]))
       for i in range(0, len(ranges(l_3)), 2):
-        if not difisnull(xmltojsonCat3(l[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1])):
-          JS.update(xmltojsonCat2(l[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1]))
+        if not difisnull(xmltojsonCat3(listCounters[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1])):
+          JS.update(xmltojsonCat2(listCounters[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1]))
 
       JSO['Counters'] = JS
       txt = str(JSO).replace('Eta', 'Theta')
@@ -550,6 +546,5 @@ def analyseXMLSummary(xmlFileName=None, xf_o=None, log=None, inputsOnPartOK=Fals
   if not xf_o:
     xf_o = XMLSummary(xmlFileName, log=log)
   return xf_o.analyse(inputsOnPartOK)
-  
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#
