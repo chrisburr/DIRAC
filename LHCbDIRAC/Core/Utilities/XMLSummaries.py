@@ -515,12 +515,12 @@ class XMLSummary(object):
       l_1 = list()
       l_2 = list()
       l_3 = list()
-      for i in range(len(l)):
-        if listCounters[i]['@name'].find('#') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:
+      for i in range(len(listCounters)):
+        if listCounters[i]['@name'].find('#') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
           l_1.append(i)
         if listCounters[i]['@name'].find('/') != -1 and listCounters[i]['@name'].find('Original') == -1 and listCounters[i]['@name'].find('Unpacked') == -1 and listCounters[i]['@name'].find('Diff') == -1 and listCounters[i]['@name'].find('#') == -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
           l_2.append(i)
-        if listCounters[i]['@name'].find('Diff.') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:
+        if listCounters[i]['@name'].find('Diff.') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
           l_3.append(i)
       for i in l_1:
         JS.update(xmltojsonCat1(listCounters[i:i + 1]))
