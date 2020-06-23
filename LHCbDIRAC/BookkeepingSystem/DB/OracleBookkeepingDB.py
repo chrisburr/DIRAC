@@ -1280,7 +1280,7 @@ class OracleBookkeepingDB(object):
     :return: processing pass
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-					    six.string_types, [prodid])
+					    str, [prodid])
 
   #############################################################################
   def getRunProcessingPass(self, runnumber):
@@ -1290,7 +1290,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass for a given run
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-					    six.string_types, [-1 * runnumber])
+					    str, [-1 * runnumber])
 
   #############################################################################
   def getProductionProcessingPassID(self, prodid):
@@ -3365,7 +3365,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: data quality
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getQFlagByRunAndProcId',
-					    six.string_types[0], [runnb, processing])
+					    str, [runnb, processing])
 
   #############################################################################
   def getRunWithProcessingPassAndDataQuality(self, procpass, flag=default):
@@ -5143,7 +5143,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: the file for a given GUID
     """
     result = S_ERROR()
-    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', six.string_types[0], [guid])
+    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', str, [guid])
     if retVal['OK']:
       result = S_OK(retVal['Value'])
     else:
