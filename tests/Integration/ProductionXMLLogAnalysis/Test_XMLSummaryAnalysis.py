@@ -33,7 +33,7 @@ class XMLSummaryAnalysisTestCase(unittest.TestCase):
       directory (str): either "ok" or "nok" (used for creating the path)
     """
 
-    workPath = os.path.join(os.path.expandvars('$TESTCODE'), testsDir, testPath, directory)
+    workPath = os.path.join(os.path.expandvars('$TEST_CODE_LOC'), testsDir, testPath, directory)
 
     ls = os.listdir(workPath)
 
