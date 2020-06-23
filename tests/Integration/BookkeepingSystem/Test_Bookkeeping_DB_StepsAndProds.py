@@ -306,6 +306,27 @@ def test_inserts():
 			   'boole-dddb', 'boole-conddb',
 			   None, mooreStepID, 'N')]
 
-  # res = bk.getSteps(6)
-  # print(res)
-  # assert res['OK'] is True
+  # Now without BkQuery
+  res = bk.getSteps(6)
+  assert res['OK'] is False  # This will fail because the processing pass of 6 does not exist
+
+  # Adding production 8 (with the same steps of 6, still "inheriting" from 7)
+
+  boole2Step = {'StepId': boole2StepID, 'Visible': 'Y',
+		'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
+  mooreStep = {'StepId': mooreStepID, 'Visible': 'N',
+	       'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
+  res = bk.addProduction(8, simcond='SimCond', steps=[boole2Step, mooreStep],
+			 inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
+  assert res['OK'] is True
+
+  res = bk.getSteps(8)
+  assert res['OK'] is True
+  assert res['Value'] == [('boole2', 'Boole', 'v2r3',
+			   '/some/boole2/option/files',
+			   'boole-dddb', 'boole-conddb',
+			   None, boole2StepID, 'N'),
+			  ('moore', 'Moore', 'v3r3',
+			   '/some/moore/option/files',
+			   'boole-dddb', 'boole-conddb',
+			   None, mooreStepID, 'N')]
