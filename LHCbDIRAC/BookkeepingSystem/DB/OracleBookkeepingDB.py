@@ -10,6 +10,8 @@
 ###############################################################################
 """Queries creation."""
 
+from __future__ import print_function
+
 import datetime
 import re
 
@@ -3111,7 +3113,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return S_OK(productionSteps)
 
     # if we are here it's because in the current production none of the steps contain DB tags
-    gLogger.info("DB tags are not set: will try to retrieve from the parent production")
+    self.log.info("DB tags are not set: will try to retrieve from the parent production")
     if bkQuery is None:
       bkQuery = {}
     if bkQuery.get('ProcessingPass') is None:
@@ -3120,18 +3122,18 @@ and files.qualityid= dataquality.qualityid" % lfn
       if not retVal['OK']:
         return retVal
       if not retVal['Value']:
-        gLogger.error("Production does not have a registered processing pass",
-                      "(%s)" % prodid)
-        return S_ERROR("Production does not have a registered processing pass")
-      gLogger.debug("Production processing pass",
-                    "(%s -> %s)" % (prodid, retVal['Value']))
+	self.log.error("Production does not have a registered processing pass",
+		       "(%s)" % prodid)
+	return S_ERROR("Production does not have a registered processing pass")
+      self.log.debug("Production processing pass",
+		     "(%s -> %s)" % (prodid, retVal['Value']))
       bkQuery['ProcessingPass'] = retVal['Value']
 
     try:
       retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
     except IndexError:
-      gLogger.error("Unable to find DB tags",
-                    "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
+      self.log.error("Unable to find DB tags",
+		     "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
       return S_ERROR("Unable to find DB tags")
 
     if not retVal['OK']:
@@ -3174,49 +3176,30 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     productions = set(tuple(i[0] for i in retVal['Value'])) - set([production])
     if productions:
-      gLogger.debug('Input Production(s) for bkQuery %s: %s' % (bkQuery, productions))
+      self.log.debug('Input Production(s) for bkQuery %s: %s' % (bkQuery, productions))
       for prod in productions:
-        retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
-        if not retVal['OK']:
-          return retVal
+	retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
+	if not retVal['OK']:
+	  return retVal
 
-        steps = retVal['Value']  # this is an ordered list
+	steps = retVal['Value']  # this is an ordered list
 
-        # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
-        # This will search among the steps in the current production (might not be final)
-        # We assume that dddb and conddb are both either set, or not.
-        for step in reversed(steps):  # starting from the end
-          gLogger.debug("[getSteps] StepID: %s" % step[7])
+	# DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
+	# This will search among the steps in the current production (might not be final)
+	# We assume that dddb and conddb are both either set, or not.
+	for step in reversed(steps):  # starting from the end
+	  self.log.debug("[getSteps] StepID: %s" % step[7])
 
-          # dddb is in step[4], conddb in step[5]
-          if step[4] != 'fromPreviousStep':
-            return S_OK([step[4], step[5]])
+	  # dddb is in step[4], conddb in step[5]
+	  if step[4] != 'fromPreviousStep':
+	    return S_OK([step[4], step[5]])
 
-      gLogger.debug('No step of production %s found to have a set dddb/conddb, now looping' % prod)
+      self.log.debug('No step of production %s found to have a set dddb/conddb, now looping' % prod)
       return self.__resolveFromPreviousStep(production, bkQuery)
 
     else:
-      productions = set(tuple(i[0] for i in retVal['Value'])) - set([production])
-      self.log.debug('Input Production(s):', productions)
-      if productions:
-        for prod in productions:
-          retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
-          if not retVal['OK']:
-            return retVal
-          data = retVal['Value']
-          found = False
-          for i in data:
-            if i[4] != "fromPreviousStep" or i[5] != "fromPreviousStep":
-              ddb = i[4]
-              conddb = i[5]
-              found = True
-              break
-          if found:
-            return S_OK([ddb, conddb])
-          else:
-            return self.__resolveFromPreviousStep(production, bkQuery)
-      else:
-        return self.__resolveFromPreviousStep(production, bkQuery)
+      self.log.debug('No input productions found for bkQuery %s, now looping' % bkQuery)
+      return self.__resolveFromPreviousStep(production, bkQuery)
 
   #############################################################################
   def getNbOfJobsBySites(self, prodid):
@@ -3345,7 +3328,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     proc = in_dict.get('ProcessingPass', in_dict.get('ProcPass', default))
     result = S_ERROR()
     if 'Runnumber' in in_dict:
-      gLogger.verbose('The Runnumber has changed to RunNumber!')
+      self.log.verbose('The Runnumber has changed to RunNumber!')
 
     if run != default:
       if proc != default:
@@ -3382,7 +3365,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: data quality
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getQFlagByRunAndProcId',
-					    six.string_types, [runnb, processing])
+					    six.string_types[0], [runnb, processing])
 
   #############################################################################
   def getRunWithProcessingPassAndDataQuality(self, procpass, flag=default):
@@ -4544,6 +4527,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param long eventType: eventTyoe
     """
+    self.log.verbose("Adding production", production)
     path = []
     if inputproc != '':
       if inputproc[0] != '/':
@@ -4558,26 +4542,22 @@ and files.qualityid= dataquality.qualityid" % lfn
 	  return res
 	if res['Value']['TotalRecords'] > 0:
 	  procpas = res['Value']['Records'][0][9]
-          path += [procpas]
-        else:
-          gLogger.error("Missing step", "(StepID: %s)" % i['StepId'])
-          return S_ERROR("Missing step")
+	  path += [procpas]
+	else:
+	  self.log.error("Missing step", "(StepID: %s)" % step['StepId'])
+	  return S_ERROR("Missing step")
 
     if not path:
-      gLogger.error("You have to define the input processing pass or you have to have a visible step!")
+      self.log.error("You have to define the input processing pass or you have to have a visible step!")
       return S_ERROR("You have to define the input processing pass or you have to have a visible step!")
     processingid = None
     retVal = self.addProcessing(path)
     if not retVal['OK']:
-      gLogger.error("Failed adding processing", path)
+      self.log.error("Failed adding processing", path)
       return retVal
-
-    else:
-      if retVal['Value']:
-	processingid = retVal['Value'][0]
-      else:
-	return S_ERROR('The processing pass already exists! Write to lhcb-bookkeeping@cern.ch')
-
+    if not retVal['Value']:
+      return S_ERROR('The processing pass already exists! Write to lhcb-bookkeeping@cern.ch')
+    processingid = retVal['Value'][0]
     retVal = self.addProductionSteps(steps, production)
     if not retVal['OK']:
       return retVal
@@ -4586,7 +4566,9 @@ and files.qualityid= dataquality.qualityid" % lfn
     did = None
     if daq is not None:
       retVal = self.__getDataTakingConditionId(daq)
-      if retVal['OK'] and retVal['Value'] > -1:
+      if not retVal['OK']:
+	return retVal
+      if retVal['Value'] > -1:
 	did = retVal['Value']
       else:
 	return S_ERROR('Data taking condition is missing')
@@ -4597,10 +4579,10 @@ and files.qualityid= dataquality.qualityid" % lfn
       else:
 	return S_ERROR('Simulation condition is missing')
     retVal = self.insertproductionscontainer(production, processingid, sim, did, configName, configVersion)
-    if retVal['OK']:  # now we can register the production output file types
-      return self.insertProductionOutputFiletypes(production, steps, eventType)
+    if not retVal['OK']:
+      return retVal
 
-    return S_OK('The production processing pass is entered to the bkk')
+    return self.insertProductionOutputFiletypes(production, steps, eventType)
 
   #############################################################################
   def insertProductionOutputFiletypes(self, production, steps, eventType):
@@ -4622,7 +4604,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         eventtypes = eventType
       else:
         return S_ERROR("%s event type is not valid!" % eventType)
-    gLogger.verbose("The following event types will be inserted:", "%s" % eventtypes)
+    self.log.verbose("The following event types will be inserted:", "%s" % eventtypes)
 
     for step in steps:
       # the runs have more than one event type
@@ -5116,7 +5098,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: a directory meradata
     """
 
-    gLogger.verbose("Getting directory metadata:", "%s" % lfn)
+    self.log.verbose("Getting directory metadata:", "%s" % lfn)
     result = S_ERROR()
     lfns = [i + '%' for i in lfn]
     retVal = self.dbR_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.getDirectoryMetadata_new',
@@ -5161,7 +5143,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: the file for a given GUID
     """
     result = S_ERROR()
-    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', six.string_types, [guid])
+    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', six.string_types[0], [guid])
     if retVal['OK']:
       result = S_OK(retVal['Value'])
     else:

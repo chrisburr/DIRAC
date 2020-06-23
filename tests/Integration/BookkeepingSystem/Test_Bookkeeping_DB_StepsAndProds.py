@@ -14,6 +14,8 @@ This test connects directly to the DB, which must be present, and defined in the
 
 # pylint: disable=invalid-name,wrong-import-position
 
+from __future__ import print_function
+
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
@@ -23,7 +25,7 @@ from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 # # sut
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
-gLogger.setLevel('DEBUG')
+gLogger.setLevel('VERBOSE')
 
 __RCSID__ = "$Id$"
 
@@ -109,6 +111,7 @@ bk = OracleBookkeepingDB()
 def test_inserts():
 
   # # first delete from DB ####################
+  bk.dbW_._query("DELETE FROM eventtypes")
   bk.dbW_._query("DELETE FROM filetypes")
   bk.dbW_._query("DELETE FROM stepscontainer")
   bk.dbW_._query("DELETE FROM steps")
@@ -276,15 +279,25 @@ def test_inserts():
 		 'G4settings': 'G4settings'}
   res = bk.insertSimConditions(simcondDict)
   assert res['OK'] is True
+  res = bk.insertFileTypes('SIM', 'bofbof', 'ROOT')
+  assert res['OK'] is True
   res = bk.insertFileTypes('DIGI', 'bof', 'ROOT')
   assert res['OK'] is True
+  res = bk.insertEventTypes(12345, 'boh', 'primary')
+  assert res['OK'] is True
 
-  boole2Step = {'StepId': boole2StepID, 'Visible': 'N',
-		'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
-  mooreStep = {'StepId': mooreStepID, 'Visible': 'N',
+  gaussStep = {'StepId': gaussStepID, 'Visible': 'Y',
+	       'OutputFileTypes': [{'Visible': 'N', 'FileType': 'SIM'}]}
+  booleStep = {'StepId': booleStepID, 'Visible': 'N',
 	       'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
 
-  res = bk.addProduction(7, simcond='SimCond', steps=[boole2Step, mooreStep],
+  res = bk.addProduction(7, simcond='SimCond', steps=[gaussStep, booleStep],
 			 inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
-  print res
   assert res['OK'] is True
+
+  res = bk.getSteps(6, {'ProcessingPass': '/Sim/Digi2/L0Trig'})
+  assert res['OK'] is True
+
+  # res = bk.getSteps(6)
+  # print(res)
+  # assert res['OK'] is True
