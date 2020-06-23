@@ -2322,9 +2322,16 @@ FOR i IN lfns.first .. lfns.last LOOP
 OPEN a_cursor FOR SELECT filename, jobid, fileid, filetypeid FROM table(lfnmeta);
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertprodnoutputftypes(v_production NUMBER, v_stepid NUMBER, v_filetypeid NUMBER, v_visible char, v_eventtype NUMBER)IS
+PROCEDURE insertprodnoutputftypes(
+  v_production NUMBER,
+  v_stepid NUMBER,
+  v_filetypeid NUMBER,
+  v_visible char,
+  v_eventtype NUMBER
+)IS
 BEGIN
-  INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid)VALUES(v_production,v_stepid, v_filetypeid, v_visible,v_eventtype);
+  INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid)
+  VALUES(v_production,v_stepid, v_filetypeid, v_visible,v_eventtype);
   COMMIT;
 EXCEPTION
   WHEN dup_val_on_index THEN
