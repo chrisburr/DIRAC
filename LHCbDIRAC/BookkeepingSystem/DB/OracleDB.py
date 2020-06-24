@@ -113,7 +113,6 @@ class OracleDB:
     self.logger.info("===================== Oracle =====================")
     self.logger.info("User:           " + self.__userName)
     self.logger.info("TNS:            " + self.__tnsName)
-    self.logger.debug("Password:       " + self.__passwd)
     self.logger.info("==================================================")
 
   def __del__(self):

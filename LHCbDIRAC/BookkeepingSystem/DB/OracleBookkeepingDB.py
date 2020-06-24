@@ -967,8 +967,7 @@ class OracleBookkeepingDB(object):
 
     if retVal['Value']:
       return S_OK(retVal['Value'][0][0])
-    else:
-      return S_OK(-1)
+    return S_OK(-1)
 
   #############################################################################
   def __getSimulationConditionId(self, desc):
@@ -980,13 +979,12 @@ class OracleBookkeepingDB(object):
     """
     command = "select simid from simulationconditions where simdescription='%s'" % (desc)
     retVal = self.dbR_.query(command)
-    if retVal['OK']:
-      if retVal['Value']:
-        return S_OK(retVal['Value'][0][0])
-      else:
-        return S_OK(-1)
-    else:
+    if not retVal['OK']:
       return retVal
+
+    if retVal['Value']:
+      return S_OK(retVal['Value'][0][0])
+    return S_OK(-1)
 
   #############################################################################
   def getProductions(self, configName=default, configVersion=default,
@@ -1724,7 +1722,8 @@ class OracleBookkeepingDB(object):
     :param str fullpath: full processing pass for exampe: /Real Data/Reco19/Stripping20
     :return: the processing pass id
     """
-    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessingPassId', types.LongType, [root, fullpath])
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessingPassId',
+                                            types.LongType, [root, fullpath])
 
   #############################################################################
   def getProcessingPassId(self, fullpath):
@@ -2608,7 +2607,7 @@ class OracleBookkeepingDB(object):
         if not retVal['OK']:
           result = retVal
         else:
-        failed['Failed'] = list(failed)
+          failed['Failed'] = list(failed)
           failed['Successful'] = fileNames
           result = S_OK(failed)
       else:  # when no files are exists
@@ -3112,7 +3111,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return S_OK(productionSteps)
 
     # if we are here it's because in the current production none of the steps contain DB tags
-    self.log.info("DB tags are not set: will try to retrieve from the parent production")
+    gLogger.info("DB tags are not set: will try to retrieve from the parent production")
     if bkQuery is None:
       bkQuery = {}
     if bkQuery.get('ProcessingPass') is None:
@@ -3132,7 +3131,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
     except IndexError:
       gLogger.error("Unable to find DB tags",
-                     "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
+                    "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
       return S_ERROR("Unable to find DB tags")
 
     if not retVal['OK']:
@@ -4550,7 +4549,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           procpas = res['Value']['Records'][0][9]
           path += [procpas]
         else:
-          gLogger.error("Missing step", "(StepID: %s)" % step['StepId'])
+          gLogger.error("Missing step", "(StepID: %s)" % i['StepId'])
           return S_ERROR("Missing step")
 
     if not path:
@@ -4563,7 +4562,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     if not retVal['Value']:
       return S_ERROR('The processing pass already exists! Write to lhcb-bookkeeping@cern.ch')
-        processingid = retVal['Value'][0]
+    processingid = retVal['Value'][0]
     retVal = self.addProductionSteps(steps, production)
     if not retVal['OK']:
       return retVal
