@@ -149,6 +149,7 @@ class XMLFilesReaderManager(object):
 
       for param in params:
         paramName = param.getParamName()
+        gLogger.debug('ParamName check of ' + str(paramName))
 
         if paramName == "EventType":
           value = long(param.getParamValue())
@@ -157,9 +158,7 @@ class XMLFilesReaderManager(object):
             errorMessage = "The event type %s is missing!" % (str(value))
             return S_ERROR(errorMessage)
 
-        gLogger.debug('EventTypeId checking!')
         if paramName == "EventTypeId":
-          gLogger.debug('ParamName:' + str(paramName))
           if param.getParamValue() != '':
             value = long(param.getParamValue())
             result = self.bkClient_.checkEventType(value)
@@ -608,8 +607,8 @@ class XMLFilesReaderManager(object):
     else:
       value = res['Value']
       if value[0][0] == 0:
-        errorMessage = "Missing processing pass and simulation conditions!\
-        (Please fill it!) Production=%s" % (str(attrList['Production']))
+        errorMessage = "Missing processing pass and simulation conditions: "
+        errorMessage += "please fill it. Production = %s" % (str(attrList['Production']))
         gLogger.warn(errorMessage)
 
     if attrList['JobStart'] is None:

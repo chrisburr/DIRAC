@@ -14,7 +14,11 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve information from the Bookkeeping for a given production."""
+
 __RCSID__ = "$Id$"
+
+import six
+
 import DIRAC
 from DIRAC.Core.Base import Script
 
@@ -25,7 +29,6 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     '  ProdID:   Production ID']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
-import types
 
 if len(args) < 1:
   Script.showHelp()
@@ -34,7 +37,7 @@ exitCode = 0
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 bk = BookkeepingClient()
-prod = long(args[0])
+prod = int(args[0])
 
 res = bk.getProductionInformations(prod)
 
@@ -52,7 +55,7 @@ if res['OK']:
 
   steps = val['Steps']
 
-  if isinstance(steps, basestring):
+  if isinstance(steps, six.string_types):
     print steps
   else:
 
@@ -71,7 +74,7 @@ if res['OK']:
       print "-----------------------"
   print "Number of Steps  ", val["Number of jobs"][0][0]
   files = val["Number of files"]
-  if len(files) != 0:
+  if files:
     print "Total number of files:", files[0][2]
   else:
     print "Total number of files: 0"
