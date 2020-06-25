@@ -554,13 +554,13 @@ class OracleBookkeepingDB(object):
                 'StepId': '',
                 'ApplicationVersion': 'v29r1',
                 'ExtraPackages': '',
-                'StepName': 'davinci prb2',
-                'ProcessingPass': 'WG-Coool',
-                'Visible': 'Y',
-                'isMulticore': 'N',
-                'OptionFiles': '',
-                'DDDB': '',
-                'CONDDB': ''},
+		'StepName': 'davinci prb2',
+		'ProcessingPass': 'WG-Coool',
+		'Visible': 'Y',
+		'isMulticore': 'N',
+		'OptionFiles': '',
+		'DDDB': '',
+		'CONDDB': ''},
        'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.MDST'}],
        'InputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.DST'}],
        'RuntimeProjects': [{'StepId': 13878}]}
@@ -941,12 +941,12 @@ class OracleBookkeepingDB(object):
     retVal = self.__getDataTakingConditionId(conddescription)
     if retVal['OK']:
       if retVal['Value'] != -1:
-        condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (table, str(retVal['Value']), table)
+	condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (table, str(retVal['Value']), table)
       else:
-        retVal = self.__getSimulationConditionId(conddescription)
-        if retVal['OK']:
-          if retVal['Value'] != -1:
-            condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal['Value']), table)
+	retVal = self.__getSimulationConditionId(conddescription)
+	if retVal['OK']:
+	  if retVal['Value'] != -1:
+	    condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal['Value']), table)
           else:
             return S_ERROR('Condition does not exists!')
         else:
@@ -1251,8 +1251,7 @@ class OracleBookkeepingDB(object):
     """
     command = "select distinct production from productionoutputfiles where production > 0 and\
     gotreplica='Yes' and visible='Y'"
-    res = self.dbR_.query(command)
-    return res
+    return self.dbR_.query(command)
 
   #############################################################################
   def getAvailableRuns(self):
@@ -1749,24 +1748,24 @@ class OracleBookkeepingDB(object):
   def setRunAndProcessingPassDataQuality(self, runNB, procpass, flag):
     """set the data quality of a run which belongs to a given processing pass.
 
-    :param long runNB: run number
+    :param int runNB: run number
     :param str procpass: processing pass
     :param str flag: data quality flag
     """
-    result = S_ERROR()
     retVal = self.__getProcessingPassId(procpass.split('/')[1:][0], procpass)
-    if retVal['OK']:
-      processingid = retVal['Value']
-      retVal = self.__getDataQualityId(flag)
-      if retVal['OK']:
-        flag = retVal['Value']
-        result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRunquality',
-                                                  [runNB, flag, processingid], False)
-      else:
-        result = retVal
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      self.log.error("Could not get a processing pass ID", retVal['Message'])
+      return retVal
+    processingid = retVal['Value']
+
+    retVal = self.__getDataQualityId(flag)
+    if not retVal['OK']:
+      self.log.error("Could not get a data quality ID", retVal['Message'])
+      return retVal
+    flag = retVal['Value']
+
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRunquality',
+					    [runNB, flag, processingid], False)
 
   #############################################################################
   def setRunDataQuality(self, runNb, flag):
@@ -2078,7 +2077,7 @@ class OracleBookkeepingDB(object):
       if value:
         result = S_OK(value)
       else:
-	self.log.error("Event type not found:", "%s" % eventTypeId)
+	self.log.info("Event type not found:", "%s" % eventTypeId)
         result = S_ERROR("Event type not found: %s" % eventTypeId)
     else:
       result = retVal
@@ -3098,16 +3097,16 @@ and files.qualityid= dataquality.qualityid" % lfn
 
       # dddb is in step[4], conddb in step[5]
       if step[4] != 'fromPreviousStep':
-        productionSteps.insert(0, step)
+	productionSteps.insert(0, step)
       else:  # now I need to serch backward
-        searchedSubList = steps[:steps.index(step)]
-        for searchedStep in reversed(searchedSubList):
-          if searchedStep[4] != 'fromPreviousStep':
-            stepCorrected = list(step)
-            stepCorrected[4] = searchedStep[4]
-            stepCorrected[5] = searchedStep[5]
-            productionSteps.insert(0, tuple(stepCorrected))
-            break
+	searchedSubList = steps[:steps.index(step)]
+	for searchedStep in reversed(searchedSubList):
+	  if searchedStep[4] != 'fromPreviousStep':
+	    stepCorrected = list(step)
+	    stepCorrected[4] = searchedStep[4]
+	    stepCorrected[5] = searchedStep[5]
+	    productionSteps.insert(0, tuple(stepCorrected))
+	    break
 
     if productionSteps:
       return S_OK(productionSteps)
@@ -3120,7 +3119,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       # we can have a situation where we want to know the steps for a given production
       retVal = self.getProductionProcessingPass(prodid)
       if not retVal['OK']:
-        return retVal
+	return retVal
       if not retVal['Value']:
 	self.log.error("Production does not have a registered processing pass",
 		       "(%s)" % prodid)
@@ -3360,7 +3359,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getRunAndProcessingPassDataQuality(self, runnb, processing):
     """For retrieving the data quality flag for run and processing pass.
 
-    :param long runnb: run number
+    :param int runnb: run number
     :param str processing: processing pass
     :return: data quality
     """

@@ -94,8 +94,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_sendXMLBookkeepingReport = [basestring]
 
-  @staticmethod
-  def export_sendXMLBookkeepingReport(xml):
+  def export_sendXMLBookkeepingReport(self, xml):
     """This method is used to upload an xml report which is produced after when
     the job successfully finished. The input parameter 'xml' is a string which
     contains various information (metadata) about the finished job in the Grid
@@ -103,20 +102,19 @@ class BookkeepingManagerHandler(RequestHandler):
 
     :param str xml: bookkeeping report
     """
-    result = S_ERROR()
     try:
       retVal = reader_.readXMLfromString(xml)
       if not retVal['OK']:
-        result = S_ERROR(retVal['Message'])
-      elif retVal['Value'] == '':
-        result = S_OK("The send bookkeeping finished successfully!")
+	self.log.error("Issue reading XML", retVal['Message'])
+	return retVal
+      if retVal['Value'] == '':
+	return S_OK("The send bookkeeping finished successfully!")
       else:
-        result = retVal
+	return retVal
     except Exception as x:
       errorMsg = "XML processing error"
-      gLogger.exception(errorMsg, lException=x)
-      result = S_ERROR(errorMsg)
-    return result
+      self.log.exception(errorMsg, lException=x)
+      return S_ERROR(errorMsg)
 
   #############################################################################
   types_getAvailableSteps = [dict]
@@ -1274,7 +1272,7 @@ class BookkeepingManagerHandler(RequestHandler):
     result = S_ERROR()
 
     retVal = dataMGMT_.checkEventType(evid)
-    if not retVal['OK']:
+    if not retVal['OK']:  # meaning the event type is not already inserted
       retVal = dataMGMT_.insertEventTypes(evid, desc, primary)
       if retVal['OK']:
         result = S_OK(str(evid) + ' event type added successfully!')
@@ -1388,11 +1386,11 @@ class BookkeepingManagerHandler(RequestHandler):
       steps = value['Value']
     else:
       result = {"Production information": prodinfos,
-                "Steps": value['Message'],
-                "Number of jobs": nbjobs,
-                "Number of files": nbOfFiles,
-                "Number of events": nbOfEvents,
-                'Path': path}
+		"Steps": value['Message'],
+		"Number of jobs": nbjobs,
+		"Number of files": nbOfFiles,
+		"Number of events": nbOfEvents,
+		'Path': path}
       return S_OK(result)
 
       # return S_ERROR(value['Message'])
