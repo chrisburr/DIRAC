@@ -485,7 +485,7 @@ class BookkeepingManagerHandler(RequestHandler):
       in_dict = JEncoder.loads(parameters)
     except Exception as _:
       iscPickleFormat = True
-      gLogger.exception("Failed to serialise data with JSON", parameters)
+      self.log.exception("Failed to serialise data with JSON", parameters)
       in_dict = pickleOrJsonLoads(parameters)
     gLogger.verbose("The following dictionary received:", "%s" % in_dict)
     methodName = in_dict.get('MethodName', default)

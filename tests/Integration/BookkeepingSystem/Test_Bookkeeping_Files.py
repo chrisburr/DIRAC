@@ -77,7 +77,7 @@ xmlFile = """
 
 dqCond = """
   <DataTakingConditions>
-  <Parameter Name="Description" Value="Real data"/>
+  <Parameter Name="Description" Value="Real Data"/>
   <Parameter Name="BeamCond" Value="Collisions"/>
   <Parameter Name="BeamEnergy" Value="450.0"/>
   <Parameter Name="MagneticField" Value="Down"/>
@@ -106,18 +106,25 @@ bk = BookkeepingClient()
 # # first delete from DB ####################
 bkDB = OracleBookkeepingDB()
 
+bkDB.dbW_._query("DELETE FROM newrunquality")
+bkDB.dbW_._query("DELETE FROM productionoutputfiles")
 bkDB.dbW_._query("DELETE FROM eventtypes")
 bkDB.dbW_._query("DELETE FROM runstatus")
 bkDB.dbW_._query("DELETE FROM dataquality")
 bkDB.dbW_._query("DELETE FROM filetypes")
 bkDB.dbW_._query("DELETE FROM files")
 bkDB.dbW_._query("DELETE FROM stepscontainer")
+bkDB.dbW_._query("DELETE FROM jobs")
 bkDB.dbW_._query("DELETE FROM steps")
 bkDB.dbW_._query("DELETE FROM productionscontainer")
 bkDB.dbW_._query("DELETE FROM processing")
 bkDB.dbW_._query("DELETE FROM simulationconditions")
 bkDB.dbW_._query("DELETE FROM configurations")
-bkDB.dbW_._query("DELETE FROM jobs")
+
+# # then add some needed data
+bkDB.dbW_._query("INSERT INTO dataquality VALUES(1, 'OK')")
+
+
 # # #########################################
 
 #############################################################################
@@ -137,13 +144,21 @@ def test_sendXMLBookkeepingReport():
   Send online XML report
   """
 
-  # NOTE: this fails even if it's already removed (by hand)
-  # prob related to how the stored procedure works
   res = bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
-  # so, the following test is commented out...
-  # assert res['OK']
+  assert res['OK']
 
   res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
+  assert res['OK']
+
+  res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
+  assert res['OK']
+
+  # bkDB.dbW_._query("DELETE FROM processing")
+  # bkDB.dbW_._query("INSERT INTO processing VALUES(1, 2, 'ProcPass')")
+  res = bkDB.addProcessing(['Real Data'])
+  assert res['OK']
+
+  res = bk.setRunAndProcessingPassDataQuality(1122, '/Real Data', 'OK')
   assert res['OK']
 
   currentTime = datetime.datetime.now()
@@ -266,7 +281,7 @@ def test_getRunNbAndTck():
 def test_getRunFilesDataQuality():
   retVal = bk.getRunFilesDataQuality(1122)
   assert retVal['OK'] is True
-  assert retVal['Value'] == [(1122, 'UNCHECKED', 30000000)]
+  assert retVal['Value'] == [(1122, 'OK', 30000000)]
 
 
 def test_getNbOfRawFiles():

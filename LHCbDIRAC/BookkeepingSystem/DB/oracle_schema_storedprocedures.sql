@@ -722,12 +722,15 @@ BEGIN
 END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION getproductionprocessingpassid(prod NUMBER) RETURN NUMBER IS
+FUNCTION getproductionprocessingpassid(
+  prod NUMBER) RETURN NUMBER IS
 RESULT Number;
-ecode    number(38);
+ecode number(38);
 thisproc constant varchar2(50) := 'trap_errmesg';
 BEGIN
-  SELECT DISTINCT processingid INTO RESULT FROM productionscontainer prod WHERE prod.production = prod;
+  SELECT DISTINCT processingid INTO RESULT
+  FROM productionscontainer prod
+  WHERE prod.production = prod;
   RETURN RESULT;
   EXCEPTION WHEN others THEN
   ecode := sqlerrm;
@@ -828,11 +831,15 @@ RETURN VARCHAR2 IS RESULT varchar2(256);
 ecode number(38);
 BEGIN
   RESULT:= -1;
-  SELECT d.dataqualityflag INTO RESULT  FROM dataquality d, newrunquality r WHERE r.runnumber = rnumber AND r.processingid = procid AND d.qualityid = r.qualityid;
+  SELECT d.dataqualityflag INTO RESULT
+  FROM dataquality d, newrunquality r
+  WHERE r.runnumber = rnumber
+    AND r.processingid = procid
+    AND d.qualityid = r.qualityid;
   RETURN RESULT;
   EXCEPTION
   WHEN no_data_found THEN
-  raise_application_error(-20014, 'The data quality does not exists in the newrunquality table!');
+  raise_application_error(-20014, 'The data quality does not exist in the newrunquality table!');
   WHEN others THEN
   ecode := sqlerrm;
 END;
