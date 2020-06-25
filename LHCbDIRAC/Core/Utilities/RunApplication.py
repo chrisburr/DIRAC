@@ -110,7 +110,7 @@ class RunApplication(object):
     finalCommand = ' '.join([self.lbrunCommand, command])
 
     # then run it!
-    runResult = self._runApp(finalCommand)
+    runResult = self._runApp(finalCommand, env=self._getEnv())
     if not runResult['OK']:
       self.log.error("Problem executing lb-run: %s" % runResult['Message'])
       self.log.error("Environment: %s" % os.environ)
@@ -222,6 +222,17 @@ class RunApplication(object):
                       cmdSeq=shlex.split(command),
                       callbackFunction=self.__redirectLogOutput,
                       env=env)
+
+  def _getEnv(self):
+    """Get a dictionary containing the environment that should be used for the job
+    """
+    # Start from the current environment
+    env = os.environ.copy()
+    # Versions of Brunel used for 2018 data use XGBoost which uses OpenMP to
+    # provide parallelism and automatically spawns one thread for each CPU.
+    # Use OMP_NUM_THREADS to force it to only use one thread
+    env["OMP_NUM_THREADS"] = str(self.numberOfProcessors)
+    return env
 
   def __redirectLogOutput(self, fd, message):
     """Callback function for the Subprocess calls (manages log files)
