@@ -132,6 +132,7 @@ MCPriority = '{{MCPriority#PROD-1:MC: Production priority#0}}'
 MCmulticoreFlag = '{{MCMulticoreFLag#PROD-1:MC multicore flag#True}}'
 MCNumberOfProcessors = '{{MCNumberOfProcessors#PROD-1:MC jobs min/max n of processors#0,0}}'
 MCSimulationType = '{{MCSimulationType#PROD-1:MC: type of MCSimulation#MCSimulation}}'
+pr.mcTesting = ast.literal_eval('{{MCTesting#PROD-1:MC: testing enabled#True}}')
 simulationCompressionLvl = '{{simulationCompressionLvl#PROD-1: Compression level#LOW}}'
 
 simulationOutputVisFlag = ast.literal_eval(
