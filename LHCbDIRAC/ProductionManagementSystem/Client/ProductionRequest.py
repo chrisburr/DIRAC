@@ -297,6 +297,7 @@ class ProductionRequest(object):
                                    transformationFamily=prodDict['transformationFamily'],
                                    events=prodDict['events'],
                                    multicore=prodDict['multicore'],
+                                   processors=prodDict['processors'],
                                    ancestorDepth=prodDict['ancestorDepth'])
 
       # if the production is a simulation production type, submit it to the automated testing
