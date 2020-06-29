@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "4ab21e20-8a08-11ea-8f8c-c10aac8009dd",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Errors per job",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":6,\"h\":6,\"i\":\"1\"},\"id\":\"c97da0d0-8a03-11ea-bef2-1d663f7888cc\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":6,\"y\":0,\"w\":6,\"h\":3,\"i\":\"2\"},\"id\":\"da574bc0-7330-11ea-8f8c-c10aac8009dd\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":6,\"y\":3,\"w\":6,\"h\":3,\"i\":\"3\"},\"id\":\"3bf24d30-8a0b-11ea-bef2-1d663f7888cc\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":6,\"y\":6,\"w\":6,\"h\":4,\"i\":\"4\"},\"id\":\"3feca1c0-8a0a-11ea-8f8c-c10aac8009dd\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"5\",\"gridData\":{\"x\":0,\"y\":6,\"w\":6,\"h\":4,\"i\":\"5\"},\"version\":\"6.2.4\",\"type\":\"visualization\",\"id\":\"e9af8f70-8a13-11ea-8f8c-c10aac8009dd\"}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[{\"$state\":{\"store\":\"appState\"},\"meta\":{\"alias\":null,\"controlledBy\":\"1585646296242\",\"disabled\":false,\"index\":\"e0cc1ec0-496c-11e9-97b4-bda41e0e0b3d\",\"key\":\"_index\",\"negate\":false,\"params\":{\"query\":\"lhcb-mcstats-00095697\",\"type\":\"phrase\"},\"type\":\"phrase\",\"value\":\"lhcb-mcstats-00095697\"},\"query\":{\"match\":{\"_index\":{\"query\":\"lhcb-mcstats-00095697\",\"type\":\"phrase\"}}}}],\"highlightAll\":true,\"version\":true}"
+      }
+    }
+  }
+]
