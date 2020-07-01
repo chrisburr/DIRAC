@@ -66,6 +66,7 @@ class ProductionRequest(object):
     self.prodsToLaunch = []  # productions to launch
     self.stepsListDict = []  # list of dict of steps
     self.stepsInProds = []  # a list of lists
+    self.mcTesting = True
     # parameters of the input data
     self.processingPass = ''
     self.dataTakingConditions = ''
@@ -296,10 +297,12 @@ class ProductionRequest(object):
                                    transformationFamily=prodDict['transformationFamily'],
                                    events=prodDict['events'],
                                    multicore=prodDict['multicore'],
+                                   processors=prodDict['processors'],
                                    ancestorDepth=prodDict['ancestorDepth'])
 
       # if the production is a simulation production type, submit it to the automated testing
-      if prodDict['productionType'] in self.opsH.getValue('Transformations/ExtendableTransfTypes', ['MCSimulation']):
+      if prodDict['productionType'] in self.opsH.getValue('Transformations/ExtendableTransfTypes', ['MCSimulation']) \
+         and self.mcTesting:
         prodID = self._mcSpecialCase(prod, prodDict)
 
       else:
@@ -316,11 +319,10 @@ class ProductionRequest(object):
       prodsLaunched.append(prodID)
 
       if self.publishFlag:
-        self.logger.notice("For request %d, submitted Production %d, of type %s, ID = %s" % (
-            self.requestID,
-            prodIndex,
-            prodDict['productionType'],
-            str(prodID)))
+        self.logger.notice("For request %d, submitted Production" % self.requestID,
+                           "%d, of type %s, ID = %s" % (prodIndex,
+                                                        prodDict['productionType'],
+                                                        str(prodID)))
     return S_OK(prodsLaunched)
 
   #############################################################################

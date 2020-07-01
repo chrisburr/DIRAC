@@ -132,10 +132,11 @@ MCPriority = '{{MCPriority#PROD-1:MC: Production priority#0}}'
 MCmulticoreFlag = '{{MCMulticoreFLag#PROD-1:MC multicore flag#True}}'
 MCNumberOfProcessors = '{{MCNumberOfProcessors#PROD-1:MC jobs min/max n of processors#0,0}}'
 MCSimulationType = '{{MCSimulationType#PROD-1:MC: type of MCSimulation#MCSimulation}}'
+pr.mcTesting = ast.literal_eval('{{MCTesting#PROD-1:MC: testing enabled#True}}')
 simulationCompressionLvl = '{{simulationCompressionLvl#PROD-1: Compression level#LOW}}'
-simVisFlag = '{{simulationOutputVisFlag'
-simVisFlag += '#PROD-1: Simulation visibility flag dictionary (one flag per step {"step":"Y|N"}) # {} }}'
-simulationOutputVisFlag = ast.literal_eval(simVisFlag)
+
+simulationOutputVisFlag = ast.literal_eval(
+    '{{simulationOutputVisFlag#PROD-1: Simulation visib flag dictionary (one flag per step {"step":"Y|N"})#{} }}')
 try:
   simVisFlagSpecial = '{{simulationOutputVisFlagSpecial'
   simVisFlagSpecial += '#PROD-1: Special Visibility flag of output files'
@@ -153,7 +154,7 @@ selmulticoreFlag = '{{selMulticoreFLag#PROD-2:Selection: multicore flag#True}}'
 selNumberOfProcessors = '{{selNumberOfProcessors#PROD-2:Selection jobs min/max n of processors#0,0}}'
 selectionCompressionLvl = '{{selectionCompressionLvl#PROD-2:Selection: Compression level#LOW}}'
 selectionOutputVisFlag = ast.literal_eval(
-    '{{selectionOutputVisFlag#PROD-2: Selection visibility flag dictionary ({"step n": "Y|N"})# {} }}')
+    '{{selectionOutputVisFlag#PROD-2: Selection visibility flag dictionary ({"step n": "Y|N"})#{} }}')
 try:
   selVisFlagSpecial = '{{selectionOutputVisFlagSpecial'
   selVisFlagSpecial += '#PROD-2: Special Visibility flag of output files (a dictionary {"step n":{"FType":flag}} )#}}'
@@ -170,7 +171,7 @@ mergemulticoreFlag = '{{mergeMulticoreFLag#PROD-3:Merging: multicore flag#True}}
 mergeNumberOfProcessors = '{{mergeNumberOfProcessors#PROD-3:Merging jobs min/max n of processors#0,0}}'
 mergeCompressionLvl = '{{mergeCompressionLvl#PROD-3:Merging: Compression level#HIGH}}'
 mergeOutputVisFlag = ast.literal_eval(
-    '{{mergeOutputVisFlag#PROD-3: Merge visibility flag dictionary ({"step":"Y|N"}) # {} }}')
+    '{{mergeOutputVisFlag#PROD-3: Merge visibility flag dictionary ({"step":"Y|N"})#{} }}')
 try:
   mergeVisFlagSpecial = '{{mergeOutputVisFlagSpecial'
   mergeVisFlagSpecial += '#PROD-3: Special Visibility flag of output files'
