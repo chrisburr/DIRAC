@@ -53,6 +53,7 @@ data2 = {
 }
 
 typeName = 'test'
+mcType = 'errors'
 
 mcStatsClient = MCStatsClient()
 mcStatsClient.indexName = 'lhcb-mclogerrors'
@@ -73,39 +74,39 @@ def test_setAndGetandRemove():
   time.sleep(5)
 
   # Get data1
-  result = mcStatsClient.get(id1)
+  result = mcStatsClient.get(id1, mcType)
   assert result['OK'] is True
   assert result['Value'] == data1
 
   # Get data2
-  result = mcStatsClient.get(id2)
+  result = mcStatsClient.get(id2, mcType)
   assert result['OK'] is True
   assert result['Value'] == data2
 
   # Get empty
-  result = mcStatsClient.get(falseID)
+  result = mcStatsClient.get(falseID, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove
 
   # Remove data1
-  mcStatsClient.remove(id1)
+  mcStatsClient.remove(id1, mcType)
   time.sleep(5)
-  result = mcStatsClient.get(id1)
+  result = mcStatsClient.get(id1, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove data2
-  mcStatsClient.remove(id2)
+  mcStatsClient.remove(id2, mcType)
   time.sleep(5)
-  result = mcStatsClient.get(id2)
+  result = mcStatsClient.get(id2, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # # Remove empty
-  mcStatsClient.remove(falseID)
+  mcStatsClient.remove(falseID, mcType)
   time.sleep(5)
-  result = mcStatsClient.get(falseID)
+  result = mcStatsClient.get(falseID, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
