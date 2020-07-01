@@ -53,6 +53,7 @@ data2 = {
 typeName = 'test'
 indexName1 = 'mcstatsdb1'
 indexName2 = 'mcstatsdb2'
+mcType = 'errors'
 
 gLogger.setLevel('DEBUG')
 db = MCStatsElasticDB()
@@ -77,45 +78,45 @@ def test_setandGetandRemove():
   # Get
 
   # Get data1 from index1
-  result = db.get(indexName1, id1)
+  result = db.get(indexName1, id1, mcType)
   assert result['OK'] is True
   assert result['Value'] == data1
 
   # Get data2 from index1
-  result = db.get(indexName1, id2)
+  result = db.get(indexName1, id2, mcType)
   assert result['OK'] is True
   assert result['Value'] == data2
 
   # Get data1 from index2 (false)
-  result = db.get(indexName2, id1)
+  result = db.get(indexName2, id1, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Get empty
-  result = db.get(indexName1, falseID)
+  result = db.get(indexName1, falseID, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove
 
   # Remove data1 from index1
-  db.remove(indexName1, id1)
+  db.remove(indexName1, id1, mcType)
   time.sleep(1)
-  result = db.get(indexName1, id1)
+  result = db.get(indexName1, id1, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove data2 from index1
-  db.remove(indexName1, id2)
+  db.remove(indexName1, id2, mcType)
   time.sleep(1)
   result = db.get(indexName1, id2)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove empty
-  db.remove(indexName1, falseID)
+  db.remove(indexName1, falseID, mcType)
   time.sleep(1)
-  result = db.get(indexName1, falseID)
+  result = db.get(indexName1, falseID, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
