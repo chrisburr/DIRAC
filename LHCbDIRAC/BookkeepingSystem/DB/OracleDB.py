@@ -64,7 +64,7 @@ import Queue
 import time
 import threading
 
-import cx_Oracle  # pylint: disable=import-error
+import cx_Oracle
 
 from DIRAC import gLogger
 from DIRAC import S_OK, S_ERROR
