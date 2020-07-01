@@ -175,6 +175,8 @@ class GaudiApplication(ModuleBase):
       try:
         self.setApplicationStatus('%s step %s' % (self.applicationName, self.step_number))
         ra.run()  # This would trigger an exception in case of failure, or application status != 0
+        self.applicationPID = ra.pid
+        self.log.info("The application ran with PID", self.applicationPID)
       except LHCbApplicationError as appError:
         # Running gdb in case of core dump
         if 'core' in [fileProduced.split('.')[0] for fileProduced in os.listdir('.')]:
