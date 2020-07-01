@@ -38,16 +38,16 @@ class MCStatsClient(Client):
     """
     return self._getRPC().set(self.indexName, typeName, data)
 
-  def get(self, jobID):
+  def get(self, jobID, mcType):
     """get per Job ID.
 
     :params int jobID: WMS Job ID
     """
-    return self._getRPC().get(self.indexName, jobID)
+    return self._getRPC().get(self.indexName, jobID, mcType)
 
-  def remove(self, jobID):
+  def remove(self, jobID, mcType):
     """remove data for JobID.
 
     :params int jobID: WMS Job ID
     """
-    return self._getRPC().remove(self.indexName, jobID)
+    return self._getRPC().remove(self.indexName, jobID, mcType)
