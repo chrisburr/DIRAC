@@ -65,26 +65,40 @@ class MCStatsElasticDB(ElasticDB):
       self.log.error("ERROR: Couldn't insert data", result['Message'])
     return result
 
-  def get(self, indexName, jobID):
+  def get(self, indexName, jobID, mcType):
     """Retrieves data given a specific WMS JobID.
 
     :param str indexName: the name of the index in ELasticSearch
     :param int JobID: The WMS JobID of the data in elasticsearch
+    :param str mcType: The type of the data 
 
     :returns: S_OK/S_ERROR
     """
 
-    query = {
+    if mcType == 'errors':
+      query = {
         "query": {
             "bool": {
                 "must": {
                     "match": {
                         "Errors.ID.JobID": jobID
+                        }
                     }
                 }
             }
         }
-    }
+    elif mcType == 'summary':
+      query = {
+        "query": {
+            "bool": {
+                "must": {
+                    "match": {
+                        "Counters.ID.JobID": jobID
+                        }
+                    }
+                }
+            }
+        }        
 
     self.log.debug('Getting results for JobID %s in index %s' % (jobID, indexName))
     result = self.query(indexName + '*', query)
@@ -99,23 +113,37 @@ class MCStatsElasticDB(ElasticDB):
       resultDict.update(data)
     return S_OK(resultDict)
 
-  def remove(self, indexName, jobID):
+  def remove(self, indexName, jobID, mcType):
     """Removes data given a specific WMS JobID.
 
     :param str indexName: the name of the index in ELasticSearch
     :param int JobID: The JobID of the data in elasticsearch
+    :param str mcType: The type of the data 
     """
-    query = {
+    if mcType == 'errors':
+      query = {
         "query": {
             "bool": {
                 "must": {
                     "match": {
                         "Errors.ID.JobID": jobID
+                        }
                     }
                 }
             }
         }
-    }
+    elif mcType == 'summary':
+      query = {
+        "query": {
+            "bool": {
+                "must": {
+                    "match": {
+                        "Counters.ID.JobID": jobID
+                        }
+                    }
+                }
+            }
+        } 
 
     self.log.debug('Attempting to delete data with JobID: %s in index %s' % (jobID, indexName))
     return self.deleteByQuery(indexName, query)
