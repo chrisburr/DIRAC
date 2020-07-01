@@ -21,6 +21,19 @@ use LHCbWebDIRAC v5r2-pre1
 * Test dumping production infomation with JSON as well as pickle
 * Re-enable data management tests
 
+v10r0p4
+Based on DIRAC v7r0p28
+LHCbWebDIRAC v5r1p6
+LHCbDIRACOS v1r8
+
+Bookkeeping
+FIX: (!826) Fix for resolving the DBs in the steps, for productions using steps with inherited DB tags
+FIX: (!827) Set OMP_NUM_THREADS in production jobs to prevent Brunel from using too much CPU
+ProductionManagement:
+NEW: (!828) Added flag for skipping the MC testing
+FIX: (!828) Fix for setting the number of processors
+
+
 v10r0p3
 use DIRAC v7r0p26
 

@@ -65,7 +65,7 @@ import time
 import threading
 import six
 
-import cx_Oracle  # pylint: disable=import-error
+import cx_Oracle
 
 from DIRAC import gLogger
 from DIRAC import S_OK, S_ERROR
@@ -114,7 +114,6 @@ class OracleDB(object):
     self.logger.info("===================== Oracle =====================")
     self.logger.info("User:           " + self.__userName)
     self.logger.info("TNS:            " + self.__tnsName)
-    self.logger.debug("Password:       " + self.__passwd)
     self.logger.info("==================================================")
 
   def __del__(self):

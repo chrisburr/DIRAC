@@ -160,7 +160,7 @@ diracServices(){
 
       if [[ -z "${DIRACOSVER}" ]]; then
         export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/afs/cern.ch/project/oracle/amd64_linux26/prod/lib/"
-        pip install cx_Oracle==7.2
+        pip install cx_Oracle==7.3
       fi
     fi
 

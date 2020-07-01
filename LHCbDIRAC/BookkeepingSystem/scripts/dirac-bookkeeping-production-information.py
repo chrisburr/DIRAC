@@ -37,7 +37,7 @@ exitCode = 0
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 bk = BookkeepingClient()
-prod = long(args[0])
+prod = int(args[0])
 
 res = bk.getProductionInformations(prod)
 
@@ -74,7 +74,7 @@ if res['OK']:
       print "-----------------------"
   print "Number of Steps  ", val["Number of jobs"][0][0]
   files = val["Number of files"]
-  if len(files) != 0:
+  if files:
     print "Total number of files:", files[0][2]
   else:
     print "Total number of files: 0"

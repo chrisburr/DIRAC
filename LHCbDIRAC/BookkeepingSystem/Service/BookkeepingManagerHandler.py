@@ -1347,19 +1347,12 @@ class BookkeepingManagerHandler(RequestHandler):
     return retVal
 
   #############################################################################
-  types_getProductionInformations_new = [six.integer_types]
-
-  def export_getProductionInformations_new(self, prodid):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProductionInformations(prodid)
-
-  #############################################################################
   types_getProductionInformations = [six.integer_types]
 
   @staticmethod
   def export_getProductionInformations(prodid):
-    """It returns a statistic (data processing phases, number of events, etc.)
-    for a given production."""
+    """It returns statistics (data processing phases, number of events, etc.) for a given production
+    """
 
     nbjobs = None
     nbOfFiles = None
@@ -1385,8 +1378,9 @@ class BookkeepingManagerHandler(RequestHandler):
 
     path = '/'
 
-    if len(prodinfos) == 0:
-      return S_ERROR('This production does not contains any jobs!')
+    if not prodinfos:
+      return S_ERROR('The production does not contain jobs')
+
     cname = prodinfos[0][0]
     cversion = prodinfos[0][1]
     path += cname + '/' + cversion + '/'
@@ -1395,9 +1389,8 @@ class BookkeepingManagerHandler(RequestHandler):
     if value['OK']:
       steps = value['Value']
     else:
-      steps = value['Message']
-      result = {"Production informations": prodinfos,
-                "Steps": steps,
+      result = {"Production information": prodinfos,
+                "Steps": value['Message'],
                 "Number of jobs": nbjobs,
                 "Number of files": nbOfFiles,
                 "Number of events": nbOfEvents,
@@ -1420,7 +1413,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     for i in nbOfEvents:
       path += prefix + '/' + str(i[2]) + '/' + i[0]
-    result = {"Production informations": prodinfos,
+    result = {"Production information": prodinfos,
               "Steps": steps,
               "Number of jobs": nbjobs,
               "Number of files": nbOfFiles,
@@ -1866,7 +1859,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
   @staticmethod
   def export_addProduction(infos):
-    """It is used to register a production to the bkk.
+    """It is used to register a production in the bkk.
 
     Input parameters:
     SimulationConditions
@@ -1876,7 +1869,7 @@ class BookkeepingManagerHandler(RequestHandler):
     InputProductionTotalProcessingPass: it is a path of the input data processing pass
     """
 
-    gLogger.debug("Registering:", "%s" % infos)
+    gLogger.debug("Registering:", infos)
     result = S_OK()
     simcond = infos.get('SimulationConditions', None)
     daqdesc = infos.get('DataTakingConditions', None)
