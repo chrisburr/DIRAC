@@ -74,18 +74,7 @@ class BookkeepingManagerHandler(RequestHandler):
     gLogger.info("Email used to track queries: %s forceExecution" % cls.email, cls.forceExecution)
     return S_OK()
   ###########################################################################
-  # types_<methodname> global variable is a list which defines for each exposed
-  # method the types of its arguments, the argument types are ignored if the list is empty.
-
-  types_echo = [basestring]
-
-  @staticmethod
-  def export_echo(inputstring):
-    """Echo input to output."""
-    return S_OK(inputstring)
-
-  #############################################################################
-  types_sendBookkeeping = [basestring, basestring]
+  types_sendBookkeeping = [six.string_types, six.string_types]
 
   def export_sendBookkeeping(self, name, xml):
     """more info in the BookkeepingClient.py."""
@@ -148,17 +137,15 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_getStepInputFiles(stepId):
     """It returns the input files for a given step."""
-    result = S_ERROR()
     retVal = dataMGMT_.getStepInputFiles(stepId)
-    if retVal['OK']:
-      records = []
-      parameters = ['FileType', 'Visible']
-      for record in retVal['Value']:
-        records += [list(record)]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+
+    records = []
+    parameters = ['FileType', 'Visible']
+    for record in retVal['Value']:
+      records += [list(record)]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_setStepInputFiles = [int, list]
