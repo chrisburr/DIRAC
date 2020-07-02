@@ -70,35 +70,36 @@ class MCStatsElasticDB(ElasticDB):
 
     :param str indexName: the name of the index in ELasticSearch
     :param int JobID: The WMS JobID of the data in elasticsearch
-    :param str mcType: The type of the data 
+    :param str mcType: The type of the data
 
     :returns: S_OK/S_ERROR
     """
 
     if mcType == 'errors':
       query = {
-        "query": {
-            "bool": {
-                "must": {
-                    "match": {
-                        "Errors.ID.JobID": jobID
-                        }
-                    }
-                }
-            }
-        }
+          "query": {
+              "bool": {
+                  "must": {
+                      "match": {
+                          "Errors.ID.wmsID": jobID
+                      }
+                  }
+              }
+          }
+      }
+
     elif mcType == 'summary':
       query = {
-        "query": {
-            "bool": {
-                "must": {
-                    "match": {
-                        "Counters.ID.JobID": jobID
-                        }
-                    }
-                }
-            }
-        }        
+          "query": {
+              "bool": {
+                  "must": {
+                      "match": {
+                          "Counters.ID.wmsID": jobID
+                      }
+                  }
+              }
+          }
+      }        
 
     self.log.debug('Getting results for JobID %s in index %s' % (jobID, indexName))
     result = self.query(indexName + '*', query)
@@ -122,28 +123,29 @@ class MCStatsElasticDB(ElasticDB):
     """
     if mcType == 'errors':
       query = {
-        "query": {
-            "bool": {
-                "must": {
-                    "match": {
-                        "Errors.ID.JobID": jobID
-                        }
-                    }
-                }
-            }
-        }
+          "query": {
+              "bool": {
+                  "must": {
+                      "match": {
+                          "Errors.ID.wmsID": jobID
+                      }
+                  }
+              }
+          }
+      }
+
     elif mcType == 'summary':
       query = {
-        "query": {
-            "bool": {
-                "must": {
-                    "match": {
-                        "Counters.ID.JobID": jobID
-                        }
-                    }
-                }
-            }
-        } 
+          "query": {
+              "bool": {
+                  "must": {
+                      "match": {
+                          "Counters.ID.wmsID": jobID
+                      }
+                  }
+              }
+          }
+      }
 
     self.log.debug('Attempting to delete data with JobID: %s in index %s' % (jobID, indexName))
     return self.deleteByQuery(indexName, query)
