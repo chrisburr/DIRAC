@@ -297,6 +297,14 @@ def test_inserts():
 
   res = bk.getSteps(6, {'ProcessingPass': '/Sim/Digi2/L0Trig'})
   assert res['OK'] is True
+  assert res['Value'] == [('boole2', 'Boole', 'v2r3',
+			   '/some/boole2/option/files',
+			   'boole-dddb', 'boole-conddb',
+			   None, boole2StepID, 'N'),
+			  ('moore', 'Moore', 'v3r3',
+			   '/some/moore/option/files',
+			   'boole-dddb', 'boole-conddb',
+			   None, mooreStepID, 'N')]
 
   # res = bk.getSteps(6)
   # print(res)
