@@ -3317,6 +3317,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_ERROR()
 
   #############################################################################
+
+  # FIXME: is this useful at all? Does prodrunview still exist?
   def getProductionsFromView(self, in_dict):
     """For retrieving productions.
 
