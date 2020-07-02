@@ -35,32 +35,32 @@ __RCSID__ = "$Id$"
 
 step_gauss = {
     'Step': {
-	'ApplicationName': 'Gauss',
-	'Usable': 'Yes',
-	'ApplicationVersion': 'v1r1',
-	'ExtraPackages': '',
-	'StepName': 'gauss',
-	'ProcessingPass': 'Sim',
-	'Visible': 'Y',
-	'DDDB': 'gauss-dddb',
-	'CONDDB': 'gauss-conddb',
-	'OptionFiles': '/some/gauss/option/files'
+        'ApplicationName': 'Gauss',
+        'Usable': 'Yes',
+        'ApplicationVersion': 'v1r1',
+        'ExtraPackages': '',
+        'StepName': 'gauss',
+        'ProcessingPass': 'Sim',
+        'Visible': 'Y',
+        'DDDB': 'gauss-dddb',
+        'CONDDB': 'gauss-conddb',
+        'OptionFiles': '/some/gauss/option/files'
     },
     'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'SIM'}]
 }
 
 step_boole = {
     'Step': {
-	'ApplicationName': 'Boole',
-	'Usable': 'Yes',
-	'ApplicationVersion': 'v2r2',
-	'ExtraPackages': '',
-	'StepName': 'boole',
-	'ProcessingPass': 'Digi',
-	'Visible': 'N',
-	'DDDB': 'boole-dddb',
-	'CONDDB': 'boole-conddb',
-	'OptionFiles': '/some/boole/option/files'
+        'ApplicationName': 'Boole',
+        'Usable': 'Yes',
+        'ApplicationVersion': 'v2r2',
+        'ExtraPackages': '',
+        'StepName': 'boole',
+        'ProcessingPass': 'Digi',
+        'Visible': 'N',
+        'DDDB': 'boole-dddb',
+        'CONDDB': 'boole-conddb',
+        'OptionFiles': '/some/boole/option/files'
     },
     'InputFileTypes': [{'Visible': 'Y', 'FileType': 'SIM'}],
     'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]
@@ -68,16 +68,16 @@ step_boole = {
 
 step_boole2 = {
     'Step': {
-	'ApplicationName': 'Boole',
-	'Usable': 'Yes',
-	'ApplicationVersion': 'v2r3',
-	'ExtraPackages': '',
-	'StepName': 'boole2',
-	'ProcessingPass': 'Digi2',
-	'Visible': 'N',
-	'DDDB': 'fromPreviousStep',
-	'CONDDB': 'fromPreviousStep',
-	'OptionFiles': '/some/boole2/option/files'
+        'ApplicationName': 'Boole',
+        'Usable': 'Yes',
+        'ApplicationVersion': 'v2r3',
+        'ExtraPackages': '',
+        'StepName': 'boole2',
+        'ProcessingPass': 'Digi2',
+        'Visible': 'N',
+        'DDDB': 'fromPreviousStep',
+        'CONDDB': 'fromPreviousStep',
+        'OptionFiles': '/some/boole2/option/files'
     },
     'InputFileTypes': [{'Visible': 'Y', 'FileType': 'SIM'}],
     'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]
@@ -85,16 +85,16 @@ step_boole2 = {
 
 step_moore = {
     'Step': {
-	'ApplicationName': 'Moore',
-	'Usable': 'Yes',
-	'ApplicationVersion': 'v3r3',
-	'ExtraPackages': '',
-	'StepName': 'moore',
-	'ProcessingPass': 'L0Trig',
-	'Visible': 'N',
-	'DDDB': 'fromPreviousStep',
-	'CONDDB': 'fromPreviousStep',
-	'OptionFiles': '/some/moore/option/files'
+        'ApplicationName': 'Moore',
+        'Usable': 'Yes',
+        'ApplicationVersion': 'v3r3',
+        'ExtraPackages': '',
+        'StepName': 'moore',
+        'ProcessingPass': 'L0Trig',
+        'Visible': 'N',
+        'DDDB': 'fromPreviousStep',
+        'CONDDB': 'fromPreviousStep',
+        'OptionFiles': '/some/moore/option/files'
     },
     'InputFileTypes': [{'Visible': 'Y', 'FileType': 'DIGI'}],
     'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'DIGI'}]
@@ -186,7 +186,7 @@ def test_inserts():
 
   # Production 5: [gauss, boole2, boole, moore]
   res = bk.addProductionSteps([{'StepId': gaussStepID}, {'StepId': boole2StepID},
-			       {'StepId': booleStepID}, {'StepId': mooreStepID}], 5)
+                               {'StepId': booleStepID}, {'StepId': mooreStepID}], 5)
   assert res['OK'] is True
 
   # Production 6: [boole2, moore] (this should be in the same "production request" with 1)
@@ -197,65 +197,65 @@ def test_inserts():
   res = bk.getSteps(1)  # [gauss]
   assert res['OK'] is True
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-			   '/some/gauss/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, gaussStepID, 'Y')]
+                           '/some/gauss/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, gaussStepID, 'Y')]
 
   res = bk.getSteps(2)  # [gauss, boole]
   assert res['OK'] is True
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-			   '/some/gauss/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, gaussStepID, 'Y'),
-			  ('boole', 'Boole', 'v2r2',
-			   '/some/boole/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, booleStepID, 'N')]
+                           '/some/gauss/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, gaussStepID, 'Y'),
+                          ('boole', 'Boole', 'v2r2',
+                           '/some/boole/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, booleStepID, 'N')]
 
   res = bk.getSteps(3)  # [gauss, boole2]
   assert res['OK'] is True
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-			   '/some/gauss/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, gaussStepID, 'Y'),
-			  ('boole2', 'Boole', 'v2r3',
-			   '/some/boole2/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, boole2StepID, 'N')]
+                           '/some/gauss/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, gaussStepID, 'Y'),
+                          ('boole2', 'Boole', 'v2r3',
+                           '/some/boole2/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, boole2StepID, 'N')]
 
   res = bk.getSteps(4)  # [gauss, boole, boole2]
   assert res['OK'] is True
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-			   '/some/gauss/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, gaussStepID, 'Y'),
-			  ('boole', 'Boole', 'v2r2',
-			   '/some/boole/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, booleStepID, 'N'),
-			  ('boole2', 'Boole', 'v2r3',
-			   '/some/boole2/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, boole2StepID, 'N')]
+                           '/some/gauss/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, gaussStepID, 'Y'),
+                          ('boole', 'Boole', 'v2r2',
+                           '/some/boole/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, booleStepID, 'N'),
+                          ('boole2', 'Boole', 'v2r3',
+                           '/some/boole2/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, boole2StepID, 'N')]
 
   res = bk.getSteps(5)  # [gauss, boole2, boole, moore]
   assert res['OK'] is True
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-			   '/some/gauss/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, gaussStepID, 'Y'),
-			  ('boole2', 'Boole', 'v2r3',
-			   '/some/boole2/option/files',
-			   'gauss-dddb', 'gauss-conddb',
-			   None, boole2StepID, 'N'),
-			  ('boole', 'Boole', 'v2r2',
-			   '/some/boole/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, booleStepID, 'N'),
-			  ('moore', 'Moore', 'v3r3',
-			   '/some/moore/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, mooreStepID, 'N')]
+                           '/some/gauss/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, gaussStepID, 'Y'),
+                          ('boole2', 'Boole', 'v2r3',
+                           '/some/boole2/option/files',
+                           'gauss-dddb', 'gauss-conddb',
+                           None, boole2StepID, 'N'),
+                          ('boole', 'Boole', 'v2r2',
+                           '/some/boole/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, booleStepID, 'N'),
+                          ('moore', 'Moore', 'v3r3',
+                           '/some/moore/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, mooreStepID, 'N')]
 
   # Now dealing with the case where the current production does not have any step with an explicit DB tag
   res = bk.getSteps(6)  # [boole2, moore]
@@ -270,13 +270,13 @@ def test_inserts():
   # This is several steps...
 
   simcondDict = {'SimDescription': 'SimCond',
-		 'BeamCond': 'BeamCond',
-		 'BeamEnergy': 'BeamEnergy',
-		 'Generator': 'Generator',
-		 'MagneticField': 'MagneticField',
-		 'DetectorCond': 'DetectorCond',
-		 'Luminosity': 'Luminosity',
-		 'G4settings': 'G4settings'}
+                 'BeamCond': 'BeamCond',
+                 'BeamEnergy': 'BeamEnergy',
+                 'Generator': 'Generator',
+                 'MagneticField': 'MagneticField',
+                 'DetectorCond': 'DetectorCond',
+                 'Luminosity': 'Luminosity',
+                 'G4settings': 'G4settings'}
   res = bk.insertSimConditions(simcondDict)
   assert res['OK'] is True
   res = bk.insertFileTypes('SIM', 'bofbof', 'ROOT')
@@ -287,24 +287,24 @@ def test_inserts():
   assert res['OK'] is True
 
   gaussStep = {'StepId': gaussStepID, 'Visible': 'Y',
-	       'OutputFileTypes': [{'Visible': 'N', 'FileType': 'SIM'}]}
+               'OutputFileTypes': [{'Visible': 'N', 'FileType': 'SIM'}]}
   booleStep = {'StepId': booleStepID, 'Visible': 'N',
-	       'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
+               'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
 
   res = bk.addProduction(7, simcond='SimCond', steps=[gaussStep, booleStep],
-			 inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
+                         inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
   assert res['OK'] is True
 
   res = bk.getSteps(6, {'ProcessingPass': '/Sim/Digi2/L0Trig'})
   assert res['OK'] is True
   assert res['Value'] == [('boole2', 'Boole', 'v2r3',
-			   '/some/boole2/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, boole2StepID, 'N'),
-			  ('moore', 'Moore', 'v3r3',
-			   '/some/moore/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, mooreStepID, 'N')]
+                           '/some/boole2/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, boole2StepID, 'N'),
+                          ('moore', 'Moore', 'v3r3',
+                           '/some/moore/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, mooreStepID, 'N')]
 
   # Now without BkQuery
   res = bk.getSteps(6)
@@ -313,20 +313,20 @@ def test_inserts():
   # Adding production 8 (with the same steps of 6, still "inheriting" from 7)
 
   boole2Step = {'StepId': boole2StepID, 'Visible': 'Y',
-		'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
+                'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
   mooreStep = {'StepId': mooreStepID, 'Visible': 'N',
-	       'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
+               'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
   res = bk.addProduction(8, simcond='SimCond', steps=[boole2Step, mooreStep],
-			 inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
+                         inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
   assert res['OK'] is True
 
   res = bk.getSteps(8)
   assert res['OK'] is True
   assert res['Value'] == [('boole2', 'Boole', 'v2r3',
-			   '/some/boole2/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, boole2StepID, 'N'),
-			  ('moore', 'Moore', 'v3r3',
-			   '/some/moore/option/files',
-			   'boole-dddb', 'boole-conddb',
-			   None, mooreStepID, 'N')]
+                           '/some/boole2/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, boole2StepID, 'N'),
+                          ('moore', 'Moore', 'v3r3',
+                           '/some/moore/option/files',
+                           'boole-dddb', 'boole-conddb',
+                           None, mooreStepID, 'N')]

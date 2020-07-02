@@ -540,7 +540,7 @@ class OracleBookkeepingDB(object):
   def insertFileTypes(self, ftype, desc, fileType):
     """inserts a given file type."""
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFileTypes',
-					    int, [ftype, desc, fileType])
+                                            int, [ftype, desc, fileType])
 
   #############################################################################
   def insertStep(self, in_dict):
@@ -554,13 +554,13 @@ class OracleBookkeepingDB(object):
                 'StepId': '',
                 'ApplicationVersion': 'v29r1',
                 'ExtraPackages': '',
-		'StepName': 'davinci prb2',
-		'ProcessingPass': 'WG-Coool',
-		'Visible': 'Y',
-		'isMulticore': 'N',
-		'OptionFiles': '',
-		'DDDB': '',
-		'CONDDB': ''},
+                'StepName': 'davinci prb2',
+                'ProcessingPass': 'WG-Coool',
+                'Visible': 'Y',
+                'isMulticore': 'N',
+                'OptionFiles': '',
+                'DDDB': '',
+                'CONDDB': ''},
        'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.MDST'}],
        'InputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.DST'}],
        'RuntimeProjects': [{'StepId': 13878}]}
@@ -941,12 +941,12 @@ class OracleBookkeepingDB(object):
     retVal = self.__getDataTakingConditionId(conddescription)
     if retVal['OK']:
       if retVal['Value'] != -1:
-	condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (table, str(retVal['Value']), table)
+        condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (table, str(retVal['Value']), table)
       else:
-	retVal = self.__getSimulationConditionId(conddescription)
-	if retVal['OK']:
-	  if retVal['Value'] != -1:
-	    condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal['Value']), table)
+        retVal = self.__getSimulationConditionId(conddescription)
+        if retVal['OK']:
+          if retVal['Value'] != -1:
+            condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal['Value']), table)
           else:
             return S_ERROR('Condition does not exists!')
         else:
@@ -1279,7 +1279,7 @@ class OracleBookkeepingDB(object):
     :return: processing pass
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-					    str, [prodid])
+                                            str, [prodid])
 
   #############################################################################
   def getRunProcessingPass(self, runnumber):
@@ -1289,7 +1289,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass for a given run
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-					    str, [-1 * runnumber])
+                                            str, [-1 * runnumber])
 
   #############################################################################
   def getProductionProcessingPassID(self, prodid):
@@ -1299,7 +1299,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass identifier of a production
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPassId',
-					    int, [prodid])
+                                            int, [prodid])
 
   #############################################################################
   def getMoreProductionInformations(self, prodid):
@@ -1707,7 +1707,7 @@ class OracleBookkeepingDB(object):
                                                 array=lfns)
       if not retVal['OK']:
         failed = lfns
-	self.log.error(retVal['Message'])
+        self.log.error(retVal['Message'])
       else:
         succ = lfns
       values['Successful'] = succ
@@ -1765,7 +1765,7 @@ class OracleBookkeepingDB(object):
     flag = retVal['Value']
 
     return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRunquality',
-					    [runNB, flag, processingid], False)
+                                            [runNB, flag, processingid], False)
 
   #############################################################################
   def setRunDataQuality(self, runNb, flag):
@@ -1885,19 +1885,19 @@ class OracleBookkeepingDB(object):
     if depth:
       depth -= 1
       result = self.dbR_.executeStoredFunctions(
-	  'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', int, [fileName])
+          'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', int, [fileName])
 
       if not result["OK"]:
-	self.log.error('Error getting jobID', result['Message'])
+        self.log.error('Error getting jobID', result['Message'])
       jobID = int(result.get('Value', 0))
       if jobID:
-	command = "select files.fileName,files.jobid, files.gotreplica, files.eventstat,\
+        command = "select files.fileName,files.jobid, files.gotreplica, files.eventstat,\
          files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name \
         from inputfiles,files, filetypes where files.filetypeid=filetypes.filetypeid \
          and inputfiles.fileid=files.fileid and inputfiles.jobid=%d" % (jobID)
         res = self.dbR_.query(command)
         if not res['OK']:
-	  self.log.error('Error getting job input files', result["Message"])
+          self.log.error('Error getting job input files', result["Message"])
         else:
           dbResult = res['Value']
           for record in dbResult:
@@ -1967,7 +1967,7 @@ class OracleBookkeepingDB(object):
 
       res = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getFileDesJobId', [fileName])
       if not res["OK"]:
-	self.log.error('Error getting fileId', res['Message'])
+        self.log.error('Error getting fileId', res['Message'])
         failed.add(fileName)
       elif not res['Value']:
         notprocessed.add(fileName)
@@ -1977,7 +1977,7 @@ class OracleBookkeepingDB(object):
 
           res = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getFileAndJobMetadata', [jobID, getProd])
           if not res["OK"]:
-	    self.log.error('Error getting job output files', res['Message'])
+            self.log.error('Error getting job output files', res['Message'])
             failed.add(fileName)
           elif not res['Value']:
             notprocessed.add(fileName)
@@ -2044,7 +2044,7 @@ class OracleBookkeepingDB(object):
       if res:
         return S_OK(res)
       else:
-	self.log.warn("File not found! ", "%s" % fileName)
+        self.log.warn("File not found! ", "%s" % fileName)
         return S_ERROR("File not found: %s" % fileName)
     else:
       return S_ERROR(result['Message'])
@@ -2059,7 +2059,7 @@ class OracleBookkeepingDB(object):
     :return: file type id
     """
     result = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.checkFileTypeAndVersion',
-					      int, [filetype, version])
+                                              int, [filetype, version])
     return result
 
   #############################################################################
@@ -2077,7 +2077,7 @@ class OracleBookkeepingDB(object):
       if value:
         result = S_OK(value)
       else:
-	self.log.info("Event type not found:", "%s" % eventTypeId)
+        self.log.info("Event type not found:", "%s" % eventTypeId)
         result = S_ERROR("Event type not found: %s" % eventTypeId)
     else:
       result = retVal
@@ -2125,7 +2125,7 @@ class OracleBookkeepingDB(object):
 
     for param in job:
       if not attrList.__contains__(param):
-	self.log.error("insert job error: ", " the job table not contain attribute %s" % param)
+        self.log.error("insert job error: ", " the job table not contain attribute %s" % param)
         return S_ERROR(" The job table not contain attribute %s" % param)
 
       if param == 'JobStart' or param == 'JobEnd':  # We have to convert data format
@@ -2151,37 +2151,37 @@ class OracleBookkeepingDB(object):
       pass  # it is already defined
 
     result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertJobsRow',
-					      int, [attrList['ConfigName'],
-						    attrList['ConfigVersion'],
-						    attrList['DiracJobId'],
-						    attrList['DiracVersion'],
-						    attrList['EventInputStat'],
-						    attrList['ExecTime'],
-						    attrList['FirstEventNumber'],
-						    attrList['JobEnd'],
-						    attrList['JobStart'],
-						    attrList['Location'],
-						    attrList['Name'],
-						    attrList['NumberOfEvents'],
-						    attrList['Production'],
-						    attrList['ProgramName'],
-						    attrList['ProgramVersion'],
-						    attrList['StatisticsRequested'],
-						    attrList['WNCPUPOWER'],
-						    attrList['CPUTIME'],
-						    attrList['WNCACHE'],
-						    attrList['WNMEMORY'],
-						    attrList['WNMODEL'],
-						    attrList['WorkerNode'],
-						    attrList['RunNumber'],
-						    attrList['FillNumber'],
-						    attrList['WNCPUHS06'],
-						    attrList['TotalLuminosity'],
-						    attrList['Tck'],
-						    attrList['StepID'],
-						    attrList['WNMJFHS06'],
-						    attrList['HLT2Tck'],
-						    attrList['NumberOfProcessors']])
+                                              int, [attrList['ConfigName'],
+                                                    attrList['ConfigVersion'],
+                                                    attrList['DiracJobId'],
+                                                    attrList['DiracVersion'],
+                                                    attrList['EventInputStat'],
+                                                    attrList['ExecTime'],
+                                                    attrList['FirstEventNumber'],
+                                                    attrList['JobEnd'],
+                                                    attrList['JobStart'],
+                                                    attrList['Location'],
+                                                    attrList['Name'],
+                                                    attrList['NumberOfEvents'],
+                                                    attrList['Production'],
+                                                    attrList['ProgramName'],
+                                                    attrList['ProgramVersion'],
+                                                    attrList['StatisticsRequested'],
+                                                    attrList['WNCPUPOWER'],
+                                                    attrList['CPUTIME'],
+                                                    attrList['WNCACHE'],
+                                                    attrList['WNMEMORY'],
+                                                    attrList['WNMODEL'],
+                                                    attrList['WorkerNode'],
+                                                    attrList['RunNumber'],
+                                                    attrList['FillNumber'],
+                                                    attrList['WNCPUHS06'],
+                                                    attrList['TotalLuminosity'],
+                                                    attrList['Tck'],
+                                                    attrList['StepID'],
+                                                    attrList['WNMJFHS06'],
+                                                    attrList['HLT2Tck'],
+                                                    attrList['NumberOfProcessors']])
     return result
 
   #############################################################################
@@ -2220,7 +2220,7 @@ class OracleBookkeepingDB(object):
 
     for param in fileobject:
       if param not in attrList:
-	self.log.error("insert file error: ", " the files table not contain attribute %s " % param)
+        self.log.error("insert file error: ", " the files table not contain attribute %s " % param)
         return S_ERROR(" The files table not contain attribute %s" % param)
 
       if param == 'CreationDate':  # We have to convert data format
@@ -2317,9 +2317,9 @@ class OracleBookkeepingDB(object):
     g4settings = in_dict.get('G4settings', None)
     visible = in_dict.get('Visible', 'Y')
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertSimConditions',
-					    int, [simdesc, beamCond, beamEnergy,
-						  generator, magneticField,
-						  detectorCond, luminosity, g4settings, visible])
+                                            int, [simdesc, beamCond, beamEnergy,
+                                                  generator, magneticField,
+                                                  detectorCond, luminosity, g4settings, visible])
 
   #############################################################################
   def getSimConditions(self):
@@ -2356,28 +2356,28 @@ class OracleBookkeepingDB(object):
 
     for param in conditions:
       if not datataking.__contains__(param):
-	self.log.error("Can not insert data taking condition the files table not contains:", "%s" % param)
+        self.log.error("Can not insert data taking condition the files table not contains:", "%s" % param)
         return S_ERROR("Can not insert data taking condition the files table not contains: %s " % param)
       datataking[param] = conditions[param]
 
     res = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertDataTakingCond',
-					   int, [datataking['Description'],
-						 datataking['BeamCond'],
-						 datataking['BeamEnergy'],
-						 datataking['MagneticField'],
-						 datataking['VELO'],
-						 datataking['IT'],
-						 datataking['TT'],
-						 datataking['OT'],
-						 datataking['RICH1'],
-						 datataking['RICH2'],
-						 datataking['SPD_PRS'],
-						 datataking['ECAL'],
-						 datataking['HCAL'],
-						 datataking['MUON'],
-						 datataking['L0'],
-						 datataking['HLT'],
-						 datataking['VeloPosition']])
+                                           int, [datataking['Description'],
+                                                 datataking['BeamCond'],
+                                                 datataking['BeamEnergy'],
+                                                 datataking['MagneticField'],
+                                                 datataking['VELO'],
+                                                 datataking['IT'],
+                                                 datataking['TT'],
+                                                 datataking['OT'],
+                                                 datataking['RICH1'],
+                                                 datataking['RICH2'],
+                                                 datataking['SPD_PRS'],
+                                                 datataking['ECAL'],
+                                                 datataking['HCAL'],
+                                                 datataking['MUON'],
+                                                 datataking['L0'],
+                                                 datataking['HLT'],
+                                                 datataking['VeloPosition']])
     return res
 
   #############################################################################
@@ -2511,7 +2511,7 @@ class OracleBookkeepingDB(object):
     if sortDict:
       res = self.__getProductionStatisticsForUsers(prod)
       if not res['OK']:
-	self.log.error(res['Message'])
+        self.log.error(res['Message'])
       else:
         totalrecords = res['Value'][0][0]
         nbOfEvents = res['Value'][0][1]
@@ -3097,16 +3097,16 @@ and files.qualityid= dataquality.qualityid" % lfn
 
       # dddb is in step[4], conddb in step[5]
       if step[4] != 'fromPreviousStep':
-	productionSteps.insert(0, step)
+        productionSteps.insert(0, step)
       else:  # now I need to serch backward
-	searchedSubList = steps[:steps.index(step)]
-	for searchedStep in reversed(searchedSubList):
-	  if searchedStep[4] != 'fromPreviousStep':
-	    stepCorrected = list(step)
-	    stepCorrected[4] = searchedStep[4]
-	    stepCorrected[5] = searchedStep[5]
-	    productionSteps.insert(0, tuple(stepCorrected))
-	    break
+        searchedSubList = steps[:steps.index(step)]
+        for searchedStep in reversed(searchedSubList):
+          if searchedStep[4] != 'fromPreviousStep':
+            stepCorrected = list(step)
+            stepCorrected[4] = searchedStep[4]
+            stepCorrected[5] = searchedStep[5]
+            productionSteps.insert(0, tuple(stepCorrected))
+            break
 
     if productionSteps:
       return S_OK(productionSteps)
@@ -3119,20 +3119,20 @@ and files.qualityid= dataquality.qualityid" % lfn
       # we can have a situation where we want to know the steps for a given production
       retVal = self.getProductionProcessingPass(prodid)
       if not retVal['OK']:
-	return retVal
+        return retVal
       if not retVal['Value']:
-	self.log.error("Production does not have a registered processing pass",
-		       "(%s)" % prodid)
-	return S_ERROR("Production does not have a registered processing pass")
+        self.log.error("Production does not have a registered processing pass",
+                       "(%s)" % prodid)
+        return S_ERROR("Production does not have a registered processing pass")
       self.log.debug("Production processing pass",
-		     "(%s -> %s)" % (prodid, retVal['Value']))
+                     "(%s -> %s)" % (prodid, retVal['Value']))
       bkQuery['ProcessingPass'] = retVal['Value']
 
     try:
       retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
     except IndexError:
       self.log.error("Unable to find DB tags",
-		     "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
+                     "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
       return S_ERROR("Unable to find DB tags")
 
     if not retVal['OK']:
@@ -3177,21 +3177,21 @@ and files.qualityid= dataquality.qualityid" % lfn
     if productions:
       self.log.debug('Input Production(s) for bkQuery %s: %s' % (bkQuery, productions))
       for prod in productions:
-	retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
-	if not retVal['OK']:
-	  return retVal
+        retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
+        if not retVal['OK']:
+          return retVal
 
-	steps = retVal['Value']  # this is an ordered list
+        steps = retVal['Value']  # this is an ordered list
 
-	# DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
-	# This will search among the steps in the current production (might not be final)
-	# We assume that dddb and conddb are both either set, or not.
-	for step in reversed(steps):  # starting from the end
-	  self.log.debug("[getSteps] StepID: %s" % step[7])
+        # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
+        # This will search among the steps in the current production (might not be final)
+        # We assume that dddb and conddb are both either set, or not.
+        for step in reversed(steps):  # starting from the end
+          self.log.debug("[getSteps] StepID: %s" % step[7])
 
-	  # dddb is in step[4], conddb in step[5]
-	  if step[4] != 'fromPreviousStep':
-	    return S_OK([step[4], step[5]])
+          # dddb is in step[4], conddb in step[5]
+          if step[4] != 'fromPreviousStep':
+            return S_OK([step[4], step[5]])
 
       self.log.debug('No step of production %s found to have a set dddb/conddb, now looping' % prod)
       return self.__resolveFromPreviousStep(production, bkQuery)
@@ -3364,7 +3364,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: data quality
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getQFlagByRunAndProcId',
-					    str, [runnb, processing])
+                                            str, [runnb, processing])
 
   #############################################################################
   def getRunWithProcessingPassAndDataQuality(self, procpass, flag=default):
@@ -3874,7 +3874,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           command = "select QualityId from dataquality where dataqualityflag='%s'" % (str(i))
           res = self.dbR_.query(command)
           if not res['OK']:
-	    self.log.error('Data quality problem:', res['Message'])
+            self.log.error('Data quality problem:', res['Message'])
           elif not res['Value']:
             return S_ERROR('No file found! Dataquality is missing!')
           else:
@@ -3886,7 +3886,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select QualityId from dataquality where dataqualityflag=\'' + str(flag) + '\''
         res = self.dbR_.query(command)
         if not res['OK']:
-	  self.log.error('Data quality problem:', res['Message'])
+          self.log.error('Data quality problem:', res['Message'])
         elif not res['Value']:
           return S_ERROR('No file found! Dataquality is missing!')
         else:
@@ -4419,7 +4419,7 @@ and files.qualityid= dataquality.qualityid" % lfn
               command = "insert into processing(id,parentid,name)values(%d,%d,'%s')" % (processingpassid, parentid, i)
               retVal = self.dbW_.query(command)
               if not retVal['OK']:
-		self.log.error(retVal['Message'])
+                self.log.error(retVal['Message'])
               values.remove(i)
               self.__insertprocessing(values, processingpassid, ids)
           else:
@@ -4433,7 +4433,7 @@ and files.qualityid= dataquality.qualityid" % lfn
               command = "insert into processing(id,parentid,name)values(%d,null,'%s')" % (processingpassid, i)
               retVal = self.dbW_.query(command)
               if not retVal['OK']:
-		self.log.error(retVal['Message'])
+                self.log.error(retVal['Message'])
               values.remove(i)
               self.__insertprocessing(values, processingpassid, ids)
         else:
@@ -4495,8 +4495,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     level = 1
     for step in steps:
       retVal = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertStepsContainer',
-						[prod, step['StepId'], level],
-						False)
+                                                [prod, step['StepId'], level],
+                                                False)
       if not retVal['OK']:
         return retVal
       level += 1
@@ -4535,16 +4535,16 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     for step in steps:
       if step['Visible'] == 'Y':
-	res = self.getAvailableSteps({'StepId': step['StepId']})
-	if not res['OK']:
-	  self.log.error(res['Message'])
-	  return res
-	if res['Value']['TotalRecords'] > 0:
-	  procpas = res['Value']['Records'][0][9]
-	  path += [procpas]
-	else:
-	  self.log.error("Missing step", "(StepID: %s)" % step['StepId'])
-	  return S_ERROR("Missing step")
+        res = self.getAvailableSteps({'StepId': step['StepId']})
+        if not res['OK']:
+          self.log.error(res['Message'])
+          return res
+        if res['Value']['TotalRecords'] > 0:
+          procpas = res['Value']['Records'][0][9]
+          path += [procpas]
+        else:
+          self.log.error("Missing step", "(StepID: %s)" % step['StepId'])
+          return S_ERROR("Missing step")
 
     if not path:
       self.log.error("You have to define the input processing pass or you have to have a visible step!")
@@ -4566,17 +4566,17 @@ and files.qualityid= dataquality.qualityid" % lfn
     if daq is not None:
       retVal = self.__getDataTakingConditionId(daq)
       if not retVal['OK']:
-	return retVal
+        return retVal
       if retVal['Value'] > -1:
-	did = retVal['Value']
+        did = retVal['Value']
       else:
-	return S_ERROR('Data taking condition is missing')
+        return S_ERROR('Data taking condition is missing')
     if simcond is not None:
       retVal = self.__getSimulationConditionId(simcond)
       if retVal['OK'] and retVal['Value'] > -1:
-	sim = retVal['Value']
+        sim = retVal['Value']
       else:
-	return S_ERROR('Simulation condition is missing')
+        return S_ERROR('Simulation condition is missing')
     retVal = self.insertproductionscontainer(production, processingid, sim, did, configName, configVersion)
     if not retVal['OK']:
       return retVal
@@ -5019,7 +5019,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         result = retVal
       else:
         productions = set([i[0] for i in retVal['Value']])
-	self.log.debug('Productions:', "%s" % str(productions))
+        self.log.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
         for prod in productions:
           retVal = self.getSteps(prod, {
@@ -5507,7 +5507,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       command = "select Finished from runstatus where runnumber=%d" % i
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
-	self.log.error(i, retVal['Message'])
+        self.log.error(i, retVal['Message'])
         status['Failed'] += [i]
       else:
         if len(retVal['Value']) > 0:
