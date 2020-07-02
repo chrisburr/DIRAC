@@ -3074,131 +3074,14 @@ and files.qualityid= dataquality.qualityid" % lfn
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getProductionInformation', [prodid])
 
   #############################################################################
-  def getSteps(self, prodid, bkQuery=None):
+  def getSteps(self, prodid):
     """For retrieving the production step.
 
     :param int prodid: production number
-    :param dict bkQuery: the bk dataset (optional)
 
     :return: the steps used by a production, with resolved DB tags
     """
-    retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prodid])
-    if not retVal['OK']:
-      return retVal
-
-    steps = retVal['Value']  # this is an ordered list
-    productionSteps = []
-
-    # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
-    # This will search among the steps in the current production (might not be final)
-    # We assume that dddb and conddb are both either set, or not.
-    for step in reversed(steps):  # starting from the end
-      self.log.debug("[getSteps] StepID: %s" % step[7])
-
-      # dddb is in step[4], conddb in step[5]
-      if step[4] != 'fromPreviousStep':
-        productionSteps.insert(0, step)
-      else:  # now I need to serch backward
-        searchedSubList = steps[:steps.index(step)]
-        for searchedStep in reversed(searchedSubList):
-          if searchedStep[4] != 'fromPreviousStep':
-            stepCorrected = list(step)
-            stepCorrected[4] = searchedStep[4]
-            stepCorrected[5] = searchedStep[5]
-            productionSteps.insert(0, tuple(stepCorrected))
-            break
-
-    if productionSteps:
-      return S_OK(productionSteps)
-
-    # if we are here it's because in the current production none of the steps contain DB tags
-    self.log.info("DB tags are not set: will try to retrieve from the parent production")
-    if bkQuery is None:
-      bkQuery = {}
-    if bkQuery.get('ProcessingPass') is None:
-      # we can have a situation where we want to know the steps for a given production
-      retVal = self.getProductionProcessingPass(prodid)
-      if not retVal['OK']:
-        return retVal
-      if not retVal['Value']:
-        self.log.error("Production does not have a registered processing pass",
-                       "(%s)" % prodid)
-        return S_ERROR("Production does not have a registered processing pass")
-      self.log.debug("Production processing pass",
-                     "(%s -> %s)" % (prodid, retVal['Value']))
-      bkQuery['ProcessingPass'] = retVal['Value']
-
-    try:
-      retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
-    except IndexError:
-      self.log.error("Unable to find DB tags",
-                     "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
-      return S_ERROR("Unable to find DB tags")
-
-    if not retVal['OK']:
-      return retVal
-
-    correctedValues = []
-    for i in steps:
-      tmp = list(i)
-      tmp[4] = retVal['Value'][0]
-      tmp[5] = retVal['Value'][1]
-      correctedValues += [tuple(tmp)]
-    result = S_OK(correctedValues)
-
-    return result
-
-  #############################################################################
-  def __resolveFromPreviousStep(self, production, bkQuery):
-    """Returns the database tags from the ancestor production steps.
-    The Productionoutputfiles table is used.
-
-    :param int production: production number
-    :param dict bkQuery: the bk dataset
-    :return: database tags
-    """
-    bkQuery['ProcessingPass'] = '/'.join(bkQuery['ProcessingPass'].split('/')[:-1])
-    command = self.__prepareStepMetadata(bkQuery.get('ConfigName', default),
-                                         bkQuery.get('ConfigVersion', default),
-                                         bkQuery.get('ConditionDescription', default),
-                                         bkQuery.get('ProcessingPass', default),
-                                         bkQuery.get('EventType', default),
-                                         bkQuery.get('Production', default),
-                                         'ALL',
-                                         bkQuery.get('RunNumber', default),
-                                         'ALL',
-                                         'ALL',
-                                         selection="prod.production")
-    retVal = self.dbR_.query(command)
-    if not retVal['OK']:
-      return retVal
-
-    productions = set(tuple(i[0] for i in retVal['Value'])) - set([production])
-    if productions:
-      self.log.debug('Input Production(s) for bkQuery %s: %s' % (bkQuery, productions))
-      for prod in productions:
-        retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
-        if not retVal['OK']:
-          return retVal
-
-        steps = retVal['Value']  # this is an ordered list
-
-        # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
-        # This will search among the steps in the current production (might not be final)
-        # We assume that dddb and conddb are both either set, or not.
-        for step in reversed(steps):  # starting from the end
-          self.log.debug("[getSteps] StepID: %s" % step[7])
-
-          # dddb is in step[4], conddb in step[5]
-          if step[4] != 'fromPreviousStep':
-            return S_OK([step[4], step[5]])
-
-      self.log.debug('No step of production %s found to have a set dddb/conddb, now looping' % prod)
-      return self.__resolveFromPreviousStep(production, bkQuery)
-
-    else:
-      self.log.debug('No input productions found for bkQuery %s, now looping' % bkQuery)
-      return self.__resolveFromPreviousStep(production, bkQuery)
+    return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prodid])
 
   #############################################################################
   def getNbOfJobsBySites(self, prodid):

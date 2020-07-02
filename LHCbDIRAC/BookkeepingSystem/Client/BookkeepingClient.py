@@ -25,12 +25,14 @@ Whatever:
 
 import tempfile
 
-from DIRAC import S_OK, S_ERROR
+from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.DISET.TransferClient import TransferClient
 from DIRAC.Core.Utilities.Decorators import deprecated
 
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
+from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
+from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 __RCSID__ = "$Id$"
 
@@ -49,6 +51,7 @@ class BookkeepingClient(Client):
     if url:
       self.setServer(url)
     self.timeout = 3600
+    self.log = gLogger.getSubLogger('BookkeepingClient')
 
   #############################################################################
   def getAvailableFileTypes(self):
@@ -397,6 +400,96 @@ class BookkeepingClient(Client):
     if lfns is None:
       lfns = []
     return self._getRPC().getProductionFilesStatus(productionid, lfns)
+
+  def getProductionInformations(self, prodID):
+    """ Get the production information.
+    """
+    res = self._getRPC().getProductionInformations(prodID)
+    if not res['OK']:
+      return res
+
+    prodInfo = res['Value']
+
+    res = self.getSteps(prodID)
+    if not res['OK']:
+      return res
+
+    prodInfo["Steps"] = res['Value']
+
+    return S_OK(prodInfo)
+
+  def getSteps(self, prodID):
+    """ Fully resolve the steps
+    """
+
+    res = self._getRPC().getSteps(prodID)
+    steps = res['Value']  # this is an ordered list
+    productionSteps = []
+
+    # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
+    # This will search among the steps in the current production (might not be final)
+    # We assume that dddb and conddb are both either set, or not.
+    for step in reversed(steps):  # starting from the end
+      self.log.debug("[getSteps] StepID: %s" % step[7])
+
+      # dddb is in step[4], conddb in step[5]
+      if step[4] != 'fromPreviousStep':
+        productionSteps.insert(0, step)
+      else:  # now I need to serch backward
+        searchedSubList = steps[:steps.index(step)]
+        for searchedStep in reversed(searchedSubList):
+          if searchedStep[4] != 'fromPreviousStep':
+            stepCorrected = list(step)
+            stepCorrected[4] = searchedStep[4]
+            stepCorrected[5] = searchedStep[5]
+            productionSteps.insert(0, tuple(stepCorrected))
+            break
+
+    if productionSteps:
+      return S_OK(productionSteps)
+
+    # if we are here it's because in the current production none of the steps contain DB tags
+    self.log.info("DB tags are not set: they will be retrieved from the parent production(s)",
+                  "(prod: %s)" % prodID)
+
+    # Now finding the previous productions
+    # Start by getting the RequestID
+    res = self._getPreviousProductions(prodID)
+    if not res['OK']:
+      return res
+    ancestorProdIDs = res['Value']  # an already ordered list
+    if not ancestorProdIDs:
+      return S_ERROR("No ancestor productions found")
+
+    for ancestorProdID in ancestorProdIDs:
+      res = self._getSteps(ancestorProdID)
+      if not res['OK']:
+        return res
+
+      # now, treat the result
+
+  def _getPreviousProductions(self, prodID):
+    """ returns an already-ordered list of productions that were inputs to the provided one
+    """
+    res = TransformationClient().getTransformation(prodID, True)
+    if not res['OK']:
+      self.log.error('Could not retrieve parameters for production',
+                     '%d: %s' % (prodID, res['Message']))
+      return res
+    parameters = res['Value']
+
+    # Now getting the TransformationIDs for the RequestID
+    reqID = int(parameters.get('RequestID'))
+    res = ProductionRequestClient().getProductionList(reqID)
+    if not res['OK']:
+      self.log.error('Could not retrieve productions list for request', '%d:%s' % (reqID, res['Message']))
+      return res
+    ancestorProdIDs = res['Value']
+
+    # Now only returning the production IDs prior to prodID (in good order)
+    ancestorProdIDs = ancestorProdIDs[0: ancestorProdIDs.index(prodID)]
+    ancestorProdIDs.reverse()
+    return S_OK(ancestorProdIDs)
 
 
 class BKClientWithRetry():
