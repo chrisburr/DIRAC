@@ -105,12 +105,11 @@ class BookkeepingManagerHandler(RequestHandler):
     try:
       retVal = reader_.readXMLfromString(xml)
       if not retVal['OK']:
-	self.log.error("Issue reading XML", retVal['Message'])
-	return retVal
+        self.log.error("Issue reading XML", retVal['Message'])
+        return retVal
       if retVal['Value'] == '':
-	return S_OK("The send bookkeeping finished successfully!")
-      else:
-	return retVal
+        return S_OK("The send bookkeeping finished successfully!")
+      return retVal
     except Exception as x:
       errorMsg = "XML processing error"
       self.log.exception(errorMsg, lException=x)
@@ -1386,11 +1385,11 @@ class BookkeepingManagerHandler(RequestHandler):
       steps = value['Value']
     else:
       result = {"Production information": prodinfos,
-		"Steps": value['Message'],
-		"Number of jobs": nbjobs,
-		"Number of files": nbOfFiles,
-		"Number of events": nbOfEvents,
-		'Path': path}
+                "Steps": value['Message'],
+                "Number of jobs": nbjobs,
+                "Number of files": nbOfFiles,
+                "Number of events": nbOfEvents,
+                'Path': path}
       return S_OK(result)
 
       # return S_ERROR(value['Message'])
