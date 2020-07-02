@@ -81,7 +81,7 @@ class MCStatsElasticDB(ElasticDB):
               "bool": {
                   "must": {
                       "match": {
-                          "Errors.ID.wmsID": jobID
+                          "Errors.ID.JobID": jobID
                       }
                   }
               }
@@ -94,7 +94,7 @@ class MCStatsElasticDB(ElasticDB):
               "bool": {
                   "must": {
                       "match": {
-                          "Counters.ID.wmsID": jobID
+                          "Counters.ID.JobID": jobID
                       }
                   }
               }
@@ -127,7 +127,7 @@ class MCStatsElasticDB(ElasticDB):
               "bool": {
                   "must": {
                       "match": {
-                          "Errors.ID.wmsID": jobID
+                          "Errors.ID.JobID": jobID
                       }
                   }
               }
@@ -140,7 +140,7 @@ class MCStatsElasticDB(ElasticDB):
               "bool": {
                   "must": {
                       "match": {
-                          "Counters.ID.wmsID": jobID
+                          "Counters.ID.JobID": jobID
                       }
                   }
               }
