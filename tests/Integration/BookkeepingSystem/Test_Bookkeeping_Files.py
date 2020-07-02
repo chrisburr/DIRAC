@@ -130,13 +130,12 @@ bkDB.dbW_._query("INSERT INTO dataquality VALUES(1, 'OK')")
 #############################################################################
 
 
-def test_echo():
-  """make sure we are able to use the bkk"
+def test_ping():
+  """make sure we are able to contact the bkk service"
   """
 
-  res = bk.echo("Test")
+  res = bk.ping()
   assert res['OK']
-  assert res['Value'] == "Test"
 
 
 def test_sendXMLBookkeepingReport():

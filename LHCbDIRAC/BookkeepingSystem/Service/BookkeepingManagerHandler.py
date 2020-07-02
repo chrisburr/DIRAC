@@ -76,17 +76,6 @@ class BookkeepingManagerHandler(RequestHandler):
     gLogger.info("Email used to track queries: %s forceExecution" % cls.email, cls.forceExecution)
     return S_OK()
   ###########################################################################
-  # types_<methodname> global variable is a list which defines for each exposed
-  # method the types of its arguments, the argument types are ignored if the list is empty.
-
-  types_echo = [six.string_types]
-
-  @staticmethod
-  def export_echo(inputstring):
-    """Echo input to output."""
-    return S_OK(inputstring)
-
-  #############################################################################
   types_sendBookkeeping = [six.string_types, six.string_types]
 
   @deprecated("Use sendXMLBookkeepingReport")
