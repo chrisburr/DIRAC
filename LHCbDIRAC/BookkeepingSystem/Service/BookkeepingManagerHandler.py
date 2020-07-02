@@ -1036,7 +1036,8 @@ class BookkeepingManagerHandler(RequestHandler):
 
   @staticmethod
   def export_getAncestors(lfns, depth):
-    """more info in the BookkeepingClient.py."""
+    """ Get the ancestors for a list of LFNs in input
+    """
     result = S_ERROR()
     retVal = dataMGMT_.getFileAncestors(lfns, depth, True)
     if retVal['OK']:
@@ -2107,6 +2108,15 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_getAvailableTcks(self, in_dict):
     """more info in the BookkeepingClient.py."""
     return self.export_getTCKs(in_dict)
+
+  #############################################################################
+  types_getSteps = [int]
+
+  @staticmethod
+  def export_getSteps(prodID):
+    """ get list of steps used in a production
+    """
+    return dataMGMT_.getSteps(prodID)
 
   #############################################################################
   types_getStepsMetadata = [dict]
