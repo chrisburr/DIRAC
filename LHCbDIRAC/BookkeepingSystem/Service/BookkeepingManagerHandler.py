@@ -175,10 +175,11 @@ class BookkeepingManagerHandler(RequestHandler):
     if not retVal['OK']:
       return retVal
 
-    records = [list(record) for record in retVal['Value']]
-    return S_OK({'ParameterNames': ['FileType', 'Visible'],
-                 'Records': records,
-                 'TotalRecords': len(records)})
+    records = []
+    parameters = ['FileType', 'Visible']
+    for record in retVal['Value']:
+      records += [list(record)]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_getAvailableFileTypes = []
