@@ -28,6 +28,7 @@ import tempfile
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.DISET.TransferClient import TransferClient
+from DIRAC.Core.Utilities.Decorators import deprecated
 
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 
@@ -262,6 +263,7 @@ class BookkeepingClient(Client):
     return self._getRPC().setFilesVisible(lfns)
 
   #############################################################################
+  @deprecated("Use getFiles")
   def getFilesWithGivenDataSets(self, in_dict):
     """For retrieving list of files.
 
