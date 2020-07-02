@@ -26,8 +26,8 @@ This file contains all the visualizations used in the dashboards
 In order to simplify the process, choose as an id for the index pattern 'e0cc1ec0-496c-11e9-97b4-bda41e0e0b3d'.
 Of course you can choose a different one, but make sure to change it for all the visualizations in the json file.
 
--In Kibana -> Management -> Saved Objects, import the visualizations using the MCStatsVisualizations.json file.
+- In Kibana -> Management -> Saved Objects, import the visualizations using the MCStatsVisualizations.json file.
 
--In Kibana -> Management -> Saved Objects, import the three dashboards using the MCStatsErrorsPerJob.json, MCStatsErrorsPerProduction.json, MCStatsProductionsWithMostErrors.json files.
+- In Kibana -> Management -> Saved Objects, import the three dashboards using the MCStatsErrorsPerJob.json, MCStatsErrorsPerProduction.json, MCStatsProductionsWithMostErrors.json files.
 
 Note: Some dashboards may not contain some visualizations and display the message [Could not locate that visualization (id:------)] if the data don't contain the type of errors in the visualization.
