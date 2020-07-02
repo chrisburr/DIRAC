@@ -99,7 +99,7 @@ class MCStatsElasticDB(ElasticDB):
                   }
               }
           }
-      }        
+      }
 
     self.log.debug('Getting results for JobID %s in index %s' % (jobID, indexName))
     result = self.query(indexName + '*', query)
@@ -119,7 +119,7 @@ class MCStatsElasticDB(ElasticDB):
 
     :param str indexName: the name of the index in ELasticSearch
     :param int JobID: The JobID of the data in elasticsearch
-    :param str mcType: The type of the data 
+    :param str mcType: The type of the data
     """
     if mcType == 'errors':
       query = {
