@@ -21,11 +21,6 @@ echo -e '****************************************'
 echo -e '******' "LHCb client -> server tests" '******\n'
 
 #-------------------------------------------------------------------------------#
-echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_BookkeepingGUImethods.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-
-#-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
 python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
