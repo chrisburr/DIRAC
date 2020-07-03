@@ -108,17 +108,25 @@ bk = OracleBookkeepingDB()
 #############################################################################
 
 
-def test_inserts():
+def test_Steps():
 
   # # first delete from DB ####################
-  bk.dbW_._query("DELETE FROM eventtypes")
-  bk.dbW_._query("DELETE FROM filetypes")
+
+  bk.dbW_._query("DELETE FROM productionoutputfiles")
   bk.dbW_._query("DELETE FROM stepscontainer")
+  bk.dbW_._query("DELETE FROM inputfiles")
+  bk.dbW_._query("DELETE FROM files")
+  bk.dbW_._query("DELETE FROM filetypes")
+  bk.dbW_._query("DELETE FROM eventtypes")
+  bk.dbW_._query("DELETE FROM jobs")
   bk.dbW_._query("DELETE FROM steps")
   bk.dbW_._query("DELETE FROM productionscontainer")
   bk.dbW_._query("DELETE FROM processing")
   bk.dbW_._query("DELETE FROM simulationconditions")
   bk.dbW_._query("DELETE FROM configurations")
+  bk.dbW_._query("DELETE FROM data_taking_conditions")
+  bk.dbW_._query("DELETE FROM newrunquality")
+
   # # #########################################
 
   # insert gauss step
@@ -220,51 +228,8 @@ def test_inserts():
                            None, gaussStepID, 'Y'),
                           ('boole2', 'Boole', 'v2r3',
                            '/some/boole2/option/files',
-                           'gauss-dddb', 'gauss-conddb',
+                           'fromPreviousStep', 'fromPreviousStep',
                            None, boole2StepID, 'N')]
-
-  res = bk.getSteps(4)  # [gauss, boole, boole2]
-  assert res['OK'] is True
-  assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-                           '/some/gauss/option/files',
-                           'gauss-dddb', 'gauss-conddb',
-                           None, gaussStepID, 'Y'),
-                          ('boole', 'Boole', 'v2r2',
-                           '/some/boole/option/files',
-                           'boole-dddb', 'boole-conddb',
-                           None, booleStepID, 'N'),
-                          ('boole2', 'Boole', 'v2r3',
-                           '/some/boole2/option/files',
-                           'boole-dddb', 'boole-conddb',
-                           None, boole2StepID, 'N')]
-
-  res = bk.getSteps(5)  # [gauss, boole2, boole, moore]
-  assert res['OK'] is True
-  assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
-                           '/some/gauss/option/files',
-                           'gauss-dddb', 'gauss-conddb',
-                           None, gaussStepID, 'Y'),
-                          ('boole2', 'Boole', 'v2r3',
-                           '/some/boole2/option/files',
-                           'gauss-dddb', 'gauss-conddb',
-                           None, boole2StepID, 'N'),
-                          ('boole', 'Boole', 'v2r2',
-                           '/some/boole/option/files',
-                           'boole-dddb', 'boole-conddb',
-                           None, booleStepID, 'N'),
-                          ('moore', 'Moore', 'v3r3',
-                           '/some/moore/option/files',
-                           'boole-dddb', 'boole-conddb',
-                           None, mooreStepID, 'N')]
-
-  # Now dealing with the case where the current production does not have any step with an explicit DB tag
-  res = bk.getSteps(6)  # [boole2, moore]
-  assert res['OK'] is False
-  # This fails because there's no processing pass for this production,
-  # so no possibility of finding the parent production (this should never happen)
-
-  res = bk.getSteps(6, {'ProcessingPass': 'MC/Sim/Digi2/L0Trig'})
-  assert res['OK'] is False  # This (still) fails because there are no processing passes registered
 
   # Now registering a production and with it its processing pass
   # This is several steps...
@@ -295,20 +260,16 @@ def test_inserts():
                          inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
   assert res['OK'] is True
 
-  res = bk.getSteps(6, {'ProcessingPass': '/Sim/Digi2/L0Trig'})
+  res = bk.getSteps(6)
   assert res['OK'] is True
   assert res['Value'] == [('boole2', 'Boole', 'v2r3',
                            '/some/boole2/option/files',
-                           'boole-dddb', 'boole-conddb',
+                           'fromPreviousStep', 'fromPreviousStep',
                            None, boole2StepID, 'N'),
                           ('moore', 'Moore', 'v3r3',
                            '/some/moore/option/files',
-                           'boole-dddb', 'boole-conddb',
+                           'fromPreviousStep', 'fromPreviousStep',
                            None, mooreStepID, 'N')]
-
-  # Now without BkQuery
-  res = bk.getSteps(6)
-  assert res['OK'] is False  # This will fail because the processing pass of 6 does not exist
 
   # Adding production 8 (with the same steps of 6, still "inheriting" from 7)
 
@@ -324,9 +285,9 @@ def test_inserts():
   assert res['OK'] is True
   assert res['Value'] == [('boole2', 'Boole', 'v2r3',
                            '/some/boole2/option/files',
-                           'boole-dddb', 'boole-conddb',
+                           'fromPreviousStep', 'fromPreviousStep',
                            None, boole2StepID, 'N'),
                           ('moore', 'Moore', 'v3r3',
                            '/some/moore/option/files',
-                           'boole-dddb', 'boole-conddb',
+                           'fromPreviousStep', 'fromPreviousStep',
                            None, mooreStepID, 'N')]
