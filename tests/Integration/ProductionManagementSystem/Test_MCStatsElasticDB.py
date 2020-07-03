@@ -109,7 +109,7 @@ def test_setandGetandRemove():
   # Remove data2 from index1
   db.remove(indexName1, id2, mcType)
   time.sleep(1)
-  result = db.get(indexName1, id2)
+  result = db.get(indexName1, id2, mcType)
   assert result['OK'] is True
   assert result['Value'] == {}
 
