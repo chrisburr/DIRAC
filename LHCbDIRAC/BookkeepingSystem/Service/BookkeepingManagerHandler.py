@@ -1331,7 +1331,6 @@ class BookkeepingManagerHandler(RequestHandler):
     nbjobs = None
     nbOfFiles = None
     nbOfEvents = None
-    steps = None
     prodinfos = None
 
     value = dataMGMT_.getProductionNbOfJobs(prodid)
@@ -1359,20 +1358,6 @@ class BookkeepingManagerHandler(RequestHandler):
     cversion = prodinfos[0][1]
     path += cname + '/' + cversion + '/'
 
-    value = dataMGMT_.getSteps(prodid)
-    if value['OK']:
-      steps = value['Value']
-    else:
-      result = {"Production information": prodinfos,
-                "Steps": value['Message'],
-                "Number of jobs": nbjobs,
-                "Number of files": nbOfFiles,
-                "Number of events": nbOfEvents,
-                'Path': path}
-      return S_OK(result)
-
-      # return S_ERROR(value['Message'])
-
     res = dataMGMT_.getProductionSimulationCond(prodid)
     if not res['OK']:
       return S_ERROR(res['Message'])
@@ -1388,7 +1373,6 @@ class BookkeepingManagerHandler(RequestHandler):
     for i in nbOfEvents:
       path += prefix + '/' + str(i[2]) + '/' + i[0]
     result = {"Production information": prodinfos,
-              "Steps": steps,
               "Number of jobs": nbjobs,
               "Number of files": nbOfFiles,
               "Number of events": nbOfEvents,
