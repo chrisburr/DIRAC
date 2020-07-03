@@ -4907,14 +4907,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         self.log.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
         for prod in productions:
-          retVal = self.getSteps(prod, {
-              'ConfigName': configName,
-              'ConfigVersion': configVersion,
-              'ConditionDescription': cond,
-              'ProcessingPass': procpass,
-              'EventType': evt,
-              'Production': production,
-              'RunNumber': runnb})
+          retVal = self.getSteps(prod)
           if not retVal:
             result = retVal
           else:
