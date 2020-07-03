@@ -61,25 +61,25 @@ data3 = {
             "JobID": id3
         },
         "ITHitMonitor": {
-            "betaGamma": 224730238, 
-            "DeltaRay": 4208, 
+            "betaGamma": 224730238,
+            "DeltaRay": 4208,
             "numberHits": 86436
-        }, 
+        },
         "MCITHitPacker": {
             "PackedData": 86436
-        }, 
+        },
         "CheckITHits/Diff.": {
-            "Energy": 0, 
-            "Parent |P|": 9, 
-            "TOF": 0, 
+            "Energy": 0,
+            "Parent |P|": 9,
+            "TOF": 0,
             "Displacement": {
-                "y": 0, 
-                "x": 0, 
+                "y": 0,
+                "x": 0,
                 "z": 0
-            }, 
+            },
             "Entry Point": {
-                "y": 0, 
-                "x": 0, 
+                "y": 0,
+                "x": 0,
                 "z": 0
             }
         }
@@ -148,8 +148,7 @@ def test_setAndGetandRemove():
   assert result['OK'] is True
   assert result['Value'] == {}
 
-
-  # Remove data3
+ # Remove data3
   mcStatsClient.remove(id3, mcType2)
   time.sleep(5)
   result = mcStatsClient.get(id3, mcType2)
