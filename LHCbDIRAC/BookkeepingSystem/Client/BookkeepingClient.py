@@ -419,11 +419,52 @@ class BookkeepingClient(Client):
     return S_OK(prodInfo)
 
   def getSteps(self, prodID):
-    """ Fully resolve the steps
+    """ Fully resolve the steps of the production in input
+
+        :param str/int prodID: production (transformation) ID
+        :returns: S_OK with list of resolved steps
+    """
+    res = self._getRPC().getSteps(prodID)
+    if not res['OK']:
+      return res
+    steps = res['Value']  # this is an ordered list
+    if not steps:
+      self.log.error("Production %s does not have recorded steps" % prodID)
+      return S_ERROR("No recorded steps")
+    # now we check if the first in the list had DDDB and CondDB defined, or not
+    # if not, we get the steps of all the previous productions
+    if steps[0][4] == steps[0][5] == 'fromPreviousStep':
+      # if we are here it is because in the current production none of the steps contain DB tags
+      self.log.info("DB tags are not set: they will be retrieved from the parent production(s)",
+                    "(prod: %s)" % prodID)
+      numberOfSteps = len(steps)
+      # Now finding the previous productions
+      res = self._getPreviousProductions(prodID)
+      if not res['OK']:
+        return res
+      ancestorProdIDs = res['Value']  # an already ordered list
+      if not ancestorProdIDs:
+        return S_ERROR("No ancestor productions found")
+
+      for ancestorProdID in ancestorProdIDs:
+        res = self._getRPC().getSteps(ancestorProdID)
+        if not res['OK']:
+          return res
+        stepsInAncestorProd = res['Value']
+        steps = stepsInAncestorProd + steps
+      allResolvedSteps = self._resolveProductionSteps(steps)
+      return S_OK(allResolvedSteps[-numberOfSteps:])
+    else:
+      return S_OK(self._resolveProductionSteps(steps))
+
+  def _resolveProductionSteps(self, steps):
+    """ Takes care of resolving the steps of a single production
+        (including resolving the DDDB and CondDB tags "fromPreviousStep")
+
+        :param list steps: list of steps (which are tuples)
+        :returns: list of resolved steps
     """
 
-    res = self._getRPC().getSteps(prodID)
-    steps = res['Value']  # this is an ordered list
     productionSteps = []
 
     # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
@@ -436,6 +477,7 @@ class BookkeepingClient(Client):
       if step[4] != 'fromPreviousStep':
         productionSteps.insert(0, step)
       else:  # now I need to serch backward
+        found = False
         searchedSubList = steps[:steps.index(step)]
         for searchedStep in reversed(searchedSubList):
           if searchedStep[4] != 'fromPreviousStep':
@@ -443,46 +485,39 @@ class BookkeepingClient(Client):
             stepCorrected[4] = searchedStep[4]
             stepCorrected[5] = searchedStep[5]
             productionSteps.insert(0, tuple(stepCorrected))
+            found = True
             break
+        # insert the step anyway
+        if not found:
+          productionSteps.insert(0, step)
 
-    if productionSteps:
-      return S_OK(productionSteps)
-
-    # if we are here it's because in the current production none of the steps contain DB tags
-    self.log.info("DB tags are not set: they will be retrieved from the parent production(s)",
-                  "(prod: %s)" % prodID)
-
-    # Now finding the previous productions
-    # Start by getting the RequestID
-    res = self._getPreviousProductions(prodID)
-    if not res['OK']:
-      return res
-    ancestorProdIDs = res['Value']  # an already ordered list
-    if not ancestorProdIDs:
-      return S_ERROR("No ancestor productions found")
-
-    for ancestorProdID in ancestorProdIDs:
-      res = self._getSteps(ancestorProdID)
-      if not res['OK']:
-        return res
-
-      # now, treat the result
+    return productionSteps
 
   def _getPreviousProductions(self, prodID):
-    """ returns an already-ordered list of productions that were inputs to the provided one
+    """ Returns an already-ordered list of production(s)
+        that were inputs to the provided one
+
+        :param str/int prodID: production (transformation) ID
+        :returns: S_OK with list of ancestorProdIDs or S_ERROR
     """
+    # Start by getting the RequestID
     res = TransformationClient().getTransformation(prodID, True)
     if not res['OK']:
-      self.log.error('Could not retrieve parameters for production',
+      self.log.error("Could not retrieve parameters for production",
                      '%d: %s' % (prodID, res['Message']))
       return res
     parameters = res['Value']
 
     # Now getting the TransformationIDs for the RequestID
-    reqID = int(parameters.get('RequestID'))
-    res = ProductionRequestClient().getProductionList(reqID)
+    reqID = parameters.get('RequestID')
+    if not reqID:
+      self.log.error("No RequestID recorded for production", prodID)
+      return S_ERROR("No RequestID recorded for production")
+
+    res = ProductionRequestClient().getProductionList(int(reqID))
     if not res['OK']:
-      self.log.error('Could not retrieve productions list for request', '%d:%s' % (reqID, res['Message']))
+      self.log.error("Could not retrieve productions list for request",
+                     '%d:%s' % (int(reqID), res['Message']))
       return res
     ancestorProdIDs = res['Value']
 
