@@ -417,18 +417,21 @@ bk = BookkeepingClient()
 # # first delete from DB ####################
 bkDB = OracleBookkeepingDB()
 
-bkDB.dbW_._query("DELETE FROM eventtypes")
-bkDB.dbW_._query("DELETE FROM runstatus")
-bkDB.dbW_._query("DELETE FROM dataquality")
-bkDB.dbW_._query("DELETE FROM filetypes")
-bkDB.dbW_._query("DELETE FROM files")
+bkDB.dbW_._query("DELETE FROM productionoutputfiles")
 bkDB.dbW_._query("DELETE FROM stepscontainer")
+bkDB.dbW_._query("DELETE FROM inputfiles")
+bkDB.dbW_._query("DELETE FROM files")
+bkDB.dbW_._query("DELETE FROM filetypes")
+bkDB.dbW_._query("DELETE FROM eventtypes")
+bkDB.dbW_._query("DELETE FROM jobs")
 bkDB.dbW_._query("DELETE FROM steps")
 bkDB.dbW_._query("DELETE FROM productionscontainer")
 bkDB.dbW_._query("DELETE FROM processing")
 bkDB.dbW_._query("DELETE FROM simulationconditions")
 bkDB.dbW_._query("DELETE FROM configurations")
-bkDB.dbW_._query("DELETE FROM jobs")
+bkDB.dbW_._query("DELETE FROM data_taking_conditions")
+bkDB.dbW_._query("DELETE FROM newrunquality")
+
 # # #########################################
 
 #############################################################################
