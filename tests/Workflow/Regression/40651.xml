@@ -107,6 +107,18 @@ from LHCbDIRAC.Workflow.Modules.ErrorLogging import ErrorLogging
 </ModuleDefinition>
 <ModuleDefinition>
 <body><![CDATA[
+from LHCbDIRAC.Workflow.Modules.UploadMC import UploadMC
+]]></body>
+<origin></origin>
+<description><![CDATA[ UploadMC module is used to upload to ES the json files for MC statistics
+]]></description>
+<descr_short></descr_short>
+<required></required>
+<version>0.0</version>
+<type>UploadMC</type>
+</ModuleDefinition>
+<ModuleDefinition>
+<body><![CDATA[
 from LHCbDIRAC.Workflow.Modules.UploadOutputData import UploadOutputData
 ]]></body>
 <origin></origin>
