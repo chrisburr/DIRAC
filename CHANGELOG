@@ -1,3 +1,12 @@
+v10r0p5
+Based on DIRAC v7r0p28
+LHCbWebDIRAC v5r1p6
+LHCbDIRACOS v1r8
+
+NEW: Automatically install new tags on CVMFS
+
+
+
 v10r0p4
 Based on DIRAC v7r0p28
 LHCbWebDIRAC v5r1p6
