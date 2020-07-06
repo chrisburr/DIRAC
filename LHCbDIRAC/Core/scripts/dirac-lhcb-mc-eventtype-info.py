@@ -43,7 +43,7 @@ prods = bkQuery.getBKProductions()
 
 bk = BookkeepingClient()
 for prod in prods:
-  res = bk.getProductionInformations(prod)
+  res = bk.getProductionInformation(prod)
   if not res['OK']:
     print res['Message']
     DIRAC.exit(1)

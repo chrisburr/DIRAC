@@ -401,10 +401,14 @@ class BookkeepingClient(Client):
       lfns = []
     return self._getRPC().getProductionFilesStatus(productionid, lfns)
 
+  @deprecated("use getProductionInformation")
   def getProductionInformations(self, prodID):
+    return self.getProductionInformation(prodID)
+
+  def getProductionInformation(self, prodID):
     """ Get the production information.
     """
-    res = self._getRPC().getProductionInformations(prodID)
+    res = self._getRPC().getProductionInformation(prodID)
     if not res['OK']:
       return res
 

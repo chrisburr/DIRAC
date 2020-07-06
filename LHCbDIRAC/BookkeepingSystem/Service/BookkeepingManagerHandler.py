@@ -1323,8 +1323,14 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getProductionInformations = [(long, int)]
 
-  @staticmethod
-  def export_getProductionInformations(prodid):
+  @deprecated("Use getProductionInformation")
+  def export_getProductionInformations(self, prodid):
+    return self.export_getProductionInformation(prodid)
+
+  #############################################################################
+  types_getProductionInformation = [six.integer_types]
+
+  def export_getProductionInformation(self, prodid):
     """It returns statistics (data processing phases, number of events, etc.) for a given production
     """
 
@@ -1352,7 +1358,8 @@ class BookkeepingManagerHandler(RequestHandler):
     path = '/'
 
     if not prodinfos:
-      return S_ERROR('The production does not contain jobs')
+      self.log.error("No Configs/Event type for production", prodid)
+      return S_ERROR('No Configs/Event type')
 
     cname = prodinfos[0][0]
     cversion = prodinfos[0][1]
@@ -1477,15 +1484,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfFiles(prodid)
 
   #############################################################################
-  types_getProductionInformation = [long]
-
-  @staticmethod
-  def export_getProductionInformation(prodid):
-    """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionInformation(prodid)
-
-  #############################################################################
-  types_getNbOfJobsBySites = [long]
+  types_getNbOfJobsBySites = [six.integer_types]
 
   @staticmethod
   def export_getNbOfJobsBySites(prodid):
@@ -2094,7 +2093,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getTCKs(in_dict)
 
   #############################################################################
-  types_getSteps = [int]
+  types_getSteps = [six.integer_types]
 
   @staticmethod
   def export_getSteps(prodID):
