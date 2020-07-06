@@ -1,3 +1,11 @@
+v10r0p5
+Based on DIRAC v7r0p28
+LHCbWebDIRAC v5r1p6
+LHCbDIRACOS v1r8
+
+NEW: Automatically install new tags on CVMFS
+
+
 v10r1-pre3
 use DIRAC v7r1p6
 use LHCbDIRACOS v1r8
@@ -25,6 +33,8 @@ use LHCbWebDIRAC v5r2-pre1
 * Replace pickle with JSON in production/transformation data
 * Test dumping production infomation with JSON as well as pickle
 * Re-enable data management tests
+
+
 
 v10r0p4
 Based on DIRAC v7r0p28
