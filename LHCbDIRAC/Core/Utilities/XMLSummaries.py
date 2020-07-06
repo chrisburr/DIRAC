@@ -21,7 +21,7 @@ __RCSID__ = "$Id$"
 
 
 def xmltojsonCat1(lCategory1):
-  '''e.g Transforms <counter name="MCVeloHitPacker/# PackedData">50809</counter>
+  '''e.g. Transforms <counter name="MCVeloHitPacker/# PackedData">50809</counter>
      into {"MCVeloHitPacker": {"PackedData": 50809}}
      Let's call this category of counters category 1'''
   dicto = {}
@@ -36,7 +36,7 @@ def xmltojsonCat1(lCategory1):
 
 
 def xmltojsonCat2(lCategory2):
-  '''e.g Transforms   <counter name="TTHitMonitor/DeltaRay">1249</counter>
+  '''e.g. Transforms   <counter name="TTHitMonitor/DeltaRay">1249</counter>
                       <counter name="TTHitMonitor/betaGamma">28101829</counter>
                       <counter name="TTHitMonitor/numberHits">17105</counter>
      into {"TTHitMonitor": {"betaGamma": 28101829, "DeltaRay": 1249, "numberHits": 17105}}
@@ -47,24 +47,24 @@ def xmltojsonCat2(lCategory2):
   key1 = s[:n]
   key2 = s[n + 1:]
   dicto[key1] = {key2: int(lCategory2[0]['#text'])}
-  for i in range(1, len(lCategory2)):
-    s = lCategory2[i]['@name']
+  for enum in enumerate(lCategory2[1:]):
+    s = enum[1]['@name']
     n = s.find('/')
     key = s[:n]
     if key == key1:
-      dicto[key1].update({s[n + 1:]: int(lCategory2[i]['#text'])})
+      dicto[key1].update({s[n + 1:]: int(enum[1]['#text'])})
     else:
-      s = lCategory2[i]['@name']
+      s = enum[1]['@name']
       n = s.find('/')
       key1 = s[:n]
       key2 = s[n + 1:]
-      dicto[key1] = {key2: int(lCategory2[i]['#text'])}
+      dicto[key1] = {key2: int(enum[1]['#text'])}
 
   return(dicto)
 
 
 def xmltojsonCat3(lCategory3):
-  '''e.g Transforms   <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
+  '''e.g. Transforms  <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
                       <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
                       <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
                       <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
@@ -113,8 +113,8 @@ def xmltojsonCat3(lCategory3):
     dicto[key1] = {key2cc: {key3cc: int(lCategory3[0]['#text'])}}
   else:
     dicto[key1] = {key2: int(lCategory3[0]['#text'])}
-  for i in range(1, len(lCategory3)):
-    s = lCategory3[i]['@name']
+  for enum in enumerate(lCategory3[1:]):
+    s = enum[1]['@name']
     n = s.find('-')
     key_1 = s[:n - 1].strip()
     key_2 = s[n + 2:]
@@ -124,22 +124,22 @@ def xmltojsonCat3(lCategory3):
     key_3cc = key_2[len(key_2) - 3:]
     if key_2cc != key2cc:
       if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
-        dicto[key_1][key_2c] = {key_3c: int(lCategory3[i]['#text'])}
+        dicto[key_1][key_2c] = {key_3c: int(enum[1]['#text'])}
       elif key_3cc in ['Phi', 'Eta']:
-        dicto[key_1] = {key_2cc: {key_3cc: int(lCategory3[i]['#text'])}}
+        dicto[key_1] = {key_2cc: {key_3cc: int(enum[1]['#text'])}}
       else:
-        dicto[key_1].update({key_2: int(lCategory3[i]['#text'])})
+        dicto[key_1].update({key_2: int(enum[1]['#text'])})
       key2 = key_2
       key2c = key_2c
       key2cc = key_2cc
       key3cc = key_3cc
     else:
       if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
-        dicto[key_1][key_2c].update({key_3c: int(lCategory3[i]['#text'])})
+        dicto[key_1][key_2c].update({key_3c: int(enum[1]['#text'])})
       elif key_3cc in ['Phi', 'Eta']:
-        dicto[key_1][key_2cc].update({key_3cc: int(lCategory3[i]['#text'])})
+        dicto[key_1][key_2cc].update({key_3cc: int(enum[1]['#text'])})
       else:
-        dicto[key_1].update({key_2: int(lCategory3[i]['#text'])})
+        dicto[key_1].update({key_2: int(enum[1]['#text'])})
 
   return(dicto)
 
@@ -147,11 +147,11 @@ def xmltojsonCat3(lCategory3):
 def ranges(mainList):
   ''' Returns a list containing the ranges of each category '''
   rangesList = [mainList[0], mainList[1]]
-  for i in range(2, len(mainList)):
-    if mainList[i] == mainList[i - 1] + 1 and mainList[i - 1] == mainList[i - 2] + 1:
-      rangesList[len(rangesList) - 1] = mainList[i]
+  for i in enumerate(mainList[2:]):
+    if mainList[i[0] + 2] == mainList[i[0] + 1] + 1 and mainList[i[0] + 1] == mainList[i[0]] + 1:
+      rangesList[len(rangesList) - 1] = mainList[i[0] + 2]
     else:
-      rangesList.append(mainList[i])
+      rangesList.append(mainList[i[0] + 2])
   return rangesList
 
 
@@ -515,12 +515,12 @@ class XMLSummary(object):
       l_1 = list()
       l_2 = list()
       l_3 = list()
-      for i in range(len(listCounters)):
-        if listCounters[i]['@name'].find('#') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
+      for counter in listCounters:
+        if counter['@name'].find('#') != -1 and counter['@name'].find('Prev') == -1 and counter['@name'].find('Next') == -1:  # nopep8
           l_1.append(i)
-        if listCounters[i]['@name'].find('/') != -1 and listCounters[i]['@name'].find('Original') == -1 and listCounters[i]['@name'].find('Unpacked') == -1 and listCounters[i]['@name'].find('Diff') == -1 and listCounters[i]['@name'].find('#') == -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
+        elif counter['@name'].find('/') != -1 and counter['@name'].find('Original') == -1 and counter['@name'].find('Unpacked') == -1 and counter['@name'].find('Diff') == -1 and counter['@name'].find('#') == -1 and counter['@name'].find('Prev') == -1 and counter['@name'].find('Next') == -1:  # nopep8
           l_2.append(i)
-        if listCounters[i]['@name'].find('Diff.') != -1 and listCounters[i]['@name'].find('Prev') == -1 and listCounters[i]['@name'].find('Next') == -1:  # nopep8
+        elif counter['@name'].find('Diff.') != -1 and counter['@name'].find('Prev') == -1 and counter['@name'].find('Next') == -1:  # nopep8
           l_3.append(i)
       for i in l_1:
         JS.update(xmltojsonCat1(listCounters[i:i + 1]))
@@ -531,8 +531,8 @@ class XMLSummary(object):
           JS.update(xmltojsonCat2(listCounters[ranges(l_3)[i]:ranges(l_3)[i + 1] + 1]))
 
       JSO['Counters'] = JS
-      txt = str(JSO).replace('Eta', 'Theta')
-      dico = ast.literal_eval(txt)
+      text = str(JSO).replace('Eta', 'Theta')
+      dico = ast.literal_eval(text)
       with open(self.xmlFileName[-36:-3] + 'json', 'w') as fp:
         json.dump(dico, fp, indent=2)
 
