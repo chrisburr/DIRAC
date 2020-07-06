@@ -37,7 +37,7 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 bk = BookkeepingClient()
 prod = int(args[0])
 
-res = bk.getProductionInformations(prod)
+res = bk.getProductionInformation(prod)
 if not res['OK']:
   print "ERROR %s: %s" % (str(prod), res['Message'])
   DIRAC.exit(2)

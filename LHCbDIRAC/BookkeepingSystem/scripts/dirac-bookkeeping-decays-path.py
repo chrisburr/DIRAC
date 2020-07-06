@@ -21,8 +21,6 @@ import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
-from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 
 Script.setUsageMessage(__doc__ + '\n'.join([
@@ -60,7 +58,7 @@ prodIDs = [p['Production'] for p in prods]
 # # loop over all productions
 for prodID in sorted(prodIDs):
 
-  res = bkClient.getProductionInformations(prodID)
+  res = bkClient.getProductionInformation(prodID)
   if not res['OK']:
     gLogger.error('Could not retrieve production infos for production %s' % prodID, res['Message'])
     continue
