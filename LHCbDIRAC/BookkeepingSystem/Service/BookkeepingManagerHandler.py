@@ -1321,7 +1321,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getProductionInformation(prodid)
 
   #############################################################################
-  types_getProductionInformation = [(long, int)]
+  types_getProductionInformation = [six.integer_types]
 
   def export_getProductionInformation(self, prodid):
     """It returns statistics (data processing phases, number of events, etc.) for a given production
@@ -1477,14 +1477,6 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_getProductionNbOfFiles(prodid):
     """It returns the number of files produced by a given production."""
     return dataMGMT_.getProductionNbOfFiles(prodid)
-
-  #############################################################################
-  types_getProductionInformation = [six.integer_types]
-
-  @staticmethod
-  def export_getProductionInformation(prodid):
-    """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionInformation(prodid)
 
   #############################################################################
   types_getNbOfJobsBySites = [six.integer_types]

@@ -695,7 +695,7 @@ def test_registerProduction():
   retVal = bk.addProduction(productionSteps)
   assert retVal['OK'] is True
 
-  res = bk.getProductionInformations(12345)
+  res = bk.getProductionInformation(12345)
   assert res['OK']
   assert len(res['Value']['Steps']) == 8
 
