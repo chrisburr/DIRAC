@@ -70,7 +70,7 @@ for prodID in sorted(prodIDs):
   events = prodInfo["Number of events"]
   path = prodInfo["Path"]
   dddb = prodInfo["Steps"][0][4]
-  conddb = prodInfo["Steps"][0][4]
+  conddb = prodInfo["Steps"][0][5]
 
   evts = 0
   ftype = None

@@ -75,7 +75,7 @@ class BookkeepingManagerHandler(RequestHandler):
     gLogger.info("Email used to track queries: %s forceExecution" % cls.email, cls.forceExecution)
     return S_OK()
   ###########################################################################
-  types_sendBookkeeping = [six.string_types, six.string_types]
+  types_sendBookkeeping = [basestring, basestring]
 
   @deprecated("Use sendXMLBookkeepingReport")
   def export_sendBookkeeping(self, name, xml):
@@ -1328,7 +1328,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getProductionInformation(prodid)
 
   #############################################################################
-  types_getProductionInformation = [six.integer_types]
+  types_getProductionInformation = [(long, int)]
 
   def export_getProductionInformation(self, prodid):
     """It returns statistics (data processing phases, number of events, etc.) for a given production
@@ -1484,7 +1484,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionNbOfFiles(prodid)
 
   #############################################################################
-  types_getNbOfJobsBySites = [six.integer_types]
+  types_getNbOfJobsBySites = [(long, int)]
 
   @staticmethod
   def export_getNbOfJobsBySites(prodid):
@@ -2093,7 +2093,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getTCKs(in_dict)
 
   #############################################################################
-  types_getSteps = [six.integer_types]
+  types_getSteps = [basestring]
 
   @staticmethod
   def export_getSteps(prodID):

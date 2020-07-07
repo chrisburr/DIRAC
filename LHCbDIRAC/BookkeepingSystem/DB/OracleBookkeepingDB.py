@@ -19,6 +19,7 @@ from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.Core.Utilities.List import breakListIntoChunks
+from DIRAC.Core.Utilities.Decorators import deprecated
 from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 
 __RCSID__ = "$Id$"
@@ -3065,6 +3066,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getNbOfFiles', [prodid])
 
   #############################################################################
+  @deprecated("Unused?")
   def getProductionInformation(self, prodid):
     """For retrieving production statistics.
 
