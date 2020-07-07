@@ -1016,7 +1016,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1068,7 +1068,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1083,7 +1083,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnb, None, None, condition, tables, useMainTables=False)
+    retVal = self._buildRunnumbers(runnb, None, None, condition, tables, useMainTables=False)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1165,7 +1165,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1185,7 +1185,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -2939,7 +2939,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddesc, condition, tables)
+    retVal = self._buildConditions(default, conddesc, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3373,7 +3373,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3408,7 +3408,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(simdesc, datataking, condition, tables)
+    retVal = self._buildConditions(simdesc, datataking, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3606,7 +3606,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
   #############################################################################
   @staticmethod
-  def __buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables, useMainTables=True):
+  def _buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables, useMainTables=True):
     """it adds the run numbers or start end run to the jobs table.
 
     :param list runnumbers: list of runs
@@ -3818,7 +3818,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_OK((condition, tables))
 
   #############################################################################
-  def __buildConditions(self, simdesc, datataking, condition, tables):
+  def _buildConditions(self, simdesc, datataking, condition, tables):
     """adds the data taking or simulation conditions to the query.
 
     :param str simdesc it is used to construct the simulation condition query filter
@@ -3945,7 +3945,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runNumbers, startRun, endRun, condition, tables)
+    retVal = self._buildRunnumbers(runNumbers, startRun, endRun, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3955,7 +3955,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conditionDescription, condition, tables)
+    retVal = self._buildConditions(default, conditionDescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -4042,7 +4042,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -4077,7 +4077,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnb, None, None, condition, tables)
+    retVal = self._buildRunnumbers(runnb, None, None, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
