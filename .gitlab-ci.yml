@@ -194,10 +194,8 @@ integration_tests:
     - cd DIRAC
     - git checkout "$diracRef"
     - cd ..
-    # TODO: Fix and re-enable bookkeeping and data management tests
+    # TODO: Fix and re-enable the data management tests
     - sed -E -i 's@^.*/Test_DataManager.py .*$@@g' DIRAC/tests/Integration/all_integration_client_tests.sh
-    - sed -E -i 's@^.*/Test_Bookkeeping.py" .*$@@g' LHCbDIRAC/tests/Integration/all_integration_client_tests.sh
-    - sed -E -i 's@^.*/Test_BookkeepingGUImethods.py" .*$@@g' LHCbDIRAC/tests/Integration/all_integration_client_tests.sh
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
