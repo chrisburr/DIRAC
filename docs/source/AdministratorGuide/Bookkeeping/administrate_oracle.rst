@@ -33,13 +33,13 @@ You have a few ways to login:
 # If you are outside the CERN network, you should first set up port forwarding:
 ::
 
-    ssh -Nf lxplus.cern.ch -L 10121:itrac5213-v.cern.ch:10121
+    ssh -Nf lxplus.cern.ch -L 10121:itrac5404-v.cern.ch:10121
 
 and then you can connect via e.g. `sqldeveloper <https://www.oracle.com/database/technologies/appdev/sql-developer.html>`_
 or using `sqlcl <https://www.oracle.com/database/technologies/appdev/sqlcl.html>`_ client:
 ::
 
-    sql LHCB_DIRACBOOKKEEPING_USERS@localhost:10121/lhcb_diracbookkeeping.cern.ch
+    sql LHCB_DIRACBOOKKEEPING_users@localhost:10121/lhcb_diracbookkeeping.cern.ch
 
 
 
