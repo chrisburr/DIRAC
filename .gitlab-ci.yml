@@ -224,7 +224,7 @@ integration_tests:
         -e ORACLE_PWD=bkdbpass \
         -e ORACLE_CHARACTERSET=AL32UTF8 \
         -v $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME:/repo \
-        gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database:19.3.0-ee
+        gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database-snapshots:19.3.0-ee
   script:
     - source DIRAC/tests/CI/run_docker_setup.sh
     - prepareEnvironment
