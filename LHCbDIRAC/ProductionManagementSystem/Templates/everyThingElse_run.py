@@ -28,8 +28,8 @@ def fillVisList(vdict, num):
 
   # Assuming that, if there's only one element in the list of output visibility flags, every step will catch that flag
   if len(vdict) == 1:
-    val = vdict[vdict.keys()[0]]
-    vdict = dict([(str(i), val) for i in range(int(vdict.keys()[0]), int(vdict.keys()[0]) + num)])
+    val = vdict[list(vdict)[0]]
+    vdict = dict([(str(i), val) for i in range(int(list(vdict)[0]), int(list(vdict)[0]) + num)])
   # Another assumption: if the number of steps is bigger than that of vis flags,
   # then extend the list with the last flag available
   # to fill the "holes"
