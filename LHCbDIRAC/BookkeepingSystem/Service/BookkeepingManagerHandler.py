@@ -143,11 +143,10 @@ class BookkeepingManagerHandler(RequestHandler):
     if not retVal['OK']:
       return retVal
 
-    records = []
-    parameters = ['FileType', 'Visible']
-    for record in retVal['Value']:
-      records += [list(record)]
-    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['FileType', 'Visible'],
+                 'Records': records,
+                 'TotalRecords': len(records)})
 
   #############################################################################
   types_setStepInputFiles = [int, list]
@@ -175,11 +174,10 @@ class BookkeepingManagerHandler(RequestHandler):
     if not retVal['OK']:
       return retVal
 
-    records = []
-    parameters = ['FileType', 'Visible']
-    for record in retVal['Value']:
-      records += [list(record)]
-    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['FileType', 'Visible'],
+                 'Records': records,
+                 'TotalRecords': len(records)})
 
   #############################################################################
   types_getAvailableFileTypes = []
@@ -249,11 +247,10 @@ class BookkeepingManagerHandler(RequestHandler):
     if not retVal['OK']:
       return retVal
 
-    records = []
-    parameters = ['Configuration Name']
-    for record in retVal['Value']:
-      records += [list(record)]
-    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['Configuration Name'],
+                 'Records': records,
+                 'TotalRecords': len(records)})
 
   #############################################################################
   types_getConfigVersions = [dict]
@@ -1109,12 +1106,12 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_checkEventType(eventTypeId):
     """more info in the BookkeepingClient.py."""
-    if eventTypeId in __eventTypeCache:
-      return __eventTypeCache[eventTypeId]
-    retVal = dataMGMT_.checkEventType(eventTypeId)
-    if not retVal['OK']:
-      return retVal
-    __eventTypeCache[eventTypeId] = retVal
+    if eventTypeId not in __eventTypeCache:
+      retVal = dataMGMT_.checkEventType(eventTypeId)
+      if not retVal['OK']:
+        return retVal
+      __eventTypeCache[eventTypeId] = retVal
+
     return __eventTypeCache[eventTypeId]
 
   #############################################################################
@@ -1377,6 +1374,9 @@ class BookkeepingManagerHandler(RequestHandler):
       path += res['Value']
     prefix = '\n' + path
 
+    # FIXME: I think this will crash due to iterating over None if dataMGMT_.getProductionNbOfEvents(prodid) fails.
+    # FIXME: I also have no idea what i is. At at glance I thought it was an integer but its being indexed?
+    # FIXME: Why only index 0 and 2? The docstring of getProductionNbOfEvents should probably be fixed.
     for i in nbOfEvents:
       path += prefix + '/' + str(i[2]) + '/' + i[0]
     result = {"Production information": prodinfos,
