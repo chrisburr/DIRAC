@@ -15,7 +15,7 @@
 from mock import MagicMock
 
 bkc_mock = MagicMock()
-bkc_mock.sendBookkeeping.return_value = {'OK': True, 'Value': ''}
+bkc_mock.sendXMLBookkeepingReport.return_value = {'OK': True, 'Value': ''}
 bkc_mock.getFileTypes.return_value = {'OK': True,
                                       'rpcStub': (('Bookkeeping/BookkeepingManager',
                                                    {'skipCACheck': False, 'delegatedGroup': 'diracAdmin',

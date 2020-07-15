@@ -10,7 +10,8 @@
 ###############################################################################
 """Queries creation."""
 
-import types
+from __future__ import print_function
+
 import datetime
 import re
 import six
@@ -19,6 +20,7 @@ from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.Core.Utilities.List import breakListIntoChunks
+from DIRAC.Core.Utilities.Decorators import deprecated
 from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 
 __RCSID__ = "$Id$"
@@ -36,33 +38,34 @@ class OracleBookkeepingDB(object):
 
   def __init__(self):
     """c'tor."""
+    self.log = gLogger.getSubLogger('OracleBookkeepingDB')
     self.cs_path = getDatabaseSection('Bookkeeping/BookkeepingDB')
 
     self.dbHost = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingTNS')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: Host')
+      self.log.error('Failed to get the configuration parameters: Host')
       return
     self.dbHost = result['Value']
 
     self.dbUser = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingUser')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: User')
+      self.log.error('Failed to get the configuration parameters: User')
       return
     self.dbUser = result['Value']
 
     self.dbPass = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingPassword')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: User')
+      self.log.error('Failed to get the configuration parameters: User')
       return
     self.dbPass = result['Value']
 
     self.dbServer = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingServer')
     if not result['OK']:
-      gLogger.error('Failed to get the configuration parameters: User')
+      self.log.error('Failed to get the configuration parameters: User')
       return
     self.dbServer = result['Value']
 
@@ -485,7 +488,7 @@ class OracleBookkeepingDB(object):
   def getStepOutputFiles(self, stepId):
     """For retrieving the step output file types.
 
-    :param int stepid: given tep id
+    :param int stepid: step id
     :return: the output file types for a given step
     """
     command = 'select outputfiletypes.name,outputfiletypes.visible from steps, \
@@ -539,7 +542,7 @@ class OracleBookkeepingDB(object):
   def insertFileTypes(self, ftype, desc, fileType):
     """inserts a given file type."""
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFileTypes',
-                                            types.LongType, [ftype, desc, fileType])
+                                            int, [ftype, desc, fileType])
 
   #############################################################################
   def insertStep(self, in_dict):
@@ -663,7 +666,7 @@ class OracleBookkeepingDB(object):
   def deleteSetpContiner(self, prod):
     """delete a production from the step container.
 
-    :param long prod: production number
+    :param int prod: production number
     """
     result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteSetpContiner', [prod], False)
     return result
@@ -672,7 +675,7 @@ class OracleBookkeepingDB(object):
   def deleteProductionsContiner(self, prod):
     """delete a production from the productions container.
 
-    :param long prod: the production number
+    :param int prod: the production number
     """
     result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteProductionsCont', [prod], False)
     return result
@@ -832,7 +835,7 @@ class OracleBookkeepingDB(object):
     :param str configVersion: configuration version
     :param str conddescription: data taking or simulation description
     :param long runnumber: run number
-    :param long production: production number
+    :param int production: production number
     :param eventType: event type identifier
     :param str path: processing pass
     :return: the processing pass for a given dataset
@@ -1049,7 +1052,7 @@ class OracleBookkeepingDB(object):
     :param str processing: processing pass
     :param long evt: event type identifier
     :param long runnb: run number
-    :param long production: production number
+    :param int production: production number
     :param str visible: the file visibility flag
     :param str file type: file type
     :param str replicaFlag: replica flag
@@ -1122,7 +1125,7 @@ class OracleBookkeepingDB(object):
     :param str conddescription: data taking or simulation description
     :param str processing: processing pass
     :param long evt: event type identifier
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str quality: data quality flag
     :param str visible: visibility flag
@@ -1250,8 +1253,7 @@ class OracleBookkeepingDB(object):
     """
     command = "select distinct production from productionoutputfiles where production > 0 and\
     gotreplica='Yes' and visible='Y'"
-    res = self.dbR_.query(command)
-    return res
+    return self.dbR_.query(command)
 
   #############################################################################
   def getAvailableRuns(self):
@@ -1279,7 +1281,7 @@ class OracleBookkeepingDB(object):
     :return: processing pass
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-                                            types.StringType, [prodid])
+                                            str, [prodid])
 
   #############################################################################
   def getRunProcessingPass(self, runnumber):
@@ -1289,7 +1291,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass for a given run
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPass',
-                                            types.StringType, [-1 * runnumber])
+                                            str, [-1 * runnumber])
 
   #############################################################################
   def getProductionProcessingPassID(self, prodid):
@@ -1299,7 +1301,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass identifier of a production
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProductionProcessingPassId',
-                                            types.LongType, [prodid])
+                                            int, [prodid])
 
   #############################################################################
   def getMoreProductionInformations(self, prodid):
@@ -1515,7 +1517,7 @@ class OracleBookkeepingDB(object):
     :param str lfn: logical file name
     :return: the run number of a given file
     """
-    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getRunNumber', types.LongType, [lfn])
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getRunNumber', int, [lfn])
 
   #############################################################################
   def getRunNbAndTck(self, lfn):
@@ -1530,7 +1532,7 @@ class OracleBookkeepingDB(object):
   def getProductionFiles(self, prod, ftype, gotreplica=default):
     """For retrieving the list of LFNs for a given production.
 
-    :param long prod: production number
+    :param int prod: production number
     :param str ftype: file type
     :param str gotreplica: replica flag
     :return: the files which are belongs to a given production
@@ -1707,7 +1709,7 @@ class OracleBookkeepingDB(object):
                                                 array=lfns)
       if not retVal['OK']:
         failed = lfns
-        gLogger.error(retVal['Message'])
+        self.log.error(retVal['Message'])
       else:
         succ = lfns
       values['Successful'] = succ
@@ -1724,7 +1726,7 @@ class OracleBookkeepingDB(object):
     :return: the processing pass id
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessingPassId',
-                                            types.LongType, [root, fullpath])
+                                            int, [root, fullpath])
 
   #############################################################################
   def getProcessingPassId(self, fullpath):
@@ -1742,30 +1744,30 @@ class OracleBookkeepingDB(object):
     :param str name: data quality for example OK, BAD, etc.
     :return: data quality id
     """
-    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getDataQualityId', types.LongType, [name])
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getDataQualityId', int, [name])
 
   #############################################################################
   def setRunAndProcessingPassDataQuality(self, runNB, procpass, flag):
     """set the data quality of a run which belongs to a given processing pass.
 
-    :param long runNB: run number
+    :param int runNB: run number
     :param str procpass: processing pass
     :param str flag: data quality flag
     """
-    result = S_ERROR()
     retVal = self.__getProcessingPassId(procpass.split('/')[1:][0], procpass)
-    if retVal['OK']:
-      processingid = retVal['Value']
-      retVal = self.__getDataQualityId(flag)
-      if retVal['OK']:
-        flag = retVal['Value']
-        result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRunquality',
-                                                  [runNB, flag, processingid], False)
-      else:
-        result = retVal
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      self.log.error("Could not get a processing pass ID", retVal['Message'])
+      return retVal
+    processingid = retVal['Value']
+
+    retVal = self.__getDataQualityId(flag)
+    if not retVal['OK']:
+      self.log.error("Could not get a data quality ID", retVal['Message'])
+      return retVal
+    flag = retVal['Value']
+
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRunquality',
+                                            [runNB, flag, processingid], False)
 
   #############################################################################
   def setRunDataQuality(self, runNb, flag):
@@ -1824,7 +1826,7 @@ class OracleBookkeepingDB(object):
   def setProductionDataQuality(self, prod, flag):
     """sets the data quality to a production.
 
-    :param long prod: production number
+    :param int prod: production number
     :param str flag: data quality flag
     """
     result = S_ERROR()
@@ -1885,10 +1887,10 @@ class OracleBookkeepingDB(object):
     if depth:
       depth -= 1
       result = self.dbR_.executeStoredFunctions(
-          'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', types.LongType, [fileName])
+          'BOOKKEEPINGORACLEDB.getJobIdWithoutReplicaCheck', int, [fileName])
 
       if not result["OK"]:
-        gLogger.error('Error getting jobID', result['Message'])
+        self.log.error('Error getting jobID', result['Message'])
       jobID = int(result.get('Value', 0))
       if jobID:
         command = "select files.fileName,files.jobid, files.gotreplica, files.eventstat,\
@@ -1897,7 +1899,7 @@ class OracleBookkeepingDB(object):
          and inputfiles.fileid=files.fileid and inputfiles.jobid=%d" % (jobID)
         res = self.dbR_.query(command)
         if not res['OK']:
-          gLogger.error('Error getting job input files', result["Message"])
+          self.log.error('Error getting job input files', result["Message"])
         else:
           dbResult = res['Value']
           for record in dbResult:
@@ -1929,7 +1931,7 @@ class OracleBookkeepingDB(object):
     logicalFileNames = {'Failed': []}
     ancestorList = {}
     filesWithMetadata = {}
-    gLogger.debug('original', "%s" % lfn)
+    self.log.debug('original', "%s" % lfn)
     failed = []
     for fileName in lfn:
       files = []
@@ -1967,7 +1969,7 @@ class OracleBookkeepingDB(object):
 
       res = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getFileDesJobId', [fileName])
       if not res["OK"]:
-        gLogger.error('Error getting fileId', res['Message'])
+        self.log.error('Error getting fileId', res['Message'])
         failed.add(fileName)
       elif not res['Value']:
         notprocessed.add(fileName)
@@ -1977,7 +1979,7 @@ class OracleBookkeepingDB(object):
 
           res = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getFileAndJobMetadata', [jobID, getProd])
           if not res["OK"]:
-            gLogger.error('Error getting job output files', res['Message'])
+            self.log.error('Error getting job output files', res['Message'])
             failed.add(fileName)
           elif not res['Value']:
             notprocessed.add(fileName)
@@ -2044,7 +2046,7 @@ class OracleBookkeepingDB(object):
       if res:
         return S_OK(res)
       else:
-        gLogger.warn("File not found! ", "%s" % fileName)
+        self.log.warn("File not found! ", "%s" % fileName)
         return S_ERROR("File not found: %s" % fileName)
     else:
       return S_ERROR(result['Message'])
@@ -2059,7 +2061,7 @@ class OracleBookkeepingDB(object):
     :return: file type id
     """
     result = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.checkFileTypeAndVersion',
-                                              types.LongType, [filetype, version])
+                                              int, [filetype, version])
     return result
 
   #############################################################################
@@ -2077,7 +2079,7 @@ class OracleBookkeepingDB(object):
       if value:
         result = S_OK(value)
       else:
-        gLogger.error("Event type not found:", "%s" % eventTypeId)
+        self.log.info("Event type not found:", "%s" % eventTypeId)
         result = S_ERROR("Event type not found: %s" % eventTypeId)
     else:
       result = retVal
@@ -2090,7 +2092,7 @@ class OracleBookkeepingDB(object):
     :param dict job: job attributes
     :returns: jobId
     """
-    gLogger.debug("Insert job into database!")
+    self.log.debug("Insert job into database!")
     attrList = {'ConfigName': None,
                 'ConfigVersion': None,
                 'DiracJobId': None,
@@ -2125,7 +2127,7 @@ class OracleBookkeepingDB(object):
 
     for param in job:
       if not attrList.__contains__(param):
-        gLogger.error("insert job error: ", " the job table not contain attribute %s" % param)
+        self.log.error("insert job error: ", " the job table not contain attribute %s" % param)
         return S_ERROR(" The job table not contain attribute %s" % param)
 
       if param == 'JobStart' or param == 'JobEnd':  # We have to convert data format
@@ -2151,37 +2153,37 @@ class OracleBookkeepingDB(object):
       pass  # it is already defined
 
     result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertJobsRow',
-                                              types.LongType, [attrList['ConfigName'],
-                                                               attrList['ConfigVersion'],
-                                                               attrList['DiracJobId'],
-                                                               attrList['DiracVersion'],
-                                                               attrList['EventInputStat'],
-                                                               attrList['ExecTime'],
-                                                               attrList['FirstEventNumber'],
-                                                               attrList['JobEnd'],
-                                                               attrList['JobStart'],
-                                                               attrList['Location'],
-                                                               attrList['Name'],
-                                                               attrList['NumberOfEvents'],
-                                                               attrList['Production'],
-                                                               attrList['ProgramName'],
-                                                               attrList['ProgramVersion'],
-                                                               attrList['StatisticsRequested'],
-                                                               attrList['WNCPUPOWER'],
-                                                               attrList['CPUTIME'],
-                                                               attrList['WNCACHE'],
-                                                               attrList['WNMEMORY'],
-                                                               attrList['WNMODEL'],
-                                                               attrList['WorkerNode'],
-                                                               attrList['RunNumber'],
-                                                               attrList['FillNumber'],
-                                                               attrList['WNCPUHS06'],
-                                                               attrList['TotalLuminosity'],
-                                                               attrList['Tck'],
-                                                               attrList['StepID'],
-                                                               attrList['WNMJFHS06'],
-                                                               attrList['HLT2Tck'],
-                                                               attrList['NumberOfProcessors']])
+                                              int, [attrList['ConfigName'],
+                                                    attrList['ConfigVersion'],
+                                                    attrList['DiracJobId'],
+                                                    attrList['DiracVersion'],
+                                                    attrList['EventInputStat'],
+                                                    attrList['ExecTime'],
+                                                    attrList['FirstEventNumber'],
+                                                    attrList['JobEnd'],
+                                                    attrList['JobStart'],
+                                                    attrList['Location'],
+                                                    attrList['Name'],
+                                                    attrList['NumberOfEvents'],
+                                                    attrList['Production'],
+                                                    attrList['ProgramName'],
+                                                    attrList['ProgramVersion'],
+                                                    attrList['StatisticsRequested'],
+                                                    attrList['WNCPUPOWER'],
+                                                    attrList['CPUTIME'],
+                                                    attrList['WNCACHE'],
+                                                    attrList['WNMEMORY'],
+                                                    attrList['WNMODEL'],
+                                                    attrList['WorkerNode'],
+                                                    attrList['RunNumber'],
+                                                    attrList['FillNumber'],
+                                                    attrList['WNCPUHS06'],
+                                                    attrList['TotalLuminosity'],
+                                                    attrList['Tck'],
+                                                    attrList['StepID'],
+                                                    attrList['WNMJFHS06'],
+                                                    attrList['HLT2Tck'],
+                                                    attrList['NumberOfProcessors']])
     return result
 
   #############################################################################
@@ -2220,7 +2222,7 @@ class OracleBookkeepingDB(object):
 
     for param in fileobject:
       if param not in attrList:
-        gLogger.error("insert file error: ", " the files table not contain attribute %s " % param)
+        self.log.error("insert file error: ", " the files table not contain attribute %s " % param)
         return S_ERROR(" The files table not contain attribute %s" % param)
 
       if param == 'CreationDate':  # We have to convert data format
@@ -2233,7 +2235,7 @@ class OracleBookkeepingDB(object):
         attrList[param] = fileobject[param]
     utctime = datetime.datetime.utcnow()
 
-    result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', types.LongType,
+    result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', int,
                                               [attrList['Adler32'],
                                                attrList['CreationDate'],
                                                attrList['EventStat'],
@@ -2317,9 +2319,9 @@ class OracleBookkeepingDB(object):
     g4settings = in_dict.get('G4settings', None)
     visible = in_dict.get('Visible', 'Y')
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertSimConditions',
-                                            types.LongType, [simdesc, beamCond, beamEnergy,
-                                                             generator, magneticField,
-                                                             detectorCond, luminosity, g4settings, visible])
+                                            int, [simdesc, beamCond, beamEnergy,
+                                                  generator, magneticField,
+                                                  detectorCond, luminosity, g4settings, visible])
 
   #############################################################################
   def getSimConditions(self):
@@ -2356,28 +2358,28 @@ class OracleBookkeepingDB(object):
 
     for param in conditions:
       if not datataking.__contains__(param):
-        gLogger.error("Can not insert data taking condition the files table not contains:", "%s" % param)
+        self.log.error("Can not insert data taking condition the files table not contains:", "%s" % param)
         return S_ERROR("Can not insert data taking condition the files table not contains: %s " % param)
       datataking[param] = conditions[param]
 
     res = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertDataTakingCond',
-                                           types.LongType, [datataking['Description'],
-                                                            datataking['BeamCond'],
-                                                            datataking['BeamEnergy'],
-                                                            datataking['MagneticField'],
-                                                            datataking['VELO'],
-                                                            datataking['IT'],
-                                                            datataking['TT'],
-                                                            datataking['OT'],
-                                                            datataking['RICH1'],
-                                                            datataking['RICH2'],
-                                                            datataking['SPD_PRS'],
-                                                            datataking['ECAL'],
-                                                            datataking['HCAL'],
-                                                            datataking['MUON'],
-                                                            datataking['L0'],
-                                                            datataking['HLT'],
-                                                            datataking['VeloPosition']])
+                                           int, [datataking['Description'],
+                                                 datataking['BeamCond'],
+                                                 datataking['BeamEnergy'],
+                                                 datataking['MagneticField'],
+                                                 datataking['VELO'],
+                                                 datataking['IT'],
+                                                 datataking['TT'],
+                                                 datataking['OT'],
+                                                 datataking['RICH1'],
+                                                 datataking['RICH2'],
+                                                 datataking['SPD_PRS'],
+                                                 datataking['ECAL'],
+                                                 datataking['HCAL'],
+                                                 datataking['MUON'],
+                                                 datataking['L0'],
+                                                 datataking['HLT'],
+                                                 datataking['VeloPosition']])
     return res
 
   #############################################################################
@@ -2479,7 +2481,7 @@ class OracleBookkeepingDB(object):
   def __getProductionStatisticsForUsers(self, prod):
     """For retrieving the statistics of a production.
 
-    :param long prod: production number
+    :param int prod: production number
     :return: number of files, evenet stat, filesize end luminosity
     """
     command = "select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.Luminosity), \
@@ -2491,7 +2493,7 @@ class OracleBookkeepingDB(object):
   def getProductionFilesForWeb(self, prod, ftypeDict, sortDict, startItem, maxitems):
     """For retrieving the production file used by WebApp.
 
-    :param long prod: production number
+    :param int prod: production number
     :param dict ftypeDict: dictionary which contains the file type.
     :param dict sortDict: the columns which will be sorted.
     :param int startItem: used for paging. The row number
@@ -2511,7 +2513,7 @@ class OracleBookkeepingDB(object):
     if sortDict:
       res = self.__getProductionStatisticsForUsers(prod)
       if not res['OK']:
-        gLogger.error(res['Message'])
+        self.log.error(res['Message'])
       else:
         totalrecords = res['Value'][0][0]
         nbOfEvents = res['Value'][0][1]
@@ -2572,7 +2574,7 @@ class OracleBookkeepingDB(object):
     """
     result = {}
     for lfn in lfns:
-      res = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.fileExists', types.LongType, [lfn])
+      res = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.fileExists', int, [lfn])
       if not res['OK']:
         return S_ERROR(res['Message'])
       if res['Value'] == 0:
@@ -2901,7 +2903,7 @@ class OracleBookkeepingDB(object):
     :param str: cVersion: configuration version
     :param str: conddesc: simulation or data taking description
     :param str processing: processing pass
-    :paran long production: production number
+    :paran int production: production number
     :param str ftype: file type
     :param long evttype: event type id
     :return: production statistics
@@ -2980,7 +2982,7 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
     """For retrieving the simulation or data taking description of a
     production.
 
-    :param long prod: production number
+    :param int prod: production number
     :return: simulation condition
     """
     simdesc = None
@@ -3030,7 +3032,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionNbOfJobs(self, prodid):
     """Number of jobs for given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the number of jobs
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getJobsNb', [prodid])
@@ -3039,7 +3041,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionNbOfEvents(self, prodid):
     """Number of event for a given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the number of events
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getNumberOfEvents', [prodid])
@@ -3048,7 +3050,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionSizeOfFiles(self, prodid):
     """Size of the files for a given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the size of files
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSizeOfFiles', [prodid])
@@ -3057,153 +3059,37 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionNbOfFiles(self, prodid):
     """For retrieving number of files for a given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the number of files
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getNbOfFiles', [prodid])
 
   #############################################################################
+  @deprecated("Unused?")
   def getProductionInformation(self, prodid):
     """For retrieving production statistics.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the statistics of a production
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getProductionInformation', [prodid])
 
   #############################################################################
-  def getSteps(self, prodid, bkQuery=None):
+  def getSteps(self, prodid):
     """For retrieving the production step.
 
     :param int prodid: production number
-    :param dict bkQuery: the bk dataset (optional)
 
     :return: the steps used by a production, with resolved DB tags
     """
-    retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prodid])
-    if not retVal['OK']:
-      return retVal
-
-    steps = retVal['Value']  # this is an ordered list
-    productionSteps = []
-
-    # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
-    # This will search among the steps in the current production (might not be final)
-    # We assume that dddb and conddb are both either set, or not.
-    for step in reversed(steps):  # starting from the end
-      gLogger.debug("[getSteps] StepID: %s" % step[7])
-
-      # dddb is in step[4], conddb in step[5]
-      if step[4] != 'fromPreviousStep':
-        productionSteps.insert(0, step)
-      else:  # now I need to serch backward
-        searchedSubList = steps[:steps.index(step)]
-        for searchedStep in reversed(searchedSubList):
-          if searchedStep[4] != 'fromPreviousStep':
-            stepCorrected = list(step)
-            stepCorrected[4] = searchedStep[4]
-            stepCorrected[5] = searchedStep[5]
-            productionSteps.insert(0, tuple(stepCorrected))
-            break
-
-    if productionSteps:
-      return S_OK(productionSteps)
-
-    # if we are here it's because in the current production none of the steps contain DB tags
-    gLogger.info("DB tags are not set: will try to retrieve from the parent production")
-    if bkQuery is None:
-      bkQuery = {}
-    if bkQuery.get('ProcessingPass') is None:
-      # we can have a situation where we want to know the steps for a given production
-      retVal = self.getProductionProcessingPass(prodid)
-      if not retVal['OK']:
-        return retVal
-      if not retVal['Value']:
-        gLogger.error("Production does not have a registered processing pass",
-                      "(%s)" % prodid)
-        return S_ERROR("Production does not have a registered processing pass")
-      gLogger.debug("Production processing pass",
-                    "(%s -> %s)" % (prodid, retVal['Value']))
-      bkQuery['ProcessingPass'] = retVal['Value']
-
-    try:
-      retVal = self.__resolveFromPreviousStep(prodid, bkQuery)
-    except IndexError:
-      gLogger.error("Unable to find DB tags",
-                    "for production %s with processing pass %s" % (prodid, bkQuery['ProcessingPass']))
-      return S_ERROR("Unable to find DB tags")
-
-    if not retVal['OK']:
-      return retVal
-
-    correctedValues = []
-    for i in steps:
-      tmp = list(i)
-      tmp[4] = retVal['Value'][0]
-      tmp[5] = retVal['Value'][1]
-      correctedValues += [tuple(tmp)]
-    result = S_OK(correctedValues)
-
-    return result
-
-  #############################################################################
-  def __resolveFromPreviousStep(self, production, bkQuery):
-    """Returns the database tags from the ancestor production steps.
-    The Productionoutputfiles table is used.
-
-    :param int production: production number
-    :param dict bkQuery: the bk dataset
-    :return: database tags
-    """
-    bkQuery['ProcessingPass'] = '/'.join(bkQuery['ProcessingPass'].split('/')[:-1])
-    command = self.__prepareStepMetadata(bkQuery.get('ConfigName', default),
-                                         bkQuery.get('ConfigVersion', default),
-                                         bkQuery.get('ConditionDescription', default),
-                                         bkQuery.get('ProcessingPass', default),
-                                         bkQuery.get('EventType', default),
-                                         bkQuery.get('Production', default),
-                                         'ALL',
-                                         bkQuery.get('RunNumber', default),
-                                         'ALL',
-                                         'ALL',
-                                         selection="prod.production")
-    retVal = self.dbR_.query(command)
-    if not retVal['OK']:
-      return retVal
-
-    productions = set(tuple(i[0] for i in retVal['Value'])) - set([production])
-    if productions:
-      gLogger.debug('Input Production(s) for bkQuery %s: %s' % (bkQuery, productions))
-      for prod in productions:
-        retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prod])
-        if not retVal['OK']:
-          return retVal
-
-        steps = retVal['Value']  # this is an ordered list
-
-        # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
-        # This will search among the steps in the current production (might not be final)
-        # We assume that dddb and conddb are both either set, or not.
-        for step in reversed(steps):  # starting from the end
-          gLogger.debug("[getSteps] StepID: %s" % step[7])
-
-          # dddb is in step[4], conddb in step[5]
-          if step[4] != 'fromPreviousStep':
-            return S_OK([step[4], step[5]])
-
-      gLogger.debug('No step of production %s found to have a set dddb/conddb, now looping' % prod)
-      return self.__resolveFromPreviousStep(production, bkQuery)
-
-    else:
-      gLogger.debug('No input productions found for bkQuery %s, now looping' % bkQuery)
-      return self.__resolveFromPreviousStep(production, bkQuery)
+    return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getSteps', [prodid])
 
   #############################################################################
   def getNbOfJobsBySites(self, prodid):
     """the number of successfully finished jobs at different Grid sites for a
     given production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: number of jobs
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getJobsbySites', [prodid])
@@ -3212,7 +3098,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getConfigsAndEvtType(self, prodid):
     """For retrieving the configuration name, version and event type.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the configurations and event type of a production
     """
     return self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.getConfigsAndEvtType', [prodid])
@@ -3244,10 +3130,10 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionProcessedEvents(self, prodid):
     """For retreiving all events in specific production.
 
-    :param long prodid: production number
+    :param int prodid: production number
     :return: the processed event by a production
     """
-    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessedEvents', types.LongType, [prodid])
+    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProcessedEvents', int, [prodid])
 
   #############################################################################
   def getRunsForAGivenPeriod(self, in_dict):
@@ -3315,6 +3201,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_ERROR()
 
   #############################################################################
+
+  # FIXME: is this useful at all? Does prodrunview still exist?
   def getProductionsFromView(self, in_dict):
     """For retrieving productions.
 
@@ -3325,7 +3213,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     proc = in_dict.get('ProcessingPass', in_dict.get('ProcPass', default))
     result = S_ERROR()
     if 'Runnumber' in in_dict:
-      gLogger.verbose('The Runnumber has changed to RunNumber!')
+      self.log.verbose('The Runnumber has changed to RunNumber!')
 
     if run != default:
       if proc != default:
@@ -3357,12 +3245,12 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getRunAndProcessingPassDataQuality(self, runnb, processing):
     """For retrieving the data quality flag for run and processing pass.
 
-    :param long runnb: run number
+    :param int runnb: run number
     :param str processing: processing pass
     :return: data quality
     """
     return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getQFlagByRunAndProcId',
-                                            types.StringType, [runnb, processing])
+                                            str, [runnb, processing])
 
   #############################################################################
   def getRunWithProcessingPassAndDataQuality(self, procpass, flag=default):
@@ -3434,7 +3322,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long evt: event type
     :param str configName: configuration name
     :param str configVersion: configuration version
-    :param long production: production number
+    :param int production: production number
     :param str flag: data quality flag
     :param datetime startDate: job/run insert start time stamp
     :param datetime endDate: job/run insert end time stamp
@@ -3872,7 +3760,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           command = "select QualityId from dataquality where dataqualityflag='%s'" % (str(i))
           res = self.dbR_.query(command)
           if not res['OK']:
-            gLogger.error('Data quality problem:', res['Message'])
+            self.log.error('Data quality problem:', res['Message'])
           elif not res['Value']:
             return S_ERROR('No file found! Dataquality is missing!')
           else:
@@ -3884,7 +3772,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select QualityId from dataquality where dataqualityflag=\'' + str(flag) + '\''
         res = self.dbR_.query(command)
         if not res['OK']:
-          gLogger.error('Data quality problem:', res['Message'])
+          self.log.error('Data quality problem:', res['Message'])
         elif not res['Value']:
           return S_ERROR('No file found! Dataquality is missing!')
         else:
@@ -3971,7 +3859,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str evt: event type
     :param str configName: configuration name
     :param str configVersion: configuration version
-    :param long production: production number
+    :param int production: production number
     :param str flag: data quality
     :param datetime startDate: job start insert time stamp
     :param datetime endDate: job end insert time stamp
@@ -4023,7 +3911,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: simulation or data taking condition
     :param str processingPass: processing pass
     :param long eventType: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str dataQuality: data quality
     :param long startRun: satart run number
@@ -4135,7 +4023,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: simulation or data taking condition
     :param str processing: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str quality: data quality
     :param long runnb: run number
@@ -4417,7 +4305,7 @@ and files.qualityid= dataquality.qualityid" % lfn
               command = "insert into processing(id,parentid,name)values(%d,%d,'%s')" % (processingpassid, parentid, i)
               retVal = self.dbW_.query(command)
               if not retVal['OK']:
-                gLogger.error(retVal['Message'])
+                self.log.error(retVal['Message'])
               values.remove(i)
               self.__insertprocessing(values, processingpassid, ids)
           else:
@@ -4431,7 +4319,7 @@ and files.qualityid= dataquality.qualityid" % lfn
               command = "insert into processing(id,parentid,name)values(%d,null,'%s')" % (processingpassid, i)
               retVal = self.dbW_.query(command)
               if not retVal['OK']:
-                gLogger.error(retVal['Message'])
+                self.log.error(retVal['Message'])
               values.remove(i)
               self.__insertprocessing(values, processingpassid, ids)
         else:
@@ -4470,23 +4358,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_ERROR()
 
   #############################################################################
-  def insertStepsContainer(self, prod, stepid, step):
-    """inserts a step to the stepcontainer.
-
-    :param long prod: production number
-    :param long stepid: step id
-    :param long step: the step counter (a production can have more than one step)
-    """
-    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertStepsContainer', [prod, stepid, step], False)
-
-  #############################################################################
   def insertproductionscontainer(self, prod, processingid, simid, daqperiodid, configName, configVersion):
     """inserts a production to the productions container.
 
-    :param long prod: production number
-    :param long processingid: processing pass id
-    :param long simid: simulation condition id
-    :param long daqperiodid: data taking condition id
+    :param int prod: production number
+    :param int processingid: processing pass id
+    :param int simid: simulation condition id
+    :param int daqperiodid: data taking condition id
     :param str configName: configuration name
     :param str configVersion: configuration version
     """
@@ -4497,12 +4375,14 @@ and files.qualityid= dataquality.qualityid" % lfn
   def addProductionSteps(self, steps, prod):
     """adds a step to a production. The steps which used by the production.
 
-    :param list steps: list of steps
-    :param long prod: production number
+    :param list steps: list of dict of steps [{'StepId':123}, {'StepId':321}]
+    :param int prod: production number
     """
     level = 1
-    for i in steps:
-      retVal = self.insertStepsContainer(prod, i['StepId'], level)
+    for step in steps:
+      retVal = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertStepsContainer',
+                                                [prod, step['StepId'], level],
+                                                False)
       if not retVal['OK']:
         return retVal
       level += 1
@@ -4512,7 +4392,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def checkProcessingPassAndSimCond(self, production):
     """checks the processing pass and simulation condition.
 
-    :param long production: production number
+    :param int production: production number
     """
     command = ' select count(*) from productionscontainer where production=' + str(production)
     res = self.dbR_.query(command)
@@ -4523,7 +4403,7 @@ and files.qualityid= dataquality.qualityid" % lfn
                     inputproc='', configName=None, configVersion=None, eventType=None):
     """adds a production to the productions container table.
 
-    :param long production: production number
+    :param int production: production number
     :param str simcond: simulation condition description
     :param str daq: data taking description
     :param list steps: list of dictionaries of steps (min fields {'Visible': 'Y/N', 'StepID': '123'})
@@ -4532,32 +4412,33 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param long eventType: eventTyoe
     """
+    self.log.verbose("Adding production", production)
     path = []
     if inputproc != '':
       if inputproc[0] != '/':
         inputproc = '/' + inputproc
       path = inputproc.split('/')[1:]
 
-    for i in steps:
-      if i['Visible'] == 'Y':
-        res = self.getAvailableSteps({'StepId': i['StepId']})
+    for step in steps:
+      if step['Visible'] == 'Y':
+        res = self.getAvailableSteps({'StepId': step['StepId']})
         if not res['OK']:
-          gLogger.error(res['Message'])
+          self.log.error(res['Message'])
           return res
         if res['Value']['TotalRecords'] > 0:
           procpas = res['Value']['Records'][0][9]
           path += [procpas]
         else:
-          gLogger.error("Missing step", "(StepID: %s)" % i['StepId'])
+          self.log.error("Missing step", "(StepID: %s)" % step['StepId'])
           return S_ERROR("Missing step")
 
     if not path:
-      gLogger.error("You have to define the input processing pass or you have to have a visible step!")
+      self.log.error("You have to define the input processing pass or you have to have a visible step!")
       return S_ERROR("You have to define the input processing pass or you have to have a visible step!")
     processingid = None
     retVal = self.addProcessing(path)
     if not retVal['OK']:
-      gLogger.error("Failed adding processing", path)
+      self.log.error("Failed adding processing", path)
       return retVal
     if not retVal['Value']:
       return S_ERROR('The processing pass already exists! Write to lhcb-bookkeeping@cern.ch')
@@ -4608,7 +4489,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         eventtypes = eventType
       else:
         return S_ERROR("%s event type is not valid!" % eventType)
-    gLogger.verbose("The following event types will be inserted:", "%s" % eventtypes)
+    self.log.verbose("The following event types will be inserted:", "%s" % eventtypes)
 
     for step in steps:
       # the runs have more than one event type
@@ -4636,7 +4517,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :param str configName: configuration name
     :param str configVersion: configuration version
-    :param long prod: production number
+    :param int prod: production number
     :return: event types
     """
 
@@ -4734,7 +4615,7 @@ and files.qualityid= dataquality.qualityid" % lfn
   def getProductionProcessingPassSteps(self, prod):
     """For retrieving the processing pass of a fgiven production.
 
-    :param long prod: production number
+    :param int prod: production number
     :return: the production processing pass
     """
     processing = {}
@@ -4896,7 +4777,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: data taking condition
     :param str processing: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param str quality: data quality
     :param long runnb: run number
@@ -4929,7 +4810,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param str procpass: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param long runnb: run number
     :param str selection: select state
@@ -4997,7 +4878,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str configVersion: configuration version
     :param str procpass: processing pass
     :param long evt: event type
-    :param long production: production number
+    :param int production: production number
     :param str filetype: file type
     :param long runnb: run number
     :return: the steps with metadata
@@ -5024,17 +4905,10 @@ and files.qualityid= dataquality.qualityid" % lfn
         result = retVal
       else:
         productions = set([i[0] for i in retVal['Value']])
-        gLogger.debug('Productions:', "%s" % str(productions))
+        self.log.debug('Productions:', "%s" % str(productions))
         parametersNames = ['id', 'name']
         for prod in productions:
-          retVal = self.getSteps(prod, {
-              'ConfigName': configName,
-              'ConfigVersion': configVersion,
-              'ConditionDescription': cond,
-              'ProcessingPass': procpass,
-              'EventType': evt,
-              'Production': production,
-              'RunNumber': runnb})
+          retVal = self.getSteps(prod)
           if not retVal:
             result = retVal
           else:
@@ -5102,7 +4976,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: a directory meradata
     """
 
-    gLogger.verbose("Getting directory metadata:", "%s" % lfn)
+    self.log.verbose("Getting directory metadata:", "%s" % lfn)
     result = S_ERROR()
     lfns = [i + '%' for i in lfn]
     retVal = self.dbR_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.getDirectoryMetadata_new',
@@ -5147,7 +5021,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: the file for a given GUID
     """
     result = S_ERROR()
-    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', types.StringType, [guid])
+    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', str, [guid])
     if retVal['OK']:
       result = S_OK(retVal['Value'])
     else:
@@ -5512,7 +5386,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       command = "select Finished from runstatus where runnumber=%d" % i
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
-        gLogger.error(i, retVal['Message'])
+        self.log.error(i, retVal['Message'])
         status['Failed'] += [i]
       else:
         if len(retVal['Value']) > 0:
@@ -5544,7 +5418,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long prodid: production number
     :return: produced events
     """
-    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProducedEvents', types.LongType, [prodid])
+    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getProducedEvents', int, [prodid])
 
   #############################################################################
   def bulkinsertEventType(self, eventtypes):

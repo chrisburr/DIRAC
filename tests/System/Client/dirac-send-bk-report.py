@@ -9,18 +9,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Retrieves the GUID from a local file
+""" Sends the XML Bookkeeping Report
 """
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()
 
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-bkClient = BookkeepingClient()
-
 xmlFile = Script.getPositionalArgs()[0]
+
+from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
 with open(xmlFile, 'r') as fd:
   bkXML = fd.read()
 
-res = bkClient.sendXMLBookkeepingReport( bkXML )
+res = BookkeepingClient().sendXMLBookkeepingReport(bkXML)
 print res

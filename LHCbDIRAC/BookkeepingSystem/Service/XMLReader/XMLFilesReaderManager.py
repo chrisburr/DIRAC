@@ -52,6 +52,8 @@ class XMLFilesReaderManager(object):
     self.dm_ = DataManager()
     self.fileTypeCache = {}
 
+    self.log = gLogger.getSubLogger('XMLFilesReaderManager')
+
   #############################################################################
   @staticmethod
   def readFile(filename):
@@ -82,22 +84,21 @@ class XMLFilesReaderManager(object):
         result = self.processReplicas(replica)
         del replica
         return result
+      elif xmltype == 'Job':
+        job = self.jobReader_.readJob(doc, "IN Memory")
+        result = self.processJob(job)
+        del job
+        return result
       else:
-        if xmltype == 'Job':
-          job = self.jobReader_.readJob(doc, "IN Memory")
-          result = self.processJob(job)
-          del job
-          return result
-        else:
-          gLogger.error("unknown XML file!!!")
+        self.log.error("unknown XML file!!!")
     except ExpatError as ex:
-      gLogger.error("XML reading error", repr(ex))
+      self.log.error("XML reading error", repr(ex))
       return S_ERROR(ex)
 
   #############################################################################
   def processJob(self, job):
     """interprets the xml content."""
-    gLogger.debug("Start Processing")
+    self.log.debug("Start Job Processing")
 
     # prepare for the insert, check the existence of the input files and retreive the fileid
     inputFiles = [inputFile.getFileName() for inputFile in job.getJobInputFiles()]
@@ -106,7 +107,9 @@ class XMLFilesReaderManager(object):
       if not result['OK']:
         return result
       if result['Value']['Failed']:
-        return S_ERROR("The following files are not in the bkk: %s" % (",".join(result['Value']['Failed'])))
+        self.log.error("The following files are not in the bkk",
+                       "%s" % (",".join(result['Value']['Failed'])))
+        return S_ERROR("Files not in bkk")
 
       for inputFile in job.getJobInputFiles():
         lfn = inputFile.getFileName()
@@ -121,17 +124,17 @@ class XMLFilesReaderManager(object):
       typeVersion = outputfile.getFileVersion()
       cahedTypeNameVersion = typeName + '<<' + typeVersion
       if cahedTypeNameVersion in self.fileTypeCache:
-        gLogger.debug(cahedTypeNameVersion + ' in the cache!')
+        self.log.debug(cahedTypeNameVersion + ' in the cache!')
         typeID = self.fileTypeCache[cahedTypeNameVersion]
         outputfile.setTypeID(typeID)
       else:
         result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
         if not result['OK']:
-          errorMessage = "The type:%s, version:%s is missing." % (str(typeName),
-                                                                  str(typeVersion))
-          return S_ERROR(errorMessage)
+          self.log.error("The [type:version] is missing",
+                         "[%s: %s]" % (str(typeName), str(typeVersion)))
+          return S_ERROR("[type:version] missing")
         else:
-          gLogger.debug(cahedTypeNameVersion + " added to the cache!")
+          self.log.debug(cahedTypeNameVersion + " added to the cache!")
           typeID = long(result['Value'])
           outputfile.setTypeID(typeID)
           self.fileTypeCache[cahedTypeNameVersion] = typeID
@@ -142,14 +145,14 @@ class XMLFilesReaderManager(object):
         newFileParams.setParamName('VisibilityFlag')
         newFileParams.setParamValue('Y')
         outputfile.addFileParam(newFileParams)
-        gLogger.debug('The Merged histograms visibility flag has to be Y!')
+        self.log.debug('The Merged histograms visibility flag has to be Y!')
 
       params = outputfile.getFileParams()
       evtExists = False
 
       for param in params:
         paramName = param.getParamName()
-        gLogger.debug('ParamName check of ' + str(paramName))
+        self.log.debug('ParamName check of ' + str(paramName))
 
         if paramName == "EventType":
           value = long(param.getParamValue())
@@ -186,7 +189,7 @@ class XMLFilesReaderManager(object):
                   outputfile.addFileParam(newFileParams)
             else:
               errMsg = "Can not get the metadata of %s file" % fileName
-              gLogger.error(errMsg)
+              self.log.error(errMsg)
               return S_ERROR(errMsg)
           else:
             return res
@@ -212,7 +215,7 @@ class XMLFilesReaderManager(object):
           if not retVal['OK']:
             return S_ERROR(retVal['Message'])
           if len(retVal['Value']) > 0:
-            gLogger.debug('RunTCK:', '%s' % retVal['Value'])
+            self.log.debug('RunTCK:', '%s' % retVal['Value'])
 
             for i in retVal['Value']:
               if i[0] not in runnumbers:
@@ -221,19 +224,19 @@ class XMLFilesReaderManager(object):
                 tcks += [i[1]]
 
           if len(runnumbers) > 1:
-            gLogger.warn('Different runs are reconstructed:', '%s' % runnumbers)
+            self.log.warn('Different runs are reconstructed:', '%s' % runnumbers)
             runnumber = -1
           else:
             runnumber = runnumbers[0]
 
           if len(tcks) > 1:
-            gLogger.warn('Different TCKs are reconstructed:', '%s' % tcks)
+            self.log.warn('Different TCKs are reconstructed:', '%s' % tcks)
             tck = -2
           else:
             tck = tcks[0]
 
-          gLogger.debug('The output files of the job inherits the following run:', "%s" % runnumber)
-          gLogger.debug('The output files of the job inherits the following TCK:', '%s' % tck)
+          self.log.debug('The output files of the job inherits the following run:', "%s" % runnumber)
+          self.log.debug('The output files of the job inherits the following TCK:', '%s' % tck)
 
           if not job.exists('Tck'):
             newJobParams = JobParameters()
@@ -249,7 +252,7 @@ class XMLFilesReaderManager(object):
             job.addJobParams(newJobParams)
 
             if job.getParam('JobType') and job.getParam('JobType').getValue() == 'DQHISTOMERGING':
-              gLogger.debug('DQ merging!')
+              self.log.debug('DQ merging!')
               retVal = self.bkClient_.getJobInfo(fileName)
               if retVal['OK']:
                 prod = retVal['Value'][0][18]
@@ -257,10 +260,10 @@ class XMLFilesReaderManager(object):
                 newJobParams.setName('Production')
                 newJobParams.setValue(str(prod))
                 job.addJobParams(newJobParams)
-                gLogger.debug('Production inherited from input:', '%s' % prod)
+                self.log.debug('Production inherited from input:', '%s' % prod)
             else:
               prod = job.getParam('Production').getValue()
-              gLogger.debug('Production:', '%s' % prod)
+              self.log.debug('Production:', '%s' % prod)
 
             retVal = self.bkClient_.getProductionProcessingPassID(prod)
             if retVal['OK']:
@@ -273,10 +276,10 @@ class XMLFilesReaderManager(object):
                 dqvalue = None
                 message = "The rundataquality table does not contains %d %s. Consequently, \
                 the Dq flag is inherited from the ancestor file!" % (long(runnumber), proc)
-                gLogger.warn(message)
+                self.log.warn(message)
             else:
               dqvalue = None
-              gLogger.warn('Bkk can not set the quality flag because the processing \
+              self.log.warn('Bkk can not set the quality flag because the processing \
               pass is missing for % d production (run number: %d )!' % (long(prod), long(runnumber)))
 
     inputfiles = job.getJobInputFiles()
@@ -312,7 +315,7 @@ class XMLFilesReaderManager(object):
             dqvalue = fileMetadata.get('DataqualityFlag', fileMetadata.get('DQFlag', None))
         else:
           errMsg = "Can not get the metadata of %s file" % fname
-          gLogger.error(errMsg)
+          self.log.error(errMsg)
           return S_ERROR(errMsg)
       else:
         return res
@@ -333,7 +336,7 @@ class XMLFilesReaderManager(object):
         currentEventInputStat = job.getParam('EventInputStat')
         currentEventInputStat.setValue(evtinput)
 
-    gLogger.debug('Luminosity:', '%s' % sumLuminosity)
+    self.log.debug('Luminosity:', '%s' % sumLuminosity)
     outputFiles = job.getJobOutputFiles()
     for outputfile in outputFiles:
       if outputfile.getFileType() not in ['LOG'] and \
@@ -342,7 +345,7 @@ class XMLFilesReaderManager(object):
         newFileParams.setParamName('Luminosity')
         newFileParams.setParamValue(sumLuminosity)
         outputfile.addFileParam(newFileParams)
-        gLogger.debug('Luminosity added to ', '%s' % outputfile.getFileName())
+        self.log.debug('Luminosity added to ', '%s' % outputfile.getFileName())
       ################
 
     config = job.getJobConfiguration()
@@ -373,8 +376,8 @@ class XMLFilesReaderManager(object):
       except ValueError:
         runnumber = -1
       if runnumber != -1:
-        gLogger.verbose("Registering the run status for ", "Run number %s,  JobId %s" %
-                        (runnumber, job.getJobId()))
+        self.log.verbose("Registering the run status for ", "Run number %s,  JobId %s" %
+                         (runnumber, job.getJobId()))
         result = self.bkClient_.insertRunStatus(runnumber, job.getJobId(), "N")
         if not result['OK']:
           self.bkClient_.deleteJob(job.getJobId())
@@ -389,15 +392,15 @@ class XMLFilesReaderManager(object):
           retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, retVal['Value'])
           if retVal['OK']:
             dqvalue = retVal['Value']
-            gLogger.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
+            self.log.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
           else:
             # The report will be entered to the db.
-            gLogger.warn(retVal['Message'])
+            self.log.warn(retVal['Message'])
         else:
-          gLogger.error(retVal['Message'])
+          self.log.error(retVal['Message'])
       else:
         # we reconstruct multiple runs
-        gLogger.warn("Run number can not determined for production:", job.getParam('Production').getValue())
+        self.log.warn("Run number can not determined for production:", job.getParam('Production').getValue())
 
     inputFiles = job.getJobInputFiles()
     for inputfile in inputFiles:
@@ -431,7 +434,7 @@ class XMLFilesReaderManager(object):
         vFileParams.setParamName('VisibilityFlag')
         vFileParams.setParamValue(outputFileTypes[ftype])
         outputfile.addFileParam(vFileParams)
-        gLogger.debug('The visibility flag is:' + outputFileTypes[ftype])
+        self.log.debug('The visibility flag is:' + outputFileTypes[ftype])
 
       result = self.__insertOutputFiles(job, outputfile)
       if not result['OK']:
@@ -454,7 +457,7 @@ class XMLFilesReaderManager(object):
           errorMessage = "Unable to create Replica %s !" % (str(name))
           return S_ERROR(errorMessage)
 
-    gLogger.debug("End Processing!")
+    self.log.debug("End Processing!")
 
     return S_OK()
 
@@ -472,7 +475,7 @@ class XMLFilesReaderManager(object):
       ver = config.getConfigVersion()  # online bug fix
       ver = ver.capitalize()
       config.setConfigVersion(ver)
-      gLogger.debug("Data taking:", "%s" % datataking)
+      self.log.debug("Data taking:", "%s" % datataking)
       context = Context(datataking, config.getConfigName())
       conditions = [BeamEnergyCondition(), VeloCondition(),
                     MagneticFieldCondition(), EcalCondition(),
@@ -485,7 +488,7 @@ class XMLFilesReaderManager(object):
       for condition in conditions:
         condition.interpret(context)
 
-      gLogger.debug(context.getOutput())
+      self.log.debug(context.getOutput())
       datataking['Description'] = context.getOutput()
 
       res = self.bkClient_.getDataTakingCondDesc(datataking)
@@ -494,7 +497,7 @@ class XMLFilesReaderManager(object):
         daqid = res['Value']
         if len(daqid) != 0:  # exist in the database datataking
           dataTackingPeriodDesc = res['Value'][0][0]
-          gLogger.debug('Data taking condition id', dataTackingPeriodDesc)
+          self.log.debug('Data taking condition id', dataTackingPeriodDesc)
         else:
           res = self.bkClient_.insertDataTakingCond(datataking)
           if not res['OK']:
@@ -536,7 +539,7 @@ class XMLFilesReaderManager(object):
         job.removeParam('DDDB')
 
       if not found:
-        gLogger.error('Run number is missing!')
+        self.log.error('Run number is missing!')
         return S_ERROR('Run number is missing!')
 
       retVal = self.bkClient_.getStepIdandNameForRUN(programName, programVersion, conddb, dddb)
@@ -561,9 +564,9 @@ class XMLFilesReaderManager(object):
                  'Visible':'Y',
                  'OutputFileTypes':[{'FileType': 'RAW'}]}]}
 
-      gLogger.debug('Pass_indexid', "%s" % steps)
-      gLogger.debug('Data taking', "%s" % dataTackingPeriodDesc)
-      gLogger.debug('production', production)
+      self.log.debug('Pass_indexid', "%s" % steps)
+      self.log.debug('Data taking', "%s" % dataTackingPeriodDesc)
+      self.log.debug('production', production)
 
       newJobParams = JobParameters()
       newJobParams.setName('StepID')
@@ -571,7 +574,7 @@ class XMLFilesReaderManager(object):
       job.addJobParams(newJobParams)
 
       message = "StepID for run: %s" % (str(production))
-      gLogger.info(message, stepid)
+      self.log.info(message, stepid)
 
       res = self.bkClient_.addProduction(production,
                                          simcond=None,
@@ -583,15 +586,15 @@ class XMLFilesReaderManager(object):
                                          eventType=eventtypes)
 
       if res['OK']:
-        gLogger.verbose("New processing pass has been created!")
-        gLogger.verbose("New production is:", production)
+        self.log.verbose("New processing pass has been created!")
+        self.log.verbose("New production is:", production)
       elif job.exists('RunNumber'):
-        gLogger.warn('The run already registered!')
+        self.log.warn('The run already registered!')
       else:
         retVal = self.bkClient_.deleteSetpContiner(production)
         if not retVal['OK']:
           return retVal
-        gLogger.error('Unable to create processing pass!', res['Message'])
+        self.log.error('Unable to create processing pass!', res['Message'])
         return S_ERROR('Unable to create processing pass!')
 
     attrList = {'ConfigName': config.getConfigName(),
@@ -603,13 +606,13 @@ class XMLFilesReaderManager(object):
 
     res = self.bkClient_.checkProcessingPassAndSimCond(attrList['Production'])
     if not res['OK']:
-      gLogger.error('check processing pass and simulation condition error', res['Message'])
+      self.log.error('check processing pass and simulation condition error', res['Message'])
     else:
       value = res['Value']
       if value[0][0] == 0:
         errorMessage = "Missing processing pass and simulation conditions: "
         errorMessage += "please fill it. Production = %s" % (str(attrList['Production']))
-        gLogger.warn(errorMessage)
+        self.log.warn(errorMessage)
 
     if attrList['JobStart'] is None:
       # date = config.getDate().split('-')
@@ -625,7 +628,7 @@ class XMLFilesReaderManager(object):
     if not res['OK'] and production < 0:
       retVal = self.bkClient_.deleteProductionsContiner(production)
       if not retVal['OK']:
-        gLogger.error(retVal['Message'])
+        self.log.error(retVal['Message'])
     return res
 
   #############################################################################
@@ -645,7 +648,7 @@ class XMLFilesReaderManager(object):
   def processReplicas(self, replica):
     """process the replica registration request."""
     outputfile = replica.getFileName()
-    gLogger.debug("Processing replicas:", "%s" % outputfile)
+    self.log.debug("Processing replicas:", "%s" % outputfile)
     fileID = -1
 
     params = replica.getaprams()
@@ -668,7 +671,7 @@ class XMLFilesReaderManager(object):
         return S_ERROR(message)
       else:
         fileID = long(result['Value'][0][0])
-        gLogger.debug("FileId:", fileID)
+        self.log.debug("FileId:", fileID)
 
       if delete:
         result = self.dm_.getReplicas(replicaFileName)
@@ -676,13 +679,13 @@ class XMLFilesReaderManager(object):
         if len(replicaList) == 0:
           result = self.bkClient_.updateReplicaRow(fileID, "No")
           if not result['OK']:
-            gLogger.warn("Unable to set the Got_Replica flag for ", "%s" % replicaFileName)
+            self.log.warn("Unable to set the Got_Replica flag for ", "%s" % replicaFileName)
             return S_ERROR("Unable to set the Got_Replica flag for ", "%s" % replicaFileName)
       else:
         result = self.bkClient_.updateReplicaRow(fileID, "Yes")
         if not result['OK']:
           return S_ERROR("Unable to set the Got_Replica flag for " + str(replicaFileName))
 
-    gLogger.debug("End Processing replicas!")
+    self.log.debug("End Processing replicas!")
 
     return S_OK()

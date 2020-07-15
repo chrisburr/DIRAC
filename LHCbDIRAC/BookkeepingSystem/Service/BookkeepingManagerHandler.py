@@ -17,6 +17,7 @@ from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceSection
 from DIRAC.ConfigurationSystem.Client.Helpers import cfgPath
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
+from DIRAC.Core.Utilities.Decorators import deprecated
 
 from LHCbDIRAC.BookkeepingSystem.DB.BookkeepingDatabaseClient import BookkeepingDatabaseClient
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
@@ -88,6 +89,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_sendBookkeeping = [six.string_types, six.string_types]
 
+  @deprecated("Use sendXMLBookkeepingReport")
   def export_sendBookkeeping(self, name, xml):
     """more info in the BookkeepingClient.py."""
     return self.export_sendXMLBookkeepingReport(xml)
@@ -95,8 +97,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_sendXMLBookkeepingReport = [six.string_types]
 
-  @staticmethod
-  def export_sendXMLBookkeepingReport(xml):
+  def export_sendXMLBookkeepingReport(self, xml):
     """This method is used to upload an xml report which is produced after when
     the job successfully finished. The input parameter 'xml' is a string which
     contains various information (metadata) about the finished job in the Grid
@@ -104,20 +105,18 @@ class BookkeepingManagerHandler(RequestHandler):
 
     :param str xml: bookkeeping report
     """
-    result = S_ERROR()
     try:
       retVal = reader_.readXMLfromString(xml)
       if not retVal['OK']:
-        result = S_ERROR(retVal['Message'])
-      elif retVal['Value'] == '':
-        result = S_OK("The send bookkeeping finished successfully!")
-      else:
-        result = retVal
+        self.log.error("Issue reading XML", retVal['Message'])
+        return retVal
+      if retVal['Value'] == '':
+        return S_OK("The send bookkeeping finished successfully!")
+      return retVal
     except Exception as x:
       errorMsg = "XML processing error"
-      gLogger.exception(errorMsg, lException=x)
-      result = S_ERROR(errorMsg)
-    return result
+      self.log.exception(errorMsg, lException=x)
+      return S_ERROR(errorMsg)
 
   #############################################################################
   types_getAvailableSteps = [dict]
@@ -152,17 +151,14 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_getStepInputFiles(stepId):
     """It returns the input files for a given step."""
-    result = S_ERROR()
     retVal = dataMGMT_.getStepInputFiles(stepId)
-    if retVal['OK']:
-      records = []
-      parameters = ['FileType', 'Visible']
-      for record in retVal['Value']:
-        records += [list(record)]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['FileType', 'Visible'],
+                 'Records': records,
+                 'TotalRecords': len(records)})
 
   #############################################################################
   types_setStepInputFiles = [int, list]
@@ -186,17 +182,14 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_getStepOutputFiles(stepId):
     """It returns the output file types for a given Step."""
-    result = S_ERROR()
     retVal = dataMGMT_.getStepOutputFiles(stepId)
-    if retVal['OK']:
-      records = []
-      parameters = ['FileType', 'Visible']
-      for record in retVal['Value']:
-        records += [list(record)]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['FileType', 'Visible'],
+                 'Records': records,
+                 'TotalRecords': len(records)})
 
   #############################################################################
   types_getAvailableFileTypes = []
@@ -263,14 +256,13 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_getAvailableConfigNames():
     """It returns all the available configuration names which are used."""
     retVal = dataMGMT_.getAvailableConfigNames()
-    if retVal['OK']:
-      records = []
-      parameters = ['Configuration Name']
-      for record in retVal['Value']:
-        records += [list(record)]
-      return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
+    if not retVal['OK']:
       return retVal
+
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['Configuration Name'],
+                 'Records': records,
+                 'TotalRecords': len(records)})
 
   #############################################################################
   types_getConfigVersions = [dict]
@@ -394,15 +386,10 @@ class BookkeepingManagerHandler(RequestHandler):
   ############################################################################
   types_getStandardProcessingPass = [dict, six.string_types]
 
+  @deprecated("use getProcessingPass")
   def export_getStandardProcessingPass(self, in_dict, path):
     """more info in the BookkeepingClient.py."""
-    result = S_ERROR()
-    retVal = self.export_getProcessingPass(in_dict, path)
-    if retVal['OK']:
-      result = S_OK(retVal['Value'])
-    else:
-      result = retVal
-    return result
+    return self.export_getProcessingPass(in_dict, path)
 
   #############################################################################
   types_getProductions = [dict]
@@ -480,6 +467,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getStandardEventTypes = [dict]
 
+  @deprecated("Use getEventTypes")
   def export_getStandardEventTypes(self, in_dict):
     """more info in the BookkeepingClient.py."""
     self.export_getEventTypes(in_dict)
@@ -646,13 +634,6 @@ class BookkeepingManagerHandler(RequestHandler):
                      record[20], record[21], record[22], record[23], record[24]]]
       retVal = {'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)}
     return retVal
-
-  #############################################################################
-  types_getFilesSumary = [dict]
-
-  def export_getFilesSumary(self, in_dict):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getFilesSummary(in_dict)
 
   #############################################################################
   types_getFilesSummary = [dict]
@@ -958,6 +939,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_setQuality = [list, six.string_types]
 
+  @deprecated("use setFileDataQuality")
   def export_setQuality(self, lfns, flag):
     """more info in the BookkeepingClient.py."""
     return self.export_setFileDataQuality(lfns, flag)
@@ -987,6 +969,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_setRunQualityWithProcessing = [six.integer_types, six.string_types, six.string_types]
 
+  @deprecated("use setRunAndProcessingPassDataQuality")
   def export_setRunQualityWithProcessing(self, runNB, procpass, flag):
     """more info in the BookkeepingClient.py."""
     return self.export_setRunAndProcessingPassDataQuality(runNB, procpass, flag)
@@ -1021,12 +1004,14 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_setQualityProduction = [int, six.string_types]
 
+  @deprecated("Use setProductionDataQuality")
   def export_setQualityProduction(self, prod, flag):
     """more info in the BookkeepingClient.py."""
     return self.export_setProductionDataQuality(prod, flag)
 
   types_getLFNsByProduction = [int]
 
+  @deprecated("Use getProductionFiles")
   def export_getLFNsByProduction(self, prod):
     """more info in the BookkeepingClient.py."""
     return self.export_getProductionFiles(prod, 'ALL', 'ALL')
@@ -1061,7 +1046,8 @@ class BookkeepingManagerHandler(RequestHandler):
 
   @staticmethod
   def export_getAncestors(lfns, depth):
-    """more info in the BookkeepingClient.py."""
+    """ Get the ancestors for a list of LFNs in input
+    """
     result = S_ERROR()
     retVal = dataMGMT_.getFileAncestors(lfns, depth, True)
     if retVal['OK']:
@@ -1133,14 +1119,12 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_checkEventType(eventTypeId):
     """more info in the BookkeepingClient.py."""
-    if eventTypeId in __eventTypeCache:
-      return __eventTypeCache[eventTypeId]
-    else:
+    if eventTypeId not in __eventTypeCache:
       retVal = dataMGMT_.checkEventType(eventTypeId)
-      if retVal['OK']:
-        __eventTypeCache[eventTypeId] = retVal
-      else:
+      if not retVal['OK']:
         return retVal
+      __eventTypeCache[eventTypeId] = retVal
+
     return __eventTypeCache[eventTypeId]
 
   #############################################################################
@@ -1273,18 +1257,13 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_insertEventType(evid, desc, primary):
     """It inserts an event type to the Bookkeeping Metadata catalogue."""
-    result = S_ERROR()
-
     retVal = dataMGMT_.checkEventType(evid)
-    if not retVal['OK']:
+    if not retVal['OK']:  # meaning the event type is not already inserted
       retVal = dataMGMT_.insertEventTypes(evid, desc, primary)
-      if retVal['OK']:
-        result = S_OK(str(evid) + ' event type added successfully!')
-      else:
-        result = retVal
-    else:
-      result = S_OK(str(evid) + ' event type exists')
-    return result
+      if not retVal['OK']:
+        return retVal
+      return S_OK(str(evid) + ' event type added successfully!')
+    return S_OK(str(evid) + ' event type exists')
 
   #############################################################################
   types_addEventType = [six.integer_types, six.string_types, six.string_types]
@@ -1342,22 +1321,25 @@ class BookkeepingManagerHandler(RequestHandler):
     pgroup = in_dict.get('ProcessingPass', default)
     ftype = in_dict.get('FileType', default)
     evttype = in_dict.get('EventType', default)
-    retVal = dataMGMT_.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
-
-    return retVal
+    return dataMGMT_.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
 
   #############################################################################
   types_getProductionInformations = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionInformations(prodid):
+  @deprecated("Use getProductionInformation")
+  def export_getProductionInformations(self, prodid):
+    return self.export_getProductionInformation(prodid)
+
+  #############################################################################
+  types_getProductionInformation = [(long, int)]
+
+  def export_getProductionInformation(self, prodid):
     """It returns statistics (data processing phases, number of events, etc.) for a given production
     """
 
     nbjobs = None
     nbOfFiles = None
     nbOfEvents = None
-    steps = None
     prodinfos = None
 
     value = dataMGMT_.getProductionNbOfJobs(prodid)
@@ -1379,42 +1361,30 @@ class BookkeepingManagerHandler(RequestHandler):
     path = '/'
 
     if not prodinfos:
-      return S_ERROR('The production does not contain jobs')
+      self.log.error("No Configs/Event type for production", prodid)
+      return S_ERROR("No Configs/Event type")
 
     cname = prodinfos[0][0]
     cversion = prodinfos[0][1]
     path += cname + '/' + cversion + '/'
 
-    value = dataMGMT_.getSteps(prodid)
-    if value['OK']:
-      steps = value['Value']
-    else:
-      result = {"Production information": prodinfos,
-                "Steps": value['Message'],
-                "Number of jobs": nbjobs,
-                "Number of files": nbOfFiles,
-                "Number of events": nbOfEvents,
-                'Path': path}
-      return S_OK(result)
-
-      # return S_ERROR(value['Message'])
-
     res = dataMGMT_.getProductionSimulationCond(prodid)
     if not res['OK']:
       return S_ERROR(res['Message'])
-    else:
-      path += res['Value']
+    path += res['Value']
+
     res = dataMGMT_.getProductionProcessingPass(prodid)
     if not res['OK']:
       return S_ERROR(res['Message'])
-    else:
-      path += res['Value']
+    path += res['Value']
     prefix = '\n' + path
 
+    # FIXME: I think this will crash due to iterating over None if dataMGMT_.getProductionNbOfEvents(prodid) fails.
+    # FIXME: I also have no idea what i is. At at glance I thought it was an integer but its being indexed?
+    # FIXME: Why only index 0 and 2? The docstring of getProductionNbOfEvents should probably be fixed.
     for i in nbOfEvents:
       path += prefix + '/' + str(i[2]) + '/' + i[0]
     result = {"Production information": prodinfos,
-              "Steps": steps,
               "Number of jobs": nbjobs,
               "Number of files": nbOfFiles,
               "Number of events": nbOfEvents,
@@ -1578,6 +1548,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getProductiosWithAGivenRunAndProcessing = [dict]
 
+  @deprecated("Use getProductionsFromView")
   def export_getProductiosWithAGivenRunAndProcessing(self, in_dict):
     """more info in the BookkeepingClient.py."""
     return self.export_getProductionsFromView(in_dict)
@@ -1592,11 +1563,13 @@ class BookkeepingManagerHandler(RequestHandler):
 
     Input parameters: RunNumber ProcessingPass
     """
+    # FIXME: might be a useless method
     return dataMGMT_.getProductionsFromView(in_dict)
 
   #############################################################################
   types_getDataQualityForRuns = [list]
 
+  @deprecated("Use getRunFilesDataQuality")
   def export_getDataQualityForRuns(self, runs):
     """more info in the BookkeepingClient.py."""
     return self.export_getRunFilesDataQuality(runs)
@@ -1628,6 +1601,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getRunFlag = [six.integer_types, six.integer_types]
 
+  @deprecated("Use getRunAndProcessingPassDataQuality")
   def export_getRunFlag(self, runnb, processing):
     """more info in the BookkeepingClient.py."""
     return self.export_getRunAndProcessingPassDataQuality(runnb, processing)
@@ -1670,6 +1644,7 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getFilesWithGivenDataSets = [dict]
 
+  @deprecated("Use getFiles")
   def export_getFilesWithGivenDataSets(self, values):
     """more info in the BookkeepingClient.py."""
     gLogger.debug('getFiles dataset:', "%s" % values)
@@ -1726,10 +1701,9 @@ class BookkeepingManagerHandler(RequestHandler):
                                 filesize, tck, jobStart, jobEnd)
     if not retVal['OK']:
       return S_ERROR(retVal['Message'])
-    else:
-      values = retVal['Value']
-      for i in values:
-        result += [i[0]]
+    values = retVal['Value']
+    for i in values:
+      result += [i[0]]
 
     return S_OK(result)
 
@@ -1811,47 +1785,47 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if not retVal['OK']:
       return retVal
-    else:
-      values = retVal['Value']
-      nbfiles = 0
-      nbevents = 0
-      evinput = 0
-      fsize = 0
-      tLumi = 0
-      lumi = 0
-      ilumi = 0
-      for i in values:
-        nbfiles = nbfiles + 1
-        row = dict(zip(parameters, i))
-        if row['EventStat'] is not None:
-          nbevents += row['EventStat']
-        if row['EventInputStat'] is not None:
-          evinput += row['EventInputStat']
-        if row['FileSize'] is not None:
-          fsize += row['FileSize']
-        if row['TotalLuminosity'] is not None:
-          tLumi += row['TotalLuminosity']
-        if row['Luminosity'] is not None:
-          lumi += row['Luminosity']
-        if row['InstLuminosity'] is not None:
-          ilumi += row['InstLuminosity']
-        result[row['FileName']] = {'EventStat': row['EventStat'],
-                                   'EventInputStat': row['EventInputStat'],
-                                   'Runnumber': row['RunNumber'],
-                                   'Fillnumber': row['FillNumber'],
-                                   'FileSize': row['FileSize'],
-                                   'TotalLuminosity': row['TotalLuminosity'],
-                                   'Luminosity': row['Luminosity'],
-                                   'InstLuminosity': row['InstLuminosity'],
-                                   'TCK': row['TCK']}
-      if nbfiles > 0:
-        summary = {'Number Of Files': nbfiles,
-                   'Number of Events': nbevents,
-                   'EventInputStat': evinput,
-                   'FileSize': fsize / 1000000000.,
-                   'TotalLuminosity': tLumi,
-                   'Luminosity': lumi,
-                   'InstLuminosity': ilumi}
+
+    values = retVal['Value']
+    nbfiles = 0
+    nbevents = 0
+    evinput = 0
+    fsize = 0
+    tLumi = 0
+    lumi = 0
+    ilumi = 0
+    for i in values:
+      nbfiles = nbfiles + 1
+      row = dict(zip(parameters, i))
+      if row['EventStat'] is not None:
+        nbevents += row['EventStat']
+      if row['EventInputStat'] is not None:
+        evinput += row['EventInputStat']
+      if row['FileSize'] is not None:
+        fsize += row['FileSize']
+      if row['TotalLuminosity'] is not None:
+        tLumi += row['TotalLuminosity']
+      if row['Luminosity'] is not None:
+        lumi += row['Luminosity']
+      if row['InstLuminosity'] is not None:
+        ilumi += row['InstLuminosity']
+      result[row['FileName']] = {'EventStat': row['EventStat'],
+                                 'EventInputStat': row['EventInputStat'],
+                                 'Runnumber': row['RunNumber'],
+                                 'Fillnumber': row['FillNumber'],
+                                 'FileSize': row['FileSize'],
+                                 'TotalLuminosity': row['TotalLuminosity'],
+                                 'Luminosity': row['Luminosity'],
+                                 'InstLuminosity': row['InstLuminosity'],
+                                 'TCK': row['TCK']}
+    if nbfiles > 0:
+      summary = {'Number Of Files': nbfiles,
+                 'Number of Events': nbevents,
+                 'EventInputStat': evinput,
+                 'FileSize': fsize / 1000000000.,
+                 'TotalLuminosity': tLumi,
+                 'Luminosity': lumi,
+                 'InstLuminosity': ilumi}
     return S_OK({'LFNs': result, 'Summary': summary})
 
   #############################################################################
@@ -1941,8 +1915,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if 'Production' in in_dict:
       return dataMGMT_.getProductionProcessingPassSteps(in_dict['Production'])
-    else:
-      return S_ERROR('The Production dictionary key is missing!!!')
+    return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
   types_getProductionOutputFiles = [dict]
@@ -1965,8 +1938,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if production != default:
       return dataMGMT_.getProductionOutputFileTypes(production, stepid)
-    else:
-      return S_ERROR('The Production dictionary key is missing!!!')
+    return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
   types_getRunQuality = [six.string_types, six.string_types]
@@ -1994,14 +1966,11 @@ class BookkeepingManagerHandler(RequestHandler):
 
     Input parameters:
     """
-    result = S_ERROR()
     cName = in_dict.get('ConfigName', default)
     cVersion = in_dict.get('ConfigVersion', default)
     if cName != default and cVersion != default:
-      result = dataMGMT_.getRuns(cName, cVersion)
-    else:
-      result = S_ERROR('The configuration name and version have to be defined!')
-    return result
+      return dataMGMT_.getRuns(cName, cVersion)
+    return S_ERROR('The configuration name and version have to be defined!')
 
   #############################################################################
   types_getRunProcPass = [dict]
@@ -2017,12 +1986,9 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_getRunAndProcessingPass(in_dict):
     """It returns all the processing pass and run number for a given run."""
     run = in_dict.get('RunNumber', default)
-    result = S_ERROR()
     if run != default:
-      result = dataMGMT_.getRunAndProcessingPass(run)
-    else:
-      result = S_ERROR('The run number has to be specified!')
-    return result
+      return dataMGMT_.getRunAndProcessingPass(run)
+    return S_ERROR('The run number has to be specified!')
 
   #############################################################################
   types_getProcessingPassId = [six.string_types]
@@ -2131,6 +2097,15 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getTCKs(in_dict)
 
   #############################################################################
+  types_getSteps = [basestring]
+
+  @staticmethod
+  def export_getSteps(prodID):
+    """ get list of steps used in a production
+    """
+    return dataMGMT_.getSteps(prodID)
+
+  #############################################################################
   types_getStepsMetadata = [dict]
 
   @staticmethod
@@ -2219,7 +2194,6 @@ class BookkeepingManagerHandler(RequestHandler):
     'ConfigName', 'ConfigVersion', 'ConditionDescription',
     'EventType','ProcessingPass'
     """
-    result = S_ERROR()
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
@@ -2229,10 +2203,8 @@ class BookkeepingManagerHandler(RequestHandler):
 
     retVal = dataMGMT_.getListOfRuns(configName, configVersion, conddescription, processing, evt, quality)
     if not retVal['OK']:
-      result = retVal
-    else:
-      result = S_OK([i[0] for i in retVal['Value']])
-    return result
+      return retVal
+    return S_OK([i[0] for i in retVal['Value']])
 
   #############################################################################
   types_getSimulationConditions = [dict]
