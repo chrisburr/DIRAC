@@ -17,13 +17,10 @@
 
 __RCSID__ = "$Id$"
 
-import ast
 import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
-from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 
 Script.setUsageMessage(__doc__ + '\n'.join([
@@ -61,7 +58,7 @@ prodIDs = [p['Production'] for p in prods]
 # # loop over all productions
 for prodID in sorted(prodIDs):
 
-  res = bkClient.getProductionInformations(prodID)
+  res = bkClient.getProductionInformation(prodID)
   if not res['OK']:
     gLogger.error('Could not retrieve production infos for production %s' % prodID, res['Message'])
     continue
@@ -72,46 +69,8 @@ for prodID in sorted(prodIDs):
   files = prodInfo["Number of files"]
   events = prodInfo["Number of events"]
   path = prodInfo["Path"]
-
-  dddb = None
-  conddb = None
-
-  for step in reversed(steps):
-    if step[4] and step[4].lower() != 'frompreviousstep':
-      dddb = step[4]
-    if step[5] and step[5].lower() != 'frompreviousstep':
-      conddb = step[5]
-
-  result = TransformationClient().getTransformation(prodID, True)
-  if not result['OK']:
-    gLogger.error('Could not retrieve parameters for production %d:' % prodID, result['Message'])
-    continue
-  parameters = result['Value']
-
-  if not dddb:
-    dddb = parameters.get('DDDBTag')
-  if not conddb:
-    conddb = parameters.get('CondDBTag')
-
-  if not (dddb and conddb):  # probably the production above was not a MCSimulation
-    reqID = int(parameters.get('RequestID'))
-    res = ProductionRequestClient().getProductionList(reqID)
-    if not res['OK']:
-      gLogger.error('Could not retrieve productions list for request %d:' % reqID, result['Message'])
-      continue
-    simProdID = res['Value'][0]  # this should be the MCSimulation
-    res = TransformationClient().getTransformation(simProdID, True)
-    if not res['OK']:
-      gLogger.error('Could not retrieve parameters for production %d:' % simProdID, result['Message'])
-      continue
-    if not dddb:
-      dddb = res['Value'].get('DDDBTag', 0)
-    if not conddb:
-      conddb = res['Value'].get('CondDBTag', 0)
-
-  if not (dddb and conddb):  # this is for more recent productions (in fact, most of them)
-    dddb = ast.literal_eval(res['Value']['BKProcessingPass'])['Step0']['DDDb']
-    conddb = ast.literal_eval(res['Value']['BKProcessingPass'])['Step0']['CondDb']
+  dddb = prodInfo["Steps"][0][4]
+  conddb = prodInfo["Steps"][0][5]
 
   evts = 0
   ftype = None

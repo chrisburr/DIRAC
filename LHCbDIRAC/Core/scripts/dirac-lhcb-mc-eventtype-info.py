@@ -18,6 +18,7 @@
 
 __RCSID__ = "$Id$"
 
+import DIRAC
 from DIRAC.Core.Base import Script
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -42,14 +43,16 @@ prods = bkQuery.getBKProductions()
 
 bk = BookkeepingClient()
 for prod in prods:
-  res = bk.getProductionInformations(prod)
-  if res['OK']:
-    value = res['Value']
-    print value['Path'].split("\n")[1],
-    for nf in value['Number of files']:
-      if nf[1] == fileType:
-        print nf[0],
-    for ne in value['Number of events']:
-      if ne[0] == fileType:
-        print ne[1],
-    print ""
+  res = bk.getProductionInformation(prod)
+  if not res['OK']:
+    print res['Message']
+    DIRAC.exit(1)
+  value = res['Value']
+  print value['Path'].split("\n")[1],
+  for nf in value['Number of files']:
+    if nf[1] == fileType:
+      print nf[0],
+  for ne in value['Number of events']:
+    if ne[0] == fileType:
+      print ne[1],
+  print ""

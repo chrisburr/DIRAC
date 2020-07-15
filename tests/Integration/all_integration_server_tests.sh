@@ -20,6 +20,9 @@
 echo -e '****************************************'
 echo -e '********** LHCb server tests ***********\n'
 
+#-------------------------------------------------------------------------------#
+echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
+pytest --ignore=. "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Accounting TESTS ****\n"

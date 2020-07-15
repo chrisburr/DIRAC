@@ -8,726 +8,767 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                      */
 
-create or replace type stepobj is object (
-stepid number,
-STEPNAME	 VARCHAR2(256),
-APPLICATIONNAME	 VARCHAR2(128),
-APPLICATIONVERSION	 VARCHAR2(128),
-OPTIONFILES	 VARCHAR2(1000),
-DDDB	 VARCHAR2(256),
-CONDDB VARCHAR2(256),
-EXTRAPACKAGES	 VARCHAR2(256),
-VISIBLE	 CHAR(1),
-PROCESSINGPASS VARCHAR2(256),
-USABLE VARCHAR2(10),
-DQTag VARCHAR2(256),
-OptionsFormat VARCHAR2(30),
-ISMULTICORE CHAR(1),
-SYSTEMCONFIG VARCHAR2(256),
-mcTCK VARCHAR2(256),
-rstepid number,
-rSTEPNAME	 VARCHAR2(256),
-rAPPLICATIONNAME	 VARCHAR2(128),
-rAPPLICATIONVERSION	 VARCHAR2(128),
-rOPTIONFILES	 VARCHAR2(1000),
-rDDDB	 VARCHAR2(256),
-rCONDDB VARCHAR2(256),
-rEXTRAPACKAGES	 VARCHAR2(256),
-rVISIBLE	 CHAR(1),
-rPROCESSINGPASS VARCHAR2(256),
-rUSABLE VARCHAR2(10),
-rDQTag VARCHAR2(256),
-rOptionsFormat VARCHAR2(30),
-riSMULTICORE CHAR(1),
-rSYSTEMCONFIG VARCHAR2(256),
-RmcTCK VARCHAR2(256)
+-- Bookkeeping DB schema (Oracle)
+
+
+CREATE OR REPLACE TYPE stepobj IS object(
+    stepid              NUMBER,
+    stepname            varchar2(256),
+    applicationname     varchar2(128),
+    applicationversion  varchar2(128),
+    optionfiles         varchar2(1000),
+    dddb                varchar2(256),
+    conddb              varchar2(256),
+    extrapackages       varchar2(256),
+    visible             char(1),
+    processingpass      varchar2(256),
+    usable              varchar2(10),
+    dqtag               varchar2(256),
+    optionsformat       varchar2(30),
+    ismulticore         char(1),
+    systemconfig        varchar2(256),
+    mctck               varchar2(256),
+    rstepid             NUMBER,
+    rstepname           varchar2(256),
+    rapplicationname    varchar2(128),
+    rapplicationversion varchar2(128),
+    roptionfiles        varchar2(1000),
+    rdddb               varchar2(256),
+    rconddb             varchar2(256),
+    rextrapackages      varchar2(256),
+    rvisible            char(1),
+    rprocessingpass     varchar2(256),
+    rusable             varchar2(10),
+    rdqtag              varchar2(256),
+    roptionsformat      varchar2(30),
+    rismulticore        char(1),
+    rsystemconfig       varchar2(256),
+    rmctck              varchar2(256)
 );
-/
-
-create or replace type step_table is table of stepobj;
-/
-
-create or replace type runnb_quality_eventtype is object (runnumber number, dataqualityflag varchar2(256), eventtypeid number);
-/
-
-create or replace type runnb_proc is object (runnumber number, processingpass varchar2(256));
-/
-
-create or replace type run_proc_table is table of runnb_proc;
-/
-
-create or replace type metadata0bj is object (
-  FILENAME varchar2(256),
-  ADLER32 varchar2(256),
-  CREATIONDATE timestamp(6),
-  EVENTSTAT NUMBER,
-  EVENTTYPEID NUMBER,
-  Name varchar2(256),
-  GOTREPLICA varchar2(3),
-  GUID varchar2(256),
-  MD5SUM varchar2(256),
-  FILESIZE number,
-  FullStat number,
-  DATAQUALITYFLAG varchar2(256),
-  jobid number(38,0),
-  runnumber number,
-  inserttimestamp timestamp(6),
-  luminosity number,
-  instluminosity number ,
-  VISIBILITYFLAG CHAR(1),
-  fileid number,
-  filetypeid number
- );
  /
 
- create or replace type metadata_table is table of metadata0bj;
-/
+ CREATE OR REPLACE TYPE step_table IS TABLE OF stepobj;
+ /
 
- create or replace type lists IS TABLE OF VARCHAR2(256);
-/
-
- create or replace type jobMetadata is object(lfn varchar2(256),
-  DiracJobId                  NUMBER,
-  DiracVersion                VARCHAR2(256),
-  EventInputStat              NUMBER,
-  ExecTime                    FLOAT,
-  FirstEventNumber            NUMBER,
-  Location                    VARCHAR2(256),
-  Name                        VARCHAR2(256),
-  NumberOfEvents              NUMBER,
-  StatisticsRequested         NUMBER,
-  WNCPUPower                  VARCHAR2(256),
-  CPUTime                     FLOAT,
-  WNCache                     VARCHAR2(256),
-  WNMemory                    VARCHAR2(256),
-  WNModel                     VARCHAR2(256),
-  WORKERNODE                  varchar2(256),
-  WNCPUHS06                   FLOAT,
-  jobid                       number,
-  totalLuminosity             NUMBER,
-  production                  NUMBER,
-  ProgramName                 VARCHAR2(256),
-  ProgramVersion              VARCHAR2(256),
-  WNMJFHS06                   FLOAT);
-/
-
-create or replace type ftype as object(
-name varchar2(256),
-visible char(1)
+ CREATE OR REPLACE TYPE runnb_quality_eventtype IS object(
+    runnumber NUMBER,
+    dataqualityflag varchar2(256),
+    eventtypeid NUMBER
 );
-/
+ /
 
-create or replace TYPE filetypesARRAY is VARRAY(30) OF ftype;
-/
+ CREATE OR REPLACE TYPE runnb_proc IS object(
+    runnumber NUMBER,
+    processingpass varchar2(256)
+);
+ /
 
-create or replace type
-directoryMetadata_new is object
-(lfn varchar2(256),
-production number,
-configname varchar2(256),
-configversion  varchar2(256),
-eventtypeid number,
-filetype varchar2(256),
-processingpass varchar2(256),
-ConditionDescription varchar2(256),
-VISIBILITYFLAG CHAR(1));
-/
+ CREATE OR REPLACE TYPE run_proc_table IS TABLE OF runnb_proc;
+ /
 
-create or replace type
-directoryMetadata is object
-(production number,
-configname varchar2(256),
-configversion  varchar2(256),
-eventtypeid number,
-filetype varchar2(256),
-processingpass varchar2(256),
-ConditionDescription varchar2(256),
-VISIBILITYFLAG CHAR(1));
-/
 
-create or replace type bulk_collect_run_quality_evt is table of runnb_quality_eventtype;
-/
+ CREATE OR REPLACE TYPE metadata0bj IS object(
+    filename        varchar2(256),
+    adler32         varchar2(256),
+    creationdate    timestamp(6),
+    eventstat       NUMBER,
+    eventtypeid     NUMBER,
+    name            varchar2(256),
+    gotreplica      varchar2(3),
+    guid            varchar2(256),
+    md5sum          varchar2(256),
+    filesize        NUMBER,
+    fullstat        NUMBER,
+    dataqualityflag varchar2(256),
+    jobid           number(38,0),
+    runnumber       NUMBER,
+    inserttimestamp timestamp(6),
+    luminosity      NUMBER,
+    instluminosity  NUMBER,
+    visibilityflag  char(1),
+    fileid          NUMBER,
+    filetypeid      NUMBER
+);
+ /
 
-create or replace type bulk_collect_jobMetadata is table of jobMetadata;
-/
+ CREATE OR REPLACE TYPE metadata_table IS TABLE OF metadata0bj;
+ /
 
-create or replace type bulk_collect_directoryMetadata is table of directoryMetadata;
-/
+ CREATE OR REPLACE TYPE LISTS IS TABLE OF varchar2(256);
+ /
 
-create or replace type bulk_collect_directoryMet_new is table of directoryMetadata_new;
-/
+ CREATE OR REPLACE TYPE jobmetadata IS object(
+    lfn                         varchar2(256),
+    diracjobid                  NUMBER,
+    diracversion                varchar2(256),
+    eventinputstat              NUMBER,
+    exectime                    FLOAT,
+    firsteventnumber            NUMBER,
+    LOCATION                    varchar2(256),
+    name                        varchar2(256),
+    numberofevents              NUMBER,
+    statisticsrequested         NUMBER,
+    wncpupower                  varchar2(256),
+    cputime                     FLOAT,
+    wncache                     varchar2(256),
+    wnmemory                    varchar2(256),
+    wnmodel                     varchar2(256),
+    workernode                  varchar2(256),
+    wncpuhs06                   FLOAT,
+    jobid                       number,
+    totalluminosity             NUMBER,
+    production                  NUMBER,
+    programname                 varchar2(256),
+    programversion              varchar2(256),
+    wnmjfhs06                   FLOAT
+);
+ /
 
-CREATE SEQUENCE  APPLICATIONS_INDEX_SEQ MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE ftype AS object(
+    name varchar2(256),
+    visible char(1)
+);
+ /
 
-CREATE SEQUENCE  CONFIGURATIONID_SEQ MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE filetypesarray IS varray(30) OF ftype;
+ /
 
-CREATE SEQUENCE  FILEID_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE directorymetadata_new IS object(
+    lfn                   varchar2(256),
+    production            NUMBER,
+    configname            varchar2(256),
+    configversion         varchar2(256),
+    eventtypeid           NUMBER,
+    filetype              varchar2(256),
+    processingpass        varchar2(256),
+    conditiondescription  varchar2(256),
+    visibilityflag        char(1)
+);
+ /
 
-CREATE SEQUENCE  GROUPID_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE directorymetadata IS object(
+    production            NUMBER,
+    configname            varchar2(256),
+    configversion         varchar2(256),
+    eventtypeid           NUMBER,
+    filetype              varchar2(256),
+    processingpass        varchar2(256),
+    conditiondescription  varchar2(256),
+    visibilityflag        char(1)
+);
+ /
 
-CREATE SEQUENCE  JOBID_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE bulk_collect_run_quality_evt IS TABLE OF runnb_quality_eventtype;
+ /
 
-CREATE SEQUENCE  PASS_INDEX_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE bulk_collect_jobmetadata IS TABLE OF jobmetadata;
+ /
 
-CREATE SEQUENCE  PRODUCTION_SEQ  MINVALUE -99999999999999999999999999 MAXVALUE -1 INCREMENT BY -1 START WITH -1;
+ CREATE OR REPLACE TYPE bulk_collect_directorymetadata IS TABLE OF directorymetadata;
+ /
 
-CREATE SEQUENCE  SIMULATIONCONDID_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE OR REPLACE TYPE bulk_collect_directorymet_new IS TABLE OF directorymetadata_new;
+ /
 
-CREATE SEQUENCE  TAGS_INDEX_SEQ  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+ CREATE SEQUENCE applications_index_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-CREATE GLOBAL TEMPORARY TABLE STEPSTMP
-   (    STEPID NUMBER,
-    STEPNAME VARCHAR2(256 BYTE),
-    APPLICATIONNAME VARCHAR2(128 BYTE),
-    APPLICATIONVERSION VARCHAR2(128 BYTE),
-    OPTIONFILES VARCHAR2(1000 BYTE),
-    DDDB VARCHAR2(256 BYTE),
-    CONDDB VARCHAR2(256 BYTE),
-    EXTRAPACKAGES VARCHAR2(256 BYTE),
-    VISIBLE CHAR(1 BYTE) DEFAULT 'Y',
-    PROCESSINGPASS VARCHAR2(256 BYTE),
-    USABLE VARCHAR2(10 BYTE) DEFAULT 'Not ready',
-    DQTAG VARCHAR2(256 BYTE),
-    OPTIONSFORMAT VARCHAR2(30 BYTE),
-    ISMULTICORE CHAR(1 BYTE) DEFAULT 'N',
-    SYSTEMCONFIG VARCHAR2(256 BYTE),
-    MCTCK VARCHAR2(256 BYTE),
-    RSTEPID NUMBER,
-    RSTEPNAME VARCHAR2(256 BYTE),
-    RAPPLICATIONNAME VARCHAR2(128 BYTE),
-    RAPPLICATIONVERSION VARCHAR2(128 BYTE),
-    ROPTIONFILES VARCHAR2(1000 BYTE),
-    RDDDB VARCHAR2(256 BYTE),
-    RCONDDB VARCHAR2(256 BYTE),
-    REXTRAPACKAGES VARCHAR2(256 BYTE),
-    RVISIBLE CHAR(1 BYTE),
-    RPROCESSINGPASS VARCHAR2(256 BYTE),
-    RUSABLE VARCHAR2(10 BYTE),
-    RDQTAG VARCHAR2(256 BYTE),
-    ROPTIONSFORMAT VARCHAR2(30 BYTE),
-    RISMULTICORE CHAR(1 BYTE) DEFAULT 'N',
-    RSYSTEMCONFIG VARCHAR2(256 BYTE),
-    RMCTCK VARCHAR2(256 BYTE)
-   ) ON COMMIT DELETE ROWS ;
+CREATE SEQUENCE configurationid_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-CREATE TABLE TAGS
-   (    TAGID NUMBER,
-    NAME VARCHAR2(256 BYTE),
-    TAG VARCHAR2(256 BYTE),
-    INSERTTIMESTAMP TIMESTAMP (6) DEFAULT sysTIMESTAMP
-   );
+CREATE SEQUENCE fileid_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-CREATE TABLE PROCESSING
-   (	ID NUMBER,
-	PARENTID NUMBER,
-	NAME VARCHAR2(256 BYTE),
-	 CONSTRAINT PROCESSING_PK PRIMARY KEY (ID),
-	 CONSTRAINT PROCESSING_FK FOREIGN KEY (PARENTID)
-	  REFERENCES PROCESSING (ID));
+CREATE SEQUENCE groupid_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-  CREATE INDEX PROCESSING_PID ON PROCESSING (PARENTID);
+CREATE SEQUENCE jobid_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-  CREATE INDEX PROCESSING_PID_NAME ON PROCESSING (PARENTID, NAME);
+CREATE SEQUENCE pass_index_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
 
-  CREATE OR REPLACE EDITIONABLE TRIGGER PROCESSING_BEFORE_INSERT
+CREATE SEQUENCE production_seq MINVALUE -99999999999999999999999999 MAXVALUE -1 INCREMENT BY -1 START WITH -1;
+
+CREATE SEQUENCE simulationcondid_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+
+CREATE SEQUENCE tags_index_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+
+CREATE GLOBAL TEMPORARY TABLE stepstmp(
+    stepid              NUMBER,
+    stepname            varchar2(256),
+    applicationname     varchar2(128),
+    applicationversion  varchar2(128),
+    optionfiles         varchar2(1000),
+    dddb                varchar2(256),
+    conddb              varchar2(256),
+    extrapackages       varchar2(256),
+    visible             char(1) DEFAULT 'Y',
+    processingpass      varchar2(256),
+    usable              varchar2(10) DEFAULT 'Not ready',
+    dqtag               varchar2(256),
+    optionsformat       varchar2(30),
+    ismulticore         char(1) DEFAULT 'N',
+    systemconfig        varchar2(256),
+    mctck               varchar2(256),
+    rstepid             NUMBER,
+    rstepname           varchar2(256),
+    rapplicationname    varchar2(128),
+    rapplicationversion varchar2(128),
+    roptionfiles        varchar2(1000),
+    rdddb               varchar2(256),
+    rconddb             varchar2(256),
+    rextrapackages      varchar2(256),
+    rvisible            char(1),
+    rprocessingpass     varchar2(256),
+    rusable             varchar2(10),
+    rdqtag              varchar2(256),
+    roptionsformat      varchar2(30),
+    rismulticore        char(1) DEFAULT 'N',
+    rsystemconfig       varchar2(256),
+    rmctck              varchar2(256)
+) ON COMMIT DELETE ROWS;
+
+---------------------------------------------------------------------------------------
+CREATE TABLE tags(
+    tagid           NUMBER,
+    name            varchar2(256),
+    tag             varchar2(256),
+    inserttimestamp TIMESTAMP (6) DEFAULT systimestamp
+);
+
+---------------------------------------------------------------------------------------
+CREATE TABLE processing(
+    id       NUMBER,
+    parentid NUMBER,
+    name     varchar2(256),
+    CONSTRAINT processing_pk PRIMARY KEY (id),
+    CONSTRAINT processing_fk FOREIGN KEY (parentid) REFERENCES processing (id)
+);
+
+CREATE INDEX processing_pid ON processing (parentid);
+CREATE INDEX processing_pid_name ON processing (parentid, name);
+
+CREATE OR REPLACE editionable TRIGGER processing_before_insert
 BEFORE INSERT
-   ON processing
-   FOR EACH ROW
-DECLARE
-BEGIN
-
-  if INSTR(:new.name,'/') > 0 then
-    RAISE_APPLICATION_ERROR(-20001,'The processing pass name can not contain / characther!!!');
-  END if;
-
+  ON processing
+    FOR EACH ROW
+  DECLARE
+  BEGIN
+  IF instr(:new.name,'/') > 0 THEN
+    raise_application_error(-20001,'The processing pass name can not contain / characther!!!');
+  END IF;
 END;
-/
+ /
+ ---------------------------------------------------------------------------------------
+CREATE TABLE filetypes(
+    filetypeid  NUMBER,
+    description varchar2(256),
+    name        varchar2(64),
+    VERSION     varchar2(256),
+    PRIMARY KEY (filetypeid),
+    CONSTRAINT filetypes_name_version UNIQUE (name, VERSION),
+    CONSTRAINT filetypes_id_name_uk UNIQUE (filetypeid, name)
+);
 
-CREATE TABLE FILETYPES
-   (	DESCRIPTION VARCHAR2(256 BYTE),
-	FILETYPEID NUMBER,
-	NAME VARCHAR2(256 BYTE),
-	VERSION VARCHAR2(256 BYTE),
-	 PRIMARY KEY (FILETYPEID),
-	 CONSTRAINT FILETYPES_NAME_VERSION UNIQUE (NAME, VERSION),
-	 CONSTRAINT FILETYPES_ID_NAME_UK UNIQUE (FILETYPEID, NAME));
+---------------------------------------------------------------------------------------
+CREATE TABLE applications(
+    applicationid      NUMBER,
+    applicationname    varchar2(128) NOT NULL,
+    applicationversion varchar2(128) NOT NULL,
+    optionfiles        varchar2(1000),
+    dddb               varchar2(256),
+    conddb             varchar2(256),
+    extrapackages      varchar2(256),
+    PRIMARY KEY (applicationid)
+);
 
-CREATE TABLE APPLICATIONS (	APPLICATIONID NUMBER,
-	APPLICATIONNAME VARCHAR2(128 BYTE) NOT NULL,
-	APPLICATIONVERSION VARCHAR2(128 BYTE) NOT NULL,
-	OPTIONFILES VARCHAR2(1000 BYTE),
-	DDDB VARCHAR2(256 BYTE),
-	CONDDB VARCHAR2(256 BYTE),
-	EXTRAPACKAGES VARCHAR2(256 BYTE),
-	 PRIMARY KEY (APPLICATIONID));
+---------------------------------------------------------------------------------------
+CREATE TABLE configurations(
+    configurationid NUMBER,
+    configname      varchar2(128) NOT NULL,
+    configversion   varchar2(128) NOT NULL,
+    PRIMARY KEY (configurationid),
+    CONSTRAINT configuration_uk UNIQUE (configname, configversion)
+);
 
-CREATE TABLE CONFIGURATIONS (	CONFIGURATIONID NUMBER,
-	CONFIGNAME VARCHAR2(128 BYTE) NOT NULL,
-	CONFIGVERSION VARCHAR2(128 BYTE) NOT NULL,
-	 PRIMARY KEY (CONFIGURATIONID),
-	 CONSTRAINT CONFIGURATION_UK  UNIQUE (CONFIGNAME,CONFIGVERSION));
+---------------------------------------------------------------------------------------
+CREATE TABLE data_taking_conditions(
+    daqperiodid   NUMBER,
+    description   varchar2(256),
+    beamcond      varchar2(256),
+    beamenergy    varchar2(256),
+    magneticfield varchar2(256),
+    velo          varchar2(256),
+    it            varchar2(256),
+    tt            varchar2(256),
+    ot            varchar2(256),
+    rich1         varchar2(256),
+    rich2         varchar2(256),
+    spd_prs       varchar2(256),
+    ecal          varchar2(256),
+    hcal          varchar2(256),
+    muon          varchar2(256),
+    l0            varchar2(256),
+    hlt           varchar2(256),
+    veloposition  varchar2(255),
+    PRIMARY KEY (daqperiodid)
+);
 
-CREATE TABLE DATA_TAKING_CONDITIONS
-   (	DAQPERIODID NUMBER,
-	DESCRIPTION VARCHAR2(256 BYTE),
-	BEAMCOND VARCHAR2(256 BYTE),
-	BEAMENERGY VARCHAR2(256 BYTE),
-	MAGNETICFIELD VARCHAR2(256 BYTE),
-	VELO VARCHAR2(256 BYTE),
-	IT VARCHAR2(256 BYTE),
-	TT VARCHAR2(256 BYTE),
-	OT VARCHAR2(256 BYTE),
-	RICH1 VARCHAR2(256 BYTE),
-	RICH2 VARCHAR2(256 BYTE),
-	SPD_PRS VARCHAR2(256 BYTE),
-	ECAL VARCHAR2(256 BYTE),
-	HCAL VARCHAR2(256 BYTE),
-	MUON VARCHAR2(256 BYTE),
-	L0 VARCHAR2(256 BYTE),
-	HLT VARCHAR2(256 BYTE),
-	VELOPOSITION VARCHAR2(255 BYTE),
-	 	PRIMARY KEY (DAQPERIODID));
+CREATE INDEX data_taking_condition_id_desc ON data_taking_conditions (daqperiodid, description);
 
- CREATE INDEX DATA_TAKING_CONDITION_ID_DESC ON DATA_TAKING_CONDITIONS (DAQPERIODID, DESCRIPTION);
+---------------------------------------------------------------------------------------
+CREATE TABLE dataquality(
+    qualityid       NUMBER,
+    dataqualityflag varchar2(256),
+    PRIMARY KEY (qualityid)
+);
 
-
-CREATE TABLE DATAQUALITY (
-  	QUALITYID NUMBER,
-	DATAQUALITYFLAG VARCHAR2(256 BYTE),
-	 	PRIMARY KEY (QUALITYID));
-
-INSERT INTO DATAQUALITY (QUALITYID,DATAQUALITYFLAG) SELECT 1,'UNCHECKED' FROM DUAL WHERE NOT EXISTS (SELECT * FROM DATAQUALITY WHERE (QUALITYID=1 AND DATAQUALITYFLAG='UNCHECKED'));
-INSERT INTO DATAQUALITY (QUALITYID,DATAQUALITYFLAG) SELECT 2,'OK' FROM DUAL WHERE NOT EXISTS (SELECT * FROM DATAQUALITY WHERE (QUALITYID=2 AND DATAQUALITYFLAG='OK'));
-INSERT INTO DATAQUALITY (QUALITYID,DATAQUALITYFLAG) SELECT 3,'BAD' FROM DUAL WHERE NOT EXISTS (SELECT * FROM DATAQUALITY WHERE (QUALITYID=3 AND DATAQUALITYFLAG='BAD'));
+INSERT INTO dataquality (qualityid,dataqualityflag) SELECT 1,'UNCHECKED' FROM dual WHERE NOT EXISTS (SELECT * FROM dataquality WHERE (qualityid = 1 AND dataqualityflag = 'UNCHECKED'));
+INSERT INTO dataquality (qualityid,dataqualityflag) SELECT 2,'OK' FROM dual WHERE NOT EXISTS (SELECT * FROM dataquality WHERE (qualityid = 2 AND dataqualityflag = 'OK'));
+INSERT INTO dataquality (qualityid,dataqualityflag) SELECT 3,'BAD' FROM dual WHERE NOT EXISTS (SELECT * FROM dataquality WHERE (qualityid = 3 AND dataqualityflag = 'BAD'));
 COMMIT;
 
-CREATE TABLE EVENTTYPES
-   (	DESCRIPTION VARCHAR2(256 BYTE),
-	EVENTTYPEID NUMBER,
-	PRIMARY VARCHAR2(256 BYTE),
-	 PRIMARY KEY (EVENTTYPEID));
+---------------------------------------------------------------------------------------
+CREATE TABLE eventtypes(
+    description   varchar2(256),
+    eventtypeid   NUMBER,
+    PRIMARY       varchar2(256),
+    PRIMARY KEY (eventtypeid)
+);
 
-CREATE TABLE SIMULATIONCONDITIONS
-   (	SIMID NUMBER,
-	SIMDESCRIPTION VARCHAR2(256 BYTE),
-	BEAMCOND VARCHAR2(256 BYTE),
-	BEAMENERGY VARCHAR2(256 BYTE),
-	GENERATOR VARCHAR2(256 BYTE),
-	MAGNETICFIELD VARCHAR2(256 BYTE),
-	DETECTORCOND VARCHAR2(256 BYTE),
-	LUMINOSITY VARCHAR2(256 BYTE),
-	G4SETTINGS VARCHAR2(256 BYTE) DEFAULT ' ',
-	VISIBLE CHAR(1 BYTE) DEFAULT 'Y',
-	INSERTTIMESTAMPS TIMESTAMP (6) DEFAULT sys_extract_utc(systimestamp),
-	 CONSTRAINT SIMCOND_PK PRIMARY KEY (SIMID),
-	 CONSTRAINT SIMDESC UNIQUE (SIMDESCRIPTION),
-	 CHECK (visible in ('N','Y'))
-   );
+---------------------------------------------------------------------------------------
+CREATE TABLE simulationconditions(
+    simid NUMBER,
+    simdescription varchar2(256),
+    beamcond varchar2(256),
+    beamenergy varchar2(256),
+    generator varchar2(256),
+    magneticfield varchar2(256),
+    detectorcond varchar2(256),
+    luminosity varchar2(256),
+    g4settings varchar2(256) DEFAULT ' ',
+    visible char(1) DEFAULT 'Y',
+    inserttimestamps TIMESTAMP (6) DEFAULT sys_extract_utc(systimestamp),
+    CONSTRAINT simcond_pk PRIMARY KEY (simid),
+    CONSTRAINT simdesc UNIQUE (simdescription),
+    CHECK (visible IN ('N','Y'))
+);
 
- CREATE TABLE PRODUCTIONSCONTAINER
-   (	PRODUCTION NUMBER,
-	PROCESSINGID NUMBER,
-	SIMID NUMBER,
-	DAQPERIODID NUMBER,
-	TOTALPROCESSING VARCHAR2(256 BYTE),
-	CONFIGURATIONID NUMBER,
-	 CONSTRAINT PK_PRODUCTIONSCONTAINER PRIMARY KEY (PRODUCTION),
-	 CONSTRAINT FK1_PRODUCTIONSCONTAINER FOREIGN KEY (SIMID)
-	  REFERENCES SIMULATIONCONDITIONS (SIMID),
-	 CONSTRAINT FK2_PRODUCTIONSCONTAINER FOREIGN KEY (DAQPERIODID)
-	  REFERENCES DATA_TAKING_CONDITIONS (DAQPERIODID),
-	 CONSTRAINT FK_PRODUCTIONSCONTAINER_PROC FOREIGN KEY (PROCESSINGID)
-	  REFERENCES PROCESSING (ID),
-	 FOREIGN KEY (CONFIGURATIONID)
-	  REFERENCES CONFIGURATIONS (CONFIGURATIONID)
-   );
+---------------------------------------------------------------------------------------
+CREATE TABLE productionscontainer(
+    production NUMBER,
+    processingid NUMBER,
+    simid NUMBER,
+    daqperiodid NUMBER,
+    totalprocessing varchar2(256),
+    configurationid NUMBER,
+    CONSTRAINT pk_productionscontainer PRIMARY KEY (production),
+    CONSTRAINT fk1_productionscontainer FOREIGN KEY (simid) REFERENCES simulationconditions (simid),
+    CONSTRAINT fk2_productionscontainer FOREIGN KEY (daqperiodid) REFERENCES data_taking_conditions (daqperiodid),
+    CONSTRAINT fk_productionscontainer_proc FOREIGN KEY (processingid) REFERENCES processing (id),
+    FOREIGN KEY (configurationid) REFERENCES configurations (configurationid)
+);
 
-  CREATE INDEX PRODCONTDAQ ON PRODUCTIONSCONTAINER (DAQPERIODID, PRODUCTION);
+CREATE INDEX prodcontdaq ON productionscontainer (daqperiodid, production);
+CREATE INDEX prodcontpsim ON productionscontainer (simid, production);
+CREATE INDEX prodcont_proc ON productionscontainer (processingid);
+CREATE INDEX prodcont_proc_prod ON productionscontainer (processingid, production);
 
-  CREATE INDEX PRODCONTPSIM ON PRODUCTIONSCONTAINER (SIMID, PRODUCTION);
+---------------------------------------------------------------------------------------
+CREATE TABLE steps(
+     stepid             NUMBER,
+     stepname           varchar2(256),
+     applicationname    varchar2(128) NOT NULL DISABLE,
+     applicationversion varchar2(128) NOT NULL DISABLE,
+     optionfiles        varchar2(1000),
+     dddb               varchar2(256),
+     conddb             varchar2(256),
+     extrapackages      varchar2(256),
+     inserttimestamps   TIMESTAMP (6) DEFAULT sys_extract_utc(systimestamp),
+     visible            char(1) DEFAULT 'Y',
+     inputfiletypes     filetypesarray,
+     outputfiletypes    filetypesarray,
+     processingpass     varchar2(256),
+     usable             varchar2(10) DEFAULT 'Not ready',
+     dqtag              varchar2(256),
+     optionsformat      varchar2(30),
+     ismulticore        char(1) DEFAULT 'N',
+     systemconfig       varchar2(256),
+     mctck              varchar2(256),
+     CHECK (visible IN ('N', 'Y')),
+     PRIMARY KEY (stepid),
+     CONSTRAINT s_processingpass CHECK (processingpass IS NOT NULL),
+     CHECK (usable = 'Yes' OR usable = 'Not ready' OR usable = 'Obsolete'),
+     CHECK (ismulticore IN ('N', 'Y'))
+);
 
-  CREATE INDEX PRODCONT_PROC ON PRODUCTIONSCONTAINER (PROCESSINGID);
+---------------------------------------------------------------------------------------
+CREATE TABLE stepscontainer(
+     production  NUMBER,
+     stepid      NUMBER,
+     step        NUMBER,
+     eventtypeid NUMBER,
+     CONSTRAINT pk_stepcontainer PRIMARY KEY (production, stepid),
+     CONSTRAINT fk_stepcontainer FOREIGN KEY (stepid) REFERENCES steps (stepid),
+     CONSTRAINT fk_stepscontainer_eventtypeid FOREIGN KEY (eventtypeid) REFERENCES eventtypes (eventtypeid)
+);
 
-  CREATE INDEX PRODCONT_PROC_PROD ON PRODUCTIONSCONTAINER (PROCESSINGID, PRODUCTION);
+CREATE INDEX steps_id ON stepscontainer (stepid);
 
-  CREATE TABLE STEPS
-   (	STEPID NUMBER,
-	STEPNAME VARCHAR2(256 BYTE),
-	APPLICATIONNAME VARCHAR2(128 BYTE) NOT NULL DISABLE,
-	APPLICATIONVERSION VARCHAR2(128 BYTE) NOT NULL DISABLE,
-	OPTIONFILES VARCHAR2(1000 BYTE),
-	DDDB VARCHAR2(256 BYTE),
-	CONDDB VARCHAR2(256 BYTE),
-	EXTRAPACKAGES VARCHAR2(256 BYTE),
-	INSERTTIMESTAMPS TIMESTAMP (6) DEFAULT sys_extract_utc(systimestamp),
-	VISIBLE CHAR(1 BYTE) DEFAULT 'Y',
-	INPUTFILETYPES FILETYPESARRAY ,
-	OUTPUTFILETYPES FILETYPESARRAY,
-	PROCESSINGPASS VARCHAR2(256 BYTE),
-	USABLE VARCHAR2(10 BYTE) DEFAULT 'Not ready',
-	DQTAG VARCHAR2(256 BYTE),
-	OPTIONSFORMAT VARCHAR2(30 BYTE),
-	ISMULTICORE CHAR(1 BYTE) DEFAULT 'N',
-	SYSTEMCONFIG VARCHAR2(256 BYTE),
-	MCTCK VARCHAR2(256 BYTE),
-	 CHECK (visible in ('N','Y')),
-	 PRIMARY KEY (STEPID),
-	 CONSTRAINT S_PROCESSINGPASS CHECK (processingpass is not null),
-	 CHECK (USABLE='Yes' OR USABLE='Not ready' OR USABLE='Obsolete'),
-	 CHECK (isMulticore in ('N','Y'))
-   );
 
-  CREATE OR REPLACE EDITIONABLE TRIGGER STEP_INSERT
-before insert on steps
-referencing new as new old as old
-for each row
-declare
-begin
-if :new.DDDB ='NULL' or :new.DDDB = 'None' or :new.DDDB = '' then
-   :new.DDDB:=null;
-end if;
-if :new.conddb='NULL' or :new.Conddb = 'None' or :new.Conddb = '' then
-  :new.conddb := null;
-end if;
-end;
-/
-
-  CREATE OR REPLACE EDITIONABLE TRIGGER STEPS_BEFORE_INSERT
-BEFORE INSERT
-   ON steps
-   FOR EACH ROW
+CREATE OR REPLACE editionable TRIGGER step_insert
+BEFORE INSERT ON steps
+REFERENCING NEW AS NEW OLD AS OLD
+FOR EACH ROW
 DECLARE
 BEGIN
-
-  if INSTR(:new.processingpass,'/') > 0 then
-    RAISE_APPLICATION_ERROR(-20001,'The processing pass name can not contain / characther!!!');
-  END if;
-
+  IF :new.dddb = 'NULL' OR :new.dddb = 'None' OR :new.dddb = '' THEN
+     :new.dddb:=NULL;
+  END IF;
+  IF :new.conddb = 'NULL' OR :new.conddb = 'None' OR :new.conddb = '' THEN
+    :new.conddb := NULL;
+  END IF;
 END;
-/
+ /
 
-  CREATE OR REPLACE EDITIONABLE TRIGGER STEP_UPDATE
-before update on steps
-referencing new as new old as old
-for each row
-declare
-rowcnt number;
-begin
-SELECT COUNT(*) INTO rowcnt from stepscontainer s where s.stepid=:new.stepid;
-if rowcnt > 0 then
-   DBMS_OUTPUT.PUT_LINE('      Tag: '||:new.Visible||:old.stepname);
-   :new.stepname:=:old.stepname;
-   :new.applicationname:=:old.applicationname;
-   :new.applicationversion:=:old.applicationversion;
-   :new.optionfiles:=:old.optionfiles;
-   :new.DDDB:=:old.DDDB;
-   :new.conddb:=:old.conddb;
-   :new.extrapackages:=:old.extrapackages;
-   :new.visible:=:old.visible;
-   :new.inputfiletypes:=:old.inputfiletypes;
-   :new.outputfiletypes:=:old.outputfiletypes;
-   :new.processingpass:=:old.processingpass;
-   --raise_application_error (-20999,'You are not allowed to modify already used steps!');
+ CREATE OR REPLACE editionable TRIGGER steps_before_insert
+BEFORE INSERT ON steps
+FOR EACH ROW
+DECLARE
+BEGIN
+  IF instr(:new.processingpass,'/') > 0 THEN
+    raise_application_error(-20001,'The processing pass name can not contain / characther!!!');
+  END IF;
+END;
+ /
 
-end if;
-end;
-/
+ CREATE OR REPLACE editionable TRIGGER step_update
+BEFORE UPDATE ON steps
+REFERENCING NEW AS NEW OLD AS OLD
+FOR EACH ROW DECLARE rowcnt NUMBER;
+BEGIN
+  SELECT count(*) INTO rowcnt FROM stepscontainer s WHERE s.stepid = :new.stepid;
+    IF rowcnt > 0 THEN
+       dbms_output.put_line('      Tag: ' || :new.visible || :old.stepname);
+       :new.stepname:=:old.stepname;
+       :new.applicationname:=:old.applicationname;
+       :new.applicationversion:=:old.applicationversion;
+       :new.optionfiles:=:old.optionfiles;
+       :new.dddb:=:old.dddb;
+       :new.conddb:=:old.conddb;
+       :new.extrapackages:=:old.extrapackages;
+       :new.visible:=:old.visible;
+       :new.inputfiletypes:=:old.inputfiletypes;
+       :new.outputfiletypes:=:old.outputfiletypes;
+       :new.processingpass:=:old.processingpass;
+       --raise_application_error (-20999,'You are not allowed to modify already used steps!');
+    END IF;
+END;
+ /
 
-CREATE TABLE JOBS
-   (	JOBID NUMBER,
-	CONFIGURATIONID NUMBER,
-	DIRACJOBID NUMBER,
-	DIRACVERSION VARCHAR2(256 BYTE),
-	EVENTINPUTSTAT NUMBER,
-	EXECTIME FLOAT(126),
-	FIRSTEVENTNUMBER NUMBER,
-	GEOMETRYVERSION VARCHAR2(256 BYTE),
-	GRIDJOBID VARCHAR2(256 BYTE),
-	JOBEND TIMESTAMP (6),
-	JOBSTART TIMESTAMP (6),
-	LOCALJOBID VARCHAR2(256 BYTE),
-	LOCATION VARCHAR2(256 BYTE),
-	NAME VARCHAR2(256 BYTE),
-	NUMBEROFEVENTS NUMBER,
-	PRODUCTION NUMBER,
-	PROGRAMNAME VARCHAR2(256 BYTE),
-	PROGRAMVERSION VARCHAR2(256 BYTE),
-	STATISTICSREQUESTED NUMBER,
-	WNCPUPOWER VARCHAR2(256 BYTE),
-	CPUTIME FLOAT(126),
-	WNCACHE VARCHAR2(256 BYTE),
-	WNMEMORY VARCHAR2(256 BYTE),
-	WNMODEL VARCHAR2(256 BYTE),
-	WORKERNODE VARCHAR2(256 BYTE),
-	GENERATOR VARCHAR2(256 BYTE),
-	RUNNUMBER NUMBER,
-	FILLNUMBER NUMBER,
-	WNCPUHS06 FLOAT(126) DEFAULT 0.0,
-	TOTALLUMINOSITY NUMBER DEFAULT 0,
-	TCK VARCHAR2(20 BYTE) DEFAULT 'None',
-	STEPID NUMBER,
-	WNMJFHS06 FLOAT(126),
-	HLT2TCK VARCHAR2(20 BYTE),
-	NUMBEROFPROCESSORS NUMBER DEFAULT 1,
-	  PRIMARY KEY (JOBID),
-	 CONSTRAINT JOB_NAME_UNIQUE UNIQUE (NAME),
-	 CONSTRAINT FK_PRODCONT_PROD FOREIGN KEY (PRODUCTION)
-	  REFERENCES PRODUCTIONSCONTAINER (PRODUCTION),
-	 CONSTRAINT JOBS_FK1 FOREIGN KEY (CONFIGURATIONID)
-	  REFERENCES CONFIGURATIONS (CONFIGURATIONID),
-	 CONSTRAINT FK_JOBS_STEPID FOREIGN KEY (STEPID)
-	  REFERENCES STEPS (STEPID)
-   )
-  PARTITION BY RANGE (PRODUCTION)
-  SUBPARTITION BY HASH (CONFIGURATIONID)
-  SUBPARTITION TEMPLATE (
-    SUBPARTITION CONFIG1,
-    SUBPARTITION CONFIG2,
-    SUBPARTITION CONFIG3,
-    SUBPARTITION CONFIG4,
-    SUBPARTITION CONFIG5,
-    SUBPARTITION CONFIG6,
-    SUBPARTITION CONFIG7,
-    SUBPARTITION CONFIG8 )
- (PARTITION RUNLAST  VALUES LESS THAN (-187450),
- PARTITION RUN2  VALUES LESS THAN (-90000),
- PARTITION RUN1  VALUES LESS THAN (0),
- PARTITION PROD1  VALUES LESS THAN (33612),
- PARTITION PROD2  VALUES LESS THAN (42466),
- PARTITION PROD3  VALUES LESS THAN (49181),
- PARTITION PRODLAST  VALUES LESS THAN (MAXVALUE));
+ ---------------------------------------------------------------------------------------
+CREATE TABLE jobs(
+    jobid               NUMBER,
+    configurationid     NUMBER,
+    diracjobid          NUMBER,
+    diracversion        varchar2(256),
+    eventinputstat      NUMBER,
+    exectime            float(126),
+    firsteventnumber    NUMBER,
+    geometryversion     varchar2(256),
+    gridjobid           varchar2(256),
+    jobend              TIMESTAMP (6),
+    jobstart            TIMESTAMP (6),
+    localjobid          varchar2(256),
+    LOCATION            varchar2(256),
+    name                varchar2(256),
+    numberofevents      NUMBER,
+    production          NUMBER,
+    programname         varchar2(256),
+    programversion      varchar2(256),
+    statisticsrequested NUMBER,
+    wncpupower          varchar2(256),
+    cputime             float(126),
+    wncache             varchar2(256),
+    wnmemory            varchar2(256),
+    wnmodel             varchar2(256),
+    workernode          varchar2(256),
+    generator           varchar2(256),
+    runnumber           NUMBER,
+    fillnumber          NUMBER,
+    wncpuhs06           float(126) DEFAULT 0.0,
+    totalluminosity     NUMBER DEFAULT 0,
+    tck                 varchar2(20) DEFAULT 'None',
+    stepid              NUMBER,
+    wnmjfhs06           float(126),
+    hlt2tck             varchar2(20),
+    numberofprocessors  NUMBER DEFAULT 1,
+    PRIMARY KEY (jobid),
+    CONSTRAINT job_name_unique UNIQUE (name),
+    CONSTRAINT fk_prodcont_prod FOREIGN KEY (production) REFERENCES productionscontainer (production),
+    CONSTRAINT jobs_fk1 FOREIGN KEY (configurationid) REFERENCES configurations (configurationid),
+    CONSTRAINT fk_jobs_stepid FOREIGN KEY (stepid) REFERENCES steps (stepid)
+) PARTITION BY range (production)
+  subpartition BY hash (configurationid)
+  subpartition TEMPLATE (
+    subpartition config1,
+    subpartition config2,
+    subpartition config3,
+    subpartition config4,
+    subpartition config5,
+    subpartition config6,
+    subpartition config7,
+    subpartition config8
+  )
+  (PARTITION runlast  VALUES LESS THAN (-187450),
+   PARTITION run2     VALUES LESS THAN (-90000),
+   PARTITION run1     VALUES LESS THAN (0),
+   PARTITION prod1    VALUES LESS THAN (33612),
+   PARTITION prod2    VALUES LESS THAN (42466),
+   PARTITION prod3    VALUES LESS THAN (49181),
+   PARTITION prodlast VALUES LESS THAN (MAXVALUE));
 
-  CREATE INDEX CONF_JOB_RUN ON JOBS (CONFIGURATIONID, JOBID, RUNNUMBER);
+CREATE INDEX conf_job_run ON jobs (configurationid, jobid, runnumber);
+CREATE INDEX jobsprognameandversion ON jobs (programname, programversion);
+CREATE INDEX jobs_diracjobid_jobid ON jobs (diracjobid, jobid) LOCAL;
+CREATE INDEX jobs_fill_runnumber ON jobs (fillnumber, runnumber);
+CREATE INDEX jobs_productionid ON jobs (production);
+CREATE INDEX jobs_prod_config_jobid ON jobs (production, configurationid, jobid) LOCAL;
+CREATE INDEX prod_start_end ON jobs (production, jobstart, jobend);
+CREATE INDEX runnumber ON jobs (runnumber);
 
-  CREATE INDEX JOBSPROGNAMEANDVERSION ON JOBS (PROGRAMNAME, PROGRAMVERSION);
 
-  CREATE INDEX JOBS_DIRACJOBID_JOBID ON JOBS (DIRACJOBID, JOBID) LOCAL;
+---------------------------------------------------------------------------------------
+CREATE TABLE files(
+    fileid          NUMBER,
+    adler32         varchar2(256),
+    creationdate    TIMESTAMP (6),
+    eventstat       NUMBER,
+    eventtypeid     NUMBER,
+    filename        varchar2(256) NOT NULL,
+    filetypeid      NUMBER,
+    gotreplica      varchar2(3) DEFAULT 'No',
+    guid            varchar2(256) NOT NULL,
+    jobid           number(38, 0),
+    md5sum          varchar2(256) NOT NULL,
+    filesize        NUMBER DEFAULT 0,
+    qualityid       NUMBER DEFAULT 1,
+    inserttimestamp TIMESTAMP (6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    fullstat        NUMBER,
+    physicstat      NUMBER,
+    luminosity      NUMBER DEFAULT 0,
+    visibilityflag  char(1) DEFAULT 'Y',
+    instluminosity  NUMBER DEFAULT 0,
+    CONSTRAINT files_pk11 PRIMARY KEY (fileid),
+    CONSTRAINT files_filename_unique UNIQUE (filename),
+    CONSTRAINT check_physicstat CHECK (physicstat < 0),
+    CHECK (visibilityflag IN ('N', 'Y')),
+    CONSTRAINT files_fk11 FOREIGN KEY (eventtypeid) REFERENCES eventtypes (eventtypeid),
+    CONSTRAINT files_fk21 FOREIGN KEY (filetypeid) REFERENCES filetypes (filetypeid),
+    CONSTRAINT fk_qualityid FOREIGN KEY (qualityid) REFERENCES dataquality (qualityid),
+    CONSTRAINT files_fk31 FOREIGN KEY (jobid) REFERENCES jobs (jobid) ON DELETE CASCADE
+) PARTITION BY range (jobid) (
+    PARTITION sect_0020m VALUES LESS THAN (20000000),
+    PARTITION sect_0040m VALUES LESS THAN (40000000),
+    PARTITION sect_0060m VALUES LESS THAN (60000000),
+    PARTITION sect_0080m VALUES LESS THAN (80000000),
+    PARTITION sect_0100m VALUES LESS THAN (100000000),
+    PARTITION sect_0120m VALUES LESS THAN (120000000),
+    PARTITION sect_0140m VALUES LESS THAN (140000000),
+    PARTITION sect_0160m VALUES LESS THAN (160000000),
+    PARTITION sect_0180m VALUES LESS THAN (180000000),
+    PARTITION sect_0200m VALUES LESS THAN (200000000),
+    PARTITION sect_0220m VALUES LESS THAN (220000000),
+    PARTITION sect_0240m VALUES LESS THAN (240000000),
+    PARTITION sect_0260m VALUES LESS THAN (260000000),
+    PARTITION sect_0280m VALUES LESS THAN (280000000),
+    PARTITION sect_0300m VALUES LESS THAN (300000000),
+    PARTITION sect_0320m VALUES LESS THAN (320000000),
+    PARTITION sect_0340m VALUES LESS THAN (340000000),
+    PARTITION sect_0360m VALUES LESS THAN (360000000),
+    PARTITION sect_0380m VALUES LESS THAN (380000000),
+    PARTITION sect_0400m VALUES LESS THAN (400000000),
+    PARTITION sect_0420m VALUES LESS THAN (420000000),
+    PARTITION sect_0440m VALUES LESS THAN (440000000),
+    PARTITION sect_0460m VALUES LESS THAN (460000000),
+    PARTITION sect_0480m VALUES LESS THAN (480000000),
+    PARTITION sect_0500m VALUES LESS THAN (500000000),
+    PARTITION sect_0520m VALUES LESS THAN (520000000)
+) nologging;
 
-  CREATE INDEX JOBS_FILL_RUNNUMBER ON JOBS (FILLNUMBER, RUNNUMBER);
+CREATE INDEX files_filetypeid ON files (filetypeid);
+ALTER INDEX files_filetypeid unusable;
+CREATE INDEX files_guid ON files (guid);
+CREATE INDEX files_job_event_filetype ON files (jobid, eventtypeid, filetypeid) LOCAL;
+CREATE INDEX files_time_gotreplica ON files (inserttimestamp, gotreplica);
+ALTER INDEX files_time_gotreplica invisible;
+CREATE INDEX f_gotreplica ON files (gotreplica, visibilityflag, jobid) LOCAL;
 
-  CREATE INDEX JOBS_PRODUCTIONID ON JOBS (PRODUCTION);
 
-  CREATE INDEX JOBS_PROD_CONFIG_JOBID ON JOBS (PRODUCTION, CONFIGURATIONID, JOBID) LOCAL;
-
-  CREATE INDEX PROD_START_END ON JOBS (PRODUCTION, JOBSTART, JOBEND);
-
-  CREATE INDEX RUNNUMBER ON JOBS (RUNNUMBER);
-
-CREATE TABLE FILES
-   (	FILEID NUMBER,
-	ADLER32 VARCHAR2(256 BYTE),
-	CREATIONDATE TIMESTAMP (6),
-	EVENTSTAT NUMBER,
-	EVENTTYPEID NUMBER,
-	FILENAME VARCHAR2(256 BYTE) NOT NULL,
-	FILETYPEID NUMBER,
-	GOTREPLICA VARCHAR2(3 BYTE) DEFAULT 'No',
-	GUID VARCHAR2(256 BYTE) NOT NULL,
-	JOBID NUMBER(38,0),
-	MD5SUM VARCHAR2(256 BYTE) NOT NULL,
-	FILESIZE NUMBER DEFAULT 0,
-	QUALITYID NUMBER DEFAULT 1,
-	INSERTTIMESTAMP TIMESTAMP (6) DEFAULT current_timestamp NOT NULL,
-	FULLSTAT NUMBER,
-	PHYSICSTAT NUMBER,
-	LUMINOSITY NUMBER DEFAULT 0,
-	VISIBILITYFLAG CHAR(1 BYTE) DEFAULT 'Y',
-	INSTLUMINOSITY NUMBER DEFAULT 0,
-	 CONSTRAINT FILES_PK11 PRIMARY KEY (FILEID),
-	 CONSTRAINT FILES_FILENAME_UNIQUE UNIQUE (FILENAME),
-	 CONSTRAINT CHECK_PHYSICSTAT CHECK (physicstat < 0),
-	 CHECK (visibilityFlag in ('N','Y')),
-	 CONSTRAINT FILES_FK11 FOREIGN KEY (EVENTTYPEID)
-	  REFERENCES EVENTTYPES (EVENTTYPEID),
-	 CONSTRAINT FILES_FK21 FOREIGN KEY (FILETYPEID)
-	  REFERENCES FILETYPES (FILETYPEID),
-	 CONSTRAINT FK_QUALITYID FOREIGN KEY (QUALITYID)
-	  REFERENCES DATAQUALITY (QUALITYID),
-	 CONSTRAINT FILES_FK31 FOREIGN KEY (JOBID)
-	  REFERENCES JOBS (JOBID) ON DELETE CASCADE
-   ) PARTITION BY RANGE (JOBID)
- (PARTITION SECT_0020M  VALUES LESS THAN (20000000),
- PARTITION SECT_0040M  VALUES LESS THAN (40000000),
- PARTITION SECT_0060M  VALUES LESS THAN (60000000),
- PARTITION SECT_0080M  VALUES LESS THAN (80000000),
- PARTITION SECT_0100M  VALUES LESS THAN (100000000),
- PARTITION SECT_0120M  VALUES LESS THAN (120000000),
- PARTITION SECT_0140M  VALUES LESS THAN (140000000),
- PARTITION SECT_0160M  VALUES LESS THAN (160000000),
- PARTITION SECT_0180M  VALUES LESS THAN (180000000),
- PARTITION SECT_0200M  VALUES LESS THAN (200000000),
- PARTITION SECT_0220M  VALUES LESS THAN (220000000),
- PARTITION SECT_0240M  VALUES LESS THAN (240000000),
- PARTITION SECT_0260M  VALUES LESS THAN (260000000),
- PARTITION SECT_0280M  VALUES LESS THAN (280000000),
- PARTITION SECT_0300M  VALUES LESS THAN (300000000),
- PARTITION SECT_0320M  VALUES LESS THAN (320000000),
- PARTITION SECT_0340M  VALUES LESS THAN (340000000),
- PARTITION SECT_0360M  VALUES LESS THAN (360000000),
- PARTITION SECT_0380M  VALUES LESS THAN (380000000),
- PARTITION SECT_0400M  VALUES LESS THAN (400000000),
- PARTITION SECT_0420M  VALUES LESS THAN (420000000),
- PARTITION SECT_0440M  VALUES LESS THAN (440000000),
- PARTITION SECT_0460M  VALUES LESS THAN (460000000),
- PARTITION SECT_0480M  VALUES LESS THAN (480000000),
- PARTITION SECT_0500M  VALUES LESS THAN (500000000),
- PARTITION SECT_0520M  VALUES LESS THAN (520000000)) NOLOGGING;
-
-CREATE INDEX FILES_FILETYPEID ON FILES (FILETYPEID);
-ALTER INDEX FILES_FILETYPEID  UNUSABLE;
-
-CREATE INDEX FILES_GUID ON FILES (GUID);
-
-CREATE INDEX FILES_JOB_EVENT_FILETYPE ON FILES (JOBID, EVENTTYPEID, FILETYPEID) local;
-
-CREATE INDEX FILES_TIME_GOTREPLICA ON FILES (INSERTTIMESTAMP, GOTREPLICA);
-ALTER INDEX FILES_TIME_GOTREPLICA invisible;
-
-CREATE INDEX F_GOTREPLICA ON FILES (GOTREPLICA, VISIBILITYFLAG, JOBID) local;
-
-CREATE TABLE INPUTFILES
-   (	FILEID NUMBER,
-	JOBID NUMBER,
-	 CONSTRAINT PK_INPUTFILES_ PRIMARY KEY (FILEID, JOBID),
-	 CONSTRAINT FILES_FK1 FOREIGN KEY (FILEID)
-	  REFERENCES FILES (FILEID),
-	 CONSTRAINT INPUTFILES_FK31 FOREIGN KEY (JOBID)
-	  REFERENCES JOBS (JOBID) ON DELETE CASCADE);
-
-CREATE INDEX INPUTFILES_JOBID ON INPUTFILES (JOBID);
+---------------------------------------------------------------------------------------
+CREATE TABLE inputfiles(
+    fileid NUMBER,
+    jobid  NUMBER,
+    CONSTRAINT pk_inputfiles_ PRIMARY KEY (fileid, jobid),
+    CONSTRAINT files_fk1 FOREIGN KEY (fileid) REFERENCES files (fileid),
+    CONSTRAINT inputfiles_fk31 FOREIGN KEY (jobid) REFERENCES jobs (jobid) ON
+    DELETE CASCADE
+);
 
 CREATE INDEX inputfiles_jobid_test ON inputfiles (jobid, fileid)
-  GLOBAL PARTITION BY RANGE(jobid)
-(PARTITION SECT_0020M  VALUES LESS THAN (20000000),
- PARTITION SECT_0040M  VALUES LESS THAN (40000000),
- PARTITION SECT_0060M  VALUES LESS THAN (60000000),
- PARTITION SECT_0080M  VALUES LESS THAN (80000000),
- PARTITION SECT_0100M  VALUES LESS THAN (100000000),
- PARTITION SECT_0120M  VALUES LESS THAN (120000000),
- PARTITION SECT_0140M  VALUES LESS THAN (140000000),
- PARTITION SECT_0160M  VALUES LESS THAN (160000000),
- PARTITION SECT_0180M  VALUES LESS THAN (180000000),
- PARTITION SECT_0200M  VALUES LESS THAN (200000000),
- PARTITION SECT_0220M  VALUES LESS THAN (220000000),
- PARTITION SECT_0240M  VALUES LESS THAN (240000000),
- PARTITION SECT_0260M  VALUES LESS THAN (260000000),
- PARTITION SECT_0280M  VALUES LESS THAN (280000000),
- PARTITION SECT_0300M  VALUES LESS THAN (300000000),
- PARTITION SECT_0320M  VALUES LESS THAN (320000000),
- PARTITION SECT_0340M  VALUES LESS THAN (340000000),
- PARTITION SECT_0360M  VALUES LESS THAN (360000000),
- PARTITION SECT_0380M  VALUES LESS THAN (380000000),
- PARTITION SECT_0400M  VALUES LESS THAN (400000000),
- PARTITION SECT_0420M  VALUES LESS THAN (420000000),
- PARTITION SECT_0440M  VALUES LESS THAN (440000000),
- PARTITION SECT_0460M  VALUES LESS THAN (460000000),
- PARTITION SECT_0480M  VALUES LESS THAN (480000000),
- PARTITION SECT_0500M  VALUES LESS THAN (500000000),
- PARTITION SECT_0520M  VALUES LESS THAN (520000000),
- PARTITION p_greater_than_520000000 VALUES LESS THAN (maxvalue));
+  GLOBAL PARTITION BY range(jobid)
+(PARTITION sect_0020m  VALUES LESS THAN (20000000),
+ PARTITION sect_0040m  VALUES LESS THAN (40000000),
+ PARTITION sect_0060m  VALUES LESS THAN (60000000),
+ PARTITION sect_0080m  VALUES LESS THAN (80000000),
+ PARTITION sect_0100m  VALUES LESS THAN (100000000),
+ PARTITION sect_0120m  VALUES LESS THAN (120000000),
+ PARTITION sect_0140m  VALUES LESS THAN (140000000),
+ PARTITION sect_0160m  VALUES LESS THAN (160000000),
+ PARTITION sect_0180m  VALUES LESS THAN (180000000),
+ PARTITION sect_0200m  VALUES LESS THAN (200000000),
+ PARTITION sect_0220m  VALUES LESS THAN (220000000),
+ PARTITION sect_0240m  VALUES LESS THAN (240000000),
+ PARTITION sect_0260m  VALUES LESS THAN (260000000),
+ PARTITION sect_0280m  VALUES LESS THAN (280000000),
+ PARTITION sect_0300m  VALUES LESS THAN (300000000),
+ PARTITION sect_0320m  VALUES LESS THAN (320000000),
+ PARTITION sect_0340m  VALUES LESS THAN (340000000),
+ PARTITION sect_0360m  VALUES LESS THAN (360000000),
+ PARTITION sect_0380m  VALUES LESS THAN (380000000),
+ PARTITION sect_0400m  VALUES LESS THAN (400000000),
+ PARTITION sect_0420m  VALUES LESS THAN (420000000),
+ PARTITION sect_0440m  VALUES LESS THAN (440000000),
+ PARTITION sect_0460m  VALUES LESS THAN (460000000),
+ PARTITION sect_0480m  VALUES LESS THAN (480000000),
+ PARTITION sect_0500m  VALUES LESS THAN (500000000),
+ PARTITION sect_0520m  VALUES LESS THAN (520000000),
+ PARTITION p_greater_than_520000000 VALUES LESS THAN (MAXVALUE));
 
-  CREATE TABLE NEWRUNQUALITY
-   (	RUNNUMBER NUMBER,
-	QUALITYID NUMBER,
-	PROCESSINGID NUMBER,
-	 CONSTRAINT PK_RUN_QUALITY PRIMARY KEY (RUNNUMBER, PROCESSINGID),
-	 CONSTRAINT FK_QUALITYID_RUN FOREIGN KEY (QUALITYID)
-	  REFERENCES DATAQUALITY (QUALITYID),
-	 CONSTRAINT PROCESSING_ID FOREIGN KEY (PROCESSINGID)
-	  REFERENCES PROCESSING (ID));
 
-  CREATE INDEX NEWRUNQUALITY_PROC ON NEWRUNQUALITY (PROCESSINGID);
+---------------------------------------------------------------------------------------
+CREATE TABLE newrunquality(
+    runnumber    NUMBER,
+    qualityid    NUMBER,
+    processingid NUMBER,
+    CONSTRAINT pk_run_quality PRIMARY KEY (runnumber, processingid),
+    CONSTRAINT fk_qualityid_run FOREIGN KEY (qualityid) REFERENCES dataquality (qualityid),
+    CONSTRAINT processing_id FOREIGN KEY (processingid) REFERENCES processing (id)
+  );
 
-CREATE OR REPLACE EDITIONABLE TRIGGER RUNQUALITY
-before update or insert on newrunquality
-referencing new as new old as old
-for each row
-begin
-   update files SET insertTimestamp=sys_extract_utc(systimestamp + interval '5' minute), files.qualityid= :new.qualityid where jobid in (select j.jobid from jobs j where j.runnumber= :new.runnumber and j.production<0);
-   update files SET insertTimestamp=sys_extract_utc(systimestamp + interval '5' minute), files.qualityid= :new.qualityid where files.fileid in (select f.fileid from files f, jobs j where j.jobid=f.jobid and j.runnumber= :new.runnumber and f.gotreplica='Yes'and j.production in (select prod.production from productionscontainer prod where prod.processingid= :new.processingid));
-end;
-/
+CREATE INDEX newrunquality_proc ON newrunquality (processingid);
 
-CREATE TABLE PRODUCTIONOUTPUTFILES
-   (	PRODUCTION NUMBER,
-	STEPID NUMBER,
-	EVENTTYPEID NUMBER,
-	FILETYPEID NUMBER,
-	VISIBLE CHAR(1 BYTE) DEFAULT 'Y',
-	GOTREPLICA VARCHAR2(3 BYTE) DEFAULT 'No',
-	 CONSTRAINT PK_PRODUCTIONOUTPUTFILES_P PRIMARY KEY (PRODUCTION, STEPID, FILETYPEID, EVENTTYPEID, VISIBLE),
-	 CONSTRAINT FK_PRODUCTIONOUTPUTFILES_STEPS FOREIGN KEY (STEPID)
-	  REFERENCES STEPS (STEPID),
-	 CONSTRAINT FK_PRODUCTIONOUTPUTFILES_EVT FOREIGN KEY (EVENTTYPEID)
-	  REFERENCES EVENTTYPES (EVENTTYPEID),
-	 CONSTRAINT FK_PRODUCTIONOUTPUTFILES_FT FOREIGN KEY (FILETYPEID)
-	  REFERENCES FILETYPES (FILETYPEID),
-	 CONSTRAINT FK_PRODUCTIONOUTPUTFILES_PROD FOREIGN KEY (PRODUCTION)
-	  REFERENCES PRODUCTIONSCONTAINER (PRODUCTION) ON DELETE CASCADE
-   );
+CREATE OR REPLACE editionable TRIGGER runquality
+BEFORE UPDATE OR INSERT ON newrunquality REFERENCING NEW AS NEW OLD AS OLD
+FOR EACH ROW
+  BEGIN
+    UPDATE
+      files
+    SET
+      inserttimestamp = sys_extract_utc(systimestamp + INTERVAL '5' MINUTE), files.qualityid = :NEW.qualityid
+    WHERE
+      jobid IN
+      (
+        SELECT
+          j.jobid
+        FROM
+          jobs j
+        WHERE
+          j.runnumber = :NEW.runnumber
+          AND j.production < 0
+      );
+    UPDATE
+      files
+    SET
+      inserttimestamp = sys_extract_utc(systimestamp + INTERVAL '5' MINUTE),
+      files.qualityid = :NEW.qualityid
+    WHERE
+      files.fileid IN
+      (
+        SELECT
+          f.fileid
+        FROM
+          files f,
+          jobs j
+        WHERE
+          j.jobid = f.jobid
+          AND j.runnumber = :NEW.runnumber
+          AND f.gotreplica = 'Yes'
+          AND j.production IN
+          (
+            SELECT
+              prod.production
+            FROM
+              productionscontainer prod
+            WHERE
+              prod.processingid = :NEW.processingid
+          )
+      );
+  END;
+ /
 
-  CREATE TABLE RUNSTATUS
-   (	RUNNUMBER NUMBER,
-	JOBID NUMBER,
-	FINISHED CHAR(1 BYTE) DEFAULT 'N',
-	 CONSTRAINT PK_RUNSTATUS PRIMARY KEY (RUNNUMBER, JOBID),
-	 CONSTRAINT FK_RUNSTATUS FOREIGN KEY (JOBID)
-	  REFERENCES JOBS (JOBID)
-   );
+ ---------------------------------------------------------------------------------------
+CREATE TABLE productionoutputfiles(
+    production  NUMBER,
+    stepid      NUMBER,
+    eventtypeid NUMBER,
+    filetypeid  NUMBER,
+    visible     char(1) DEFAULT 'Y',
+    gotreplica  varchar2(3) DEFAULT 'No',
+    CONSTRAINT pk_productionoutputfiles_p PRIMARY KEY (production, stepid, filetypeid, eventtypeid, visible),
+    CONSTRAINT fk_productionoutputfiles_steps FOREIGN KEY (stepid) REFERENCES steps (stepid),
+    CONSTRAINT fk_productionoutputfiles_evt FOREIGN KEY (eventtypeid) REFERENCES eventtypes (eventtypeid),
+    CONSTRAINT fk_productionoutputfiles_ft FOREIGN KEY (filetypeid) REFERENCES filetypes (filetypeid),
+    CONSTRAINT fk_productionoutputfiles_prod FOREIGN KEY (production)
+    REFERENCES productionscontainer (production) ON DELETE CASCADE
+);
 
-   CREATE OR REPLACE EDITIONABLE TRIGGER RUNSTATUS
-before update on runstatus
-referencing new as new old as old
-for each row
-begin
-   BOOKKEEPINGORACLEDB.updateLuminosity(:new.runnumber);
-end;
-/
 
- CREATE TABLE RUNTIMEPROJECTS
-   (	STEPID NUMBER,
-	RUNTIMEPROJECTID NUMBER,
-	 CONSTRAINT RUNTIMEPROJECT_PK PRIMARY KEY (RUNTIMEPROJECTID, STEPID),
-	 CONSTRAINT RUNTIMEPROJECT_FK1 FOREIGN KEY (STEPID)
-	  REFERENCES STEPS (STEPID),
-	 CONSTRAINT RUNTIMEPROJECT_FK2 FOREIGN KEY (RUNTIMEPROJECTID)
-	  REFERENCES STEPS (STEPID)
-   );
+---------------------------------------------------------------------------------------
+CREATE TABLE runstatus(
+    runnumber NUMBER,
+    jobid NUMBER,
+    finished char(1) DEFAULT 'N',
+    CONSTRAINT pk_runstatus PRIMARY KEY (runnumber, jobid),
+    CONSTRAINT fk_runstatus FOREIGN KEY (jobid)
+    REFERENCES jobs (jobid)
+);
 
-CREATE TABLE STEPSCONTAINER
-   (	PRODUCTION NUMBER,
-	STEPID NUMBER,
-	STEP NUMBER,
-	EVENTTYPEID NUMBER,
-	 CONSTRAINT PK_STEPCONTAINER PRIMARY KEY (PRODUCTION, STEPID),
-	 CONSTRAINT FK_STEPCONTAINER FOREIGN KEY (STEPID)
-	  REFERENCES STEPS (STEPID),
-	 CONSTRAINT FK_STEPSCONTAINER_EVENTTYPEID FOREIGN KEY (EVENTTYPEID)
-	  REFERENCES EVENTTYPES (EVENTTYPEID)
-   );
+CREATE OR REPLACE editionable TRIGGER runstatus
+BEFORE UPDATE ON runstatus
+REFERENCING NEW AS NEW OLD AS OLD
+FOR EACH ROW
+  BEGIN
+     bookkeepingoracledb.updateluminosity(:new.runnumber);
+  END;
+ /
+---------------------------------------------------------------------------------------
+CREATE TABLE runtimeprojects(
+    stepid           NUMBER,
+    runtimeprojectid NUMBER,
+    CONSTRAINT runtimeproject_pk PRIMARY KEY (runtimeprojectid, stepid),
+    CONSTRAINT runtimeproject_fk1 FOREIGN KEY (stepid) REFERENCES steps (stepid),
+    CONSTRAINT runtimeproject_fk2 FOREIGN KEY (runtimeprojectid) REFERENCES steps (stepid)
+);
 
-  CREATE INDEX STEPS_ID ON STEPSCONTAINER (STEPID);
 
-CREATE TABLE prodrunview_table (
+---------------------------------------------------------------------------------------
+CREATE TABLE prodrunview (
   production number NOT NULL,
   runnumber number NOT NULL,
   CONSTRAINT prod_run_const UNIQUE (production, runnumber)
 );
 
+---------------------------------------------------------------------------------------
 BEGIN
-  DBMS_SCHEDULER.CREATE_JOB (
+  dbms_scheduler.create_job (
      job_name             => 'produpdatejob',
      job_type             => 'PLSQL_BLOCK',
      job_action           => 'BEGIN BKUTILITIES.updateProdOutputFiles(); END;',
      repeat_interval      => 'FREQ=MINUTELY; interval=10',
      start_date           => systimestamp,
-     enabled              =>  TRUE
+     enabled              => TRUE
      );
 END;
-/
+ /
 
-BEGIN
-  DBMS_SCHEDULER.CREATE_JOB (
+ BEGIN
+  dbms_scheduler.create_job (
      job_name             => 'prodrunupdatejob',
      job_type             => 'PLSQL_BLOCK',
      job_action           => 'BEGIN BKUTILITIES.updateprodrunview(); END;',
@@ -736,4 +777,4 @@ BEGIN
      enabled              =>  TRUE
      );
 END;
-/
+ /

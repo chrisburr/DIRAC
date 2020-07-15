@@ -194,10 +194,8 @@ integration_tests:
     - cd DIRAC
     - git checkout "$diracRef"
     - cd ..
-    # TODO: Fix and re-enable bookkeeping and data management tests
+    # TODO: Fix and re-enable the data management tests
     - sed -E -i 's@^.*/Test_DataManager.py .*$@@g' DIRAC/tests/Integration/all_integration_client_tests.sh
-    - sed -E -i 's@^.*/Test_Bookkeeping.py" .*$@@g' LHCbDIRAC/tests/Integration/all_integration_client_tests.sh
-    - sed -E -i 's@^.*/Test_BookkeepingGUImethods.py" .*$@@g' LHCbDIRAC/tests/Integration/all_integration_client_tests.sh
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
@@ -226,7 +224,7 @@ integration_tests:
         -e ORACLE_PWD=bkdbpass \
         -e ORACLE_CHARACTERSET=AL32UTF8 \
         -v $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME:/repo \
-        gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database-snapshots:12.2.0.1-ee
+        gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database-snapshots:19.3.0-ee
   script:
     - source DIRAC/tests/CI/run_docker_setup.sh
     - prepareEnvironment
