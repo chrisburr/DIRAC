@@ -394,8 +394,9 @@ class BookkeepingClient(Client):
   def getProductionFilesStatus(self, productionid=None, lfns=None):
     """Status of the files, which belong to a given production.
 
-    :param int productionid:
-    :return: the file status in the bkk for a given production or a list of lfns.
+        :param str/int prodID: production (transformation) ID
+        :param list lfns: list of LFNs
+        :returns: the file status in the bkk for a given production or a list of lfns.
     """
     if lfns is None:
       lfns = []
@@ -407,6 +408,9 @@ class BookkeepingClient(Client):
 
   def getProductionInformation(self, prodID):
     """ Get the production information.
+
+        :param str/int prodID: production (transformation) ID
+        :returns: S_OK with dictionary of production info
     """
     res = self._getRPC().getProductionInformation(prodID)
     if not res['OK']:
@@ -468,33 +472,21 @@ class BookkeepingClient(Client):
         :param list steps: list of steps (which are tuples)
         :returns: list of resolved steps
     """
-
-    productionSteps = []
+    if not steps:
+      return []
 
     # DDDB and CondDB are often registered as "fromPreviousStep", so they should be resolved
     # This will search among the steps in the current production (might not be final)
-    # We assume that dddb and conddb are both either set, or not.
-    for step in reversed(steps):  # starting from the end
-      self.log.debug("[getSteps] StepID: %s" % step[7])
+    # A fair assumption is that dddb and conddb are both either set, or not (so both 'fromPreviousStep').
 
-      # dddb is in step[4], conddb in step[5]
-      if step[4] != 'fromPreviousStep':
-        productionSteps.insert(0, step)
-      else:  # now I need to serch backward
-        found = False
-        searchedSubList = steps[:steps.index(step)]
-        for searchedStep in reversed(searchedSubList):
-          if searchedStep[4] != 'fromPreviousStep':
-            stepCorrected = list(step)
-            stepCorrected[4] = searchedStep[4]
-            stepCorrected[5] = searchedStep[5]
-            productionSteps.insert(0, tuple(stepCorrected))
-            found = True
-            break
-        # insert the step anyway
-        if not found:
-          productionSteps.insert(0, step)
-
+    productionSteps = [steps[0]]
+    for i, nextStep in enumerate(steps[1:]):
+      nextStep = list(nextStep)
+      if nextStep[4] == 'fromPreviousStep':
+        nextStep[4] = productionSteps[i][4]
+      if nextStep[5] == 'fromPreviousStep':
+        nextStep[5] = productionSteps[i][5]
+      productionSteps.append(tuple(nextStep))
     return productionSteps
 
   def _getPreviousProductions(self, prodID):

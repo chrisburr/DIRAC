@@ -1244,18 +1244,13 @@ class BookkeepingManagerHandler(RequestHandler):
   @staticmethod
   def export_insertEventType(evid, desc, primary):
     """It inserts an event type to the Bookkeeping Metadata catalogue."""
-    result = S_ERROR()
-
     retVal = dataMGMT_.checkEventType(evid)
     if not retVal['OK']:  # meaning the event type is not already inserted
       retVal = dataMGMT_.insertEventTypes(evid, desc, primary)
-      if retVal['OK']:
-        result = S_OK(str(evid) + ' event type added successfully!')
-      else:
-        result = retVal
-    else:
-      result = S_OK(str(evid) + ' event type exists')
-    return result
+      if not retVal['OK']:
+        return retVal
+      return S_OK(str(evid) + ' event type added successfully!')
+    return S_OK(str(evid) + ' event type exists')
 
   #############################################################################
   types_addEventType = [long, basestring, basestring]
@@ -1313,9 +1308,7 @@ class BookkeepingManagerHandler(RequestHandler):
     pgroup = in_dict.get('ProcessingPass', default)
     ftype = in_dict.get('FileType', default)
     evttype = in_dict.get('EventType', default)
-    retVal = dataMGMT_.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
-
-    return retVal
+    return dataMGMT_.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
 
   #############################################################################
   types_getProductionInformations = [(long, int)]
@@ -1356,7 +1349,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if not prodinfos:
       self.log.error("No Configs/Event type for production", prodid)
-      return S_ERROR('No Configs/Event type')
+      return S_ERROR("No Configs/Event type")
 
     cname = prodinfos[0][0]
     cversion = prodinfos[0][1]
@@ -1365,13 +1358,12 @@ class BookkeepingManagerHandler(RequestHandler):
     res = dataMGMT_.getProductionSimulationCond(prodid)
     if not res['OK']:
       return S_ERROR(res['Message'])
-    else:
-      path += res['Value']
+    path += res['Value']
+
     res = dataMGMT_.getProductionProcessingPass(prodid)
     if not res['OK']:
       return S_ERROR(res['Message'])
-    else:
-      path += res['Value']
+    path += res['Value']
     prefix = '\n' + path
 
     # FIXME: I think this will crash due to iterating over None if dataMGMT_.getProductionNbOfEvents(prodid) fails.
@@ -1688,10 +1680,9 @@ class BookkeepingManagerHandler(RequestHandler):
                                 filesize, tck, jobStart, jobEnd)
     if not retVal['OK']:
       return S_ERROR(retVal['Message'])
-    else:
-      values = retVal['Value']
-      for i in values:
-        result += [i[0]]
+    values = retVal['Value']
+    for i in values:
+      result += [i[0]]
 
     return S_OK(result)
 
@@ -1773,47 +1764,47 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if not retVal['OK']:
       return retVal
-    else:
-      values = retVal['Value']
-      nbfiles = 0
-      nbevents = 0
-      evinput = 0
-      fsize = 0
-      tLumi = 0
-      lumi = 0
-      ilumi = 0
-      for i in values:
-        nbfiles = nbfiles + 1
-        row = dict(zip(parameters, i))
-        if row['EventStat'] is not None:
-          nbevents += row['EventStat']
-        if row['EventInputStat'] is not None:
-          evinput += row['EventInputStat']
-        if row['FileSize'] is not None:
-          fsize += row['FileSize']
-        if row['TotalLuminosity'] is not None:
-          tLumi += row['TotalLuminosity']
-        if row['Luminosity'] is not None:
-          lumi += row['Luminosity']
-        if row['InstLuminosity'] is not None:
-          ilumi += row['InstLuminosity']
-        result[row['FileName']] = {'EventStat': row['EventStat'],
-                                   'EventInputStat': row['EventInputStat'],
-                                   'Runnumber': row['RunNumber'],
-                                   'Fillnumber': row['FillNumber'],
-                                   'FileSize': row['FileSize'],
-                                   'TotalLuminosity': row['TotalLuminosity'],
-                                   'Luminosity': row['Luminosity'],
-                                   'InstLuminosity': row['InstLuminosity'],
-                                   'TCK': row['TCK']}
-      if nbfiles > 0:
-        summary = {'Number Of Files': nbfiles,
-                   'Number of Events': nbevents,
-                   'EventInputStat': evinput,
-                   'FileSize': fsize / 1000000000.,
-                   'TotalLuminosity': tLumi,
-                   'Luminosity': lumi,
-                   'InstLuminosity': ilumi}
+
+    values = retVal['Value']
+    nbfiles = 0
+    nbevents = 0
+    evinput = 0
+    fsize = 0
+    tLumi = 0
+    lumi = 0
+    ilumi = 0
+    for i in values:
+      nbfiles = nbfiles + 1
+      row = dict(zip(parameters, i))
+      if row['EventStat'] is not None:
+        nbevents += row['EventStat']
+      if row['EventInputStat'] is not None:
+        evinput += row['EventInputStat']
+      if row['FileSize'] is not None:
+        fsize += row['FileSize']
+      if row['TotalLuminosity'] is not None:
+        tLumi += row['TotalLuminosity']
+      if row['Luminosity'] is not None:
+        lumi += row['Luminosity']
+      if row['InstLuminosity'] is not None:
+        ilumi += row['InstLuminosity']
+      result[row['FileName']] = {'EventStat': row['EventStat'],
+                                 'EventInputStat': row['EventInputStat'],
+                                 'Runnumber': row['RunNumber'],
+                                 'Fillnumber': row['FillNumber'],
+                                 'FileSize': row['FileSize'],
+                                 'TotalLuminosity': row['TotalLuminosity'],
+                                 'Luminosity': row['Luminosity'],
+                                 'InstLuminosity': row['InstLuminosity'],
+                                 'TCK': row['TCK']}
+    if nbfiles > 0:
+      summary = {'Number Of Files': nbfiles,
+                 'Number of Events': nbevents,
+                 'EventInputStat': evinput,
+                 'FileSize': fsize / 1000000000.,
+                 'TotalLuminosity': tLumi,
+                 'Luminosity': lumi,
+                 'InstLuminosity': ilumi}
     return S_OK({'LFNs': result, 'Summary': summary})
 
   #############################################################################
@@ -1903,8 +1894,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if 'Production' in in_dict:
       return dataMGMT_.getProductionProcessingPassSteps(in_dict['Production'])
-    else:
-      return S_ERROR('The Production dictionary key is missing!!!')
+    return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
   types_getProductionOutputFiles = [dict]
@@ -1927,8 +1917,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     if production != default:
       return dataMGMT_.getProductionOutputFileTypes(production, stepid)
-    else:
-      return S_ERROR('The Production dictionary key is missing!!!')
+    return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
   types_getRunQuality = [basestring, basestring]
@@ -1956,14 +1945,11 @@ class BookkeepingManagerHandler(RequestHandler):
 
     Input parameters:
     """
-    result = S_ERROR()
     cName = in_dict.get('ConfigName', default)
     cVersion = in_dict.get('ConfigVersion', default)
     if cName != default and cVersion != default:
-      result = dataMGMT_.getRuns(cName, cVersion)
-    else:
-      result = S_ERROR('The configuration name and version have to be defined!')
-    return result
+      return dataMGMT_.getRuns(cName, cVersion)
+    return S_ERROR('The configuration name and version have to be defined!')
 
   #############################################################################
   types_getRunProcPass = [dict]
@@ -1979,12 +1965,9 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_getRunAndProcessingPass(in_dict):
     """It returns all the processing pass and run number for a given run."""
     run = in_dict.get('RunNumber', default)
-    result = S_ERROR()
     if run != default:
-      result = dataMGMT_.getRunAndProcessingPass(run)
-    else:
-      result = S_ERROR('The run number has to be specified!')
-    return result
+      return dataMGMT_.getRunAndProcessingPass(run)
+    return S_ERROR('The run number has to be specified!')
 
   #############################################################################
   types_getProcessingPassId = [basestring]
@@ -2190,7 +2173,6 @@ class BookkeepingManagerHandler(RequestHandler):
     'ConfigName', 'ConfigVersion', 'ConditionDescription',
     'EventType','ProcessingPass'
     """
-    result = S_ERROR()
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
@@ -2200,10 +2182,8 @@ class BookkeepingManagerHandler(RequestHandler):
 
     retVal = dataMGMT_.getListOfRuns(configName, configVersion, conddescription, processing, evt, quality)
     if not retVal['OK']:
-      result = retVal
-    else:
-      result = S_OK([i[0] for i in retVal['Value']])
-    return result
+      return retVal
+    return S_OK([i[0] for i in retVal['Value']])
 
   #############################################################################
   types_getSimulationConditions = [dict]
