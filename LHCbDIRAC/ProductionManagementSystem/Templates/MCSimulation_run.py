@@ -50,7 +50,7 @@ def modifyCompression(dict1, dict2, default):
 
   compression = []
 
-  combinedVis = dict1
+  combinedVis = dict1.copy()
   combinedVis.update(dict2)
   for stepN in sorted(list(combinedVis)):
     if combinedVis[stepN] == 'Y':
