@@ -226,7 +226,7 @@ class RunApplication(object):
                                  env=env)
     self.pid = spObject.getChildPID()
     print('process pid', self.pid)
-    
+
     # PRMON
     # Specifying the name of the output files
     fileName = 'prmon_%s_%s' % (self.applicationName, str(self.pid))
@@ -235,7 +235,7 @@ class RunApplication(object):
     cmdPRMON = "prmon --pid %s --filename %s.txt --json-summary %s.json" % (str(self.pid), fileName, fileName)
 
     subprocess.Popen(shlex.split(cmdPRMON))
-    
+
     return result
 
   def _getEnv(self):

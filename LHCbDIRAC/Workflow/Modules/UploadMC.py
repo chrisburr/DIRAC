@@ -76,7 +76,7 @@ class UploadMC(ModuleBase):
               raise ve
         else:
           self.log.info("JSON file not found", fn)
-      
+
       # looking for xml files that are 'summaryGauss_self.production_id_self.prod_job_id_1.xml'
       xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.prod_job_id)
       if os.path.exists(xmlfl):
@@ -113,6 +113,7 @@ class UploadMC(ModuleBase):
         self.log.info("XML Gauss summary file not found", xmlfl)
 
       # looking for json files that are 'prmon_self.applicationName_self.applicationPID'
+      fileName = 'prmon_%s_%s' % (self.applicationName, str(self.applicationPID))
       if self.applicationPID:
         with open(fileName + '.json') as JS:
           jsonData = json.load(JS)
@@ -127,12 +128,12 @@ class UploadMC(ModuleBase):
         ids['applicationVersion'] = self.applicationVersion
         jsonData['ID'] = ids
 
-        #Uploading the metrics data
+        # Uploading the metrics data
         mcMetricsClient = MCStatsClient()
         mcMetricsClient.indexName = 'lhcb-mcstats-Metrics-' + self.production_id
         res = mcMetricsClient.set('mcMetrics', jsonData)
         if not res['OK']:
-          self.log.error('the application\'s Metrics data not set, exiting without affecting workflow status', "%s: %s" % (str(self.jsonData), res['Message']))  # nopep8
+          self.log.error('the application\'s Metrics data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # nopep8
       else:
         self.log.info("PID not found, no data to upload")
 
