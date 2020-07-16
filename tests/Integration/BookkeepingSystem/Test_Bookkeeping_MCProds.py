@@ -27,8 +27,7 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
-
+from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
@@ -415,24 +414,7 @@ xmlStep8 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 bk = BookkeepingClient()
 
 # # first delete from DB ####################
-bkDB = OracleBookkeepingDB()
-
-bkDB.dbW_._query("DELETE FROM productionoutputfiles")
-bkDB.dbW_._query("DELETE FROM stepscontainer")
-bkDB.dbW_._query("DELETE FROM inputfiles")
-bkDB.dbW_._query("DELETE FROM files")
-bkDB.dbW_._query("DELETE FROM filetypes")
-bkDB.dbW_._query("DELETE FROM eventtypes")
-bkDB.dbW_._query("DELETE FROM jobs")
-bkDB.dbW_._query("DELETE FROM steps")
-bkDB.dbW_._query("DELETE FROM productionscontainer")
-bkDB.dbW_._query("DELETE FROM processing")
-bkDB.dbW_._query("DELETE FROM simulationconditions")
-bkDB.dbW_._query("DELETE FROM configurations")
-bkDB.dbW_._query("DELETE FROM data_taking_conditions")
-bkDB.dbW_._query("DELETE FROM newrunquality")
-
-# # #########################################
+wipeOutDB()
 
 #############################################################################
 

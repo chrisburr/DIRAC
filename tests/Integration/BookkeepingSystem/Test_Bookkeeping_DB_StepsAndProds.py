@@ -20,12 +20,13 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 from DIRAC import gLogger
-from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
+gLogger.setLevel('VERBOSE')
+
+from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB
 
 # # sut
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
-gLogger.setLevel('VERBOSE')
 
 __RCSID__ = "$Id$"
 
@@ -105,29 +106,13 @@ step_moore = {
 # What's used for the tests
 bk = OracleBookkeepingDB()
 
+# # first delete the content from the DB
+wipeOutDB()
+
 #############################################################################
 
 
 def test_Steps():
-
-  # # first delete from DB ####################
-
-  bk.dbW_._query("DELETE FROM productionoutputfiles")
-  bk.dbW_._query("DELETE FROM stepscontainer")
-  bk.dbW_._query("DELETE FROM inputfiles")
-  bk.dbW_._query("DELETE FROM files")
-  bk.dbW_._query("DELETE FROM filetypes")
-  bk.dbW_._query("DELETE FROM eventtypes")
-  bk.dbW_._query("DELETE FROM jobs")
-  bk.dbW_._query("DELETE FROM steps")
-  bk.dbW_._query("DELETE FROM productionscontainer")
-  bk.dbW_._query("DELETE FROM processing")
-  bk.dbW_._query("DELETE FROM simulationconditions")
-  bk.dbW_._query("DELETE FROM configurations")
-  bk.dbW_._query("DELETE FROM data_taking_conditions")
-  bk.dbW_._query("DELETE FROM newrunquality")
-
-  # # #########################################
 
   # insert gauss step
   res = bk.insertStep(step_gauss)

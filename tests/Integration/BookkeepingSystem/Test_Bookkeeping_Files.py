@@ -14,12 +14,15 @@ It tests the insert of XML Summaries to the BookkeepingDB.
 
 # pylint: disable=invalid-name,wrong-import-position
 
+from __future__ import print_function
+
+
 import datetime
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
+from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB, addBasicData
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -103,29 +106,11 @@ dqCond = """
 # What's used for the tests
 bk = BookkeepingClient()
 
-# # first delete from DB ####################
-bkDB = OracleBookkeepingDB()
-
-bkDB.dbW_._query("DELETE FROM productionoutputfiles")
-bkDB.dbW_._query("DELETE FROM stepscontainer")
-bkDB.dbW_._query("DELETE FROM inputfiles")
-bkDB.dbW_._query("DELETE FROM files")
-bkDB.dbW_._query("DELETE FROM filetypes")
-bkDB.dbW_._query("DELETE FROM eventtypes")
-bkDB.dbW_._query("DELETE FROM jobs")
-bkDB.dbW_._query("DELETE FROM steps")
-bkDB.dbW_._query("DELETE FROM productionscontainer")
-bkDB.dbW_._query("DELETE FROM processing")
-bkDB.dbW_._query("DELETE FROM simulationconditions")
-bkDB.dbW_._query("DELETE FROM configurations")
-bkDB.dbW_._query("DELETE FROM data_taking_conditions")
-bkDB.dbW_._query("DELETE FROM newrunquality")
+# # first delete from DB
+wipeOutDB()
 
 # # then add some needed data
-bkDB.dbW_._query("INSERT INTO dataquality VALUES(1, 'OK')")
-
-
-# # #########################################
+addBasicData()
 
 #############################################################################
 
@@ -150,11 +135,6 @@ def test_sendXMLBookkeepingReport():
   assert res['OK']
 
   res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
-  assert res['OK']
-
-  # bkDB.dbW_._query("DELETE FROM processing")
-  # bkDB.dbW_._query("INSERT INTO processing VALUES(1, 2, 'ProcPass')")
-  res = bkDB.addProcessing(['Real Data'])
   assert res['OK']
 
   res = bk.setRunAndProcessingPassDataQuality(1122, '/Real Data', 'OK')
@@ -329,18 +309,6 @@ def test_fileMetadata():
   assert retVal['OK'] is True
   assert retVal['Value']['Successful'] == {}
   assert retVal['Value']['Failed'] == ['test.txt']
-
-
-def test_getRunFiles():
-  """
-  retrieve all the files for a given run
-  """
-  fileParams = ['FullStat', 'Luminosity', 'FileSize', 'EventStat', 'GotReplica', 'GUID', 'InstLuminosity']
-  retVal = bk.getRunFiles(int(runnb))
-  assert retVal['OK'] is True
-  assert sorted(retVal['Value']) == sorted(files)
-  for fName in retVal['Value']:
-    assert sorted(retVal['Value'][fName]) == sorted(fileParams)
 
 
 def test_getAvailableFileTypes():
