@@ -1382,7 +1382,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK(result)
 
   #############################################################################
-  types_getFileHistory = [six.string_types]
 
   @staticmethod
   def export_getFileHistory(lfn):
