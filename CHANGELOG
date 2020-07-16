@@ -1,9 +1,31 @@
+v10r1-pre5
+use DIRAC v7r1p7
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre2
+
+
+
 v10r1-pre4
 use DIRAC v7r1p6
 use LHCbDIRACOS v1r8
 use LHCbWebDIRAC v5r2-pre2
 
 NEW: (!829) Added Kibana dashboards for MCStats Gauss errors
+
+
+
+v10r0p6
+Based on DIRAC v7r0p29
+LHCbWebDIRAC v5r1p6
+LHCbDIRACOS v1r9
+
+Bookkeeping:
+CHANGE: (!832) Use ProductionManagement and Transformation systems for getting production ancestors
+CHANGE: (!832) Simplified the BKK code for getting Steps out of the Bookkeeping
+FIX: (!837) ProductionManagement Request templates: fixes for MC_Simulation_run
+
+*Tests
+CHANGE: (!840) Pytest prints locals
 
 
 

@@ -194,8 +194,6 @@ integration_tests:
     - cd DIRAC
     - git checkout "$diracRef"
     - cd ..
-    # Removing the Multi-VO file catalog tests
-    - sed -E -i 's@^.*/Test_UserMetadata.py" .*$@@g' DIRAC/tests/Integration/all_integration_client_tests.sh
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
