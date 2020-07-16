@@ -1331,67 +1331,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getProductionInformation(prodid)
 
   #############################################################################
-  types_getProductionInformation = [(long, int)]
-
-  def export_getProductionInformation(self, prodid):
-    """It returns statistics (data processing phases, number of events, etc.) for a given production
-    """
-
-    nbjobs = None
-    nbOfFiles = None
-    nbOfEvents = None
-    prodinfos = None
-
-    value = dataMGMT_.getProductionNbOfJobs(prodid)
-    if value['OK']:
-      nbjobs = value['Value']
-
-    value = dataMGMT_.getProductionNbOfFiles(prodid)
-    if value['OK']:
-      nbOfFiles = value['Value']
-
-    value = dataMGMT_.getProductionNbOfEvents(prodid)
-    if value['OK']:
-      nbOfEvents = value['Value']
-
-    value = dataMGMT_.getConfigsAndEvtType(prodid)
-    if value['OK']:
-      prodinfos = value['Value']
-
-    path = '/'
-
-    if not prodinfos:
-      self.log.error("No Configs/Event type for production", prodid)
-      return S_ERROR("No Configs/Event type")
-
-    cname = prodinfos[0][0]
-    cversion = prodinfos[0][1]
-    path += cname + '/' + cversion + '/'
-
-    res = dataMGMT_.getProductionSimulationCond(prodid)
-    if not res['OK']:
-      return S_ERROR(res['Message'])
-    path += res['Value']
-
-    res = dataMGMT_.getProductionProcessingPass(prodid)
-    if not res['OK']:
-      return S_ERROR(res['Message'])
-    path += res['Value']
-    prefix = '\n' + path
-
-    # FIXME: I think this will crash due to iterating over None if dataMGMT_.getProductionNbOfEvents(prodid) fails.
-    # FIXME: I also have no idea what i is. At at glance I thought it was an integer but its being indexed?
-    # FIXME: Why only index 0 and 2? The docstring of getProductionNbOfEvents should probably be fixed.
-    for i in nbOfEvents:
-      path += prefix + '/' + str(i[2]) + '/' + i[0]
-    result = {"Production information": prodinfos,
-              "Number of jobs": nbjobs,
-              "Number of files": nbOfFiles,
-              "Number of events": nbOfEvents,
-              'Path': path}
-    return S_OK(result)
-
-  #############################################################################
   types_getFileHistory = [six.string_types]
 
   @staticmethod

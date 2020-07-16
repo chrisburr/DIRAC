@@ -194,8 +194,8 @@ integration_tests:
     - cd DIRAC
     - git checkout "$diracRef"
     - cd ..
-    # TODO: Fix and re-enable the data management tests
-    - sed -E -i 's@^.*/Test_DataManager.py .*$@@g' DIRAC/tests/Integration/all_integration_client_tests.sh
+    # Removing the Multi-VO file catalog tests
+    - sed -E -i 's@^.*/Test_UserMetadata.py" .*$@@g' DIRAC/tests/Integration/all_integration_client_tests.sh
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
