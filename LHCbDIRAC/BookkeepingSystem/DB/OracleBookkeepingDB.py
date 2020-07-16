@@ -556,13 +556,13 @@ class OracleBookkeepingDB(object):
                 'StepId': '',
                 'ApplicationVersion': 'v29r1',
                 'ExtraPackages': '',
-		'StepName': 'davinci prb2',
-		'ProcessingPass': 'WG-Coool',
-		'Visible': 'Y',
-		'isMulticore': 'N',
-		'OptionFiles': '',
-		'DDDB': '',
-		'CONDDB': ''},
+                'StepName': 'davinci prb2',
+                'ProcessingPass': 'WG-Coool',
+                'Visible': 'Y',
+                'isMulticore': 'N',
+                'OptionFiles': '',
+                'DDDB': '',
+                'CONDDB': ''},
        'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.MDST'}],
        'InputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.DST'}],
        'RuntimeProjects': [{'StepId': 13878}]}
@@ -943,12 +943,12 @@ class OracleBookkeepingDB(object):
     retVal = self.__getDataTakingConditionId(conddescription)
     if retVal['OK']:
       if retVal['Value'] != -1:
-	condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (table, str(retVal['Value']), table)
+        condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (table, str(retVal['Value']), table)
       else:
-	retVal = self.__getSimulationConditionId(conddescription)
-	if retVal['OK']:
-	  if retVal['Value'] != -1:
-	    condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal['Value']), table)
+        retVal = self.__getSimulationConditionId(conddescription)
+        if retVal['OK']:
+          if retVal['Value'] != -1:
+            condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal['Value']), table)
           else:
             return S_ERROR('Condition does not exists!')
         else:

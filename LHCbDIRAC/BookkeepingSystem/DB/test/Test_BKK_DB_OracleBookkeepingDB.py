@@ -55,20 +55,20 @@ def test_buildRunNumbers():
   assert retVal['OK'] is True
   outVal = ' and prview.runnumber=j.runnumber  and  (  j.runnumber=1 or  j.runnumber=3 or  j.runnumber=4 ) '
   assert retVal['Value'] == (outVal,
-			     ' ,prodrunview prview ,productionscontainer cont')
+                             ' ,prodrunview prview ,productionscontainer cont')
 
   startRunID = 1
   retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
   assert retVal['OK'] is True
   assert retVal['Value'] == (outVal,
-			     ' ,prodrunview prview ,productionscontainer cont')
+                             ' ,prodrunview prview ,productionscontainer cont')
 
   startRunID = None
   endRunID = 1
   retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
   assert retVal['OK'] is True
   assert retVal['Value'] == (outVal,
-			     ' ,prodrunview prview ,productionscontainer cont')
+                             ' ,prodrunview prview ,productionscontainer cont')
 
   startRunID = 1
   endRunID = 2
@@ -103,8 +103,8 @@ def test_buildConditions():
     retVal = client._buildConditions(simdesc, daqdesc, condition, tables)
     assert retVal['OK'] is True
     assert retVal['Value'] == (
-	' and cont.DAQPERIODID=1 and cont.DAQPERIODID is not null ',
-	' ,productionscontainer cont ')
+        ' and cont.DAQPERIODID=1 and cont.DAQPERIODID is not null ',
+        ' ,productionscontainer cont ')
 
 #   ################################################################################
 #   def test_buildConfiguration(self):
