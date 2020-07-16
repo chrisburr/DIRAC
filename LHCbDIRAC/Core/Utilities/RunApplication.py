@@ -16,6 +16,7 @@ __RCSID__ = "$Id$"
 import sys
 import os
 import shlex
+import subprocess
 
 from DIRAC import gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -225,6 +226,16 @@ class RunApplication(object):
                                  env=env)
     self.pid = spObject.getChildPID()
     print('process pid', self.pid)
+    
+    # PRMON
+    # Specifying the name of the output files
+    fileName = 'prmon_%s_%s' % (self.applicationName, str(self.pid))
+
+    # Specifying the command that runs prmon given the PID of the application
+    cmdPRMON = "prmon --pid %s --filename %s.txt --json-summary %s.json" % (str(self.pid), fileName, fileName)
+
+    subprocess.Popen(shlex.split(cmdPRMON))
+    
     return result
 
   def _getEnv(self):
