@@ -424,9 +424,7 @@ def test_insertSimConditions():
   register a simulation condition to the db
   """
   retVal = bk.insertSimConditions(simCondDict)
-  if retVal["OK"]:
-    assert retVal['OK'] is True
-  else:
+  if not retVal["OK"]:
     assert 'unique constraint' in retVal["Message"]
 
 
@@ -439,6 +437,7 @@ def test_registerProduction():
   bk.insertFileTypes('SIM', 'sim', 'ROOT')
   bk.insertFileTypes('DIGI', 'digi', 'ROOT')
   bk.insertEventType(11104131, 'This is 11104131L', 'something Lambda Xyz (blah)')
+  bk.insertSimConditions(simCondDict)
 
   # actual tests
   retVal = bk.insertStep(
@@ -689,6 +688,8 @@ def test_sendMCXMLBookkeepingReport():
   bk.insertFileTypes('DIGI', 'digi', 'ROOT')
   bk.insertFileTypes('LOG', 'log', '1')
   bk.insertEventType(27165000, 'This is 11104131', 'something GammaBeta Xyz (blah)')
+  bk.insertEventType(11104131, 'This is 11104131L', 'something Lambda Xyz (blah)')
+  bk.insertSimConditions(simCondDict)
 
   jobStart = jobEnd = datetime.datetime.now()
   jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)

@@ -4459,10 +4459,11 @@ and files.qualityid= dataquality.qualityid" % lfn
         return S_ERROR('Data taking condition is missing')
     if simcond is not None:
       retVal = self.__getSimulationConditionId(simcond)
-      if retVal['OK'] and retVal['Value'] > -1:
-        sim = retVal['Value']
-      else:
+      if not retVal['OK']:
+        return retVal
+      if retVal['Value'] == -1:
         return S_ERROR('Simulation condition is missing')
+      sim = retVal['Value']
     retVal = self.insertproductionscontainer(production, processingid, sim, did, configName, configVersion)
     if not retVal['OK']:
       return retVal

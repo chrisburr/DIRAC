@@ -2078,7 +2078,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getTCKs(in_dict)
 
   #############################################################################
-  types_getSteps = [str]
+  types_getSteps = [six.integer_types]
 
   @staticmethod
   def export_getSteps(prodID):
