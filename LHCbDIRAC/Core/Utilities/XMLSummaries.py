@@ -36,11 +36,13 @@ def xmltojsonCat1(lCategory1):
 
 
 def xmltojsonCat2(lCategory2):
-  '''e.g. Transforms   <counter name="TTHitMonitor/DeltaRay">1249</counter>
-                      <counter name="TTHitMonitor/betaGamma">28101829</counter>
-                      <counter name="TTHitMonitor/numberHits">17105</counter>
-      into {"TTHitMonitor": {"betaGamma": 28101829, "DeltaRay": 1249, "numberHits": 17105}}
-      Let's call this category of counters category 2'''
+  '''e.g. Transforms
+    <counter name="TTHitMonitor/DeltaRay">1249</counter>
+    <counter name="TTHitMonitor/betaGamma">28101829</counter>
+    <counter name="TTHitMonitor/numberHits">17105</counter>
+    into {"TTHitMonitor": {"betaGamma": 28101829, "DeltaRay": 1249, "numberHits": 17105}}
+    Let's call this category of counters category 2
+  '''
   dicto = dict()
   s = lCategory2[0]['@name']
   n = s.find('/')
@@ -64,40 +66,41 @@ def xmltojsonCat2(lCategory2):
 
 
 def xmltojsonCat3(lCategory3):
-  '''e.g. Transforms  <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
-                      <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
-
-                  into {'CheckRichOpPhot/Diff.': {'Cherenkov': {'Phi': 0, 'Theta': 0},
-                                                 'Emission Point': {'x': 0, 'y': 0, 'z': 0},
-                                                 'Energy': 0,
-                                                 'HPD In. Point': {'x': 0, 'y': 0, 'z': 0},
-                                                 'HPD QW Point': {'x': 0, 'y': 0, 'z': 0},
-                                                 'Parent Momentum': {'x': 38, 'y': 46, 'z': -33},
-                                                 'Prim. Mirr.': {'x': 0, 'y': 0, 'z': 0},
-                                                 'Sec. Mirr.': {'x': 0, 'y': 0, 'z': 0}}}
-      Let's call this category of counters category 3'''
+  '''e.g. Transforms  
+  <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
+  <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
+  into {'CheckRichOpPhot/Diff.': {'Cherenkov': {'Phi': 0, 'Theta': 0},
+                                 'Emission Point': {'x': 0, 'y': 0, 'z': 0},
+                                 'Energy': 0,
+                                 'HPD In. Point': {'x': 0, 'y': 0, 'z': 0},
+                                 'HPD QW Point': {'x': 0, 'y': 0, 'z': 0},
+                                 'Parent Momentum': {'x': 38, 'y': 46, 'z': -33},
+                                 'Prim. Mirr.': {'x': 0, 'y': 0, 'z': 0},
+                                 'Sec. Mirr.': {'x': 0, 'y': 0, 'z': 0}}}
+  Let's call this category of counters category 3
+  '''
   dicto = dict()
   s = lCategory3[0]['@name']
   n = s.find('-')
