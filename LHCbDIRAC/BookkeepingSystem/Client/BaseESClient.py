@@ -37,7 +37,7 @@ class BaseESClient(object):
     res = self.getManager().mergePaths(self.__currentDirectory, path)
     if res['OK']:
       return self.getManager().list(res['Value'], selectionDict, sortDict, startItem, maxitems)
-    return S_ERROR(res['Message'])
+    return res
 
   #############################################################################
   def getManager(self):

@@ -1357,12 +1357,12 @@ class BookkeepingManagerHandler(RequestHandler):
 
     res = dataMGMT_.getProductionSimulationCond(prodid)
     if not res['OK']:
-      return S_ERROR(res['Message'])
+      return res
     path += res['Value']
 
     res = dataMGMT_.getProductionProcessingPass(prodid)
     if not res['OK']:
-      return S_ERROR(res['Message'])
+      return res
     path += res['Value']
     prefix = '\n' + path
 
@@ -1679,7 +1679,7 @@ class BookkeepingManagerHandler(RequestHandler):
                                 replicaFlag, visible,
                                 filesize, tck, jobStart, jobEnd)
     if not retVal['OK']:
-      return S_ERROR(retVal['Message'])
+      return retVal
     values = retVal['Value']
     for i in values:
       result += [i[0]]
@@ -2076,7 +2076,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getTCKs(in_dict)
 
   #############################################################################
-  types_getSteps = [basestring]
+  types_getSteps = [(int, long)]
 
   @staticmethod
   def export_getSteps(prodID):

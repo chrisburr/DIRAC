@@ -1317,19 +1317,17 @@ class OracleBookkeepingDB(object):
 
     res = self.dbR_.query(command)
     if not res['OK']:
-      return S_ERROR(res['Message'])
-    else:
-      record = res['Value']
-      cname = record[0][0]
-      cversion = record[0][1]
-      pname = record[0][2]
-      pversion = record[0][3]
+      return res
+    record = res['Value']
+    cname = record[0][0]
+    cversion = record[0][1]
+    pname = record[0][2]
+    pversion = record[0][3]
 
     retVal = self.getProductionProcessingPass(prodid)
-    if retVal['OK']:
-      procdescription = retVal['Value']
-    else:
+    if not retVal['OK']:
       return retVal
+    procdescription = retVal['Value']
 
     simdesc = None
     daqdesc = None
@@ -1340,13 +1338,12 @@ class OracleBookkeepingDB(object):
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
       return retVal
+    value = retVal['Value']
+    if value:
+      simdesc = value[0][0]
+      daqdesc = value[0][1]
     else:
-      value = retVal['Value']
-      if value:
-        simdesc = value[0][0]
-        daqdesc = value[0][1]
-      else:
-        return S_ERROR('Simulation condition or data taking condition not exist!')
+      return S_ERROR('Simulation condition or data taking condition not exist!')
     if simdesc is not None:
       return S_OK({'ConfigName': cname,
                    'ConfigVersion': cversion,
@@ -2040,16 +2037,14 @@ class OracleBookkeepingDB(object):
     :return: fileId, jobId, filetypeid
     """
     result = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.checkfile', [fileName])
-    if result['OK']:
-      res = result['Value']
-      if res:
-        return S_OK(res)
-      else:
-        self.log.warn("File not found! ", "%s" % fileName)
-        return S_ERROR("File not found: %s" % fileName)
-    else:
-      return S_ERROR(result['Message'])
-    return result
+    if not result['OK']:
+      return result
+
+    res = result['Value']
+    if res:
+      return S_OK(res)
+    self.log.warn("File not found! ", "%s" % fileName)
+    return S_ERROR("File not found: %s" % fileName)
 
   #############################################################################
   def checkFileTypeAndVersion(self, filetype, version):  # fileTypeAndFileTypeVersion(self, type, version):
@@ -2059,9 +2054,8 @@ class OracleBookkeepingDB(object):
     :param str version: file type version
     :return: file type id
     """
-    result = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.checkFileTypeAndVersion',
-                                              int, [filetype, version])
-    return result
+    return self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.checkFileTypeAndVersion',
+                                            int, [filetype, version])
 
   #############################################################################
   def checkEventType(self, eventTypeId):  # eventType(self, eventTypeId):
@@ -2575,7 +2569,7 @@ class OracleBookkeepingDB(object):
     for lfn in lfns:
       res = self.dbR_.executeStoredFunctions('BOOKKEEPINGORACLEDB.fileExists', int, [lfn])
       if not res['OK']:
-        return S_ERROR(res['Message'])
+        return res
       if res['Value'] == 0:
         result[lfn] = False
       else:
@@ -2820,7 +2814,7 @@ class OracleBookkeepingDB(object):
                  jobs.production=%d" % (productionid)
       retVal = self.dbR_.query(command)
       if not retVal['OK']:
-        return S_ERROR(retVal['Message'])
+        return retVal
       files = retVal['Value']
       for lfn in files:
         if lfn[1] == 'Yes':
@@ -2834,7 +2828,7 @@ class OracleBookkeepingDB(object):
         command = " select files.filename, files.gotreplica from files where filename='%s'" % (lfn)
         retVal = self.dbR_.query(command)
         if not retVal['OK']:
-          return S_ERROR(retVal['Message'])
+          return retVal
         value = retVal['Value']
         if not value:
           missing += [lfn]
@@ -2957,7 +2951,7 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
     prod.production, ftypes.name" % (tables, condition)
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
-      return S_ERROR(retVal['Message'])
+      return retVal
 
     parameters = ['ConfigurationName', 'ConfigurationVersion',
                   'ConditionDescription', 'Processing pass ',
@@ -3173,7 +3167,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         if record[0] is not None:
           runIds += [record[0]]
     else:
-      return S_ERROR(retVal['Message'])
+      return retVal
 
     check = in_dict.get('CheckRunStatus', False)
     if check:
