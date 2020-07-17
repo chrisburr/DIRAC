@@ -92,13 +92,13 @@ def xmltojsonCat3(lCategory3):
     <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
     <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
     into {'CheckRichOpPhot/Diff.': {'Cherenkov': {'Phi': 0, 'Theta': 0},
-      'Emission Point': {'x': 0, 'y': 0, 'z': 0},
-      'Energy': 0,
-      'HPD In. Point': {'x': 0, 'y': 0, 'z': 0},
-      'HPD QW Point': {'x': 0, 'y': 0, 'z': 0},
-      'Parent Momentum': {'x': 38, 'y': 46, 'z': -33},
-      'Prim. Mirr.': {'x': 0, 'y': 0, 'z': 0},
-      'Sec. Mirr.': {'x': 0, 'y': 0, 'z': 0}}}
+    'Emission Point': {'x': 0, 'y': 0, 'z': 0},
+    'Energy': 0,
+    'HPD In. Point': {'x': 0, 'y': 0, 'z': 0},
+    'HPD QW Point': {'x': 0, 'y': 0, 'z': 0},
+    'Parent Momentum': {'x': 38, 'y': 46, 'z': -33},
+    'Prim. Mirr.': {'x': 0, 'y': 0, 'z': 0},
+    'Sec. Mirr.': {'x': 0, 'y': 0, 'z': 0}}}
     Let's call this category of counters category 3
   '''
   dicto = dict()
