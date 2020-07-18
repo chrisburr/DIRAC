@@ -42,7 +42,7 @@ WORKDIR /opt/dirac
 
 # Creating dirac user
 RUN useradd -ms /bin/bash dirac && \
-    chown -R dirac:dirac /opt/dirac && \
+    chown -R dirac:dirac /opt/dirac
 
 RUN \
     curl -L -o dirac-install https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py && \
