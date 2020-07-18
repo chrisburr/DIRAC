@@ -14,6 +14,20 @@ NEW: (!829) Added Kibana dashboards for MCStats Gauss errors
 
 
 
+v10r0p7
+Based on DIRAC v7r0p29
+LHCbWebDIRAC v5r1p6
+LHCbDIRACOS v1r9
+
+FIX: (!841) Fix typo for creation of client docker image
+
+*Bookkeeping
+
+FIX: (!842) BookkeepingManagerHandler: fix for type for getSteps
+FIX: (!842) dirac-bookkeeping-setdataquality.py scripy: fix typo
+
+
+
 v10r0p6
 Based on DIRAC v7r0p29
 LHCbWebDIRAC v5r1p6

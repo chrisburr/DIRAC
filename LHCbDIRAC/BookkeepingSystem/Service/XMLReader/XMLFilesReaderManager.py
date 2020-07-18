@@ -213,7 +213,7 @@ class XMLFilesReaderManager(object):
           retVal = self.bkClient_.getRunNbAndTck(fileName)
 
           if not retVal['OK']:
-            return S_ERROR(retVal['Message'])
+            return retVal
           if len(retVal['Value']) > 0:
             self.log.debug('RunTCK:', '%s' % retVal['Value'])
 
@@ -302,7 +302,7 @@ class XMLFilesReaderManager(object):
         if value and value[0][2] is not None:
           sumEventInputStat += value[0][2]
       else:
-        return S_ERROR(res['Message'])
+        return res
       res = self.bkClient_.getFileMetadata([fname])
       if res['OK']:
         fileMetadata = res['Value']['Successful'].get(fname)
@@ -545,7 +545,7 @@ class XMLFilesReaderManager(object):
       retVal = self.bkClient_.getStepIdandNameForRUN(programName, programVersion, conddb, dddb)
 
       if not retVal['OK']:
-        return S_ERROR(retVal['Message'])
+        return retVal
 
       stepid = retVal['Value'][0]
 
