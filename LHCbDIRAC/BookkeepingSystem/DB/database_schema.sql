@@ -236,8 +236,7 @@ CREATE TABLE processing(
     id       NUMBER,
     parentid NUMBER,
     name     varchar2(256),
-    CONSTRAINT processing_pk PRIMARY KEY (id),
-    CONSTRAINT processing_fk FOREIGN KEY (parentid) REFERENCES processing (id)
+    CONSTRAINT processing_pk PRIMARY KEY (id)
 );
 
 CREATE INDEX processing_pid ON processing (parentid);

@@ -519,8 +519,6 @@ class NagiosConnectorSuccess(UtilitiesTestCase):
     nagConn = NagiosConnector()
     nagConn.readConfig()
     self.assertTrue(nagConn.config['MsgPort'])
-    self.assertEqual(nagConn.config['MsgBroker'], None)
-    self.assertEqual(nagConn.config['MsgQueue'], None)
 
 #  def test_failedConnection( self ):
 #

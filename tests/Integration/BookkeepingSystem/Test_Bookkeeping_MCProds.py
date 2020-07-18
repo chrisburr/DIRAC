@@ -27,6 +27,8 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
+from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB
+# sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 
@@ -411,6 +413,9 @@ xmlStep8 = """<?xml version="1.0" encoding="ISO-8859-1"?>
 # What's used for the tests
 bk = BookkeepingClient()
 
+# # first delete from DB ####################
+wipeOutDB()
+
 #############################################################################
 
 
@@ -419,9 +424,7 @@ def test_insertSimConditions():
   register a simulation condition to the db
   """
   retVal = bk.insertSimConditions(simCondDict)
-  if retVal["OK"]:
-    assert retVal['OK'] is True
-  else:
+  if not retVal["OK"]:
     assert 'unique constraint' in retVal["Message"]
 
 
@@ -434,6 +437,7 @@ def test_registerProduction():
   bk.insertFileTypes('SIM', 'sim', 'ROOT')
   bk.insertFileTypes('DIGI', 'digi', 'ROOT')
   bk.insertEventType(11104131, 'This is 11104131L', 'something Lambda Xyz (blah)')
+  bk.insertSimConditions(simCondDict)
 
   # actual tests
   retVal = bk.insertStep(
@@ -672,6 +676,10 @@ def test_registerProduction():
   retVal = bk.addProduction(productionSteps)
   assert retVal['OK'] is True
 
+  res = bk.getProductionInformation(12345)
+  assert res['OK']
+  assert len(res['Value']['Steps']) == 8
+
 
 def test_sendMCXMLBookkeepingReport():
 
@@ -680,6 +688,8 @@ def test_sendMCXMLBookkeepingReport():
   bk.insertFileTypes('DIGI', 'digi', 'ROOT')
   bk.insertFileTypes('LOG', 'log', '1')
   bk.insertEventType(27165000, 'This is 11104131', 'something GammaBeta Xyz (blah)')
+  bk.insertEventType(11104131, 'This is 11104131L', 'something Lambda Xyz (blah)')
+  bk.insertSimConditions(simCondDict)
 
   jobStart = jobEnd = datetime.datetime.now()
   jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)

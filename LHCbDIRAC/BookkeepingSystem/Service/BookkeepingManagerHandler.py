@@ -76,17 +76,6 @@ class BookkeepingManagerHandler(RequestHandler):
     gLogger.info("Email used to track queries: %s forceExecution" % cls.email, cls.forceExecution)
     return S_OK()
   ###########################################################################
-  # types_<methodname> global variable is a list which defines for each exposed
-  # method the types of its arguments, the argument types are ignored if the list is empty.
-
-  types_echo = [six.string_types]
-
-  @staticmethod
-  def export_echo(inputstring):
-    """Echo input to output."""
-    return S_OK(inputstring)
-
-  #############################################################################
   types_sendBookkeeping = [six.string_types, six.string_types]
 
   @deprecated("Use sendXMLBookkeepingReport")
@@ -186,10 +175,11 @@ class BookkeepingManagerHandler(RequestHandler):
     if not retVal['OK']:
       return retVal
 
-    records = [list(record) for record in retVal['Value']]
-    return S_OK({'ParameterNames': ['FileType', 'Visible'],
-                 'Records': records,
-                 'TotalRecords': len(records)})
+    records = []
+    parameters = ['FileType', 'Visible']
+    for record in retVal['Value']:
+      records += [list(record)]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_getAvailableFileTypes = []
@@ -485,7 +475,7 @@ class BookkeepingManagerHandler(RequestHandler):
       in_dict = JEncoder.loads(parameters)
     except Exception as _:
       iscPickleFormat = True
-      gLogger.exception("Failed to serialise data with JSON", parameters)
+      self.log.exception("Failed to serialise data with JSON", parameters)
       in_dict = pickleOrJsonLoads(parameters)
     gLogger.verbose("The following dictionary received:", "%s" % in_dict)
     methodName = in_dict.get('MethodName', default)
@@ -1331,7 +1321,67 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getProductionInformation(prodid)
 
   #############################################################################
-  types_getFileHistory = [six.string_types]
+  types_getProductionInformation = [six.integer_types]
+
+  def export_getProductionInformation(self, prodid):
+    """It returns statistics (data processing phases, number of events, etc.) for a given production
+    """
+
+    nbjobs = None
+    nbOfFiles = None
+    nbOfEvents = None
+    prodinfos = None
+
+    value = dataMGMT_.getProductionNbOfJobs(prodid)
+    if value['OK']:
+      nbjobs = value['Value']
+
+    value = dataMGMT_.getProductionNbOfFiles(prodid)
+    if value['OK']:
+      nbOfFiles = value['Value']
+
+    value = dataMGMT_.getProductionNbOfEvents(prodid)
+    if value['OK']:
+      nbOfEvents = value['Value']
+
+    value = dataMGMT_.getConfigsAndEvtType(prodid)
+    if value['OK']:
+      prodinfos = value['Value']
+
+    path = '/'
+
+    if not prodinfos:
+      self.log.error("No Configs/Event type for production", prodid)
+      return S_ERROR("No Configs/Event type")
+
+    cname = prodinfos[0][0]
+    cversion = prodinfos[0][1]
+    path += cname + '/' + cversion + '/'
+
+    res = dataMGMT_.getProductionSimulationCond(prodid)
+    if not res['OK']:
+      return S_ERROR(res['Message'])
+    path += res['Value']
+
+    res = dataMGMT_.getProductionProcessingPass(prodid)
+    if not res['OK']:
+      return S_ERROR(res['Message'])
+    path += res['Value']
+    prefix = '\n' + path
+
+    # FIXME: I think this will crash due to iterating over None if dataMGMT_.getProductionNbOfEvents(prodid) fails.
+    # FIXME: I also have no idea what i is. At at glance I thought it was an integer but its being indexed?
+    # FIXME: Why only index 0 and 2? The docstring of getProductionNbOfEvents should probably be fixed.
+    for i in nbOfEvents:
+      path += prefix + '/' + str(i[2]) + '/' + i[0]
+    result = {"Production information": prodinfos,
+              "Number of jobs": nbjobs,
+              "Number of files": nbOfFiles,
+              "Number of events": nbOfEvents,
+              'Path': path}
+    return S_OK(result)
+
+  #############################################################################
 
   @staticmethod
   def export_getFileHistory(lfn):
@@ -1426,14 +1476,6 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_getProductionNbOfFiles(prodid):
     """It returns the number of files produced by a given production."""
     return dataMGMT_.getProductionNbOfFiles(prodid)
-
-  #############################################################################
-  types_getProductionInformation = [six.integer_types]
-
-  @staticmethod
-  def export_getProductionInformation(prodid):
-    """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionInformation(prodid)
 
   #############################################################################
   types_getNbOfJobsBySites = [six.integer_types]
@@ -2036,7 +2078,7 @@ class BookkeepingManagerHandler(RequestHandler):
     return self.export_getTCKs(in_dict)
 
   #############################################################################
-  types_getSteps = [basestring]
+  types_getSteps = [six.integer_types]
 
   @staticmethod
   def export_getSteps(prodID):

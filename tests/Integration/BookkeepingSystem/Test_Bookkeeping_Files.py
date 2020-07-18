@@ -14,11 +14,17 @@ It tests the insert of XML Summaries to the BookkeepingDB.
 
 # pylint: disable=invalid-name,wrong-import-position
 
+from __future__ import print_function
+
+
 import datetime
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
+from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB, addBasicData
+
+# sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 
@@ -74,7 +80,7 @@ xmlFile = """
 
 dqCond = """
   <DataTakingConditions>
-  <Parameter Name="Description" Value="Real data"/>
+  <Parameter Name="Description" Value="Real Data"/>
   <Parameter Name="BeamCond" Value="Collisions"/>
   <Parameter Name="BeamEnergy" Value="450.0"/>
   <Parameter Name="MagneticField" Value="Down"/>
@@ -100,16 +106,21 @@ dqCond = """
 # What's used for the tests
 bk = BookkeepingClient()
 
+# # first delete from DB
+wipeOutDB()
+
+# # then add some needed data
+addBasicData()
+
 #############################################################################
 
 
-def test_echo():
-  """make sure we are able to use the bkk"
+def test_ping():
+  """make sure we are able to contact the bkk service"
   """
 
-  res = bk.echo("Test")
+  res = bk.ping()
   assert res['OK']
-  assert res['Value'] == "Test"
 
 
 def test_sendXMLBookkeepingReport():
@@ -117,13 +128,16 @@ def test_sendXMLBookkeepingReport():
   Send online XML report
   """
 
-  # NOTE: this fails even if it's already removed (by hand)
-  # prob related to how the stored procedure works
   res = bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
-  # so, the following test is commented out...
-  # assert res['OK']
+  assert res['OK']
 
   res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
+  assert res['OK']
+
+  res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
+  assert res['OK']
+
+  res = bk.setRunAndProcessingPassDataQuality(1122, '/Real Data', 'OK')
   assert res['OK']
 
   currentTime = datetime.datetime.now()
@@ -246,7 +260,7 @@ def test_getRunNbAndTck():
 def test_getRunFilesDataQuality():
   retVal = bk.getRunFilesDataQuality(1122)
   assert retVal['OK'] is True
-  assert retVal['Value'] == [(1122, 'UNCHECKED', 30000000)]
+  assert retVal['Value'] == [(1122, 'OK', 30000000)]
 
 
 def test_getNbOfRawFiles():
@@ -295,18 +309,6 @@ def test_fileMetadata():
   assert retVal['OK'] is True
   assert retVal['Value']['Successful'] == {}
   assert retVal['Value']['Failed'] == ['test.txt']
-
-
-def test_getRunFiles():
-  """
-  retrieve all the files for a given run
-  """
-  fileParams = ['FullStat', 'Luminosity', 'FileSize', 'EventStat', 'GotReplica', 'GUID', 'InstLuminosity']
-  retVal = bk.getRunFiles(int(runnb))
-  assert retVal['OK'] is True
-  assert sorted(retVal['Value']) == sorted(files)
-  for fName in retVal['Value']:
-    assert sorted(retVal['Value'][fName]) == sorted(fileParams)
 
 
 def test_getAvailableFileTypes():
