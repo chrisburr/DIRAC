@@ -142,7 +142,7 @@ def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
 def getProcessingPasses(runNumber, procPass):
   res = bkClient.getRunConfigurationsAndDataTakingCondition(int(runNumber))
   if not res['OK']:
-    return S_ERROR(res['Messgage'])
+    return res
 
   bkDict = res['Value']
   bkDict['RunNumber'] = runNumber
@@ -151,8 +151,7 @@ def getProcessingPasses(runNumber, procPass):
   res = browseBkkPath(bkDict, procPass, passes)
   if not res['OK']:
     return res
-  else:
-    return S_OK(passes)
+  return S_OK(passes)
 
 
 def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
