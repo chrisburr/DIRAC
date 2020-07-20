@@ -260,6 +260,11 @@ from LHCbDIRAC.Workflow.Modules.StepAccounting import StepAccounting
 <descr_short></descr_short>
 </ModuleInstance>
 <ModuleInstance>
+<type>UploadMC</type>
+<name>UploadMC</name>
+<descr_short/>
+</ModuleInstance>
+<ModuleInstance>
 <type>FailoverRequest</type>
 <name>FailoverRequest</name>
 <descr_short></descr_short>
