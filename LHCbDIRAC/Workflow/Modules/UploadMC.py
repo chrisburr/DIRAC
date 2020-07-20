@@ -81,11 +81,11 @@ class UploadMC(ModuleBase):
       xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.prod_job_id)
       if os.path.exists(xmlfl):
         jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
-        try:
-          xmlData = XMLSummary(xmlfl)
-          xmlData.xmltojson()
-          # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
-          with open(jsonfl) as JS:
+        xmlData = XMLSummary(xmlfl)
+        xmlData.xmltojson()
+        # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
+        with open(jsonfl) as JS:
+          try:
             jsonData = json.load(JS)
             ids = dict()
             ids['JobID'] = self.jobID
@@ -105,7 +105,7 @@ class UploadMC(ModuleBase):
             else:
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
-        except Exception as ve:
+          except Exception as ve:
             self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
             print JS.read()
             raise ve
