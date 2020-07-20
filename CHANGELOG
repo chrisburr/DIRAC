@@ -13,6 +13,12 @@ use LHCbWebDIRAC v5r2-pre2
 NEW: (!829) Added Kibana dashboards for MCStats Gauss errors
 
 
+v10r0p8
+Based on DIRAC v7r0p29
+LHCbWebDIRAC v5r1p6
+LHCbDIRACOS v1r9
+
+
 
 v10r0p7
 Based on DIRAC v7r0p29
