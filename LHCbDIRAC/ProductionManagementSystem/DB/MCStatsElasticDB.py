@@ -100,9 +100,9 @@ class MCStatsElasticDB(ElasticDB):
               }
           }
       }
-      else:
-        self.log.error("Un-supported type %s" % mcType)
-        return S_ERROR("Un-supported type %s" % mcType)
+    else:
+      self.log.error("Un-supported type %s" % mcType)
+      return S_ERROR("Un-supported type %s" % mcType)
 
     self.log.debug('Getting results for JobID %s in index %s' % (jobID, indexName))
     result = self.query(indexName + '*', query)
@@ -149,6 +149,9 @@ class MCStatsElasticDB(ElasticDB):
               }
           }
       }
+    else:
+      self.log.error("Un-supported type %s" % mcType)
+      return S_ERROR("Un-supported type %s" % mcType)  
 
     self.log.debug('Attempting to delete data with JobID: %s in index %s' % (jobID, indexName))
     return self.deleteByQuery(indexName, query)

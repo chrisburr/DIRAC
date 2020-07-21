@@ -12,6 +12,7 @@
 
 import os
 import ast
+import io
 import json
 import xmltodict
 from DIRAC import gLogger
@@ -502,19 +503,15 @@ class XMLSummary(object):
       JS = dict()
       JSO = dict()
 
-      with open(self.xmlFileName, 'r') as file:
+      with io.open(self.xmlFileName, 'r') as file:
         fileLines = file.readlines()
       fileLines = fileLines[fileLines.index(
           '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
       countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
       s = ''.join(countersLines).replace('Theta', 'Eta')
-      with open("counters.xml", "w") as output:
-        output.write(s)
-      with open('counters.xml') as xmlFile:
-        dicto = xmltodict.parse(xmlFile.read())
+      dicto = xmltodict.parse(s)
       jsonData = json.dumps(dicto)
       listCounters = dicto['counters']['counter']
-      os.remove("counters.xml")
       l_1 = list()
       l_2 = list()
       l_3 = list()
@@ -536,7 +533,7 @@ class XMLSummary(object):
       JSO['Counters'] = JS
       text = str(JSO).replace('Eta', 'Theta')
       dico = ast.literal_eval(text)
-      with open(self.xmlFileName[-36:-3] + 'json', 'w') as fp:
+      with io.open(self.xmlFileName[-36:-3] + 'json', 'w') as fp:
         json.dump(dico, fp, indent=2)
 
       return(dico)

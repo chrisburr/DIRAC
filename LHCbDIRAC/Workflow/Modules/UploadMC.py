@@ -13,6 +13,7 @@
 __RCSID__ = "$Id$"
 
 import os
+import io
 import json
 
 from DIRAC import S_OK, S_ERROR, gLogger
@@ -56,7 +57,7 @@ class UploadMC(ModuleBase):
       for app in ['Gauss', 'Boole']:
         fn = '%s_Errors_%s.json' % (self.jobID, app)
         if os.path.exists(fn):
-          with open(fn) as fd:
+          with io.open(fn) as fd:
             try:
               jsonData = json.load(fd)
               self.log.verbose("Content of JSON file", "%s: %s" % (fn, jsonData))
@@ -84,15 +85,15 @@ class UploadMC(ModuleBase):
         xmlData = XMLSummary(xmlfl)
         xmlData.xmltojson()
         # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
-        with open(jsonfl) as JS:
+        with io.open(jsonfl) as JS:
           try:
             jsonData = json.load(JS)
             ids = dict()
             ids['JobID'] = self.jobID
             ids['ProductionID'] = self.production_id
             ids['prod_job_id'] = self.prod_job_id
-            jsonData['ID'] = ids
-            with open(jsonfl, 'w') as output:
+            jsonData['Counters']['ID'] = ids
+            with io.open(jsonfl, 'w') as output:
               json.dump(jsonData, output, indent=2)
 
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
@@ -111,31 +112,6 @@ class UploadMC(ModuleBase):
             raise ve
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
-
-      # looking for json files that are 'prmon_self.applicationName_self.applicationPID'
-      fileName = 'prmon_%s_%s.json' % (self.applicationName, str(self.applicationPID))  # nopep8
-      if self.applicationPID:
-        with open(fileName) as JS:
-          jsonData = json.load(JS)
-          self.log.verbose("Content of JSON file", "%s: %s" % (fileName + '.json', jsonData))
-
-        # Enriching the jsonData with the IDS
-        ids = dict()
-        ids['JobID'] = self.jobID
-        ids['ProductionID'] = self.production_id
-        ids['prod_job_id'] = self.prod_job_id
-        ids['applicationName'] = self.applicationName
-        ids['applicationVersion'] = self.applicationVersion
-        jsonData['ID'] = ids
-
-        # Uploading the metrics data
-        mcMetricsClient = MCStatsClient()
-        mcMetricsClient.indexName = 'lhcb-mcstats-Metrics-' + self.production_id
-        res = mcMetricsClient.set('mcMetrics', jsonData)
-        if not res['OK']:
-          self.log.error('the application\'s Metrics data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # nopep8
-      else:
-        self.log.info("PID not found, no data to upload")
 
       return S_OK()
 
