@@ -619,15 +619,15 @@ open  a_Cursor for
   select distinct * from stepsTMP;
 end;
 
-function getProductionProcessingPass(prod number) return varchar2 is
+function getProductionProcessingPass(prod NUMBER) return varchar2 is
 retval varchar2(256);
-ecode    NUMBER(38);
+ecode NUMBER(38);
 thisproc CONSTANT VARCHAR2(50) := 'trap_errmesg';
 begin
- select v.path into retval from (SELECT distinct  LEVEL-1 Pathlen, SYS_CONNECT_BY_PATH(name, '/') Path
+ SELECT v.path into retval FROM (SELECT distinct  LEVEL-1 Pathlen, SYS_CONNECT_BY_PATH(name, '/') Path
    FROM processing
-   WHERE LEVEL > 0 and id = (select distinct processingid from productionscontainer prod where prod.production=prod)
-   CONNECT BY NOCYCLE PRIOR id=parentid order by Pathlen desc) v where rownum<=1;
+   WHERE LEVEL > 0 and id = (SELECT distinct processingid FROM productionscontainer WHERE productionscontainer.production=prod)
+   CONNECT BY NOCYCLE PRIOR id=parentid order by Pathlen desc) v WHERE rownum<=1;
 return retval;
 EXCEPTION WHEN OTHERS THEN
 raise_application_error(-20004, 'error found! The processing pass does not exists!');
