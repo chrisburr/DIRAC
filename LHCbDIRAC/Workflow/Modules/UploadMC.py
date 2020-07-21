@@ -113,9 +113,9 @@ class UploadMC(ModuleBase):
         self.log.info("XML Gauss summary file not found", xmlfl)
 
       # looking for json files that are 'prmon_self.applicationName_self.applicationPID'
-      fileName = 'cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/prmon/current/prmon_2.0.1_x86_64-static-gnu93-opt/prmon_%s_%s' % (self.applicationName, str(self.applicationPID))
+      fileName = 'prmon_%s_%s.json' % (self.applicationName, str(self.applicationPID))  # nopep8
       if self.applicationPID:
-        with open(fileName + '.json') as JS:
+        with open(fileName) as JS:
           jsonData = json.load(JS)
           self.log.verbose("Content of JSON file", "%s: %s" % (fileName + '.json', jsonData))
 

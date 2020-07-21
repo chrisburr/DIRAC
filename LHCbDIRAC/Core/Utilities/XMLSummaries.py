@@ -518,13 +518,13 @@ class XMLSummary(object):
       l_1 = list()
       l_2 = list()
       l_3 = list()
-      for counter in listCounters:
-        if counter['@name'].find('#') != -1 and counter['@name'].find('Prev') == -1 and counter['@name'].find('Next') == -1:  # nopep8
-          l_1.append(i)
-        elif counter['@name'].find('/') != -1 and counter['@name'].find('Original') == -1 and counter['@name'].find('Unpacked') == -1 and counter['@name'].find('Diff') == -1 and counter['@name'].find('#') == -1 and counter['@name'].find('Prev') == -1 and counter['@name'].find('Next') == -1:  # nopep8
-          l_2.append(i)
-        elif counter['@name'].find('Diff.') != -1 and counter['@name'].find('Prev') == -1 and counter['@name'].find('Next') == -1:  # nopep8
-          l_3.append(i)
+      for enum in enumerate(listCounters):
+        if enum[1]['@name'].find('#') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # nopep8
+          l_1.append(enum[0])
+        elif enum[1]['@name'].find('/') != -1 and enum[1]['@name'].find('Original') == -1 and enum[1]['@name'].find('Unpacked') == -1 and enum[1]['@name'].find('Diff') == -1 and enum[1]['@name'].find('#') == -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # nopep8
+          l_2.append(enum[0])
+        elif enum[1]['@name'].find('Diff.') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # nopep8
+          l_3.append(enum[0])
       for i in l_1:
         JS.update(xmltojsonCat1(listCounters[i:i + 1]))
       for i in range(0, len(ranges(l_2)), 2):

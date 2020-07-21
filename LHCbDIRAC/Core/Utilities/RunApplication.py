@@ -229,10 +229,10 @@ class RunApplication(object):
 
     # PRMON
     # Specifying the name of the output files
-    fileName = 'prmon_%s_%s' % (self.applicationName, str(self.pid))
+    fileName = './prmon_%s_%s' % (self.applicationName, str(self.pid))
 
     # Specifying the command that runs prmon given the PID of the application
-    cmdPRMON = "cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/prmon/current/prmon_2.0.1_x86_64-static-gnu93-opt/prmon --pid %s --filename %s.txt --json-summary %s.json" % (str(self.pid), fileName, fileName)
+    cmdPRMON = "/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/prmon/current/prmon_2.0.1_x86_64-static-gnu93-opt/bin/prmon --pid %s --filename %s.txt --json-summary %s.json" % (str(self.pid), fileName, fileName)  # nopep8
 
     subprocess.Popen(shlex.split(cmdPRMON))
 
