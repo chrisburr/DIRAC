@@ -100,6 +100,9 @@ class MCStatsElasticDB(ElasticDB):
               }
           }
       }
+      else:
+        self.log.error("Un-supported type %s" % mcType)
+        return S_ERROR("Un-supported type %s" % mcType)
 
     self.log.debug('Getting results for JobID %s in index %s' % (jobID, indexName))
     result = self.query(indexName + '*', query)
