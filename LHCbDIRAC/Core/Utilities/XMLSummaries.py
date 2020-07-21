@@ -159,7 +159,7 @@ def ranges(mainList):
 
 
 def difisnull(dict_3):
-  ''' Returns False if a category 3 dictionnary contains a field or a subfield that has a value different from 0 '''
+  ''' Returns False if a category 3 dictionary contains a field or a subfield that has a value different from 0 '''
   for i in dict_3:
     if isinstance(dict_3[i], dict):
       for j in dict_3[i]:
