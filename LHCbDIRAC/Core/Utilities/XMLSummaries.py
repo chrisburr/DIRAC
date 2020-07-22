@@ -51,7 +51,6 @@ def xmltojsonCat2(lCategory2):
   return result
 
 
-
 def xmltojsonCat3(lCategory3):
   '''returns a Category3 dictionary
     :param lCategory3: list containing Category3 counters
@@ -82,7 +81,7 @@ def xmltojsonCat3(lCategory3):
     <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
   '''
   result = dict()
-  key1, key2 = lCategory3[0]['@name'].split(" - ",1)
+  key1, key2 = lCategory3[0]['@name'].split(" - ", 1)
   key1 = key1.strip()
   # key2c and key3c are used if key3c in ['x', 'y', 'z']
   key2c = key2[:-2]
