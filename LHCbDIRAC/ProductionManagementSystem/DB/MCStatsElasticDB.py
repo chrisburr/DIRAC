@@ -11,7 +11,7 @@
 """A database wrapper for ElasticDB to insert data into elasticsearch from
 Gauss & Boole simulations."""
 
-from DIRAC import S_OK
+from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.ElasticDB import ElasticDB
 
 
@@ -151,7 +151,7 @@ class MCStatsElasticDB(ElasticDB):
       }
     else:
       self.log.error("Un-supported type %s" % mcType)
-      return S_ERROR("Un-supported type %s" % mcType)  
+      return S_ERROR("Un-supported type %s" % mcType)
 
     self.log.debug('Attempting to delete data with JobID: %s in index %s' % (jobID, indexName))
     return self.deleteByQuery(indexName, query)
