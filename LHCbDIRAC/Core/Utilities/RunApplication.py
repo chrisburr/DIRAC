@@ -51,7 +51,7 @@ class RunApplication(object):
     # What to run
     self.applicationName = ''  # e.g. Gauss
     self.applicationVersion = ''  # e.g v42r1
-    self.pid = 0  # the PID of the application that will be run
+    self.childPID = 0  # the PID of the application that will be run
 
     # Define the environment
     self.extraPackages = []
@@ -224,8 +224,7 @@ class RunApplication(object):
     result = spObject.systemCall(shlex.split(command),
                                  callbackFunction=self.__redirectLogOutput,
                                  env=env)
-    self.pid = spObject.getChildPID()
-    print('process pid', self.pid)
+    self.childPID = spObject.getChildPID()
 
     return result
 

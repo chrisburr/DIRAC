@@ -74,7 +74,7 @@ class UploadMC(ModuleBase):
             except Exception as ve:
               self.log.verbose("Exception loading the JSON file: content of %s follows" % fn)
               print fd.read()
-              raise ve
+              raise
         else:
           self.log.info("JSON file not found", fn)
 
@@ -102,14 +102,14 @@ class UploadMC(ModuleBase):
               mcLogGaussSummariesClient.indexName = 'lhcb-mcstats-GaussSummaries' + self.production_id
               res = mcLogGaussSummariesClient.set('Gauss-Summaries', jsonData)
               if not res['OK']:
-                self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # nopep8
+                self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
             else:
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
           except Exception as ve:
             self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
             print JS.read()
-            raise ve
+            raise
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
 

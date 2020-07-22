@@ -75,26 +75,15 @@ class MCStatsElasticDB(ElasticDB):
     :returns: S_OK/S_ERROR
     """
 
-    if mcType == 'errors':
-      query = {
-          "query": {
-              "bool": {
-                  "must": {
-                      "match": {
-                          "Errors.ID.JobID": jobID
-                      }
-                  }
-              }
-          }
-      }
+    mcTypeDict = {'errors':'Errors', 'summary':'Counters'}
 
-    elif mcType == 'summary':
+    if mcType in mcTypeDict:
       query = {
           "query": {
               "bool": {
                   "must": {
                       "match": {
-                          "Counters.ID.JobID": jobID
+                          "%s.ID.JobID" % mcTypeDict[mcType]: jobID
                       }
                   }
               }
@@ -124,26 +113,15 @@ class MCStatsElasticDB(ElasticDB):
     :param int JobID: The JobID of the data in elasticsearch
     :param str mcType: The type of the data
     """
-    if mcType == 'errors':
-      query = {
-          "query": {
-              "bool": {
-                  "must": {
-                      "match": {
-                          "Errors.ID.JobID": jobID
-                      }
-                  }
-              }
-          }
-      }
+    mcTypeDict = {'errors':'Errors', 'summary':'Counters'}
 
-    elif mcType == 'summary':
+    if mcType in mcTypeDict:
       query = {
           "query": {
               "bool": {
                   "must": {
                       "match": {
-                          "Counters.ID.JobID": jobID
+                          "%s.ID.JobID" % mcTypeDict[mcType]: jobID
                       }
                   }
               }
