@@ -51,7 +51,7 @@ def test_xmltojsonCat2():
       },
       'TTHitMonitor': {
           'DeltaRay': 10184,
-          'betaGamma': 72641099, 
+          'betaGamma': 72641099,
           'numberHits': 73624
       }
   }
