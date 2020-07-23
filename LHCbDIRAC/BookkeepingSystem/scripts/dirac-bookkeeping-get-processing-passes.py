@@ -15,7 +15,7 @@ or '*' but enclose with quotes)"""
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script, ProgressBar
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script, ProgressBar
 from DIRAC import gLogger, exit
 
 if __name__ == "__main__":
