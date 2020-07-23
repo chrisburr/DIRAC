@@ -465,55 +465,55 @@ class XMLSummary(object):
 ################################################################################
 
   def xmltojson(self):
-      ''' The main function that takes the name of the XMLsummary file or the path to it
-          as an entry parameter and creates a JSON file with the same name in the current directory '''
+    ''' The main function that takes the name of the XMLsummary file or the path to it
+    as an entry parameter and creates a JSON file with the same name in the current directory '''
 
-      JS = dict()
-      JSO = dict()
+    JS = dict()
+    JSO = dict()
 
-      with io.open(self.xmlFileName, 'r') as file:
-        # storing the lines in a list
-        fileLines = file.readlines()
-      # keeping only the counters lines
-      fileLines = fileLines[fileLines.index(
-          '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
-      # deleting the \t in the beginning of each line
-      countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
-      # replacing Theta with Eta in order to simplify the process. It will be replaced back at the end
-      countersText = ''.join(countersLines).replace('Theta', 'Eta')
+    with io.open(self.xmlFileName, 'r') as file:
+      # storing the lines in a list
+      fileLines = file.readlines()
+    # keeping only the counters lines
+    fileLines = fileLines[fileLines.index(
+        '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
+    # deleting the \t in the beginning of each line
+    countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
+    # replacing Theta with Eta in order to simplify the process. It will be replaced back at the end
+    countersText = ''.join(countersLines).replace('Theta', 'Eta')
 
-      # Transforming the xml data into a dictionary
-      jsonData = xmltodict.parse(countersText)
-      listCounters = jsonData['counters']['counter']
-      lCategory1 = list()
-      lCategory2 = list()
-      lCategory3 = list()
-      # Selecting only the data that meet certain criteria
-      for enum in enumerate(listCounters):
-        if enum[1]['@name'].find('#') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
-          lCategory1.append(enum[0])
-        elif enum[1]['@name'].find('/') != -1 and enum[1]['@name'].find('Original') == -1 and enum[1]['@name'].find('Unpacked') == -1 and enum[1]['@name'].find('Diff') == -1 and enum[1]['@name'].find('#') == -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
-          lCategory2.append(enum[0])
-        elif enum[1]['@name'].find('Diff.') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
-          lCategory3.append(enum[0])
-      # Filling the dictionary with the data that was kept
-      for i in lCategory1:
-        JS.update(xmltojsonCat1(listCounters[i:i + 1]))
-      for i in range(0, len(ranges(lCategory2)), 2):
-        JS.update(xmltojsonCat2(listCounters[ranges(lCategory2)[i]:ranges(lCategory2)[i + 1] + 1]))
-      for i in range(0, len(ranges(lCategory3)), 2):
-        if difisnotnull(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1])):
-          JS.update(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1]))
+    # Transforming the xml data into a dictionary
+    jsonData = xmltodict.parse(countersText)
+    listCounters = jsonData['counters']['counter']
+    lCategory1 = list()
+    lCategory2 = list()
+    lCategory3 = list()
+    # Selecting only the data that meet certain criteria
+    for enum in enumerate(listCounters):
+      if enum[1]['@name'].find('#') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
+        lCategory1.append(enum[0])
+      elif enum[1]['@name'].find('/') != -1 and enum[1]['@name'].find('Original') == -1 and enum[1]['@name'].find('Unpacked') == -1 and enum[1]['@name'].find('Diff') == -1 and enum[1]['@name'].find('#') == -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
+        lCategory2.append(enum[0])
+      elif enum[1]['@name'].find('Diff.') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
+        lCategory3.append(enum[0])
+    # Filling the dictionary with the data that was kept
+    for i in lCategory1:
+      JS.update(xmltojsonCat1(listCounters[i:i + 1]))
+    for i in range(0, len(ranges(lCategory2)), 2):
+      JS.update(xmltojsonCat2(listCounters[ranges(lCategory2)[i]:ranges(lCategory2)[i + 1] + 1]))
+    for i in range(0, len(ranges(lCategory3)), 2):
+      if difisnotnull(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1])):
+        JS.update(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1]))
 
-      # Making the final changes in order to produce the json file
-      JSO['Counters'] = JS
-      text = str(JSO).replace('Eta', 'Theta')
-      dico = ast.literal_eval(text)
-      # Taking only the name of the file without the .xml in the end
-      with io.open(self.xmlFileName[:-3] + 'json', 'w', encoding="utf-8") as fp:
-        fp.write(unicode(json.dumps(dico)))
+    # Making the final changes in order to produce the json file
+    JSO['Counters'] = JS
+    text = str(JSO).replace('Eta', 'Theta')
+    dico = ast.literal_eval(text)
+    # Taking only the name of the file without the .xml in the end
+    with io.open(self.xmlFileName[:-3] + 'json', 'w', encoding="utf-8") as fp:
+      fp.write(unicode(json.dumps(dico)))
 
-      return(dico)
+    return(dico)
 
 ################################################################################
 
