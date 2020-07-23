@@ -93,8 +93,8 @@ class UploadMC(ModuleBase):
             ids['ProductionID'] = self.production_id
             ids['prod_job_id'] = self.prod_job_id
             jsonData['Counters']['ID'] = ids
-            with io.open(jsonfl, 'w') as output:
-              json.dump(jsonData, output, indent=2)
+            with io.open(jsonfl, 'w', encoding="utf-8") as output:
+              output.write(unicode(json.dumps(jsonData)))
 
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
             if self._enableModule():
