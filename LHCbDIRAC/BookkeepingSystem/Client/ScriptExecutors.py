@@ -1441,7 +1441,7 @@ def executeRunInfo(item):
         # Initialize count of files
         count = 0
       if run:
-        count += runDict[run]
+        count += len(runDict[run])
       # Update parameters with this run's information
       lastRun = run
       lastRunDesc = runDesc
