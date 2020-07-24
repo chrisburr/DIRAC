@@ -1,0 +1,57 @@
+v10r1-pre6
+use DIRAC v7r1p7
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre2
+includes all patches up to including v10r0p8
+
+
+v10r1-pre5
+use DIRAC v7r1p7
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre2
+
+
+
+v10r1-pre4
+use DIRAC v7r1p6
+use LHCbDIRACOS v1r8
+use LHCbWebDIRAC v5r2-pre2
+
+NEW: (!829) Added Kibana dashboards for MCStats Gauss errors
+
+
+
+v10r1-pre3
+use DIRAC v7r1p6
+use LHCbDIRACOS v1r8
+use LHCbWebDIRAC v5r2-pre2
+
+
+
+v10r1-pre2
+use DIRAC v7r1p5
+use LHCbDIRACOS v1r7
+use LHCbWebDIRAC v5r2-pre2
+
+* CI: check_docs done in virtualenv
+* Add script to retrieve all existing parent transformations
+* Run bkk tests in gitlab
+* Removed BKK gui
+* Fixes bash scripts
+* Fix setup tools version
+
+
+
+
+v10r1-pre1
+use DIRAC v7r1p2
+use LHCbDIRACOS v1r7
+use LHCbWebDIRAC v5r2-pre1
+
+* Rename LHCbDIRAC.Core.Utilities.Pickle to LHCbDIRAC.Core.Utilities.JSONPickle
+* Replace pickle with JSON in production/transformation data
+* Test dumping production infomation with JSON as well as pickle
+* Re-enable data management tests
+
+
+
