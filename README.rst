@@ -7,18 +7,14 @@ Documentation
       :target: http://lhcb-dirac.readthedocs.io/
 
 Master
-  .. image:: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/badges/master/build.svg
+  .. image:: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/badges/master/pipeline.svg
       :target: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/commits/master
-
-Master coverage
   .. image:: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/badges/master/coverage.svg
       :target: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/commits/master
 
 Devel
-  .. image:: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/badges/devel/build.svg
+  .. image:: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/badges/devel/pipeline.svg
           :target: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/commits/devel
-
-Devel coverage
   .. image:: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/badges/devel/coverage.svg
           :target: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/commits/devel
 
