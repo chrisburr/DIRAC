@@ -1,8 +1,8 @@
 .. _administrate_oracle:
 
-=======================================
-LHCbBookkeeping database administration
-=======================================
+========================================
+LHCb Bookkeeping database administration
+========================================
 
 This document contains all the information needed to manage the Bookkeeping Oracle
 database.
@@ -10,39 +10,7 @@ database.
 Login to the database
 =====================
 
-For the **production** system, which is on ``lhcbr`` server, we are using 3 database accounts:
-
-#. ``LHCB_DIRACBOOKKEEPING_users`` (reader account, in CS as /Systems/Bookkeeping/Databases/BookkeepingDB/LHCbDIRACBookkeepingUser)
-#. ``LHCB_DIRACBOOKKEEPING_server`` (writer account, in CS as /Systems/Bookkeeping/Databases/BookkeepingDB/LHCbDIRACBookkeepingServer)
-#. ``LHCB_DIRACBOOKKEEPING`` (main account, which is not used by LHCbDIRAC, but is used for profiling)
-
-The main account is always locked, so every time when you want to use it you have to unlock it at `<https://cern.ch/service-db-actionmanagement>`_
-(the owner user is **lbbkk**). Important: you must only unlock the following account: ``lhcbr : lhcb_diracbookkeeping``.
-
-You have a few ways to login:
-
-# The simplest is by being inside the CERN network, and using ``sqlplus`` (e.g. from AFS):
-::
-
-    source /afs/cern.ch/project/oracle/script/setoraenv.sh
-    setoraenv -s 12101
-    sqlplus LHCB_DIRACBOOKKEEPING@LHCB_DIRACBOOKKEEPING
-
-(``sqlplus`` will look for ``tnsnames.ora`` file for discovering the connection details, including the service name)
-
-# If you are outside the CERN network, you should first set up port forwarding:
-::
-
-    ssh -Nf lxplus.cern.ch -L 10121:itrac5404-v.cern.ch:10121
-
-and then you can connect via e.g. `sqldeveloper <https://www.oracle.com/database/technologies/appdev/sql-developer.html>`_
-or using `sqlcl <https://www.oracle.com/database/technologies/appdev/sqlcl.html>`_ client:
-::
-
-    sql LHCB_DIRACBOOKKEEPING_users@localhost:10121/lhcb_diracbookkeeping.cern.ch
-
-
-
+How-To in `lbDevOps doc <https://lbdevops.web.cern.ch/lbdevops/DIRACInfrastructure.html>`_.
 
 Compile oracle stored procedure
 ===============================
@@ -146,7 +114,8 @@ Notes:
 Steps in the Bookkeeping database
 =================================
 
-Steps are used to process/produce data. The steps are used by the Production Management system and work flow. The steps are stored in the steps table which has the following columns::
+Steps are used to process/produce data. The steps are used by the Production Management system and work flow.
+The steps are stored in the steps table which has the following columns::
 
    STEPID
    STEPNAME
@@ -177,13 +146,14 @@ The steps table has 3 triggers::
 Modifying steps
 ===============
 
-We may want to modify an already used steps. A step can be modified if the trigger is disabled. The following commands has to be performed in order to modify a step:
+We may want to modify an already used steps. A step can be modified if the trigger is disabled.
+The following commands has to be performed in order to modify a step:
 
 .. code-block:: sql
 
-   alter trigger step_update disable;
-   update steps set stepname='Reco16Smog for 2015 pA', processingpass='Reco16Smog' where stepid=129609; --an alternative is to used the StepManager page
-   alter trigger step_update enable;
+   ALTER TRIGGER step_update disable;
+   UPDATE steps SET stepname='Reco16Smog for 2015 pA', processingpass='Reco16Smog' WHERE stepid=129609; --an alternative is used by the StepManager page
+   ALTER TRIGGER step_update enable;
 
 ==================================
 Processing pass in the Bookkeeping
@@ -198,8 +168,8 @@ The following example illustrates how to create a step:
 
 .. code-block:: sql
 
-    select max(id)+1 from processing;
-    select * from processing where name='Real Data';
+    SELECT max(id)+1 FROM processing;
+    SELECT * FROM processing where name='Real Data';
     insert into processing(id,parentid, name)values(1915,12,'Reco16Smog');
 
 In this example we have created the following processing pass: /Real Data/Reco16Smog
@@ -209,7 +179,7 @@ The following query can be used to check the step:
 .. code-block:: sql
 
     SELECT * FROM (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID
-         FROM processing v   START WITH id in (select distinct id from processing where name='Real Data')
+         FROM processing v   START WITH id in (SELECT distinct id FROM processing where name='Real Data')
     CONNECT BY NOCYCLE PRIOR  id=parentid) v   where v.path='/Real Data/Reco16Smog';
 
 If we know the processing id, we can use the following query to found out the processing pass:
