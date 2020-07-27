@@ -145,6 +145,6 @@ def test_difisnotnull():
 
 
 def test_ranges():
-  testList = [0,1,2,3,4,5,6,7,8,10,11,12,13,14,20,21,22,23]
+  testList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 20, 21, 22, 23]
 
   assert ranges(testList) == [0, 8, 10, 14, 20, 23]
