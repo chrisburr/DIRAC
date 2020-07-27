@@ -1,3 +1,17 @@
+v10r0p9
+Based on DIRAC v7r0p29
+LHCbWebDIRAC v5r1p7
+LHCbDIRACOS v1r9
+
+*Documentation
+
+CHANGE: (!844) DBs doc moved to lbdevops
+
+*CHANGELOG
+
+CHANGE: (!848) Move CHANGELOG to folder and create changelog per version
+
+
 v10r0p8
 Based on DIRAC v7r0p29
 LHCbWebDIRAC v5r1p6
