@@ -12,7 +12,7 @@
 LHCbDIRAC.HCbDIRAC.Core.Utilities.XMLSummaries."""
 
 import unittest
-from LHCbDIRAC.Core.Utilities.XMLSummaries import xmltojsonCat1, xmltojsonCat2, xmltojsonCat3, difisnotnull
+from LHCbDIRAC.Core.Utilities.XMLSummaries import xmltojsonCat1, xmltojsonCat2, xmltojsonCat3, difisnotnull, ranges
 
 
 def test_xmltojsonCat1():
@@ -142,3 +142,9 @@ def test_difisnotnull():
 
   assert difisnotnull(dictCategory3NotNull)
   assert not difisnotnull(dictCategory3Null)
+
+
+def test_ranges():
+  testList = [0,1,2,3,4,5,6,7,8,10,11,12,13,14,20,21,22,23]
+
+  assert ranges(testList) == [0, 8, 10, 14, 20, 23]

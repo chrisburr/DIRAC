@@ -86,9 +86,14 @@ def xmltojsonCat3(lCategory3):
   # key2c and key3c are used if key3c in ['x', 'y', 'z']
   key2c = key2[:-2]
   key3c = key2[-1:]
+  # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+  # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
   # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
   key2cc = key2[:- 4]
   key3cc = key2[-3:]
+  # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+  # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
+
   if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
     result[key1] = {key2c: {key3c: int(lCategory3[0]['#text'])}}
   elif key3cc in ['Phi', 'Eta']:
@@ -102,6 +107,7 @@ def xmltojsonCat3(lCategory3):
     key_3c = key_2[-1:]
     key_2cc = key_2[:-4]
     key_3cc = key_2[-3:]
+    # Here we compare 2 consecutive counters
     if key_2cc != key2cc:
       if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
         result[key_1][key_2c] = {key_3c: int(enum[1]['#text'])}
@@ -127,11 +133,11 @@ def xmltojsonCat3(lCategory3):
 def ranges(mainList):
   ''' Returns a list containing the ranges of each category '''
   rangesList = [mainList[0], mainList[1]]
-  for i in enumerate(mainList[2:]):
-    if mainList[i[0] + 2] == mainList[i[0] + 1] + 1 and mainList[i[0] + 1] == mainList[i[0]] + 1:
-      rangesList[len(rangesList) - 1] = mainList[i[0] + 2]
+  for i, value in enumerate(mainList[2:]):
+    if value == mainList[i + 1] + 1 and mainList[i + 1] == mainList[i] + 1:
+      rangesList[len(rangesList) - 1] = value
     else:
-      rangesList.append(mainList[i[0] + 2])
+      rangesList.append(value)
   return rangesList
 
 
@@ -139,8 +145,7 @@ def difisnotnull(dict_3):
   ''' Returns True if a category 3 dictionary contains a field or a subfield that has a value different from 0 '''
   if isinstance(dict_3, dict):
     return any(difisnotnull(v) for v in dict_3.values())
-  else:
-    return dict_3 != 0
+  return dict_3 != 0
 
 
 class XMLSummaryError(Exception):
