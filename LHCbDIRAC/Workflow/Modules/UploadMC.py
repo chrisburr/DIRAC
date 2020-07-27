@@ -99,7 +99,7 @@ class UploadMC(ModuleBase):
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
             if self._enableModule():
               mcLogGaussSummariesClient = MCStatsClient()
-              mcLogGaussSummariesClient.indexName = 'lhcb-mcstats-GaussSummaries' + self.production_id
+              mcLogGaussSummariesClient.indexName = 'lhcb-GaussSummaries-' + self.production_id
               res = mcLogGaussSummariesClient.set('Gauss-Summaries', jsonData)
               if not res['OK']:
                 self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
