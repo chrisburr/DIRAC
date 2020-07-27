@@ -504,9 +504,9 @@ class BookkeepingClient(Client):
       return res
     parameters = res['Value']
 
-    if parameters['Status'] == 'Cleaned':
-      self.log.notice("The production is in status Cleaned")
-      return S_ERROR("The production is in status Cleaned")
+    if parameters['Status'] in ('Cleaned', 'Deleted'):
+      self.log.notice("The production is Cleaned/Deleted")
+      return S_ERROR("The production is Cleaned/Deleted")
 
     # Now getting the TransformationIDs for the RequestID
     reqID = parameters.get('RequestID')
