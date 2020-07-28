@@ -1,3 +1,14 @@
+v10r0p10
+Based on DIRAC v7r0p29
+LHCbWebDIRAC v5r1p7
+LHCbDIRACOS v1r9
+
+*Bookkeeping
+
+FIX: (!843) added check for cleaned productions
+
+
+
 v10r0p9
 Based on DIRAC v7r0p29
 LHCbWebDIRAC v5r1p7
