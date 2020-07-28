@@ -696,30 +696,22 @@ OPEN  a_cursor FOR
 END;
 
 --------------------------------------------------------------------------------------
-FUNCTION getproductionprocessingpass(
-  prod NUMBER) RETURN VARCHAR2 IS
+function getProductionProcessingPass(prod NUMBER) return varchar2 is
 retval varchar2(256);
-ecode number(38);
-thisproc constant varchar2(50) := 'trap_errmesg';
-BEGIN
-  SELECT v.path INTO retval
-  FROM (SELECT DISTINCT  LEVEL-1 pathlen, sys_connect_by_path(name, '/') path
-	FROM processing
-	WHERE LEVEL > 0
-	  AND id = (SELECT DISTINCT processingid
-		    FROM productionscontainer
-		    WHERE production = prod)
-	CONNECT BY NOCYCLE PRIOR id = parentid
-	ORDER BY pathlen DESC) v
-  WHERE rownum <= 1;
-  RETURN retval;
-  EXCEPTION
-    WHEN others THEN
-      raise_application_error(-20004, 'error found! The processing pass does not exists!');
-  --ecode := SQLERRM; --SQLCODE;
-  --dbms_output.put_line(thisproc || ' - ' || ecode);
-    RETURN NULL;
-END;
+ecode NUMBER(38);
+thisproc CONSTANT VARCHAR2(50) := 'trap_errmesg';
+begin
+ SELECT v.path into retval FROM (SELECT distinct  LEVEL-1 Pathlen, SYS_CONNECT_BY_PATH(name, '/') Path
+   FROM processing
+   WHERE LEVEL > 0 and id = (SELECT distinct processingid FROM productionscontainer WHERE productionscontainer.production=prod)
+   CONNECT BY NOCYCLE PRIOR id=parentid order by Pathlen desc) v WHERE rownum<=1;
+return retval;
+EXCEPTION WHEN OTHERS THEN
+raise_application_error(-20004, 'error found! The processing pass does not exists!');
+--ecode := SQLERRM; --SQLCODE;
+--dbms_output.put_line(thisproc || ' - ' || ecode);
+return null;
+end;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 FUNCTION getproductionprocessingpassid(
