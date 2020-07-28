@@ -14,8 +14,12 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Get Data Quality Flag for the given run."""
+
 __RCSID__ = "$Id$"
+
 import DIRAC
+
+from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 
 
@@ -31,18 +35,22 @@ if not runSet:
   Script.showHelp()
   DIRAC.exit()
 
+gLogger.showHeaders(False)
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 cl = BookkeepingClient()
-print "-----------------------------------"
-print "Run Number".ljust(15) + "Stream".ljust(10) + "Flag".ljust(10)
-print "-----------------------------------"
+
+gLogger.notice("Run Number".ljust(15) + "Stream".ljust(10) + "Flag".ljust(10))
+
+error = False
 for runId in sorted(runSet):
   retVal = cl.getRunFilesDataQuality(runId)
   if retVal['OK']:
     for run, stream, flag in sorted((run, stream, flag) for run, flag, stream in retVal["Value"]):
-      print str(run).ljust(15) + str(stream).ljust(10) + str(flag).ljust(10)
-    print "-----------------------------------"
+      gLogger.notice(str(run).ljust(15) + str(stream).ljust(10) + str(flag).ljust(10))
+    gLogger.notice("-----------------------------------")
   else:
-    print retVal["Message"]
+    gLogger.error(retVal["Message"])
+    error = True
 
-DIRAC.exit()
+if error:
+  DIRAC.exit(1)

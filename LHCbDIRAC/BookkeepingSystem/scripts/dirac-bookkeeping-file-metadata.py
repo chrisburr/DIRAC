@@ -9,12 +9,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-########################################################################
-# File :    dirac-bookkeeping-eventtype-mgt-update
-# Author :  Zoltan Mathe
-########################################################################
+
 """Retrieve metadata from the Bookkeeping for the given files."""
+
 __RCSID__ = "$Id$"
+
 import DIRAC.Core.Base.Script as Script
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 

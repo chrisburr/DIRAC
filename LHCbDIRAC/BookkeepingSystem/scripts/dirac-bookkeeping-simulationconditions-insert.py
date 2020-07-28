@@ -16,7 +16,10 @@
 """Insert a new set of simulation conditions in the Bookkeeping."""
 __RCSID__ = "$Id$"
 
+from builtins import input
+
 import DIRAC
+from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
@@ -28,16 +31,16 @@ bk = BookkeepingClient()
 
 exitCode = 0
 
-desc = raw_input("SimDescription: ")
-beamcond = raw_input("BeamCond: ")
-beamEnergy = raw_input("BeamEnergy: ")
-generator = raw_input("Generator: ")
-magneticField = raw_input("MagneticField: ")
-detectorCond = raw_input("DetectorCond: ")
-luminosity = raw_input("Luminosity: ")
-g4settings = raw_input("G4settings: ")
-print 'Do you want to add these new simulation conditions? (yes or no)'
-value = raw_input('Choice:')
+desc = input("SimDescription: ")
+beamcond = input("BeamCond: ")
+beamEnergy = input("BeamEnergy: ")
+generator = input("Generator: ")
+magneticField = input("MagneticField: ")
+detectorCond = input("DetectorCond: ")
+luminosity = input("Luminosity: ")
+g4settings = input("G4settings: ")
+gLogger.notice('Do you want to add these new simulation conditions? (yes or no)')
+value = input('Choice:')
 choice = value.lower()
 if choice in ['yes', 'y']:
   in_dict = {
@@ -52,14 +55,14 @@ if choice in ['yes', 'y']:
       'Visible': 'Y'}
   res = bk.insertSimConditions(in_dict)
   if res['OK']:
-    print 'The simulation conditions added successfully!'
+    gLogger.notice('The simulation conditions added successfully!')
   else:
-    print "ERROR:", res['Message']
+    gLogger.error(res['Message'])
     exitCode = 2
 elif choice in ['no', 'n']:
-  print 'Aborted!'
+  gLogger.notice('Aborted!')
 else:
-  print 'Unexpected choice:', value
+  gLogger.notice('Unexpected choice:', value)
   exitCode = 2
 
 DIRAC.exit(exitCode)

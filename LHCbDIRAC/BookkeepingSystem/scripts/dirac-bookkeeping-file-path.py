@@ -13,8 +13,11 @@
 # File :    dirac-bookkeeping-file-path
 # Author :  Zoltan Mathe
 ########################################################################
+
 """Return the BK path for the directories of a (list of) files."""
+
 __RCSID__ = "$Id$"
+
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
 if __name__ == "__main__":
