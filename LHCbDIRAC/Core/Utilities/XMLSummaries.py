@@ -36,7 +36,7 @@ def xmltojsonCat1(lCategory1):
 
 def xmltojsonCat2(lCategory2):
   '''returns a Category2 dictionary
-    :param lCategory2: list containing Category2 counters
+    :param list lCategory2: list containing Category2 counters
     e.g. Category2 counters:
     <counter name="TTHitMonitor/DeltaRay">1249</counter>
     <counter name="TTHitMonitor/betaGamma">28101829</counter>
@@ -53,7 +53,7 @@ def xmltojsonCat2(lCategory2):
 
 def xmltojsonCat3(lCategory3):
   '''returns a Category3 dictionary
-    :param lCategory3: list containing Category3 counters
+    :param list lCategory3: list containing Category3 counters
     e.g. Category3 counters:
     <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
     <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
