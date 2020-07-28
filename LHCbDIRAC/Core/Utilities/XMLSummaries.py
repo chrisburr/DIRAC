@@ -23,7 +23,7 @@ __RCSID__ = "$Id$"
 
 def xmltojsonCat1(lCategory1):
   '''returns a Category1 dictionary
-    :param lCategory1: list containing Category1 counters
+    :param list lCategory1: list containing Category1 counters
     e.g. Category1 counter : <counter name="MCVeloHitPacker/# PackedData">50809</counter>
   '''
   result = {}
