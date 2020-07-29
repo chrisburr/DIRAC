@@ -95,7 +95,7 @@ def xmltojsonCat3(lCategory3):
     key3cc = key2[-3:]
     # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
     # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
-    
+
     if key1 not in result:
       result[key1] = {}
     if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
@@ -497,7 +497,7 @@ class XMLSummary(object):
     dico = ast.literal_eval(text)
     # Taking only the name of the file without the .xml in the end
     with io.open(self.xmlFileName[:-3] + 'json', 'w', encoding="utf-8") as fp:
-      fp.write(unicode(json.dumps(dico)))
+      fp.write(unicode(json.dumps(dico, indent=2)))
 
     return(dico)
 

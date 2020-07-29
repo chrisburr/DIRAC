@@ -29,7 +29,10 @@ dictCategory1 = {
         'PackedData': 244708
     }
 }
-@pytest.mark.parametrize("test_input,expected", [(lCategory1,dictCategory1), ([],{})])
+@pytest.mark.parametrize("test_input,expected",[(lCategory1, dictCategory1),
+                                                ([], {})])
+
+
 def test_xmltojsonCat1(test_input, expected):
   assert xmltojsonCat1(test_input) == expected
 
@@ -52,7 +55,10 @@ dictCategory2 = {
         'numberHits': 73624
     }
 }
-@pytest.mark.parametrize("test_input,expected", [(lCategory2,dictCategory2), ([],{})])
+@pytest.mark.parametrize("test_input,expected", [(lCategory2, dictCategory2),
+                                                 ([], {})])
+
+
 def test_xmltojsonCat2(test_input, expected):
   assert xmltojsonCat2(test_input) == expected
 
@@ -75,7 +81,10 @@ dictCategory3 = {
         'TOF': 0
     }
 }
-@pytest.mark.parametrize("test_input,expected", [(lCategory3,dictCategory3), ([],{})])
+@pytest.mark.parametrize("test_input,expected", [(lCategory3, dictCategory3),
+                                                 ([], {})])
+
+
 def test_xmltojsonCat3(test_input, expected):
   assert xmltojsonCat3(test_input) == expected
 
@@ -135,7 +144,10 @@ dictCategory3Null = {
         }
     }
 }
-@pytest.mark.parametrize("test_input,expected", [(dictCategory3NotNull,True), (dictCategory3Null,False)])
+@pytest.mark.parametrize("test_input,expected", [(dictCategory3NotNull, True),
+                                                 (dictCategory3Null, False)])
+
+
 def test_difisnotnull(test_input, expected):
   assert difisnotnull(test_input) == expected
 

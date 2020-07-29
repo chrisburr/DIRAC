@@ -72,8 +72,10 @@ class UploadMC(ModuleBase):
                 # At this point we can see exactly what the module would have uploaded
                 self.log.info("Module disabled", "would have attempted to upload the following file %s" % fn)
             except Exception as ve:
+              self.log.error(repr(ve))
               self.log.verbose("Exception loading the JSON file: content of %s follows" % fn)
-              print fd.read()
+              self.log.verbose(fd.read)
+
               raise
         else:
           self.log.info("JSON file not found", fn)
@@ -94,7 +96,7 @@ class UploadMC(ModuleBase):
             ids['prod_job_id'] = self.prod_job_id
             jsonData['Counters']['ID'] = ids
             with io.open(jsonfl, 'w', encoding="utf-8") as output:
-              output.write(unicode(json.dumps(jsonData)))
+              output.write(unicode(json.dumps(jsonData, indent=2)))
 
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
             if self._enableModule():
@@ -107,8 +109,9 @@ class UploadMC(ModuleBase):
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
           except Exception as ve:
+            self.log.error(repr(ve))
             self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
-            print JS.read()
+            self.log.verbose(JS.read())
             raise
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
