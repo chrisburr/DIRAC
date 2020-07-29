@@ -15,6 +15,7 @@ import ast
 import io
 import json
 import xmltodict
+
 from DIRAC import gLogger
 from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 
@@ -80,54 +81,34 @@ def xmltojsonCat3(lCategory3):
     <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
     <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
   '''
-  result = dict()
-  key1, key2 = lCategory3[0]['@name'].split(" - ", 1)
-  key1 = key1.strip()
-  # key2c and key3c are used if key3c in ['x', 'y', 'z']
-  key2c = key2[:-2]
-  key3c = key2[-1:]
-  # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
-  # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
-  # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
-  key2cc = key2[:- 4]
-  key3cc = key2[-3:]
-  # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
-  # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
-
-  if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
-    result[key1] = {key2c: {key3c: int(lCategory3[0]['#text'])}}
-  elif key3cc in ['Phi', 'Eta']:
-    result[key1] = {key2cc: {key3cc: int(lCategory3[0]['#text'])}}
-  else:
-    result[key1] = {key2: int(lCategory3[0]['#text'])}
-  for enum in enumerate(lCategory3[1:]):
-    key_1, key_2 = enum[1]['@name'].split(" - ")
-    key_1 = key_1.strip()
-    key_2c = key_2[:-2]
-    key_3c = key_2[-1:]
-    key_2cc = key_2[:-4]
-    key_3cc = key_2[-3:]
-    # Here we compare 2 consecutive counters
-    if key_2cc != key2cc:
-      if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
-        result[key_1][key_2c] = {key_3c: int(enum[1]['#text'])}
-      elif key_3cc in ['Phi', 'Eta']:
-        result[key_1] = {key_2cc: {key_3cc: int(enum[1]['#text'])}}
-      else:
-        result[key_1].update({key_2: int(enum[1]['#text'])})
-      key2 = key_2
-      key2c = key_2c
-      key2cc = key_2cc
-      key3cc = key_3cc
+  result = {}
+  for counter in lCategory3:
+    key1, key2 = counter['@name'].split(" - ", 1)
+    key1 = key1.strip()
+    # key2c and key3c are used if key3c in ['x', 'y', 'z']
+    key2c = key2[:-2]
+    key3c = key2[-1:]
+    # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+    # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
+    # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
+    key2cc = key2[:- 4]
+    key3cc = key2[-3:]
+    # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+    # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
+    
+    if key1 not in result:
+      result[key1] = {}
+    if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
+      if key2c not in result[key1]:
+          result[key1][key2c] = {}
+      result[key1][key2c][key3c] = int(counter['#text'])
+    elif key3cc in ['Phi', 'Eta']:
+      if key2cc not in result[key1]:
+        result[key1][key2cc] = {}
+      result[key1][key2cc][key3cc] = int(counter['#text'])
     else:
-      if key_3c in ['x', 'y', 'z'] and key_2 != 'Energy':
-        result[key_1][key_2c].update({key_3c: int(enum[1]['#text'])})
-      elif key_3cc in ['Phi', 'Eta']:
-        result[key_1][key_2cc].update({key_3cc: int(enum[1]['#text'])})
-      else:
-        result[key_1].update({key_2: int(enum[1]['#text'])})
-
-  return(result)
+      result[key1][key2] = int(counter['#text'])
+  return result
 
 
 def ranges(mainList):
@@ -473,17 +454,17 @@ class XMLSummary(object):
     ''' The main function that takes the name of the XMLsummary file or the path to it
     as an entry parameter and creates a JSON file with the same name in the current directory '''
 
-    JS = dict()
-    JSO = dict()
+    jsonTemp = dict()
+    jsonFin = dict()
 
-    with io.open(self.xmlFileName, 'r') as file:
+    with io.open(self.xmlFileName, 'r') as fp:
       # storing the lines in a list
-      fileLines = file.readlines()
+      fileLines = fp.readlines()
     # keeping only the counters lines
     fileLines = fileLines[fileLines.index(
         '\t<counters>\n'):fileLines.index('\t</counters>\n') + 1]
     # deleting the \t in the beginning of each line
-    countersLines = [fileLines[i][1:] for i in range(len(fileLines))]
+    countersLines = [counterLine[1:] for counterLine in fileLines]
     # replacing Theta with Eta in order to simplify the process. It will be replaced back at the end
     countersText = ''.join(countersLines).replace('Theta', 'Eta')
 
@@ -494,25 +475,25 @@ class XMLSummary(object):
     lCategory2 = list()
     lCategory3 = list()
     # Selecting only the data that meet certain criteria
-    for enum in enumerate(listCounters):
-      if enum[1]['@name'].find('#') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
-        lCategory1.append(enum[0])
-      elif enum[1]['@name'].find('/') != -1 and enum[1]['@name'].find('Original') == -1 and enum[1]['@name'].find('Unpacked') == -1 and enum[1]['@name'].find('Diff') == -1 and enum[1]['@name'].find('#') == -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
-        lCategory2.append(enum[0])
-      elif enum[1]['@name'].find('Diff.') != -1 and enum[1]['@name'].find('Prev') == -1 and enum[1]['@name'].find('Next') == -1:  # noqa
-        lCategory3.append(enum[0])
+    for i, value in enumerate(listCounters):
+      if value['@name'].find('#') != -1 and value['@name'].find('Prev') == -1 and value['@name'].find('Next') == -1:  # noqa
+        lCategory1.append(i)
+      elif value['@name'].find('/') != -1 and value['@name'].find('Original') == -1 and value['@name'].find('Unpacked') == -1 and value['@name'].find('Diff') == -1 and value['@name'].find('#') == -1 and value['@name'].find('Prev') == -1 and value['@name'].find('Next') == -1:  # noqa
+        lCategory2.append(i)
+      elif value['@name'].find('Diff.') != -1 and value['@name'].find('Prev') == -1 and value['@name'].find('Next') == -1:  # noqa
+        lCategory3.append(i)
     # Filling the dictionary with the data that was kept
     for i in lCategory1:
-      JS.update(xmltojsonCat1(listCounters[i:i + 1]))
+      jsonTemp.update(xmltojsonCat1(listCounters[i:i + 1]))
     for i in range(0, len(ranges(lCategory2)), 2):
-      JS.update(xmltojsonCat2(listCounters[ranges(lCategory2)[i]:ranges(lCategory2)[i + 1] + 1]))
+      jsonTemp.update(xmltojsonCat2(listCounters[ranges(lCategory2)[i]:ranges(lCategory2)[i + 1] + 1]))
     for i in range(0, len(ranges(lCategory3)), 2):
       if difisnotnull(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1])):
-        JS.update(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1]))
+        jsonTemp.update(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1]))
 
     # Making the final changes in order to produce the json file
-    JSO['Counters'] = JS
-    text = str(JSO).replace('Eta', 'Theta')
+    jsonFin['Counters'] = jsonTemp
+    text = str(jsonFin).replace('Eta', 'Theta')
     dico = ast.literal_eval(text)
     # Taking only the name of the file without the .xml in the end
     with io.open(self.xmlFileName[:-3] + 'json', 'w', encoding="utf-8") as fp:
