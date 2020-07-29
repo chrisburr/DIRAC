@@ -14,6 +14,7 @@ LHCbDIRAC.HCbDIRAC.Core.Utilities.XMLSummaries."""
 import pytest
 from LHCbDIRAC.Core.Utilities.XMLSummaries import xmltojsonCat1, xmltojsonCat2, xmltojsonCat3, difisnotnull, ranges
 
+
 lCategory1 = [{'@name': 'MCVeloHitPacker/# PackedData', '#text': '244708'}, {'@name': 'MCPuVetoHitPacker/# PackedData', '#text': '9800'}, {'@name': 'MCTTHitPacker/# PackedData', '#text': '73624'}, {'@name': 'MCITHitPacker/# PackedData', '#text': '86436'}]  # noqa
 dictCategory1 = {
     'MCITHitPacker': {
@@ -29,12 +30,13 @@ dictCategory1 = {
         'PackedData': 244708
     }
 }
-@pytest.mark.parametrize("test_input,expected",[(lCategory1, dictCategory1),
+
+
+@pytest.mark.parametrize("test_input,expected", [(lCategory1, dictCategory1),
                                                 ([], {})])
-
-
 def test_xmltojsonCat1(test_input, expected):
   assert xmltojsonCat1(test_input) == expected
+
 
 lCategory2 = [{'@name': 'TTHitMonitor/DeltaRay', '#text': '10184'}, {'@name': 'TTHitMonitor/betaGamma', '#text': '72641099'}, {'@name': 'TTHitMonitor/numberHits', '#text': '73624'}, {'@name': 'ITHitMonitor/DeltaRay', '#text': '4208'}, {'@name': 'ITHitMonitor/betaGamma', '#text': '224730238'}, {'@name': 'ITHitMonitor/numberHits', '#text': '86436'}, {'@name': 'OTHitMonitor/DeltaRay', '#text': '16893'}, {'@name': 'OTHitMonitor/betaGamma', '#text': '338754733'}, {'@name': 'OTHitMonitor/numberHits', '#text': '253748'}]  # noqa
 
@@ -55,10 +57,10 @@ dictCategory2 = {
         'numberHits': 73624
     }
 }
+
+
 @pytest.mark.parametrize("test_input,expected", [(lCategory2, dictCategory2),
                                                  ([], {})])
-
-
 def test_xmltojsonCat2(test_input, expected):
   assert xmltojsonCat2(test_input) == expected
 
@@ -81,10 +83,10 @@ dictCategory3 = {
         'TOF': 0
     }
 }
+
+
 @pytest.mark.parametrize("test_input,expected", [(lCategory3, dictCategory3),
                                                  ([], {})])
-
-
 def test_xmltojsonCat3(test_input, expected):
   assert xmltojsonCat3(test_input) == expected
 
@@ -144,10 +146,10 @@ dictCategory3Null = {
         }
     }
 }
+
+
 @pytest.mark.parametrize("test_input,expected", [(dictCategory3NotNull, True),
                                                  (dictCategory3Null, False)])
-
-
 def test_difisnotnull(test_input, expected):
   assert difisnotnull(test_input) == expected
 
