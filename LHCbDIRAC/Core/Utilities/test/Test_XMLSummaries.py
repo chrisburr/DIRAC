@@ -33,7 +33,7 @@ dictCategory1 = {
 
 
 @pytest.mark.parametrize("test_input,expected", [(lCategory1, dictCategory1),
-                                                ([], {})])
+                                                 ([], {})])
 def test_xmltojsonCat1(test_input, expected):
   assert xmltojsonCat1(test_input) == expected
 
