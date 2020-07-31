@@ -246,7 +246,7 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 2 to 4 pro
 
 gaudirunJob = LHCbJob()
 
-gaudirunJob.setName("gaudirun-Gauss-test-multicore-2to4-might-fail")
+gaudirunJob.setName("gaudirun-Gauss-test-multicore-2to4")
 gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
                                       '/tests/System/GridTestSubmission')[0]])
 gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
@@ -282,23 +282,36 @@ gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py', r
                                       '/tests/System/GridTestSubmission')[0]])
 gaudirunJob.setOutputSandbox('00012345_00067899_1.sim')
 
-# From step 139522
+# lb-run --unset LD_LIBRARY_PATH --unset PYTHONPATH --unset XrdSecPROTOCOL
+# --siteroot=/cvmfs/lhcb.cern.ch/lib/ --allow-containers -c x86_64-centos7-gcc9-opt
+# --use="AppConfig v3r400"  --use="Gen/DecFiles v30r42"  --use="ProdConf"
+# Gauss/v54r3 gaudirun.py -T --ncpus 8
+# $APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py
+# $APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py
+# $DECFILESROOT/options/12143001.py
+# $LBPYTHIA8ROOT/options/Pythia8.py
+# $APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py
+# $APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmOpt2.py
+# $APPCONFIGOPTS/Gauss/GaussMPpatch20200701.py
+# $APPCONFIGOPTS/Persistency/Compression-LZMA-4.py
+# prodConf_Gauss_00111263_00000023_1.py
 
-options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py;"
-options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
-options += "$DECFILESROOT/options/12143001.py;"
-options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
-options += "$APPCONFIGOPTS/Gauss/TuningPythia8_Sim09.py;"
-options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py;"
-options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py;"
-options += "$APPCONFIGOPTS/Gauss/GaussMPpatch.py"
+options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py"
+options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py"
+options += "$DECFILESROOT/options/12143001.py"
+options += "$LBPYTHIA8ROOT/options/Pythia8.py"
+options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py"
+options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmOpt2.py"
+options += "$APPCONFIGOPTS/Gauss/GaussMPpatch20200701.py"
+options += "$APPCONFIGOPTS/Persistency/Compression-LZMA-4.py"
+
 
 # gaudirunJob.addPackage('AppConfig', 'v3r179')
 # gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
 # gaudirunJob.addPackage('ProdConf', 'v1r9')
-gaudirunJob.setApplication('Gauss', 'v53r1', options,
-                           extraPackages='AppConfig.v3r389;Gen/DecFiles.v30r35;ProdConf.v1r9',
-                           systemConfig='x86_64-slc6-gcc7-opt')
+gaudirunJob.setApplication('Gauss', 'v54r3', options,
+                           extraPackages='AppConfig.v3r400;Gen/DecFiles.v30r42;ProdConf.v3r0',
+                           systemConfig='x86_64-centos7-gcc9-opt')
 
 gaudirunJob.setDIRACPlatform()
 gaudirunJob.setCPUTime(172800)

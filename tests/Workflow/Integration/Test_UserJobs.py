@@ -336,6 +336,9 @@ def createJob(local=True):
                                              ('inputDataType', 'string', '', 'Input Data Type'),
                                              ('inputData', 'string', '', 'Input Data'),
                                              ('numberOfEvents', 'string', '', 'Events treated'),
+                                             ('multiCore', 'string', '', 'If the step can run multicore'),
+                                             ('StopSigNumber', 'string', '', 'signal number (interpreted by Gaudi)'),
+                                             ('StopSigRegex', 'string', '', 'RegEx of what to stop'),
                                              ('extraPackages', 'string', '', 'ExtraPackages'),
                                              ('listoutput', 'list', [], 'StepOutputList'),
                                              ('SystemConfig', 'string', '', 'binary tag')])
