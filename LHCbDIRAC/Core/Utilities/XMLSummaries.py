@@ -112,7 +112,12 @@ def xmltojsonCat3(lCategory3):
 
 
 def ranges(mainList):
-  ''' Returns a list containing the ranges of each category '''
+  ''' Returns a list containing the ranges of each category
+      :param list mainList: list containing indices of a certain category of counters
+      e.g. mainList = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 20, 21, 22]
+      ranges(mainList) = [1, 6, 11, 14, 20, 22]
+      The role of this function is to know the intervals of each category
+  '''
   rangesList = [mainList[0], mainList[1]]
   for i, value in enumerate(mainList[2:]):
     if value == mainList[i + 1] + 1 and mainList[i + 1] == mainList[i] + 1:

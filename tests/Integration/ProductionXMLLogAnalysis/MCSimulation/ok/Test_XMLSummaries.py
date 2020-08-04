@@ -11,7 +11,6 @@
 """Unittest for:
 LHCbDIRAC.ProductionManagementSystem.Utilities.XMLtoJSON."""
 
-import unittest
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 
 
