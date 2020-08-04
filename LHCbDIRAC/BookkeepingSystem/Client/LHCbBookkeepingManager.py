@@ -1696,26 +1696,29 @@ class LHCbBookkeepingManager(BaseESManager):
 
     :returns: str with options
     """
-    if optionsFile is None and savedType == 'txt':
+    if savedType == 'py' or savedType is None:
+      # get list of event types
+      evtTypes = self.__createEventTypeList(files)
+
+      string = self.__addGaudiheader(evtTypes)
+      string += self.__addDatasetCreationMetadata(dataset)
+
+      filesandformats = self.__getFilesandFormats(savePfn, files)
+      string += self.__createFormatString(filesandformats)
+
+      if catalog:
+        string += "\nFileCatalog().Catalogs += [ 'xmlcatalog_file:" + os.path.basename(catalog) + "' ]\n"
+    elif savedType == 'txt':
       # Only return the list of LFNs
-      return '\n'.join(str(lfn) for lfn in files) + '\n'
-
-    # get list of event types
-    evtTypes = self.__createEventTypeList(files)
-
-    string = self.__addGaudiheader(evtTypes)
-    string += self.__addDatasetCreationMetadata(dataset)
-
-    filesandformats = self.__getFilesandFormats(savePfn, files)
-    string += self.__createFormatString(filesandformats)
-
-    if catalog:
-      string += "\nFileCatalog().Catalogs += [ 'xmlcatalog_file:" + catalog + "' ]\n"
+      string = '\n'.join(str(lfn) for lfn in files) + '\n'
+    else:
+      raise NotImplementedError(savedType)
 
     if optionsFile:
       # Write options file if requested
-      with open(optionsFile, 'w') as fd:
+      with open(optionsFile, 'wt') as fd:
         fd.write(string)
+
     # Always return the string
     return string
 
