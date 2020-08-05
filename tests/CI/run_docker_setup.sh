@@ -97,6 +97,7 @@ prepareEnvironment() {
     echo ""
     echo "# Test specific variables"
     echo "export WORKSPACE=${WORKSPACE}"
+    echo "export TEST_HTTPS=${TEST_HTTPS}"
     echo ""
     echo "# Optional parameters"
 
@@ -264,9 +265,9 @@ if [[ "${0}" = "${BASH_SOURCE[0]}" ]]; then
   prepareEnvironment
   installServer
   installClient
-  testServer
-  testClient
-  checkErrors
+  #testServer
+  #testClient
+  #checkErrors
 else
   echo "Skipping setup, installation and testing as ${BASH_SOURCE[0]} is being sourced"
 fi

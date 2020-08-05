@@ -9,13 +9,13 @@ import zipfile
 import zlib
 
 import DIRAC
-from DIRAC.Core.Utilities.File import mkDir
 from DIRAC.ConfigurationSystem.Client.ConfigurationClient import ConfigurationClient
 from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData, ConfigurationData
 from DIRAC.ConfigurationSystem.private.Refresher import gRefresher
-from DIRAC.FrameworkSystem.Client.Logger import gLogger
-from DIRAC.Core.Utilities.ReturnValues import S_OK, S_ERROR
 from DIRAC.Core.Base.Client import Client
+from DIRAC.Core.Utilities.File import mkDir
+from DIRAC.Core.Utilities.ReturnValues import S_OK, S_ERROR
+from DIRAC.FrameworkSystem.Client.Logger import gLogger
 
 
 class ServiceInterfaceBase(object):
@@ -115,14 +115,14 @@ class ServiceInterfaceBase(object):
     gLogger.info("Checking status of slave servers")
     iGraceTime = gConfigurationData.getSlavesGraceTime()
     bModifiedSlaveServers = False
-    for sSlaveURL in self.dAliveSlaveServers.keys():
+    for sSlaveURL in list(self.dAliveSlaveServers):
       if time.time() - self.dAliveSlaveServers[sSlaveURL] > iGraceTime:
-        gLogger.info("Found dead slave", sSlaveURL)
+        gLogger.warn("Found dead slave", sSlaveURL)
         del self.dAliveSlaveServers[sSlaveURL]
         bModifiedSlaveServers = True
     if bModifiedSlaveServers or forceWriteConfiguration:
       gConfigurationData.setServers("%s, %s" % (self.sURL,
-                                                ", ".join(self.dAliveSlaveServers.keys())))
+                                                ", ".join(list(self.dAliveSlaveServers))))
       self.__generateNewVersion()
 
   @staticmethod

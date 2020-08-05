@@ -133,23 +133,23 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
   @classmethod
   def initializeHandler(cls, serviceInfoDict):
     """
-      This may be overwrited when you write a DIRAC service handler
+      This may be overwritten when you write a DIRAC service handler
       And it must be a class method. This method is called only one time,
       at the first request
 
       :param dict ServiceInfoDict: infos about services, it contains
                                     'serviceName', 'serviceSectionPath',
-                                    'csPaths'and 'URL'
+                                    'csPaths' and 'URL'
     """
     pass
 
   def initializeRequest(self):
     """
-      Called at every request, may be overwrited in your handler.
+      Called at every request, may be overwritten in your handler.
     """
     pass
 
-  # This function is designed to be overwrited as we want in Tornado
+  # This function is designed to be overwritten as we want in Tornado
   # It's why we should disable pylint for this one
   def initialize(self, debug):  # pylint: disable=arguments-differ
     """
@@ -309,8 +309,12 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
     # Write status code before writing, by default error code is "200 OK"
     self.set_status(self._httpError)
 
-    # See 4.5.1 http://www.rfc-editor.org/rfc/rfc2046.txt
-    self.set_header("Content-Type", "application/octet-stream")
+    if self.rawContent:
+      # See 4.5.1 http://www.rfc-editor.org/rfc/rfc2046.txt
+      self.set_header("Content-Type", "application/octet-stream")
+    else:
+      self.set_header("Content-Type", "application/json")
+
     returnedData = dictionnary if self.rawContent else encode(dictionnary)
     self.write(returnedData)
 

@@ -160,9 +160,9 @@ class HandlerManager(object):
 
   def getHandlersDict(self):
     """
-      Return all handler dictionnary
+      Return all handler dictionary
 
-      :returns: dictionnary with absolute url as key ("/System/Service")
+      :returns: dictionary with absolute url as key ("/System/Service")
                 and tornado.web.url object as value
     """
     if not self.__handlers and self.__autoDiscovery:

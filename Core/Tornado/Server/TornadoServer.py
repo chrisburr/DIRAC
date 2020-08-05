@@ -93,7 +93,7 @@ class TornadoServer(object):
 
     # if no service list is given, load services from configuration
     handlerDict = self.handlerManager.getHandlersDict()
-    for item in handlerDict.iteritems():
+    for item in handlerDict.items():
       # handlerDict[key].initializeService(key)
       self.urls.append(url(item[0], item[1], dict(debug=self.debugSSL)))
     # If there is no services loaded:
@@ -115,7 +115,7 @@ class TornadoServer(object):
     if self.debugSSL:
       gLogger.warn("Server is running in debug mode")
 
-    router = Application(self.urls, debug=self.debugSSL)
+    router = Application(self.urls, debug=self.debugSSL, compress_response=True)
 
     certs = Locations.getHostCertificateAndKeyLocation()
     if certs is False:

@@ -1,6 +1,6 @@
 """
   RPCClientSelector can replace RPCClient (with import RPCClientSelector as RPCClient)
-  to migrate from DISET to Tornado. This method chooses and returns the client wich should be
+  to migrate from DISET to Tornado. This method chooses and returns the client which should be
   used for a service. If the url of the service uses HTTPS, TornadoClient is returned, else it returns RPCClient
 
   Example::
@@ -37,7 +37,7 @@ def RPCClientSelector(*args, **kwargs):  # We use same interface as RPCClient
   else:
     TornadoRPCClient = TornadoClient
 
-  # We have to make URL resolution BEFORE the RPCClient or TornadoClient to determine wich one we want to use
+  # We have to make URL resolution BEFORE the RPCClient or TornadoClient to determine which one we want to use
   # URL is defined as first argument (called serviceName) in RPCClient
 
   try:

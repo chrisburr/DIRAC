@@ -12,7 +12,7 @@ __RCSID__ = "$Id$"
 # Must be define BEFORE any dirac import
 import os
 import sys
-os.environ['USE_TORNADO_IOLOOP'] = "True"
+os.environ['DIRAC_USE_TORNADO_IOLOOP'] = "True"
 
 
 from DIRAC.FrameworkSystem.Client.Logger import gLogger

@@ -246,7 +246,7 @@ class TornadoBaseClient(object):
 
     WARNING: COPY/PASTE FROM Core/Diset/private/BaseClient
     """
-    # Wich extra credentials to use?
+    # which extra credentials to use?
     if self.__useCertificates:
       self.__extraCredentials = self.VAL_EXTRA_CREDENTIALS_HOST
     else:
