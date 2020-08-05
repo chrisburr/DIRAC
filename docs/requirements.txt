@@ -8,3 +8,4 @@ uproot
 certifi
 futures
 cx_Oracle==7.3
+xmltodict

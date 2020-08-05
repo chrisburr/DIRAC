@@ -26,6 +26,7 @@ from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsCli
 id1 = 1
 id2 = 2
 falseID = 3
+id3 = 4
 
 data1 = {
     "Errors": {
@@ -52,10 +53,45 @@ data2 = {
     }
 }
 
+data3 = {
+    "Counters": {
+        "ID": {
+            "prod_job_id": "000000001",
+            "ProductionID": "8",
+            "JobID": id3
+        },
+        "ITHitMonitor": {
+            "betaGamma": 224730238,
+            "DeltaRay": 4208,
+            "numberHits": 86436
+        },
+        "MCITHitPacker": {
+            "PackedData": 86436
+        },
+        "CheckITHits/Diff.": {
+            "Energy": 0,
+            "Parent |P|": 9,
+            "TOF": 0,
+            "Displacement": {
+                "y": 0,
+                "x": 0,
+                "z": 0
+            },
+            "Entry Point": {
+                "y": 0,
+                "x": 0,
+                "z": 0
+            }
+        }
+    }
+}
+
 typeName = 'test'
+mcType1 = 'errors'
+mcType2 = 'summary'
 
 mcStatsClient = MCStatsClient()
-mcStatsClient.indexName = 'lhcb-mclogerrors'
+mcStatsClient.indexName = 'lhcb-mcstats'
 
 
 def test_setAndGetandRemove():
@@ -70,42 +106,58 @@ def test_setAndGetandRemove():
   result = mcStatsClient.set(typeName, data2)
   assert result['OK'] is True
 
+  # Set data3
+  result = mcStatsClient.set(typeName, data3)
+  assert result['OK'] is True
+
   time.sleep(5)
 
   # Get data1
-  result = mcStatsClient.get(id1)
+  result = mcStatsClient.get(id1, mcType1)
   assert result['OK'] is True
   assert result['Value'] == data1
 
   # Get data2
-  result = mcStatsClient.get(id2)
+  result = mcStatsClient.get(id2, mcType1)
   assert result['OK'] is True
   assert result['Value'] == data2
 
+  # Get data3
+  result = mcStatsClient.get(id3, mcType2)
+  assert result['OK'] is True
+  assert result['Value'] == data3
+
   # Get empty
-  result = mcStatsClient.get(falseID)
+  result = mcStatsClient.get(falseID, mcType1)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove
 
   # Remove data1
-  mcStatsClient.remove(id1)
+  mcStatsClient.remove(id1, mcType1)
   time.sleep(5)
-  result = mcStatsClient.get(id1)
+  result = mcStatsClient.get(id1, mcType1)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # Remove data2
-  mcStatsClient.remove(id2)
+  mcStatsClient.remove(id2, mcType1)
   time.sleep(5)
-  result = mcStatsClient.get(id2)
+  result = mcStatsClient.get(id2, mcType1)
+  assert result['OK'] is True
+  assert result['Value'] == {}
+
+ # Remove data3
+  mcStatsClient.remove(id3, mcType2)
+  time.sleep(5)
+  result = mcStatsClient.get(id3, mcType2)
   assert result['OK'] is True
   assert result['Value'] == {}
 
   # # Remove empty
-  mcStatsClient.remove(falseID)
+  mcStatsClient.remove(falseID, mcType1)
   time.sleep(5)
-  result = mcStatsClient.get(falseID)
+  result = mcStatsClient.get(falseID, mcType1)
   assert result['OK'] is True
   assert result['Value'] == {}

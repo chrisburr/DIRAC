@@ -36,14 +36,14 @@ class MCStatsElasticDBHandler(RequestHandler):
 
   types_get = [basestring, int]
 
-  def export_get(self, indexName, jobID):
+  def export_get(self, indexName, jobID, mcType):
 
     self.log.debug('Called get() with indexName = %s, jobID = %d' % (indexName, jobID))
-    return mcStatsDB.get(indexName, jobID)
+    return mcStatsDB.get(indexName, jobID, mcType)
 
   types_remove = [basestring, int]
 
-  def export_remove(self, indexName, jobID):
+  def export_remove(self, indexName, jobID, mcType):
 
     self.log.debug('Called remove() with indexName = %s, with jobID = %d' % (indexName, jobID))
-    return mcStatsDB.remove(indexName, jobID)
+    return mcStatsDB.remove(indexName, jobID, mcType)

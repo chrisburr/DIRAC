@@ -16,10 +16,11 @@ __RCSID__ = "$Id$"
 import sys
 import os
 import shlex
+import subprocess
 
 from DIRAC import gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
-from DIRAC.Core.Utilities.Subprocess import systemCall
+from DIRAC.Core.Utilities.Subprocess import Subprocess
 
 
 class LbRunError(RuntimeError):
@@ -50,6 +51,7 @@ class RunApplication(object):
     # What to run
     self.applicationName = ''  # e.g. Gauss
     self.applicationVersion = ''  # e.g v42r1
+    self.childPID = 0  # the PID of the application that will be run
 
     # Define the environment
     self.extraPackages = []
@@ -218,10 +220,13 @@ class RunApplication(object):
     """
     print('Command called: \n%s' % command)  # Really printing here as we want to see and maybe cut/paste
 
-    return systemCall(timeout=0,
-                      cmdSeq=shlex.split(command),
-                      callbackFunction=self.__redirectLogOutput,
-                      env=env)
+    spObject = Subprocess()
+    result = spObject.systemCall(shlex.split(command),
+                                 callbackFunction=self.__redirectLogOutput,
+                                 env=env)
+    self.childPID = spObject.getChildPID()
+
+    return result
 
   def _getEnv(self):
     """Get a dictionary containing the environment that should be used for the job

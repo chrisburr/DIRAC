@@ -16,8 +16,6 @@ request (for failover)
 """
 
 from DIRAC import S_OK, S_ERROR, gLogger
-from DIRAC.Core.Utilities import DEncode
-from DIRAC.RequestManagementSystem.Client.Operation import Operation
 
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 

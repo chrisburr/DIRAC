@@ -13,11 +13,13 @@
 __RCSID__ = "$Id$"
 
 import os
+import io
 import json
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
+from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 
 
 class UploadMC(ModuleBase):
@@ -55,7 +57,7 @@ class UploadMC(ModuleBase):
       for app in ['Gauss', 'Boole']:
         fn = '%s_Errors_%s.json' % (self.jobID, app)
         if os.path.exists(fn):
-          with open(fn) as fd:
+          with io.open(fn) as fd:
             try:
               jsonData = json.load(fd)
               self.log.verbose("Content of JSON file", "%s: %s" % (fn, jsonData))
@@ -69,12 +71,50 @@ class UploadMC(ModuleBase):
               else:
                 # At this point we can see exactly what the module would have uploaded
                 self.log.info("Module disabled", "would have attempted to upload the following file %s" % fn)
-            except BaseException as ve:
+            except Exception as ve:
+              self.log.error(repr(ve))
               self.log.verbose("Exception loading the JSON file: content of %s follows" % fn)
-              print fd.read()
-              raise ve
+              self.log.verbose(fd.read)
+
+              raise
         else:
           self.log.info("JSON file not found", fn)
+
+      # looking for xml files that are 'summaryGauss_self.production_id_self.prod_job_id_1.xml'
+      xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.prod_job_id)
+      if os.path.exists(xmlfl):
+        jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
+        xmlData = XMLSummary(xmlfl)
+        xmlData.xmltojson()
+        # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
+        with io.open(jsonfl) as JS:
+          try:
+            jsonData = json.load(JS)
+            ids = dict()
+            ids['JobID'] = self.jobID
+            ids['ProductionID'] = self.production_id
+            ids['prod_job_id'] = self.prod_job_id
+            jsonData['Counters']['ID'] = ids
+            with io.open(jsonfl, 'w', encoding="utf-8") as output:
+              output.write(unicode(json.dumps(jsonData, indent=2)))
+
+            self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
+            if self._enableModule():
+              mcLogGaussSummariesClient = MCStatsClient()
+              mcLogGaussSummariesClient.indexName = 'lhcb-GaussSummaries-' + self.production_id
+              res = mcLogGaussSummariesClient.set('Gauss-Summaries', jsonData)
+              if not res['OK']:
+                self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
+            else:
+              # At this point we can see exactly what the module would have uploaded
+              self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
+          except Exception as ve:
+            self.log.error(repr(ve))
+            self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
+            self.log.verbose(JS.read())
+            raise
+      else:
+        self.log.info("XML Gauss summary file not found", xmlfl)
 
       return S_OK()
 
