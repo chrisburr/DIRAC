@@ -1,3 +1,21 @@
+v10r1-pre7
+use DIRAC v7r1p9
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre4
+includes all patches up to including v10r0p11
+
+*ProductionManagement
+NEW: Module that transforms XML Gauss summaries into JSON format
+CHANGE: Update UploadMC.py to ingest Gauss summaries to ES
+
+*Bookkeeping
+FIX: Fix type signature of getFileHistory
+FIX: Fix saving a txt file with writeJobOptions
+
+*Test
+NEW: full system test for BKK scripts
+
+
 v10r1-pre6
 use DIRAC v7r1p7
 use LHCbDIRACOS v1r9
