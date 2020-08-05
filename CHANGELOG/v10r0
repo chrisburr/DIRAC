@@ -1,3 +1,14 @@
+v10r0p11
+Based on DIRAC v7r0p31
+LHCbWebDIRAC v5r1p8
+LHCbDIRACOS v1r9
+
+*Bookkeeping
+
+FIX: (!852) Fix saving a txt file with writeJobOptions
+
+
+
 v10r0p10
 Based on DIRAC v7r0p29
 LHCbWebDIRAC v5r1p7
