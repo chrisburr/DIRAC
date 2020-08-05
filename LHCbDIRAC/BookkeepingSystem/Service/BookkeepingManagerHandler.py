@@ -1880,7 +1880,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
   @staticmethod
   def export_getProcessingPassSteps(in_dict):
-    """It returns the steps for a given stepname processing pass ands
+    """It returns the steps for a given stepname, processing pass and
     production."""
     stepname = in_dict.get('StepName', default)
     cond = in_dict.get('ConditionDescription', default)

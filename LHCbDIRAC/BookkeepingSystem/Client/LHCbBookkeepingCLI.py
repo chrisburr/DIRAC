@@ -217,7 +217,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
       nbOfFiles = len(files)
 
     lfns = {}
-    for i in xrange(nbOfFiles):
+    for i in range(nbOfFiles):
       lfns[files[i]['FileName']] = files[i]
 
     if args.with_fileCatalog:
