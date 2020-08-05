@@ -21,7 +21,7 @@ def isURL(url):
   """
     Just a test to check if URL is already given or not
   """
-  return url.startswith('http') or url.startswith('dip')
+  return url.startswith(('http', 'dip'))
 
 
 def TransferClientSelector(*args, **kwargs):  # We use same interface as TransferClient
@@ -32,10 +32,8 @@ def TransferClientSelector(*args, **kwargs):  # We use same interface as Transfe
   """
 
   # We detect if we need to use a specific class for the HTTPS client
-  if 'httpsClient' in kwargs:
-    TornadoTransClient = kwargs.pop('httpsClient')
-  else:
-    TornadoTransClient = TornadoClient
+
+  TornadoTransClient = kwargs.pop('httpsClient', TornadoClient)
 
   # We have to make URL resolution BEFORE the TransferClient or TornadoClient to determine which one we want to use
   # URL is defined as first argument (called serviceName) in TransferClient
@@ -55,6 +53,6 @@ def TransferClientSelector(*args, **kwargs):  # We use same interface as Transfe
       transClient = TransferClient(*args, **kwargs)
   except Exception:
     # If anything went wrong in the resolution, we return default TransferClient
-    # So the comportement is exactly the same as before implementation of Tornado
+    # So the behavior is exactly the same as before implementation of Tornado
     transClient = TransferClient(*args, **kwargs)
   return transClient

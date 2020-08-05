@@ -251,16 +251,10 @@ class TornadoRefresher(RefresherBase):
     tasks, so it work with Tornado (HTTPS server).
   """
 
-  # For pylint...
-  gen = None
-
   from tornado import gen
   # We change the import name otherwise sphinx tries
   # to compile the tornado doc and fails
   from tornado.ioloop import IOLoop as _IOLoop
-
-  def __init__(self):
-    RefresherBase.__init__(self)
 
   def refreshConfigurationIfNeeded(self):
     """
@@ -275,7 +269,6 @@ class TornadoRefresher(RefresherBase):
       return
     self._lastUpdateTime = time.time()
     self._IOLoop.current().run_in_executor(None, self._refresh)  # pylint: disable=no-member
-    return
 
   def autoRefreshAndPublish(self, sURL):
     """
@@ -303,7 +296,7 @@ class TornadoRefresher(RefresherBase):
       Trigger the autorefresh when configuration is expired
 
       This task must use Tornado utilities to avoid blocking the ioloop and
-      pottentialy deadlock the server.
+      potentialy deadlock the server.
 
       See http://www.tornadoweb.org/en/stable/guide/coroutines.html#looping
       for official documentation about this type of method.

@@ -19,7 +19,7 @@ def urlFinder(module):
   """
     Try to guess the url with module name
 
-    :param module: path writed like import (e.g. "DIRAC.something.something")
+    :param module: path written like import (e.g. "DIRAC.something.something")
   """
   sections = module.split('.')
   for section in sections:
@@ -44,7 +44,8 @@ class HandlerManager(object):
       discovery of handler. If disabled you can use loadHandlersByServiceName() to
       load your handlers or loadHandlerInHandlerManager()
 
-      :param autoDiscovery=False: Disable the automatic discovery, can be used to choose service we want to load.
+      :param autoDiscovery: (default True) Disable the automatic discovery,
+          can be used to choose service we want to load.
     """
     self.__handlers = {}
     self.__objectLoader = ObjectLoader()
@@ -86,7 +87,7 @@ class HandlerManager(object):
         gLogger.info("New handler: %s with URL %s" % (handlerTuple[0], url))
     else:
       gLogger.debug("Handler already loaded %s" % (handlerTuple[0]))
-    return S_OK
+    return S_OK()
 
   def discoverHandlers(self):
     """

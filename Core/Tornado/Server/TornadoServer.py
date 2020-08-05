@@ -68,7 +68,6 @@ class TornadoServer(object):
     :param int port: Used to change port, default is 443
     """
 
-    # If port not precised, get it from config
     if port is None:
       port = gConfig.getValue("/Systems/Tornado/%s/Port" % PathFinder.getSystemInstance('Tornado'), 443)
 

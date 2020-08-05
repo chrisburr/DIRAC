@@ -21,7 +21,7 @@ def isURL(url):
   """
     Just a test to check if URL is already given or not
   """
-  return url.startswith('http') or url.startswith('dip')
+  return url.startswith(('http', 'dip'))
 
 
 def RPCClientSelector(*args, **kwargs):  # We use same interface as RPCClient
@@ -32,10 +32,8 @@ def RPCClientSelector(*args, **kwargs):  # We use same interface as RPCClient
   """
 
   # We detect if we need to use a specific class for the HTTPS client
-  if 'httpsClient' in kwargs:
-    TornadoRPCClient = kwargs.pop('httpsClient')
-  else:
-    TornadoRPCClient = TornadoClient
+
+  TornadoRPCClient = kwargs.pop('httpsClient', TornadoClient)
 
   # We have to make URL resolution BEFORE the RPCClient or TornadoClient to determine which one we want to use
   # URL is defined as first argument (called serviceName) in RPCClient
@@ -55,6 +53,6 @@ def RPCClientSelector(*args, **kwargs):  # We use same interface as RPCClient
       rpc = RPCClient(*args, **kwargs)
   except Exception:
     # If anything went wrong in the resolution, we return default RPCClient
-    # So the comportement is exactly the same as before implementation of Tornado
+    # So the behaviour is exactly the same as before implementation of Tornado
     rpc = RPCClient(*args, **kwargs)
   return rpc

@@ -12,10 +12,10 @@
     After some tests request seems to retry 3 times by default.
     https://stackoverflow.com/questions/15431044/can-i-set-max-retries-for-requests-request
 
-    *WARNING*: If you use your own certificates, it's like in dips, please take a look at
+    .. warning:: If you use your own certificates, it's like in dips, please take a look at
     :ref:`using_own_CA`
 
-    *WARNING*: Lots of method are copy-paste from :py:class:`~DIRAC.Core.DISET.private.BaseClient`.
+    .. warning:: Lots of method are copy-paste from :py:class:`~DIRAC.Core.DISET.private.BaseClient`.
     And some methods are copy-paste AND modifications, for now it permit to fully separate DISET and HTTPS.
 
 

@@ -109,7 +109,7 @@ class ServiceInterfaceBase(object):
     """
       Check if Slaves server are still availlable
 
-      :param forceWriteConfiguration=False: Force rewriting configuration after checking slaves
+      :param forceWriteConfiguration: (default False) Force rewriting configuration after checking slaves
     """
 
     gLogger.info("Checking status of slave servers")
@@ -201,7 +201,7 @@ class ServiceInterfaceBase(object):
     # Test that remote and new versions are the same
     sRemoteVersion = oRemoteConfData.getVersion()
     sLocalVersion = gConfigurationData.getVersion()
-    gLogger.info("Checking versions\nremote: %s\nlocal:  %s" % (sRemoteVersion, sLocalVersion))
+    gLogger.info("Checking versions\n", "remote: %s\nlocal:  %s" % (sRemoteVersion, sLocalVersion))
     if sRemoteVersion != sLocalVersion:
       if not gConfigurationData.mergingEnabled():
         return S_ERROR("Local and remote versions differ (%s vs %s). Cannot commit." % (sLocalVersion, sRemoteVersion))
