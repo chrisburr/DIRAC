@@ -20,7 +20,7 @@ declare -a commands=(
 'test $( dirac-bookkeeping-get-file-ancestors /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All | grep /lhcb/certification/test/SIM/00001446/0000/00001446 | wc -l ) = 5'
 'dirac-bookkeeping-get-file-descendants /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All'
 'test $( dirac-bookkeeping-get-file-sisters /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All | grep NoSister | wc -l ) = 1'
-'test $( dirac-bookkeeping-get-files dirac-bookkeeping-get-stats --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/Digi14b/24142001/XDIGI | grep 'files found' | cut -d ' ' -f 1 ) = 130'
+'test $( dirac-bookkeeping-get-stats --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/Digi14b/24142001/XDIGI | grep "Nb of Files" | cut -d ":" -f 2 ) = 130'
 'dirac-bookkeeping-get-processing-passes --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/'
 'dirac-bookkeeping-get-run-ranges --Activity=Collision12 --Fast'
 'test $( dirac-bookkeeping-get-runsWithAGivenDate 2012-04-01 2012-05-01 | wc -w ) = 283'
