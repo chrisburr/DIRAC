@@ -14,7 +14,7 @@ declare -a commands=(
 'test $( dirac-bookkeeping-decays-path 13264001 | wc -l ) = 10'
 'test $( dirac-bookkeeping-file-metadata /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi | grep 2199 | wc -l ) = 1'
 'test $( dirac-bookkeeping-file-path --Full /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi | wc -l ) = 11'
-'test $( dirac-bookkeeping-filetypes-list | wc -l" ) = 5'
+'test $( dirac-bookkeeping-filetypes-list | grep -cE "^(RADIATIVE.DST|XGEN|SWIMTRIGGERD02KPI.DST|BHADRON.DST|ALLSTREAMS.DST)" ) = 5'
 'dirac-bookkeeping-genXMLCatalog --LFNs /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi'
 'more pool_xml_catalog.xml'
 'test $( dirac-bookkeeping-get-file-ancestors /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All | grep /lhcb/certification/test/SIM/00001446/0000/00001446 | wc -l ) = 5'
