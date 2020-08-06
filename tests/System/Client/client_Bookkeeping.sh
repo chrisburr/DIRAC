@@ -113,7 +113,7 @@ fi
 # The names will be "random_content_X" and be between 1 and 10 Mb
 
 # array of fileNames
-$DIRAC/tests/System/random_files_creator.sh --Files=${numberOfFiles} --Name=${filesName} --Path=${temporaryPath}
+$DIRAC/DIRAC/tests/System/random_files_creator.sh --Files=${numberOfFiles} --Name=${filesName} --Path=${temporaryPath}
 
 # fileNames=()
 # for n in {1..10}
