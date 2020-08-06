@@ -8,6 +8,9 @@
 
 __RCSID__ = "$Id$"
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # Must be define BEFORE any dirac import
 import os

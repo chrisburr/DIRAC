@@ -23,6 +23,13 @@
 
 # pylint: disable=broad-except
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+from io import open
+import six
+
 import cStringIO
 import requests
 import DIRAC
@@ -78,7 +85,7 @@ class TornadoBaseClient(object):
       :param keepAliveLapse: Duration for keepAliveLapse (heartbeat like)  (now managed by requests)
     """
 
-    if not isinstance(serviceName, basestring):
+    if not isinstance(serviceName, six.string_types):
       raise TypeError("Service name expected to be a string. Received %s type %s" %
                       (str(serviceName), type(serviceName)))
 

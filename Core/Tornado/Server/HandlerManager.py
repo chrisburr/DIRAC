@@ -7,6 +7,10 @@
 
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 from tornado.web import url as TornadoURL, RequestHandler
 
 from DIRAC.Core.Utilities.ObjectLoader import ObjectLoader
@@ -26,9 +30,8 @@ def urlFinder(module):
     # This condition is a bit long
     # We search something which look like <...>.<component>System.<...>.<service>Handler
     # If find we return /<component>/<service>
-    if(section.find("System") > 0) and (sections[-1].find('Handler') > 0):
-      return "/%s/%s" % (section.replace("System", ""), sections[-1].replace("Handler", ""))
-  return None
+    if section.endswith("System") and sections[-1].endswith("Handler"):
+      return "/".join(["", section[:-len("System")], sections[-1][:-len("Handler")]])
 
 
 class HandlerManager(object):

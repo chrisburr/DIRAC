@@ -5,6 +5,9 @@ It may work better with TornadoClient but as it accepts HTTPS you can create you
 
 __RCSID__ = "$Id$"
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import time
 import datetime
@@ -136,14 +139,14 @@ class TornadoServer(object):
     tornado.ioloop.PeriodicCallback(self.__reportToMonitoring, self.__monitoringLoopDelay * 1000).start()
 
     # Start server
-    server = HTTPServer(router, ssl_options=ssl_options)
+    server = HTTPServer(router, ssl_options=ssl_options, decompress_request=True)
     try:
       if multiprocess:
         server.bind(self.port)
       else:
         server.listen(self.port)
-    except socketerror as e:
-      gLogger.fatal(e)
+    except Exception as e:  # pylint: disable=broad-except
+      gLogger.exception("Exception starting HTTPServer", e)
       return S_ERROR()
     gLogger.always("Listening on port %s" % self.port)
     for service in self.urls:
@@ -152,7 +155,6 @@ class TornadoServer(object):
     if multiprocess:
       server.start(0)
     IOLoop.current().start()
-    return True  # Never called because we are stuck in the IOLoop, but to make pylint happy
 
   def _initMonitoring(self):
     """
