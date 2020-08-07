@@ -39,9 +39,9 @@ def RPCClientSelector(*args, **kwargs):  # We use same interface as RPCClient
   try:
     serviceName = args[0]
     sLog.verbose("Trying to autodetect client for %s" % serviceName)
-    
+
     # If we are not already given a URL, resolve it
-    if  serviceName.startswith(('http', 'dip')):
+    if serviceName.startswith(('http', 'dip')):
       completeUrl = serviceName
     else:
       completeUrl = getServiceURL(serviceName)

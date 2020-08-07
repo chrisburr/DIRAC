@@ -3,8 +3,6 @@ TornadoServer create a web server and load services.
 It may work better with TornadoClient but as it accepts HTTPS you can create your own client
 """
 
-__RCSID__ = "$Id$"
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
