@@ -49,6 +49,7 @@ from DIRAC.Core.DISET.ThreadConfig import ThreadConfig
 # I do not do it now because I want first to decide
 # whether we go with code copy of fatorization
 
+
 class TornadoBaseClient(object):
   """
     This class contain initialization method and all utilities method used for RPC
