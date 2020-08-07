@@ -1292,7 +1292,7 @@ def executeRunInfo(item):
     elif switch[0] == 'RunGap':
       runGap = int(switch[1])
     elif switch[0] == 'TimeGap':
-      # Must get run informations to apply it
+      # Must get run information to apply it
       timeGap = int(switch[1])
       runGap = 100000000
       force = False
@@ -1398,7 +1398,8 @@ def executeRunInfo(item):
     lastRunEnd = None
     lastRunDesc = None
     lastRunValue = None
-    count = 0
+    if getRanges:
+      count = 0
     # Add a fake run (None) in order to print out the last range
     if itemValue == itemList[-1]:
       runList.append(None)
@@ -1424,8 +1425,9 @@ def executeRunInfo(item):
       if runValue == itemValue and firstRun is None:
         # First run encountered
         firstRun = run
-        # Initialize count of files
-        count = 0
+        if getRanges:
+          # Initialize count of files
+          count = 0
       elif (runValue != itemValue or gap) and firstRun is not None:
         # We are now in a new range, print out the previous range
         if lastRun != firstRun:
@@ -1434,14 +1436,17 @@ def executeRunInfo(item):
           rangeStr = '%d' % firstRun
         if lastRunDesc:
           rangeStr += ' (%s)' % lastRunDesc
-        rangesDict[rangeStr] = '%d %s' % (count, counted) if getRanges else itemValue
+        if getRanges:
+          rangesDict[rangeStr] = '%d %s' % (count, counted)
+          # Initialize count of files
+          count = 0
+        else:
+          rangesDict[rangeStr] = itemValue
         itemDict.setdefault(itemValue, []).append(rangeStr)
         # If still same value, start a new range
         firstRun = run if runValue == itemValue else None
-        # Initialize count of files
-        count = 0
-      if run:
-        count += len(runDict[run])
+      if getRanges and run:
+        count += runDict[run]
       # Update parameters with this run's information
       lastRun = run
       lastRunDesc = runDesc
