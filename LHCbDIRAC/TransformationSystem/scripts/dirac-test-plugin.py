@@ -307,8 +307,7 @@ if __name__ == "__main__":
     bkQueryDict = bkQuery.getQueryDict()
     if bkQueryDict.keys() in ([], ['Visible']):
       print "No BK query was given..."
-      Script.showHelp()
-      DIRAC.exit(2)
+      Script.showHelp(exitCode=2)
 
   reqID = pluginScript.getRequestID()
   if not requestID and reqID:

@@ -9,20 +9,23 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from DIRAC.Core.Base.Script import parseCommandLine
-import DIRAC
-parseCommandLine()
 
 __RCSID__ = "$Id$"
 
 import sys
+
+from DIRAC.Core.Base.Script import parseCommandLine
+parseCommandLine()
+
+import DIRAC
+
 if len(sys.argv) < 2:
   print 'Usage: dirac-transformation-clean transID [transID] [transID]'
   DIRAC.exit(1)
 else:
   try:
     transIDs = [int(arg) for arg in sys.argv[1:]]
-  except BaseException:
+  except Exception:
     print 'Invalid list of transformations'
     DIRAC.exit(1)
 

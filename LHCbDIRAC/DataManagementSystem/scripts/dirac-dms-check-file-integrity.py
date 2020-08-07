@@ -50,7 +50,6 @@ if __name__ == "__main__":
   if not lfns:
     print("No LFNs given...")
     Script.showHelp()
-    DIRAC.exit(0)
 
   integrityClient = DataIntegrityClient()
   res = integrityClient.catalogFileToBK(lfns)

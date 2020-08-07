@@ -9,13 +9,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from DIRAC.Core.Base.Script import parseCommandLine
-parseCommandLine()
-import DIRAC
 
 __RCSID__ = "$Id$"
 
 import sys
+
+from DIRAC.Core.Base.Script import parseCommandLine
+parseCommandLine()
+import DIRAC
+
+
 if len(sys.argv) < 2:
   print 'Usage: dirac-transformation-archive transID [transID] [transID]'
   DIRAC.exit(1)

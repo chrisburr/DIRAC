@@ -13,8 +13,8 @@
 # File :    dirac-bookkeeping-get-conditions
 # Author :  Zoltan Mathe
 ########################################################################
-"""Returns list of Conditions for a run range, by default only if there is a
-FULL stream."""
+"""Returns list of Conditions for a run range, by default only if there is a FULL stream."""
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script

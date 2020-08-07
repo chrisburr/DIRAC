@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve production summary from the Bookkeeping."""
+
 __RCSID__ = "$Id$"
 
 import DIRAC

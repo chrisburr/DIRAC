@@ -14,7 +14,9 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve from Bookkeeping information for a given run."""
+
 __RCSID__ = "$Id$"
+
 import DIRAC
 from DIRAC import gLogger, S_OK
 from DIRAC.Core.Base import Script

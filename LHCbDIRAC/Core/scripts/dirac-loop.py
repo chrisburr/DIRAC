@@ -26,6 +26,8 @@
               which allows recursive calls
 """
 
+import os
+import subprocess
 
 def reduceArgs(arguments):
   """If the arguments look like BK paths (start with /LHCb or /MC), try to
@@ -71,9 +73,7 @@ def reduceArgs(arguments):
 
 if __name__ == '__main__':
 
-  import os
-  import subprocess
-  from DIRAC import gLogger, exit as Dexit
+  from DIRAC import gLogger
   from DIRAC.Core.Base import Script
 
   Script.registerSwitch('', 'NoMerge', 'If set, do not merge arguments if BK paths')
@@ -100,7 +100,6 @@ if __name__ == '__main__':
 
   if len(args) < 1:
     Script.showHelp()
-    Dexit(0)
 
   if not arguments:
     if os.path.exists(args[0]):

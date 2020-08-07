@@ -98,7 +98,6 @@ def executeAddTransformation(pluginScript):
   if not plugin and not listProcessingPasses:
     gLogger.fatal("ERROR: No plugin supplied...")
     Script.showHelp()
-    DIRAC.exit(0)
   prods = pluginScript.getOption('Productions')
   requestID = pluginScript.getOption('RequestID')
   fileType = pluginScript.getOption('FileType')
@@ -172,8 +171,7 @@ def executeAddTransformation(pluginScript):
       bkQuery = pluginScript.getBKQuery()
     if not bkQuery and not force:
       gLogger.fatal("No LFNs and no BK query were given...")
-      Script.showHelp()
-      DIRAC.exit(2)
+      Script.showHelp(exitCode=2)
     if bkQuery:
       processingPass = bkQuery.getProcessingPass()
       if '...' in processingPass or '*' in processingPass:
@@ -326,7 +324,6 @@ def executeAddTransformation(pluginScript):
         # Should not happen here, but who knows ;-)
         gLogger.error("No BK query provided...")
         Script.showHelp()
-        DIRAC.exit(0)
 
     if force:
       lfns = []

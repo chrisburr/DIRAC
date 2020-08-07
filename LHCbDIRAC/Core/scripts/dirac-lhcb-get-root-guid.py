@@ -32,7 +32,6 @@ from LHCbDIRAC.DataManagementSystem.Client.DMScript import printDMResult
 
 if not files:
   Script.showHelp()
-  DIRAC.exit(0)
 existFiles = {}
 nonExisting = []
 dirac = Dirac()

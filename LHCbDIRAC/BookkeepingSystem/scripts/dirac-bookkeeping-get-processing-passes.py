@@ -33,8 +33,7 @@ if __name__ == "__main__":
       bkPaths = val.split(',')
   if not bkPaths:
     gLogger.error('No BK path provided...')
-    Script.showHelp()
-    exit(1)
+    Script.showHelp(exitCode=1)
 
   from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import getProcessingPasses, BKQuery
 

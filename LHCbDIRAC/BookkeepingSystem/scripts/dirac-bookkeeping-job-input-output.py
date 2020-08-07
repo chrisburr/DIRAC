@@ -14,12 +14,13 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """It returns the input and output files of a given list of DIRAC Jobids."""
+
 __RCSID__ = "$Id$"
+
+import os
 
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
-import DIRAC
-import os
 
 if __name__ == "__main__":
 
@@ -55,15 +56,15 @@ if __name__ == "__main__":
   jobidList += bkScript.getOption('JobIDs', [])
   if not jobidList:
     print "No jobID provided!"
-    Script.showHelp()
-    DIRAC.exit(0)
+    Script.showHelp(exitCode=1)
 
   from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
   retVal = BookkeepingClient().getJobInputOutputFiles(jobidList)
   if retVal['OK']:
     success = retVal['Value']['Successful']
     for job in success:
-      # Remove from input the files that are also output! This happens because the output of step 1 can be the input of step 2...
+      # Remove from input the files that are also output!
+      # This happens because the output of step 1 can be the input of step 2...
       # only worth if input files are requested though
       if inputFiles:
         success[job]['InputFiles'] = sorted(set(success[job]['InputFiles']) - set(success[job]['OutputFiles']))

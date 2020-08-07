@@ -13,8 +13,8 @@
 # File :    dirac-bookkeeping-get-tck
 # Author :  Zoltan Mathe
 ########################################################################
-"""Returns list of TCKs for a run range, by default only if there is a FULL
-stream."""
+"""Returns list of TCKs for a run range, by default only if there is a FULL stream."""
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script

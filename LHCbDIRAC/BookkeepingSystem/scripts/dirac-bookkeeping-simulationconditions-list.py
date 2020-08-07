@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """List simulation conditions from the Bookkeeping."""
+
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -24,10 +25,9 @@ Script.setUsageMessage(__doc__ + '\n'.join([
 Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-bk = BookkeepingClient()
 exitCode = 0
 
-res = bk.getSimConditions()
+res = BookkeepingClient().getSimConditions()
 if res['OK']:
   dbresult = res['Value']
   for record in dbresult:
@@ -43,5 +43,6 @@ if res['OK']:
 
 else:
   print 'ERROR:', res['Message']
+  exitCode = 1
 
 DIRAC.exit(exitCode)

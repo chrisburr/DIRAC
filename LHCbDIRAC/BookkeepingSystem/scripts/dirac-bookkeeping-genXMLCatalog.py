@@ -120,8 +120,7 @@ def execute():
 
   if depth <= 0:
     gLogger.fatal("Invalid ancestor depth, should be >= 1")
-    Script.showHelp()
-    DIRAC.exit(1)
+    Script.showHelp(exitCode=1)
 
   if newOptFile and len(optFiles) != 1:
     if optFiles:
@@ -138,16 +137,15 @@ def execute():
       ignore = False
     depth = 1
     if os.path.realpath(newOptFile) == os.path.realpath(optFiles[0]):
-      gLogger.fatal("Cannot write a new option file overwriting the original one, select a name different from", newOptFile)
-      Script.showHelp()
-      DIRAC.exit(1)
+      gLogger.fatal("Cannot write a new option file overwriting the original one, select a name different from",
+                    newOptFile)
+      Script.showHelp(exitCode=1)
 
   sites = dmScript.getOption('Sites', [])
   if sites:
     if len(sites) != 1:
       gLogger.fatal("Provide at most one site...")
-      Script.showHelp()
-      DIRAC.exit(1)
+      Script.showHelp(exitCode=1)
     site = sites[0]
 
   if optFiles:
@@ -156,8 +154,7 @@ def execute():
     lfnList = dmScript.getOption('LFNs', [])
   if not lfnList:
     gLogger.fatal("No option files and no list of files given")
-    Script.showHelp()
-    DIRAC.exit(1)
+    Script.showHelp(exitCode=1)
 
   rc = 0
   savedLevel = gLogger.getLevel()

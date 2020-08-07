@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Returns descendants for a (list of) LFN(s)"""
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
@@ -24,7 +25,7 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'All', 'Do not restrict to descendants with replicas')
   Script.registerSwitch('', 'Full', 'Get full metadata information on descendants')
   level = 1
-  Script.registerSwitch('', 'Depth=', 'Number of processing levels (default:%d)' % level)
+  Script.registerSwitch('', 'Depth=', 'Number of processing levels (default: %d)' % level)
   Script.registerSwitch('', 'Production=', 'Restrict to descendants in a given production (at any depth)')
   Script.setUsageMessage(__doc__ + '\n'.join([
       'Usage:',

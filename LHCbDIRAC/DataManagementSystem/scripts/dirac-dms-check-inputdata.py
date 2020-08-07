@@ -35,11 +35,9 @@ def prettyMsg(msg, msgList):
   gLogger.always('The following file%s %s:\n%s' % (areIs, msg, '\n'.join(msgList)))
 
 
-#====================================
 if __name__ == "__main__":
 
   from DIRAC.Core.Base import Script
-  import sys
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
   dmScript = DMScript()
 
@@ -49,7 +47,7 @@ if __name__ == "__main__":
 
   Script.parseCommandLine(ignoreErrors=True)
   import DIRAC
-  from DIRAC import gLogger, gConfig
+  from DIRAC import gLogger
   from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 
   verbose = False

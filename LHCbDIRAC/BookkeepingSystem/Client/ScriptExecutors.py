@@ -46,7 +46,6 @@ def executeFileMetadata(dmScript):
 
   if not lfnList:
     Script.showHelp()
-    diracExit(0)
 
   res = bkClient.getFileMetadata(lfnList)
   if not res['OK']:
@@ -149,7 +148,6 @@ def executeFilePath(dmScript):
     lfnList = sorted(dmScript.getOption('Directory', []))
     if not lfnList:
       Script.showHelp()
-      diracExit(0)
 
   dirMetadata = ('Production', 'ConfigName', 'ConditionDescription', 'EventType',
                  'FileType', 'ConfigVersion', 'ProcessingPass', 'Path')

@@ -87,8 +87,7 @@ for baseDir in dirList:
     directories.add(baseDir if not baseDir.endswith('/') else baseDir[:-1])
 
 if not directories or (user is None and group is None and mode is None):
-  Script.showHelp()
-  exit(1)
+  Script.showHelp(exitCode=1)
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
