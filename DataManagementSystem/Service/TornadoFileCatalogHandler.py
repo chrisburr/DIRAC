@@ -17,7 +17,7 @@ import six
 import csv
 import os
 
-from io import StringIO
+from io import BytesIO
 # from DIRAC
 from DIRAC.Core.DISET.RequestHandler import getServiceOption
 
@@ -624,7 +624,7 @@ class TornadoFileCatalogHandler(TornadoService):
     retVal = self.getSEDump(seName)
 
     try:
-      csvOutput = StringIO()
+      csvOutput = BytesIO()
       writer = csv.writer(csvOutput, delimiter='|')
       for lfn in retVal:
         writer.writerow(lfn)
