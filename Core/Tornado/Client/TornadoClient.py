@@ -21,11 +21,11 @@
 
 """
 
-# pylint: disable=broad-except
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+# pylint: disable=broad-except
 
 from DIRAC.Core.Utilities.JEncode import encode
 from DIRAC.Core.Tornado.Client.private.TornadoBaseClient import TornadoBaseClient
