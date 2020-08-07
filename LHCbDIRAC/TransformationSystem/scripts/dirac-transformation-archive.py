@@ -18,6 +18,7 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 import DIRAC
+from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import TransformationCleaningAgent
 
 if len(sys.argv) < 2:
   print 'Usage: dirac-transformation-archive transID [transID] [transID]'
@@ -29,7 +30,6 @@ else:
     print 'Invalid list of transformations'
     DIRAC.exit(1)
 
-from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import TransformationCleaningAgent
 
 agent = TransformationCleaningAgent('Transformation/TransformationCleaningAgent',
                                     'Transformation/TransformationCleaningAgent',
