@@ -13,7 +13,7 @@ problematic file and replicas to the IntegrityDB and their status correctly
 updated in the FileCatalog."""
 
 import re
-import types
+import six
 
 from DIRAC import S_OK, gLogger
 from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
@@ -142,7 +142,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->BK check")
     gLogger.info("-" * 40)
-    if isinstance(lfnDir, basestring):
+    if isinstance(lfnDir, six.string_types):
       lfnDir = [lfnDir]
     res = self.__getCatalogDirectoryContents(lfnDir)
     if not res['OK']:
@@ -169,7 +169,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->BK check")
     gLogger.info("-" * 40)
-    if type(lfns) in types.StringTypes:
+    if isinstance(lfns, six.string_types):
       lfns = [lfns]
 
     res = self.cc._getCatalogMetadata(lfns)

@@ -16,6 +16,7 @@ __RCSID__ = "$Id$"
 import os
 import random
 import glob
+import six
 from operator import itemgetter
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
@@ -80,7 +81,7 @@ class UploadOutputData(ModuleBase):
     # Use LHCb utility for local running via jobexec
     if 'ProductionOutputData' in self.workflow_commons:
       self.prodOutputLFNs = self.workflow_commons['ProductionOutputData']
-      if isinstance(self.prodOutputLFNs, basestring):
+      if isinstance(self.prodOutputLFNs, six.string_types):
         self.prodOutputLFNs = [i.strip() for i in self.prodOutputLFNs.split(';')]  # pylint: disable=no-member
     else:
       self.log.info("ProductionOutputData parameter not found, creating on the fly")

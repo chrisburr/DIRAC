@@ -10,6 +10,8 @@
 ###############################################################################
 """Client for BookkeepingDB file catalog."""
 
+import six
+
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 from DIRAC.Resources.Catalog.FileCatalogClientBase import FileCatalogClientBase
@@ -150,12 +152,12 @@ class BookkeepingDBClient(FileCatalogClientBase):
 
   def __checkArgumentFormat(self, path):
     """Returns a list, either from a string or keys of a dict."""
-    if isinstance(path, basestring):
+    if isinstance(path, six.string_types):
       return S_OK([path])
     elif isinstance(path, list):
       return S_OK(path)
     elif isinstance(path, dict):
-      return S_OK(path.keys())
+      return S_OK(list(path))
     else:
       errStr = "BookkeepingDBClient.__checkArgumentFormat: Supplied path is not of the correct format."
       gLogger.error(errStr)
@@ -210,9 +212,6 @@ class BookkeepingDBClient(FileCatalogClientBase):
       else:
         success = res['Value'].get('Successful', res['Value'])
         failed.update(dict.fromkeys((lfn for lfn in lfnList if lfn not in success), 'File does not exist'))
-        failed.update(dict((lfn, val) for lfn, val in success.items() if isinstance(val, basestring)))
-        successful.update(dict((lfn, val) for lfn, val in success.items() if not isinstance(val, basestring)))
+        failed.update(dict((lfn, val) for lfn, val in success.items() if isinstance(val, six.string_types)))
+        successful.update(dict((lfn, val) for lfn, val in success.items() if not isinstance(val, six.string_types)))
     return S_OK({'Successful': successful, 'Failed': failed})
-
-################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

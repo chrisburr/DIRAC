@@ -39,7 +39,10 @@ args = Script.getPositionalArgs()
 if len(args) < 1:
   Script.showHelp(exitCode=1)
 
-bkQuery = BKQuery({'EventType': eventTypes, "ConfigName": "MC"}, fileTypes=fileType, visible=True)
+eventTypes = args[0]
+bkQuery = BKQuery({'EventType': eventTypes, "ConfigName": "MC"},
+                  fileTypes=fileType,
+                  visible=True)
 print "bkQuery:", bkQuery
 prods = bkQuery.getBKProductions()
 

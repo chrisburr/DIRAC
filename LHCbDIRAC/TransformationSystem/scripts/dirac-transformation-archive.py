@@ -16,8 +16,8 @@ import sys
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
-import DIRAC
 
+import DIRAC
 
 if len(sys.argv) < 2:
   print 'Usage: dirac-transformation-archive transID [transID] [transID]'

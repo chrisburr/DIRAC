@@ -15,6 +15,7 @@ __RCSID__ = "$Id$"
 import itertools
 import copy
 import re
+import six
 
 from DIRAC import gLogger, S_OK
 
@@ -753,7 +754,7 @@ class ProductionRequest(object):
     if outputFileMask:
       outputFileMask = [m.lower() for m in outputFileMask.replace(' ', '').split(',')]
     if outputFileStep:
-      if isinstance(outputFileStep, str):
+      if isinstance(outputFileStep, six.string_types):
         outputFileStep = [m.lower() for m in outputFileStep.replace(' ', '').split(',')]
     prod.setFileMask(outputFileMask, outputFileStep)
     if target:
@@ -909,7 +910,7 @@ class ProductionRequest(object):
   stepsList = property(get_stepsList, set_stepsList)
 
   def set_startRun(self, value):
-    if isinstance(value, str):
+    if isinstance(value, six.string_types):
       value = int(value)
     if value < 0:
       raise ValueError("startRun can not be negative")
@@ -920,7 +921,7 @@ class ProductionRequest(object):
   startRun = property(get_startRun, set_startRun)
 
   def set_endRun(self, value):
-    if isinstance(value, str):
+    if isinstance(value, six.string_types):
       value = int(value)
     if value < 0:
       raise ValueError("endRun can not be negative")
@@ -933,7 +934,7 @@ class ProductionRequest(object):
   def set_requestID(self, value):
     if value == '':
       value = 0
-    if isinstance(value, str):
+    if isinstance(value, six.string_types):
       value = int(value)
     if value < 0:
       raise ValueError("requestID can not be negative")
@@ -946,7 +947,7 @@ class ProductionRequest(object):
   def set_parentRequestID(self, value):
     if value == '':
       value = 0
-    if isinstance(value, str):
+    if isinstance(value, six.string_types):
       value = int(value)
     if value < 0:
       raise ValueError("parentRequestID can not be negative")

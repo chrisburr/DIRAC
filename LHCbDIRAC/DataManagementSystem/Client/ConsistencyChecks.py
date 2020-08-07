@@ -19,6 +19,7 @@ import time
 import ast
 import os
 import copy
+import six
 
 import DIRAC
 
@@ -618,7 +619,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
     Args:
         lfns (str, list, dict): a string for a single lfn, a list of strings, or a dict with lfns as keys
     """
-    if isinstance(lfns, basestring):
+    if isinstance(lfns, six.string_types):
       lfns = [lfns]
     elif isinstance(lfns, dict):
       lfns = list(lfns)
@@ -935,7 +936,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
       else:
         directories = []
         dirList = res['Value']
-        if isinstance(dirList, basestring) and dirList[0] == '[' and dirList[-1] == ']':
+        if isinstance(dirList, six.string_types) and dirList[0] == '[' and dirList[-1] == ']':
           dirList = ast.literal_eval(dirList)
         for dirName in dirList:
           # There is a shortcut when multiple streams are used, only the stream name is repeated!
@@ -1238,7 +1239,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
   def set_bkQuery(self, value):
     """ Setter """
-    if isinstance(value, basestring):
+    if isinstance(value, six.string_types):
       self._bkQuery = ast.literal_eval(value)
     else:
       self._bkQuery = value
@@ -1250,7 +1251,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
 
   def set_lfns(self, value):
     """ Setter """
-    if isinstance(value, basestring):
+    if isinstance(value, six.string_types):
       value = [value]
     value = [v.replace(' ', '').replace('//', '/') for v in value]
     self._lfns = value
