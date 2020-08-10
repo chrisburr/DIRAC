@@ -82,6 +82,7 @@ def methodGeneratorJson(listMethods, listGenerators, numberEventTypes):
     dictMethods[listMethods] = listGenerators
   return dictMethods
 
+
 class GeneratorLog(object):
   def __init__(self):
     pass
@@ -99,7 +100,7 @@ class GeneratorLog(object):
     xmlText = ''.join(fileLines)
     numberEventTypes = xmlText.count('<eventType>')
     if numberEventTypes > 1:
-      # Taking the first set of nodes 
+      # Taking the first set of nodes
       xmlText = xmlText.split('<eventType>')[0] + '<eventType>' + xmlText.split('<eventType>')[1] + '<method>' + xmlText.split('<eventType>')[-1].split('<method>', 1)[-1]  # noqa
     dicto = xmltodict.parse(xmlText)
     jsonData = ast.literal_eval(json.dumps(dicto))

@@ -12,7 +12,7 @@
 LHCbDIRAC.HCbDIRAC.Core.Utilities.GeneratorLog"""
 
 import pytest
-from LHCbDIRAC.Core.Utilities.GeneratorLog import counterJson, efficiencyJson, fractionJson, crosssectionJson, methodGeneratorJson
+from LHCbDIRAC.Core.Utilities.GeneratorLog import counterJson, efficiencyJson, fractionJson, crosssectionJson, methodGeneratorJson  # noqa
 
 
 listCounters = [{'@name': 'all events (including empty events)', 'value': '556'},
@@ -48,6 +48,7 @@ dictCounters = {
                                                  ([], {})])
 def test_counterJson(test_input, expected):
   assert counterJson(test_input) == expected
+
 
 listEfficiencies = [
     {
@@ -100,6 +101,7 @@ dictEfficiencies = {
 def test_efficiencyJson(test_input, expected):
   assert efficiencyJson(test_input) == expected
 
+
 listFractions = [{'@name': 'accepted B+', 'error': '0.35355', 'number': '1', 'value': '0.5'},
                  {'@name': 'accepted B-', 'error': '0', 'number': '1', 'value': '1'},
                  {'@name': 'accepted B0', 'error': '0.35355', 'number': '1', 'value': '0.5'}]
@@ -116,9 +118,9 @@ dictFractions = {
         'value': 1.0
     },
     'accepted B0': {
-    'error': 0.35355,
-    'number': 1,
-    'value': 0.5
+        'error': 0.35355,
+        'number': 1,
+        'value': 0.5
     }
 }
 
@@ -187,7 +189,7 @@ Generator = 'Pythia8'
 dictMethodGenerator = {'Generation.SignalRepeatedHadronization': 'Pythia8'}
 
 
-@pytest.mark.parametrize("test_input1,test_input2,test_input3,expected", [(listMethods, listGenerators, 2, dictMethodsGenerators),
+@pytest.mark.parametrize("test_input1,test_input2,test_input3,expected", [(listMethods, listGenerators, 2, dictMethodsGenerators),  # noqa
                                                                           (Method, Generator, 1, dictMethodGenerator)])
 def test_methodGeneratorJson(test_input1, test_input2, test_input3, expected):
   assert methodGeneratorJson(test_input1, test_input2, test_input3) == expected
