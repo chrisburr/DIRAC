@@ -27,6 +27,7 @@
 <Parameter name="arguments" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Arguments to executable Step"><value><![CDATA[]]></value></Parameter>
 <Parameter name="ParametricInputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Default null parametric input data value"><value><![CDATA[]]></value></Parameter>
 <Parameter name="ParametricInputSandbox" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Default null parametric input sandbox value"><value><![CDATA[]]></value></Parameter>
+<Parameter name="InputSandbox" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Input sandbox file list"><value><![CDATA[pilot.cfg]]></value></Parameter>
 <Parameter name="OutputSandbox" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Output sandbox file list"><value><![CDATA[std.out;std.err;summary*.xml]]></value></Parameter>
 <Parameter name="MaxCPUTime" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="CPU time in secs"><value><![CDATA[100000]]></value></Parameter>
 <Parameter name="CPUTime" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="CPU time in secs"><value><![CDATA[100000]]></value></Parameter>
@@ -48,7 +49,7 @@
 <Parameter name="Platform" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Platform (host OS + micro arch)"><value><![CDATA[x86_64-slc6]]></value></Parameter>
 <Parameter name="gaudiSteps" type="list" linked_module="" linked_parameter="" in="True" out="False" description="list of Gaudi Steps"><value><![CDATA[['Gauss_1']]]></value></Parameter>
 <Parameter name="outputSEs" type="dict" linked_module="" linked_parameter="" in="True" out="False" description="dictionary of output SEs"><value><![CDATA[{'BRUNELHIST': 'CERN-HIST-EOS', 'HIST': 'CERN-HIST-EOS', 'GAUSSHIST': 'CERN-HIST-EOS', 'DIGI': 'Tier1-Buffer', 'PROMPTD2KSTGAMMA.STRIPTRIG.DST': 'Tier1-Buffer', 'DST': 'Tier1-Buffer', 'DAVINCIHIST': 'CERN-HIST-EOS', 'SIM': 'Tier1-Buffer', 'HIST.ROOT': 'CERN-HIST-EOS'}]]></value></Parameter>
-<Parameter name="Site" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified destination site"><value><![CDATA[LCG.RAL.uk]]></value></Parameter>
+<Parameter name="Site" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified destination site"><value><![CDATA[ANY]]></value></Parameter>
 <Parameter name="ProcessingType" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="ProductionGroupOrType"><value><![CDATA[Sim09i-ReDecay01/Reco14c/Stripping21r0p2Filtered]]></value></Parameter>
 <Parameter name="Owner" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified ID"><value><![CDATA[cburr]]></value></Parameter>
 <Parameter name="OwnerGroup" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified owner group."><value><![CDATA[lhcb_mc]]></value></Parameter>
