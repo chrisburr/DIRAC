@@ -2532,9 +2532,9 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
       self._createRunitLog(runitCompDir)
 
       runFile = os.path.join(runitCompDir, 'run')
-      with io.open(runFile, 'w') as fd:
+      with io.open(runFile, 'wt') as fd:
         fd.write(
-            """#!/bin/bash
+            u"""#!/bin/bash
   rcfile=%(bashrc)s
   [ -e $rcfile ] && source $rcfile
   #
