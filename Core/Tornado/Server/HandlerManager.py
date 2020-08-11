@@ -11,12 +11,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+__RCSID__ = "$Id$"
+
 from tornado.web import url as TornadoURL, RequestHandler
 
-from DIRAC.Core.Utilities.ObjectLoader import ObjectLoader
-from DIRAC import gLogger, S_ERROR, S_OK, gConfig
-from DIRAC.Core.Base.private.ModuleLoader import ModuleLoader
+from DIRAC import gConfig, gLogger, S_ERROR, S_OK
 from DIRAC.ConfigurationSystem.Client import PathFinder
+from DIRAC.Core.Base.private.ModuleLoader import ModuleLoader
+from DIRAC.Core.Utilities.ObjectLoader import ObjectLoader
 
 
 def urlFinder(module):

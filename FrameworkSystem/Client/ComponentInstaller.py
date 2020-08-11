@@ -54,9 +54,11 @@ If a Master Configuration Server is being installed the following Options can be
   /LocalInstallation/VirtualOrganization: Name of the main Virtual Organization (default: None)
 
 """
-
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
+
+__RCSID__ = "$Id$"
 
 import os
 import io
@@ -2530,7 +2532,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
       self._createRunitLog(runitCompDir)
 
       runFile = os.path.join(runitCompDir, 'run')
-      with open(runFile, 'w') as fd:
+      with io.open(runFile, 'w') as fd:
         fd.write(
             """#!/bin/bash
   rcfile=%(bashrc)s

@@ -69,12 +69,12 @@ Nothing better than an example::
       ## Returned value may be an S_OK/S_ERROR
       ## You don't need to serialize in JSON, Tornado will do it
 
-Writing a service for tornado and diset is similar. You have to define your method starting with ``export_``, and your initialization method is a class method called ``initializeHandler``.
+Writing a service for tornado and DISET is similar. You have to define your method starting with ``export_``, and your initialization method is a class method called ``initializeHandler``.
 Main changes in tornado are:
 
 - Service are initialized at first request
-- You **should not** write a method called ``initialize`` because Tornado already use that name, so the ``initialize`` from diset handlers became ``initializeRequest``
-- ``infosDict``, arguments of initializedHandler is not really the same as for diset: all transport related matters are removed.
+- You **should not** write a method called ``initialize`` because Tornado already use that name, so the ``initialize`` from DISET handlers became ``initializeRequest``
+- ``infosDict``, arguments of initializedHandler is not really the same as for DISET: all transport related matters are removed.
 -  There is no parameter type check any more: attributes like ``types_yourMethod`` are ignored.
 - Auth attributes are still there (``auth_yourMethod``).
 
@@ -194,7 +194,7 @@ Client
 
 This diagram present what is behind TornadoClient, but you should use :py:class:`DIRAC.Core.Base.Client` ! The new client integrate a selection system which select for you between HTTPS and DISET client.
 
-In your client module when you inherit from :py:class:`DIRAC.Core.Base.Client` you can define `httpsClient` with another client, it can be useful when you can't serialize some data in JSON. Here the step to create and use a JSON patch:
+In your client module when you inherit from :py:class:`DIRAC.Core.Base.Client` you can define ``httpsClient`` with another client, it can be useful when you can't serialize some data in JSON. Here the step to create and use a JSON patch:
 
 - Create a class which inherit from :py:class:`~DIRAC.Core.Tornado.Client.TornadoClient`
 - For every method who need a JSON patch create a method with the same name as the service
@@ -284,7 +284,7 @@ Two special python packages are needed:
 Install a service
 *****************
 
-`dirac-install-tornado-service` is your friend. This will install a runit component running `tornado-start-all`.
+``dirac-install-tornado-service`` is your friend. This will install a runit component running ``tornado-start-all``.
 Nothing is ready yet to install specific tornado service, like the master CS.
 
 Start the server

@@ -14,17 +14,20 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from DIRAC.Core.Tornado.Client.TornadoClient import TornadoClient
-from DIRAC.Core.DISET.RPCClient import RPCClient
-from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceURL
+__RCSID__ = "$Id$"
+
 from DIRAC import gLogger
+from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceURL
+from DIRAC.Core.DISET.RPCClient import RPCClient
+from DIRAC.Core.Tornado.Client.TornadoClient import TornadoClient
+
 
 sLog = gLogger.getSubLogger(__name__)
 
 
 def RPCClientSelector(*args, **kwargs):  # We use same interface as RPCClient
   """
-    Select the correct RPCClient, instanciate it, and return it
+    Select the correct RPCClient, instantiate it, and return it
 
     :param args: URL can be just "system/service" or "dips://domain:port/system/service"
   """

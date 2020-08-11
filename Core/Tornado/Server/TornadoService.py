@@ -15,7 +15,7 @@ To create you must write this "minimal" code::
     def initializeRequest(self):
       ## Called at each request
 
-    auth_someMethod = ['all']
+    auth_someMethod = ['authenticated']
     def export_someMethod(self):
       #Insert your method here, don't forgot the return
 
@@ -28,33 +28,37 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+__RCSID__ = "$Id$"
+
 from io import open
 
 import os
 import time
+try:
+  import httplib
+except ImportError:  # python 3 compatibility
+  import http.client as httplib
 from datetime import datetime
 from tornado.web import RequestHandler
 from tornado import gen
 import tornado.ioloop
 from tornado.ioloop import IOLoop
 
-
 import DIRAC
-from DIRAC.Core.Security.X509Chain import X509Chain  # pylint: disable=import-error
-from DIRAC.Core.DISET.AuthManager import AuthManager
+
+from DIRAC import gConfig, gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client import PathFinder
-from DIRAC.Core.Utilities.JEncode import decode, encode
-from DIRAC import S_OK, S_ERROR, gLogger
+from DIRAC.Core.DISET.AuthManager import AuthManager
+from DIRAC.Core.Security.X509Chain import X509Chain  # pylint: disable=import-error
 from DIRAC.Core.Utilities.DErrno import ENOAUTH
-from DIRAC import gConfig
+from DIRAC.Core.Utilities.JEncode import decode, encode
 from DIRAC.FrameworkSystem.Client.MonitoringClient import MonitoringClient
-from DIRAC.Core.Tornado.Utilities import HTTPErrorCodes
 
 
 class TornadoService(RequestHandler):  # pylint: disable=abstract-method
   """
     TornadoService main class, manage all tornado services
-    Instanciated at each request
+    Instantiated at each request
   """
 
   # Because we initialize at first request, we use a flag to know if it's already done
@@ -95,18 +99,16 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
     return S_OK()
 
   @classmethod
-  def __initializeService(cls, relativeUrl, absoluteUrl, debug):
+  def __initializeService(cls, relativeUrl, absoluteUrl):
     """
       Initialize a service, called at first request
 
       :param relativeUrl: the url, something like "/component/service"
       :param absoluteUrl: the url, something like "https://dirac.cern.ch:1234/component/service"
-      :param debug: boolean which indicate if server running in debug mode
     """
     # Url starts with a "/", we just remove it
     serviceName = relativeUrl[1:]
 
-    cls.debug = debug
     cls.log = gLogger
     cls._startTime = datetime.utcnow()
     cls.log.info("First use of %s, initializing service..." % relativeUrl)
@@ -155,17 +157,18 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
     """
     pass
 
-  # This function is designed to be overwritten as we want in Tornado
-  # It's why we should disable pylint for this one
-  def initialize(self, debug):  # pylint: disable=arguments-differ
+  # This is a Tornado magic method
+
+  def initialize(self):  # pylint: disable=arguments-differ
     """
-      initialize, called at every request
+      Initialize the handler, called at every request.
+
 
       ..warning::
         DO NOT REWRITE THIS FUNCTION IN YOUR HANDLER
         ==> initialize in DISET became initializeRequest in HTTPS !
     """
-    self.debug = debug
+
     self.authorized = False
     self.method = None
     self.requestStartTime = time.time()
@@ -175,11 +178,11 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
 
     # On internet you can find "HTTP Error Code" or "HTTP Status Code" for that.
     # In fact code>=400 is an error (like "404 Not Found"), code<400 is a status (like "200 OK")
-    self._httpError = HTTPErrorCodes.HTTP_OK
+    self._httpError = httplib.OK
     if not self.__FLAG_INIT_DONE:
-      init = self.__initializeService(self.srv_getURL(), self.request.full_url(), debug)
+      init = self.__initializeService(self.srv_getURL(), self.request.full_url())
       if not init['OK']:
-        self._httpError = HTTPErrorCodes.HTTP_INTERNAL_SERVER_ERROR
+        self._httpError = httplib.INTERNAL_SERVER_ERROR
         gLogger.error("Error during initalization on %s" % self.request.full_url())
         gLogger.debug(init)
         return False
@@ -210,7 +213,7 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
       # If an error occur when reading certificates we close connection
       # It can be strange but the RFC, for HTTP, say's that when error happend
       # before authentication we return 401 UNAUTHORIZED instead of 403 FORBIDDEN
-      self.reportUnauthorizedAccess(HTTPErrorCodes.HTTP_UNAUTHORIZED)
+      self.reportUnauthorizedAccess(httplib.UNAUTHORIZED)
 
     try:
       hardcodedAuth = getattr(self, 'auth_' + self.method)
@@ -221,20 +224,28 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
     if not self.authorized:
       self.reportUnauthorizedAccess()
 
+  # Make post a coroutine.
+  # See https://www.tornadoweb.org/en/branch5.1/guide/coroutines.html#coroutines
+  # for details
   @gen.coroutine
   def post(self):  # pylint: disable=arguments-differ
     """
-    HTTP POST, used for RPC
+      HTTP POST, used for RPC
       Call the remote method, client may send his method via "method" argument
       and list of arguments in JSON in "args" argument
     """
 
-    # Execute the method
-    # First argument is "None", it's because we let Tornado manage the executor
+    # Execute the method in an executor (basically a separate thread)
+    # Because of that, we cannot calls certain methods like `self.write`
+    # in __executeMethod. This is because these methods are not threadsafe
+    # https://www.tornadoweb.org/en/branch5.1/web.html#thread-safety-notes
+    # However, we can still rely on instance attributes to store what should
+    # be sent back (like self._httpError) (reminder: there is an instance
+    # of this class created for each request)
     retVal = yield IOLoop.current().run_in_executor(None, self.__executeMethod)
 
-    # Tornado recommend to write in main thread
-    # TODO CHRIS READ THAT https://www.tornadoweb.org/en/branch5.1/web.html#thread-safety-notes
+    # Here it is safe to write back to the client, because we are not
+    # in a thread anymore
     self.__write_return(retVal.result())
     self.finish()
 
@@ -278,13 +289,17 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
 
       - First, the method does not exist => Attribute error, return an error to client
       - second, anything happend during execution => General Exception, send error to client
+
+      .. warning::
+        This method is called in an executor, and so cannot use methods like self.write
+        See https://www.tornadoweb.org/en/branch5.1/web.html#thread-safety-notes
     """
 
     # getting method
     try:
       method = getattr(self, 'export_%s' % self.method)
     except AttributeError as e:
-      self._httpError = HTTPErrorCodes.HTTP_NOT_IMPLEMENTED
+      self._httpError = httplib.NOT_IMPLEMENTED
       return S_ERROR("Unknown method %s" % self.method)
 
     # Decode args
@@ -298,13 +313,13 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
     except Exception as e:  # pylint: disable=broad-except
       gLogger.exception("Exception serving request", "%s:%s" % (str(e), repr(e)))
       retVal = S_ERROR(repr(e))
-      self._httpError = HTTPErrorCodes.HTTP_INTERNAL_SERVER_ERROR
+      self._httpError = httplib.INTERNAL_SERVER_ERROR
 
     return retVal
 
   def __write_return(self, dictionary):
     """
-      Write to client what we wan't to return to client
+      Write to client what we want to return to client
       It must be a dictionary
     """
 
@@ -360,7 +375,6 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
       already written for DISET and re-used for HTTPS.
     """
 
-    # This line get certificates, it must be change when M2Crypto will be fully integrated in tornado
     chainAsText = self.request.get_ssl_certificate().as_pem()
     peerChain = X509Chain()
 

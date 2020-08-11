@@ -7,11 +7,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+__RCSID__ = "$Id$"
+
 import time
 import datetime
 import os
-
-from socket import error as socketerror
 
 import M2Crypto
 
@@ -25,12 +25,12 @@ from tornado.ioloop import IOLoop
 import tornado.ioloop
 
 import DIRAC
-from DIRAC.Core.Tornado.Server.HandlerManager import HandlerManager
-from DIRAC import gLogger, S_ERROR, S_OK, gConfig
-from DIRAC.FrameworkSystem.Client.MonitoringClient import MonitoringClient
+from DIRAC import gConfig, gLogger, S_ERROR, S_OK
 from DIRAC.ConfigurationSystem.Client import PathFinder
 from DIRAC.Core.Security import Locations
+from DIRAC.Core.Tornado.Server.HandlerManager import HandlerManager
 from DIRAC.Core.Utilities import MemStat
+from DIRAC.FrameworkSystem.Client.MonitoringClient import MonitoringClient
 
 
 class TornadoServer(object):
@@ -52,7 +52,7 @@ class TornadoServer(object):
     Example 2:We want to debug service1 and service2 only, and use another port for that ::
 
       services = ['component/service1', 'component/service2']
-      serverToLaunch = TornadoServer(services=services, port=1234, debugSSL=True)
+      serverToLaunch = TornadoServer(services=services, port=1234)
       serverToLaunch.startTornado()
 
 
@@ -60,7 +60,7 @@ class TornadoServer(object):
                  for extra logging use -ddd in your command line
   """
 
-  def __init__(self, services=None, debugSSL=False, port=None):
+  def __init__(self, services=None, port=None):
     """
     Basic instanciation, set some variables
 
@@ -78,7 +78,6 @@ class TornadoServer(object):
     # URLs for services: 1URL/Service
     self.urls = []
     # Other infos
-    self.debugSSL = debugSSL  # Used by tornado and M2Crypto
     self.port = port
     self.handlerManager = HandlerManager()
     self._monitor = MonitoringClient()
@@ -95,7 +94,7 @@ class TornadoServer(object):
     handlerDict = self.handlerManager.getHandlersDict()
     for item in handlerDict.items():
       # handlerDict[key].initializeService(key)
-      self.urls.append(url(item[0], item[1], dict(debug=self.debugSSL)))
+      self.urls.append(url(item[0], item[1]))
     # If there is no services loaded:
     if not self.urls:
       raise ImportError("There is no services loaded, please check your configuration")
@@ -112,10 +111,9 @@ class TornadoServer(object):
     gLogger.debug("Starting Tornado")
     self._initMonitoring()
 
-    if self.debugSSL:
-      gLogger.warn("Server is running in debug mode")
-
-    router = Application(self.urls, debug=self.debugSSL, compress_response=True)
+    router = Application(self.urls,
+                         debug=False,
+                         compress_response=True)
 
     certs = Locations.getHostCertificateAndKeyLocation()
     if certs is False:
@@ -127,7 +125,7 @@ class TornadoServer(object):
         'keyfile': certs[1],
         'cert_reqs': M2Crypto.SSL.verify_peer,
         'ca_certs': ca,
-        'sslDebug': self.debugSSL
+        'sslDebug': False,  # Set to true if you want to see the TLS debug messages
     }
 
     self.__monitorLastStatsUpdate = time.time()

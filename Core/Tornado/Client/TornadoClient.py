@@ -1,6 +1,6 @@
 """
   TornadoClient is equivalent of the RPCClient but in HTTPS.
-  Usage of TornadoClient is the same as RPCClient, you can instanciate TornadoClient with
+  Usage of TornadoClient is the same as RPCClient, you can instantiate TornadoClient with
   complete url (https://domain/component/service) or just "component/service". Like RPCClient
   you can use all method defined in your service, your call will be automatically transformed
   in RPC.
@@ -25,10 +25,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+__RCSID__ = "$Id$"
+
 # pylint: disable=broad-except
 
-from DIRAC.Core.Utilities.JEncode import encode
 from DIRAC.Core.Tornado.Client.private.TornadoBaseClient import TornadoBaseClient
+from DIRAC.Core.Utilities.JEncode import encode
 
 
 class TornadoClient(TornadoBaseClient):
