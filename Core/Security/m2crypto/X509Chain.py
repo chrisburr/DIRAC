@@ -488,7 +488,7 @@ class X509Chain(object):
     if not retVal['OK']:
       return retVal
     try:
-      with open(filePath, 'wt') as fd:
+      with open(filePath, 'wb') as fd:
         fd.write(retVal['Value'])
     except BaseException as e:
       return S_ERROR(DErrno.EWF, "%s :%s" % (filePath, repr(e).replace(',)', ')')))
