@@ -297,6 +297,7 @@ class TornadoService(RequestHandler):  # pylint: disable=abstract-method
 
     # getting method
     try:
+      # For compatibility reasons with DISET, the methods are still called ``export_*``
       method = getattr(self, 'export_%s' % self.method)
     except AttributeError as e:
       self._httpError = httplib.NOT_IMPLEMENTED

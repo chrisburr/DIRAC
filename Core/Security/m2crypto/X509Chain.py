@@ -218,7 +218,7 @@ class X509Chain(object):
       :returns: S_OK/S_ERROR
     """
     try:
-      with open(chainLocation, 'rt') as fd:
+      with open(chainLocation, 'rb') as fd:
         pemData = fd.read()
     except IOError as e:
       return S_ERROR(DErrno.EOF, "%s: %s" % (chainLocation, repr(e).replace(',)', ')')))
@@ -276,7 +276,7 @@ class X509Chain(object):
         :returns: S_OK / S_ERROR
     """
     try:
-      with open(chainLocation, 'rt') as fd:
+      with open(chainLocation, 'rb') as fd:
         pemData = fd.read()
     except BaseException as e:
       return S_ERROR(DErrno.EOF, "%s: %s" % (chainLocation, repr(e).replace(',)', ')')))
@@ -316,7 +316,7 @@ class X509Chain(object):
       :returns: S_OK  / S_ERROR
     """
     try:
-      with open(chainLocation, 'rt') as fd:
+      with open(chainLocation, 'rb') as fd:
         pemData = fd.read()
     except BaseException as e:
       return S_ERROR(DErrno.EOF, "%s: %s" % (chainLocation, repr(e).replace(',)', ')')))
