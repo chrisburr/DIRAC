@@ -1,3 +1,26 @@
+v10r1-pre8
+use DIRAC v7r1p10
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre4
+
+*Bookkeeping
+FIX: Fix dirac-bookkeeping-get-run-ranges
+
+*Core
+FIX: Allow the case of a missing category of counters in xml Gauss summaries
+NEW: Convert Generator Log xml files into json format
+
+*ProductionManagement:
+NEW: Module that transforms XML Gauss summaries into JSON format
+CHANGE: Update UploadMC.py to ingest Gauss summaries to ES
+
+*Tests
+FIX: Correct path to random_files_creator.sh
+
+*Workflow
+NEW: Upload Generator Log json files into Elasticsearch
+
+
 v10r1-pre7
 use DIRAC v7r1p9
 use LHCbDIRACOS v1r9
