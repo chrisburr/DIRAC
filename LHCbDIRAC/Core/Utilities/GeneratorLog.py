@@ -105,10 +105,10 @@ class GeneratorLog(object):
     dicto = xmltodict.parse(xmlText)
     jsonData = ast.literal_eval(json.dumps(dicto))
 
-    listCounters = jsonData['generatorCounters'].get('counter',[])
-    listEfficiencies = jsonData['generatorCounters'].get('efficiency',[])
-    listFractions = jsonData['generatorCounters'].get('fraction',[])
-    listCrosssections = jsonData['generatorCounters'].get('crosssection',[])
+    listCounters = jsonData['generatorCounters'].get('counter', [])
+    listEfficiencies = jsonData['generatorCounters'].get('efficiency', [])
+    listFractions = jsonData['generatorCounters'].get('fraction', [])
+    listCrosssections = jsonData['generatorCounters'].get('crosssection', [])
     listMethods = jsonData['generatorCounters']['method']
     listGenerators = jsonData['generatorCounters']['generator']
 
