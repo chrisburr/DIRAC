@@ -215,13 +215,15 @@ class GaudirunSuccess(UserJobTestCase):
     options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py;"
     options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmOpt2.py;"
     options += "$APPCONFIGOPTS/Gauss/GaussMPpatch20200701.py;"
-    options += "$APPCONFIGOPTS/Persistency/Compression-LZMA-4.py"
+    options += "$APPCONFIGOPTS/Persistency/Compression-LZMA-4.py;"
+    options += "prodConf_Gauss_00012345_00067899_1.py"
 
     oJob.setApplication('Gauss', 'v54r3', options,
                         extraPackages='AppConfig.v3r400;Gen/DecFiles.v30r42;ProdConf.v3r0',
                         systemConfig='x86_64-centos7-gcc9-opt',
-                        events='4')
+                        events='16')
     oJob.setDIRACPlatform()
+    oJob.setNumberOfProcessors(2)
 
     res = oJob.runLocal(self.dLHCb)
     self.assertTrue(res['OK'])
