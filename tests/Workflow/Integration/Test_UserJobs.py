@@ -246,7 +246,7 @@ class GaudirunSuccess(UserJobTestCase):
 #     res = lhcbJob.runLocal( self.dLHCb )
 #     self.assertTrue( res['OK'] )
 
-########################################################################################################################
+###############################################################################################
 
 
 class UserJobsFailingLocalSuccess(FailingUserJobTestCase):

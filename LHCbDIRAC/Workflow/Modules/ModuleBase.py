@@ -292,7 +292,7 @@ class ModuleBase(object):
     if 'CPUe' in self.workflow_commons:
       self.CPUe = int(round(float(self.workflow_commons['CPUe'])))
 
-    multicoreJob = self.workflow_commons.get('multicore', self.multicoreJob)
+    multicoreJob = self.workflow_commons.get('multicore', self.multicoreJob)  # Flag specific to production jobs
     if isinstance(multicoreJob, bool):
       self.multicoreJob = multicoreJob
     else:
@@ -427,7 +427,8 @@ class ModuleBase(object):
       if isinstance(multicoreStep, str) and multicoreStep.lower() in ('true', 'y', 'yes'):
         self.multicoreStep = True
 
-    if self.multicoreJob and self.multicoreStep:
+    if (self.multicoreJob and self.multicoreStep) or\
+       (self.jobType.lower() == 'user' and self.workflow_commons.get('MaxNumberOfProcessors', False)):
       # the parameter 'MaxNumberOfProcessors' is in the workflow commons:
       # for simplicity we assume that there's a general max number
       # of processors the application can use, set at the workflow level (by the Job API)
