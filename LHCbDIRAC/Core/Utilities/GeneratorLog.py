@@ -117,7 +117,7 @@ class GeneratorLog(object):
     if xmlText.find('crosssection') != -1:
       listCrosssections = jsonData['generatorCounters']['crosssection']
       dictElements['crosssection'] = crosssectionJson(listCrosssections)
-    
+
     listMethods = jsonData['generatorCounters']['method']
     listGenerators = jsonData['generatorCounters']['generator']
     dictElements['method'] = methodGeneratorJson(listMethods, listGenerators, numberEventTypes)
