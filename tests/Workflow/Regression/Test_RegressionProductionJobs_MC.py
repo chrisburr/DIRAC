@@ -52,6 +52,14 @@ class MCSuccess(RegressionTestCase):
     res = j_mc_40651.runLocal(self.diracLHCb)
     self.assertTrue(res['OK'])
 
+  def test_Regression_Production2(self):
+
+    location123456 = find_all('123456.xml', '..', 'Regression')[0]
+    j_mc_123456 = LHCbJob(location123456)
+    j_mc_123456.setConfigArgs('pilot.cfg')
+
+    res = j_mc_123456.runLocal(self.diracLHCb)
+    self.assertTrue(res['OK'])
 
 #############################################################################
 # Test Suite run

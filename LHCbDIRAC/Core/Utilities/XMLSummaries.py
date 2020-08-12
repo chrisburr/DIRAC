@@ -490,11 +490,13 @@ class XMLSummary(object):
     # Filling the dictionary with the data that was kept
     for i in lCategory1:
       jsonTemp.update(xmltojsonCat1(listCounters[i:i + 1]))
-    for i in range(0, len(ranges(lCategory2)), 2):
-      jsonTemp.update(xmltojsonCat2(listCounters[ranges(lCategory2)[i]:ranges(lCategory2)[i + 1] + 1]))
-    for i in range(0, len(ranges(lCategory3)), 2):
-      if difisnotnull(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1])):
-        jsonTemp.update(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1]))
+    if lCategory2:
+      for i in range(0, len(ranges(lCategory2)), 2):
+        jsonTemp.update(xmltojsonCat2(listCounters[ranges(lCategory2)[i]:ranges(lCategory2)[i + 1] + 1]))
+    if lCategory3:
+      for i in range(0, len(ranges(lCategory3)), 2):
+        if difisnotnull(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1])):
+          jsonTemp.update(xmltojsonCat3(listCounters[ranges(lCategory3)[i]:ranges(lCategory3)[i + 1] + 1]))
 
     # Making the final changes in order to produce the json file
     jsonFin['Counters'] = jsonTemp
