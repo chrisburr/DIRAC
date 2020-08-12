@@ -105,17 +105,21 @@ class GeneratorLog(object):
     dicto = xmltodict.parse(xmlText)
     jsonData = ast.literal_eval(json.dumps(dicto))
 
-    listCounters = jsonData['generatorCounters']['counter']
-    listEfficiencies = jsonData['generatorCounters']['efficiency']
-    listFractions = jsonData['generatorCounters']['fraction']
-    listCrosssections = jsonData['generatorCounters']['crosssection']
+    if xmlText.find('counter') != -1:
+      listCounters = jsonData['generatorCounters']['counter']
+      dictElements['counter'] = counterJson(listCounters)
+    if xmlText.find('efficiency') != -1:
+      listEfficiencies = jsonData['generatorCounters']['efficiency']
+      dictElements['efficiency'] = efficiencyJson(listEfficiencies)
+    if xmlText.find('fraction') != -1:
+      listFractions = jsonData['generatorCounters']['fraction']
+      dictElements['fraction'] = fractionJson(listFractions)
+    if xmlText.find('crosssection') != -1:
+      listCrosssections = jsonData['generatorCounters']['crosssection']
+      dictElements['crosssection'] = crosssectionJson(listCrosssections)
+    
     listMethods = jsonData['generatorCounters']['method']
     listGenerators = jsonData['generatorCounters']['generator']
-
-    dictElements['counter'] = counterJson(listCounters)
-    dictElements['efficiency'] = efficiencyJson(listEfficiencies)
-    dictElements['fraction'] = fractionJson(listFractions)
-    dictElements['crosssection'] = crosssectionJson(listCrosssections)
     dictElements['method'] = methodGeneratorJson(listMethods, listGenerators, numberEventTypes)
 
     dictGenerator['generatorCounters'] = dictElements

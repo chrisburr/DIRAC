@@ -102,7 +102,7 @@ class UploadMC(ModuleBase):
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
             if self._enableModule():
               mcLogGaussSummariesClient = MCStatsClient()
-              mcLogGaussSummariesClient.indexName = 'lhcb-GaussSummaries-' + self.production_id
+              mcLogGaussSummariesClient.indexName = 'lhcb-gausssummaries-' + self.production_id
               res = mcLogGaussSummariesClient.set('Gauss-Summaries', jsonData)
               if not res['OK']:
                 self.log.error('Gauss Summaries data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
@@ -123,7 +123,7 @@ class UploadMC(ModuleBase):
         jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
         xmlData = GeneratorLog()
         xmlData.generatorLogJson(jsonfile)
-        # At this point 'GeneratorLog.json' should have been created
+        # At this point 'GeneratorLog_self.production_id_self.prod_job_id.json' should have been created
         with io.open(jsonfile) as JS:
           try:
             jsonData = json.load(JS)
@@ -138,8 +138,8 @@ class UploadMC(ModuleBase):
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfile, jsonData))
             if self._enableModule():
               mcGeneratorLogClient = MCStatsClient()
-              mcGeneratorLogClient.indexName = 'lhcb-GeneratorLog-' + self.production_id
-              res = mcGeneratorLogClient.set('GeneratorLog', jsonData)
+              mcGeneratorLogClient.indexName = 'lhcb-generatorlog-' + self.production_id
+              res = mcGeneratorLogClient.set('generatorlog', jsonData)
               if not res['OK']:
                 self.log.error('Generator Log data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
             else:
