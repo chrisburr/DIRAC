@@ -20,6 +20,7 @@ from DIRAC import S_OK, S_ERROR, gLogger
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
+from LHCbDIRAC.Core.Utilities.GeneratorLog import GeneratorLog
 
 
 class UploadMC(ModuleBase):
@@ -115,6 +116,42 @@ class UploadMC(ModuleBase):
             raise
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
+
+      # looking for xml files that are 'GeneratorLog.xml'
+      xmlfile = 'GeneratorLog.xml'
+      if os.path.exists(xmlfile):
+        jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
+        xmlData = GeneratorLog()
+        xmlData.generatorLogJson(jsonfile)
+        # At this point 'GeneratorLog.json' should have been created
+        with io.open(jsonfile) as JS:
+          try:
+            jsonData = json.load(JS)
+            ids = dict()
+            ids['JobID'] = self.jobID
+            ids['ProductionID'] = self.production_id
+            ids['prod_job_id'] = self.prod_job_id
+            jsonData['generatorCounters']['ID'] = ids
+            with io.open(jsonfile, 'w', encoding="utf-8") as output:
+              output.write(unicode(json.dumps(jsonData)))
+
+            self.log.verbose("Content of JSON file", "%s: %s" % (jsonfile, jsonData))
+            if self._enableModule():
+              mcGeneratorLogClient = MCStatsClient()
+              mcGeneratorLogClient.indexName = 'lhcb-GeneratorLog-' + self.production_id
+              res = mcGeneratorLogClient.set('GeneratorLog', jsonData)
+              if not res['OK']:
+                self.log.error('Generator Log data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
+            else:
+              # At this point we can see exactly what the module would have uploaded
+              self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfile)
+          except Exception as ve:
+            self.log.error(repr(ve))
+            self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfile)
+            self.log.verbose(JS.read())
+            raise
+      else:
+        self.log.info("XML GeneratorLog file not found", xmlfile)
 
       return S_OK()
 
