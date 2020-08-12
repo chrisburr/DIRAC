@@ -64,6 +64,7 @@ class GaudiApplicationSuccess(ModulesApplicationsTestCase):
 
     ga = GaudiApplication(bkClient=bkc_mock, dm=dm_mock)
     ga.siteName = 'LCG.PIPPO.org'
+    ga.jobType = 'user'
 
     # no errors, no input data
     for wf_cs in copy.deepcopy(wf_commons):
@@ -85,6 +86,7 @@ class GaudiApplicationScriptSuccess(ModulesApplicationsTestCase):
   def test_execute(self, _patch, _patched):
 
     gas = GaudiApplicationScript(bkClient=bkc_mock, dm=dm_mock)
+    gas.jobType = 'user'
 
     # no errors, no input data
     for wf_cs in copy.deepcopy(wf_commons):
@@ -176,6 +178,7 @@ class RootApplicationSuccess(ModulesApplicationsTestCase):
     ra.applicationName = 'aRoot.py'
     ra.applicationVersion = 'v1r1'
     ra.rootType = 'py'
+    ra.jobType = 'user'
 
     # no errors, no input data
     for wf_cs in copy.deepcopy(wf_commons):
@@ -196,6 +199,7 @@ class ErrorLoggingSuccess(ModulesApplicationsTestCase):
   def test_excecute(self, _patch):
 
     er = ErrorLogging()
+    er.jobType = 'user'
 
     # no errors, no input data
     for wf_cs in copy.deepcopy(wf_commons):
