@@ -296,13 +296,13 @@ gaudirunJob.setOutputSandbox('00012345_00067899_1.sim')
 # $APPCONFIGOPTS/Persistency/Compression-LZMA-4.py
 # prodConf_Gauss_00111263_00000023_1.py
 
-options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py"
-options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py"
-options += "$DECFILESROOT/options/12143001.py"
-options += "$LBPYTHIA8ROOT/options/Pythia8.py"
-options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py"
-options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmOpt2.py"
-options += "$APPCONFIGOPTS/Gauss/GaussMPpatch20200701.py"
+options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py;"
+options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
+options += "$DECFILESROOT/options/12143001.py;"
+options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
+options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py;"
+options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmOpt2.py;"
+options += "$APPCONFIGOPTS/Gauss/GaussMPpatch20200701.py;"
 options += "$APPCONFIGOPTS/Persistency/Compression-LZMA-4.py"
 
 
