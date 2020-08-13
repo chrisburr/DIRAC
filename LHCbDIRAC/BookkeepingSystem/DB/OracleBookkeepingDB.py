@@ -663,12 +663,17 @@ class OracleBookkeepingDB(object):
     return result
 
   #############################################################################
+
+  @deprecated("Use deleteStepContainer")
   def deleteSetpContiner(self, prod):
+    return self.deleteStepContainer(prod)
+
+  def deleteStepContainer(self, prod):
     """delete a production from the step container.
 
     :param int prod: production number
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteSetpContiner', [prod], False)
+    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteStepContainer', [prod], False)
     return result
 
   #############################################################################

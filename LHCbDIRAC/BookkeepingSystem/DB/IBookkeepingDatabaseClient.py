@@ -13,6 +13,9 @@
 __RCSID__ = "$Id$"
 
 
+from DIRAC.Core.Utilities.Decorators import deprecated
+
+
 class IBookkeepingDatabaseClient(object):
   """stores a Entity manager and expose its method."""
   #############################################################################
@@ -566,9 +569,14 @@ class IBookkeepingDatabaseClient(object):
     return self.getManager().insertDataTakingCond(conditions)
 
   #############################################################################
+
+  @deprecated("Use deleteStepContainer")
   def deleteSetpContiner(self, prod):
+    return self.deleteSetpContiner(prod)
+
+  def deleteStepContainer(self, prod):
     """more info in the BookkeepingClient.py."""
-    return self.getManager().deleteSetpContiner(prod)
+    return self.getManager().deleteStepContainer(prod)
 
   #############################################################################
   def getRunNbAndTck(self, lfn):

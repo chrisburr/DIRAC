@@ -591,7 +591,7 @@ class XMLFilesReaderManager(object):
       elif job.exists('RunNumber'):
         self.log.warn('The run already registered!')
       else:
-        retVal = self.bkClient_.deleteSetpContiner(production)
+        retVal = self.bkClient_.deleteStepContainer(production)
         if not retVal['OK']:
           return retVal
         self.log.error('Unable to create processing pass!', res['Message'])
