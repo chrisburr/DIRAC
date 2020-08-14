@@ -102,6 +102,7 @@ class GeneratorLog(object):
     if numberEventTypes > 1:
       # Taking the first set of nodes
       xmlText = xmlText.split('<eventType>')[0] + '<eventType>' + xmlText.split('<eventType>')[1] + '<method>' + xmlText.split('<eventType>')[-1].split('<method>', 1)[-1]  # noqa
+    xmlText = xmlText.replace('-nan', '-1')
     dicto = xmltodict.parse(xmlText)
     jsonData = ast.literal_eval(json.dumps(dicto))
 
