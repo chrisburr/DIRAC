@@ -475,7 +475,8 @@ END;
 PROCEDURE getavailableeventtypes(a_cursor OUT udt_refcursor) IS
 BEGIN
   OPEN a_cursor FOR
-    SELECT DISTINCT eventtypeid, description FROM eventtypes;
+    SELECT DISTINCT eventtypeid, description
+    FROM eventtypes;
 END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -521,7 +522,8 @@ PROCEDURE inserttag(
 ) IS
 tid NUMBER;
 BEGIN
-  SELECT tags_index_seq.nextval INTO tid FROM dual;
+  SELECT tags_index_seq.nextval INTO tid
+  FROM dual;
   INSERT INTO tags(tagid,name, tag) VALUES(tid, v_name, v_tag);
   COMMIT;
 END;
@@ -532,7 +534,8 @@ RESULT NUMBER;
 ecode number(38);
 BEGIN
   RESULT:=-1;
-  SELECT DISTINCT v.id INTO RESULT FROM (SELECT DISTINCT sys_connect_by_path(name, '/') path, id id
+  SELECT DISTINCT v.id INTO RESULT
+  FROM (SELECT DISTINCT sys_connect_by_path(name, '/') path, id id
   FROM processing v START WITH id IN (
     SELECT DISTINCT id
     FROM processing
@@ -552,7 +555,9 @@ RESULT NUMBER;
 ecode number(38);
 BEGIN
   RESULT:=1;
-  SELECT DISTINCT qualityid INTO RESULT FROM dataquality WHERE dataqualityflag = name;
+  SELECT DISTINCT qualityid INTO RESULT
+  FROM dataquality
+  WHERE dataqualityflag = name;
   RETURN RESULT;
   EXCEPTION WHEN others THEN
   ecode := sqlerrm;
@@ -589,7 +594,8 @@ BEGIN
     OPEN a_cursor FOR
       SELECT runnumber
       FROM newrunquality
-      WHERE processingid = procid AND qualityid = flag;
+      WHERE processingid = procid
+        AND qualityid = flag;
   ELSE
     OPEN a_cursor FOR SELECT runnumber FROM newrunquality WHERE processingid = procid;
   END IF;
@@ -665,31 +671,37 @@ END;
 FUNCTION checkfiletypeandversion (
        v_name                          VARCHAR2,
        v_version                       VARCHAR2
- ) RETURN NUMBER IS
- id NUMBER :=0;
- descr varchar2(256);
- BEGIN
-   SELECT filetypeid INTO id FROM filetypes WHERE
-           name = v_name AND
-           VERSION = v_version;
-   RETURN id;
-   EXCEPTION
-    WHEN too_many_rows THEN
-     SELECT min(filetypeid) INTO id FROM filetypes WHERE name = v_name AND VERSION = v_version;RETURN id;
-    WHEN others THEN
-   SELECT count(*) INTO id FROM filetypes WHERE
-           name = v_name;
-   IF id > 0 THEN
-   SELECT DISTINCT description INTO descr FROM filetypes WHERE
-           name = v_name;
-   SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
-   INSERT INTO filetypes(filetypeid,name,description,VERSION) VALUES(id,v_name,descr,v_version);
-   COMMIT;
-   RETURN id;
-   ELSE
-     raise_application_error(-20013, 'File type does not exist!');
-   END IF;
- END;
+) RETURN NUMBER IS
+  id NUMBER :=0;
+  descr varchar2(256);
+  BEGIN
+    SELECT filetypeid INTO id
+    FROM filetypes
+    WHERE name = v_name
+      AND VERSION = v_version;
+    RETURN id;
+    EXCEPTION
+     WHEN too_many_rows THEN
+      SELECT min(filetypeid) INTO id
+      FROM filetypes
+      WHERE name = v_name
+        AND VERSION = v_version;RETURN id;
+     WHEN others THEN
+    SELECT count(*) INTO id
+    FROM filetypes
+    WHERE name = v_name;
+    IF id > 0 THEN
+    SELECT DISTINCT description INTO descr
+    FROM filetypes
+    WHERE name = v_name;
+    SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
+    INSERT INTO filetypes(filetypeid,name,description,VERSION) VALUES(id,v_name,descr,v_version);
+    COMMIT;
+    RETURN id;
+    ELSE
+      raise_application_error(-20013, 'File type does not exist!');
+    END IF;
+  END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE checkeventtype (
     v_eventtypeid                  NUMBER,
@@ -867,25 +879,25 @@ FUNCTION insertjobsrow (
     RETURN -1;
   END;
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  FUNCTION insertfilesrow (
-    v_adler32                         VARCHAR2,
-    v_creationdate                    TIMESTAMP,
-    v_eventstat                       NUMBER,
-    v_eventtypeid                     NUMBER,
-    v_filename                        VARCHAR2,
-    v_filetypeid                      NUMBER,
-    v_gotreplica                      VARCHAR2,
-    v_guid                            VARCHAR2,
-    v_jobid                           NUMBER,
-    v_md5sum                          VARCHAR2,
-    v_filesize                        NUMBER,
-    v_fullstat                      NUMBER,
-    v_utc                             TIMESTAMP,
-    dqflag                            VARCHAR2,
-    v_luminosity                      NUMBER,
-    v_instluminosity                   Number,
-    v_visibilityflag                  VARCHAR2
-  )RETURN NUMBER IS
+FUNCTION insertfilesrow(
+  v_adler32                         VARCHAR2,
+  v_creationdate                    TIMESTAMP,
+  v_eventstat                       NUMBER,
+  v_eventtypeid                     NUMBER,
+  v_filename                        VARCHAR2,
+  v_filetypeid                      NUMBER,
+  v_gotreplica                      VARCHAR2,
+  v_guid                            VARCHAR2,
+  v_jobid                           NUMBER,
+  v_md5sum                          VARCHAR2,
+  v_filesize                        NUMBER,
+  v_fullstat                      NUMBER,
+  v_utc                             TIMESTAMP,
+  dqflag                            VARCHAR2,
+  v_luminosity                      NUMBER,
+  v_instluminosity                   Number,
+  v_visibilityflag                  VARCHAR2
+) RETURN NUMBER IS
   fid NUMBER;
   dqid NUMBER;
   BEGIN
@@ -956,8 +968,11 @@ FUNCTION insertjobsrow (
     RETURN fid;
   END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertinputfilesrow (v_fileid NUMBER, v_jobid NUMBER)IS
-BEGIN
+PROCEDURE insertinputfilesrow(
+  v_fileid NUMBER,
+  v_jobid NUMBER
+)IS
+  BEGIN
     INSERT INTO inputfiles(
          fileid,
          jobid
@@ -971,53 +986,69 @@ BEGIN
   END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE updatereplicarow(
-   v_fileid NUMBER,
-   v_replica VARCHAR2
-  )IS
+  v_fileid NUMBER,
+  v_replica VARCHAR2
+)IS
   BEGIN
-   UPDATE files SET inserttimestamp = sys_extract_utc(systimestamp),gotreplica = v_replica WHERE fileid = v_fileid;
-   COMMIT;
+    UPDATE files
+    SET inserttimestamp = sys_extract_utc(systimestamp),gotreplica = v_replica
+    WHERE fileid = v_fileid;
+    COMMIT;
   END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- PROCEDURE deleteinputfiles(
-  v_jobid    NUMBER
- )IS
+PROCEDURE deletejob(
+  v_jobid NUMBER
+)IS
   BEGIN
-   DELETE inputfiles WHERE jobid = v_jobid;
-   COMMIT;
+    DELETE FROM jobs
+    WHERE jobid = v_jobid;
+    COMMIT;
   END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- PROCEDURE deletefile(
-   v_fileid                NUMBER
- )IS
+PROCEDURE deleteinputfiles(
+  v_jobid NUMBER
+)IS
   BEGIN
-   DELETE files WHERE fileid = v_fileid;
-   COMMIT;
- END;
+    DELETE FROM inputfiles
+    WHERE jobid = v_jobid;
+    COMMIT;
+  END;
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE deletefile(
+  v_fileid NUMBER
+)IS
+  BEGIN
+    DELETE FROM files
+    WHERE fileid = v_fileid;
+    COMMIT;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE deletesetpcontiner(
   v_prod NUMBER
-  )IS
-   BEGIN
-   DELETE stepscontainer WHERE production = v_prod;
-   COMMIT;
-END;
+)IS
+  BEGIN
+    DELETE FROM stepscontainer
+    WHERE production = v_prod;
+    COMMIT;
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE deletestepcontainer(
   v_prod NUMBER
-  )IS
-   BEGIN
-   DELETE stepscontainer WHERE production = v_prod;
-   COMMIT;
-END;
+)IS
+  BEGIN
+    DELETE FROM stepscontainer
+    WHERE production = v_prod;
+    COMMIT;
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE deleteproductionscont(
- v_prod NUMBER
-  )IS
-   BEGIN
-   DELETE productionscontainer WHERE production = v_prod;
-   COMMIT;
-END;
+  v_prod NUMBER
+)IS
+  BEGIN
+    DELETE FROM productionscontainer
+    WHERE production = v_prod;
+    COMMIT;
+  END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FUNCTION insertsimconditions(
@@ -1030,57 +1061,68 @@ FUNCTION insertsimconditions(
    v_luminosity             VARCHAR2,
    v_g4settings             VARCHAR2,
    v_visible                VARCHAR2
- )RETURN NUMBER
- IS
+)RETURN NUMBER
+  IS
   simulid NUMBER;
- BEGIN
-  SELECT simulationcondid_seq.nextval INTO simulid FROM dual;
-  INSERT INTO simulationconditions(
-               simid,
-               simdescription,
-               beamcond,
-               beamenergy,
-               generator,
-               magneticfield,
-               detectorcond,
-               luminosity,
-               g4settings,
-               visible)VALUES(simulid,v_simdesc,v_beamcond,v_beamenergy,v_generator,v_magneticfield,v_detectorcond,v_luminosity,v_g4settings, v_visible);
+  BEGIN
+    SELECT simulationcondid_seq.nextval INTO simulid FROM dual;
+    INSERT INTO simulationconditions(
+                  simid,
+                  simdescription,
+                  beamcond,
+                  beamenergy,
+                  generator,
+                  magneticfield,
+                  detectorcond,
+                  luminosity,
+                  g4settings,
+                  visible)
+    VALUES(simulid,
+           v_simdesc,
+           v_beamcond,
+           v_beamenergy,
+           v_generator,
+           v_magneticfield,
+           v_detectorcond,
+           v_luminosity,
+           v_g4settings,
+           v_visible);
   COMMIT;
   RETURN simulid;
- END;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE getsimconditions (
-    a_cursor                        OUT udt_refcursor
-    )IS
-   BEGIN
-     OPEN a_cursor FOR
-       SELECT * FROM simulationconditions WHERE visible = 'Y' ORDER BY simid DESC;
-   END;
+PROCEDURE getsimconditions(
+  a_cursor OUT udt_refcursor
+)IS
+  BEGIN
+    OPEN a_cursor FOR
+    SELECT * FROM simulationconditions
+    WHERE visible = 'Y'
+    ORDER BY simid DESC;
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FUNCTION insertdatatakingcond(
-     v_description                                        VARCHAR2,
-     v_beamcond                                           VARCHAR2,
-     v_beamenergy                                         VARCHAR2,
-     v_magneticfield                                      VARCHAR2,
-     v_velo                                               VARCHAR2,
-     v_it                                                 VARCHAR2,
-     v_tt                                                 VARCHAR2,
-     v_ot                                                 VARCHAR2,
-     v_rich1                                              VARCHAR2,
-     v_rich2                                              VARCHAR2,
-     v_spd_prs                                            VARCHAR2,
-     v_ecal                                               VARCHAR2,
-     v_hcal                                               VARCHAR2,
-     v_muon                                               VARCHAR2,
-     v_l0                                                 VARCHAR2,
-     v_hlt                                                VARCHAR2,
-     v_veloposition                                       VARCHAR2
-  ) RETURN NUMBER
-  IS
-  daq       NUMBER;
+  v_description                                        VARCHAR2,
+  v_beamcond                                           VARCHAR2,
+  v_beamenergy                                         VARCHAR2,
+  v_magneticfield                                      VARCHAR2,
+  v_velo                                               VARCHAR2,
+  v_it                                                 VARCHAR2,
+  v_tt                                                 VARCHAR2,
+  v_ot                                                 VARCHAR2,
+  v_rich1                                              VARCHAR2,
+  v_rich2                                              VARCHAR2,
+  v_spd_prs                                            VARCHAR2,
+  v_ecal                                               VARCHAR2,
+  v_hcal                                               VARCHAR2,
+  v_muon                                               VARCHAR2,
+  v_l0                                                 VARCHAR2,
+  v_hlt                                                VARCHAR2,
+  v_veloposition                                       VARCHAR2
+) RETURN NUMBER
+IS
+daq       NUMBER;
   BEGIN
-
       daq := 0;
       SELECT simulationcondid_seq.nextval INTO daq FROM dual;
       IF v_description IS NULL THEN
@@ -1138,9 +1180,9 @@ FUNCTION insertdatatakingcond(
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 PROCEDURE getfilemetadata(
-   v_filename              VARCHAR2,
-   a_cursor                OUT udt_refcursor
-  )IS
+   v_filename VARCHAR2,
+   a_cursor   OUT udt_refcursor
+)IS
   BEGIN
    OPEN a_cursor FOR
      SELECT files.filename,files.adler32,files.creationdate,files.eventstat,files.eventtypeid,filetypes.name,files.gotreplica,files.guid,files.md5sum,files.filesize, files.fullstat, dataquality.dataqualityflag, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity FROM files,filetypes,dataquality,jobs WHERE
@@ -1174,44 +1216,48 @@ END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FUNCTION fileexists (
     v_filename            VARCHAR2
-  )RETURN NUMBER IS
+)RETURN NUMBER IS
   fid NUMBER;
   BEGIN
-   SELECT fileid INTO fid FROM files WHERE filename = v_filename;
+    SELECT fileid INTO fid
+    FROM files
+    WHERE filename = v_filename;
   RETURN (fid);
     EXCEPTION WHEN others THEN
     RETURN 0;
 
 END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE inserteventtypes (
-        v_description           VARCHAR2,
-        v_eventtypeid           NUMBER,
-        v_primary               VARCHAR2
- )
- IS
- BEGIN
-   INSERT INTO eventtypes(description, eventtypeid, PRIMARY)
-   VALUES (v_description, v_eventtypeid, v_primary);
-   COMMIT;
- END;
+PROCEDURE inserteventtypes(
+  v_description           VARCHAR2,
+  v_eventtypeid           NUMBER,
+  v_primary               VARCHAR2
+) IS
+  BEGIN
+    INSERT INTO eventtypes(description, eventtypeid, PRIMARY)
+    VALUES (v_description, v_eventtypeid, v_primary);
+    COMMIT;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE  updateeventtypes (
+PROCEDURE  updateeventtypes(
         v_description           VARCHAR2,
         v_eventtypeid           NUMBER,
         v_primary               VARCHAR2
- )
- IS
- BEGIN
-   UPDATE eventtypes SET description = v_description, PRIMARY = v_primary WHERE eventtypeid = v_eventtypeid;
-   COMMIT;
- END;
+) IS
+  BEGIN
+    UPDATE eventtypes
+    SET description = v_description, PRIMARY = v_primary
+    WHERE eventtypeid = v_eventtypeid;
+    COMMIT;
+  END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE setfileinvisible (
   lfn VARCHAR2
  )IS
  BEGIN
-  UPDATE files SET visibilityflag = 'N',inserttimestamp = sys_extract_utc(systimestamp) WHERE files.filename = lfn;
+  UPDATE files
+  SET visibilityflag = 'N',inserttimestamp = sys_extract_utc(systimestamp)
+  WHERE files.filename = lfn;
   COMMIT;
  END;
 
@@ -1219,7 +1265,9 @@ PROCEDURE setfilevisible(
   lfn VARCHAR2
  )IS
  BEGIN
-  UPDATE files SET visibilityflag = 'Y',inserttimestamp = sys_extract_utc(systimestamp) WHERE files.filename = lfn;
+  UPDATE files
+  SET visibilityflag = 'Y',inserttimestamp = sys_extract_utc(systimestamp)
+  WHERE files.filename = lfn;
   COMMIT;
  END;
 
@@ -1227,7 +1275,7 @@ PROCEDURE setfilevisible(
 PROCEDURE getconfigsandevttype(
    prodid                  NUMBER,
    a_cursor                OUT udt_refcursor
-  )IS
+)IS
   BEGIN
     OPEN a_cursor FOR
     SELECT c.configname,c.configversion,prod.eventtypeid
@@ -1241,16 +1289,19 @@ PROCEDURE getconfigsandevttype(
 PROCEDURE getjobsbysites(
    prodid                  NUMBER,
    a_cursor                OUT udt_refcursor
- )IS
+)IS
   BEGIN
    OPEN a_cursor FOR
-    SELECT count(*), jobs.location FROM jobs WHERE production = prodid GROUP BY LOCATION;
+    SELECT count(*), jobs.location
+    FROM jobs
+    WHERE production = prodid
+    GROUP BY LOCATION;
   END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE getsteps(
    prodid                  NUMBER,
    a_cursor                OUT udt_refcursor
-  )IS
+)IS
   BEGIN
    OPEN a_cursor FOR
     SELECT s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.stepid, s.visible
@@ -1318,10 +1369,12 @@ PROCEDURE getnumberofevents(
 PROCEDURE getjobsnb(
     prodid            NUMBER,
     a_cursor                OUT udt_refcursor
-  )IS
+)IS
   BEGIN
   OPEN a_cursor FOR
-    SELECT count(*) FROM jobs WHERE production = prodid;
+    SELECT count(*)
+    FROM jobs
+    WHERE production = prodid;
 END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1526,7 +1579,7 @@ END;
 PROCEDURE removeruntimeproject(pr_stepid NUMBER)
 IS
 BEGIN
-DELETE runtimeprojects WHERE stepid = pr_stepid;
+DELETE FROM runtimeprojects WHERE stepid = pr_stepid;
 COMMIT;
 END;
 
