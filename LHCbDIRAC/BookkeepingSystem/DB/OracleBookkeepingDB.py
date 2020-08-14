@@ -651,16 +651,13 @@ class OracleBookkeepingDB(object):
 
     :param int stepid: step id to be deleted
     """
-    result = S_ERROR()
-    command = " delete runtimeprojects where stepid=%d" % (stepid)
-    retVal = self.dbW_.query(command)
+    self.log.warn("Deleting step", stepid)
+
+    retVal = self.dbW_.query("DELETE runtimeprojects WHERE stepid=%d" % (stepid))
     if not retVal['OK']:
-      result = retVal
-    else:
-      # now we can delete the step
-      command = "delete steps where stepid=%d" % (stepid)
-      result = self.dbW_.query(command)
-    return result
+      return retVal
+    # now we can delete the step
+    return self.dbW_.query("DELETE steps WHERE stepid=%d" % (stepid))
 
   #############################################################################
 
@@ -673,17 +670,22 @@ class OracleBookkeepingDB(object):
 
     :param int prod: production number
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteStepContainer', [prod], False)
-    return result
+    self.log.warn("Deleting step container for prod", prod)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteStepContainer', [prod], False)
 
   #############################################################################
+
+  @deprecated("Use deleteProductionsContainer")
   def deleteProductionsContiner(self, prod):
+    return self.deleteProductionsContainer(prod)
+
+  def deleteProductionsContainer(self, prod):
     """delete a production from the productions container.
 
     :param int prod: the production number
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteProductionsCont', [prod], False)
-    return result
+    self.log.warn("Deleting production container for prod", prod)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteProductionsCont', [prod], False)
 
   #############################################################################
   def updateStep(self, in_dict):
@@ -2234,24 +2236,23 @@ class OracleBookkeepingDB(object):
         attrList[param] = fileobject[param]
     utctime = datetime.datetime.utcnow()
 
-    result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', int,
-                                              [attrList['Adler32'],
-                                               attrList['CreationDate'],
-                                               attrList['EventStat'],
-                                               attrList['EventTypeId'],
-                                               attrList['FileName'],
-                                               attrList['FileTypeId'],
-                                               attrList['GotReplica'],
-                                               attrList['Guid'],
-                                               attrList['JobId'],
-                                               attrList['MD5Sum'],
-                                               attrList['FileSize'],
-                                               attrList['FullStat'], utctime,
-                                               attrList['QualityId'],
-                                               attrList['Luminosity'],
-                                               attrList['InstLuminosity'],
-                                               attrList['VisibilityFlag']])
-    return result
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', int,
+                                            [attrList['Adler32'],
+                                             attrList['CreationDate'],
+                                             attrList['EventStat'],
+                                             attrList['EventTypeId'],
+                                             attrList['FileName'],
+                                             attrList['FileTypeId'],
+                                             attrList['GotReplica'],
+                                             attrList['Guid'],
+                                             attrList['JobId'],
+                                             attrList['MD5Sum'],
+                                             attrList['FileSize'],
+                                             attrList['FullStat'], utctime,
+                                             attrList['QualityId'],
+                                             attrList['Luminosity'],
+                                             attrList['InstLuminosity'],
+                                             attrList['VisibilityFlag']])
 
   #############################################################################
   def updateReplicaRow(self, fileID, replica):  # , name, location):
@@ -2260,8 +2261,7 @@ class OracleBookkeepingDB(object):
     :param long fileID: internal bookkeeping file id
     :param str replica: replica flag
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateReplicaRow', [fileID, replica], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateReplicaRow', [fileID, replica], False)
 
   #############################################################################
   def deleteJob(self, jobID):
@@ -2269,26 +2269,26 @@ class OracleBookkeepingDB(object):
 
     :param long jobID: internal bookkeeping job id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteJob', [jobID], False)
-    return result
+    self.log.warn("Deleting job", jobID)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteJob', [jobID], False)
 
   #############################################################################
-  def deleteInputFiles(self, jobid):
+  def deleteInputFiles(self, jobID):
     """deletes the input files of a job.
 
     :param long jobid:internal bookkeeping job id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteInputFiles', [jobid], False)
-    return result
+    self.log.warn("Deleting input files of", jobID)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteInputFiles', [jobID], False)
 
   #############################################################################
-  def deleteFile(self, fileid):
+  def deleteFile(self, fileID):
     """deletes a file.
 
     :param long fileid: internal bookkeeping file id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deletefile', [fileid], False)
-    return result
+    self.log.warn("Deleting file", fileID)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deletefile', [fileID], False)
 
   #############################################################################
   @staticmethod

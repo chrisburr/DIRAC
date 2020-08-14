@@ -133,11 +133,11 @@ class XMLFilesReaderManager(object):
           self.log.error("The [type:version] is missing",
                          "[%s: %s]" % (str(typeName), str(typeVersion)))
           return S_ERROR("[type:version] missing")
-        else:
-          self.log.debug(cahedTypeNameVersion + " added to the cache!")
-          typeID = long(result['Value'])
-          outputfile.setTypeID(typeID)
-          self.fileTypeCache[cahedTypeNameVersion] = typeID
+
+        self.log.debug(cahedTypeNameVersion + " added to the cache!")
+        typeID = long(result['Value'])
+        outputfile.setTypeID(typeID)
+        self.fileTypeCache[cahedTypeNameVersion] = typeID
 
       if job.getParam('JobType') and \
          job.getParam('JobType').getValue() == 'DQHISTOMERGING':  # all the merged histogram files have to be visible
@@ -296,29 +296,29 @@ class XMLFilesReaderManager(object):
     for i in inputfiles:
       fname = i.getFileName()
       res = self.bkClient_.getJobInfo(fname)
+      if not res['OK']:
+        return res
 
-      if res['OK']:
-        value = res["Value"]
-        if value and value[0][2] is not None:
-          sumEventInputStat += value[0][2]
-      else:
-        return res
+      value = res["Value"]
+      if value and value[0][2] is not None:
+        sumEventInputStat += value[0][2]
+
       res = self.bkClient_.getFileMetadata([fname])
-      if res['OK']:
-        fileMetadata = res['Value']['Successful'].get(fname)
-        if fileMetadata:
-          if fileMetadata['EventStat'] is not None:
-            sumEvtStat += fileMetadata['EventStat']
-          if fileMetadata['Luminosity'] is not None:
-            sumLuminosity += fileMetadata['Luminosity']
-          if dqvalue is None:
-            dqvalue = fileMetadata.get('DataqualityFlag', fileMetadata.get('DQFlag', None))
-        else:
-          errMsg = "Can not get the metadata of %s file" % fname
-          self.log.error(errMsg)
-          return S_ERROR(errMsg)
-      else:
+      if not res['OK']:
         return res
+
+      fileMetadata = res['Value']['Successful'].get(fname)
+      if fileMetadata:
+        if fileMetadata['EventStat'] is not None:
+          sumEvtStat += fileMetadata['EventStat']
+        if fileMetadata['Luminosity'] is not None:
+          sumLuminosity += fileMetadata['Luminosity']
+        if dqvalue is None:
+          dqvalue = fileMetadata.get('DataqualityFlag', fileMetadata.get('DQFlag', None))
+      else:
+        errMsg = "Can not get the metadata of %s file" % fname
+        self.log.error(errMsg)
+        return S_ERROR(errMsg)
 
     evtinput = 0
     if long(sumEvtStat) > long(sumEventInputStat):
@@ -380,9 +380,12 @@ class XMLFilesReaderManager(object):
                          (runnumber, job.getJobId()))
         result = self.bkClient_.insertRunStatus(runnumber, job.getJobId(), "N")
         if not result['OK']:
-          self.bkClient_.deleteJob(job.getJobId())
-          errorMessage = "Unable to register run status %s " % (result['Message'])
-          return S_ERROR(errorMessage)
+          errorMessage = ("Unable to register run status", runnumber + result['Message'])
+          self.log.error(errorMessage[0], errorMessage[1])
+          res = self.bkClient_.deleteJob(job.getJobId())
+          if not res['OK']:
+            self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
+          return S_ERROR(errorMessage[0])
 
         # we may using HLT2 output to flag the runs as a consequence we may flagged the
         # runs before they registered to the bookkeeping.
@@ -406,9 +409,13 @@ class XMLFilesReaderManager(object):
     for inputfile in inputFiles:
       result = self.bkClient_.insertInputFile(job.getJobId(), inputfile.getFileID())
       if not result['OK']:
-        self.bkClient_.deleteJob(job.getJobId())
-        errorMessage = "Unable to add %s " % (str(inputfile.getFileName()))
-        return S_ERROR(errorMessage)
+        errorMessage = ("Unable to insert input file",
+                        (str(inputfile.getFileName())) + result['Message'])
+        self.log.error(errorMessage[0], errorMessage[1])
+        res = self.bkClient_.deleteJob(job.getJobId())
+        if not res['OK']:
+          self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
+        return S_ERROR(errorMessage[0])
 
     outputFiles = job.getJobOutputFiles()
     prod = job.getParam('Production').getValue()
@@ -438,11 +445,17 @@ class XMLFilesReaderManager(object):
 
       result = self.__insertOutputFiles(job, outputfile)
       if not result['OK']:
-        self.bkClient_.deleteInputFiles(job.getJobId())
-        self.bkClient_.deleteJob(job.getJobId())
-        errorMessage = "Unable to create file %s ! ERROR: %s" % (str(outputfile.getFileName()),
-                                                                 result["Message"])
-        return S_ERROR(errorMessage)
+        errorMessage = ("Unable to insert output file",
+                        "%s ! ERROR: %s" % (str(outputfile.getFileName()),
+                                            result["Message"]))
+        self.log.error(errorMessage[0], errorMessage[1])
+        res = self.bkClient_.deleteInputFiles(job.getJobId())
+        if not res['OK']:
+          self.log.warn("Unable to delete inputfiles of", job.getJobId() + res['Message'])
+        res = self.bkClient_.deleteJob(job.getJobId())
+        if not res['OK']:
+          self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
+        return S_ERROR(errorMessage[0])
       else:
         fileid = long(result['Value'])
         outputfile.setFileID(fileid)
@@ -502,17 +515,15 @@ class XMLFilesReaderManager(object):
           res = self.bkClient_.insertDataTakingCond(datataking)
           if not res['OK']:
             return S_ERROR("DATA TAKING Problem:" + str(res['Message']))
-          else:
-            dataTackingPeriodDesc = datataking['Description']
-            # The new data taking condition inserted. The name should be the generated name.
+          dataTackingPeriodDesc = datataking['Description']
+          # The new data taking condition inserted. The name should be the generated name.
       else:
         # Note we allow to insert data quality tags when only the description is different.
         res = self.bkClient_.insertDataTakingCond(datataking)
         if not res['OK']:
           return S_ERROR("DATA TAKING Problem:" + str(res['Message']))
-        else:
-          dataTackingPeriodDesc = datataking['Description']
-          # The new data taking condition inserted. The name should be the generated name.
+        dataTackingPeriodDesc = datataking['Description']
+        # The new data taking condition inserted. The name should be the generated name.
 
       # insert processing pass
       programName = None
@@ -584,18 +595,17 @@ class XMLFilesReaderManager(object):
                                          configName=config.getConfigName(),
                                          configVersion=config.getConfigVersion(),
                                          eventType=eventtypes)
-
       if res['OK']:
         self.log.verbose("New processing pass has been created!")
         self.log.verbose("New production is:", production)
       elif job.exists('RunNumber'):
         self.log.warn('The run already registered!')
       else:
+        self.log.error("Failing adding production", production + res['Message'])
         retVal = self.bkClient_.deleteStepContainer(production)
         if not retVal['OK']:
           return retVal
-        self.log.error('Unable to create processing pass!', res['Message'])
-        return S_ERROR('Unable to create processing pass!')
+        return S_ERROR('Failing adding production')
 
     attrList = {'ConfigName': config.getConfigName(),
                 'ConfigVersion': config.getConfigVersion(),
@@ -626,7 +636,8 @@ class XMLFilesReaderManager(object):
     res = self.bkClient_.insertJob(attrList)
 
     if not res['OK'] and production < 0:
-      retVal = self.bkClient_.deleteProductionsContiner(production)
+      self.log.error("Failed inserting job", res['Message'])
+      retVal = self.bkClient_.deleteProductionsContainer(production)
       if not retVal['OK']:
         self.log.error(retVal['Message'])
     return res
@@ -641,8 +652,7 @@ class XMLFilesReaderManager(object):
     fileParams = outputfile.getFileParams()
     for param in fileParams:
       attrList[str(param.getParamName())] = param.getParamValue()
-    res = self.bkClient_.insertOutputFile(attrList)
-    return res
+    return self.bkClient_.insertOutputFile(attrList)
 
   #############################################################################
   def processReplicas(self, replica):

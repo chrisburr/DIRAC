@@ -584,7 +584,12 @@ class IBookkeepingDatabaseClient(object):
     return self.getManager().getRunNbAndTck(lfn)
 
   #############################################################################
+
+  @deprecated("Use deleteProductionsContainer")
   def deleteProductionsContiner(self, prod):
+    return self.deleteProductionsContainer(prod)
+
+  def deleteProductionsContainer(self, prod):
     """more info in the BookkeepingClient.py."""
     return self.getManager().deleteProductionsContiner(prod)
 
