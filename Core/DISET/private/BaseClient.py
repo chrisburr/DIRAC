@@ -9,7 +9,11 @@ __RCSID__ = "$Id$"
 
 import six
 import time
-import thread
+try:
+  import thread
+except ImportError:  # python 3 compatibility
+  import _thread as thread
+
 import DIRAC
 from DIRAC.Core.DISET.private.Protocols import gProtocolDict
 from DIRAC.FrameworkSystem.Client.Logger import gLogger
@@ -250,7 +254,7 @@ class BaseClient(object):
 
         :return: S_OK()/S_ERROR()
     """
-    # Wich extra credentials to use?
+    # which extra credentials to use?
     self.__extraCredentials = self.VAL_EXTRA_CREDENTIALS_HOST if self.__useCertificates else ""
     if self.KW_EXTRA_CREDENTIALS in self.kwargs:
       self.__extraCredentials = self.kwargs[self.KW_EXTRA_CREDENTIALS]
@@ -645,8 +649,12 @@ and this is thread %s
       del newKwargs['useCertificates']
     return [self._destinationSrv, newKwargs]
 
-  def __nonzero__(self):
+  def __bool__(self):
     return True
+
+  # python 2 and 3 compatibility
+  # https://portingguide.readthedocs.io/en/latest/core-obj-misc.html#customizing-truthiness-bool
+  __nonzero__ = __bool__
 
   def __str__(self):
     return "<DISET Client %s %s>" % (self.serviceURL, self.__extraCredentials)
