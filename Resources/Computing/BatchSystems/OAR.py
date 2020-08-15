@@ -12,7 +12,11 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 import json
 
@@ -60,7 +64,7 @@ class OAR(object):
                                                                        queue,
                                                                        submitOptions,
                                                                        executable)
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
 
       if status != 0 or not output:
         break
@@ -107,7 +111,7 @@ class OAR(object):
     successful = []
     failed = []
     for job in jobIDList:
-      status, output = commands.getstatusoutput('oardel %s' % job)
+      status, output = getstatusoutput('oardel %s' % job)
       if status != 0:
         failed.append(job)
       else:
@@ -148,7 +152,7 @@ class OAR(object):
       resultDict['Message'] = 'No user name'
       return resultDict
 
-    status, output = commands.getstatusoutput("oarstat --sql \"project = '%s'\" -J" % user)
+    status, output = getstatusoutput("oarstat --sql \"project = '%s'\" -J" % user)
     if status != 0:
       resultDict['Status'] = status
       resultDict['Message'] = output
@@ -220,7 +224,7 @@ class OAR(object):
     waitingJobs = 0
     runningJobs = 0
 
-    status, output = commands.getstatusoutput('oarstat -u %s -J' % user)
+    status, output = getstatusoutput('oarstat -u %s -J' % user)
     if status != 0:
       if "arrayref expected" in output:
         resultDict['Status'] = 0

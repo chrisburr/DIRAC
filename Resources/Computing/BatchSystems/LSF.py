@@ -13,7 +13,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 import re
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 
 __RCSID__ = "$Id$"
@@ -54,7 +58,7 @@ class LSF(object):
                                                              queue,
                                                              submitOptions,
                                                              executable)
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
       if status == 0:
         outputs.append(output)
       else:
@@ -95,7 +99,7 @@ class LSF(object):
     successful = []
     failed = []
     for job in jobIDList:
-      status, output = commands.getstatusoutput('bkill %s' % job)
+      status, output = getstatusoutput('bkill %s' % job)
       if status != 0:
         failed.append(job)
       else:
@@ -125,7 +129,7 @@ class LSF(object):
     queue = kwargs['Queue']
 
     cmd = "bjobs -q %s -a" % queue
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = status
@@ -167,7 +171,7 @@ class LSF(object):
       return resultDict
 
     cmd = 'bjobs ' + ' '.join(jobIDList)
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = status

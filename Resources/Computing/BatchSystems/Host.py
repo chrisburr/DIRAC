@@ -11,7 +11,11 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 import glob
 import shutil
@@ -190,7 +194,7 @@ exit 0
       jobInfo = json.loads(jobInfo)
       pid = jobInfo['PID']
       cmd = 'ps -f -p %s --no-headers | wc -l' % pid
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
       if status == 0:
         if output.strip() == '1':
           running += 1
@@ -214,7 +218,7 @@ exit 0
 
     if pid == 0:
       return "Unknown"
-    status, output = commands.getstatusoutput('ps  -f -p %s | grep %s | wc -l' % (pid, user))
+    status, output = getstatusoutput('ps  -f -p %s | grep %s | wc -l' % (pid, user))
     if status == 0 and output.strip() == "1":
       return "Running"
     return "Done"

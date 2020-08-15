@@ -59,7 +59,7 @@ class HTCondorCETests(unittest.TestCase):
     for jobID, expected in expectedResults.iteritems():
       self.assertEqual(HTCE.parseCondorStatus(statusLines, jobID), expected)
 
-  @patch(MODNAME + ".commands.getstatusoutput", new=Mock(side_effect=([(0, "\n".join(STATUS_LINES)),
+  @patch(MODNAME + ".getstatusoutput", new=Mock(side_effect=([(0, "\n".join(STATUS_LINES)),
                                                                        (0, "\n".join(HISTORY_LINES)),
                                                                        (0, 0)])))
   @patch(MODNAME + ".HTCondorCEComputingElement._HTCondorCEComputingElement__cleanup", new=Mock())
@@ -174,7 +174,7 @@ class HTCondorCETests(unittest.TestCase):
     htce.useLocalSchedd = local
     htce.ceParameters = self.ceParameters
     htce._reset()
-    with patch(MODNAME + ".commands.getstatusoutput", new=mock):
+    with patch(MODNAME + ".getstatusoutput", new=mock):
       ret = htce.killJob(jobIDList=jobIDList)
 
     assert ret['OK'] == success
@@ -189,7 +189,7 @@ class BatchCondorTest(unittest.TestCase):
     mock = Mock(side_effect=([(0, "\n".join(STATUS_LINES)),  # condor_q
                               (0, "\n".join(HISTORY_LINES))]))  # condor_history
 
-    with patch(MODNAME + ".commands.getstatusoutput", new=mock):
+    with patch(MODNAME + ".getstatusoutput", new=mock):
       ret = Condor.Condor().getJobStatus(JobIDList=["123.0",
                                                     "123.1",
                                                     "123.2",

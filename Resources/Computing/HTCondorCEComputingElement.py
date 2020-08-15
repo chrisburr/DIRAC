@@ -48,7 +48,11 @@ from __future__ import print_function
 import six
 import os
 import tempfile
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import errno
 
 from DIRAC import S_OK, S_ERROR, gConfig
@@ -330,7 +334,7 @@ Queue %(nJobs)s
     for jobRef in jobIDList:
       job, _, jobID = condorIDAndPathToResultFromJobRef(jobRef)
       self.log.verbose("Killing pilot %s " % job)
-      status, stdout = commands.getstatusoutput('condor_rm %s %s' % (self.remoteScheddOptions, jobID))
+      status, stdout = getstatusoutput('condor_rm %s %s' % (self.remoteScheddOptions, jobID))
       if status != 0:
         return S_ERROR("Failed to kill pilot %s: %s" % (job, stdout))
 
@@ -385,7 +389,7 @@ Queue %(nJobs)s
     for _condorIDs in breakListIntoChunks(condorIDs.values(), 100):
 
       # This will return a list of 1245.75 3
-      status, stdout_q = commands.getstatusoutput('condor_q %s %s -af:j JobStatus ' % (self.remoteScheddOptions,
+      status, stdout_q = getstatusoutput('condor_q %s %s -af:j JobStatus ' % (self.remoteScheddOptions,
                                                                                        ' '.join(_condorIDs)))
       if status != 0:
         return S_ERROR(stdout_q)
@@ -405,7 +409,7 @@ Queue %(nJobs)s
       pilotStatus = parseCondorStatus(qList, jobID)
       if pilotStatus == 'HELD':
         # make sure the pilot stays dead and gets taken out of the condor_q
-        _rmStat, _rmOut = commands.getstatusoutput('condor_rm %s %s ' % (self.remoteScheddOptions, jobID))
+        _rmStat, _rmOut = getstatusoutput('condor_rm %s %s ' % (self.remoteScheddOptions, jobID))
         # self.log.debug( "condor job killed: job %s, stat %s, message %s " % ( jobID, rmStat, rmOut ) )
         pilotStatus = 'Aborted'
 
@@ -430,7 +434,7 @@ Queue %(nJobs)s
 
       # TOREMOVE: once v7r0 will mainly be used, remove the following block that was only useful
       # when path to output was not deterministic
-      status, stdout_q = commands.getstatusoutput('condor_q %s %s -af SUBMIT_Iwd' % (self.remoteScheddOptions,
+      status, stdout_q = getstatusoutput('condor_q %s %s -af SUBMIT_Iwd' % (self.remoteScheddOptions,
                                                                                      condorID))
       self.log.verbose('condor_q:', stdout_q)
       if status == 0 and self.workingDirectory in stdout_q:
@@ -526,7 +530,7 @@ Queue %(nJobs)s
     # remove all files older than 120 minutes starting with DIRAC_ Condor will
     # push files on submission, but it takes at least a few seconds until this
     # happens so we can't directly unlink after condor_submit
-    status, stdout = commands.getstatusoutput('find %s -mmin +120 -name "DIRAC_*" -delete ' % self.workingDirectory)
+    status, stdout = getstatusoutput('find %s -mmin +120 -name "DIRAC_*" -delete ' % self.workingDirectory)
     if status:
       self.log.error("Failure during HTCondorCE __cleanup", stdout)
 
@@ -534,7 +538,7 @@ Queue %(nJobs)s
     workDir = os.path.join(self.workingDirectory, self.ceName)
     findPars = dict(workDir=workDir, days=self.daysToKeepLogs)
     # remove all out/err/log files older than "DaysToKeepLogs" days
-    status, stdout = commands.getstatusoutput(
+    status, stdout = getstatusoutput(
         r'find %(workDir)s -mtime +%(days)s -type f \( -name "*.out" -o -name "*.err" -o -name "*.log" \) -delete ' %
         findPars)
     if status:

@@ -15,7 +15,11 @@ from __future__ import print_function
 
 import os
 import sys
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 
 from diraccfg import CFG
 from DIRAC.Core.Base import Script
@@ -43,7 +47,7 @@ def pipInstall(package, switches=""):
   # The right pip should be in the PATH, which is the case after sourcing the DIRAC bashrc
   cmd = "pip install --trusted-host pypi.python.org %s %s" % (switches, package)
   gLogger.notice("Executing %s" % cmd)
-  return commands.getstatusoutput(cmd)
+  return getstatusoutput(cmd)
 
 
 # Collect all the requested python modules to install

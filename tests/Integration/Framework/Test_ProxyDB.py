@@ -12,7 +12,11 @@ import sys
 import stat
 import shutil
 import tempfile
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import unittest
 
 from diraccfg import CFG
@@ -179,7 +183,7 @@ class ProxyDBTestCase(unittest.TestCase):
       cmd += ' -voms "%s"' % vo
       cmd += ' -fqan "/%s/Role=%s/Capability=NULL"' % (vo, role)
       cmd += ' -hours %s -out %s -rfc' % (time, self.proxyPath)
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
       if status:
         return S_ERROR(output)
     chain = X509Chain()
@@ -278,13 +282,13 @@ class ProxyDBTestCase(unittest.TestCase):
       userCertFile = os.path.join(cls.userDir, userName + '.cert.pem')
       with open(userConfFile, "w") as f:
         f.write(userConf)
-      status, output = commands.getstatusoutput('openssl genrsa -out %s' % userKeyFile)
+      status, output = getstatusoutput('openssl genrsa -out %s' % userKeyFile)
       if status:
         gLogger.error(output)
         exit()
       gLogger.debug(output)
       os.chmod(userKeyFile, stat.S_IREAD)
-      status, output = commands.getstatusoutput('openssl req -config %s -key %s -new -out %s' %
+      status, output = getstatusoutput('openssl req -config %s -key %s -new -out %s' %
                                                 (userConfFile, userKeyFile, userReqFile))
       if status:
         gLogger.error(output)
@@ -292,14 +296,14 @@ class ProxyDBTestCase(unittest.TestCase):
       gLogger.debug(output)
       cmd = 'openssl ca -config %s -extensions usr_cert -batch -days 375 -in %s -out %s'
       cmd = cmd % (cls.caConfigFile, userReqFile, userCertFile)
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
       if status:
         gLogger.error(output)
         exit()
       gLogger.debug(output)
 
     # Result
-    status, output = commands.getstatusoutput('ls -al %s' % cls.userDir)
+    status, output = getstatusoutput('ls -al %s' % cls.userDir)
     if status:
       gLogger.error(output)
       exit()

@@ -6,7 +6,11 @@ from __future__ import absolute_import
 from __future__ import division
 __RCSID__ = "$Id$"
 
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os.path
 import time
 import sys
@@ -534,7 +538,7 @@ File Catalog Client $Revision: 1.17 $Date:
     if len(args) == 5:
       guid = args[4]
     else:
-      _status, guid = commands.getstatusoutput('uuidgen')
+      _status, guid = getstatusoutput('uuidgen')
     infoDict['GUID'] = guid
     infoDict['Checksum'] = ''
 

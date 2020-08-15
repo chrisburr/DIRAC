@@ -12,7 +12,11 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 import re
 
@@ -63,7 +67,7 @@ class SLURM(object):
       # --export restricts the propagation to the PATH variable to get a clean environment in the workers
       cmd += "sbatch --export=PATH -o %s/%%j.out --partition=%s -n %s %s %s " % (
           outputDir, queue, numberOfProcessors, submitOptions, executable)
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
 
       if status != 0 or not output:
         break
@@ -114,7 +118,7 @@ class SLURM(object):
     failed = []
     for job in jobIDList:
       cmd = 'scancel --partition=%s %s' % (queue, job)
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
 
       if status != 0:
         failed.append(job)
@@ -148,7 +152,7 @@ class SLURM(object):
 
     # displays accounting data for all jobs in the Slurm job accounting log or Slurm database
     cmd = "sacct -j %s -o JobID,STATE" % jobIDs
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = 1
@@ -208,7 +212,7 @@ class SLURM(object):
     queue = kwargs['Queue']
 
     cmd = "squeue --partition=%s --user=%s --format='%%j %%T' " % (queue, user)
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = 1

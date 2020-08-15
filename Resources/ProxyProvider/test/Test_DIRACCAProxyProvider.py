@@ -9,7 +9,11 @@ import os
 import re
 import sys
 import shutil
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import unittest
 import tempfile
 
@@ -63,7 +67,7 @@ class DIRACCAProviderTestCase(unittest.TestCase):
       caCFG.writelines(lines)
 
     # Result
-    status, output = commands.getstatusoutput('ls -al %s' % testCAPath)
+    status, output = getstatusoutput('ls -al %s' % testCAPath)
     if status:
       gLogger.error(output)
       exit()

@@ -14,7 +14,11 @@ from __future__ import absolute_import
 from __future__ import division
 import re
 import tempfile
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 
 __RCSID__ = "$Id$"
@@ -54,7 +58,7 @@ def treatCondorHistory(condorHistCall, qList):
   :type qList: python:list
   :returns: None
   """
-  status_history, stdout_history_temp = commands.getstatusoutput(condorHistCall)
+  status_history, stdout_history_temp = getstatusoutput(condorHistCall)
 
   # Join the ClusterId and the ProcId and add to existing list of statuses
   if status_history == 0:
@@ -118,7 +122,7 @@ class Condor(object):
 
     cmd = '%s; ' % preamble if preamble else ''
     cmd += 'condor_submit %s %s' % (submitOptions, jdlFile.name)
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     jdlFile.close()
 
@@ -173,7 +177,7 @@ class Condor(object):
     successful = []
     failed = []
     for job in jobIDList:
-      status, output = commands.getstatusoutput('condor_rm %s' % job)
+      status, output = getstatusoutput('condor_rm %s' % job)
       if status != 0:
         failed.append(job)
       else:
@@ -214,7 +218,7 @@ class Condor(object):
       resultDict['Message'] = 'No user name'
       return resultDict
 
-    status, stdout_q = commands.getstatusoutput('condor_q -submitter %s -af:j JobStatus  ' % user)
+    status, stdout_q = getstatusoutput('condor_q -submitter %s -af:j JobStatus  ' % user)
 
     if status != 0:
       resultDict['Status'] = status
@@ -259,7 +263,7 @@ class Condor(object):
     waitingJobs = 0
     runningJobs = 0
 
-    status, output = commands.getstatusoutput('condor_q -submitter %s' % user)
+    status, output = getstatusoutput('condor_q -submitter %s' % user)
     if status != 0:
       if "no record" in output:
         resultDict['Status'] = 0

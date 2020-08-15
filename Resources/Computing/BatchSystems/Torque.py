@@ -12,7 +12,11 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 
 __RCSID__ = "$Id$"
@@ -50,7 +54,7 @@ class Torque(object):
              "-q %(Queue)s " \
              "-N DIRACPilot " \
              "%(SubmitOptions)s %(Executable)s 2>/dev/null" % kwargs
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
       if status == 0:
         jobIDs.append(output.split('.')[0])
       else:
@@ -91,7 +95,7 @@ class Torque(object):
       jobDict[jobNumber] = job
 
     cmd = 'qstat ' + ' '.join(jobIDList)
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = status
@@ -137,7 +141,7 @@ class Torque(object):
       return resultDict
 
     cmd = 'qselect -u %s -s WQ | wc -l; qselect -u %s -s R | wc -l' % (user, user)
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = status
@@ -180,7 +184,7 @@ class Torque(object):
     successful = []
     failed = []
     for job in jobIDList:
-      status, output = commands.getstatusoutput('qdel %s' % job)
+      status, output = getstatusoutput('qdel %s' % job)
       if status != 0:
         failed.append(job)
       else:

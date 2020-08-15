@@ -11,7 +11,11 @@ import socket
 import os
 import re
 import time
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import getpass
 import importlib
 import shutil
@@ -526,7 +530,7 @@ class SystemAdministratorHandler(RequestHandler):
 
     # Disk occupancy
     summary = ''
-    _status, output = commands.getstatusoutput('df')
+    _status, output = getstatusoutput('df')
     lines = output.split('\n')
     for i in xrange(len(lines)):
       if lines[i].startswith('/dev'):
@@ -542,7 +546,7 @@ class SystemAdministratorHandler(RequestHandler):
 
     # Open files
     puser = getpass.getuser()
-    _status, output = commands.getstatusoutput('lsof')
+    _status, output = getstatusoutput('lsof')
     pipes = 0
     files = 0
     sockets = 0

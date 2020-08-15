@@ -18,7 +18,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 import re
-import commands
+# TODO: This should be moderised to use subprocess(32)
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 import os
 
 __RCSID__ = "$Id$"
@@ -46,7 +50,7 @@ class GE(object):
     for _i in xrange(int(nJobs)):
       cmd = '%s; ' % preamble if preamble else ''
       cmd += "qsub -o %(OutputDir)s -e %(ErrorDir)s -N DIRACPilot %(SubmitOptions)s %(Executable)s" % kwargs
-      status, output = commands.getstatusoutput(cmd)
+      status, output = getstatusoutput(cmd)
       if status == 0:
         outputs.append(output)
       else:
@@ -87,7 +91,7 @@ class GE(object):
     successful = []
     failed = []
     for job in jobIDList:
-      status, output = commands.getstatusoutput('qdel %s' % job)
+      status, output = getstatusoutput('qdel %s' % job)
       if status != 0:
         failed.append(job)
       else:
@@ -126,7 +130,7 @@ class GE(object):
       resultDict['Message'] = 'Empty job list'
       return resultDict
 
-    status, output = commands.getstatusoutput('qstat -u %s' % user)
+    status, output = getstatusoutput('qstat -u %s' % user)
 
     if status != 0:
       resultDict['Status'] = status
@@ -148,7 +152,7 @@ class GE(object):
             elif jobStatus in ['qw', 'h']:
               jobDict[job] = 'Waiting'
 
-    status, output = commands.getstatusoutput('qstat -u %s -s z' % user)
+    status, output = getstatusoutput('qstat -u %s -s z' % user)
 
     if status == 0:
       if output:
@@ -184,7 +188,7 @@ class GE(object):
       return resultDict
 
     cmd = 'qstat -u %s' % user
-    status, output = commands.getstatusoutput(cmd)
+    status, output = getstatusoutput(cmd)
 
     if status != 0:
       resultDict['Status'] = status
