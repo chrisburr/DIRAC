@@ -5,7 +5,7 @@ from __future__ import print_function
 
 import unittest
 import sys
-from StringIO import StringIO
+from io import StringIO
 
 from mock import MagicMock as Mock
 

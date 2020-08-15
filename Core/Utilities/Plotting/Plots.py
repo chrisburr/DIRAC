@@ -6,7 +6,7 @@ from __future__ import division
 from __future__ import print_function
 
 try:
-  from StringIO import StringIO
+  from io import StringIO
 except ImportError:
   from io import BytesIO as StringIO
 import errno
