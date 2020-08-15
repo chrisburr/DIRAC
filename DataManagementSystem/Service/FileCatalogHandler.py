@@ -16,7 +16,7 @@ __RCSID__ = "$Id$"
 
 # imports
 import six
-from io import StringIO
+from six import StringIO
 import csv
 import os
 from types import IntType, LongType, DictType, StringTypes, BooleanType, ListType

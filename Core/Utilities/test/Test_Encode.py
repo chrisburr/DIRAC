@@ -319,7 +319,7 @@ def test_nestedSerializable(data):
 def test_types():
   """ Ensure that the DEncode types object matches the Python 2 types module
   """
-  if not six.PY2K:
+  if not six.PY2:
     skip("This test only makes sense on Python 2")
   import types as pythonTypes
   from DIRAC.Core.Utilities.DEncode import types as DIRACTypes

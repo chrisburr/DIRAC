@@ -5,7 +5,7 @@ Test Logger Wrapper
 __RCSID__ = "$Id$"
 
 import logging
-from io import StringIO
+from io import BytesIO
 
 from DIRAC.FrameworkSystem.private.standardLogging.LoggingRoot import LoggingRoot
 from DIRAC.FrameworkSystem.private.standardLogging.Logging import Logging
@@ -27,7 +27,7 @@ def captureBackend():
   Dirac logger is wrapped by LoggingRoot and represent the root of the DIRAC logging system
   Modify the output to capture logs of LoggingRoot
   """
-  bufferDirac = StringIO()
+  bufferDirac = BytesIO()
   if logging.getLogger('dirac').handlers:
     logging.getLogger('dirac').handlers[0].stream = bufferDirac
   return bufferDirac

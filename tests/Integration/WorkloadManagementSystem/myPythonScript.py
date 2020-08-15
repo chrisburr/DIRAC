@@ -3,7 +3,13 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-import os,commands,time,sys
+import os
+import time
+import sys
+try:
+  from commands import getstatusoutput
+except ImportError:
+  from subprocess import getstatusoutput
 
 print('**************************')
 print('START myPythonScript.py')

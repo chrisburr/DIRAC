@@ -8,6 +8,7 @@ __RCSID__ = "$Id$"
 
 import pytest
 from io import StringIO
+import six
 
 from DIRAC.Interfaces.API.Job import Job
 from DIRAC.Core.Utilities.ClassAd.ClassAdLight import ClassAd
@@ -42,7 +43,7 @@ def test_basicJob():
     with open('./Interfaces/API/test/testWFSIO.jdl') as fd:
       expected = fd.read()
 
-  jdlSIO = job._toJDL(jobDescriptionObject=StringIO(job._toXML()))
+  jdlSIO = job._toJDL(jobDescriptionObject=StringIO(six.text_type(job._toXML())))
   assert jdlSIO == expected
 
 

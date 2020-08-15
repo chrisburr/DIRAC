@@ -9,7 +9,7 @@ Test Config for External Libraries:
 __RCSID__ = "$Id$"
 
 import logging
-from io import StringIO
+from io import BytesIO
 import pytest
 
 from DIRAC.FrameworkSystem.private.standardLogging.test.TestLogUtilities import gLogger, cleaningLog, gLoggerReset
@@ -62,7 +62,7 @@ def test_logsFromExtLibsLogs(isEnabled, loggerName, message, expected):
     gLogger.disableLogsFromExternalLibs()
 
   # modify the output to capture logs of the root logger
-  bufferRoot = StringIO()
+  bufferRoot = BytesIO()
   logging.getLogger().handlers[0].stream = bufferRoot
 
   logging.getLogger(loggerName).info(message)
@@ -79,7 +79,7 @@ def test_logsFromExtLibsPropag():
   gLogger.enableLogsFromExternalLibs()
 
   # modify the output to capture logs of the root logger
-  bufferRoot = StringIO()
+  bufferRoot = BytesIO()
   logging.getLogger().handlers[0].stream = bufferRoot
 
   gLogger.error('message')

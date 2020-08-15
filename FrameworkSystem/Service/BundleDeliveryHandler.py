@@ -8,7 +8,7 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import six
-from io import StringIO
+from io import BytesIO, StringIO
 import tarfile
 import os
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
@@ -72,7 +72,7 @@ class BundleManager(object):
     for bId in dirsToBundle:
       bundlePaths = dirsToBundle[bId]
       gLogger.info("Updating %s bundle %s" % (bId, bundlePaths))
-      buffer_ = StringIO()
+      buffer_ = BytesIO()
       filesToBundle = sorted(File.getGlobbedFiles(bundlePaths))
       if filesToBundle:
         commonPath = File.getCommonPath(filesToBundle)

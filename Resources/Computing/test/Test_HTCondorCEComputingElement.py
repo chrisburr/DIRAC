@@ -59,9 +59,13 @@ class HTCondorCETests(unittest.TestCase):
     for jobID, expected in expectedResults.iteritems():
       self.assertEqual(HTCE.parseCondorStatus(statusLines, jobID), expected)
 
-  @patch(MODNAME + ".getstatusoutput", new=Mock(side_effect=([(0, "\n".join(STATUS_LINES)),
-                                                                       (0, "\n".join(HISTORY_LINES)),
-                                                                       (0, 0)])))
+  @patch(MODNAME + ".getstatusoutput", new=Mock(side_effect=([
+      (0, "\n".join(STATUS_LINES)),
+      (0, 0)
+  ])))
+  @patch("DIRAC.Resources.Computing.BatchSystems.Condor.getstatusoutput", new=Mock(side_effect=([
+      (0, "\n".join(HISTORY_LINES)),
+  ])))
   @patch(MODNAME + ".HTCondorCEComputingElement._HTCondorCEComputingElement__cleanup", new=Mock())
   def test_getJobStatus(self):
 
@@ -186,14 +190,20 @@ class BatchCondorTest(unittest.TestCase):
   """ tests for the plain batchSystem Condor Module """
 
   def test_getJobStatus(self):
-    mock = Mock(side_effect=([(0, "\n".join(STATUS_LINES)),  # condor_q
-                              (0, "\n".join(HISTORY_LINES))]))  # condor_history
+    q_mock = Mock(side_effect=([
+      (0, "\n".join(STATUS_LINES)),
+    ]))  # condor_q
+    history_mock = Mock(side_effect=([
+      (0, "\n".join(STATUS_LINES)),
+      (0, "\n".join(HISTORY_LINES)),
+    ]))  # condor_history
 
-    with patch(MODNAME + ".getstatusoutput", new=mock):
-      ret = Condor.Condor().getJobStatus(JobIDList=["123.0",
-                                                    "123.1",
-                                                    "123.2",
-                                                    "333.3"])
+    with patch(MODNAME + ".getstatusoutput", new=q_mock):
+      with patch("DIRAC.Resources.Computing.BatchSystems.Condor.getstatusoutput", new=history_mock):
+        ret = Condor.Condor().getJobStatus(JobIDList=["123.0",
+                                                      "123.1",
+                                                      "123.2",
+                                                      "333.3"])
 
     expectedResults = {"123.0": "Done",
                        "123.1": "Aborted",
