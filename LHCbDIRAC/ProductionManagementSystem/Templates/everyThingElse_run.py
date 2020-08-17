@@ -126,6 +126,7 @@ p1Policy = '{{p1Policy#PROD-P1: data policy (download or protocol)#download}}'
 p1RemoveInputs = ast.literal_eval('{{p1RemoveInputs#PROD-P1: removeInputs flag#False}}')
 p1StepMask = '{{P1StepMask#PROD-P1: step output to save, semicolon separated (default is last)#}}'
 p1FileMask = '{{P1FileMask#PROD-P1: file types in output to save, semicolon separated (default is all)#}}'
+p1NoBKQuery = ast.literal_eval('{{P1NoBKQuery#PROD-P1: run without an input Bookkeeping Query#False}}')
 p1multicoreFlag = '{{P1MulticoreFLag#PROD-P1: multicore flag#True}}'
 p1NumberOfProcessors = '{{p1NumberOfProcessors#PROD-P1: jobs min/max n of processors#0,0}}'
 p1outputMode = '{{P1OutputMode#PROD-P1: output mode#Local}}'
@@ -226,13 +227,13 @@ pr.outConfigName = pr.configName
 pr.dqFlag = '{{inDataQualityFlag}}'  # UNCHECKED
 pr.dataTakingConditions = '{{simDesc}}'
 pr.processingPass = '{{inProPass}}'
-if p1[0] == 1 and pr.prodsTypeList[0].lower() != 'mcsimulation':
+if p1[0] == 1 and pr.prodsTypeList[0].lower() not in ('mcsimulation', 'mcfastsimulation'):
   pr.bkFileType = '{{inFileType}}'
-  pr.bkQueries = ['Full']
-elif p1[0] == 1 and pr.prodsTypeList[0].lower() == 'mcsimulation':
+  pr.bkQueries = ['Full'] if not p1NoBKQuery else ['']
+elif p1[0] == 1 and pr.prodsTypeList[0].lower() in ('mcsimulation', 'mcfastsimulation'):
   pr.bkQueries = ['']
   pr.prodGroup = '{{pDsc}}'
-elif p1[0] != 1 and pr.prodsTypeList[0].lower() != 'mcsimulation':
+elif p1[0] != 1 and pr.prodsTypeList[0].lower() != ('mcsimulation', 'mcfastsimulation'):
   pr.bkQueries = ['fromPreviousProd']
   if not pr.previousProdID:
     gLogger.error("Please specify an input production")
