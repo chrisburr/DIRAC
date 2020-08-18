@@ -1,3 +1,14 @@
+v10r0p12
+Based on DIRAC v7r0p33
+LHCbWebDIRAC v5r1p8
+LHCbDIRACOS v1r9
+
+*Workflow
+
+FIX: (!860) passing to lb-run the "--ncpus" flag for the case of user jobs
+
+
+
 v10r0p11
 Based on DIRAC v7r0p31
 LHCbWebDIRAC v5r1p8

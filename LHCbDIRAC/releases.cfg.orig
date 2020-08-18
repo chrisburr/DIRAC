@@ -21,6 +21,7 @@ Releases
     DIRACOS = LHCb:master
   }
 
+<<<<<<< HEAD
   v10r1-pre8
   {
     Modules = LHCbDIRAC:v10r1-pre8, LHCbWebDIRAC:v5r2-pre4
@@ -77,6 +78,7 @@ Releases
     DIRACOS = LHCb:v1r7
   }
 
+=======
   v10r0p12
   {
     Modules = LHCbDIRAC:v10r0p12, LHCbWebDIRAC:v5r1p8
@@ -84,6 +86,7 @@ Releases
     DIRACOS = LHCb:v1r9
   }
 
+>>>>>>> upstream/master
   v10r0p11
   {
     Modules = LHCbDIRAC:v10r0p11, LHCbWebDIRAC:v5r1p8

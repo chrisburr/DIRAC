@@ -176,7 +176,8 @@ def test_getCandidateFiles(mocker, fileMask, stepMask, result):
 
 
 inputDatas = ['previousStep', 'previousStep', 'LFN:123.raw']
-workflow_commons = [{'outputList': [{'stepName': 'Brunel_1',
+workflow_commons = [{'JobType': 'User',
+                     'outputList': [{'stepName': 'Brunel_1',
                                      'outputDataType': 'brunelhist',
                                      'outputBKType': 'BRUNELHIST',
                                      'outputDataName': 'Brunel_00012345_00006789_1_Hist.root'},
@@ -186,7 +187,8 @@ workflow_commons = [{'outputList': [{'stepName': 'Brunel_1',
                                      'outputDataName': '00012345_00006789_1.sdst'}
                                     ]
                      },
-                    {'outputList': [{'stepName': 'Brunel_1',
+                    {'JobType': 'User',
+                     'outputList': [{'stepName': 'Brunel_1',
                                      'outputDataType': 'brunelhist',
                                      'outputBKType': 'BRUNELHIST',
                                      'outputDataName': 'Brunel_00012345_00006789_1_Hist.root'},
@@ -200,7 +202,8 @@ workflow_commons = [{'outputList': [{'stepName': 'Brunel_1',
                                      'outputDataName': '00012345_00006789_1.sdst'}
                                     ]
                      },
-                    {'outputList': [{'stepName': 'Brunel_1',
+                    {'JobType': 'User',
+                     'outputList': [{'stepName': 'Brunel_1',
                                      'outputDataType': 'brunelhist',
                                      'outputBKType': 'BRUNELHIST',
                                      'outputDataName': 'Brunel_00012345_00006789_1_Hist.root'},
@@ -294,7 +297,7 @@ def test__findOutputs(mocker):
                   'outputDataType': 'LEPTONICFULL.DST', 'outputDataName': '00012345_00012345_2.LEPTONICFULL.DST'}, {
                   'outputDataType': 'MINIBIAS.DST', 'outputDataName': '00012345_00012345_2.MINIBIAS.DST'}, {
                   'outputDataType': 'RADIATIVE.DST', 'outputDataName': '00012345_00012345_2.RADIATIVE.DST'}, {
-                      'outputDataType': 'SEMILEPTONIC.DST', 'outputDataName': '00012345_00012345_2.SEMILEPTONIC.DST'}, {
+                  'outputDataType': 'SEMILEPTONIC.DST', 'outputDataName': '00012345_00012345_2.SEMILEPTONIC.DST'}, {
                   'outputDataType': 'HIST', 'outputDataName': 'DaVinci_00012345_00012345_2_Hist.root'}]
           mb._findOutputs(stepOutput)
           os.remove('aaa.Bhadron.dst')
