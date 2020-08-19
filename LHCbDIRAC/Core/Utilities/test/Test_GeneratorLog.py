@@ -12,7 +12,7 @@
 LHCbDIRAC.HCbDIRAC.Core.Utilities.GeneratorLog"""
 
 import pytest
-from LHCbDIRAC.Core.Utilities.GeneratorLog import counterJson, efficiencyJson, fractionJson, crosssectionJson, methodGeneratorJson  # noqa
+from LHCbDIRAC.Core.Utilities.GeneratorLog import counterJson, efficiencyJson, fractionJson, crossSectionJson, methodGeneratorJson  # noqa
 
 
 listCounters = [{'@name': 'all events (including empty events)', 'value': '556'},
@@ -152,7 +152,7 @@ listCrosssections = [
     }
 ]
 
-dictCrosssections = {
+dictCrossSections = {
     'A B -> A B elastic': {
         'ID': 102,
         'generated': 300,
@@ -171,10 +171,10 @@ dictCrosssections = {
 }
 
 
-@pytest.mark.parametrize("test_input,expected", [(listCrosssections, dictCrosssections),
+@pytest.mark.parametrize("test_input,expected", [(listCrossSections, dictCrossSections),
                                                  ([], {})])
-def test_crosssectionJson(test_input, expected):
-  assert crosssectionJson(test_input) == expected
+def test_crossSectionJson(test_input, expected):
+  assert crossSectionJson(test_input) == expected
 
 
 listMethods = ['GenerationSignal.SignalPlain', 'Generation.SignalRepeatedHadronization']
