@@ -20,6 +20,8 @@ def counterJson(listCounters):
     :param list listCounters: list containing all the counter nodes
   '''
   dictCounters = dict()
+  if isinstance(listCounters, dict):
+    listCounters = [listCounters]
   for counter in listCounters:
     dictCounters[counter['@name']] = int(counter['value'])
   return dictCounters
@@ -30,6 +32,8 @@ def efficiencyJson(listEfficiencies):
     :param list listEfficiencies: list containing all the efficiency nodes
   '''
   dictEfficiencies = dict()
+  if isinstance(listEfficiencies, dict):
+    listEfficiencies = [listEfficiencies]
   for efficiency in listEfficiencies:
     dictEfficiencies[efficiency['@name']] = {
         'after': int(efficiency['after']),
@@ -45,6 +49,8 @@ def fractionJson(listFractions):
     :param list listFractions: list containing all the fraction nodes
   '''
   dictFractions = dict()
+  if isinstance(listFractions, dict):
+    listFractions = [listFractions]
   for fraction in listFractions:
     dictFractions[fraction['@name']] = {
         'number': int(fraction['number']),
@@ -54,18 +60,20 @@ def fractionJson(listFractions):
   return dictFractions
 
 
-def crosssectionJson(listCrosssections):
+def crossSectionJson(listCrossSections):
   '''returns a dictionary containing cross sections
-    :param list listCrosssections: list containing all the cross section nodes
+    :param list listCrossSections: list containing all the cross section nodes
   '''
-  dictCrosssections = dict()
-  for crosssection in listCrosssections:
-    dictCrosssections[crosssection['description'][1:-1]] = {
-        'ID': int(crosssection['@id']),
-        'generated': int(crosssection['generated']),
-        'value': float(crosssection['value'])
+  dictCrossSections = dict()
+  if isinstance(listCrossSections, dict):
+    listCrossSections = [listCrossSections]
+  for crossSection in listCrossSections:
+    dictCrossSections[crossSection['description'][1:-1]] = {
+        'ID': int(crossSection['@id']),
+        'generated': int(crossSection['generated']),
+        'value': float(crossSection['value'])
     }
-  return dictCrosssections
+  return dictCrossSections
 
 
 def methodGeneratorJson(listMethods, listGenerators, numberEventTypes):
@@ -102,20 +110,21 @@ class GeneratorLog(object):
     if numberEventTypes > 1:
       # Taking the first set of nodes
       xmlText = xmlText.split('<eventType>')[0] + '<eventType>' + xmlText.split('<eventType>')[1] + '<method>' + xmlText.split('<eventType>')[-1].split('<method>', 1)[-1]  # noqa
+    xmlText = xmlText.replace('-nan', '-1')
     dicto = xmltodict.parse(xmlText)
     jsonData = ast.literal_eval(json.dumps(dicto))
 
-    listCounters = jsonData['generatorCounters']['counter']
-    listEfficiencies = jsonData['generatorCounters']['efficiency']
-    listFractions = jsonData['generatorCounters']['fraction']
-    listCrosssections = jsonData['generatorCounters']['crosssection']
+    listCounters = jsonData['generatorCounters'].get('counter', [])
+    listEfficiencies = jsonData['generatorCounters'].get('efficiency', [])
+    listFractions = jsonData['generatorCounters'].get('fraction', [])
+    listCrossSections = jsonData['generatorCounters'].get('crosssection', [])
     listMethods = jsonData['generatorCounters']['method']
     listGenerators = jsonData['generatorCounters']['generator']
 
     dictElements['counter'] = counterJson(listCounters)
     dictElements['efficiency'] = efficiencyJson(listEfficiencies)
     dictElements['fraction'] = fractionJson(listFractions)
-    dictElements['crosssection'] = crosssectionJson(listCrosssections)
+    dictElements['crossSection'] = crossSectionJson(listCrossSections)
     dictElements['method'] = methodGeneratorJson(listMethods, listGenerators, numberEventTypes)
 
     dictGenerator['generatorCounters'] = dictElements
