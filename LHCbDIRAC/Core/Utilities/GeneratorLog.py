@@ -60,20 +60,20 @@ def fractionJson(listFractions):
   return dictFractions
 
 
-def crosssectionJson(listCrosssections):
+def crossSectionJson(listCrossSections):
   '''returns a dictionary containing cross sections
-    :param list listCrosssections: list containing all the cross section nodes
+    :param list listCrossSections: list containing all the cross section nodes
   '''
-  dictCrosssections = dict()
-  if isinstance(listCrosssections, dict):
-    listCrosssections = [listCrosssections]
-  for crosssection in listCrosssections:
-    dictCrosssections[crosssection['description'][1:-1]] = {
-        'ID': int(crosssection['@id']),
-        'generated': int(crosssection['generated']),
-        'value': float(crosssection['value'])
+  dictCrossSections = dict()
+  if isinstance(listCrossSections, dict):
+    listCrossSections = [listCrossSections]
+  for crossSection in listCrossSections:
+    dictCrossSections[crossSection['description'][1:-1]] = {
+        'ID': int(crossSection['@id']),
+        'generated': int(crossSection['generated']),
+        'value': float(crossSection['value'])
     }
-  return dictCrosssections
+  return dictCrossSections
 
 
 def methodGeneratorJson(listMethods, listGenerators, numberEventTypes):
@@ -117,14 +117,14 @@ class GeneratorLog(object):
     listCounters = jsonData['generatorCounters'].get('counter', [])
     listEfficiencies = jsonData['generatorCounters'].get('efficiency', [])
     listFractions = jsonData['generatorCounters'].get('fraction', [])
-    listCrosssections = jsonData['generatorCounters'].get('crosssection', [])
+    listCrossSections = jsonData['generatorCounters'].get('crosssection', [])
     listMethods = jsonData['generatorCounters']['method']
     listGenerators = jsonData['generatorCounters']['generator']
 
     dictElements['counter'] = counterJson(listCounters)
     dictElements['efficiency'] = efficiencyJson(listEfficiencies)
     dictElements['fraction'] = fractionJson(listFractions)
-    dictElements['crosssection'] = crosssectionJson(listCrosssections)
+    dictElements['crossSection'] = crossSectionJson(listCrossSections)
     dictElements['method'] = methodGeneratorJson(listMethods, listGenerators, numberEventTypes)
 
     dictGenerator['generatorCounters'] = dictElements
