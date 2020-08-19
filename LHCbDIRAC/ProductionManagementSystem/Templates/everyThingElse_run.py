@@ -124,23 +124,23 @@ except SyntaxError:
   p1DataSESpecial = {}
 p1Policy = '{{p1Policy#PROD-P1: data policy (download or protocol)#download}}'
 p1RemoveInputs = ast.literal_eval('{{p1RemoveInputs#PROD-P1: removeInputs flag#False}}')
-p1StepMask = '{{P1StepMask#PROD-P1: step output to save, semicolon separated (default is last)#}}'
-p1FileMask = '{{P1FileMask#PROD-P1: file types in output to save, semicolon separated (default is all)#}}'
+p1StepMask = '{{p1StepMask#PROD-P1: step output to save, semicolon separated (default is last)#}}'
+p1FileMask = '{{p1FileMask#PROD-P1: file types in output to save, semicolon separated (default is all)#}}'
 p1NoBKQuery = ast.literal_eval('{{P1NoBKQuery#PROD-P1: run without an input Bookkeeping Query#False}}')
-p1multicoreFlag = '{{P1MulticoreFLag#PROD-P1: multicore flag#True}}'
+p1multicoreFlag = '{{p1MulticoreFLag#PROD-P1: multicore flag#True}}'
 p1NumberOfProcessors = '{{p1NumberOfProcessors#PROD-P1: jobs min/max n of processors#0,0}}'
-p1outputMode = '{{P1OutputMode#PROD-P1: output mode#Local}}'
-p1eventsRequested = '{{P1EventsRequested#PROD-P1: events requested (-1 = ALL)#-1}}'
-p1ancestorDepth = int('{{P1AncestorDepth#PROD-P1: ancestor depth#0}}')
+p1outputMode = '{{p1OutputMode#PROD-P1: output mode#Local}}'
+p1eventsRequested = '{{p1EventsRequested#PROD-P1: events requested (-1 = ALL)#-1}}'
+p1ancestorDepth = int('{{p1AncestorDepth#PROD-P1: ancestor depth#0}}')
 try:
-  p1compressionLvl = '{{P1CompressionLevel#PROD-P1: Compression Level per step, e.g. LOW,HIGH]#LOW}}'
+  p1compressionLvl = '{{p1CompressionLevel#PROD-P1: Compression Level per step, e.g. LOW,HIGH]#LOW}}'
 except SyntaxError:
   p1compressionLvl = []
 p1OutputVisFlag = ast.literal_eval(
-    '{{P1OutputVisFlag#PROD-P1: Visibility flag of output files (a dict {"n step":"flag"})#{"1":"N"} }}')
+    '{{p1OutputVisFlag#PROD-P1: Visibility flag of output files (a dict {"n step":"flag"})#{"1":"N"} }}')
 p1OutputVisFlag = fillVisList(p1OutputVisFlag, len(pr.stepsInProds[0]))
 try:
-  p1VisFlagSpecial = '{{P1OutputVisFlagSpecial'
+  p1VisFlagSpecial = '{{p1OutputVisFlagSpecial'
   p1VisFlagSpecial += '#PROD-P1: Special Visibility flag of output files (a dict {"n step":{"FType":"flag" } })#}}'
   p1OutputVisFlagSpecial = ast.literal_eval(p1VisFlagSpecial)
 except SyntaxError:
@@ -158,22 +158,22 @@ except SyntaxError:
   p2DataSESpecial = {}
 p2Policy = '{{p2Policy#PROD-P2: data policy (download or protocol)#download}}'
 p2RemoveInputs = ast.literal_eval('{{p2RemoveInputs#PROD-P2: removeInputs flag#False}}')
-p2StepMask = '{{P2StepMask#PROD-P2: step output to save, semicolon separated (default is last#}}'
-p2FileMask = '{{P2FileMask#PROD-P2: file types in output to save, semicolon separated (default is all)#}}'
-p2multicoreFlag = '{{P2MulticoreFLag#PROD-P2: multicore flag#True}}'
+p2StepMask = '{{p2StepMask#PROD-P2: step output to save, semicolon separated (default is last#}}'
+p2FileMask = '{{p2FileMask#PROD-P2: file types in output to save, semicolon separated (default is all)#}}'
+p2multicoreFlag = '{{p2MulticoreFLag#PROD-P2: multicore flag#True}}'
 p2NumberOfProcessors = '{{p2NumberOfProcessors#PROD-P2: jobs min/max n of processors#0,0}}'
-p2outputMode = '{{P2OutputMode#PROD-P2: output mode#Local}}'
-p2eventsRequested = '{{P2EventsRequested#PROD-P2: events requested (-1 = ALL)#-1}}'
-p2ancestorDepth = int('{{P2AncestorDepth#PROD-P2: ancestor depth#0}}')
+p2outputMode = '{{p2OutputMode#PROD-P2: output mode#Local}}'
+p2eventsRequested = '{{p2EventsRequested#PROD-P2: events requested (-1 = ALL)#-1}}'
+p2ancestorDepth = int('{{p2AncestorDepth#PROD-P2: ancestor depth#0}}')
 try:
-  p2compressionLvl = '{{P2CompressionLevel#PROD-P2: Compression Level per step, e.g. LOW,HIGH#LOW}}'
+  p2compressionLvl = '{{p2CompressionLevel#PROD-P2: Compression Level per step, e.g. LOW,HIGH#LOW}}'
 except SyntaxError:
   p2compressionLvl = []
 p2OutputVisFlag = ast.literal_eval(
-    '{{P2OutputVisFlag#PROD-P2: Visibility flag of output files (a dict {"n step":"flag"})#{"2":"Y"} }}')
+    '{{p2OutputVisFlag#PROD-P2: Visibility flag of output files (a dict {"n step":"flag"})#{"2":"Y"} }}')
 p2OutputVisFlag = fillVisList(p2OutputVisFlag, len(pr.stepsInProds[1]))
 try:
-  p2VisFlagSpecial = '{{P2OutputVisFlagSpecial'
+  p2VisFlagSpecial = '{{p2OutputVisFlagSpecial'
   p2VisFlagSpecial += '#PROD-P2: Special Visibility flag of output files (a dict {"n step":{"FType":"flag" } })#}}'
   p2OutputVisFlagSpecial = ast.literal_eval(p2VisFlagSpecial)
 except SyntaxError:
@@ -191,22 +191,22 @@ except SyntaxError:
   p3DataSESpecial = {}
 p3Policy = '{{p3Policy#PROD-P3: data policy (download or protocol)#download}}'
 p3RemoveInputs = ast.literal_eval('{{p3RemoveInputs#PROD-P3: removeInputs flag#False}}')
-p3StepMask = '{{P3StepMask#PROD-P3: step output to save, semicolon separated (default is last#}}'
-p3FileMask = '{{P3FileMask#PROD-P3: file types in output to save, semicolon separated (default is all)#}}'
-p3multicoreFlag = '{{P3MulticoreFLag#PROD-P3: multicore flag#True}}'
+p3StepMask = '{{p3StepMask#PROD-P3: step output to save, semicolon separated (default is last#}}'
+p3FileMask = '{{p3FileMask#PROD-P3: file types in output to save, semicolon separated (default is all)#}}'
+p3multicoreFlag = '{{p3MulticoreFLag#PROD-P3: multicore flag#True}}'
 p3NumberOfProcessors = '{{p3NumberOfProcessors#PROD-P3: jobs min/max n of processors#0,0}}'
-p3outputMode = '{{P3OutputMode#PROD-P3: output mode#Any}}'
-p3eventsRequested = '{{P3EventsRequested#PROD-P3: events requested (-1 = ALL)#-1}}'
-p3ancestorDepth = int('{{P3AncestorDepth#PROD-P3: ancestor depth#0}}')
+p3outputMode = '{{p3OutputMode#PROD-P3: output mode#Any}}'
+p3eventsRequested = '{{p3EventsRequested#PROD-P3: events requested (-1 = ALL)#-1}}'
+p3ancestorDepth = int('{{p3AncestorDepth#PROD-P3: ancestor depth#0}}')
 try:
-  p3compressionLvl = '{{P3CompressionLevel#PROD-P3: Compression Level per step, e.g. ["LOW","HIGH"]#HIGH}}'
+  p3compressionLvl = '{{p3CompressionLevel#PROD-P3: Compression Level per step, e.g. ["LOW","HIGH"]#HIGH}}'
 except SyntaxError:
   p3compressionLvl = []
 p3OutputVisFlag = ast.literal_eval(
-    '{{P3OutputVisFlag#PROD-P3: Visibility flag of output files (a dict {"n step":"flag"})#{"3":"Y"} }}')
+    '{{p3OutputVisFlag#PROD-P3: Visibility flag of output files (a dict {"n step":"flag"})#{"3":"Y"} }}')
 p3OutputVisFlag = fillVisList(p3OutputVisFlag, len(pr.stepsInProds[2]))
 try:
-  p3VisFlagSpecial = '{{P3OutputVisFlagSpecial'
+  p3VisFlagSpecial = '{{p3OutputVisFlagSpecial'
   p3VisFlagSpecial += '#PROD-P3: Special Visibility flag of output files (a dict {"n step":{"FType":"flag" } })#}}'
   p3OutputVisFlagSpecial = ast.literal_eval(p3VisFlagSpecial)
 except SyntaxError:
