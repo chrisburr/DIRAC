@@ -1,3 +1,31 @@
+v10r1-pre9
+use DIRAC v7r1p11
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre4
+
+*Core
+
+FIX: (!858) Allow the case of a missing set of nodes
+
+*tests
+
+NEW: (!861) added user MP Gaudi test job, for Jenkins
+
+*Bookkeeping
+
+NEW: (!862) added missing DELETEJOB procedure
+CHANGE: (!862) removed several unused procedures
+CHANGE: (!862) renamed few functions with typos
+
+*ProductionManagement
+
+FIX: (!863) added flag for running without Bk Query (issue 505)
+
+*Workflow
+
+FIX: (!858) Indices names in lower case
+
+
 v10r1-pre8
 use DIRAC v7r1p10
 use LHCbDIRACOS v1r9
