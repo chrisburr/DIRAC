@@ -190,6 +190,44 @@ class GaudirunSuccess(UserJobTestCase):
     res = oJob.runLocal(self.dLHCb)
     self.assertTrue(res['OK'])
 
+  def test_Integration_User_mc_MP(self):
+    """ A MC production job, run as a user job in multiprocessor
+    """
+
+    oJob = copy.deepcopy(self.lhcbJobTemplate)
+    oJob.setName("gaudirun-test-MP")
+    try:
+      # This is the standard location in Jenkins
+      oJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py',
+                                     os.environ['WORKSPACE'],
+                                     '/tests/System/GridTestSubmission')[0],
+                            find_all('pilot.cfg',
+                                     os.environ['WORKSPACE'] + '/PilotInstallDIR')[0]])
+    except (IndexError, KeyError):
+      oJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py', rootPath,
+                                     '/tests/System/GridTestSubmission')[0],
+                            find_all('pilot.cfg', rootPath)[0]])
+
+    options = "$APPCONFIGOPTS/Gauss/Beam7000GeV-mu100-nu7.6-HorExtAngle.py;"
+    options += "$APPCONFIGOPTS/Gauss/EnableSpillover-25ns.py;"
+    options += "$DECFILESROOT/options/12143001.py;"
+    options += "$LBPYTHIA8ROOT/options/Pythia8.py;"
+    options += "$APPCONFIGOPTS/Gauss/Gauss-Upgrade-Baseline-20150522.py;"
+    options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmOpt2.py;"
+    options += "$APPCONFIGOPTS/Gauss/GaussMPpatch20200701.py;"
+    options += "$APPCONFIGOPTS/Persistency/Compression-LZMA-4.py;"
+    options += "prodConf_Gauss_00012345_00067899_1.py"
+
+    oJob.setApplication('Gauss', 'v54r3', options,
+                        extraPackages='AppConfig.v3r400;Gen/DecFiles.v30r42;ProdConf.v3r0',
+                        systemConfig='x86_64-centos7-gcc9-opt',
+                        events='16')
+    oJob.setDIRACPlatform()
+    oJob.setNumberOfProcessors(2)
+
+    res = oJob.runLocal(self.dLHCb)
+    self.assertTrue(res['OK'])
+
   def test_Integration_User_boole(self):
     """ A Boole production job, run as a user job
     """
