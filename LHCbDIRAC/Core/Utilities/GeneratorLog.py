@@ -20,6 +20,8 @@ def counterJson(listCounters):
     :param list listCounters: list containing all the counter nodes
   '''
   dictCounters = dict()
+  if isinstance(listCounters, dict):
+    listEfficiencies = [listCounters]
   for counter in listCounters:
     dictCounters[counter['@name']] = int(counter['value'])
   return dictCounters
@@ -30,6 +32,8 @@ def efficiencyJson(listEfficiencies):
     :param list listEfficiencies: list containing all the efficiency nodes
   '''
   dictEfficiencies = dict()
+  if isinstance(listEfficiencies, dict):
+    listEfficiencies = [listEfficiencies]
   for efficiency in listEfficiencies:
     dictEfficiencies[efficiency['@name']] = {
         'after': int(efficiency['after']),
@@ -45,6 +49,8 @@ def fractionJson(listFractions):
     :param list listFractions: list containing all the fraction nodes
   '''
   dictFractions = dict()
+  if isinstance(listFractions, dict):
+    listFractions = [listFractions]
   for fraction in listFractions:
     dictFractions[fraction['@name']] = {
         'number': int(fraction['number']),
@@ -59,6 +65,8 @@ def crosssectionJson(listCrosssections):
     :param list listCrosssections: list containing all the cross section nodes
   '''
   dictCrosssections = dict()
+  if isinstance(listCrosssections, dict):
+    listCrosssections = [listCrosssections]
   for crosssection in listCrosssections:
     dictCrosssections[crosssection['description'][1:-1]] = {
         'ID': int(crosssection['@id']),
