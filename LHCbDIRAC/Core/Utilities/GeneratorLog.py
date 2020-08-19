@@ -21,7 +21,7 @@ def counterJson(listCounters):
   '''
   dictCounters = dict()
   if isinstance(listCounters, dict):
-    listEfficiencies = [listCounters]
+    listCounters = [listCounters]
   for counter in listCounters:
     dictCounters[counter['@name']] = int(counter['value'])
   return dictCounters
