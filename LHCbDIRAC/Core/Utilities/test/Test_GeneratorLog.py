@@ -131,7 +131,7 @@ def test_fractionJson(test_input, expected):
   assert fractionJson(test_input) == expected
 
 
-listCrosssections = [
+listCrossSections = [
     {
         '@id': '101',
         'description': '"non-diffractive"',
