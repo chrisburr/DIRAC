@@ -47,27 +47,27 @@ CREATE OR REPLACE TYPE stepobj IS object(
 );
  /
 
- CREATE OR REPLACE TYPE step_table IS TABLE OF stepobj;
+CREATE OR REPLACE TYPE step_table IS TABLE OF stepobj;
  /
 
- CREATE OR REPLACE TYPE runnb_quality_eventtype IS object(
+CREATE OR REPLACE TYPE runnb_quality_eventtype IS object(
     runnumber NUMBER,
     dataqualityflag varchar2(256),
     eventtypeid NUMBER
 );
  /
 
- CREATE OR REPLACE TYPE runnb_proc IS object(
+CREATE OR REPLACE TYPE runnb_proc IS object(
     runnumber NUMBER,
     processingpass varchar2(256)
 );
  /
 
- CREATE OR REPLACE TYPE run_proc_table IS TABLE OF runnb_proc;
+CREATE OR REPLACE TYPE run_proc_table IS TABLE OF runnb_proc;
  /
 
 
- CREATE OR REPLACE TYPE metadata0bj IS object(
+CREATE OR REPLACE TYPE metadata0bj IS object(
     filename        varchar2(256),
     adler32         varchar2(256),
     creationdate    timestamp(6),
@@ -91,13 +91,13 @@ CREATE OR REPLACE TYPE stepobj IS object(
 );
  /
 
- CREATE OR REPLACE TYPE metadata_table IS TABLE OF metadata0bj;
+CREATE OR REPLACE TYPE metadata_table IS TABLE OF metadata0bj;
  /
 
- CREATE OR REPLACE TYPE LISTS IS TABLE OF varchar2(256);
+CREATE OR REPLACE TYPE LISTS IS TABLE OF varchar2(256);
  /
 
- CREATE OR REPLACE TYPE jobmetadata IS object(
+CREATE OR REPLACE TYPE jobmetadata IS object(
     lfn                         varchar2(256),
     diracjobid                  NUMBER,
     diracversion                varchar2(256),
@@ -124,16 +124,16 @@ CREATE OR REPLACE TYPE stepobj IS object(
 );
  /
 
- CREATE OR REPLACE TYPE ftype AS object(
+CREATE OR REPLACE TYPE ftype AS object(
     name varchar2(256),
     visible char(1)
 );
  /
 
- CREATE OR REPLACE TYPE filetypesarray IS varray(30) OF ftype;
+CREATE OR REPLACE TYPE filetypesarray IS varray(30) OF ftype;
  /
 
- CREATE OR REPLACE TYPE directorymetadata_new IS object(
+CREATE OR REPLACE TYPE directorymetadata_new IS object(
     lfn                   varchar2(256),
     production            NUMBER,
     configname            varchar2(256),
@@ -146,7 +146,7 @@ CREATE OR REPLACE TYPE stepobj IS object(
 );
  /
 
- CREATE OR REPLACE TYPE directorymetadata IS object(
+CREATE OR REPLACE TYPE directorymetadata IS object(
     production            NUMBER,
     configname            varchar2(256),
     configversion         varchar2(256),
@@ -158,16 +158,16 @@ CREATE OR REPLACE TYPE stepobj IS object(
 );
  /
 
- CREATE OR REPLACE TYPE bulk_collect_run_quality_evt IS TABLE OF runnb_quality_eventtype;
+CREATE OR REPLACE TYPE bulk_collect_run_quality_evt IS TABLE OF runnb_quality_eventtype;
  /
 
- CREATE OR REPLACE TYPE bulk_collect_jobmetadata IS TABLE OF jobmetadata;
+CREATE OR REPLACE TYPE bulk_collect_jobmetadata IS TABLE OF jobmetadata;
  /
 
- CREATE OR REPLACE TYPE bulk_collect_directorymetadata IS TABLE OF directorymetadata;
+CREATE OR REPLACE TYPE bulk_collect_directorymetadata IS TABLE OF directorymetadata;
  /
 
- CREATE OR REPLACE TYPE bulk_collect_directorymet_new IS TABLE OF directorymetadata_new;
+CREATE OR REPLACE TYPE bulk_collect_directorymet_new IS TABLE OF directorymetadata_new;
  /
 
  CREATE SEQUENCE applications_index_seq MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1;
@@ -425,7 +425,7 @@ BEGIN
 END;
  /
 
- CREATE OR REPLACE editionable TRIGGER steps_before_insert
+CREATE OR REPLACE editionable TRIGGER steps_before_insert
 BEFORE INSERT ON steps
 FOR EACH ROW
 DECLARE
@@ -436,7 +436,7 @@ BEGIN
 END;
  /
 
- CREATE OR REPLACE editionable TRIGGER step_update
+CREATE OR REPLACE editionable TRIGGER step_update
 BEFORE UPDATE ON steps
 REFERENCING NEW AS NEW OLD AS OLD
 FOR EACH ROW DECLARE rowcnt NUMBER;
@@ -513,14 +513,14 @@ CREATE TABLE jobs(
     subpartition config6,
     subpartition config7,
     subpartition config8
-  )
-  (PARTITION runlast  VALUES LESS THAN (-187450),
-   PARTITION run2     VALUES LESS THAN (-90000),
-   PARTITION run1     VALUES LESS THAN (0),
-   PARTITION prod1    VALUES LESS THAN (33612),
-   PARTITION prod2    VALUES LESS THAN (42466),
-   PARTITION prod3    VALUES LESS THAN (49181),
-   PARTITION prodlast VALUES LESS THAN (MAXVALUE));
+  ) (
+    PARTITION runlast  VALUES LESS THAN (-187450),
+    PARTITION run2     VALUES LESS THAN (-90000),
+    PARTITION run1     VALUES LESS THAN (0),
+    PARTITION prod1    VALUES LESS THAN (33612),
+    PARTITION prod2    VALUES LESS THAN (42466),
+    PARTITION prod3    VALUES LESS THAN (49181),
+    PARTITION prodlast VALUES LESS THAN (MAXVALUE));
 
 CREATE INDEX conf_job_run ON jobs (configurationid, jobid, runnumber);
 CREATE INDEX jobsprognameandversion ON jobs (programname, programversion);
@@ -610,34 +610,34 @@ CREATE TABLE inputfiles(
 );
 
 CREATE INDEX inputfiles_jobid_test ON inputfiles (jobid, fileid)
-  GLOBAL PARTITION BY range(jobid)
-(PARTITION sect_0020m  VALUES LESS THAN (20000000),
- PARTITION sect_0040m  VALUES LESS THAN (40000000),
- PARTITION sect_0060m  VALUES LESS THAN (60000000),
- PARTITION sect_0080m  VALUES LESS THAN (80000000),
- PARTITION sect_0100m  VALUES LESS THAN (100000000),
- PARTITION sect_0120m  VALUES LESS THAN (120000000),
- PARTITION sect_0140m  VALUES LESS THAN (140000000),
- PARTITION sect_0160m  VALUES LESS THAN (160000000),
- PARTITION sect_0180m  VALUES LESS THAN (180000000),
- PARTITION sect_0200m  VALUES LESS THAN (200000000),
- PARTITION sect_0220m  VALUES LESS THAN (220000000),
- PARTITION sect_0240m  VALUES LESS THAN (240000000),
- PARTITION sect_0260m  VALUES LESS THAN (260000000),
- PARTITION sect_0280m  VALUES LESS THAN (280000000),
- PARTITION sect_0300m  VALUES LESS THAN (300000000),
- PARTITION sect_0320m  VALUES LESS THAN (320000000),
- PARTITION sect_0340m  VALUES LESS THAN (340000000),
- PARTITION sect_0360m  VALUES LESS THAN (360000000),
- PARTITION sect_0380m  VALUES LESS THAN (380000000),
- PARTITION sect_0400m  VALUES LESS THAN (400000000),
- PARTITION sect_0420m  VALUES LESS THAN (420000000),
- PARTITION sect_0440m  VALUES LESS THAN (440000000),
- PARTITION sect_0460m  VALUES LESS THAN (460000000),
- PARTITION sect_0480m  VALUES LESS THAN (480000000),
- PARTITION sect_0500m  VALUES LESS THAN (500000000),
- PARTITION sect_0520m  VALUES LESS THAN (520000000),
- PARTITION p_greater_than_520000000 VALUES LESS THAN (MAXVALUE));
+  GLOBAL PARTITION BY range(jobid) (
+    PARTITION sect_0020m  VALUES LESS THAN (20000000),
+    PARTITION sect_0040m  VALUES LESS THAN (40000000),
+    PARTITION sect_0060m  VALUES LESS THAN (60000000),
+    PARTITION sect_0080m  VALUES LESS THAN (80000000),
+    PARTITION sect_0100m  VALUES LESS THAN (100000000),
+    PARTITION sect_0120m  VALUES LESS THAN (120000000),
+    PARTITION sect_0140m  VALUES LESS THAN (140000000),
+    PARTITION sect_0160m  VALUES LESS THAN (160000000),
+    PARTITION sect_0180m  VALUES LESS THAN (180000000),
+    PARTITION sect_0200m  VALUES LESS THAN (200000000),
+    PARTITION sect_0220m  VALUES LESS THAN (220000000),
+    PARTITION sect_0240m  VALUES LESS THAN (240000000),
+    PARTITION sect_0260m  VALUES LESS THAN (260000000),
+    PARTITION sect_0280m  VALUES LESS THAN (280000000),
+    PARTITION sect_0300m  VALUES LESS THAN (300000000),
+    PARTITION sect_0320m  VALUES LESS THAN (320000000),
+    PARTITION sect_0340m  VALUES LESS THAN (340000000),
+    PARTITION sect_0360m  VALUES LESS THAN (360000000),
+    PARTITION sect_0380m  VALUES LESS THAN (380000000),
+    PARTITION sect_0400m  VALUES LESS THAN (400000000),
+    PARTITION sect_0420m  VALUES LESS THAN (420000000),
+    PARTITION sect_0440m  VALUES LESS THAN (440000000),
+    PARTITION sect_0460m  VALUES LESS THAN (460000000),
+    PARTITION sect_0480m  VALUES LESS THAN (480000000),
+    PARTITION sect_0500m  VALUES LESS THAN (500000000),
+    PARTITION sect_0520m  VALUES LESS THAN (520000000),
+    PARTITION p_greater_than_520000000 VALUES LESS THAN (MAXVALUE));
 
 
 ---------------------------------------------------------------------------------------

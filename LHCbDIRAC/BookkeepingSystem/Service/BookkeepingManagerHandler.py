@@ -232,6 +232,14 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.deleteStep(stepid)
 
   #############################################################################
+  types_deleteStepContainer = [int]
+
+  @staticmethod
+  def export_deleteStepContainer(stepid):
+    """It used to delete a given step."""
+    return dataMGMT_.deleteStepContainer(stepid)
+
+  #############################################################################
   types_updateStep = [dict]
 
   @staticmethod
