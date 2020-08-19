@@ -120,6 +120,8 @@ class UploadMC(ModuleBase):
       # looking for xml files that are 'GeneratorLog.xml'
       xmlfile = 'GeneratorLog.xml'
       if os.path.exists(xmlfile):
+        with open(xmlfile, 'r') as fp:
+          print(fp.read())
         jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
         xmlData = GeneratorLog()
         xmlData.generatorLogJson(jsonfile)
