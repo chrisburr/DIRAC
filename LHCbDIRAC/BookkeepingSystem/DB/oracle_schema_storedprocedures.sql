@@ -97,6 +97,7 @@ FUNCTION insertfilesrow (
 PROCEDURE insertinputfilesrow (v_fileid NUMBER, v_jobid NUMBER);
 
 PROCEDURE updatereplicarow(v_fileid NUMBER,v_replica VARCHAR2);
+PROCEDURE deletejob(v_jobid NUMBER);
 PROCEDURE deleteinputfiles(v_jobid NUMBER);
 PROCEDURE deletefile(v_fileid NUMBER);
 PROCEDURE deletesetpcontiner(v_prod NUMBER);  -- FIXME: to remove
@@ -1671,7 +1672,7 @@ FOR i IN lfns.first .. lfns.last LOOP
   FOR c IN (SELECT DISTINCT j.production, c.configname, c.configversion, ft.name, f.eventtypeid, f.visibilityflag FROM files f, jobs j, filetypes ft, configurations c WHERE
    c.configurationid = j.configurationid AND ft.filetypeid = f.filetypeid AND j.jobid = f.jobid AND f.gotreplica = 'Yes' AND f.filename LIKE lfns(i)) LOOP
    SELECT count(*) INTO FOUND FROM productionscontainer WHERE production = c.production;
-   IF FOUND > 0then
+   IF FOUND > 0 THEN
      SELECT getproductionporcpassname(prod.processingid),sim.simdescription, daq.description INTO procname, simdesc, daqdesc FROM productionscontainer prod, simulationconditions sim, data_taking_conditions daq WHERE
        production = c.production AND
        prod.simid = sim.simid( + ) AND
