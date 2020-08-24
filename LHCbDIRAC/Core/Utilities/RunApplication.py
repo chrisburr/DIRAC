@@ -1,4 +1,4 @@
-###############################################################################
+##############################################################################
 # (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
 #                                                                             #
 # This software is distributed under the terms of the GNU General Public      #
@@ -16,7 +16,6 @@ __RCSID__ = "$Id$"
 import sys
 import os
 import shlex
-import subprocess
 
 from DIRAC import gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -75,6 +74,9 @@ class RunApplication(object):
     # Utilities
     self.log = gLogger.getSubLogger("RunApplication")
     self.opsH = Operations()
+
+    # Prmon
+    self.prmonPath = '/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/prmon/current/bin/prmon'
 
   def run(self):
     """Invokes lb-run (what you call after having setup the object)"""
@@ -218,9 +220,11 @@ class RunApplication(object):
     :param command basestring: the command to run
     :param env dict: environment where to run -- maybe the LHCb environment from LbLogin
     """
+    spObject = Subprocess()
     print('Command called: \n%s' % command)  # Really printing here as we want to see and maybe cut/paste
 
-    spObject = Subprocess()
+    if self.applicationName == 'Gauss':
+      command = self.prmonPath + ' --json-summary ./prmon_Gauss.json -- ' + command
     result = spObject.systemCall(shlex.split(command),
                                  callbackFunction=self.__redirectLogOutput,
                                  env=env)

@@ -75,7 +75,12 @@ class MCStatsElasticDB(ElasticDB):
     :returns: S_OK/S_ERROR
     """
 
-    mcTypeDict = {'errors': 'Errors', 'summary': 'Counters', 'generatorLog': 'generatorCounters'}
+    mcTypeDict = {
+        'errors': 'Errors',
+        'summary': 'Counters',
+        'generatorLog': 'generatorCounters',
+        'metrics': 'Metrics'
+    }
 
     if mcType in mcTypeDict:
       query = {
@@ -113,7 +118,12 @@ class MCStatsElasticDB(ElasticDB):
     :param int JobID: The JobID of the data in elasticsearch
     :param str mcType: The type of the data
     """
-    mcTypeDict = {'errors': 'Errors', 'summary': 'Counters', 'generatorLog': 'generatorCounters'}
+    mcTypeDict = {
+        'errors': 'Errors',
+        'summary': 'Counters',
+        'generatorLog': 'generatorCounters',
+        'metrics': 'Metrics'
+    }
 
     if mcType in mcTypeDict:
       query = {
