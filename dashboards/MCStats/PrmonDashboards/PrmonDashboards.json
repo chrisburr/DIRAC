@@ -1,0 +1,40 @@
+[
+  {
+    "_id": "f1ab3980-e63f-11ea-afe9-41f15642af81",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Gauss Metrics per Job",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"1\",\"w\":24,\"x\":0,\"y\":15},\"id\":\"f25fe150-e630-11ea-afe9-41f15642af81\",\"panelIndex\":\"1\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"2\",\"w\":24,\"x\":24,\"y\":15},\"id\":\"8c5ce440-e633-11ea-afe9-41f15642af81\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"3\",\"w\":24,\"x\":0,\"y\":30},\"id\":\"0ffb5650-e630-11ea-afe9-41f15642af81\",\"panelIndex\":\"3\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{\"vis\":{\"colors\":{\"Average Metrics.Max.write_bytes\":\"#65C5DB\"}}},\"gridData\":{\"h\":15,\"i\":\"4\",\"w\":24,\"x\":24,\"y\":30},\"id\":\"a9e9d620-e639-11ea-afe9-41f15642af81\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"5\",\"w\":24,\"x\":0,\"y\":45},\"id\":\"ecc1cb00-e635-11ea-afe9-41f15642af81\",\"panelIndex\":\"5\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"6\",\"w\":24,\"x\":24,\"y\":45},\"id\":\"2b56ccc0-e637-11ea-afe9-41f15642af81\",\"panelIndex\":\"6\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"7\",\"w\":24,\"x\":0,\"y\":60},\"id\":\"46383cc0-e634-11ea-afe9-41f15642af81\",\"panelIndex\":\"7\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"8\",\"w\":24,\"x\":0,\"y\":90},\"id\":\"4e1cf140-e63b-11ea-afe9-41f15642af81\",\"panelIndex\":\"8\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"9\",\"w\":24,\"x\":24,\"y\":60},\"id\":\"ae0cddd0-e637-11ea-afe9-41f15642af81\",\"panelIndex\":\"9\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"12\",\"w\":24,\"x\":0,\"y\":0},\"id\":\"4c16d2f0-e639-11ea-afe9-41f15642af81\",\"panelIndex\":\"12\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"13\",\"w\":24,\"x\":0,\"y\":75},\"id\":\"6cc8b2e0-e63c-11ea-afe9-41f15642af81\",\"panelIndex\":\"13\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"14\",\"w\":24,\"x\":24,\"y\":75},\"id\":\"e15bd6a0-e63c-11ea-afe9-41f15642af81\",\"panelIndex\":\"14\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"15\",\"w\":24,\"x\":24,\"y\":90},\"id\":\"c9086150-e63b-11ea-afe9-41f15642af81\",\"panelIndex\":\"15\",\"type\":\"visualization\",\"version\":\"6.8.8\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"16\",\"w\":24,\"x\":24,\"y\":0},\"id\":\"74df3f10-e63e-11ea-afe9-41f15642af81\",\"panelIndex\":\"16\",\"type\":\"visualization\",\"version\":\"6.8.8\"}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[]}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
+    "_id": "d9728910-e647-11ea-afe9-41f15642af81",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Gauss Metrics per Production",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"gridData\":{\"x\":0,\"y\":30,\"w\":24,\"h\":15,\"i\":\"1\"},\"version\":\"6.8.8\",\"panelIndex\":\"1\",\"type\":\"visualization\",\"id\":\"7bb215c0-e642-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":0,\"y\":15,\"w\":24,\"h\":15,\"i\":\"2\"},\"version\":\"6.8.8\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"id\":\"daabed10-e63f-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":15,\"w\":24,\"h\":15,\"i\":\"3\"},\"version\":\"6.8.8\",\"panelIndex\":\"3\",\"type\":\"visualization\",\"id\":\"7db7e2c0-e640-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":0,\"y\":45,\"w\":24,\"h\":15,\"i\":\"4\"},\"version\":\"6.8.8\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"id\":\"d289cb50-e641-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":0,\"y\":75,\"w\":24,\"h\":15,\"i\":\"5\"},\"version\":\"6.8.8\",\"panelIndex\":\"5\",\"type\":\"visualization\",\"id\":\"10d7bc80-e644-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":60,\"w\":24,\"h\":15,\"i\":\"6\"},\"version\":\"6.8.8\",\"panelIndex\":\"6\",\"type\":\"visualization\",\"id\":\"c247eb10-e640-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":0,\"y\":60,\"w\":24,\"h\":15,\"i\":\"7\"},\"version\":\"6.8.8\",\"panelIndex\":\"7\",\"type\":\"visualization\",\"id\":\"8efb90b0-e643-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":90,\"w\":24,\"h\":15,\"i\":\"8\"},\"version\":\"6.8.8\",\"panelIndex\":\"8\",\"type\":\"visualization\",\"id\":\"58bae770-e644-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":75,\"w\":24,\"h\":15,\"i\":\"9\"},\"version\":\"6.8.8\",\"panelIndex\":\"9\",\"type\":\"visualization\",\"id\":\"b0524e10-e644-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":45,\"w\":24,\"h\":15,\"i\":\"10\"},\"version\":\"6.8.8\",\"panelIndex\":\"10\",\"type\":\"visualization\",\"id\":\"422abb10-e645-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":30,\"w\":24,\"h\":15,\"i\":\"11\"},\"version\":\"6.8.8\",\"panelIndex\":\"11\",\"type\":\"visualization\",\"id\":\"cf3f5e70-e645-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":15,\"i\":\"12\"},\"version\":\"6.8.8\",\"panelIndex\":\"12\",\"type\":\"visualization\",\"id\":\"04a956c0-e645-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":0,\"y\":90,\"w\":24,\"h\":15,\"i\":\"13\"},\"version\":\"6.8.8\",\"panelIndex\":\"13\",\"type\":\"visualization\",\"id\":\"e5453a40-e646-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}},{\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":15,\"i\":\"14\"},\"version\":\"6.8.8\",\"panelIndex\":\"14\",\"type\":\"visualization\",\"id\":\"393ee0b0-e647-11ea-afe9-41f15642af81\",\"embeddableConfig\":{}}]",
+      "optionsJSON": "{\"darkTheme\":false,\"useMargins\":true,\"hidePanelTitles\":false}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"lucene\"},\"filter\":[]}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  }
+]
