@@ -168,8 +168,8 @@ class StorageUsageDB(DB):
     for path, pathInfo in directoryDict.iteritems():
       path = _standardDirectory(path)
       try:
-        files = long(pathInfo['Files'])
-        size = long(pathInfo['TotalSize'])
+        files = int(pathInfo['Files'])
+        size = int(pathInfo['TotalSize'])
       except ValueError as e:
         return S_ERROR("Values must be ints: %s" % repr(e))
       seUsage = pathInfo['SEUsage']
@@ -178,6 +178,7 @@ class StorageUsageDB(DB):
         sqlCmd = "UPDATE `su_Directory` SET Files=%d, Size=%d WHERE Path = %s" % (files, size, sqlpath)
         result = self._update(sqlCmd)
         if not result['OK']:
+          self.log.error("Cannot update directory", "%s: %s" % (path, result['Message']))
           return result
       else:
         sqlCmd = "INSERT INTO `su_Directory` (DID, Path, Files, Size) VALUES ( 0, %s, %d, %d )" % (sqlpath,
@@ -189,6 +190,7 @@ class StorageUsageDB(DB):
         dirIDs[path] = result['lastRowId']
       result = self.__updateSEUsage(dirIDs[path], seUsage, path)
       if not result['OK']:
+        self.log.error("Cannot update SE usage", "%s:%s: %s" % (path, seUsage, result['Message']))
         return result
     return S_OK()
 
