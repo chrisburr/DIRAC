@@ -504,7 +504,7 @@ create_tag:
   before_script:
     - yum install python3 git less -y
     # get the tag creation tool
-    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/getnotes/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
+    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
     - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     - python3 get-pip.py
     # needed for the tag creation tool
