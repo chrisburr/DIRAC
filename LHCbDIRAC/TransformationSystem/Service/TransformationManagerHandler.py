@@ -35,7 +35,9 @@ class TransformationManagerHandler(TManagerBase):
   types_deleteTransformation = [[long, int]]
 
   def export_deleteTransformation(self, transID):
-    return database.deleteTransformation(transID, author=self.getRemoteCredentials()['DN'])
+    rc = self.getRemoteCredentials()
+    author = rc.get('DN', rc.get('CN'))
+    return database.deleteTransformation(transID, author=author)
 
   types_setHotFlag = [[long, int], bool]
 
