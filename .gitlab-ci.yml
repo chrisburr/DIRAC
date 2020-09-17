@@ -461,7 +461,7 @@ start_tag:
     - python3 get-pip.py
     - pip3 install -U requests python-dateutil pytz diraccfg
     # Get the tagging tool from the DIRACGrid repo
-    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/getnotes/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
+    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
     - rm -f releases.cfg
     # Get the master version of the releases.cfg from the LHCbDIRAC main repo devel branch
     - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/LHCbDIRAC/releases.cfg
