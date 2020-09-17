@@ -1,3 +1,17 @@
+v10r0p13
+Based on DIRAC v7r0p34
+LHCbWebDIRAC v5r1p8
+LHCbDIRACOS v1r9
+*tests
+
+NEW: (!868) Automate tagging process
+
+*TransformationSystem
+
+FIX: (!867) Accepting CN when no DN is present (mostly for testing for now)
+
+
+
 v10r0p12
 Based on DIRAC v7r0p33
 LHCbWebDIRAC v5r1p8
