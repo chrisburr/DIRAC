@@ -46,7 +46,7 @@ stages:
     - pip install --upgrade pip
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - lhcbdiracTag=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
     # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
