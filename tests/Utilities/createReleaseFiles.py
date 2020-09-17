@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+###############################################################################
+# (c) Copyright 2019 CERN for the benefit of the LHCb Collaboration           #
+#                                                                             #
+# This software is distributed under the terms of the GNU General Public      #
+# Licence version 3 (GPL Version 3), copied verbatim in the file "LICENSE".   #
+#                                                                             #
+# In applying this licence, CERN does not waive the privileges and immunities #
+# granted to it by virtue of its status as an Intergovernmental Organization  #
+# or submit itself to any jurisdiction.                                       #
+###############################################################################
+
+import os
+import sys
+import re
+import fileinput
+import json
+from diraccfg import parseVersion, CFG
+
+
+def linePrepend(filename, line):
+  with open(filename, 'r+') as f:
+    content = f.read()
+    f.seek(0, 0)
+    f.write(line.rstrip('\r\n') + '\n' + content)
+
+
+def lineReplace(filename, lineToReplace, newLine):
+  for line in fileinput.input(filename, inplace=True):
+    if lineToReplace == 0:
+      print(newLine)
+    else:
+      print(line, end="")
+    lineToReplace -= 1
+
+
+# Load version from last release and get last version
+LATEST_RELEASE = os.environ.get('LATEST_RELEASE')
+
+# Read in the releases.cfg as JSON
+res = CFG().loadFromFile("releases.cfg").getAsDict()
+
+# From the releases.cfg look up the versions of DIRAC, LHCbWebDIRAC, LHCbDIRACOS used in last version
+LAST_DIRAC = res['Releases'][LATEST_RELEASE]['Depends'].split(':', 1)[-1]
+LAST_LHCbDIRACOS = res['Releases'][LATEST_RELEASE]['DIRACOS'].split(':', 1)[-1]
+LAST_LHCbWebDIRAC = res['Releases'][LATEST_RELEASE]['Modules'].split(':', 2)[-1]
+
+# Read env variables defined by user or use version from previous release
+DIRAC = os.getenv('DIRAC', LAST_DIRAC)
+LHCbDIRACOS = os.getenv('LHCbDIRACOS', LAST_LHCbDIRACOS)
+LHCbWebDIRAC = os.getenv('LHCbWebDIRAC', LAST_LHCbWebDIRAC)
+
+# Check if user specified version for next release
+NEXT_RELEASE = os.environ.get('NEXT_RELEASE')
+
+# If the user did not specify a release increment the current version by 1
+version = None
+versionString = None
+preRelease = None
+if not NEXT_RELEASE:
+  version = parseVersion(LATEST_RELEASE)
+  if version[3] is None:
+    # Increment patch version for 1
+    version = (version[0], version[1], version[2] + 1, version[3])
+    versionString = "v%sr%sp%s" % (version[0], version[1], version[2])
+    preRelease = False
+    print("Actomatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
+  else:
+    # Increment pre version for 1
+    version = (version[0], version[1], version[2], version[3] + 1)
+    versionString = "v%sr%s-pre%s" % (version[0], version[1], version[3])
+    preRelease = True
+    print("Actomatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
+else:
+  # Use the version specified by NEXT_RELEASE
+  version = parseVersion(NEXT_RELEASE)
+  print("Preparing files for release %s" % NEXT_RELEASE)
+  if version[3] is None:
+    preRelease = False
+  else:
+    preRelease = True
+
+# Construct the new releases section
+newCFG = "\n  %s\n  {\n    Modules = LHCbDIRAC:%s, LHCbWebDIRAC:%s\n    " \
+    "Depends = DIRAC:%s\n    DIRACOS = LHCb:%s\n  }\n" % \
+    (versionString, versionString, LHCbWebDIRAC, DIRAC, LHCbDIRACOS)
+print("I am adding the following section to releases.cfg")
+print(newCFG)
+
+# Insert into releases.cfg the new release
+lineReplace("releases.cfg", 22, newCFG)
+
+# Add information about version to release notes
+linePrepend("release/notes.txt", "LHCbDIRACOS %s" % LHCbDIRACOS)
+linePrepend("release/notes.txt", "LHCbWebDIRAC %s" % LHCbWebDIRAC)
+linePrepend("release/notes.txt", "Based on DIRAC %s" % DIRAC)
+linePrepend("release/notes.txt", versionString)
+
+
+# store into artifact the version and series for later usage in tagging process
+with open('release/version.txt', 'a') as fver:
+  fver.write(versionString)
+with open('release/series.txt', 'a') as fser:
+  fser.write("v%sr%s" % (version[0], version[1]))
+
+# change the __init__.py
+lineReplace("LHCbDIRAC/__init__.py", 29, "majorVersion = %s" % version[0])
+lineReplace("LHCbDIRAC/__init__.py", 30, "minorVersion = %s" % version[1])
+lineReplace("LHCbDIRAC/__init__.py", 31, "patchLevel = %s" % version[2])
+if preRelease:
+  lineReplace("LHCbDIRAC/__init__.py", 32, "preVersion = %s" % version[3])
+else:
+  lineReplace("LHCbDIRAC/__init__.py", 32, "preVersion = %s" % 0)
+
+# Update the dockerfile
+lineReplace("container/lhcbdirac/Dockerfile", 20, "ENV LHCB_DIRAC_VERSION %s" % versionString)
