@@ -34,10 +34,13 @@ def lineReplace(filename, lineToReplace, newLine):
     lineToReplace -= 1
 
 
-# Load data from last release and get last version
+# Load version from last release and get last version
 LATEST_RELEASE = os.environ.get('LATEST_RELEASE')
+
+# Read in the releases.cfg as JSON
 res = CFG().loadFromFile("releases.cfg").getAsDict()
 
+# From the releases.cfg look up the versions of DIRAC, LHCbWebDIRAC, LHCbDIRACOS used in last version
 LAST_DIRAC = res['Releases'][LATEST_RELEASE]['Depends'].split(':', 1)[-1]
 LAST_LHCbDIRACOS = res['Releases'][LATEST_RELEASE]['DIRACOS'].split(':', 1)[-1]
 LAST_LHCbWebDIRAC = res['Releases'][LATEST_RELEASE]['Modules'].split(':', 2)[-1]
@@ -57,16 +60,19 @@ preRelease = None
 if not NEXT_RELEASE:
   version = parseVersion(LATEST_RELEASE)
   if version[3] is None:
+    # Increment patch version for 1
     version = (version[0], version[1], version[2] + 1, version[3])
     versionString = "v%sr%sp%s" % (version[0], version[1], version[2])
     preRelease = False
     print("Actomatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
   else:
+    # Increment pre version for 1
     version = (version[0], version[1], version[2], version[3] + 1)
     versionString = "v%sr%s-pre%s" % (version[0], version[1], version[3])
     preRelease = True
     print("Actomatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
 else:
+  # Use the version specified by NEXT_RELEASE
   version = parseVersion(NEXT_RELEASE)
   print("Preparing files for release %s" % NEXT_RELEASE)
   if version[3] is None:
@@ -75,7 +81,6 @@ else:
     preRelease = True
 
 # Construct the new releases section
-
 newCFG = "\n  %s\n  {\n    Modules = LHCbDIRAC:%s, LHCbWebDIRAC:%s\n    " \
     "Depends = DIRAC:%s\n    DIRACOS = LHCb:%s\n  }\n" % \
     (versionString, versionString, LHCbWebDIRAC, DIRAC, LHCbDIRACOS)
