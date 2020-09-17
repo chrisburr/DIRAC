@@ -487,6 +487,7 @@ start_tag:
 # Update release notes and tag
 create_tag:
   stage: tag
+  when: manual
   needs:
     - job: start_tag
       artifacts: true
