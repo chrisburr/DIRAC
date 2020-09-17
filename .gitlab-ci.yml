@@ -187,7 +187,7 @@ integration_tests:
     - apk add jq python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - LHCBDIRAC_RELEASE=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - LHCBDIRAC_RELEASE=$(python -c "from LHCbDIRAC import version; print(version)")
     - export LHCBDIRAC_RELEASE
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
