@@ -62,7 +62,7 @@ Note: if a change is to be made after a transformation has already distributed a
 
 The principle goes as follow, but is obviously better done with an Excel sheet.
 
-From Rebus (https://gstat-wlcg.cern.ch/apps/pledges/resources/), we take for each T1 the CPUPledge (in MHS06) and the TapePledge (PB). We deduce easily the CPUPledgePercent and TapePledgePercent.
+From CRIC (http://wlcg-cric.cern.ch/core/pledge/list/), we take for each T1 the CPUPledge (in MHS06) and the TapePledge (PB). We deduce easily the CPUPledgePercent and TapePledgePercent.
 
 From the StorageUsageSummary, we get the CurrentTapeUsage (e.g. dirac-dms-storage-usage-summary --LCG --Site LCG.CERN.cern
 )

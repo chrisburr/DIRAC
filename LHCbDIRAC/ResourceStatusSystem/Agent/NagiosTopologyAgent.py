@@ -58,7 +58,7 @@ class NagiosTopologyAgent(AgentModule):
     AgentModule.__init__(self, *args, **kwargs)
 
     self.xmlPath = 'webRoot/www/topology/'
-    self.urljson = 'https://wlcg-rebus.cern.ch/apps/topology/all/json'
+    self.urljson = 'http://wlcg-cric.cern.ch/api/core/rcsite/query/?json'
 
     self.dryRun = False
 
@@ -353,7 +353,7 @@ def getSiteParameters(sites, wlcg):
 
   :param dict wlcg:
     It's a dictionary with the WLCG parameters from all sites grabbed from
-    https://wlcg-rebus.cern.ch/apps/topology/all/json
+    http://wlcg-cric.cern.ch/api/core/rcsite/query/?json
 
   Keys:
   'WlcgName', 'Coordinates', 'Description', 'Mail', 'DiracName', 'Tier', 'Sub-Tier',
@@ -370,11 +370,10 @@ def getSiteParameters(sites, wlcg):
     gLogger.error("Could not get options", "for site %s: %s" % (sites[0], res['Message']))
     return False
   site_opts = res['Value']
-  site_name = site_opts.get('Name')
+  site_name = site_opts.get('Name')  # This is Grid name (the one in GocDB)
   site_tier = site_opts.get('MoUTierLevel')
   if site_tier and site_name:
-    wlcg_params = [s for s in wlcg if site_name in s.get('Site')]
-    wlcg_params = wlcg_params[0] if wlcg_params else {}
+    wlcg_params = wlcg.get(site_name)
     if not wlcg_params:
       return False
     if len(sites) > 1:
@@ -389,14 +388,20 @@ def getSiteParameters(sites, wlcg):
     site_subtier = site_opts.get('SubTier', None)
     ses = site_opts.get('SE', None)
 
-    site_params = {'WlcgName': site_opts.get('Name'), 'Coordinates': site_opts.get('Coordinates'),
-                   'Description': site_opts.get('Description'), 'Mail': site_opts.get('Mail'),
+    site_params = {'WlcgName': site_opts.get('Name'),
+                   'Coordinates': site_opts.get('Coordinates'),
+                   'Description': site_opts.get('Description'),
+                   'Mail': site_opts.get('Mail'),
                    'DiracName': ('LCG.' + real_site_name + "." + country),
-                   'Tier': site_tier, 'Sub-Tier': site_subtier, 'SE': ses,
-                   'Country': wlcg_params.get('Country'), 'Federation': wlcg_params.get('Federation'),
-                   'FederationAccountingName': wlcg_params.get('FederationAccountingName'),
-                   'Infrastructure': wlcg_params.get('Infrastructure'),
-                   'Institute Name': wlcg_params.get('Institute Name'), 'Grid': grid_dict}
+                   'Tier': site_tier,
+                   'Sub-Tier': site_subtier,
+                   'SE': ses,
+                   'Country': wlcg_params.get('country'),
+                   'Federation': wlcg_params.get('federations')[0],
+                   'FederationAccountingName': wlcg_params.get('federation_accounting_name', site_name),
+                   'Infrastructure': wlcg_params.get('infrastructure', 'EGI'),
+                   'Institute Name': wlcg_params.get('institute'),
+                   'Grid': grid_dict}
 
     return site_params
   else:
@@ -439,9 +444,6 @@ def writeCEInfo(xml_doc, grid, xml_site, site, ces):
     xml_ce = xml_append(xml_doc, xml_site, 'service', hostname=site_ce_name,
                         flavour=MAPPING_CE_TYPE.get(site_ce_type.lower(), 'UNDEFINED'))
 
-    ce_queues = gConfig.getSections(
-        'Resources/Sites/%s/%s/CEs/%s/Queues/' % (grid, site, site_ce_name))
-    ce_queues = ce_queues['Value']
     #   I'll leave this code commented in case it needs to be used in the future,
     #   this function consumes a hell lot of time to return a value that is not
     #   mandatory at the momment
@@ -455,6 +457,12 @@ def writeCEInfo(xml_doc, grid, xml_site, site, ces):
       i6Comment = "Maybe DIRAC Service, not a valid machine"
     xml_append(xml_doc, xml_ce, 'queues', ipv6_status=str(i6Status), ipv6_comment=i6Comment)
 
+    ce_queues = gConfig.getSections(
+        'Resources/Sites/%s/%s/CEs/%s/Queues/' % (grid, site, site_ce_name))
+    if not ce_queues['OK']:
+      continue
+
+    ce_queues = ce_queues['Value']
     for queue in ce_queues:
       queue_information = gConfig.getOptionsDict(
           'Resources/Sites/%s/%s/CEs/%s/Queues/%s' % (grid, site, site_ce_name, queue))
