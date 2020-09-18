@@ -46,7 +46,7 @@ stages:
     - pip install --upgrade pip
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - lhcbdiracTag=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
     # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
@@ -187,7 +187,7 @@ integration_tests:
     - apk add jq python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - LHCBDIRAC_RELEASE=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - LHCBDIRAC_RELEASE=$(python3 -c "from LHCbDIRAC import version; print(version)")
     - export LHCBDIRAC_RELEASE
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
@@ -487,6 +487,7 @@ start_tag:
 # Update release notes and tag
 create_tag:
   stage: tag
+  when: manual
   needs:
     - job: start_tag
       artifacts: true
