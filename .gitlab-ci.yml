@@ -484,6 +484,8 @@ make_tag:
     - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then export LATEST_RELEASE=`diraccfg as-json releases.cfg | jq '.Releases' | diraccfg sort-versions | jq -r '.[0]'` ; fi
     - if [[ "${CI_COMMIT_REF_NAME}" == "devel" ]];  then export LATEST_RELEASE=`diraccfg as-json releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]'` ; fi
     - echo "The latest release of LHCbDIRAC is ${LATEST_RELEASE}"
+    # remove potential folder coming from artifacts
+    - rm -rf LHCbDIRAC
     # checkout the repo
     - git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbDIRAC.git LHCbDIRAC
     - cd LHCbDIRAC
