@@ -29,7 +29,6 @@ stages:
   - deploy_release
   # Left over tasks like tagging the devel container and setting the prod symlink
   - finish_up
-  - changelog
   - tag
 
 
@@ -46,7 +45,7 @@ stages:
     - pip install --upgrade pip
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - lhcbdiracTag=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
     # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
@@ -187,7 +186,7 @@ integration_tests:
     - apk add jq python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - LHCBDIRAC_RELEASE=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]')
+    - LHCBDIRAC_RELEASE=$(python3 -c "from LHCbDIRAC import version; print(version)")
     - export LHCBDIRAC_RELEASE
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
@@ -438,11 +437,13 @@ set_cvmfs_prod_link:
     - ./.ci/trigger_cvmfs_deployment.sh set-prod "${LHCB_DIRAC_SETUP}" "${CI_COMMIT_TAG}"
 
 # Job for starting the tag procedure
-start_tag:
-  stage: changelog
+make_tag:
+  stage: tag
   when: manual
   tags:
     - docker
+  variables:
+    GIT_STRATEGY: none
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   # Can be run only on master and devel branch of the main repo
   only:
@@ -456,59 +457,15 @@ start_tag:
     - if [ -z ${DIRAC+x} ]; then echo "variable DIRAC is unset, using the same version as previous release"; else echo "You are targeting DIRAC version ${DIRAC}"; fi
     - if [ -z ${LHCbDIRACOS+x} ]; then echo "variable LHCbDIRACOS is unset, using the same version as previous release"; else echo "You are targeting LHCbDIRACOS version ${LHCbDIRACOS}"; fi
     - if [ -z ${LHCbWebDIRAC+x} ]; then echo "variable LHCbWebDIRAC is unset, using the same version as previous release"; else echo "You are targeting LHCbWebDIRAC version ${LHCbWebDIRAC}"; fi
-    - yum install python3 jq -y
+    - yum install python3 jq git -y
     - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     - python3 get-pip.py
     - pip3 install -U requests python-dateutil pytz diraccfg
     # Get the tagging tool from the DIRACGrid repo
-    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/getnotes/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
+    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
     - rm -f releases.cfg
     # Get the master version of the releases.cfg from the LHCbDIRAC main repo devel branch
     - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/LHCbDIRAC/releases.cfg
-    - mkdir release
-  script:
-    - echo "GITLABTOKEN = \"$GITLABTOKEN\"" >& GitTokens.py
-    # Aggregate the release notes for the current branch
-    - python3 dirac-docs-get-release-notes.py --sinceLatestTag -g  -i 3588 --branches ${CI_COMMIT_REF_NAME} | sed '1,2d'>& release/notes.txt
-    # set LATEST_RELEASE variable depending on the branch
-    - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then export LATEST_RELEASE=`diraccfg as-json releases.cfg | jq '.Releases' | diraccfg sort-versions | jq -r '.[0]'` ; fi
-    - if [[ "${CI_COMMIT_REF_NAME}" == "devel" ]];  then export LATEST_RELEASE=`diraccfg as-json releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]'` ; fi
-    - echo "The latest release of LHCbDIRAC is ${LATEST_RELEASE}"
-    # Call the python script that generated all the artifacts for the release
-    - python3 tests/Utilities/createReleaseFiles.py
-    # move the new files in the artifacts folder
-    - mv releases.cfg release/releases.cfg
-    - mv LHCbDIRAC/__init__.py release/__init__.py
-    - mv container/lhcbdirac/Dockerfile release/Dockerfile
-  artifacts:
-    paths:
-      - release/
-
-# Update release notes and tag
-create_tag:
-  stage: tag
-  needs:
-    - job: start_tag
-      artifacts: true
-  tags:
-    - docker
-  variables:
-    GIT_STRATEGY: none
-  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
-  only:
-    refs:
-      - master@lhcb-dirac/LHCbDIRAC
-      - devel@lhcb-dirac/LHCbDIRAC
-  except:
-    - tags
-  before_script:
-    - yum install python3 git less -y
-    # get the tag creation tool
-    - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/getnotes/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
-    - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    - python3 get-pip.py
-    # needed for the tag creation tool
-    - pip3 install -U requests python-dateutil pytz
     # init the dirac bot gitlab user
     - eval `ssh-agent -s`
     - mkdir -p ~/.ssh
@@ -520,23 +477,31 @@ create_tag:
     - git config --global user.name "LHCbDIRAC Bot"
     - git config --global pull.rebase true
   script:
-    # We make a checkout the LHCbDIRAC repo with the dirac bot user
-    # this job does not make a checkout of the code -> GIT_STRATEGY: none
-    # This is needed for pushing back to the repo
-    - export SERIES=`cat release/series.txt`
-    - export VERSION=`cat release/version.txt`
+    - echo "GITLABTOKEN = \"$GITLABTOKEN\"" >& GitTokens.py
+    # Aggregate the release notes for the current branch
+    - python3 dirac-docs-get-release-notes.py --sinceLatestTag -g  -i 3588 --branches ${CI_COMMIT_REF_NAME} | sed '1,2d'>& notes.txt
+    # set LATEST_RELEASE variable depending on the branch
+    - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then export LATEST_RELEASE=`diraccfg as-json releases.cfg | jq '.Releases' | diraccfg sort-versions | jq -r '.[0]'` ; fi
+    - if [[ "${CI_COMMIT_REF_NAME}" == "devel" ]];  then export LATEST_RELEASE=`diraccfg as-json releases.cfg | jq '.Releases' | diraccfg sort-versions --allow-pre-releases | jq -r '.[0]'` ; fi
+    - echo "The latest release of LHCbDIRAC is ${LATEST_RELEASE}"
+    # checkout the repo
     - git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbDIRAC.git LHCbDIRAC
     - cd LHCbDIRAC
-    # checkout the correct branch
+    # checkout the correct branch we can only be on master or devel
     - git checkout ${CI_COMMIT_REF_NAME}
-    # put in place the updated versions of the file
-    - cp ../release/__init__.py LHCbDIRAC/__init__.py
-    - cp ../release/Dockerfile container/lhcbdirac/Dockerfile
-    - cp ../release/releases.cfg LHCbDIRAC/releases.cfg
+    # get the last releases.cfg
+    - mv ../releases.cfg releases.cfg
+    # Call the python script that generated all the artifacts for the release
+    - python3 tests/Utilities/createReleaseFiles.py
+    - mv releases.cfg LHCbDIRAC/releases.cfg
+    - export SERIES=`cat ../series.txt`
+    - export VERSION=`cat ../version.txt`
     # insert new release notes into the changelog
-    - cat ../release/notes.txt CHANGELOG/$SERIES > newNotes.txt
+    - cat ../notes.txt CHANGELOG/$SERIES > newNotes.txt
     - mv newNotes.txt CHANGELOG/$SERIES
     # show all the changes we have done
+    - cp CHANGELOG/$SERIES ../changes.txt
+    - cp LHCbDIRAC/releases.cfg ../releases.cfg
     - git diff
     - git add -u
     # commit all the changes to the current branch
@@ -550,13 +515,12 @@ create_tag:
     - git fetch origin
     - git checkout devel
     - git reset --hard origin/devel
-    - cp ../release/releases.cfg LHCbDIRAC/releases.cfg
-    - cat ../release/notes.txt CHANGELOG/$SERIES > newNotes.txt
-    - mv newNotes.txt CHANGELOG/$SERIES
+    - cp ../changes.txt CHANGELOG/$SERIES
+    - cp ../releases.cfg LHCbDIRAC/releases.cfg
     - git commit -av -m "Add release ${VERSION} to releases.cfg and CHANGELOG"
     # Only push this changes to devel if master was tagged. Don't push if you tagged devel
     - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then git push origin devel ; fi
     - cd ..
     # Create release in gitlab
     - echo "GITLABTOKEN = \"$GITLABTOKEN\"" >& GitTokens.py
-    - python3 dirac-docs-get-release-notes.py -g -i 3588 --tagName ${VERSION} --releaseNotes release/notes.txt --deployRelease
+    - python3 dirac-docs-get-release-notes.py -g -i 3588 --tagName ${VERSION} --releaseNotes notes.txt --deployRelease
