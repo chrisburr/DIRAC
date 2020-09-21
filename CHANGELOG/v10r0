@@ -1,3 +1,17 @@
+v10r0p14
+Based on DIRAC v7r0p34
+LHCbWebDIRAC v5r1p8
+LHCbDIRACOS v1r10
+*ResourceStatusSystem
+
+FIX: (!870) Rebus is now integrated in CRIC: updated the URL
+
+*tests
+
+FIX: (!869) Resolve LHCbDIRAC version via `__init__.py`
+
+
+
 v10r0p13
 Based on DIRAC v7r0p34
 LHCbWebDIRAC v5r1p8
