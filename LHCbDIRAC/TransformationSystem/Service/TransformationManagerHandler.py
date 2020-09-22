@@ -325,19 +325,19 @@ class TransformationManagerHandler(TManagerBase):
   # Managing the StoredJobDescription table
   #
 
-  types_addStoredJobDescription = [int, six.string_types]
+  types_addStoredJobDescription = [six.integer_types, six.string_types]
 
   @classmethod
   def export_addStoredJobDescription(self, transformationID, jobDescription):
     return database.addStoredJobDescription(transformationID, jobDescription)
 
-  types_getStoredJobDescription = [int]
+  types_getStoredJobDescription = [six.integer_types]
 
   @classmethod
   def export_getStoredJobDescription(self, transformationID):
     return database.getStoredJobDescription(transformationID)
 
-  types_removeStoredJobDescription = [int]
+  types_removeStoredJobDescription = [six.integer_types]
 
   @classmethod
   def export_removeStoredJobDescription(self, transformationID):
