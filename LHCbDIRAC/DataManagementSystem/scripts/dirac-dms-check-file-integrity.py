@@ -49,7 +49,7 @@ if __name__ == "__main__":
   lfns = dmScript.getOption('LFNs')
   if not lfns:
     print("No LFNs given...")
-    Script.showHelp()
+    Script.showHelp(exitCode=1)
 
   integrityClient = DataIntegrityClient()
   res = integrityClient.catalogFileToBK(lfns)
