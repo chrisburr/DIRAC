@@ -97,7 +97,7 @@ def executeAddTransformation(pluginScript):
 
   if not plugin and not listProcessingPasses:
     gLogger.fatal("ERROR: No plugin supplied...")
-    Script.showHelp()
+    Script.showHelp(exitCode=1)
   prods = pluginScript.getOption('Productions')
   requestID = pluginScript.getOption('RequestID')
   fileType = pluginScript.getOption('FileType')
