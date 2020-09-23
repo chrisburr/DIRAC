@@ -323,7 +323,7 @@ def executeAddTransformation(pluginScript):
       else:
         # Should not happen here, but who knows ;-)
         gLogger.error("No BK query provided...")
-        Script.showHelp()
+        Script.showHelp(exitCode=1)
 
     if force:
       lfns = []
