@@ -99,7 +99,7 @@ if __name__ == '__main__':
       terse = True
 
   if len(args) < 1:
-    Script.showHelp()
+    Script.showHelp(exitCode=1)
 
   if not arguments:
     if os.path.exists(args[0]):
