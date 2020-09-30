@@ -40,8 +40,7 @@ if __name__ == "__main__":
       val = set(val.split(','))
       if val & set(statusList) != val:
         print "Unknown status %s... Select in %s" % (','.join(val), str(statusList))
-        Script.showHelp()
-        DIRAC.exit(1)
+        Script.showHelp(exitCode=1)
       status = list(val)
     elif opt == 'NewStatus':
       if val not in statusList:

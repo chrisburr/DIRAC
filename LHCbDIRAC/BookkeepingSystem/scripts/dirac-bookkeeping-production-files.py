@@ -29,12 +29,12 @@ Script.parseCommandLine()
 args = Script.getPositionalArgs()
 
 if not len(args) == 2:
-  Script.showHelp()
+  Script.showHelp(exitCode=1)
 
 try:
   prodID = int(args[0])
 except BaseException:
-  Script.showHelp()
+  Script.showHelp(exitCode=1)
 filetype = args[1]
 
 from DIRAC import gLogger, exit as DIRACexit

@@ -17,6 +17,7 @@ __RCSID__ = "$Id$"
 import os
 import copy
 import time
+import six
 
 from DIRAC import gLogger, siteName
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
@@ -401,7 +402,7 @@ class ModuleBase(object):
     if 'extraPackages' in self.step_commons:
       self.extraPackages = self.step_commons['extraPackages']
       if self.extraPackages:
-        if isinstance(self.extraPackages, basestring):
+        if isinstance(self.extraPackages, six.string_types):
           eps = self.extraPackages.split(';')  # pylint: disable=no-member
           epList = []
           for ep in eps:

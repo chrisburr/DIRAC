@@ -13,8 +13,8 @@
 # File :    dirac-bookkeeping-get-file-sisters
 # Author :  Zoltan Mathe
 ########################################################################
-"""Report sisters or cousins (i.e. descendant of a parent or ancestor) for a
-(list of) LFN(s)"""
+"""Report sisters or cousins (i.e. descendant of a parent or ancestor) for a (list of) LFN(s)"""
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
@@ -29,7 +29,7 @@ if __name__ == "__main__":
   Script.registerSwitch(
       '',
       'Depth=',
-      'Number of ancestor levels (default:%d), 2 would be cousins, 3 grand-cousins etc...' %
+      'Number of ancestor levels (default: %d), 2 would be cousins, 3 grand-cousins etc...' %
       level)
   Script.registerSwitch('', 'Production=', 'Production to check for sisters (default=same production)')
   Script.registerSwitch('', 'AllFileTypes', 'Consider also files with a different type')

@@ -2,8 +2,7 @@
 CERN centralized Elasticsearch service
 ======================================
 
-This document contains all information needed to manage the ES. ES is provided by
-CERN.
+This document contains all information needed to manage the ES. The ES is provided by CERN IT.
 
 -----------------------
 Communication channels:
@@ -27,7 +26,8 @@ We are using three instances (host:username):
 Elasticsearch performance monitoring
 ------------------------------------
 
-IT/ES provides monitoring tool for monitoring ES instances. You can access `in the following link <https://es-perfmon-lhcb.cern.ch>`_.
+IT/ES provides monitoring tool for monitoring ES instances. You can access `in the following link <https://es-perfmon-lhcb.cern.ch>`_ 
+(accessible from inside the CERN network).
 
 ------
 Kibana
@@ -49,8 +49,8 @@ searching lhcb. For example: `https://gitlab.cern.ch/it-elasticsearch-project/en
 Curator
 -------
 
-Curator can be used for easily manage ES data. It can be used in different purpose. We
-are using for deleting indexes, which are older a certain age. To setup Curator you need to
+Curator can be used for easily manage ES data. It can be used in different purpose. 
+We are using it for deleting indexes that are older a certain date. To setup Curator you need to
 use the ES template repository (see Managing ES templates section.) and create `curator4.actions` file.
 For example: `deleting indexes older a certain period <https://gitlab.cern.ch/it-elasticsearch-project/endpoint-lhcb-dirac-logs-settings/raw/master/curator4.actions>`_.
 
@@ -58,5 +58,5 @@ For example: `deleting indexes older a certain period <https://gitlab.cern.ch/it
 Re-indexing existing index
 --------------------------
 
-You may need to re-index indexes from one cluster to another cluster. You can
-use the `following script to reindex <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRACMgmt>`_.
+You may need to re-index indexes from one cluster to another. You can
+use the `following script to reindex <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRACMgmt/-/blob/master/ElasticTools/scripts/reindexWMSMonitoring.py>`_.

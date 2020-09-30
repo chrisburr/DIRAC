@@ -47,7 +47,7 @@ if __name__ == "__main__":
   transList = __getTransformations(Script.getPositionalArgs())
 
   from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-  from DIRAC import gLogger, exit
+  from DIRAC import gLogger
   transClient = TransformationClient()
 
   for transID in transList:

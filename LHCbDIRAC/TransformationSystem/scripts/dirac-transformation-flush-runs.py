@@ -49,8 +49,7 @@ if __name__ == "__main__":
 
   if len(args) != 1:
     gLogger.fatal("Specify transformation number...")
-    Script.showHelp()
-    DIRAC.exit(0)
+    Script.showHelp(exitCode=1)
   else:
     ids = args[0].split(",")
     idList = []

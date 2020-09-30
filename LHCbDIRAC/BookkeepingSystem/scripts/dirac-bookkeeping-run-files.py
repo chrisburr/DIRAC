@@ -14,7 +14,9 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve files for a given run."""
+
 __RCSID__ = "$Id$"
+
 import DIRAC
 from DIRAC.Core.Base import Script
 
@@ -29,7 +31,7 @@ args = Script.getPositionalArgs()
 try:
   runID = int(args[0])
 except (ValueError, IndexError):
-  Script.showHelp()
+  Script.showHelp(exitCode=1)
 
 exitCode = 0
 

@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve from the Bookkeeping runs from a given date range."""
+
 __RCSID__ = "$Id$"
 
 from DIRAC import gLogger, exit as DIRACexit
@@ -23,7 +24,7 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
     '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
     'Arguments:',
-    '  Start:    Start date (Format: YYYY-MM-DD)',
+    '  Start:    Start date (Format: YYYY-MM-DD) (mandatory)',
     '  End:      End date (Format: YYYY-MM-DD). Default is Start']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
@@ -33,8 +34,8 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 
 start = ''
 end = ''
-if len(args) > 2 or not args or not args[0]:
-  Script.showHelp()
+if len(args) < 2:
+  Script.showHelp(exitCode=1)
 
 if len(args) == 2:
   end = args[1]

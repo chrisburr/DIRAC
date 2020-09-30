@@ -21,7 +21,7 @@ Check the integrity of the state of the storages and information in the File Cat
 for a given directory or a collection of directories.
 
 Usage:
-   %s  (<options>|<cfgFile>) <dir | fileContainingDirs>
+   %s  (<options>|<cfgFile>) <dir | fileContainingDirs> (mandatory)
 """ % Script.scriptName)
 
 Script.parseCommandLine()
@@ -38,8 +38,7 @@ gLogger.setLevel('INFO')
 args = Script.getPositionalArgs()
 if len(args) < 1:
   print("Please provide a directory or a file containing directories")
-  Script.showHelp()
-  DIRAC.exit(0)
+  Script.showHelp(exitCode=1)
 else:
   inputNames = args
 

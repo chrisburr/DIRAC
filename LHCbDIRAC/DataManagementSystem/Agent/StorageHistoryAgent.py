@@ -18,6 +18,7 @@ inserted in a new DB table and made visible via the web portal.
 import os
 import time
 import copy
+import six
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Utilities import Time
@@ -58,7 +59,7 @@ def _fillMetadata(dictToFill, metadataValue):
   # this is the list of attributes returned by the Bookkeeping for a given directory
   keyList = ('ConfigName', 'ConfigVersion', 'FileType', 'Production',
              'ProcessingPass', 'ConditionDescription', 'EventType', 'Visibility')
-  if isinstance(metadataValue, basestring):
+  if isinstance(metadataValue, six.string_types):
     for k in keyList:
       dictToFill[k] = metadataValue
   elif isinstance(metadataValue, dict):
@@ -543,7 +544,7 @@ class StorageHistoryAgent(AgentModule):
         self.log.error("For dir %s getSummary returned an empty value: %s " % (d, str(res)))
         continue
       self.lfnUsage.setdefault(d, {})
-      for retDir, dirInfo in res['Value'].iteritems():
+      for retDir, dirInfo in res['Value'].items():  # can be an iterator
         if d in retDir:
           self.lfnUsage[d]['LfnSize'] = dirInfo['Size']
           self.lfnUsage[d]['LfnFiles'] = dirInfo['Files']

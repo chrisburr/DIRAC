@@ -13,9 +13,10 @@
 # File :    dirac-dms-get-file
 # Author :  Stuart Paterson
 ########################################################################
-"""Retrieve a single file or list of files from Grid storage to the current
-directory."""
+"""Retrieve a single file or list of files from Grid storage to the current directory."""
+
 __RCSID__ = "$Id$"
+
 import os
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script

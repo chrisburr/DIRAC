@@ -12,11 +12,14 @@
 """This script adds a user directory to the DFC or changes a user directory's
 ownership."""
 
-from DIRAC.Core.Base import Script
-from DIRAC import exit, gLogger, S_OK
+__RCSID__ = "$Id$"
+
 import os
 import sys
 from time import time
+
+from DIRAC.Core.Base import Script
+from DIRAC import exit, gLogger
 
 Script.registerSwitch('', 'User=', '  User name (no default, mandatory)')
 Script.registerSwitch('', 'Recursive', '  Set ownership recursively for existing user')
@@ -48,8 +51,7 @@ from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 dfc = FileCatalogClient()
 
 if user is None:
-  Script.showHelp()
-  exit(1)
+  Script.showHelp(exitCode=1)
 
 exists = False
 initial = user[0]

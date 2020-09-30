@@ -12,10 +12,21 @@ Login to the database
 
 How-To in `lbDevOps doc <https://lbdevops.web.cern.ch/lbdevops/DIRACInfrastructure.html>`_.
 
+
+Ticketing, contacts for IT-DB Oracle support
+============================================
+
+You can send a mail to `<mailto:phydb.support@cern.ch>`_ mailing list. It will be converted to a ticket.
+
+Otherwise, directly in `service now <https://cern.service-now.com/service-portal?id=service_element&name=oracle-database-service>`_.
+
+There's also a `mattermost channel <https://mattermost.web.cern.ch/it-dep/channels/it-db>`_.
+
 Compile oracle stored procedure
 ===============================
 
-In order to compile the stored procedure you need the sql file `oracle_schema_storedprocedures.sql <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_storedprocedures.sql>`_ Make sure that you are using the correct version.
+In order to compile the stored procedure you need the `sql file <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_storedprocedures.sql>`_.
+Make sure that you are using the correct version.
 
 #. Login the database (e.g. using ``sqlplus``, but also with **sqldeveloper** or **sqlcl**)
 #. in the terminal execute @/home/user/oracle_schema_storedprocedures.sql

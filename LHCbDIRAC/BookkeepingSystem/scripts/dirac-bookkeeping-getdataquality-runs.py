@@ -32,8 +32,7 @@ Script.parseCommandLine(ignoreErrors=True)
 runSet = set(int(id) for arg in Script.getPositionalArgs() for id in arg.split(','))
 
 if not runSet:
-  Script.showHelp()
-  DIRAC.exit()
+  Script.showHelp(exitCode=1)
 
 gLogger.showHeaders(False)
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

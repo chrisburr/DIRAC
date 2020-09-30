@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Insert a new set of simulation conditions in the Bookkeeping."""
+
 __RCSID__ = "$Id$"
 
 from builtins import input

@@ -68,8 +68,7 @@ Script.setUsageMessage('Usage: %s <Processing Pass> <run> <status> <flag>' % (Sc
 Script.parseCommandLine()
 args = Script.getPositionalArgs()
 if len(args) < 3:
-  Script.showHelp()
-  DIRAC.exit(2)
+  Script.showHelp(exitCode=2)
 
 exitCode = 0
 
