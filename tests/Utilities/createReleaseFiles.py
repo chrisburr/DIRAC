@@ -91,16 +91,16 @@ print(newCFG)
 lineReplace("releases.cfg", 22, newCFG)
 
 # Add information about version to release notes
-linePrepend("release/notes.txt", "LHCbDIRACOS %s" % LHCbDIRACOS)
-linePrepend("release/notes.txt", "LHCbWebDIRAC %s" % LHCbWebDIRAC)
-linePrepend("release/notes.txt", "Based on DIRAC %s" % DIRAC)
-linePrepend("release/notes.txt", versionString)
+linePrepend("../notes.txt", "LHCbDIRACOS %s" % LHCbDIRACOS)
+linePrepend("../notes.txt", "LHCbWebDIRAC %s" % LHCbWebDIRAC)
+linePrepend("../notes.txt", "Based on DIRAC %s" % DIRAC)
+linePrepend("../notes.txt", versionString)
 
 
 # store into artifact the version and series for later usage in tagging process
-with open('release/version.txt', 'a') as fver:
+with open('version.txt', 'a') as fver:
   fver.write(versionString)
-with open('release/series.txt', 'a') as fser:
+with open('series.txt', 'a') as fser:
   fser.write("v%sr%s" % (version[0], version[1]))
 
 # change the __init__.py
