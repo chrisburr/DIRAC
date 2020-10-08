@@ -94,7 +94,7 @@ At the end of the pipeline there is a manual trigger job with name `make_tag`, y
   :width: 500
   :alt: trigger jobs
 
-As key you can specify the versions you want your release to be based upon. If you don't specify any version only the LHCbDIRAC version will be increased for +1.
+As key you can specify the versions you want your release to be based upon. If you don't specify any version only the LHCbDIRAC patch version will be increased for +1.
 After you have set the proper values press trigger this manual action. This will create the release for you and creating the release tarball, and uploading it to the LHCb web service
 
 
