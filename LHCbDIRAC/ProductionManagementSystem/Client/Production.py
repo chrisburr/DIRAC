@@ -169,14 +169,14 @@ class Production(object):
     stepDict contains everything that is in the step, for this production, e.g.::
 
       {'ApplicationName': 'DaVinci', 'Usable': 'Yes', 'StepId': 13718, 'ApplicationVersion': 'v28r3p1',
-      'ExtraPackages': 'AppConfig.v3r104', 'StepName': 'Stripping14-Merging', 'ExtraOptions': '',
-      'ProcessingPass': 'Merging', 'Visible': 'N', 'OptionsFormat': '',
-      'OptionFiles': '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py',
-      'DDDB': 'head-20110302', 'CONDDB': 'head-20110407', 'DQTag': '',
-      'isMulticore': 'N', 'SystemConfig': '', 'mcTCK': '',
-      'fileTypesIn': ['SDST'],
-      'visibilityFlag': [{'Visible': 'Y', 'FileType': 'BHADRON.DST'}],
-      'fileTypesOut': ['BHADRON.DST', 'CALIBRATION.DST', 'CHARM.MDST', 'CHARMCOMPLETEEVENT.DST']}
+       'ExtraPackages': 'AppConfig.v3r104', 'StepName': 'Stripping14-Merging', 'ExtraOptions': '',
+       'ProcessingPass': 'Merging', 'Visible': 'N', 'OptionsFormat': '',
+       'OptionFiles': '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py',
+       'DDDB': 'head-20110302', 'CONDDB': 'head-20110407', 'DQTag': '',
+       'isMulticore': 'N', 'SystemConfig': '', 'mcTCK': '',
+       'fileTypesIn': ['SDST'],
+       'visibilityFlag': [{'Visible': 'Y', 'FileType': 'BHADRON.DST'}],
+       'fileTypesOut': ['BHADRON.DST', 'CALIBRATION.DST', 'CHARM.MDST', 'CHARMCOMPLETEEVENT.DST']}
 
     Note: this step treated here does not necessarily corresponds to a step of the BKK:
     the case where they might be different is the merging case.

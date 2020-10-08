@@ -76,6 +76,7 @@ class RunApplication(object):
 
     # Prmon
     self.prmonPath = '/cvmfs/lhcb.cern.ch/lib/experimental/prmon/bin/prmon'
+    self.usePrmon = False
 
   def run(self):
     """Invokes lb-run (what you call after having setup the object)"""
@@ -221,7 +222,7 @@ class RunApplication(object):
     """
     print('Command called: \n%s' % command)  # Really printing here as we want to see and maybe cut/paste
 
-    if self.applicationName == 'Gauss':
+    if self.applicationName == 'Gauss' and self.usePrmon:
       command = self.prmonPath + ' --json-summary ./prmon_Gauss.json -- ' + command
     return systemCall(timeout=0,
                       cmdSeq=shlex.split(command),

@@ -91,6 +91,7 @@ class ModuleBase(object):
     self.applicationVersion = 'Unknown'
     self.applicationLog = ''
     self.applicationType = None
+    self.usePrmon = False
     self.systemConfig = None
     self.extraPackages = None
     self.bkConfigName = None
@@ -300,6 +301,8 @@ class ModuleBase(object):
       self.multicoreJob = False
       if isinstance(multicoreJob, str) and multicoreJob.lower() in ('true', 'y', 'yes'):
         self.multicoreJob = True
+
+    self.usePrmon = self.opsH.getValue('Productions/UsePrmon', False)
 
     self.processingPass = self.workflow_commons.get('processingPass', self.processingPass)
 

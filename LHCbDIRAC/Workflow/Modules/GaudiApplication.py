@@ -155,6 +155,7 @@ class GaudiApplication(ModuleBase):
       # lb-run stuff
       ra.applicationName = self.applicationName
       ra.applicationVersion = self.applicationVersion
+      ra.usePrmon = self.usePrmon
       ra.systemConfig = self.systemConfig
       ra.extraPackages = self.extraPackages
       ra.runTimeProject = self.runTimeProjectName
