@@ -36,25 +36,6 @@ Creating a release of LHCbDIRAC means creating a tarball that contains the relea
 2. Propagating to the devel branch (for patches)
 3. Creating the release tarball, add uploading it to the LHCb web service
 
-But before:
-
-Pre
-```
-
-Verify what is the last tag of DIRAC::
-
-  # it should be in this list:
-  git describe --tags $(git rev-list --tags --max-count=10)
-
-
-A tarball containing it is should be already
-uploaded `here <http://diracproject.web.cern.ch/diracproject/tars/>`_
-
-You may also look inside the .cfg file for the DIRAC release you're looking for: it will contain an "Externals" version number,
-that should also be a tarball uploaded in the same location as above.
-
-If all the above is ok, we can start creating the LHCbDIRAC release.
-
 
 Merging "Merge Requests"
 ````````````````````````
@@ -62,54 +43,19 @@ Merging "Merge Requests"
 `Merge Requests (MR) <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/merge_requests>`_ that are targeted to the master branch
 and that have been approved by a reviewer are ready to be merged
 
-If there are no MRs, or none ready: please skip to the "update the CHANGELOG" subsection.
-
 Otherwise, simply click the "Accept merge request" button for each of them.
 
 If you are making a Major release please merge devel to master follow the instruction: :ref:`devel_to_master`.
 
-Then, starting from a clean LHCbDIRAC local fork you need to update some files::
-
-
-  # Checkout LHCbDIRAC
-  git clone https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
-  cd LHCbDIRAC
-  git remote rename origin upstream
-  # create a "newMaster" branch which from the upstream/master branch
-  git checkout -b newMaster upstream/master
-  # determine the tag you're going to create by checking what was the last one from the following list (add 1 to the "p"):
-  git describe --tags $(git rev-list --tags --max-count=5)
-  # Update the version in the __init__ file:
-  vim LHCbDIRAC/__init__.py
-  # Update the version in the releases.cfg file:
-  vim LHCbDIRAC/releases.cfg
-  # Update the version in the Dockerfile file:
-  vim container/lhcbdirac/Dockerfile
-  # For updating the CHANGELOG, get what's changed since the last tag
-  t=$(git describe --abbrev=0 --tags); git --no-pager log ${t}..HEAD --no-merges --pretty=format:'* %s';
-  # copy the output, add it to the CHANGELOG (please also add the DIRAC version)
-  vim CHANGELOG # please, remove comments like "fix" or "pylint" or "typo"...
-  git add -A && git commit -av -m "<YourNewTag>"
-
-
-Time to tag and push::
-
-
-  # make the tag
-  git tag -a <YourNewTag> -m <YourNewTag>
-  # push "newMaster" to upstream/master
-  git push --tags upstream newMaster:master
-  # delete your local newMaster
-  git checkout upstream/master
-  git branch -d newMaster
-
-
-Remember: you can use "git status" at any point in time to make sure what's the current status.
-
-
-
 Propagate to the devel branch
 `````````````````````````````
+
+Before you start doing any merging it's good to setup the correct merge driver, you do this by adding to your .gitconfig
+
+  [merge "ours"]
+        driver = true
+
+this let's git know which files you want to ignore when you merge master into devel.
 
 Now, you need to make sure that what's merged in master is propagated to the devel branch. From the local fork::
 
@@ -123,7 +69,6 @@ Now, you need to make sure that what's merged in master is propagated to the dev
 The last operation may result in potential conflicts.
 If happens, you'll need to manually update the conflicting files (see e.g. this `guide <https://githowto.com/resolving_conflicts>`_).
 As a general rule, prefer the master fixes to the "HEAD" (devel) fixes. Remember to add and commit once fixed.
-Note: For porting the `LHCbDIRAC/__init__.py` from master to devel, we prefer the HEAD version (only for this file!!!)
 
 Please fix the conflict if some files are conflicting. Do not forget to to execute the following::
 
@@ -139,9 +84,19 @@ Conflicts or not, you'll need to push back to upstream::
   # keep your repo up-to-date
   git fetch upstream
 
+Create/Trigger release
+``````````````````````
 
-Creating the release tarball, add uploading it to the LHCb web service
-``````````````````````````````````````````````````````````````````````
+To create a release you go to the pipelines https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/pipelines and go the last pipeline of the branch you want to tag.
+At the end of the pipeline there is a manual trigger job with name `make_tag`, you clic on it and you will get the following windows
+
+.. image:: trigger.png
+  :width: 500
+  :alt: trigger jobs
+
+As key you can specify the versions you want your release to be based upon. If you don't specify any version only the LHCbDIRAC version will be increased for +1.
+After you have set the proper values press trigger this manual action. This will create the release for you and creating the release tarball, add uploading it to the LHCb web service
+
 
 ```````````````````
 Automatic procedure
@@ -150,68 +105,15 @@ Automatic procedure
 When a new git tag is pushed to the repository, a gitlab-ci job takes care of testing, creating the tarball, uploading it to the web service, and to build the docker image. You can check it in the pipeline page of the repository (https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines).
 
 It may happen that the pipeline fails. There are various reasons for that, but normally, it is just a timeout on the runner side, so just restart the job from the pipeline web interface. If it repeatedly fails building the tarball, try the manual procedure described bellow to understand.
-
-````````````````
-Manual procedure
-````````````````
-
-**This should a priori not be used anymore. If the pipeline fails, you should rather investigate why.**
-
-Login on lxplus, run ::
-
-  source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac
-
-  git archive --remote ssh://git@gitlab.cern.ch:8443/lhcb-dirac/LHCbDIRAC.git devel LHCbDIRAC/releases.cfg  | tar -x -v -f - --transform 's|^LHCbDIRAC/||' LHCbDIRAC/releases.cfg
-
-  dirac-distribution -r v8r3p1 -l LHCb -C file:///`pwd`/releases.cfg (this may take some time)
-
-Don't forget to read the last line of the previous command to copy the generated files at the right place. The format is something like::
-
-  ( cd /tmp/joel/tmpxg8UuvDiracDist ; tar -cf - *.tar.gz *.md5 *.cfg ) | ssh lhcbprod@lxplus.cern.ch 'cd /afs/cern.ch/lhcb/distribution/DIRAC3/tars &&  tar -xvf - && ls *.tar.gz > tars.list'
-
-And just copy/paste/execute it.
-
-If you do not have access to lhcbprod, you can use your user name.
+**If any of the pipelines fails, don't try to do a release manually but rather investigate why.**
 
 
 2. Making basic verifications
 =============================
 
 Once the tarball is done and uploaded, the release manager is asked to make basic verifications,
-to see if the release has been correctly created.
-
-2.1. GitLab-CI pipelines
-````````````````````````
-
-Within GitLab-CI, at https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines we run simple "unit" tests.
-
-These pipelines will: run pylint (errors only), run all the unit tests found in the system, assess the coverage.
-If the GitLab-CI pipelines are successful, we can check the system tests.
-
-2.2. Jenkins "integration" tests
-````````````````````````````````
-
-At this `link <https://jenkins-dirac.web.cern.ch/view/LHCbDIRAC/>`_ you'll find some Jenkins Jobs ready to be started.
-Please start the following Jenkins jobs and verify their output.
-
-1. LHCbIntegration_SLC6
-
-This is a lengthy test of the LHCbDIRAC server installation and interaction with services.
-Please just check if the result does not show in an "unstable" status.
-
-2. LHCbPilot3_pipeline
-
-This job will run several payloads in a pipeline, using pilot 3 on CERNVM3 nodes.
-Please just check if the result does not show in an "unstable" status.
-
-3. LHCbPilot3_CVM4_pipeline
-
-This job will run several payloads in a pipeline, using pilot 3 on CERNVM4 nodes.
-Some of the tests run in the pipeline will, for now, fail.
-The reason is that some tests try to run SLC5 binaries on a CentOS7-based distibution,
-which will fail. Some of the tests in the pipeline will anyway suceed.
-
-
+to see if the release has been correctly created. Within GitLab-CI, at https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines we run unit and integrations tests.
+Please check that the pipeline for the tag passes before proceeding further.
 
 
 3. Advertise the new release
@@ -235,76 +137,9 @@ Deploying a release means deploying it for the various installations::
 
 release for client
 ``````````````````
-
-Open a JIRA task: https://its.cern.ch/jira/projects/LHCBDEP.
-
-* JIRA task: Summary:LHCbDirac vArBpC;  Description: Please release  LHCbDirac by following the instructions::
-
-    https://lhcb-dirac.readthedocs.io/en/latest/AdministratorGuide/Installation/make_release.html#new-procedure-for-installing-on-cvmfs-lhcb
-
-
-Once the client has been deployed, you should setup the correct environment (source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac), preferably on a CERNVM, on lxplus otherwise, and run the following two scripts:
-  * Minimal test: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/tests/System/Client/basic-imports_client.py
-  * Bigger (certification like) test: https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/tests/System/Client/client_test.sh
-
-
-Procedure for installing on cvmfs-lhcbdev
-`````````````````````````````````````````
-
-You should member of the e-group lhcb-cvmfs-librarians.
-you login to aivoadm.cern.ch and you follow the sequence::
-
-  ssh cvmfs-lhcbdev
-  sudo -i -u cvlhcbdev
-  lbcvmfsinteractive.sh -m "install vArB-preC"
-  (wait to get the prompt back)
-  cd /cvmfs/lhcbdev.cern.ch/lib/lhcb/LHCBDIRAC/
-  cvmfs_server transaction lhcbdev.cern.ch
-  export DIRAC=/cvmfs/lhcbdev.cern.ch/lib/lhcb/LHCBDIRAC/vDrE-preF (vDrE-preF is the previous installation)
-  source bashrc
-  dirac-install -v -r vArB-preC -t server -l LHCb -e LHCb --createLink
-  rm /cvmfs/lhcbdev.cern.ch/lib/lhcb/LHCBDIRAC/pro
-  source lhcbdirac vArB-preC
-  pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org --upgrade pip
-  pip install --trusted-host files.pythonhosted.org --trusted-host pypi.org ipython
-  <deploy the test directory if it is needed>
-  mkdir tmp
-  cd tmp/
-  mkdir LHCbDIRAC
-  cd LHCbDIRAC/
-  git init
-  git remote add -f upstream https://:@gitlab.cern.ch:8443/lhcb-dirac/LHCbDIRAC.git
-  git config core.sparsecheckout true
-  echo tests/ >> .git/info/sparse-checkout
-  git pull upstream devel
-  rm -rf .git/
-  cd ../../
-  cp -r tmp/LHCbDIRAC/tests/ v9r3-pre20/LHCbDIRAC/
-  rm -rf tmp/
-  <end of tests directory deployment>
-  cd /
-  cvmfs_server publish lhcbdev.cern.ch
-  exit
-  exit
-
-
-new procedure for installing on cvmfs-lhcb
-``````````````````````````````````````````
-
-Only members of the e-group lhcb-cvmfs-librarians have the karma to make releases on CVMFS.
-The version to be deployed is vArBpC. Login on aivoadm.cern.ch and follow the sequence::
-
-    ssh cvmfs-lhcb
-    sudo -i -u cvlhcb
-    cd /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/
-    cvmfs_transaction
-    curl -O -L https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py
-    chmod +x dirac-install.py
-    ./dirac-install.py -v -r vArBpC -t server -l LHCb -e LHCb --createLink
-    cd /
-    cvmfs_publish
-    exit
-    exit
+In each tag pipeline there is a manual trigger job called set_cvmfs_prod_link, this sets the production version link to the current deployed version.
+Releases are automatically uploaded to cvmfs.
+**If any of the pipelines fails, don't try to do a release manually but rather investigate why.**
 
 
 Server
