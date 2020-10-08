@@ -153,6 +153,37 @@ class UploadMC(ModuleBase):
       else:
         self.log.info("XML GeneratorLog file not found", xmlfile)
 
+      # looking for prmon files that are 'prmon_Gauss.json'
+      prmonFile = 'prmon_Gauss.json'
+      if os.path.exists(prmonFile):
+        with io.open(prmonFile) as JS:
+          try:
+            jsonDataTemp = json.load(JS)
+            jsonData = {}
+            jsonData['Metrics'] = jsonDataTemp
+            ids = dict()
+            ids['JobID'] = self.jobID
+            ids['ProductionID'] = self.production_id
+            ids['prod_job_id'] = self.prod_job_id
+            jsonData['Metrics']['ID'] = ids
+            self.log.verbose("Content of JSON file", "%s: %s" % (prmonFile, jsonData))
+            if self._enableModule():
+              mcLogGaussMetricsClient = MCStatsClient()
+              mcLogGaussMetricsClient.indexName = 'lhcb-gaussmetrics-' + self.production_id
+              res = mcLogGaussMetricsClient.set('prmonMetrics', jsonData)
+              if not res['OK']:
+                self.log.error('prmon Metrics data not set, exiting without affecting workflow status', "%s: %s" % (str(jsonData), res['Message']))  # noqa
+            else:
+              # At this point we can see exactly what the module would have uploaded
+              self.log.info("Module disabled", "would have attempted to upload the following file %s" % prmonFile)
+          except Exception as ve:
+            self.log.error(repr(ve))
+            self.log.verbose("Exception loading the JSON file: content of %s follows" % prmonFile)
+            self.log.verbose(JS.read())
+            raise
+      else:
+        self.log.info("prmon file not found", prmonFile)
+
       return S_OK()
 
     except Exception as e:

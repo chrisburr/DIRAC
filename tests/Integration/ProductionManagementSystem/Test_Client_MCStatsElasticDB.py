@@ -27,6 +27,7 @@ id1 = 1
 id2 = 2
 falseID = 3
 id3 = 4
+id4 = 5
 
 data1 = {
     "Errors": {
@@ -86,9 +87,31 @@ data3 = {
     }
 }
 
+data4 = {
+    "Metrics": {
+        "Avg": {
+            "nprocs": 1,
+            "nthreads": 5,
+            "pss": 23917,
+            "rchar": 2339007,
+        },
+        "Max": {
+            "nprocs": 1,
+            "nthreads": 5,
+            "pss": 23917,
+        },
+        "ID": {
+            "wmsID": "11",
+            "ProductionID": "21",
+            "JobID": id4
+        }
+    }
+}
+
 typeName = 'test'
 mcType1 = 'errors'
 mcType2 = 'summary'
+mcType3 = 'metrics'
 
 mcStatsClient = MCStatsClient()
 mcStatsClient.indexName = 'lhcb-mcstats'
@@ -110,6 +133,10 @@ def test_setAndGetandRemove():
   result = mcStatsClient.set(typeName, data3)
   assert result['OK'] is True
 
+  # Set data4
+  result = mcStatsClient.set(typeName, data4)
+  assert result['OK'] is True
+
   time.sleep(5)
 
   # Get data1
@@ -126,6 +153,11 @@ def test_setAndGetandRemove():
   result = mcStatsClient.get(id3, mcType2)
   assert result['OK'] is True
   assert result['Value'] == data3
+
+  # Get data4
+  result = mcStatsClient.get(id4, mcType3)
+  assert result['OK'] is True
+  assert result['Value'] == data4
 
   # Get empty
   result = mcStatsClient.get(falseID, mcType1)
@@ -148,10 +180,17 @@ def test_setAndGetandRemove():
   assert result['OK'] is True
   assert result['Value'] == {}
 
- # Remove data3
+  # Remove data3
   mcStatsClient.remove(id3, mcType2)
   time.sleep(5)
   result = mcStatsClient.get(id3, mcType2)
+  assert result['OK'] is True
+  assert result['Value'] == {}
+
+  # Remove data4
+  mcStatsClient.remove(id4, mcType3)
+  time.sleep(5)
+  result = mcStatsClient.get(id4, mcType3)
   assert result['OK'] is True
   assert result['Value'] == {}
 

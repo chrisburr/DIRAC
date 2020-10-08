@@ -1,4 +1,4 @@
-# MCStats Kibana Dashboards
+# MCStats Kibana Errors Dashboards
 
 These are three dashboards for errors in MCStats
 
