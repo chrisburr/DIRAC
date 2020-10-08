@@ -122,7 +122,6 @@ class ModuleBase(object):
     self.multicoreJob = True
     self.multicoreStep = False
     self.numberOfProcessors = 1
-    self.applicationPID = None  # the per-step Gaudi application PID
     self.poolXMLCatName = 'pool_xml_catalog.xml'
     self.persistency = ''
     self.processingPass = None
