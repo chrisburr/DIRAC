@@ -55,7 +55,7 @@ Before you start doing any merging it's good to setup the correct merge driver, 
   [merge "ours"]
         driver = true
 
-this let's git know which files you want to ignore when you merge master into devel.
+this lets git know which files you want to ignore when you merge `master` into `devel`.
 
 Now, you need to make sure that what's merged in master is propagated to the devel branch. From the local fork::
 
