@@ -23,7 +23,6 @@ echo -e '******' "LHCb client -> server tests" '******\n'
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
 python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-# Re-enable when it succeeds
 pytest "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#

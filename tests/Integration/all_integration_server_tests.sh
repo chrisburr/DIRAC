@@ -36,6 +36,5 @@ python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/DataManagementSystem/Test_
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
-# FIXME: Re-enable when it succeeds
-# pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_MCStatsElasticDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_MCStatsElasticDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 TEST_CODE_LOC=$TESTCODE python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
