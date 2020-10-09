@@ -22,118 +22,6 @@ from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 __RCSID__ = "$Id$"
 
 
-def xmltojsonCat1(lCategory1):
-  '''returns a Category1 dictionary
-    :param list lCategory1: list containing Category1 counters
-    e.g. Category1 counter : <counter name="MCVeloHitPacker/# PackedData">50809</counter>
-  '''
-  result = {}
-  for counter in lCategory1:
-    key1, key2 = counter['@name'].split('/# ')
-    result[key1] = {key2: int(counter['#text'])}
-
-  return(result)
-
-
-def xmltojsonCat2(lCategory2):
-  '''returns a Category2 dictionary
-    :param list lCategory2: list containing Category2 counters
-    e.g. Category2 counters:
-    <counter name="TTHitMonitor/DeltaRay">1249</counter>
-    <counter name="TTHitMonitor/betaGamma">28101829</counter>
-    <counter name="TTHitMonitor/numberHits">17105</counter>
-  '''
-  result = {}
-  for value in lCategory2:
-    key1, key2 = value['@name'].split("/", 1)
-    if key1 not in result:
-      result[key1] = {}
-    result[key1][key2] = int(value['#text'])
-  return result
-
-
-def xmltojsonCat3(lCategory3):
-  '''returns a Category3 dictionary
-    :param list lCategory3: list containing Category3 counters
-    e.g. Category3 counters:
-    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
-  '''
-  result = {}
-  for counter in lCategory3:
-    key1, key2 = counter['@name'].split(" - ", 1)
-    key1 = key1.strip()
-    # key2c and key3c are used if key3c in ['x', 'y', 'z']
-    key2c = key2[:-2]
-    key3c = key2[-1:]
-    # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
-    # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
-    # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
-    key2cc = key2[:- 4]
-    key3cc = key2[-3:]
-    # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
-    # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
-
-    if key1 not in result:
-      result[key1] = {}
-    if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
-      if key2c not in result[key1]:
-          result[key1][key2c] = {}
-      result[key1][key2c][key3c] = int(counter['#text'])
-    elif key3cc in ['Phi', 'Eta']:
-      if key2cc not in result[key1]:
-        result[key1][key2cc] = {}
-      result[key1][key2cc][key3cc] = int(counter['#text'])
-    else:
-      result[key1][key2] = int(counter['#text'])
-  return result
-
-
-def ranges(mainList):
-  ''' Returns a list containing the ranges of each category
-      :param list mainList: list containing indices of a certain category of counters
-      e.g. mainList = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 20, 21, 22]
-      ranges(mainList) = [1, 6, 11, 14, 20, 22]
-      The role of this function is to know the intervals of each category
-  '''
-  rangesList = [mainList[0], mainList[1]]
-  for i, value in enumerate(mainList[2:]):
-    if value == mainList[i + 1] + 1 and mainList[i + 1] == mainList[i] + 1:
-      rangesList[len(rangesList) - 1] = value
-    else:
-      rangesList.append(value)
-  return rangesList
-
-
-def difisnotnull(dict_3):
-  ''' Returns True if a category 3 dictionary contains a field or a subfield that has a value different from 0 '''
-  if isinstance(dict_3, dict):
-    return any(difisnotnull(v) for v in dict_3.values())
-  return dict_3 != 0
-
-
 class XMLSummaryError(Exception):
   """Define error for XML summary."""
 
@@ -453,11 +341,51 @@ class XMLSummary(object):
 
     return fileCounter
 
-################################################################################
-
   def xmltojson(self):
-    ''' The main function that takes the name of the XMLsummary file or the path to it
-    as an entry parameter and creates a JSON file with the same name in the current directory '''
+    """ The main function that takes the name of the XMLsummary file or the path to it
+        as an entry parameter and creates a JSON file with the same name in the current directory
+
+        We need to keep those that have names like "MCXXXPacker/# PackedData",
+        e.g. "MCVeloHitPacker/# PackedData"
+
+        We have them for the main event and for additional events:
+        they appear with the same name but with PrevPrev, Prev, Next, NextNext added.
+        I think those could be dropped as not all production have all of them.
+
+        We also should keep the counters with "UnpackMCXXX/# UnPackedData" with the same rules and the 'packer' above.
+
+        All counters that start with the name starting with "Check" (e.g. CheckPuVetoHits)
+        there are 3 sets for each 'Diff/Original/Unpacked'.
+        If at all possible we should only keep their values if Diff is different from zero.
+        Again only for the set that does not have PrevPrev, Prev, Next, NextNext in their names.
+
+        There are also counters with "Monitor" in their name, those I would keep:
+                <counter name="TTHitMonitor/DeltaRay">736</counter>
+                <counter name="TTHitMonitor/betaGamma">9169899</counter>
+                <counter name="TTHitMonitor/numberHits">8013</counter>
+                <counter name="ITHitMonitor/DeltaRay">404</counter>
+                <counter name="ITHitMonitor/betaGamma">36564630</counter>
+                <counter name="ITHitMonitor/numberHits">7467</counter>
+                <counter name="OTHitMonitor/DeltaRay">1456</counter>
+                <counter name="OTHitMonitor/betaGamma">37215968</counter>
+                <counter name="OTHitMonitor/numberHits">21650</counter>
+
+        And finally I would keep all of the counters for memory. All productions will have 4 of them:
+            <counter name="MainEventGaussSim.MainEventGaussSimMemory/Delta Memory/MB">702</counter>
+            <counter name="MainEventGaussSim.MainEventGaussSimMemory/Total Memory/MB">8344</counter>
+            <counter name="GaussGen.GaussGenMemory/Delta Memory/MB">798</counter>
+            <counter name="GaussGen.GaussGenMemory/Total Memory/MB">8248</counter>
+
+        while some productions would also have extra with PrevPrev, Prev, Next, NextNext
+        in their names or a subset of them.
+        If possible it would be nice for those productions to keep them but we can do without
+        if it causes problem and it certainly not needed for the first round
+
+        I think if I sum up all mandatory counters I get
+
+        14 packers + 14 unpackers + 9 monitors
+        (FYI productions for the upgrade will come with different names) + 4 memory (possibly +20)
+    """
 
     jsonTemp = dict()
     jsonFin = dict()
@@ -516,5 +444,118 @@ def analyseXMLSummary(xmlFileName=None, xf_o=None, log=None, inputsOnPartOK=Fals
   if not xf_o:
     xf_o = XMLSummary(xmlFileName, log=log)
   return xf_o.analyse(inputsOnPartOK)
+
+
+
+def xmltojsonCat1(lCategory1):
+  '''returns a Category1 dictionary
+    :param list lCategory1: list containing Category1 counters
+    e.g. Category1 counter : <counter name="MCVeloHitPacker/# PackedData">50809</counter>
+  '''
+  result = {}
+  for counter in lCategory1:
+    key1, key2 = counter['@name'].split('/# ')
+    result[key1] = {key2: int(counter['#text'])}
+
+  return(result)
+
+
+def xmltojsonCat2(lCategory2):
+  '''returns a Category2 dictionary
+    :param list lCategory2: list containing Category2 counters
+    e.g. Category2 counters:
+    <counter name="TTHitMonitor/DeltaRay">1249</counter>
+    <counter name="TTHitMonitor/betaGamma">28101829</counter>
+    <counter name="TTHitMonitor/numberHits">17105</counter>
+  '''
+  result = {}
+  for value in lCategory2:
+    key1, key2 = value['@name'].split("/", 1)
+    if key1 not in result:
+      result[key1] = {}
+    result[key1][key2] = int(value['#text'])
+  return result
+
+
+def xmltojsonCat3(lCategory3):
+  '''returns a Category3 dictionary
+    :param list lCategory3: list containing Category3 counters
+    e.g. Category3 counters:
+    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
+  '''
+  result = {}
+  for counter in lCategory3:
+    key1, key2 = counter['@name'].split(" - ", 1)
+    key1 = key1.strip()
+    # key2c and key3c are used if key3c in ['x', 'y', 'z']
+    key2c = key2[:-2]
+    key3c = key2[-1:]
+    # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+    # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
+    # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
+    key2cc = key2[:- 4]
+    key3cc = key2[-3:]
+    # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+    # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
+
+    if key1 not in result:
+      result[key1] = {}
+    if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
+      if key2c not in result[key1]:
+          result[key1][key2c] = {}
+      result[key1][key2c][key3c] = int(counter['#text'])
+    elif key3cc in ['Phi', 'Eta']:
+      if key2cc not in result[key1]:
+        result[key1][key2cc] = {}
+      result[key1][key2cc][key3cc] = int(counter['#text'])
+    else:
+      result[key1][key2] = int(counter['#text'])
+  return result
+
+
+def ranges(mainList):
+  ''' Returns a list containing the ranges of each category
+      :param list mainList: list containing indices of a certain category of counters
+      e.g. mainList = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 20, 21, 22]
+      ranges(mainList) = [1, 6, 11, 14, 20, 22]
+      The role of this function is to know the intervals of each category
+  '''
+  rangesList = [mainList[0], mainList[1]]
+  for i, value in enumerate(mainList[2:]):
+    if value == mainList[i + 1] + 1 and mainList[i + 1] == mainList[i] + 1:
+      rangesList[len(rangesList) - 1] = value
+    else:
+      rangesList.append(value)
+  return rangesList
+
+
+def difisnotnull(dict_3):
+  ''' Returns True if a category 3 dictionary contains a field or a subfield that has a value different from 0 '''
+  if isinstance(dict_3, dict):
+    return any(difisnotnull(v) for v in dict_3.values())
+  return dict_3 != 0
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#
