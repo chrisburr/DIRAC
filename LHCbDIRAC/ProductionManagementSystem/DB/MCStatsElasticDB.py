@@ -8,8 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""A database wrapper for ElasticDB to insert data into elasticsearch from
-Gauss & Boole simulations."""
+"""A database wrapper for ElasticDB to insert data into elasticsearch"""
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.ElasticDB import ElasticDB
@@ -22,33 +21,6 @@ class MCStatsElasticDB(ElasticDB):
     """Simple constructor, just initialize MCStatsElasticDB."""
 
     super(MCStatsElasticDB, self).__init__('MCStatsElasticDB', 'ProductionManagement/MCStatsElasticDB')
-
-    # self.typeName = 'LogErr'    # We assume the type of the data is from LogErr
-    # self.mapping = {
-    #     "Log_output": {
-    #         "properties": {
-    #             "ID": {
-    #                 "properties": {
-    #                     "wmsID": {"type": "integer"},
-    #                     "JobID": {"type": "text"},
-    #                     "ProductionID": {"type": "text"}
-    #                 }
-    #             },
-    #             "Errors": {
-    #                 "properties": {
-    #                     "Counter": {"type": "integer"},
-    #                     "Error type": {"type": "text"},
-    #                     "Events": {
-    #                         "properties": {
-    #                             "runnr": {"type": "text"},
-    #                             "eventnr": {"type": "text"}
-    #                         }
-    #                     }
-    #                 }
-    #             }
-    #         }
-    #     }
-    # }
 
   def set(self, indexName, typeName, data):
     """Inserts data into specified index using data given in argument.
