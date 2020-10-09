@@ -51,7 +51,7 @@ class ElasticMCStats(ElasticDB):
     }
     """
 
-    s = self.dslSearch.query("bool", filter=self._Q("term", ProductionID=productionID))
+    s = self.dslSearch.query("bool", filter=self._Q("term", ProductionID=productionID))  # # pylint: disable=no-member
 
     res = s.execute()
 

@@ -352,7 +352,8 @@ class XMLSummary(object):
         they appear with the same name but with PrevPrev, Prev, Next, NextNext added.
         I think those could be dropped as not all production have all of them.
 
-        We also should keep the counters with "UnpackMCXXX/# UnPackedData" with the same rules and the 'packer' above.
+        We also should keep the counters with "UnpackMCXXX/# UnPackedData"
+        with the same rules and the 'packer' above.
 
         All counters that start with the name starting with "Check" (e.g. CheckPuVetoHits)
         there are 3 sets for each 'Diff/Original/Unpacked'.
@@ -438,13 +439,13 @@ class XMLSummary(object):
 
 ################################################################################
 
+
 def analyseXMLSummary(xmlFileName=None, xf_o=None, log=None, inputsOnPartOK=False):
   """Analyse a XML summary file."""
 
   if not xf_o:
     xf_o = XMLSummary(xmlFileName, log=log)
   return xf_o.analyse(inputsOnPartOK)
-
 
 
 def xmltojsonCat1(lCategory1):
