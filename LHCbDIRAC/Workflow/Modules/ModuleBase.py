@@ -302,7 +302,7 @@ class ModuleBase(object):
       if isinstance(multicoreJob, str) and multicoreJob.lower() in ('true', 'y', 'yes'):
         self.multicoreJob = True
 
-    self.usePrmon = self.opsH.getValue('Productions/UsePrmon', False)
+    self.usePrmon = self.opsH.getValue('Productions/UploadES_PrMon', False)
 
     self.processingPass = self.workflow_commons.get('processingPass', self.processingPass)
 

@@ -10,7 +10,7 @@
 ###############################################################################
 """
 This tests the chain
-MCStatsElasticDBClient > MCStatsElasticDBHandler > MCStatsElasticDB
+MCStatsElasticDBClient > MCStatsElasticDBHandler > MCStatsElasticDBs (several of them)
 
 It assumes the server is running and that ES is present and running
 """
@@ -20,183 +20,62 @@ import time
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
+from tests.Integration.ProductionManagementSystem.MCStatsSampleData import \
+    gauss_errors_1, \
+    boole_errors_1
+
+# sut
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
 
 
-id1 = 1
-id2 = 2
-falseID = 3
-id3 = 4
-id4 = 5
-
-data1 = {
-    "Errors": {
-        "ID": {
-            "wmsID": "6",
-            "ProductionID": "5",
-            "JobID": id1
-        },
-        "Error1": 10,
-        "Error2": 5,
-        "Error3": 3
-    }
-}
-
-data2 = {
-    "Errors": {
-        "ID": {
-            "wmsID": "6",
-            "ProductionID": "5",
-            "JobID": id2
-        },
-        "Error1": 7,
-        "Error2": 9
-    }
-}
-
-data3 = {
-    "Counters": {
-        "ID": {
-            "prod_job_id": "000000001",
-            "ProductionID": "8",
-            "JobID": id3
-        },
-        "ITHitMonitor": {
-            "betaGamma": 224730238,
-            "DeltaRay": 4208,
-            "numberHits": 86436
-        },
-        "MCITHitPacker": {
-            "PackedData": 86436
-        },
-        "CheckITHits/Diff.": {
-            "Energy": 0,
-            "Parent |P|": 9,
-            "TOF": 0,
-            "Displacement": {
-                "y": 0,
-                "x": 0,
-                "z": 0
-            },
-            "Entry Point": {
-                "y": 0,
-                "x": 0,
-                "z": 0
-            }
-        }
-    }
-}
-
-data4 = {
-    "Metrics": {
-        "Avg": {
-            "nprocs": 1,
-            "nthreads": 5,
-            "pss": 23917,
-            "rchar": 2339007,
-        },
-        "Max": {
-            "nprocs": 1,
-            "nthreads": 5,
-            "pss": 23917,
-        },
-        "ID": {
-            "wmsID": "11",
-            "ProductionID": "21",
-            "JobID": id4
-        }
-    }
-}
-
-typeName = 'test'
-mcType1 = 'errors'
-mcType2 = 'summary'
-mcType3 = 'metrics'
-
 mcStatsClient = MCStatsClient()
-mcStatsClient.indexName = 'lhcb-mcstats'
+
+# db = {
+#     'XMLSummary': elasticMCGaussLogErrorsDB,
+#     'booleErrors': elasticMCGaussLogErrorsDB,
+#     'gaussErrors': elasticMCGaussLogErrorsDB,
+# }
 
 
 def test_setAndGetandRemove():
 
-  # Set
+  # Set gauss errors
+  result = mcStatsClient.set('gaussErrors', gauss_errors_1)
+  assert result['OK'] is True, result['Message']
 
-  # Set data1
-  result = mcStatsClient.set(typeName, data1)
+  # Set boole errors
+  result = mcStatsClient.set('booleErrors', boole_errors_1)
   assert result['OK'] is True
 
-  # Set data2
-  result = mcStatsClient.set(typeName, data2)
-  assert result['OK'] is True
+  time.sleep(1)
 
-  # Set data3
-  result = mcStatsClient.set(typeName, data3)
+  # Get gauss errors
+  result = mcStatsClient.get('gaussErrors', 4)
   assert result['OK'] is True
+  assert result['Value'] == [gauss_errors_1]
 
-  # Set data4
-  result = mcStatsClient.set(typeName, data4)
+  # Get boole errors
+  result = mcStatsClient.get('booleErrors', 4)
   assert result['OK'] is True
+  assert result['Value'] == [boole_errors_1]
 
-  time.sleep(5)
+  # Get false
+  result = mcStatsClient.get('false', 4)
+  assert result['OK'] is False
 
-  # Get data1
-  result = mcStatsClient.get(id1, mcType1)
+  # Get non-existant
+  result = mcStatsClient.get('booleErrors', 5)
   assert result['OK'] is True
-  assert result['Value'] == data1
-
-  # Get data2
-  result = mcStatsClient.get(id2, mcType1)
-  assert result['OK'] is True
-  assert result['Value'] == data2
-
-  # Get data3
-  result = mcStatsClient.get(id3, mcType2)
-  assert result['OK'] is True
-  assert result['Value'] == data3
-
-  # Get data4
-  result = mcStatsClient.get(id4, mcType3)
-  assert result['OK'] is True
-  assert result['Value'] == data4
-
-  # Get empty
-  result = mcStatsClient.get(falseID, mcType1)
-  assert result['OK'] is True
-  assert result['Value'] == {}
+  assert result['Value'] == []
 
   # Remove
-
-  # Remove data1
-  mcStatsClient.remove(id1, mcType1)
-  time.sleep(5)
-  result = mcStatsClient.get(id1, mcType1)
+  mcStatsClient.remove('gaussErrors', 4)
+  time.sleep(1)
+  result = mcStatsClient.get('gaussErrors', 4)
   assert result['OK'] is True
-  assert result['Value'] == {}
-
-  # Remove data2
-  mcStatsClient.remove(id2, mcType1)
-  time.sleep(5)
-  result = mcStatsClient.get(id2, mcType1)
+  assert result['Value'] == []
+  mcStatsClient.remove('booleErrors', 4)
+  time.sleep(1)
+  result = mcStatsClient.get('booleErrors', 4)
   assert result['OK'] is True
-  assert result['Value'] == {}
-
-  # Remove data3
-  mcStatsClient.remove(id3, mcType2)
-  time.sleep(5)
-  result = mcStatsClient.get(id3, mcType2)
-  assert result['OK'] is True
-  assert result['Value'] == {}
-
-  # Remove data4
-  mcStatsClient.remove(id4, mcType3)
-  time.sleep(5)
-  result = mcStatsClient.get(id4, mcType3)
-  assert result['OK'] is True
-  assert result['Value'] == {}
-
-  # # Remove empty
-  mcStatsClient.remove(falseID, mcType1)
-  time.sleep(5)
-  result = mcStatsClient.get(falseID, mcType1)
-  assert result['OK'] is True
-  assert result['Value'] == {}
+  assert result['Value'] == []
