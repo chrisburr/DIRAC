@@ -22,6 +22,118 @@ from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 __RCSID__ = "$Id$"
 
 
+def xmltojsonCat1(lCategory1):
+  '''returns a Category1 dictionary
+    :param list lCategory1: list containing Category1 counters
+    e.g. Category1 counter : <counter name="MCVeloHitPacker/# PackedData">50809</counter>
+  '''
+  result = {}
+  for counter in lCategory1:
+    key1, key2 = counter['@name'].split('/# ')
+    result[key1] = {key2: int(counter['#text'])}
+
+  return(result)
+
+
+def xmltojsonCat2(lCategory2):
+  '''returns a Category2 dictionary
+    :param list lCategory2: list containing Category2 counters
+    e.g. Category2 counters:
+    <counter name="TTHitMonitor/DeltaRay">1249</counter>
+    <counter name="TTHitMonitor/betaGamma">28101829</counter>
+    <counter name="TTHitMonitor/numberHits">17105</counter>
+  '''
+  result = {}
+  for value in lCategory2:
+    key1, key2 = value['@name'].split("/", 1)
+    if key1 not in result:
+      result[key1] = {}
+    result[key1][key2] = int(value['#text'])
+  return result
+
+
+def xmltojsonCat3(lCategory3):
+  '''returns a Category3 dictionary
+    :param list lCategory3: list containing Category3 counters
+    e.g. Category3 counters:
+    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
+    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
+  '''
+  result = {}
+  for counter in lCategory3:
+    key1, key2 = counter['@name'].split(" - ", 1)
+    key1 = key1.strip()
+    # key2c and key3c are used if key3c in ['x', 'y', 'z']
+    key2c = key2[:-2]
+    key3c = key2[-1:]
+    # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
+    # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
+    # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
+    key2cc = key2[:- 4]
+    key3cc = key2[-3:]
+    # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
+    # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
+
+    if key1 not in result:
+      result[key1] = {}
+    if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
+      if key2c not in result[key1]:
+          result[key1][key2c] = {}
+      result[key1][key2c][key3c] = int(counter['#text'])
+    elif key3cc in ['Phi', 'Eta']:
+      if key2cc not in result[key1]:
+        result[key1][key2cc] = {}
+      result[key1][key2cc][key3cc] = int(counter['#text'])
+    else:
+      result[key1][key2] = int(counter['#text'])
+  return result
+
+
+def ranges(mainList):
+  ''' Returns a list containing the ranges of each category
+      :param list mainList: list containing indices of a certain category of counters
+      e.g. mainList = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 20, 21, 22]
+      ranges(mainList) = [1, 6, 11, 14, 20, 22]
+      The role of this function is to know the intervals of each category
+  '''
+  rangesList = [mainList[0], mainList[1]]
+  for i, value in enumerate(mainList[2:]):
+    if value == mainList[i + 1] + 1 and mainList[i + 1] == mainList[i] + 1:
+      rangesList[len(rangesList) - 1] = value
+    else:
+      rangesList.append(value)
+  return rangesList
+
+
+def difisnotnull(dict_3):
+  ''' Returns True if a category 3 dictionary contains a field or a subfield that has a value different from 0 '''
+  if isinstance(dict_3, dict):
+    return any(difisnotnull(v) for v in dict_3.values())
+  return dict_3 != 0
+
+
 class XMLSummaryError(Exception):
   """Define error for XML summary."""
 
@@ -341,6 +453,8 @@ class XMLSummary(object):
 
     return fileCounter
 
+################################################################################
+
   def xmltojson(self):
     """ The main function that takes the name of the XMLsummary file or the path to it
         as an entry parameter and creates a JSON file with the same name in the current directory
@@ -446,117 +560,5 @@ def analyseXMLSummary(xmlFileName=None, xf_o=None, log=None, inputsOnPartOK=Fals
   if not xf_o:
     xf_o = XMLSummary(xmlFileName, log=log)
   return xf_o.analyse(inputsOnPartOK)
-
-
-def xmltojsonCat1(lCategory1):
-  '''returns a Category1 dictionary
-    :param list lCategory1: list containing Category1 counters
-    e.g. Category1 counter : <counter name="MCVeloHitPacker/# PackedData">50809</counter>
-  '''
-  result = {}
-  for counter in lCategory1:
-    key1, key2 = counter['@name'].split('/# ')
-    result[key1] = {key2: int(counter['#text'])}
-
-  return(result)
-
-
-def xmltojsonCat2(lCategory2):
-  '''returns a Category2 dictionary
-    :param list lCategory2: list containing Category2 counters
-    e.g. Category2 counters:
-    <counter name="TTHitMonitor/DeltaRay">1249</counter>
-    <counter name="TTHitMonitor/betaGamma">28101829</counter>
-    <counter name="TTHitMonitor/numberHits">17105</counter>
-  '''
-  result = {}
-  for value in lCategory2:
-    key1, key2 = value['@name'].split("/", 1)
-    if key1 not in result:
-      result[key1] = {}
-    result[key1][key2] = int(value['#text'])
-  return result
-
-
-def xmltojsonCat3(lCategory3):
-  '''returns a Category3 dictionary
-    :param list lCategory3: list containing Category3 counters
-    e.g. Category3 counters:
-    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Aero. Exit z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Cherenkov Theta">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Emission Point x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Emission Point y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Emission Point z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Energy">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD In. Point z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - HPD QW Point z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum x">38</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum y">46</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Parent Momentum z">-33</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Prim. Mirr. z">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. x">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. y">0</counter>
-    <counter name="CheckRichOpPhot/Diff.    - Sec. Mirr. z">0</counter>
-  '''
-  result = {}
-  for counter in lCategory3:
-    key1, key2 = counter['@name'].split(" - ", 1)
-    key1 = key1.strip()
-    # key2c and key3c are used if key3c in ['x', 'y', 'z']
-    key2c = key2[:-2]
-    key3c = key2[-1:]
-    # in this example <counter name="CheckRichOpPhot/Diff.    - HPD In. Point x">0</counter>
-    # key1 = 'CheckRichOpPhot/Diff.', key2 = HPD In. Point x, key2c = 'HPD In. Point' , key3c = 'x'
-    # key2cc and key3cc are used if key3cc in ['Phi', 'Eta']
-    key2cc = key2[:- 4]
-    key3cc = key2[-3:]
-    # in this example <counter name="CheckRichOpPhot/Diff.    - Cherenkov Phi">0</counter>
-    # key1 = 'CheckRichOpPhot/Diff.', key2 = 'Cherenkov Phi', key2cc = 'Cherenkov', key3cc = 'Phi'
-
-    if key1 not in result:
-      result[key1] = {}
-    if key3c in ['x', 'y', 'z'] and key2 != 'Energy':
-      if key2c not in result[key1]:
-          result[key1][key2c] = {}
-      result[key1][key2c][key3c] = int(counter['#text'])
-    elif key3cc in ['Phi', 'Eta']:
-      if key2cc not in result[key1]:
-        result[key1][key2cc] = {}
-      result[key1][key2cc][key3cc] = int(counter['#text'])
-    else:
-      result[key1][key2] = int(counter['#text'])
-  return result
-
-
-def ranges(mainList):
-  ''' Returns a list containing the ranges of each category
-      :param list mainList: list containing indices of a certain category of counters
-      e.g. mainList = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 20, 21, 22]
-      ranges(mainList) = [1, 6, 11, 14, 20, 22]
-      The role of this function is to know the intervals of each category
-  '''
-  rangesList = [mainList[0], mainList[1]]
-  for i, value in enumerate(mainList[2:]):
-    if value == mainList[i + 1] + 1 and mainList[i + 1] == mainList[i] + 1:
-      rangesList[len(rangesList) - 1] = value
-    else:
-      rangesList.append(value)
-  return rangesList
-
-
-def difisnotnull(dict_3):
-  ''' Returns True if a category 3 dictionary contains a field or a subfield that has a value different from 0 '''
-  if isinstance(dict_3, dict):
-    return any(difisnotnull(v) for v in dict_3.values())
-  return dict_3 != 0
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

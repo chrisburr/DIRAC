@@ -9,7 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """ Module containing a front-end to the ElasticSearch-based ElasticMCGaussLogErrorsDB.
-    This module interacts with one ES index: "ElasticMCLogErrors",
 
     Here we define a mapping which is taken from a list of log errors.
 """

@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """ Module containing a front-end to the ElasticSearch-based ElasticApplicationSummaryDB.
-    This module interacts with one ES index: "ElasticMCLogErrors",
-
-    Here we define a mapping which is taken from a list of log errors.
 """
 
 from __future__ import print_function

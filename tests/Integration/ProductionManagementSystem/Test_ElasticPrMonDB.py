@@ -9,7 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """
-Tests set(), get() and remove() from ElasticApplicationSummaryDB
+Tests set(), get() and remove() from ElasticPrMonDB
 """
 
 import time
@@ -17,7 +17,7 @@ import time
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from LHCbDIRAC.ProductionManagementSystem.DB.ElasticApplicationSummaryDB import ElasticApplicationSummaryDB
+from LHCbDIRAC.ProductionManagementSystem.DB.ElasticPrMonDB import ElasticPrMonDB
 
 
-db = ElasticApplicationSummaryDB()
+db = ElasticPrMonDB()

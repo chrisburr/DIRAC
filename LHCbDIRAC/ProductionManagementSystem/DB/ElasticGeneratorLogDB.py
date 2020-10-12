@@ -8,9 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module containing a front-end to the ElasticSearch-based ElasticMCGaussLogErrorsDB.
-
-    Here we define a mapping which is taken from a list of log errors.
+""" Module containing a front-end to the ElasticSearch-based ElasticGeneratorLogDB.
 """
 
 from __future__ import print_function
@@ -24,34 +22,32 @@ from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.ConfigurationSystem.Client.Helpers import CSGlobals
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCStats import ElasticMCStats
 
-name = 'ElasticMCBooleLogErrorsDB'
+name = 'ElasticGeneratorLogDB'
 
 mapping = {
     "properties": {
         "wmsID": {"type": "long"},
         "ProductionID": {"type": "integer"},
         "JobID": {"type": "integer"},
-        "ERROR": {"type": "short"},
-        "WARNING": {"type": "short"},
-        "FATAL": {"type": "short"},
+        # TODO: ADD A Mapping
     }
 }
 
 
-class ElasticMCBooleLogErrorsDB(ElasticMCStats):
+class ElasticGeneratorLogDB(ElasticMCStats):
 
   def __init__(self):
     """ Standard Constructor
     """
 
-    section = getDatabaseSection("ProductionManagement/ElasticMCBooleLogErrorsDB")
+    section = getDatabaseSection("ProductionManagement/ElasticGeneratorLogDB")
     indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
                                    CSGlobals.getSetup()).lower()
 
     # Connecting to the ES cluster
-    super(ElasticMCBooleLogErrorsDB, self).__init__(name,
-                                                    'ProductionManagement/ElasticMCBooleLogErrorsDB',
-                                                    indexPrefix)
+    super(ElasticGeneratorLogDB, self).__init__(name,
+                                                'ProductionManagement/ElasticGeneratorLogDB',
+                                                indexPrefix)
 
     self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
     # Verifying if the index is there, and if not create it

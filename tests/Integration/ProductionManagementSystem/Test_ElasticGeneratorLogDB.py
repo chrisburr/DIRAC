@@ -9,7 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """
-Tests set(), get() and remove() from ElasticApplicationSummaryDB
+Tests set(), get() and remove() from ElasticGeneratorLogDB
 """
 
 import time
@@ -17,7 +17,7 @@ import time
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from LHCbDIRAC.ProductionManagementSystem.DB.ElasticApplicationSummaryDB import ElasticApplicationSummaryDB
+from LHCbDIRAC.ProductionManagementSystem.DB.ElasticGeneratorLogDB import ElasticGeneratorLogDB
 
 
-db = ElasticApplicationSummaryDB()
+db = ElasticGeneratorLogDB()
