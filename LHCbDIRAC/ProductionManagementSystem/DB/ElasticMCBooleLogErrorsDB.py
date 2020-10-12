@@ -22,7 +22,7 @@ __RCSID__ = "$Id$"
 from DIRAC import gConfig
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.ConfigurationSystem.Client.Helpers import CSGlobals
-from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCStats import ElasticMCStats
+from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCStatsDBBase import ElasticMCStatsDBBase
 
 name = 'ElasticMCBooleLogErrorsDB'
 
@@ -38,7 +38,7 @@ mapping = {
 }
 
 
-class ElasticMCBooleLogErrorsDB(ElasticMCStats):
+class ElasticMCBooleLogErrorsDB(ElasticMCStatsDBBase):
 
   def __init__(self):
     """ Standard Constructor

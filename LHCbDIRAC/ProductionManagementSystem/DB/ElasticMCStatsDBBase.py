@@ -24,7 +24,7 @@ from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.ElasticDB import ElasticDB
 
 
-class ElasticMCStats(ElasticDB):
+class ElasticMCStatsDBBase(ElasticDB):
 
   def set(self, data):
     """
@@ -36,7 +36,8 @@ class ElasticMCStats(ElasticDB):
     :returns: S_OK/S_ERROR as result of indexing
     """
 
-    self.log.debug('Inserting data in %s:%s' % (self.indexName, data))  # pylint: disable=no-member
+    self.log.debug(self.__class__.__name__,
+                   '.set(): inserting data in %s:%s' % (self.indexName, data))  # pylint: disable=no-member
 
     result = self.index(self.indexName,  # pylint: disable=no-member
                         body=data,
@@ -54,7 +55,7 @@ class ElasticMCStats(ElasticDB):
     :return: dict with all docs
     """
 
-    self.log.debug('ElasticMCStats.get: Getting for production %s' % productionID)
+    self.log.debug(self.__class__.__name__ + '.get(): Getting for production %s' % productionID)
 
     resultList = []
 
@@ -91,7 +92,7 @@ class ElasticMCStats(ElasticDB):
     :return: S_OK/S_ERROR
     """
 
-    self.log.debug('ElasticMCStats.get: Removing documents of production %s' % productionID)
+    self.log.debug(self.__class__.__name__ + '.remove(): Removing documents of production %s' % productionID)
 
     """ the following should be equivalent to
     {
