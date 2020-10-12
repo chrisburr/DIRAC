@@ -18,18 +18,13 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 from DIRAC import gLogger
+from tests.Integration.ProductionManagementSystem.MCStatsSampleData import boole_errors_1
+
+# sut
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCBooleLogErrorsDB import ElasticMCBooleLogErrorsDB
 
 
 db = ElasticMCBooleLogErrorsDB()
-
-data1 = {
-    "wmsID": "5",
-    "ProductionID": "4",
-    "JobID": "3",
-    "ERROR": 4,
-    "WARNING": 23
-}
 
 
 def test_setandGetandRemove():
@@ -41,7 +36,7 @@ def test_setandGetandRemove():
   # Set
 
   # Set data1
-  result = db.set(data1)
+  result = db.set(boole_errors_1)
   time.sleep(1)
   assert result['OK'] is True
   # Set data2
@@ -56,7 +51,7 @@ def test_setandGetandRemove():
 
   result = db.get(4)
   assert result['OK'] is True
-  assert result['Value'] == [data1]
+  assert result['Value'] == [boole_errors_1]
 
   # result = db.get(id2)
   # assert result['OK'] is True
@@ -64,6 +59,15 @@ def test_setandGetandRemove():
 
   # Get empty
   result = db.get(10)  # non-existing
+  assert result['OK'] is True
+  assert result['Value'] == []
+
+  # Remove
+  result = db.remove(4)
+  assert result['OK'] is True
+  # Get again
+  time.sleep(1)
+  result = db.get(4)  # removed now
   assert result['OK'] is True
   assert result['Value'] == []
 

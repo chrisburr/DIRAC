@@ -20,11 +20,30 @@ from __future__ import absolute_import
 
 __RCSID__ = "$Id$"
 
-from DIRAC import S_OK
+from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.ElasticDB import ElasticDB
 
 
 class ElasticMCStats(ElasticDB):
+
+  def set(self, data):
+    """
+    Inserts data into ElasticJobParametersDB index
+
+    :param self: self reference
+    :param str value: data to be inserted
+
+    :returns: S_OK/S_ERROR as result of indexing
+    """
+
+    self.log.debug('Inserting data in %s:%s' % (self.indexName, data))  # pylint: disable=no-member
+
+    result = self.index(self.indexName,  # pylint: disable=no-member
+                        body=data,
+                        docID=data['ProductionID'] + '_' + data['JobID'])
+    if not result['OK']:
+      self.log.error("ERROR: Couldn't insert data", result['Message'])
+    return result
 
   def get(self, productionID):
     """ Get docs per productionID. Basically here only for tests, right now
@@ -51,7 +70,7 @@ class ElasticMCStats(ElasticDB):
     }
     """
 
-    s = self.dslSearch.query("bool", filter=self._Q("term", ProductionID=productionID))  # # pylint: disable=no-member
+    s = self.dslSearch.query("bool", filter=self._Q("term", ProductionID=productionID))  # pylint: disable=no-member
 
     res = s.execute()
 
@@ -63,21 +82,34 @@ class ElasticMCStats(ElasticDB):
 
     return S_OK(resultList)
 
-  def set(self, data):
-    """
-    Inserts data into ElasticJobParametersDB index
+  def remove(self, productionID):
+    """ Remove docs per productionID. Basically here only for tests, right now
 
     :param self: self reference
-    :param str value: data to be inserted
+    :param int productionID: production ID
 
-    :returns: S_OK/S_ERROR as result of indexing
+    :return: S_OK/S_ERROR
     """
 
-    self.log.debug('Inserting data in %s:%s' % (self.indexName, data))
+    self.log.debug('ElasticMCStats.get: Removing documents of production %s' % productionID)
 
-    result = self.index(self.indexName,
-                        body=data,
-                        docID=data['ProductionID'] + '_' + data['JobID'])
-    if not result['OK']:
-      self.log.error("ERROR: Couldn't insert data", result['Message'])
-    return result
+    """ the following should be equivalent to
+    {
+      "query": {
+        "bool": {
+          "filter": {  # no scoring
+            "term": {"ProductionID": productionID}  # term level query, does not pass through the analyzer
+          }
+        }
+      }
+    }
+    """
+
+    s = self.dslSearch.query("bool", filter=self._Q("term", ProductionID=productionID))  # pylint: disable=no-member
+    try:
+      s.delete()
+    except Exception as e:
+      self.log.exception()
+      return S_ERROR(repr(e))
+
+    return S_OK()
