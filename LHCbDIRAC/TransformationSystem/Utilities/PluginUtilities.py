@@ -1429,7 +1429,7 @@ def getRemovalPlugins():
 
 def getReplicationPlugins():
   """Returns list of replication plugins."""
-  return ("LHCbDSTBroadcast", "LHCbMCDSTBroadcastRandom",
+  return ("LHCbDSTBroadcast", "LHCbMCDSTBroadcastRandom", "LHCbWGBroadcastRandom",
           "ArchiveDataset", "ReplicateDataset",
           'RAWReplication', "ReplicateToRunDestination",
           'FakeReplication', 'ReplicateToLocalSE', 'ReplicateWithAncestors',
