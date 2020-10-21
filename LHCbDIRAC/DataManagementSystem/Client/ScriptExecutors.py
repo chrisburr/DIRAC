@@ -1184,12 +1184,12 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
         if res['OK']:
           try:
             site = res['Value'][0]
+            if site not in repSites:
+              repSites[site] = [0, 0]
+            repSites[site][0] += repSEs[se][0]
+            repSites[site][1] += repSEs[se][1]
           except IndexError:
-            continue
-          if site not in repSites:
-            repSites[site] = [0, 0]
-          repSites[site][0] += repSEs[se][0]
-          repSites[site][1] += repSEs[se][1]
+            pass
       string = "%16s: %s files" % (se, repSEs[se][0])
       if getSize:
         size, sizeUnit = scaleSize(repSEs[se][1])
