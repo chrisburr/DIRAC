@@ -14,8 +14,6 @@ import unittest
 
 import LHCbDIRAC.ResourceStatusSystem.Policy.Configurations as moduleTested
 
-from types import NoneType
-
 __RCSID__ = "$Id$"
 
 ################################################################################
