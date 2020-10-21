@@ -118,7 +118,8 @@ class ConsistencyChecksSuccess(UtilitiesTestCase):
   def test_getDescendants(self):
     self.cc.fileType = ['SEMILEPTONIC.DST', 'LOG', 'RAW']
     res = self.cc.getDescendants(['aa.raw'])
-    filesWithDescendants, filesWithoutDescendants, filesWitMultipleDescendants, descendants, inFCNotInBK, inBKNotInFC, removedFiles, inFailover = res
+    filesWithDescendants, filesWithoutDescendants, filesWitMultipleDescendants, \
+        descendants, inFCNotInBK, inBKNotInFC, removedFiles, inFailover = res
     self.assertEqual(filesWithDescendants, {'aa.raw': ['bb.log', 'bb.raw']})
     self.assertEqual(filesWithoutDescendants, {})
     self.assertEqual(filesWitMultipleDescendants, {})

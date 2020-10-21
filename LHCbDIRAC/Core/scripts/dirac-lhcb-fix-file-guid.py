@@ -100,7 +100,7 @@ if not replicaInfo['OK'] or replicaInfo['Value']['Failed']:
   leave('Could not get replica information for %s' % oldLFN, replicaInfo, exitCode=2)
 
 replicas = replicaInfo['Value']['Successful'][oldLFN]
-storageElements = replicas.keys()
+storageElements = list(replicas)
 if not storageElements:
   leave('Could not determine SEs for replicas of %s' % oldLFN, exitCode=2)
 

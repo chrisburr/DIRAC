@@ -263,8 +263,8 @@ class PluginsUtilitiesSuccess(ClientTestCase):
 
     # no files, nothing happens
     #     tsMock = MagicMock()
-    #     tsMock.getTransformationFiles.return_value = S_OK( [] )
-    #     pu = PluginUtilities( transClient = tsMock, fc = self.fcMock, dataManager = MagicMock(), rmClient = MagicMock() )
+    #     tsMock.getTransformationFiles.return_value=S_OK( [] )
+    #     pu = PluginUtilities(transClient=tsMock, fc=self.fcMock, dataManager=MagicMock(), rmClient=MagicMock() )
     #     res = pu.getRAWAncestorsForRun( 1 )
     #     self.assertEqual( res, 0 )
 
@@ -274,7 +274,7 @@ class PluginsUtilitiesSuccess(ClientTestCase):
     #                                                         {'LFN':'this/is/not_here', 'Status':'MissingInFC'}] )
     #     bkMock = MagicMock()
     #     bkMock.getFileAncestors.return_value =
-    #     pu = PluginUtilities( transClient = tsMock, fc = self.fcMock, dataManager = MagicMock(), rmClient = MagicMock() )
+    #     pu = PluginUtilities( transClient=tsMock, fc=self.fcMock, dataManager=MagicMock(), rmClient=MagicMock() )
     #     res = pu.getRAWAncestorsForRun( 1 )
     #     self.assertEqual( res, 0 )
     pass

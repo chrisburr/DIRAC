@@ -170,7 +170,7 @@ def execute():
         gLogger.fatal("Error getting ancestor files...")
         DIRAC.exit(1)
       lfnList = [anc['FileName'] for ancestors in result['Value']['Successful'].values()
-                 for anc in ancestors] + result['Value']['Successful'].keys()
+                 for anc in ancestors] + list(result['Value']['Successful'])
 
     from DIRAC.Interfaces.API.Dirac import Dirac
     if not verbose:

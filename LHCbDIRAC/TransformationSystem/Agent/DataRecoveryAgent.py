@@ -305,7 +305,7 @@ class DataRecoveryAgent(AgentModule):
   def __removePendingRequestsJobs(self, jobFileDict):
     """Before doing anything check that no outstanding requests are pending for
     the set of WMS jobIDs."""
-    jobs = jobFileDict.keys()
+    jobs = list(jobFileDict)
 
     level = self.reqClient.log.getLevel()
     self.reqClient.log.setLevel('ERROR')

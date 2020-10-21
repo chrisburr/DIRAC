@@ -32,7 +32,7 @@ def removeFile(lfns):
   failed = res.get('Value', {}).get('Failed', lfns)
   if res['OK'] and success:
     seLfns = {}
-    removeFiles = success.keys()
+    removeFiles = list(success)
     for lfn in success:
       for se in success[lfn]:
         if not se.endswith('ARCHIVE'):

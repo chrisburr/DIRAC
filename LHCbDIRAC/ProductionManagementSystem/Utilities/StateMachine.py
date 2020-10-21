@@ -32,7 +32,7 @@ class LHCbStateMachine(StateMachine):
 
     if candidateState is None:
       self.state = candidateState
-    elif candidateState in self.states.keys():
+    elif candidateState in self.states:
       if not self.states[self.state].stateMap:
         gLogger.warn("Final state, won't move")
         return S_OK(self.state)
