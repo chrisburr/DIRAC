@@ -80,7 +80,7 @@ class RemoveInputData(ModuleBase):
           failureDict = result['Value']['Failed']
           if failureDict:
             self.log.info('Not all files were successfully removed, see "LFN : reason" below\n%s' % (failureDict))
-          failover = failureDict.keys()
+          failover = list(failureDict)
       except KeyError:
         self.log.error('Setting files for removal request to be the input data: %s' % self.inputDataList)
         failover = self.inputDataList

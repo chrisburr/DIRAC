@@ -176,7 +176,7 @@ class UserJobFinalization(ModuleBase):
 
       # At this point can exit and see exactly what the module will upload
       if not self._enableModule():
-        self.log.info("Module disabled would have attempted to upload the files %s" % ', '.join(final.keys()))
+        self.log.info("Module disabled would have attempted to upload the files %s" % ', '.join(final))
         for fileName, metadata in final.items():
           self.log.info('--------%s--------' % fileName)
           for n, v in metadata.items():

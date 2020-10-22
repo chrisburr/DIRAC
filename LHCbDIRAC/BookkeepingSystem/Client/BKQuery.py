@@ -894,5 +894,5 @@ class BKQuery():
     for pName in ('/Real Data', '/'):
       if pName in processingPasses:
         processingPasses.pop(pName)
-    # print "End", initialPP, [( key, processingPasses[key] ) for key in sorted( processingPasses.keys() )]
+    # print "End", initialPP, [(key, processingPasses[key]) for key in sorted(list(processingPasses))]
     return processingPasses

@@ -42,7 +42,7 @@ for localFile in files:
   elif localFile.startswith('/lhcb'):
     res = dirac.getReplicas(localFile, active=True, preferDisk=True)
     if res['OK'] and localFile in res['Value']['Successful']:
-      ses = res['Value']['Successful'][localFile].keys()
+      ses = list(res['Value']['Successful'][localFile])
       for se in ses:
         res = dirac.getAccessURL(localFile, se, protocol=['root', 'xroot'])
         if res['OK'] and localFile in res['Value']['Successful']:
@@ -54,7 +54,7 @@ for localFile in files:
   else:
     nonExisting.append(localFile)
 
-fileGUIDs = getRootFileGUIDs(existFiles.keys())
+fileGUIDs = getRootFileGUIDs(list(existFiles))
 for status in ('Successful', 'Failed'):
   for file in fileGUIDs.get('Value', {}).get(status, {}):
     fileGUIDs['Value'][status][existFiles.get(file, file)] = fileGUIDs['Value'][status].pop(file)

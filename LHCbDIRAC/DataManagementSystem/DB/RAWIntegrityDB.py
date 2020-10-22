@@ -92,7 +92,7 @@ class RAWIntegrityDB(DB):
     if res['Value'] == 0:
       res['Value'] = 'No tables created'
     else:
-      res['Value'] = 'Tables created: %s' % (','.join(tables.keys()))
+      res['Value'] = 'Tables created: %s' % (','.join(list(tables)))
 
       # Create the initial value
       if 'LastMonitor' in tables:
@@ -136,7 +136,7 @@ class RAWIntegrityDB(DB):
           }
         gLogger.info(
             "RAWIntegrityDB.getActiveFiles: Obtained %s files awaiting migration from database." %
-            len(fileDict.keys()))
+            len(fileDict))
         return S_OK(fileDict)
     except Exception as x:
       errStr = "RAWIntegrityDB.getActiveFiles: Exception while getting files from database."
@@ -177,7 +177,7 @@ class RAWIntegrityDB(DB):
         }
       gLogger.info(
           "RAWIntegrityDB.getActiveFiles: Obtained %s files awaiting migration from database." %
-          len(fileDict.keys()))
+          len(fileDict))
       return S_OK(fileDict)
     except Exception as x:
       errStr = "RAWIntegrityDB.getActiveFiles: Exception while getting files from database."

@@ -67,9 +67,9 @@ class GridSubmissionTestCase(unittest.TestCase):
       exit(1)
 
     replicas = res['Value']['Successful']
-    if replicas['/lhcb/user/f/fstagni/test/testInputFile.txt'].keys() != ['CERN-USER', 'IN2P3-USER']:
+    if list(replicas['/lhcb/user/f/fstagni/test/testInputFile.txt']) != ['CERN-USER', 'IN2P3-USER']:
       print "/lhcb/user/f/fstagni/test/testInputFile.txt locations are not correct"
-    if replicas['/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt'].keys() != ['CERN-USER']:
+    if list(replicas['/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt']) != ['CERN-USER']:
       print "/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt locations are not correct"
 
   def tearDown(self):

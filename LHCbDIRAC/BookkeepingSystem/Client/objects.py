@@ -85,10 +85,10 @@ class odict(UserDict):
       self._keys.append(key)
 
   #############################################################################
-  def update(self, dict):
+  def update(self, dictIn):
     """update."""
-    UserDict.update(self, dict)
-    for key in dict.keys():
+    UserDict.update(self, dictIn)
+    for key in list(dictIn):
       if key not in self._keys:
         self._keys.append(key)
 

@@ -110,7 +110,7 @@ class Production(object):
     parameter calls LHCbJob.setparameterName(value)
     """
 
-    for parameter in parametersDict.keys():
+    for parameter in parametersDict:
       getattr(self.LHCbJob, 'set' + parameter)(parametersDict[parameter])
 
   #############################################################################
@@ -247,7 +247,7 @@ class Production(object):
     # starting real stuff
     self.LHCbJob.stepCount += 1
 
-    if 'Gaudi_App_Step' not in self.LHCbJob.workflow.step_definitions.keys():
+    if 'Gaudi_App_Step' not in self.LHCbJob.workflow.step_definitions:
 
       gLogger.debug("Determining the modules of the steps (modulesList = %s)" % modulesList)
       if modulesList is None:  # we assume it's a standard list of modules for Gaudi steps
@@ -381,7 +381,7 @@ class Production(object):
     if modulesList is None:
       modulesList = ['UploadOutputData', 'UploadLogFile', 'UploadMC', 'FailoverRequest']
 
-    if 'Job_Finalization' not in self.LHCbJob.workflow.step_definitions.keys():
+    if 'Job_Finalization' not in self.LHCbJob.workflow.step_definitions:
 
       jobFinalizationStepDef = getStepDefinition('Job_Finalization',
                                                  importLine='LHCbDIRAC.Workflow.Modules',
@@ -489,7 +489,7 @@ class Production(object):
     parameters['OutputDirectories'] = outputDirectories
 
     # Now for the steps of the workflow
-    stepKeys = sorted(bkPassInfo.keys())
+    stepKeys = sorted(bkPassInfo)
     for step in stepKeys:
       info.append('====> %s %s %s' % (bkPassInfo[step]['ApplicationName'],
                                       bkPassInfo[step]['ApplicationVersion'],
@@ -669,7 +669,7 @@ class Production(object):
         pass
 
     stepList = []
-    stepKeys = sorted(bkSteps.keys())
+    stepKeys = sorted(bkSteps)
     # The BK needs an ordered list of steps
     for step in stepKeys:
       stepID = bkSteps[step]['BKStepID']

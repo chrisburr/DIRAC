@@ -67,7 +67,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
         return res
       catalogMetadata.update(res['Value'])
     # Get the replicas for the files found to exist in the catalog
-    res = self.cc._getCatalogReplicas(catalogMetadata.keys())
+    res = self.cc._getCatalogReplicas(list(catalogMetadata))
     if not res['OK']:
       return res
     replicas, zeroReplicaFiles = res['Value']
@@ -85,7 +85,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
       gLogger.error('Failed to get catalog metadata', res['Message'])
       return res
     allMetadata = res['Value']['Successful']
-    existingCatalogFiles = allMetadata.keys()
+    existingCatalogFiles = list(allMetadata)
     if existingCatalogFiles:
       self._reportProblematicFiles(existingCatalogFiles, 'BKReplicaNo')
     gLogger.info('Checking the catalog existence of files complete')
@@ -104,7 +104,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     badBKFileSize = []
     badBKGUID = []
     allMetadata = res['Value']
-    gLogger.info("Obtained at total of %s files" % len(allMetadata.keys()))
+    gLogger.info("Obtained at total of %s files" % len(allMetadata))
     totalSize = 0
     for lfn, bkMetadata in allMetadata.iteritems():
       if bkMetadata['FileType'] != 'LOG':
@@ -181,7 +181,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     if zeroSizeFiles:
       self._reportProblematicFiles(zeroSizeFiles, 'LFNZeroSize')
 
-    res = self.cc._getCatalogReplicas(catalogMetadata.keys())
+    res = self.cc._getCatalogReplicas(list(catalogMetadata))
     if not res['OK']:
       return res
     replicas, _zeroReplicaFiles = res['Value']

@@ -479,7 +479,7 @@ class TransformationDB(DIRACTransformationDB):
     if not res['OK']:
       return res
     connection = res['Value']['Connection']
-    res = self.__getFileIDsForLfns(lfnsDict.keys(), connection=connection)
+    res = self.__getFileIDsForLfns(list(lfnsDict), connection=connection)
     if not res['OK']:
       return res
     fileIDs = res['Value'][0]

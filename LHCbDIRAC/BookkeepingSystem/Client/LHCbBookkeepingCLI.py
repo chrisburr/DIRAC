@@ -222,7 +222,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
 
     if args.with_fileCatalog:
       site = args.with_fileCatalog
-      lfnList = lfns.keys()
+      lfnList = list(lfns)
       totalFiles = len(lfnList)
       ff = args.filename.split('.')
       catalog = ff[0] + '.xml'

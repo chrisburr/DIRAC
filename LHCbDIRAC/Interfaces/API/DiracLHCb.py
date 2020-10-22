@@ -255,7 +255,7 @@ class DiracLHCb(Dirac):
         return result
       self.log.info('Selected %s files for run %s' % (len(result['Value']), run))
       if result['Value']['LFNs']:
-        selectedData += result['Value']['LFNs'].keys()
+        selectedData += list(result['Value']['LFNs'])
 
     self.log.info('Total files selected = %s' % (len(selectedData)))
     return S_OK(selectedData)
@@ -528,7 +528,7 @@ class DiracLHCb(Dirac):
 
     if problematicFields:
       msg = 'The following fields are not valid for a BK query: %s\nValid fields include: %s' % \
-            (', '.join(problematicFields), ', '.join(self._bkQueryTemplate.keys()))
+            (', '.join(problematicFields), ', '.join(self._bkQueryTemplate))
       return S_ERROR(msg)
 
     for name, value in bkQueryDict.items():

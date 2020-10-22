@@ -82,7 +82,7 @@ class LHCbOnlineStorage(StorageBase):
     failed = {}
     # Here we are sure of the unicity of the basename since it is for raw data only
     filesToUrls = dict((os.path.basename(f), f) for f in urls)
-    filenames = filesToUrls.keys()
+    filenames = list(filesToUrls)
 
     for filenameChunck in breakListIntoChunks(filenames, 100):
 
