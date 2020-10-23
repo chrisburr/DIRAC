@@ -38,9 +38,6 @@ class RegressionTestCase(IntegrationTest):
 
     self.diracLHCb = DiracLHCb()
 
-#   def tearDown( self ):
-#     pass
-
 
 class MCSuccess(RegressionTestCase):
   def test_Regression_Production(self):
@@ -64,6 +61,7 @@ class MCSuccess(RegressionTestCase):
 #############################################################################
 # Test Suite run
 #############################################################################
+
 
 if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegressionTestCase)

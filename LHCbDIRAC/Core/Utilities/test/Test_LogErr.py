@@ -10,160 +10,122 @@
 ###############################################################################
 # Test for LogErr.py
 
-import unittest
 import json
 import ast
 import os
+import pytest
 
+# sut
 from LHCbDIRAC.Core.Utilities.LogErr import createJSONtable
 
 
-class LogErrTestCase(unittest.TestCase):
-  def __init__(self, *args, **kwargs):
-    super(LogErrTestCase, self).__init__(*args, **kwargs)
+# Define test data
+jsonDataMultiple = [
+    {
+        'G4Exception': [
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''}
+        ]
+    },
+    {
+        'ERROR Gap not found!': [
+            {'runnr': '  Run 133703', 'eventnr': 'Evt 29'}
+        ]
+    },
+    {
+        'The signal decay mode is not defined in the main DECAY.DEC table': [
+            {'runnr': '  Run 133703', 'eventnr': 'Evt 29'},
+            {'runnr': '  Run 123', 'eventnr': 'Evt 30'}
+        ]
+    },
+    {
+        'G4Exception : StuckTrack': [
+            {'runnr': '  Run 133703', 'eventnr': 'Evt 29'},
+            {'runnr': '  Run 123', 'eventnr': 'Evt 30'},
+            {'runnr': '  Run 1234', 'eventnr': 'Evt 31'}
+        ]
+    },
+    {
+        'G4Exception : 001': [
+            {'runnr': '  Run 133703', 'eventnr': 'Evt 29'},
+            {'runnr': '  Run 123', 'eventnr': 'Evt 30'},
+            {'runnr': '  Run 1234', 'eventnr': 'Evt 31'}
+        ]
+    }
+]
 
-  def setUp(self):
-
-    # Define test data
-    self.jsonDataMultiple = [
-        {
-            'G4Exception': [
-                {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                        'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}]}, {
-            'ERROR Gap not found!': [
-                {
-                    'runnr': '  Run 133703', 'eventnr': 'Evt 29'}]}, {
-            'The signal decay mode is not defined in the main DECAY.DEC table': [
-                {
-                    'runnr': '  Run 133703', 'eventnr': 'Evt 29'}, {
-                    'runnr': '  Run 123', 'eventnr': 'Evt 30'}]}, {
-            'G4Exception : StuckTrack': [
-                {
-                    'runnr': '  Run 133703', 'eventnr': 'Evt 29'}, {
-                    'runnr': '  Run 123', 'eventnr': 'Evt 30'}, {
-                    'runnr': '  Run 1234', 'eventnr': 'Evt 31'}]}, {
-            'G4Exception : 001': [
-                {
-                    'runnr': '  Run 133703', 'eventnr': 'Evt 29'}, {
-                    'runnr': '  Run 123', 'eventnr': 'Evt 30'}, {
-                    'runnr': '  Run 1234', 'eventnr': 'Evt 31'}]}]
-    self.jsonDataSingle = [
-        {
-            'G4Exception : InvalidSetup': [
-                {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}, {
-                        'runnr': '', 'eventnr': ''}, {
-                    'runnr': '', 'eventnr': ''}]}]
-    self.jsonDataEmpty = []
-
-    # Define name of output file
-    self.name = 'test_createJSONtable.json'
-
-  def tearDown(self):
-
-    # Remove file
-    os.remove(self.name)
-
-    self.jsonDataMultiple = None
-    self.jsonDataSingle = None
-    self.jsonDataEmpty = None
-
-    self.name = None
+expectedMultiple = json.dumps(
+    {
+        "ERROR Gap not found!": 1,
+        "wmsID": "5",
+        "ProductionID": "4",
+        "JobID": "3",
+        "G4Exception": 10,
+        "The signal decay mode is not defined in the main DECAY.DEC table": 2,
+        "G4Exception : StuckTrack": 3,
+        "G4Exception : 001": 3
+    }, indent=2)
 
 
-class TestLogErr(LogErrTestCase):
-  def test_createJsonMultiple(self):
+jsonDataSingle = [
+    {
+        'G4Exception : InvalidSetup': [
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''},
+            {'runnr': '', 'eventnr': ''}
+        ]
+    }
+]
 
-    expected = json.dumps(
-        {
-            "Errors": {
-                "ERROR Gap not found!": 1,
-                "ID": {
-                    "wmsID": "5",
-                    "ProductionID": "4",
-                    "JobID": "3"
-                },
-                "G4Exception": 10,
-                "The signal decay mode is not defined in the main DECAY.DEC table": 2,
-                "G4Exception : StuckTrack": 3,
-                "G4Exception : 001": 3
-            }
-        }, indent=2)
+expectedSingle = json.dumps(
+    {
+        "G4Exception : InvalidSetup": 10,
+        "wmsID": "5",
+        "ProductionID": "4",
+        "JobID": "3"
+    }, indent=2)
 
-    createJSONtable(self.jsonDataMultiple, self.name, '3', '4', '5')
-    with open(self.name, 'r') as f:
-      fileOutput = f.read()
+jsonDataEmpty = []
 
-    # Convert to dict()
-    fileOutput = ast.literal_eval(fileOutput)
-    expected = ast.literal_eval(expected)
-
-    self.assertEqual(fileOutput, expected)
-
-  def test_createJsonSingle(self):
-
-    expected = json.dumps(
-        {
-            "Errors": {
-                "G4Exception : InvalidSetup": 10,
-                "ID": {
-                    "wmsID": "5",
-                    "ProductionID": "4",
-                    "JobID": "3"
-                }
-            }
-        }, indent=2)
-
-    createJSONtable(self.jsonDataSingle, self.name, '3', '4', '5')
-    with open(self.name, 'r') as f:
-      fileOutput = f.read()
-
-    fileOutput = ast.literal_eval(fileOutput)
-    expected = ast.literal_eval(expected)
-
-    self.assertEqual(fileOutput, expected)
-
-  def test_createJsonEmpty(self):
-
-    expected = json.dumps(
-        {
-            "Errors": {
-                "ID": {
-                    "wmsID": "5",
-                    "ProductionID": "4",
-                    "JobID": "3"
-                }
-            }
-        }, indent=2)
-
-    createJSONtable(self.jsonDataEmpty, self.name, '3', '4', '5')
-    with open(self.name, 'r') as f:
-      fileOutput = f.read()
-
-    # Convert to dict()
-    fileOutput = ast.literal_eval(fileOutput)
-    expected = ast.literal_eval(expected)
-
-    self.assertEqual(fileOutput, expected)
+expectedEmpty = json.dumps(
+    {
+        "wmsID": "5",
+        "ProductionID": "4",
+        "JobID": "3"
+    }, indent=2)
 
 
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(LogErrTestCase)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(TestLogErr))
-  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+name = 'test_createJSONtable.json'
+
+
+@pytest.mark.parametrize("input, expected", [
+    (jsonDataMultiple, expectedMultiple),
+    (jsonDataSingle, expectedSingle),
+    (jsonDataEmpty, expectedEmpty)
+])
+def test_createJson(input, expected):
+  createJSONtable(input, name, '3', '4', '5')
+  with open(name, 'r') as f:
+    fileOutput = f.read()
+
+  # Convert to dict()
+  fileOutput = ast.literal_eval(fileOutput)
+  expected = ast.literal_eval(expected)
+
+  assert fileOutput == expected
+  os.remove(name)

@@ -14,8 +14,6 @@ import unittest
 
 import LHCbDIRAC.ResourceStatusSystem.Policy.Configurations as moduleTested
 
-from types import NoneType
-
 __RCSID__ = "$Id$"
 
 ################################################################################
@@ -46,7 +44,7 @@ class Configurations_Success(Configurations_TestCase):
 
     for policyName, policy in policies.items():
       print policyName
-      self.assertEqual(policyKeys, set(policy.keys()))
+      self.assertEqual(policyKeys, set(policy))
       self.assertTrue(isinstance(policy['description'], str))
       self.assertTrue(isinstance(policy['module'], str))
       self.assertTrue(isinstance(policy['command'], (tuple, None)))

@@ -82,7 +82,7 @@ class InputDataResolution (DIRACInputDataResolution):
   def _addPfnType(self, resolvedData):
     """Add the pfn type to the lfn list in input."""
 
-    typeVersions = self.bkkClient.getFileTypeVersion(resolvedData.keys())
+    typeVersions = self.bkkClient.getFileTypeVersion(list(resolvedData))
     if not typeVersions['OK']:
       return typeVersions
     typeVersions = typeVersions['Value']

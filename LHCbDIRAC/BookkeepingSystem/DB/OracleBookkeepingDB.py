@@ -2031,7 +2031,7 @@ class OracleBookkeepingDB(object):
       logicalFileNames['Failed'] += failed
       logicalFileNames['NotProcessed'] += notprocessed
       if files:
-        ancestorList[fileName] = files.keys()
+        ancestorList[fileName] = list(files)
         filesWithMetadata[fileName] = files
     logicalFileNames['Successful'] = ancestorList
     logicalFileNames['WithMetadata'] = filesWithMetadata
@@ -2409,7 +2409,7 @@ class OracleBookkeepingDB(object):
         if not retVal['OK']:
           result = retVal
         else:
-          failed['Failed'] = failed.keys()
+          failed['Failed'] = list(failed)
           failed['Successful'] = fileNames
           result = S_OK(failed)
       else:  # when no files are exists
@@ -5443,7 +5443,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       if not retVal['OK']:
         failed.append({evtId: {'Error': retVal['Message'], 'EvtentType': evt}})
 
-    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(i.keys()[0] for i in failed))
+    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(list(i)[0] for i in failed))
     return S_OK({'Failed': failed, 'Successful': successful})
 
   #############################################################################
@@ -5469,7 +5469,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       if not retVal['OK']:
         failed.append({evtId: {'Error': retVal['Message'], 'EvtentType': evt}})
 
-    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(i.keys()[0] for i in failed))
+    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(list(i)[0] for i in failed))
     return S_OK({'Failed': failed, 'Successful': successful})
 
   def getRunConfigurationsAndDataTakingCondition(self, runnumber):
@@ -5560,5 +5560,5 @@ and files.qualityid= dataquality.qualityid" % lfn
     for record in retVal['Value']:
       result[record[0]] = dict(zip(fileParams, record[1:]))
 
-    failed = list(set(lfns) - set(result.keys()))
+    failed = list(set(lfns) - set(result))
     return S_OK({'Successful': result, 'Failed': failed})

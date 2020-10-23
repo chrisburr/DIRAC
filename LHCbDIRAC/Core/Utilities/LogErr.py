@@ -46,7 +46,7 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
     return res
   logString = res['Value']
 
-  reversedKeys = sorted(dictG4Errors.keys(), reverse=True)
+  reversedKeys = sorted(dictG4Errors, reverse=True)
 
   for errorString in reversedKeys:
     dictCountDumpErrorString = dict()
@@ -161,18 +161,14 @@ def createJSONtable(dictTotal, name, jobID, prodID, wmsID):
   :param str wmsID: the wmsID of the log
   """
   result = {}
-  temp = {}
-  ids = {}
-  ids['JobID'] = jobID
-  ids['ProductionID'] = prodID
-  ids['wmsID'] = wmsID
+  result['JobID'] = jobID
+  result['ProductionID'] = prodID
+  result['wmsID'] = wmsID
 
   with open(name, 'w') as output:
     for error in dictTotal:
       for key, value in error.items():
-        temp[key] = len(value)
-    temp['ID'] = ids
-    result['Errors'] = temp
+        result[key] = len(value)
     json.dump(result, output, indent=2)
 
 #####################################################
@@ -195,15 +191,15 @@ def createHTMLtable(dictG4ErrorsCount, name):
     f.write("<td>DUMP OF ERROR MESSAGES</td>")
     f.write("</tr>")
 
-    orderedKeys = sorted(dictG4ErrorsCount.keys())
+    orderedKeys = sorted(dictG4ErrorsCount)
     for errString in orderedKeys:
       if dictG4ErrorsCount[errString] != {}:
         f.write("<tr>")
         f.write("<td>" + errString + "</td>")
-        f.write("<td>" + str(len(dictG4ErrorsCount[errString].keys())) + "</td>")
+        f.write("<td>" + str(len(dictG4ErrorsCount[errString])) + "</td>")
         f.write("<td>")
         f.write("<lu>")
-        for y in dictG4ErrorsCount[errString].keys():
+        for y in dictG4ErrorsCount[errString]:
           f.write("<li>")
           f.write(" " + dictG4ErrorsCount[errString][y] + " ")
         f.write("</lu>")

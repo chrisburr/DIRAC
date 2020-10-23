@@ -186,7 +186,7 @@ if __name__ == "__main__":
       notInFC = res['Value']['Failed']
       if notInFC:
         # Check if files has replica flag in the FC, If not ignore the problem
-        res = bk.getFileMetadata(notInFC.keys())
+        res = bk.getFileMetadata(list(notInFC))
         if not res['OK']:
           gLogger.always('Error getting BK metadata for %d files' % len(notInFC), res['Message'])
           continue
@@ -195,7 +195,7 @@ if __name__ == "__main__":
         if notInFC:
           pbFound = True
           prettyMsg('not in the FC but in BK', notInFC)
-      notFoundReplicas = replicas.keys()
+      notFoundReplicas = list(replicas)
       missingReplicas = []
       accessibleReplicas = []
       seUsed = []

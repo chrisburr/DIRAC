@@ -10,14 +10,16 @@
 ###############################################################################
 """Module holding MCStatsClient class."""
 
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+
 from DIRAC.Core.Base.Client import Client, createClient
 
 
 @createClient('ProductionManagement/MCStatsElasticDB')
 class MCStatsClient(Client):
-  """Client for MCStatsElasticDB.
-
-  Can be specialized client by setting MCStatsClient().indexName
+  """Client for MCStatsElasticDB
   """
 
   def __init__(self, **kwargs):
@@ -26,28 +28,28 @@ class MCStatsClient(Client):
     super(MCStatsClient, self).__init__(**kwargs)
     self.setServer('ProductionManagement/MCStatsElasticDB')
 
-    self.indexName = 'lhcb-mclogerrors'
-
   def set(self, typeName, data):
     """set some data in a certain type.
 
-    :params str typeName: type name (e.g. 'LogErr')
+    :params str typeName: type name (e.g. 'gaussErrors')
     :params dict data: dictionary inserted
 
     :returns: S_OK/S_ERROR
     """
-    return self._getRPC().set(self.indexName, typeName, data)
+    return self._getRPC().set(typeName, data)
 
-  def get(self, jobID, mcType):
+  def get(self, typeName, productionID):
     """get per Job ID.
 
-    :params int jobID: WMS Job ID
+    :params str typeName: type name (e.g. 'gaussErrors')
+    :params int productionID: production ID
     """
-    return self._getRPC().get(self.indexName, jobID, mcType)
+    return self._getRPC().get(typeName, productionID)
 
-  def remove(self, jobID, mcType):
-    """remove data for JobID.
+  def remove(self, typeName, productionID):
+    """remove data for productionID.
 
-    :params int jobID: WMS Job ID
+    :params str typeName: type name (e.g. 'gaussErrors')
+    :params int productionID: production ID
     """
-    return self._getRPC().remove(self.indexName, jobID, mcType)
+    return self._getRPC().remove(typeName, productionID)

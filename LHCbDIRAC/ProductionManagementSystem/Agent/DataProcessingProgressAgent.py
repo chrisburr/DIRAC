@@ -94,7 +94,7 @@ class DataProcessingProgressAgent(AgentModule):
   def execute(self):
     self.log.info("Now getting progress of processing (iteration %d)..." % self.iterationNumber)
 
-    for reportName in sorted(self.progressReports.keys()):
+    for reportName in sorted(self.progressReports):
       htmlTable = HTMLProgressTable(reportName.replace('.', '/'))
       reportLen = len(reportName) + 4
       self.log.info("\n%s\n* %s *\n%s" % (reportLen * '*', reportName, reportLen * '*'))

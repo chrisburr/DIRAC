@@ -256,7 +256,7 @@ class RunDBInterfaceHandler(RequestHandler):
     # Now sum the number of events and files in the run
     if runCounters:
       success, result = server.getFilesDirac(
-          fields=allFileFields, runID=runCounters.keys(), orderBy='runID', no=sys.maxsize)
+          fields=allFileFields, runID=list(runCounters), orderBy='runID', no=sys.maxsize)
       if not success:
         return S_ERROR(result)
       for item in result:
@@ -271,7 +271,7 @@ class RunDBInterfaceHandler(RequestHandler):
     totalFiles = 0
     totalEvents = 0
     totalSize = 0
-    for runID in runCounters.keys():
+    for runID in runCounters:
       totalFiles += runCounters[runID]['Files']
       totalEvents += runCounters[runID]['Events']
       totalSize += runCounters[runID]['Size']

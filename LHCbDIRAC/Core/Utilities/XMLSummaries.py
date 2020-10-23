@@ -456,8 +456,51 @@ class XMLSummary(object):
 ################################################################################
 
   def xmltojson(self):
-    ''' The main function that takes the name of the XMLsummary file or the path to it
-    as an entry parameter and creates a JSON file with the same name in the current directory '''
+    """ The main function that takes the name of the XMLsummary file or the path to it
+        as an entry parameter and creates a JSON file with the same name in the current directory
+
+        We need to keep those that have names like "MCXXXPacker/# PackedData",
+        e.g. "MCVeloHitPacker/# PackedData"
+
+        We have them for the main event and for additional events:
+        they appear with the same name but with PrevPrev, Prev, Next, NextNext added.
+        I think those could be dropped as not all production have all of them.
+
+        We also should keep the counters with "UnpackMCXXX/# UnPackedData"
+        with the same rules and the 'packer' above.
+
+        All counters that start with the name starting with "Check" (e.g. CheckPuVetoHits)
+        there are 3 sets for each 'Diff/Original/Unpacked'.
+        If at all possible we should only keep their values if Diff is different from zero.
+        Again only for the set that does not have PrevPrev, Prev, Next, NextNext in their names.
+
+        There are also counters with "Monitor" in their name, those I would keep:
+                <counter name="TTHitMonitor/DeltaRay">736</counter>
+                <counter name="TTHitMonitor/betaGamma">9169899</counter>
+                <counter name="TTHitMonitor/numberHits">8013</counter>
+                <counter name="ITHitMonitor/DeltaRay">404</counter>
+                <counter name="ITHitMonitor/betaGamma">36564630</counter>
+                <counter name="ITHitMonitor/numberHits">7467</counter>
+                <counter name="OTHitMonitor/DeltaRay">1456</counter>
+                <counter name="OTHitMonitor/betaGamma">37215968</counter>
+                <counter name="OTHitMonitor/numberHits">21650</counter>
+
+        And finally I would keep all of the counters for memory. All productions will have 4 of them:
+            <counter name="MainEventGaussSim.MainEventGaussSimMemory/Delta Memory/MB">702</counter>
+            <counter name="MainEventGaussSim.MainEventGaussSimMemory/Total Memory/MB">8344</counter>
+            <counter name="GaussGen.GaussGenMemory/Delta Memory/MB">798</counter>
+            <counter name="GaussGen.GaussGenMemory/Total Memory/MB">8248</counter>
+
+        while some productions would also have extra with PrevPrev, Prev, Next, NextNext
+        in their names or a subset of them.
+        If possible it would be nice for those productions to keep them but we can do without
+        if it causes problem and it certainly not needed for the first round
+
+        I think if I sum up all mandatory counters I get
+
+        14 packers + 14 unpackers + 9 monitors
+        (FYI productions for the upgrade will come with different names) + 4 memory (possibly +20)
+    """
 
     jsonTemp = dict()
     jsonFin = dict()
@@ -509,6 +552,7 @@ class XMLSummary(object):
     return(dico)
 
 ################################################################################
+
 
 def analyseXMLSummary(xmlFileName=None, xf_o=None, log=None, inputsOnPartOK=False):
   """Analyse a XML summary file."""

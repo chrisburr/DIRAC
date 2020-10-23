@@ -77,7 +77,7 @@ for directory in sorted(directoryExists):
   catalogMetadata = {}
   catalogReplicas = {}
   for lfn in catalogDirMetadata:
-    # if not lfn in bk2catalogMetadata.keys():
+    # if not lfn in bk2catalogMetadata:
     catalogMetadata[lfn] = catalogDirMetadata[lfn]
     if lfn in catalogDirReplicas:
       catalogReplicas[lfn] = catalogDirReplicas[lfn]

@@ -305,7 +305,7 @@ if __name__ == "__main__":
       # bkQuery.setOption( 'ReplicaFlag', "ALL" )
       checkReplica = False
     bkQueryDict = bkQuery.getQueryDict()
-    if bkQueryDict.keys() in ([], ['Visible']):
+    if list(bkQueryDict) in ([], ['Visible']):
       print "No BK query was given..."
       Script.showHelp(exitCode=2)
 

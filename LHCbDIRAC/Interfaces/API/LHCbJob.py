@@ -959,7 +959,7 @@ class LHCbJob(Job):
         typeVersion = ''
 
       else:
-        self.log.verbose('Found file types %s for LFNs: %s' % (typeVersions.values(), typeVersions.keys()))
+        self.log.verbose('Found file types %s for LFNs: %s' % (typeVersions.values(), list(typeVersions)))
         typeVersionsList = list(set(typeVersions.values()))
         if len(typeVersionsList) == 1:
           typeVersion = typeVersionsList[0]
