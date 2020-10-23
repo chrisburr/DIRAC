@@ -47,7 +47,7 @@ Dear %s,
   If you plan on keep using this credentials, please upload a newer proxy to
   LHCbDIRAC by executing (from lxplus.cern.ch, for example):
 
-  $ lb-run -c best LHCbDIRAC/prod lhcb-proxy-init -g %s
+  $ lhcb-proxy-init -g %s
 
   If you have been issued different certificate, please make sure you have a
   proxy uploaded with that certificate.
