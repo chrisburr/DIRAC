@@ -15,7 +15,7 @@
     To run this test, follow the 4 steps below:
 
     1. Login on lxplus (new session, please)
-    2. lb-run LHCbDIRAC/prod -norc lhcb-proxy-init
+    2. lhcb-proxy-init
     3. put the following file in ~/.dirac.cfg
         DIRAC
         {
@@ -38,7 +38,7 @@
           CPUTimeLeft = 123456
         }
     4. edit this py file only in the part where it's written "EDIT HERE"
-    5. lb-run LHCbDIRAC/prod bash -norc
+    5. lb-dirac
     6. RUN the edited script using: python testStepsPriorToSubmission.py -ddd > LHCbDIRACLog.txt
 
     Once you're done, it'd better if you remove (or better rename) the ~/.dirac.cfg file.
