@@ -97,8 +97,8 @@ class UploadMC(ModuleBase):
             self.log.error(repr(ve))
             self.log.verbose("Exception loading the JSON file: content of %s follows" % fn)
             self.log.verbose(fd.read)
-
-            raise
+            # do not fail the job for this
+            # raise
       else:
         self.log.info("Gauss errors JSON file not found", fn)
 
@@ -122,8 +122,8 @@ class UploadMC(ModuleBase):
             self.log.error(repr(ve))
             self.log.verbose("Exception loading the JSON file: content of %s follows" % fn)
             self.log.verbose(fd.read)
-
-            raise
+            # do not fail the job for this
+            # raise
       else:
         self.log.info("Boole errors JSON file not found", fn)
 
@@ -159,7 +159,8 @@ class UploadMC(ModuleBase):
             self.log.error(repr(ve))
             self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
             self.log.verbose(JS.read())
-            raise
+            # do not fail the job for this
+            # raise
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
 
@@ -195,7 +196,8 @@ class UploadMC(ModuleBase):
             self.log.error(repr(ve))
             self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfile)
             self.log.verbose(JS.read())
-            raise
+            # do not fail the job for this
+            # raise
       else:
         self.log.info("XML GeneratorLog file not found", xmlfile)
 
@@ -226,7 +228,8 @@ class UploadMC(ModuleBase):
             self.log.error(repr(ve))
             self.log.verbose("Exception loading the JSON file: content of %s follows" % prmonFile)
             self.log.verbose(JS.read())
-            raise
+            # do not fail the job for this
+            # raise
       else:
         self.log.info("prmon JSON file not found", prmonFile)
 
