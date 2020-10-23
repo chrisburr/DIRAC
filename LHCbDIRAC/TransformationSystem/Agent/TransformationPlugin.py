@@ -812,16 +812,18 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return self._BySize()
 
   def _LHCbDSTBroadcast(self):
-    """This plug-in broadcasts files to one archive1SE, one archive2SE and
-    numberOfCopies secondarySEs All files for the same run have the same target
-    Usually for replication of real data (4 copies)"""
+    """This plug-in broadcasts files according to CS settings
+    to one archive1SE (if set), one archive2SE (if set) and <numberOfCopies> secondarySEs
+    One can force some mandatorySEs and exclude some SEs
+    All files for the same run have the same target
+    Usually for replication of real data (2 copies)"""
     archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
     archive2SEs = resolveSEGroup(self.util.getPluginParam('Archive2SEs', []))
     mandatorySEs = resolveSEGroup(self.util.getPluginParam('MandatorySEs', []))
     # In order to not have to change the SEGroups when excluding temporarily a site, add exclusion list...
     excludedSEs = resolveSEGroup(self.util.getPluginParam('ExcludedSEs', []))
     secondarySEs = list(set(resolveSEGroup(self.util.getPluginParam('SecondarySEs', []))) - set(excludedSEs))
-    numberOfCopies = self.util.getPluginParam('NumberOfReplicas', 4)
+    numberOfCopies = self.util.getPluginParam('NumberOfReplicas', 2)
 
     self.util.logInfo("Starting execution of plugin")
 
@@ -905,9 +907,16 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
     return S_OK(self.util.createTasks(storageElementGroups))
 
+  def _LHCbWGBroadcastRandom(self):
+    """ This plugin is specific for randomly broadcasting real data files that don't have a run number
+    It calls the MCDSTBroadcast plugin but should have different CS settings
+    """
+    return self._LHCbMCDSTBroadcastRandom()
+
   def _LHCbMCDSTBroadcastRandom(self):
-    """This plug-in broadcasts files to archive1, to archive2 and to random
-    (NumberOfReplicas) secondary SEs."""
+    """This plug-in broadcasts files to
+    one archive1 (if set), to one archive2 (if set) and to random
+    <NumberOfReplicas> secondary SEs."""
 
     self.util.logInfo("Starting execution of plugin")
     archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
@@ -916,7 +925,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     # In order to not have to change the SEGroups when excluding temporarily a site, add exclusion list...
     excludedSEs = resolveSEGroup(self.util.getPluginParam('ExcludedSEs', []))
     secondarySEs = list(set(resolveSEGroup(self.util.getPluginParam('SecondarySEs', []))) - set(excludedSEs))
-    numberOfCopies = self.util.getPluginParam('NumberOfReplicas', 3)
+    numberOfCopies = self.util.getPluginParam('NumberOfReplicas', 2)
     excludedFileTypes = self.util.getPluginParam('ExcludedFileTypes', ['GAUSSHIST', 'BRUNELHIST', 'DAVINCIHIST'])
 
     # We need at least all mandatory copies

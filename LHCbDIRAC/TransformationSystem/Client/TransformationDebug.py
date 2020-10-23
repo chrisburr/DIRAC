@@ -35,6 +35,7 @@ from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient, printOperation
 from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
+from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -1919,16 +1920,7 @@ class TransformationDebug(object):
               filesWithNoRunTable.append(fileLfn)
 
         # Files with run# == 0
-        transWithRun = self.transType != 'Removal' and \
-            self.transPlugin not in ('LHCbStandard',
-                                     'ReplicateDataset',
-                                     'ArchiveDataset',
-                                     'LHCbMCDSTBroadcastRandom',
-                                     'ReplicateToLocalSE',
-                                     'ReplicateWithAncestors',
-                                     'BySize',
-                                     'Standard',
-                                     )
+        transWithRun = self.transPlugin not in Operations().getValue('TransformationPlugins/PluginsWithNoRunInfo', [])
         if filesWithRunZero and transWithRun:
           self.__fixRunNumber(filesWithRunZero, fixRun)
         if filesWithNoRunTable and transWithRun:

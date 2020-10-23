@@ -63,13 +63,8 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     self.pickleFile = 'BookkeepingWatchAgent.pkl'
     self.chunkSize = 1000
 
-    self.pluginsWithNoRunInfo = ['LHCbStandard', 'ReplicateDataset', 'ArchiveDataset',
-                                 'LHCbMCDSTBroadcastRandom', 'ReplicateToLocalSE',
-                                 'RemoveReplicas', 'RemoveReplicasWhenProcessed',
-                                 'RemoveReplicasWithAncestors', 'ReplicateWithAncestors',
-                                 'ReduceReplicas', 'RemoveDatasetFromDisk',
-                                 'DestroyDataset', 'DestroyDatasetWhenProcessed',
-                                 'BySize', 'Standard']
+    # No need to give full list as it is in the CS anyway
+    self.pluginsWithNoRunInfo = ['LHCbStandard']
 
     self.timeLog = {}
     self.fullTimeLog = {}
