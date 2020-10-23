@@ -1,3 +1,22 @@
+v10r1-pre11
+Based on DIRAC v7r1p15
+LHCbWebDIRAC v5r2-pre4
+LHCbDIRACOS v1r9
+*Bookkeeping
+
+CHANGE: (!875) Changed definition of partition type
+
+*ProductionManagement
+
+NEW: (!874) Using specialized classes for interacting with ES MCStats indices
+NEW: (!874) Added CS flag for controlling upload of MCStats
+
+*Core
+
+CHANGE: (!874) re-simplified and changed location of prmon executable
+
+
+
 v10r1-pre10
 Based on DIRAC v7r1p11
 LHCbWebDIRAC v5r2-pre4
