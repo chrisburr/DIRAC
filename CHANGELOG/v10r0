@@ -1,3 +1,21 @@
+v10r0p16
+Based on DIRAC v7r0p34
+LHCbWebDIRAC v5r1p8
+LHCbDIRACOS v1r11
+*TransformationSystem
+
+NEW: (!878) new plugin `LHCbWGBroadcastRandom` that is exactly the same as `LHCbMCDSTBroadcastRandom` but will have different default settings in the CS. To be used for broadcasting real data datasets without run number attached to a file.
+
+*BK
+
+NEW: (!878) allow `dirac-bookkeeping-job-info` to accept a `jobID` as argument (was only one of the output files)
+
+*docs
+
+FIX: (!873) Update docs for new tagging system
+
+
+
 v10r0p15
 Based on DIRAC v7r0p34
 LHCbWebDIRAC v5r1p8
