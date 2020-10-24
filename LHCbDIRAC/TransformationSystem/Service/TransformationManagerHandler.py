@@ -169,7 +169,9 @@ class TransformationManagerHandler(TManagerBase):
     # Get the transformations that match the selection
     res = database.getTransformationRuns(condDict=selectDict, older=toDate,
                                          newer=fromDate, orderAttribute=orderAttribute)
-    self._parseRes(res)
+    if not res['OK']:
+      self.log.error("TransformationManager.getTransformationRuns()", res['Message'])
+      return res
 
     # Prepare the standard structure now within the resultDict dictionary
     resultDict = {}
