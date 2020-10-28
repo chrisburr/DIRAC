@@ -98,7 +98,7 @@ def helloWorldTestSSH():
   job = baseToAllJobs('helloWorld-test-SSH', jobClass)
   job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script.py", "", "helloWorld.log")
-  job.setDestination(['DIRAC.YANDEX.ru', 'DIRAC.OSC.us', 'DIRAC.Zurich.ch'])
+  job.setDestination(['DIRAC.Zurich.ch'])
   return endOfAllJobs(job)
 
 
@@ -108,7 +108,7 @@ def helloWorldTestSSHCondor():
   job = baseToAllJobs('helloWorld-test-SSHCondor', jobClass)
   job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script.py", "", "helloWorld.log")
-  job.setDestination(['DIRAC.Syracuse.us'])
+  job.setDestination(['DIRAC.Syracuse.us'])  # FIXME: not there
   return endOfAllJobs(job)
 
 
@@ -118,7 +118,7 @@ def helloWorldTestVAC():
   job = baseToAllJobs('helloWorld-test-VAC', jobClass)
   job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script.py", "", "helloWorld.log")
-  job.setDestination(['VAC.Manchester.uk'])
+  job.setDestination(['VAC.Manchester.uk'])  # FIXME: not there
   return endOfAllJobs(job)
 
 
@@ -128,7 +128,7 @@ def helloWorldTestCLOUD():
   job = baseToAllJobs('helloWorld-test-CLOUD', jobClass)
   job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script.py", "", "helloWorld.log")
-  job.setDestination(['CLOUD.CERN.cern', 'CLOUD.YANDEX.ru'])
+  job.setDestination(['CLOUD.CERN.cern'])
   return endOfAllJobs(job)
 
 
@@ -139,26 +139,6 @@ def helloWorldTestCentos7():
   job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script.py", "", "helloWorld.log")
   job.setPlatform('x86_64+avx2+fma-centos7-gcc8-opt')
-  return endOfAllJobs(job)
-
-
-@executeWithUserProxy
-def helloWorldTestSLC6():
-
-  job = baseToAllJobs('helloWorld-test-SLC6', jobClass)
-  job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
-  job.setExecutable("exe-script.py", "", "helloWorld.log")
-  job.setPlatform('x86_64-slc6-gcc62-opt')
-  return endOfAllJobs(job)
-
-
-@executeWithUserProxy
-def helloWorldTestSLC5():
-
-  job = baseToAllJobs('helloWorld-test-SLC5', jobClass)
-  job.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
-  job.setExecutable("exe-script.py", "", "helloWorld.log")
-  job.setPlatform('x86_64-slc5-gcc43-opt')
   return endOfAllJobs(job)
 
 
@@ -359,20 +339,6 @@ def jobWithSingleInputDataSARA():
 
 
 @executeWithUserProxy
-def jobWithSingleInputDataNIKHEF():
-
-  job = baseToAllJobs('jobWithSingleInputDataNIKHEF', jobClass)
-  job.setInputSandbox(
-      [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
-  job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
-  job.setInputDataPolicy('protocol')
-  job.setDestination(['LCG.NIKHEF.nl'])
-  res = endOfAllJobs(job)
-  return res
-
-
-@executeWithUserProxy
 def jobWithSingleInputDataPIC():
 
   job = baseToAllJobs('jobWithSingleInputDataPIC', jobClass)
@@ -382,20 +348,6 @@ def jobWithSingleInputDataPIC():
   job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.PIC.es'])
-  res = endOfAllJobs(job)
-  return res
-
-
-@executeWithUserProxy
-def jobWithSingleInputDataGRIDKA():
-
-  job = baseToAllJobs('jobWithSingleInputDataGRIDKA', jobClass)
-  job.setInputSandbox(
-      [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
-  job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
-  job.setInputDataPolicy('protocol')
-  job.setDestination(['LCG.GRIDKA.de'])
   res = endOfAllJobs(job)
   return res
 
@@ -522,42 +474,6 @@ def gaudiApplicationScriptJob():
                            systemConfig='x86_64-slc6-gcc49-opt')
   job.setOutputSandbox('FitResultsToyData*.root')
   # job.setDIRACPlatform()  # pylint: disable=no-member
-  job.setCPUTime(172800)
-  res = endOfAllJobs(job)
-  return res
-
-
-@executeWithUserProxy
-def daVinciLHCbScriptJob_v41r2():
-  """ This job internally will try to run using 'x86_64-slc6-gcc49-opt'
-
-      DaVinci v41r2 is not on lb-run
-  """
-
-  job = baseToAllJobs('daVinciLHCbScriptJob_v41r2', jobClass)
-  job.setInputSandbox(['LFN:/lhcb/user/f/fstagni/GangaInputFile/LHCb-Scripts.tar.gz',
-                       'LFN:/lhcb/user/f/fstagni/GangaInputFile/minimal_DaVinciDev_v41r2.tgz'])
-  job.setExecutable('jobScript/GaudiExec_Job_6_script.py', arguments='', logFile='Ganga_GaudiExec.log',
-                    systemConfig='x86_64-slc6-gcc49-opt')
-  job.setDIRACPlatform()  # pylint: disable=no-member
-  job.setCPUTime(172800)
-  res = endOfAllJobs(job)
-  return res
-
-
-@executeWithUserProxy
-def daVinciLHCbScriptJob_v42r1():
-  """ This job internally will try to run using 'x86_64-slc6-gcc49-opt' while here 'x86_64-slc6-gcc48-opt' is set
-
-      DaVinci v42r1 uses lb-run only
-  """
-
-  job = baseToAllJobs('daVinciLHCbScriptJob_v42r1', jobClass)
-  job.setInputSandbox(['LFN:/lhcb/user/f/fstagni/GangaInputFile/LHCb-Scripts.tar.gz',
-                       'LFN:/lhcb/user/f/fstagni/GangaInputFile/minimal_DaVinciDev_v42r1.tgz'])
-  job.setExecutable('jobScript/GaudiExec_Job_6_script.py', arguments='', logFile='Ganga_GaudiExec.log',
-                    systemConfig='x86_64-slc6-gcc48-opt')
-  job.setDIRACPlatform()  # pylint: disable=no-member
   job.setCPUTime(172800)
   res = endOfAllJobs(job)
   return res
