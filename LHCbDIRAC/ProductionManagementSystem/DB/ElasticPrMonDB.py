@@ -29,7 +29,63 @@ mapping = {
         "wmsID": {"type": "long"},
         "ProductionID": {"type": "integer"},
         "JobID": {"type": "integer"},
-        # TODO: ADD A Mapping
+        "Avg": {
+            "properties": {
+                "nprocs": {"type": "float"},
+                "nthreads": {"type": "float"},
+                "pss": {"type": "float"},
+                "rchar": {"type": "float"},
+                "read_bytes": {"type": "float"},
+                "rss": {"type": "float"},
+                "rx_bytes": {"type": "float"},
+                "rx_packets": {"type": "float"},
+                "swap": {"type": "float"},
+                "tx_bytes": {"type": "float"},
+                "tx_packets": {"type": "float"},
+                "vmem": {"type": "float"},
+                "wchar": {"type": "float"},
+                "write_bytes": {"type": "float"}
+            }
+        },
+        "Max": {
+            "properties": {
+                "nprocs": {"type": "integer"},
+                "nthreads": {"type": "integer"},
+                "pss": {"type": "long"},
+                "rchar": {"type": "long"},
+                "read_bytes": {"type": "long"},
+                "rss": {"type": "long"},
+                "rx_bytes": {"type": "long"},
+                "rx_packets": {"type": "long"},
+                "swap": {"type": "integer"},
+                "tx_bytes": {"type": "long"},
+                "tx_packets": {"type": "long"},
+                "vmem": {"type": "long"},
+                "wchar": {"type": "long"},
+                "write_bytes": {"type": "long"},
+                "stime": {"type": "integer"},
+                "utime": {"type": "integer"},
+                "wtime": {"type": "integer"}
+            }
+        },
+        "HW": {
+            "properties": {
+                "cpu": {
+                    "properties": {
+                        "CPUs": {"type": "integer"},
+                        "CoresPerSocket": {"type": "integer"},
+                        "ModelName": {"type": "text"},
+                        "Sockets": {"type": "integer"},
+                        "ThreadsPerCore": {"type": "integer"}
+                    }
+                },
+                "mem": {
+                    "properties": {
+                        "MemTotal": {"type": "long"}
+                    }
+                }
+            }
+        }
     }
 }
 

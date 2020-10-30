@@ -24,6 +24,7 @@ from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticApplicationSummaryDB import ElasticApplicationSummaryDB
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCBooleLogErrorsDB import ElasticMCBooleLogErrorsDB
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCGaussLogErrorsDB import ElasticMCGaussLogErrorsDB
+from LHCbDIRAC.ProductionManagementSystem.DB.ElasticPrMonDB import ElasticPrMonDB
 
 
 def initializeMCStatsElasticDBHandler(_serviceinfo):
@@ -36,11 +37,15 @@ def initializeMCStatsElasticDBHandler(_serviceinfo):
   global elasticMCGaussLogErrorsDB
   elasticMCGaussLogErrorsDB = ElasticMCGaussLogErrorsDB()
 
+  global elasticPrMonDB
+  elasticPrMonDB = ElasticPrMonDB()
+
   global db
   db = {
       'XMLSummary': elasticApplicationSummaryDB,
       'booleErrors': elasticMCBooleLogErrorsDB,
       'gaussErrors': elasticMCGaussLogErrorsDB,
+      'prMon': elasticPrMonDB
   }
 
   return S_OK()
