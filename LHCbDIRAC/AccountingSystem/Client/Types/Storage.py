@@ -20,7 +20,7 @@ class Storage(BaseAccountingType):
 
   def __init__(self):
 
-    BaseAccountingType.__init__(self)
+    super(Storage, self).__init__()
 
     self.definitionKeyFields = [('StorageElement', "VARCHAR(32)"),
                                 ('Directory', "VARCHAR(32)")

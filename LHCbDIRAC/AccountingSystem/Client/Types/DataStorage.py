@@ -20,7 +20,7 @@ class DataStorage(BaseAccountingType):
 
   def __init__(self):
 
-    BaseAccountingType.__init__(self)
+    super(DataStorage, self).__init__()
 
     self.definitionKeyFields = [('StorageElement', "VARCHAR(64)"),
                                 ('ProcessingPass', "VARCHAR(256)"),

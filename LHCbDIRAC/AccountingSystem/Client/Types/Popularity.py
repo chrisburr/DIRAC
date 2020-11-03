@@ -20,7 +20,7 @@ class Popularity(BaseAccountingType):
 
   def __init__(self):
 
-    BaseAccountingType.__init__(self)
+    super(Popularity, self).__init__()
 
     self.definitionKeyFields = [('DataType', "VARCHAR(64)"),
                                 ('Activity', "VARCHAR(64)"),

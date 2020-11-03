@@ -106,7 +106,7 @@ class StepAccounting(ModuleBase):
 
                   'CPUTime': cpuTime,
                   'NormCPUTime': normCPU,
-                  'ExecTime': execTime,
+                  'ExecTime': execTime * self.numberOfProcessors,
                   'InputData': sum(xf_o.inputFileStats.values()),
                   'OutputData': sum(xf_o.outputFileStats.values()),
                   'InputEvents': xf_o.inputEventsTotal,
