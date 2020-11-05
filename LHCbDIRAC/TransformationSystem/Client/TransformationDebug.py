@@ -1920,7 +1920,7 @@ class TransformationDebug(object):
               filesWithNoRunTable.append(fileLfn)
 
         # Files with run# == 0
-        transWithRun = self.transPlugin not in Operations().getValue('TransformationPlugins/PluginsWithNoRunInfo', [])
+        transWithRun = self.transPlugin in Operations().getValue('TransformationPlugins/PluginsWithRunInfo', [])
         if filesWithRunZero and transWithRun:
           self.__fixRunNumber(filesWithRunZero, fixRun)
         if filesWithNoRunTable and transWithRun:
