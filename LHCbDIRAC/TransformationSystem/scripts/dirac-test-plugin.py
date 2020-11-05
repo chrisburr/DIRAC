@@ -17,6 +17,7 @@
 __RCSID__ = "$Id$"
 
 from DIRAC import S_OK, gLogger
+from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
 
 class fakeClient:
@@ -247,18 +248,18 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'AsIfProduction=', '   Production # that this test using as source of information')
   Script.registerSwitch('', 'AllFiles', '   Sets visible = False (useful if files were marked invisible)')
   Script.registerSwitch('', 'NoReplicaFiles', '   Also gets the files without replica (just for BK test)')
+  Script.registerSwitch('', 'DefaultOptions', '   Gets from CS the default options for a plugin')
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ...' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=True)
-  # FIXME: can be removed when the subLoggers can do it...
-  gLogger.showHeaders()
 
   asIfProd = None
   allFiles = False
   noRepFiles = False
+  defaultOptions = False
   switches = Script.getUnprocessedSwitches()
   for opt, val in switches:
     if opt == 'AsIfProduction':
@@ -267,11 +268,45 @@ if __name__ == "__main__":
       allFiles = True
     elif opt == 'NoReplicaFiles':
       noRepFiles = True
+    elif opt == 'DefaultOptions':
+      defaultOptions = True
   # print pluginScript.getOptions()
   plugin = pluginScript.getOption('Plugin')
+
+  # Just get and print default options from the CS
+  if defaultOptions:
+    if not plugin:
+      gLogger.fatal("No plugin specified")
+      DIRAC.exit(1)
+    # Get default options from CS
+    res = Operations().getOptionsDict('TransformationPlugins/%s' % plugin)
+    if res['OK']:
+      gLogger.notice("Parameters for plugin %s (*<param> means it is a generic parameter)" % plugin)
+      options = res['Value']
+      # Get default options for all plugins
+      res = Operations().getOptionsDict('TransformationPlugins')
+      if res['OK']:
+        allOptions = res['Value']
+        for opt in set(allOptions) - set(options):
+          if 'SEs' in opt:
+            options['*' + opt] = allOptions[opt]
+      # SE options first
+      for opt in [opt for opt in sorted(options) if 'SEs' in opt]:
+        gLogger.notice("\t%s : %s" % (opt, options[opt]))
+      # Other options
+      for opt in [opt for opt in sorted(options) if 'SEs' not in opt]:
+        gLogger.notice("\t%s : %s" % (opt, options[opt]))
+      DIRAC.exit(0)
+    else:
+      gLogger.error("Plugin has no specific parameters")
+      DIRAC.exit(1)
+
   requestID = pluginScript.getOption('RequestID', 0)
   requestedLFNs = pluginScript.getOption('LFNs')
   # print pluginParams
+
+  # FIXME: can be removed when the subLoggers can do it...
+  gLogger.showHeaders()
 
   from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
   from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
@@ -281,8 +316,6 @@ if __name__ == "__main__":
   # Create the transformation
   transformation = Transformation()
   transType = ''
-  if plugin == "DestroyDatasetWhenProcessed":
-    plugin = "DeleteReplicasWhenProcessed"
   if plugin in getRemovalPlugins():
     transType = "Removal"
   elif plugin in getReplicationPlugins():
@@ -387,16 +420,6 @@ if __name__ == "__main__":
   pluginParams.update(pluginSEParams)
   oplugin.setParameters(pluginParams)
   replicas = fakeClient.getReplicas()
-  # Special case of RAW files registered in CERN-RDST...
-  if plugin == "AtomicRun":
-    for lfn in [lfn for lfn in replicas if "CERN-RDST" in replicas[lfn]]:
-      ses = {}
-      for se in replicas[lfn]:
-        pfn = replicas[lfn][se]
-        if se == "CERN-RDST":
-          se = "CERN-RAW"
-        ses[se] = pfn
-      replicas[lfn] = ses
   files = fakeClient.getFiles()
   if not replicas:
     print "No replicas were found, exit..."
