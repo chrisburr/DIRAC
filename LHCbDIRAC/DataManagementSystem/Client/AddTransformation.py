@@ -266,20 +266,36 @@ def executeAddTransformation(pluginScript):
     if not transName:
       gLogger.fatal("Didn't manage to find a name for this transformation, check options")
       DIRAC.exit(1)
-    # Check if transformation exists
-    if unique:
-      res = tr.getTransformation(transName)
-      if not res['OK']:
-        res = tr.getTransformation(transName + '/')
-        if not res['OK']:
-          res = tr.getTransformation(transName.replace('-/', '-'))
-      if res['OK'] and res['Value']['Status'] not in ('Archived', 'Cleaned', 'Cleaning', 'Deleted'):
-        # If a transformation exists and is not stopped forever, don't allow
-        gLogger.notice("Transformation %s already exists with ID %d, status %s" % (transName,
-                                                                                   res['Value']['TransformationID'],
-                                                                                   res['Value']['Status']))
-        continue
-    transformation.setTransformationName(transName)
+    # Find a name for this transformation (transName remains the base name)
+    tName = transName
+    giveUp = False
+    trial = 0
+    while True:
+      # Check if there is already a transformation with that name
+      res = tr.getTransformation(tName)
+      if res['OK']:
+        # Transformation already exists
+        if unique:
+          # If unique is required and the transformation is not in a final status, give up
+          if res['Value']['Status'] not in ('Archived', 'Cleaned', 'Cleaning',
+                                            'Deleted', 'TransformationCleaned'):
+            giveUp = True
+            gLogger.notice("Transformation %s already exists with ID %d, status %s"
+                           % (transName,
+                              res['Value']['TransformationID'],
+                              res['Value']['Status']))
+            break
+        trial += 1
+        # Check again with new name
+        tName = transName + "-" + str(trial)
+      else:
+        # Transformation doesn't exist, OK
+        break
+    # If needed, skip this BK query
+    if giveUp:
+      continue
+
+    transformation.setTransformationName(tName)
     transformation.setTransformationGroup(transGroup)
     transformation.setDescription(longName[:255])
     transformation.setLongDescription(longName)
@@ -363,6 +379,7 @@ def executeAddTransformation(pluginScript):
         gLogger.fatal("Error changing ownership", res['Message'])
         DIRAC.exit(3)
       gLogger.notice("Successfully changed owner/group for %d directories" % res['Value'])
+
     # If the transformation is a removal transformation,
     #  check all files are in the FC. If not, remove their replica flag
     if fcCheck and transType == 'Removal':
@@ -432,30 +449,24 @@ def executeAddTransformation(pluginScript):
       else:
         gLogger.error("Failed to set files invisible: ", res['Message'])
 
-    trial = 0
     errMsg = ''
     while True:
-      result = transformation.addTransformation()
-      if not result['OK']:
-        if not unique and result['Message'].find("already exists") >= 0:
-          trial += 1
-          tName = transName + "-" + str(trial)
-          transformation.setTransformationName(tName)
-          continue
-        else:
-          errMsg = "Couldn't create transformation:\n%s" % result['Message']
-          break
-      result = transformation.getTransformationID()
-      if result['OK']:
-        transID = result['Value']
-      else:
-        errMsg = "Error getting transformationID: %s" % res['Message']
+      res = transformation.addTransformation()
+      if not res['OK']:
+        errMsg = "Couldn't create transformation"
         break
+      res = transformation.getTransformationID()
+      if res['OK']:
+        transID = res['Value']
+      else:
+        errMsg = "Error getting transformationID"
+        break
+      # If some LFNs must be added, do it now
       if requestedLFNs:
         from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import addFilesToTransformation
         res = addFilesToTransformation(transID, requestedLFNs, addRunInfo=True)
         if not res['OK']:
-          errMsg = "Could not add %d files to transformation: %s" % (len(requestedLFNs), res['Message'])
+          errMsg = "Could not add files to transformation"
           break
         gLogger.notice("%d files successfully added to transformation" % len(res['Value']))
       if requestID:
@@ -472,6 +483,6 @@ def executeAddTransformation(pluginScript):
         gLogger.notice("RequestID:", requestID)
       break
     if errMsg:
-      gLogger.notice(errMsg)
+      gLogger.notice(errMsg, res['Message'])
 
   DIRAC.exit(0)

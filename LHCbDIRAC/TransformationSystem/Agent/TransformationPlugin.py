@@ -813,12 +813,11 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
   def _LHCbDSTBroadcast(self):
     """This plug-in broadcasts files according to CS settings
-    to one archive1SE (if set), one archive2SE (if set) and <numberOfCopies> secondarySEs
+    to one archiveSE (if set) and <numberOfCopies> secondarySEs
     One can force some mandatorySEs and exclude some SEs
     All files for the same run have the same target
     Usually for replication of real data (2 copies)"""
-    archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
-    archive2SEs = resolveSEGroup(self.util.getPluginParam('Archive2SEs', []))
+    archiveSEs = resolveSEGroup(self.util.getPluginParam('ArchiveSEs', []))
     mandatorySEs = resolveSEGroup(self.util.getPluginParam('MandatorySEs', []))
     # In order to not have to change the SEGroups when excluding temporarily a site, add exclusion list...
     excludedSEs = resolveSEGroup(self.util.getPluginParam('ExcludedSEs', []))
@@ -878,7 +877,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
           # Now select the target SEs
           self.util.logVerbose("Selecting SEs for %d files" % len(runLfns))
           self.util.logDebug("Files: %s" % str(runLfns))
-          stringTargetSEs = self.util.setTargetSEs(numberOfCopies, archive1SEs, archive2SEs,
+          stringTargetSEs = self.util.setTargetSEs(numberOfCopies, archiveSEs,
                                                    mandatorySEs, secondarySEs, existingSEs, exclusiveSEs=False)
           runUpdate[runID] = True
 
@@ -915,12 +914,11 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
   def _LHCbMCDSTBroadcastRandom(self):
     """This plug-in broadcasts files to
-    one archive1 (if set), to one archive2 (if set) and to random
+    one archiveSE (if set) and to random
     <NumberOfReplicas> secondary SEs."""
 
     self.util.logInfo("Starting execution of plugin")
-    archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
-    archive2SEs = resolveSEGroup(self.util.getPluginParam('Archive2SEs', []))
+    archiveSEs = resolveSEGroup(self.util.getPluginParam('ArchiveSEs', []))
     mandatorySEs = resolveSEGroup(self.util.getPluginParam('MandatorySEs', []))
     # In order to not have to change the SEGroups when excluding temporarily a site, add exclusion list...
     excludedSEs = resolveSEGroup(self.util.getPluginParam('ExcludedSEs', []))
@@ -951,7 +949,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
       existingSEs = [se for se in replicaSE.split(',') if not self.util.dmsHelper.isSEFailover(se)]
       for lfns in breakListIntoChunks(lfnGroup, 100):
 
-        stringTargetSEs = self.util.setTargetSEs(numberOfCopies, archive1SEs, archive2SEs,
+        stringTargetSEs = self.util.setTargetSEs(numberOfCopies, archiveSEs,
                                                  mandatorySEs, secondarySEs, existingSEs, exclusiveSEs=True)
         if stringTargetSEs:
           storageElementGroups.setdefault(stringTargetSEs, []).extend(lfns)
@@ -1039,22 +1037,13 @@ class TransformationPlugin(DIRACTransformationPlugin):
     return S_OK(tasks)
 
   def _ArchiveDataset(self):
-    """Plugin for archiving datasets (normally 2 archives, unless one of the
-    lists is empty)"""
-    archive1SEs = resolveSEGroup(self.util.getPluginParam('Archive1SEs', []))
-    archive2SEs = resolveSEGroup(self.util.getPluginParam('Archive2SEs', []))
-    archive1ActiveSEs = getActiveSEs(archive1SEs)
+    """Plugin for archiving datasets, randomly chosen"""
+    archiveSEs = resolveSEGroup(self.util.getPluginParam('ArchiveSEs', []))
     numberOfCopies = self.util.getPluginParam('NumberOfReplicas', 1)
-    if not archive1ActiveSEs:
-      archive1ActiveSEs = archive1SEs
-    archive2ActiveSEs = getActiveSEs(archive2SEs)
-    if not archive2ActiveSEs:
-      archive2ActiveSEs = archive2SEs
-    if archive1ActiveSEs:
-      archive1SE = [randomize(archive1ActiveSEs)[0]]
-    else:
-      archive1SE = []
-    return self._simpleReplication(archive1SE, archive2ActiveSEs, numberOfCopies=numberOfCopies)
+    archiveActiveSEs = getActiveSEs(archiveSEs)
+    if not archiveActiveSEs:
+      archiveActiveSEs = archiveSEs
+    return self._simpleReplication([], archiveActiveSEs, numberOfCopies=numberOfCopies)
 
   def _simpleReplication(self, mandatorySEs, secondarySEs, numberOfCopies=0, fromSEs=None, maxFiles=None):
     """Actually creates the replication tasks for replication plugins."""
@@ -1126,7 +1115,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
         if targetSEs:
           stringTargetSEs = ','.join(sorted(targetSEs))
           # Now assign the individual files to their targets
-          (chunkFileTargetSEs, completed) = self.util.assignTargetToLfns(lfns, self.transReplicas, stringTargetSEs)
+          chunkFileTargetSEs, completed = self.util.assignTargetToLfns(lfns, self.transReplicas, stringTargetSEs)
           alreadyCompleted += completed
           fileTargetSEs.update(chunkFileTargetSEs)
 
