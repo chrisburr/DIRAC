@@ -50,7 +50,7 @@ class PluginScript(DMScript):
         "Parameters=": "   Additional plugin parameters ({<key>:<val>,[<key>:val>]}",
         "RequestID=": "   Sets the request ID (default 0)"
     }
-    self.seParameters = ("KeepSEs", "Archive1SEs", "Archive2SEs",
+    self.seParameters = ("KeepSEs", "ArchiveSEs",
                          "MandatorySEs", "SecondarySEs", "DestinationSEs", "FromSEs",
                          "RAWStorageElements", "ProcessingStorageElements",
                          )
