@@ -81,7 +81,7 @@ class fakeClient:
         res = self.bk.getFileMetadata([fileDict['LFN'] for fileDict in self.transFiles])
         if not res['OK']:
           return res
-        runs = list(set(meta['RunNumber'] for meta in res['Value']['Successful'].itervalues()))
+        runs = list(set(meta['RunNumber'] for meta in res['Value']['Successful'].values()))
       for run in runs:
         transRuns.append({'RunNumber': run, 'Status': "Active", "SelectedSite": None})
       return DIRAC.S_OK(transRuns)
@@ -137,7 +137,7 @@ class fakeClient:
             counters[runID] += 1
       else:
         return DIRAC.S_ERROR('Not implemented for field ' + field)
-      counters['Total'] = sum(count for count in counters.itervalues())
+      counters['Total'] = sum(count for count in counters.values())
       return DIRAC.S_OK(counters)
     else:
       return self.transClient.getTransformationFilesCount(transID, field, selection=selection)
@@ -193,7 +193,7 @@ class fakeClient:
     res = self.bk.getFileMetadata(lfns)
     if res['OK']:
       files = []
-      for lfn, metadata in res['Value']['Successful'].iteritems():
+      for lfn, metadata in res['Value']['Successful'].items():
         runID = metadata.get('RunNumber', 0)
         runDict = {"RunNumber": runID, "LFN": lfn}
         files.append(runDict)
@@ -211,7 +211,7 @@ class fakeClient:
         res = self.dm.getReplicasForJobs(lfnChunk, getUrl=False)
       # print res
       if res['OK']:
-        for lfn, ses in res['Value']['Successful'].iteritems():
+        for lfn, ses in res['Value']['Successful'].items():
           if ses:
             replicas[lfn] = sorted(ses)
       else:
@@ -350,13 +350,13 @@ if __name__ == "__main__":
   pluginParams = pluginScript.getPluginParameters()
   pluginSEParams = pluginScript.getPluginSEParameters()
   if pluginSEParams:
-    for key, val in pluginSEParams.iteritems():
+    for key, val in pluginSEParams.items():
       res = transformation.setSEParam(key, val)
       if not res['OK']:
         print res['Message']
         DIRAC.exit(2)
   if pluginParams:
-    for key, val in pluginParams.iteritems():
+    for key, val in pluginParams.items():
       res = transformation.setAdditionalParam(key, val)
       if not res['OK']:
         print res['Message']

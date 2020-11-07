@@ -844,7 +844,7 @@ class TransformationDebug(object):
     if res['OK']:
       reqFiles = res['Value']
       statFiles = {}
-      for stat in reqFiles.itervalues():
+      for stat in reqFiles.values():
         statFiles[stat] = statFiles.setdefault(stat, 0) + 1
       for stat in sorted(statFiles):
         gLogger.notice("\t%s: %d files" % (stat, statFiles[stat]))
@@ -1373,7 +1373,7 @@ class TransformationDebug(object):
           else:
             # lfnsFound is an AND of files found bad in all jobs
             lfnsFound = set(badLfns[sorted(badLfns, reverse=True)[0]])
-            for lfns in badLfns.itervalues():
+            for lfns in badLfns.values():
               lfnsFound &= set(lfns)
             if lfnsFound:
               for lfn, job, reason in [(l, job, badLfns[job][l])
@@ -1479,7 +1479,7 @@ class TransformationDebug(object):
       elif evtType and param == 'EventType':
         paramValues = [evtType]
       else:
-        paramValues = sorted(set(meta[param] for meta in res['Value']['Successful'].itervalues() if param in meta))
+        paramValues = sorted(set(meta[param] for meta in res['Value']['Successful'].values() if param in meta))
     ancestors = {}
     # print "*** Param values", ','.join( paramValues )
     for paramValue in paramValues:

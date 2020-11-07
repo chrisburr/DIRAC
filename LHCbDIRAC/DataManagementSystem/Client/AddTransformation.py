@@ -151,7 +151,7 @@ def executeAddTransformation(pluginScript):
         simVersion = row['ProPath'].split('/')[0]
         reqDict[mcVersion].add(simVersion)
     bkPaths = []
-    for mcVersion, simVersions in reqDict.iteritems():
+    for mcVersion, simVersions in reqDict.items():
       for simVersion in simVersions:
         bkPaths.append('/MC/%s//%s/*Reco*' % (mcVersion, simVersion))
   elif not requestedLFNs:
@@ -314,13 +314,13 @@ def executeAddTransformation(pluginScript):
       transformation.setBody(transBody)
 
     if pluginSEParams:
-      for key, val in pluginSEParams.iteritems():
+      for key, val in pluginSEParams.items():
         res = transformation.setSEParam(key, val)
         if not res['OK']:
           gLogger.error('Error setting SE parameter', res['Message'])
           DIRAC.exit(1)
     if pluginParams:
-      for key, val in pluginParams.iteritems():
+      for key, val in pluginParams.items():
         res = transformation.setAdditionalParam(key, val)
         if not res['OK']:
           gLogger.error('Error setting additional parameter', res['Message'])
