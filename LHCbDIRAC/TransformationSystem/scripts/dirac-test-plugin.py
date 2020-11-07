@@ -288,7 +288,7 @@ if __name__ == "__main__":
       if res['OK']:
         allOptions = res['Value']
         for opt in set(allOptions) - set(options):
-          if 'SEs' in opt:
+          if opt in pluginScript.seParameters:
             options['*' + opt] = allOptions[opt]
       # SE options first
       for opt in [opt for opt in sorted(options) if 'SEs' in opt]:
