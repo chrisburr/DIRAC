@@ -59,7 +59,7 @@ class UploadMC(ModuleBase):
             try:
               jsonData = json.load(fd)
               self.log.verbose("Content of JSON file", "%s: %s" % (fn, jsonData))
-              if self._enableModule():
+              if self._enableModule() and self.opsH.getValue('Productions/UploadES_GaussErrors', True):
                 mcLogErrorsClient = MCStatsClient()
                 mcLogErrorsClient.indexName = 'lhcb-mcstats-' + self.production_id
                 res = mcLogErrorsClient.set('%s-LogErrors' % app, jsonData)
