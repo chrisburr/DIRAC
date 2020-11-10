@@ -64,7 +64,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     self.chunkSize = 1000
 
     # No need to give full list as it is in the CS anyway
-    self.pluginsWithNoRunInfo = ['LHCbStandard']
+    self.pluginsWithRunInfo = []
 
     self.timeLog = {}
     self.fullTimeLog = {}
@@ -87,12 +87,12 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     self.pickleFile = os.path.join(self.am_getWorkDirectory(), self.pickleFile)
     self.chunkSize = self.am_getOption('maxFilesPerChunk', self.chunkSize)
 
-    self.pluginsWithNoRunInfo = Operations().getValue('TransformationPlugins/PluginsWithNoRunInfo',
-                                                      self.pluginsWithNoRunInfo)
+    self.pluginsWithRunInfo = Operations().getValue('TransformationPlugins/pluginsWithRunInfo',
+                                                    self.pluginsWithRunInfo)
 
     self._logInfo('Full Update Period: %d seconds' % self.fullUpdatePeriod)
     self._logInfo('BK update latency : %d seconds' % self.bkUpdateLatency)
-    self._logInfo('Plugins with no run info: %s' % ', '.join(self.pluginsWithNoRunInfo))
+    self._logInfo('Plugins with run info: %s' % ', '.join(self.pluginsWithRunInfo))
 
     self.transClient = TransformationClient()
     self.bkClient = BookkeepingClient()
@@ -236,7 +236,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
             filesMetadata.update(success)
 
         # There is no need to add the run information for a transformation that doesn't need it
-        if transPlugin not in self.pluginsWithNoRunInfo:
+        if transPlugin in self.pluginsWithRunInfo:
           for lfn, metadata in filesMetadata.items():   # can be an iterator
             runID = metadata.get('RunNumber', None)
             if isinstance(runID, (six.string_types, six.integer_types)):

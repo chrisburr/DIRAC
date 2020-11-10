@@ -385,7 +385,9 @@ def removeReplicasNoFC(lfnList, seList):
         notInBK.setdefault(reason, []).extend(bkToRemove)
       else:
         bkFailed = res['Value'].get('Failed', [])
-        if isinstance(bkFailed, dict):
+        if not bkFailed:
+          pass
+        elif isinstance(bkFailed, dict):
           for lfn, reason in bkFailed.items():  # can be an iterator
             notInBK.setdefault(str(reason), []).append(lfn)
         elif isinstance(bkFailed, list):
