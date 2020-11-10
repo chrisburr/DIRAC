@@ -20,7 +20,7 @@ class UserStorage(BaseAccountingType):
 
   def __init__(self):
 
-    BaseAccountingType.__init__(self)
+    super(UserStorage, self).__init__()
 
     self.definitionKeyFields = [('StorageElement', "VARCHAR(32)"),
                                 ('User', "VARCHAR(32)")
