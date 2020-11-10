@@ -1,3 +1,19 @@
+v10r0p20
+Based on DIRAC v7r0p38
+LHCbWebDIRAC v5r1p9
+LHCbDIRACOS v1r13
+*ProductionManagement
+
+NEW: (!886) Added disabling flag for MCStats
+
+*TransformationSystem
+
+CHANGE/FIX: (!885) removes `Archive1SEs` and replaces `Archive2SEs` in the code and in the CS with `ArchiveSEs`. Bases the check on existing archives on `Tier1-Archive` rather than on the current setting for archives.
+CHANGE: (!885) `BookkeepingWatchAgent`, replace `PluginsWithoutRunInfo` with `PluginsWithRunInfo`
+NEW: (!885) `dirac-test-plugin`: option `--Default` to list the CS default values
+
+
+
 v10r0p19
 Based on DIRAC v7r0p37
 LHCbWebDIRAC v5r1p8
