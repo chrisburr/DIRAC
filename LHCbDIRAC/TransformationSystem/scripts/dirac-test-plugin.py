@@ -17,6 +17,7 @@
 __RCSID__ = "$Id$"
 
 from DIRAC import S_OK, gLogger
+from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
 
 class fakeClient:
@@ -80,7 +81,7 @@ class fakeClient:
         res = self.bk.getFileMetadata([fileDict['LFN'] for fileDict in self.transFiles])
         if not res['OK']:
           return res
-        runs = list(set(meta['RunNumber'] for meta in res['Value']['Successful'].itervalues()))
+        runs = list(set(meta['RunNumber'] for meta in res['Value']['Successful'].values()))
       for run in runs:
         transRuns.append({'RunNumber': run, 'Status': "Active", "SelectedSite": None})
       return DIRAC.S_OK(transRuns)
@@ -136,7 +137,7 @@ class fakeClient:
             counters[runID] += 1
       else:
         return DIRAC.S_ERROR('Not implemented for field ' + field)
-      counters['Total'] = sum(count for count in counters.itervalues())
+      counters['Total'] = sum(count for count in counters.values())
       return DIRAC.S_OK(counters)
     else:
       return self.transClient.getTransformationFilesCount(transID, field, selection=selection)
@@ -192,7 +193,7 @@ class fakeClient:
     res = self.bk.getFileMetadata(lfns)
     if res['OK']:
       files = []
-      for lfn, metadata in res['Value']['Successful'].iteritems():
+      for lfn, metadata in res['Value']['Successful'].items():
         runID = metadata.get('RunNumber', 0)
         runDict = {"RunNumber": runID, "LFN": lfn}
         files.append(runDict)
@@ -210,7 +211,7 @@ class fakeClient:
         res = self.dm.getReplicasForJobs(lfnChunk, getUrl=False)
       # print res
       if res['OK']:
-        for lfn, ses in res['Value']['Successful'].iteritems():
+        for lfn, ses in res['Value']['Successful'].items():
           if ses:
             replicas[lfn] = sorted(ses)
       else:
@@ -247,18 +248,18 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'AsIfProduction=', '   Production # that this test using as source of information')
   Script.registerSwitch('', 'AllFiles', '   Sets visible = False (useful if files were marked invisible)')
   Script.registerSwitch('', 'NoReplicaFiles', '   Also gets the files without replica (just for BK test)')
+  Script.registerSwitch('', 'DefaultOptions', '   Gets from CS the default options for a plugin')
 
   Script.setUsageMessage(__doc__ + '\n'.join([
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ...' % Script.scriptName, ]))
+      'Usage:',
+      '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=True)
-  # FIXME: can be removed when the subLoggers can do it...
-  gLogger.showHeaders()
 
   asIfProd = None
   allFiles = False
   noRepFiles = False
+  defaultOptions = False
   switches = Script.getUnprocessedSwitches()
   for opt, val in switches:
     if opt == 'AsIfProduction':
@@ -267,11 +268,45 @@ if __name__ == "__main__":
       allFiles = True
     elif opt == 'NoReplicaFiles':
       noRepFiles = True
+    elif opt == 'DefaultOptions':
+      defaultOptions = True
   # print pluginScript.getOptions()
   plugin = pluginScript.getOption('Plugin')
+
+  # Just get and print default options from the CS
+  if defaultOptions:
+    if not plugin:
+      gLogger.fatal("No plugin specified")
+      DIRAC.exit(1)
+    # Get default options from CS
+    res = Operations().getOptionsDict('TransformationPlugins/%s' % plugin)
+    if res['OK']:
+      gLogger.notice("Parameters for plugin %s (*<param> means it is a generic parameter)" % plugin)
+      options = res['Value']
+      # Get default options for all plugins
+      res = Operations().getOptionsDict('TransformationPlugins')
+      if res['OK']:
+        allOptions = res['Value']
+        for opt in set(allOptions) - set(options):
+          if opt in pluginScript.seParameters:
+            options['*' + opt] = allOptions[opt]
+      # SE options first
+      for opt in [opt for opt in sorted(options) if 'SEs' in opt]:
+        gLogger.notice("\t%s : %s" % (opt, options[opt]))
+      # Other options
+      for opt in [opt for opt in sorted(options) if 'SEs' not in opt]:
+        gLogger.notice("\t%s : %s" % (opt, options[opt]))
+      DIRAC.exit(0)
+    else:
+      gLogger.error("Plugin has no specific parameters")
+      DIRAC.exit(1)
+
   requestID = pluginScript.getOption('RequestID', 0)
   requestedLFNs = pluginScript.getOption('LFNs')
   # print pluginParams
+
+  # FIXME: can be removed when the subLoggers can do it...
+  gLogger.showHeaders()
 
   from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
   from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
@@ -281,8 +316,6 @@ if __name__ == "__main__":
   # Create the transformation
   transformation = Transformation()
   transType = ''
-  if plugin == "DestroyDatasetWhenProcessed":
-    plugin = "DeleteReplicasWhenProcessed"
   if plugin in getRemovalPlugins():
     transType = "Removal"
   elif plugin in getReplicationPlugins():
@@ -316,13 +349,13 @@ if __name__ == "__main__":
   pluginParams = pluginScript.getPluginParameters()
   pluginSEParams = pluginScript.getPluginSEParameters()
   if pluginSEParams:
-    for key, val in pluginSEParams.iteritems():
+    for key, val in pluginSEParams.items():
       res = transformation.setSEParam(key, val)
       if not res['OK']:
         print res['Message']
         DIRAC.exit(2)
   if pluginParams:
-    for key, val in pluginParams.iteritems():
+    for key, val in pluginParams.items():
       res = transformation.setAdditionalParam(key, val)
       if not res['OK']:
         print res['Message']
@@ -386,16 +419,6 @@ if __name__ == "__main__":
   pluginParams.update(pluginSEParams)
   oplugin.setParameters(pluginParams)
   replicas = fakeClient.getReplicas()
-  # Special case of RAW files registered in CERN-RDST...
-  if plugin == "AtomicRun":
-    for lfn in [lfn for lfn in replicas if "CERN-RDST" in replicas[lfn]]:
-      ses = {}
-      for se in replicas[lfn]:
-        pfn = replicas[lfn][se]
-        if se == "CERN-RDST":
-          se = "CERN-RAW"
-        ses[se] = pfn
-      replicas[lfn] = ses
   files = fakeClient.getFiles()
   if not replicas:
     print "No replicas were found, exit..."

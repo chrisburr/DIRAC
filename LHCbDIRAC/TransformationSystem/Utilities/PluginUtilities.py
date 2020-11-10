@@ -546,46 +546,37 @@ get from BK" % (param, self.paramName))
       weightForSEs.pop(se)
     return rankedSEs
 
-  def setTargetSEs(self, numberOfCopies, archive1SEs, archive2SEs,
+  def setTargetSEs(self, numberOfCopies, archiveSEs,
                    mandatorySEs, secondarySEs, existingSEs, exclusiveSEs=False):
     """Decide on which SEs to target from lists and current status of
     replication Policy is max one archive1, one archive 2, all mandatory SEs
     and required number of copies elsewhere."""
     # Select active SEs
-    nbArchive1 = min(1, len(archive1SEs))
-    nbArchive2 = min(1, len(archive2SEs))
-    archive1ActiveSEs = getActiveSEs(archive1SEs)
-    if not archive1ActiveSEs:
-      archive1ActiveSEs = archive1SEs
-    archive2ActiveSEs = getActiveSEs(archive2SEs)
-    if not archive2ActiveSEs:
-      archive2ActiveSEs = archive2SEs
+    nbArchive = min(1, len(archiveSEs))
     secondaryActiveSEs = getActiveSEs(secondarySEs)
 
     targetSEs = []
-    self.logVerbose("Selecting SEs from %s, %s, %s, %s (%d copies) for files in %s" % (archive1ActiveSEs,
-                                                                                       archive2ActiveSEs,
-                                                                                       mandatorySEs,
-                                                                                       secondaryActiveSEs,
-                                                                                       numberOfCopies,
-                                                                                       existingSEs))
-    # Ensure that we have a archive1 copy
-    archive1Existing = [se for se in archive1SEs if se in existingSEs and se not in archive1ActiveSEs]
-    ses = self.selectSEs(archive1Existing + self.rankSEs(archive1ActiveSEs), nbArchive1, existingSEs)
-    self.logVerbose("Archive1SEs: %s" % ses)
-    if len(ses) < nbArchive1:
-      self.logError('Cannot select archive1SE in active SEs')
-      return None
-    targetSEs += ses
-
-    # ... and an Archive2 copy
-    archive2Existing = [se for se in archive2SEs if se in existingSEs and se not in archive2ActiveSEs]
-    ses = self.selectSEs(archive2Existing + self.rankSEs(archive2ActiveSEs), nbArchive2, existingSEs)
-    self.logVerbose("Archive2SEs: %s" % ses)
-    if len(ses) < nbArchive2:
-      self.logError('Cannot select archive2SE in active SEs')
-      return None
-    targetSEs += ses
+    self.logVerbose("Selecting SEs from %s, %s, %s (%d copies) for files in %s" % (archiveSEs,
+                                                                                   mandatorySEs,
+                                                                                   secondarySEs,
+                                                                                   numberOfCopies,
+                                                                                   existingSEs))
+    # Select archive SEs if any requested
+    if nbArchive:
+      allArchiveSEs = resolveSEGroup('Tier1-Archive')
+      archiveExisting = [se for se in allArchiveSEs if se in existingSEs]
+      archiveActiveSEs = getActiveSEs(archiveSEs)
+      # If none found active, use all
+      if not archiveActiveSEs:
+        archiveActiveSEs = archiveSEs
+      archiveActiveSEs = [se for se in archiveActiveSEs if se not in archiveExisting]
+      # Set existing archive SEs first, then other archives (check against all archives)
+      candidateSEs = self.selectSEs(archiveExisting + self.rankSEs(archiveActiveSEs), nbArchive, existingSEs)
+      self.logVerbose("Selected ArchiveSEs: %s" % candidateSEs)
+      if len(candidateSEs) < nbArchive:
+        self.logError('Cannot select enough archive SEs')
+        return None
+      targetSEs += candidateSEs
 
     # Now select the disk replicas
     # 1. add mandatory SEs
@@ -598,13 +589,14 @@ get from BK" % (param, self.paramName))
     candidateSEs += [se for se in self.rankSEs(secondaryActiveSEs)
                      if not self.isSameSEInList(se, targetSEs + candidateSEs + existingSEs)]
     # 4. Select the proper number of SEs in the candidate ordered list
-    ses = self.selectSEs(candidateSEs, numberOfCopies, existingSEs)
-    self.logVerbose("SecondarySEs: %s" % ses)
-    if len(ses) < numberOfCopies:
+    candidateSEs = self.selectSEs(candidateSEs, numberOfCopies, existingSEs)
+    self.logVerbose("Selected SecondarySEs: %s" % candidateSEs)
+    if len(candidateSEs) < numberOfCopies:
       self.logError("Can not select enough Active SEs as SecondarySE")
       return None
-    targetSEs += ses
+    targetSEs += candidateSEs
 
+    # Remove existing SEs if requested
     if exclusiveSEs:
       targetSEs = [se for se in targetSEs if se not in existingSEs]
     self.logVerbose("Selected target SEs: %s" % targetSEs)
@@ -614,11 +606,13 @@ get from BK" % (param, self.paramName))
     """Select SEs from a list, preferably from existing SEs in order to obtain
     the required number of replicas."""
     targetSEs = []
+    # Put existing SEs first
     for se in [se for se in candSEs if se in existingSEs]:
       if needToCopy <= 0:
         break
       targetSEs.append(se)
       needToCopy -= 1
+    # If more are needed, add them
     if needToCopy > 0:
       for se in [s for s in candSEs if s not in existingSEs]:
         if needToCopy <= 0:
@@ -1498,8 +1492,8 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
   if not res['OK']:
     return res
   transPlugin = res['Value']['Plugin']
-  pluginsWithNoRunInfo = Operations().getValue('TransformationPlugins/PluginsWithNoRunInfo', [])
-  addRunInfo = addRunInfo and transPlugin not in pluginsWithNoRunInfo
+  pluginsWithRunInfo = Operations().getValue('TransformationPlugins/PluginsWithRunInfo', [])
+  addRunInfo = addRunInfo and transPlugin in pluginsWithRunInfo
   addedLfns = set()
   for lfnChunk in breakListIntoChunks(lfns, 1000):
     runDict = {}
