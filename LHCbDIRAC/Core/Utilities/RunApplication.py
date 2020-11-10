@@ -220,10 +220,11 @@ class RunApplication(object):
     :param command basestring: the command to run
     :param env dict: environment where to run -- maybe the LHCb environment from LbLogin
     """
-    print('Command called: \n%s' % command)  # Really printing here as we want to see and maybe cut/paste
-
     if self.applicationName == 'Gauss' and self.usePrmon:
       command = self.prmonPath + ' --json-summary ./prmon_Gauss.json -- ' + command
+
+    print('Command called: \n%s' % command)  # Really printing here as we want to see and maybe cut/paste
+
     return systemCall(timeout=0,
                       cmdSeq=shlex.split(command),
                       callbackFunction=self.__redirectLogOutput,

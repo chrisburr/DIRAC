@@ -207,14 +207,10 @@ class UploadMC(ModuleBase):
       if os.path.exists(prmonFile):
         with io.open(prmonFile) as JS:
           try:
-            jsonDataTemp = json.load(JS)
-            jsonData = {}
-            jsonData['Metrics'] = jsonDataTemp
-            ids = dict()
-            ids['JobID'] = self.jobID
-            ids['ProductionID'] = self.production_id
-            ids['prod_job_id'] = self.prod_job_id
-            jsonData['Metrics']['ID'] = ids
+            jsonData = json.load(JS)
+            jsonData['JobID'] = self.jobID
+            jsonData['ProductionID'] = self.production_id
+            jsonData['prod_job_id'] = self.prod_job_id
             self.log.verbose("Content of JSON file", "%s: %s" % (prmonFile, jsonData))
             if self._enableModule() and self.opsH.getValue('Productions/UploadES_PrMon', False):
               res = mcStatsClient.set('prMon', jsonData)

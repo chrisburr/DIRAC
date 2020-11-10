@@ -276,17 +276,51 @@ prMon_1 = {
     "wmsID": "5",
     "ProductionID": "4",
     "JobID": "3",
-    "Metrics": {
-        "Avg": {
-            "nprocs": 1,
-            "nthreads": 5,
-            "pss": 23917,
-            "rchar": 2339007,
+    "Avg": {
+        'nprocs': 1.999,
+        'nthreads': 4.995,
+        'pss': 899358.0,
+        'rchar': 1908.0,
+        'read_bytes': 15371.0,
+        'rss': 914666.0,
+        'rx_bytes': 1199655.0,
+        'rx_packets': 864.068,
+        'swap': 0.0,
+        'tx_bytes': 887762.0,
+        'tx_packets': 669.966,
+        'vmem': 1742437.0,
+        'wchar': 8861.0,
+        'write_bytes': 8862.0
+    },
+    "Max": {
+        'nprocs': 2,
+        'nthreads': 5,
+        'pss': 946200,
+        'rchar': 114342317,
+        'read_bytes': 921133056,
+        'rss': 958424,
+        'rx_bytes': 71887798947,
+        'rx_packets': 51778138,
+        'stime': 120,
+        'swap': 0,
+        'tx_bytes': 53197995525,
+        'tx_packets': 40146840,
+        'utime': 60292,
+        'vmem': 1793628,
+        'wchar': 531004162,
+        'write_bytes': 531066880,
+        'wtime': 59923
+    },
+    "HW": {
+        'cpu': {
+            'CPUs': 48,
+            'CoresPerSocket': 12,
+            'ModelName': 'Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz',
+            'Sockets': 2,
+            'ThreadsPerCore': 2
         },
-        "Max": {
-            "nprocs": 1,
-            "nthreads": 5,
-            "pss": 23917,
-        },
+        'mem': {
+            'MemTotal': 98639096
+        }
     }
 }

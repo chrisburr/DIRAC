@@ -3,24 +3,30 @@ CERN centralized Elasticsearch service
 ======================================
 
 This document contains all information needed to manage the ES. The ES is provided by CERN IT.
+General info can be found in this `documentation <https://esdocs.web.cern.ch/>`_.
 
 -----------------------
 Communication channels:
 -----------------------
 
-1. Tickets: open a `snow ticket <https://cern.service-now.com/service-portal/service-element.do?name=Elasticsearch-Service>_`.
+CERN IT ES `homepage <https://information-technology.web.cern.ch/services/Elasticsearch-Service>`_
+
+1. Tickets: open a `snow ticket <https://cern.service-now.com/service-portal?id=service_element&name=Elasticsearch-Service>`_.
 2. Mattermost channel: LHCb `specific channel <https://mattermost.web.cern.ch/it-dep/channels/es-for-lhcb>`_ or `IT general channel <https://mattermost.web.cern.ch/it-dep/channels/it-es-project>`_.
 
 -----------------------
 Elasticsearch instances
 -----------------------
 
-We are using three instances (host:username):
+We are using three production instances:
 
-1. (es-lhcb-monitoring:lhcb) for monitoring WMS and ComponentMonitoring
-2. (es-lhcb-dirac-logs:lhcb-dirac-logs) for centralized Monitoring
-3. (es-lhcb-mcstats:lhcb-mcstats) for MC statistics
+1. es-lhcb-monitoring for monitoring WMS and ComponentMonitoring
+2. es-lhcb-dirac-logs for centralized Monitoring
+3. es-lhcb-mcstats for MC statistics
 
+and one for certification:
+
+1. es-lhcb-dev for everything
 
 ------------------------------------
 Elasticsearch performance monitoring
@@ -35,6 +41,9 @@ Kibana
 
 Kibana is used for visualize the data. IT/ES provides a Kibana end point for each ES instance.
 You can access using https://instance/kibana for example: https://es-lhcb-monitoring.cern.ch/kibana
+
+All kibana interfaces are CERN internal web pages. If you are outside of the CERN network you need to follow 
+`these instructions <https://security.web.cern.ch/recommendations/en/ssh_browsing.shtml>`_.
 
 Note: You can access to kibana, if you are in one of the group: lhcb-dirac, lhcb-geoc, lhcb-gridshifters
 

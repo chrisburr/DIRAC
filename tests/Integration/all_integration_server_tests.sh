@@ -40,5 +40,5 @@ echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
 # pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticGeneratorLogDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticMCBooleLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticMCGaussLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-# pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticPrMonDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticPrMonDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 TEST_CODE_LOC=$TESTCODE python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))

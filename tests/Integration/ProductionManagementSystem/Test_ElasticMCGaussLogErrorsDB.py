@@ -21,7 +21,6 @@ import time
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from DIRAC import gLogger
 from tests.Integration.ProductionManagementSystem.MCStatsSampleData import gauss_errors_1
 
 # sut
