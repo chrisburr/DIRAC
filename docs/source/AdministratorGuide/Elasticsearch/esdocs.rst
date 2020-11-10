@@ -9,7 +9,9 @@ General info can be found in this `documentation <https://esdocs.web.cern.ch/>`_
 Communication channels:
 -----------------------
 
-1. Tickets: open a `snow ticket <https://cern.service-now.com/service-portal/service-element.do?name=Elasticsearch-Service>`_.
+CERN IT ES `homepage <https://information-technology.web.cern.ch/services/Elasticsearch-Service>`_
+
+1. Tickets: open a `snow ticket <https://cern.service-now.com/service-portal?id=service_element&name=Elasticsearch-Service>`_.
 2. Mattermost channel: LHCb `specific channel <https://mattermost.web.cern.ch/it-dep/channels/es-for-lhcb>`_ or `IT general channel <https://mattermost.web.cern.ch/it-dep/channels/it-es-project>`_.
 
 -----------------------
