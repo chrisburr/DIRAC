@@ -258,11 +258,12 @@ def jobWith2OutputsToBannedSE():
 @executeWithUserProxy
 def jobWithSingleInputData():
 
-  job = baseToAllJobs('jobWithSingleInputData', jobClass)
+  job = baseToAllJobs('jobWithSingleInputData-shouldGoToCERN', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('download')
   res = endOfAllJobs(job)
   return res
@@ -271,11 +272,12 @@ def jobWithSingleInputData():
 @executeWithUserProxy
 def jobWithSingleInputDataCERN():
 
-  job = baseToAllJobs('jobWithSingleInputDataCERN', jobClass)
+  job = baseToAllJobs('jobWithSingleInputDataCERN-shouldSucceed', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.CERN.cern'])
   res = endOfAllJobs(job)
@@ -285,11 +287,12 @@ def jobWithSingleInputDataCERN():
 @executeWithUserProxy
 def jobWithSingleInputDataRAL():
 
-  job = baseToAllJobs('jobWithSingleInputDataRAL', jobClass)
+  job = baseToAllJobs('jobWithSingleInputDataRAL-shouldFailOptimizers', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.RAL.uk'])
   res = endOfAllJobs(job)
@@ -299,11 +302,12 @@ def jobWithSingleInputDataRAL():
 @executeWithUserProxy
 def jobWithSingleInputDataIN2P3():
 
-  job = baseToAllJobs('jobWithSingleInputDataIN2P3', jobClass)
+  job = baseToAllJobs('jobWithSingleInputDataIN2P3-shouldFailOptimizers', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.IN2P3.fr'])
   res = endOfAllJobs(job)
@@ -313,11 +317,12 @@ def jobWithSingleInputDataIN2P3():
 @executeWithUserProxy
 def jobWithSingleInputDataRRCKI():
 
-  job = baseToAllJobs('jobWithSingleInputDataRRCKI', jobClass)
+  job = baseToAllJobs('jobWithSingleInputDataRRCKI-shouldFailOptimizers', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.RRCKI.ru'])
   res = endOfAllJobs(job)
@@ -327,11 +332,12 @@ def jobWithSingleInputDataRRCKI():
 @executeWithUserProxy
 def jobWithSingleInputDataSARA():
 
-  job = baseToAllJobs('jobWithSingleInputDataSARA', jobClass)
+  job = baseToAllJobs('jobWithSingleInputDataSARA-shouldFailOptimizers', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.SARA.nl'])
   res = endOfAllJobs(job)
@@ -341,11 +347,12 @@ def jobWithSingleInputDataSARA():
 @executeWithUserProxy
 def jobWithSingleInputDataPIC():
 
-  job = baseToAllJobs('jobWithSingleInputDataPIC', jobClass)
+  job = baseToAllJobs('jobWithSingleInputDataPIC-shouldFailOptimizers', jobClass)
   job.setInputSandbox(
       [find_all('exe-script-with-input-single-location.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')  # this file should be at CERN-USER only
+  # this file should be at CERN-USER only
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
   job.setInputDataPolicy('protocol')
   job.setDestination(['LCG.PIC.es'])
   res = endOfAllJobs(job)
@@ -358,7 +365,8 @@ def jobWithSingleInputDataSpreaded():
   job = baseToAllJobs('jobWithSingleInputDataSpreaded', jobClass)
   job.setInputSandbox([find_all('exe-script-with-input.py', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setExecutable("exe-script-with-input.py", "", "exeWithInput.log")
-  job.setInputData('/lhcb/user/f/fstagni/test/testInputFile.txt')  # this file should be at CERN-USER and IN2P3-USER
+  # this file should be at CERN-USER and IN2P3-USER
+  job.setInputData('/lhcb/user/f/fstagni/test/testInputFile.txt')
   job.setInputDataPolicy('download')
   res = endOfAllJobs(job)
   return res
