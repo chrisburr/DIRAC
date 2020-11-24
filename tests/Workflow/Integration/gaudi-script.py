@@ -27,4 +27,4 @@ if __name__ == '__main__':
 
   options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
   LHCbApp().EvtMax = 2
-  sys.exit(system('''gaudirun.py -T %s''' % options) / 256)
+  sys.exit(int(system('''gaudirun.py -T %s''' % options) / 256))
