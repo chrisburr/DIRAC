@@ -20,4 +20,4 @@ from LHCbDIRAC.Core.Utilities.File import makeGuid
 fileName = Script.getPositionalArgs()[0]
 
 guids = makeGuid(fileName)
-print guids[fileName]
+print(guids[fileName])

@@ -40,7 +40,7 @@ class UserJobTestCase(IntegrationTest):
   def setUp(self):
     super(UserJobTestCase, self).setUp()
 
-    print "\n \n ********************************* \n   Running a new test \n *********************************"
+    print("\n \n ********************************* \n   Running a new test \n *********************************")
 
     self.dLHCb = DiracLHCb()
     try:
@@ -293,8 +293,8 @@ class UserJobsFailingLocalSuccess(FailingUserJobTestCase):
     """ This job will fail everything that can fail
     """
 
-    print "Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info"
-    print "This will generate a local job"
+    print("Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info")
+    print("This will generate a local job")
     os.environ['JOBID'] = '12345'
 
     gaudirunJob = createJob()

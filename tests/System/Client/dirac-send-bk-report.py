@@ -23,4 +23,4 @@ with open(xmlFile, 'r') as fd:
   bkXML = fd.read()
 
 res = BookkeepingClient().sendXMLBookkeepingReport(bkXML)
-print res
+print(res)

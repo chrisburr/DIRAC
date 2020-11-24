@@ -29,7 +29,7 @@ class IntegrationTest(unittest.TestCase):
     cleanTestDir()
     self.dirac = DiracLHCb()
     gLogger.setLevel('DEBUG')
-    print "\n\n****************************************************** Start running test"
+    print("\n\n****************************************************** Start running test")
 
   def tearDown(self):
     cleanTestDir()
@@ -48,5 +48,5 @@ class FailingUserJobTestCase(IntegrationTest):
                          '/lhcb/testCfg/testVer/SIM/00012345/0006/00012345_00067890_1.sim'],
                         force=True)
     if not res['OK']:
-      print "Could not remove files", res['Message']
+      print("Could not remove files", res['Message'])
       exit(1)

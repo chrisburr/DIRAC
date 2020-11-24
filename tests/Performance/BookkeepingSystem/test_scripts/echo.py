@@ -31,7 +31,7 @@ class Transaction(object):
     start_time = time.time()
     retVal = BookkeepingClient().ping()
     if not retVal['OK']:
-      print 'ERROR', retVal['Message']
+      print('ERROR', retVal['Message'])
     end_time = time.time()
     self.custom_timers['Bkk_ResponseTime'] = end_time - start_time
     self.custom_timers['Bkk_Ping'] = end_time - start_time
@@ -40,4 +40,4 @@ class Transaction(object):
 if __name__ == '__main__':
   trans = Transaction()
   trans.run()
-  print trans.custom_timers
+  print(trans.custom_timers)

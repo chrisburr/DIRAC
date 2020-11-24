@@ -521,7 +521,7 @@ class Transaction(object):
       retVal = cl.sendXMLBookkeepingReport(step)
       if not retVal['OK']:
         self.custom_timers['Bkk_ERROR'] = self.custom_timers['Bkk_ERROR'] + 1
-        print retVal['Message']
+        print(retVal['Message'])
         return retVal
       end_time = time.time()
       self.custom_timers['Bkk_Step%d' % i] = end_time - start_time
@@ -534,4 +534,4 @@ class Transaction(object):
 if __name__ == '__main__':
   trans = Transaction()
   trans.run()
-  print trans.custom_timers
+  print(trans.custom_timers)

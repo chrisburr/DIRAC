@@ -22,4 +22,4 @@ ftype, desc, version = Script.getPositionalArgs()
 
 res = bk.insertFileTypes(ftype.upper(), desc, version)
 
-print res
+print(res)

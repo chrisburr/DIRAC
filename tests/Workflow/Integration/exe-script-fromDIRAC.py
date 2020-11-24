@@ -13,9 +13,9 @@
 
 import os
 
-print "This is the environment in which I am running"
-print os.environ
-print "Now I will try importing DIRAC"
+print("This is the environment in which I am running")
+print(os.environ)
+print("Now I will try importing DIRAC")
 
 import DIRAC
 from DIRAC import gLogger

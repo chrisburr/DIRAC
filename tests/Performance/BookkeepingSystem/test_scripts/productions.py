@@ -22,7 +22,7 @@ cl = BookkeepingClient()
 
 res = cl.getAvailableProductions()
 if not res['OK']:
-  print res['Message']
+  print(res['Message'])
   sys.exit(0)
 
 allproductions = sorted([i[0] for i in res['Value']], reverse=True)
@@ -45,7 +45,7 @@ class Transaction(object):
     # print r
     if not r['OK']:
       self.custom_timers['Bkk_Error'] = self.custom_timers['Bkk_Error'] + 1
-      print r['Message']
+      print(r['Message'])
     end_time = time.time()
     self.custom_timers['Bkk_ResponseTime'] = end_time - start_time
 
@@ -53,4 +53,4 @@ class Transaction(object):
 if __name__ == '__main__':
   trans = Transaction()
   trans.run()
-  print trans.custom_timers
+  print(trans.custom_timers)

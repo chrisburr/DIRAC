@@ -149,9 +149,9 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase, DIRACTrans
     # clean
     res = self.transClient.cleanTransformation(transID)
     self.assertTrue(res['OK'])
-    print res
+    print(res)
     res = self.transClient.getTransformationParameters(transID, 'Status')
-    print res
+    print(res)
     self.assertTrue(res['OK'])
     self.assertEqual(res['Value'], 'TransformationCleaned')
 

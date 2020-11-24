@@ -36,7 +36,7 @@ class Transaction(object):
     start_time = time.time()
     retVal = bk.getFileMetadata(lfns[:nb])
     if not retVal['OK']:
-      print retVal['Message']
+      print(retVal['Message'])
     end_time = time.time()
 
     self.custom_timers['Bkk_ResponseTime'] = end_time - start_time
@@ -45,4 +45,4 @@ class Transaction(object):
 if __name__ == '__main__':
   trans = Transaction()
   trans.run()
-  print trans.custom_timers
+  print(trans.custom_timers)
