@@ -241,7 +241,7 @@ class MCSimulationTestingAgent (AgentModule):
 
     events = 0
     CPUeJobTotal = 0.0
-    for job in successful.itervalues():
+    for job in successful.values():
       cpuJob = 0
       for bkJob in job:
         if bkJob['ApplicationName'] in ['Gauss', 'Boole', 'Moore', 'Brunel', 'DaVinci']:

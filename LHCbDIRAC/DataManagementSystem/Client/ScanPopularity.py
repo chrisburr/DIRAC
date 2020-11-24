@@ -183,8 +183,8 @@ def cacheDirectories(directories):
       infoType = 'LFN'
       gLogger.verbose('Directory %s: %s' % (dirLfn, str(res['Value'])))
       bkPathUsage.setdefault(bkPath, {}).setdefault(infoType, [0, 0])
-      bkPathUsage[bkPath][infoType][0] += sum(val.get('Files', 0) for val in res['Value'].itervalues())
-      bkPathUsage[bkPath][infoType][1] += sum(val.get('Size', 0) for val in res['Value'].itervalues())
+      bkPathUsage[bkPath][infoType][0] += sum(val.get('Files', 0) for val in res['Value'].values())
+      bkPathUsage[bkPath][infoType][1] += sum(val.get('Size', 0) for val in res['Value'].values())
 
     # # get the PFN usage per storage type
     # Storage type is Disk, Archived, Tape and All

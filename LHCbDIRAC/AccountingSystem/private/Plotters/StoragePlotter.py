@@ -579,7 +579,7 @@ class StoragePlotter(BaseReporter):
           finalData[k][bt] = dataDict[k][bt] / bucketTotals[bt]
 
 #    for key, bucketTotal in dataDict.items():
-#      for bt in bucketTotal.itervalues():
+#      for bt in bucketTotal.values():
 #        if bt in bucketTotals:
 #          if key not in finalData:
 #            finalData[ key ] = {}

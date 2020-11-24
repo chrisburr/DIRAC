@@ -1807,7 +1807,7 @@ class LHCbBookkeepingManager(BaseESManager):
     evtTypes = {}
     if not isinstance(files, dict):
       return evtTypes
-    for metadata in files.itervalues():
+    for metadata in files.values():
       evtType = metadata.get('EventType')
       if evtType:
         try:

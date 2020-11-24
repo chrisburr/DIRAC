@@ -1538,7 +1538,7 @@ def _getEventInputStat(lfns):
   # Let's do it job by job
   if jobLfns:
     progressBar = ProgressBar(len(jobLfns), title="Getting ancestors for %d jobs" % len(jobLfns), chunk=1)
-    for lfns in jobLfns.itervalues():
+    for lfns in jobLfns.values():
       progressBar.loop()
       res = _getJobsEISFromAncestors(lfns)
       if not res['OK']:
@@ -1646,7 +1646,7 @@ def executeRejectionStats(dmScript):
       if not res['OK']:
         gLogger.fatal("Error getting files metadata", res['Message'])
         diracExit(1)
-      eventStat += sum(meta['EventStat'] for meta in res['Value']['Successful'].itervalues() if meta['EventStat'])
+      eventStat += sum(meta['EventStat'] for meta in res['Value']['Successful'].values() if meta['EventStat'])
     progressBar.endLoop()
     eventStatByStream[stream] = eventStat
 

@@ -1499,7 +1499,7 @@ class ProductionRequestSuccess(ClientTestCase):
   #
   #   pr = ProductionRequest( self.bkClientFake, self.diracProdIn )
   #   # stepsListDict = {}
-  #   # for prodDict in prodsDict.itervalues():
+  #   # for prodDict in prodsDict.values():
   #   #   stepsInProdDAG = pr._getStepsInProdDAG(prodDict, stepsListDict)
   #   #   self.assertEqual(stepsInProdDAG.graph, {})
   #

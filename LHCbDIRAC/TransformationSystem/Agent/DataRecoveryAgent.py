@@ -150,7 +150,7 @@ class DataRecoveryAgent(AgentModule):
       self.transLogger.verbose("Looking at WMS jobs %s" %
                                ','.join(str(jobID) for jobID in jobFileDict))
 
-      fileCount = sum(len(lfnList) for lfnList in jobFileDict.itervalues())
+      fileCount = sum(len(lfnList) for lfnList in jobFileDict.values())
       self.transLogger.verbose('%s files are selected after examining WMS jobs' %
                                (str(fileCount) if fileCount else 'No'))
       if not fileCount:
@@ -166,7 +166,7 @@ class DataRecoveryAgent(AgentModule):
         self.transLogger.info('No WMS jobs without pending requests to process.')
         continue
 
-      fileCount = sum(len(lfnList) for lfnList in jobFileDict.itervalues())
+      fileCount = sum(len(lfnList) for lfnList in jobFileDict.values())
       self.transLogger.info('%s files are selected in %d jobs after removing any job with pending requests' %
                             (str(fileCount) if fileCount else 'No', len(jobFileDict)))
       if not fileCount:

@@ -85,7 +85,7 @@ class DiracProduction(DiracLHCb):
       adj = self.prodAdj
       prodInfo = result['Value']
       top = ''
-      for i in self.prodHeaders.itervalues():
+      for i in self.prodHeaders.values():
         top += i.ljust(adj)
       message = ['ProductionID'.ljust(adj) + top + '\n']
       # very painful to make this consistent, better improved first on the server side

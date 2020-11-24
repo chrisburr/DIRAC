@@ -932,7 +932,7 @@ class LHCbJob(Job):
         return res
 
       runNumbers = []
-      for fileMeta in res['Value']['Successful'].itervalues():
+      for fileMeta in res['Value']['Successful'].values():
         try:
           if fileMeta['RunNumber'] not in runNumbers and fileMeta['RunNumber'] is not None:
             runNumbers.append(fileMeta['RunNumber'])

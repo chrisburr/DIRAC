@@ -115,7 +115,7 @@ else:
   if result['Value']['Failed']:
     gLogger.error("Failed to insert the following event types:")
     for evt in result['Value']['Failed']:
-      for i in evt.itervalues():
+      for i in evt.values():
         gLogger.error("%s : %s" % (repr(i.get('EvtentType')), i.get('Error')))
 
   if result['Value']['Successful']:

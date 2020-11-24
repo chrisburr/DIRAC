@@ -138,7 +138,7 @@ class DiracLHCb(Dirac):
     if not result['OK']:
       self.log.error('Could not get ancestors', result['Message'])
       return result
-    ancestors = set(x['FileName'] for ancestors in result['Value']['Successful'].itervalues() for x in ancestors)
+    ancestors = set(x['FileName'] for ancestors in result['Value']['Successful'].values() for x in ancestors)
 
     return S_OK(lfns + list(ancestors))
 
@@ -1028,7 +1028,7 @@ class DiracLHCb(Dirac):
           self.log.error("Can't get ancestors", res['Message'])
           return res
         ancestorsLFNs = []
-        for ancestorsLFN in res['Value']['Successful'].itervalues():
+        for ancestorsLFN in res['Value']['Successful'].values():
           ancestorsLFNs += [i['FileName'] for i in ancestorsLFN]
         self.log.info("DiracLHCb._getLocalInputData: adding %d ancestors" % len(ancestorsLFNs))
         self.log.verbose("%s", ', '.join(ancestorsLFNs))
