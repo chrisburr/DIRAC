@@ -20,7 +20,7 @@
 
 import sys
 import time
-import cPickle
+from six.moves import cPickle
 import json
 import unittest
 

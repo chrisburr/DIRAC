@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import cPickle
+from six.moves import cPickle
 import json
 
 from DIRAC import gLogger
