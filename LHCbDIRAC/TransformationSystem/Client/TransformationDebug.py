@@ -1473,7 +1473,7 @@ class TransformationDebug(object):
       if not res['OK']:
         gLogger.notice('Error getting files metadata', res['Message'])
         DIRAC.exit(2)
-      evtType = res['Value']['Successful'].values()[0]['EventType']
+      evtType = list(res['Value']['Successful'].values())[0]['EventType']
       if isinstance(fileTypes, (list, set)) and param == 'FileType':
         paramValues = sorted(fileTypes)
       elif evtType and param == 'EventType':

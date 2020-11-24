@@ -76,8 +76,8 @@ class TransformationClient(DIRACTransformationClient):
   def _applyTransformationStatusStateMachine(self, transIDAsDict, dictOfProposedstatus, force):
     """Performs a state machine check for productions when asked to change the
     status."""
-    originalStatus, transformationType = transIDAsDict.values()[0][0:2]
-    proposedStatus = dictOfProposedstatus.values()[0]
+    originalStatus, transformationType = list(transIDAsDict.values())[0][0:2]
+    proposedStatus = list(dictOfProposedstatus.values())[0]
     if force:
       return proposedStatus
     else:

@@ -27,7 +27,10 @@ def leave(msg, error=None, exitCode=0):
     gLogger.info("Local file %s removed" % localFile)
 
   if error:
-    errMsg = error.get('Message', error.get('Value', {}).get('Failed', {'': 'Unknown reason'}).values()[0])
+    errMsg = error.get(
+      'Message',
+      list(error.get('Value', {}).get('Failed', {'': 'Unknown reason'}).values())[0],
+    )
     gLogger.error(msg, ': %s' % errMsg)
   else:
     gLogger.always(msg)
