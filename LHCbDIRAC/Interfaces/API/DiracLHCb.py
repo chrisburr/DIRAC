@@ -932,7 +932,7 @@ class DiracLHCb(Dirac):
       return replicaDict
     replicas = replicaDict['Value']['Successful']
     if not replicas:
-      return self._errorReport(replicaDict['Value']['Failed'].items()[0],
+      return self._errorReport(list(replicaDict['Value']['Failed'].items())[0],
                                'Failed to get replica information')
     siteLfns = {}
     for lfn, reps in replicas.items():

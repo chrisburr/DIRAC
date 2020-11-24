@@ -328,7 +328,7 @@ class StorageUsageDB(DB):
     """Get the ID from the problematicDirs table, for a given directory
     {Path:seInfo}"""
     self.log.verbose("entry to be removed: %s" % dirList)
-    dirPath, dirInfo = dirList.items()[0]
+    dirPath, dirInfo = list(dirList.items())[0]
     dirPath = _standardDirectory(dirPath)
     spaceToken = dirInfo['SpaceToken']
     sqlPath = self._escapeString(dirPath)['Value']
@@ -346,7 +346,7 @@ class StorageUsageDB(DB):
 
   def __getIDsFromSe_Usage(self, dirList):
     """Get the ID of the entry corresponding to the directory {path:seInfo}"""
-    dirPath, dirInfo = dirList.items()[0]
+    dirPath, dirInfo = list(dirList.items())[0]
     dirPath = _standardDirectory(dirPath)
 
     # take into account that SEName might not be available
