@@ -614,7 +614,7 @@ class ModuleBase(object):
     # really horrible stuff for updating the name with what's found on the disk
     # (because maybe the case is not the same as the expected)
     newFileInfo = {}
-    for fi in fileInfo.iteritems():
+    for fi in fileInfo.items():
       for li in fileList:
         if fi[0].lower() == li.lower():
           newFileInfo[li] = fi[1]
@@ -694,7 +694,7 @@ class ModuleBase(object):
       stepMask = [stepMask]
 
     if fileMask and fileMask != ['']:
-      for fileName, metadata in list(candidateFiles.iteritems()):
+      for fileName, metadata in list(candidateFiles.items()):
         if metadata['type'].lower() not in [fm.lower() for fm in fileMask]:
           del candidateFiles[fileName]
           self.log.info('Output file %s was produced but will not be treated (fileMask is %s)' % (fileName,
@@ -703,7 +703,7 @@ class ModuleBase(object):
       self.log.info('No outputDataFileMask provided, the files with all the extensions will be considered')
 
     if stepMask and stepMask != ['']:
-      for fileName, metadata in list(candidateFiles.iteritems()):
+      for fileName, metadata in list(candidateFiles.items()):
         if fileName.lower().replace(metadata['type'].lower(), '').split('_')[-1].split('.')[0] not in stepMask:
           del candidateFiles[fileName]
           self.log.info('Output file %s was produced but will not be treated (stepMask is %s)' % (fileName,
@@ -729,7 +729,7 @@ class ModuleBase(object):
     notPresentKeys = []
 
     mandatoryKeys = ['type', 'lfn']  # filedict is used for requests
-    for fileName, metadata in candidateFiles.iteritems():
+    for fileName, metadata in candidateFiles.items():
       for key in mandatoryKeys:
         if key not in metadata:
           notPresentKeys.append((fileName, key))
@@ -772,12 +772,12 @@ class ModuleBase(object):
     else:
       self.log.info('GUIDs found for all specified POOL files: %s' % (', '.join(candidateFiles)))
 
-    for pfn, guid in pfnGUID['Value'].iteritems():
+    for pfn, guid in pfnGUID['Value'].items():
       candidateFiles[pfn]['guid'] = guid
 
     # Get all additional metadata about the file necessary for requests
     final = {}
-    for fileName, metadata in candidateFiles.iteritems():
+    for fileName, metadata in candidateFiles.items():
       fileDict = {}
       fileDict['LFN'] = metadata['lfn']
       fileDict['Size'] = os.path.getsize(fileName)
@@ -792,7 +792,7 @@ class ModuleBase(object):
 
     # Sanity check all final candidate metadata keys are present (return S_ERROR if not)
     mandatoryKeys = ['guid', 'filedict']  # filedict is used for requests (this method adds guid and filedict)
-    for fileName, metadata in final.iteritems():
+    for fileName, metadata in final.items():
       for key in mandatoryKeys:
         if key not in metadata:
           raise RuntimeError("File %s has missing %s" % (fileName, key))

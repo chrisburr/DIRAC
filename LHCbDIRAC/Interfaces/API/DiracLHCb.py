@@ -555,7 +555,7 @@ class DiracLHCb(Dirac):
             ' in addition to a Simulation or DataTaking Condition')
 
     self.log.verbose('Final BK query dictionary is:')
-    for item in bkQueryDict.iteritems():
+    for item in bkQueryDict.items():
       self.log.verbose('%s : %s' % item)
 
     start = time.time()

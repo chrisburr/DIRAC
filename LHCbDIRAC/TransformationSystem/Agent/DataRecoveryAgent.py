@@ -118,7 +118,7 @@ class DataRecoveryAgent(AgentModule):
                                                                ', '.join(self.transformationTypes)))
     self.log.verbose('Transformations selected:\n%s' % (', '.join(transformationDict)))
 
-    for transformation, typeName in transformationDict.iteritems():
+    for transformation, typeName in transformationDict.items():
       self.transLogger = self.log.getSubLogger('Trans-%s' % transformation)
       result = self.__selectTransformationFiles(transformation, fileSelectionStatus)
       if not result['OK']:
@@ -185,7 +185,7 @@ class DataRecoveryAgent(AgentModule):
       filesToUpdate = []
       filesMaxReset = []
       filesWithDescendants = []
-      for job, fileList in jobFileDict.iteritems():
+      for job, fileList in jobFileDict.items():
         if job in jobsThatDidntProduceOutputs:
           recoverableFiles = set(lfn for lfn in fileList if fileDict[lfn][1] not in unrecoverableStatus)
           filesToUpdate += list(recoverableFiles)
@@ -293,7 +293,7 @@ class DataRecoveryAgent(AgentModule):
         continue
 
       # Must map unique files -> jobs in expected state
-      jobFileDict[wmsID] = [lfn for lfn, (tID, _st) in fileDict.iteritems() if int(tID) == int(taskID)]
+      jobFileDict[wmsID] = [lfn for lfn, (tID, _st) in fileDict.items() if int(tID) == int(taskID)]
 
       self.transLogger.info('Found %d files for taskID %s, jobID %s (%s), last update %s' %
                             (len(jobFileDict[wmsID]), taskID, wmsID, wmsStatus, taskDict['LastUpdateTime']))
@@ -318,7 +318,7 @@ class DataRecoveryAgent(AgentModule):
       self.transLogger.verbose('None of the jobs have pending requests')
       return S_OK()
 
-    for jobID, requestID in result['Value']['Successful'].iteritems():
+    for jobID, requestID in result['Value']['Successful'].items():
       res = self.reqClient.getRequestStatus(requestID)
       if not res['OK']:
         self.transLogger.error('Failed to get Status for Request', '%s:%s' % (requestID, res['Message']))
@@ -338,7 +338,7 @@ class DataRecoveryAgent(AgentModule):
     jobsThatProducedOutputs = []
 
     self.consChecks.prod = transformation
-    for job, fileList in jobFileDict.iteritems():
+    for job, fileList in jobFileDict.items():
       result = self.consChecks.getDescendants(fileList)
       filesWithDesc = result[0]
       filesWithMultipleDesc = result[2]

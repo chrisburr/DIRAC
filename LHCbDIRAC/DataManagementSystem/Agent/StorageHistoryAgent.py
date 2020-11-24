@@ -255,7 +255,7 @@ class StorageHistoryAgent(AgentModule):
     metaForList = self.__getMetadataForAcc(self.dirDict.values())
 
     # loop on all directories  to get the bkk metadata
-    for dirLfn, fullDirectory in self.dirDict.iteritems():
+    for dirLfn, fullDirectory in self.dirDict.items():
       if dirLfn not in fullDirectory:
         self.log.error("ERROR: fullDirectory should include the dirname: %s %s " % (fullDirectory, dirLfn))
         continue

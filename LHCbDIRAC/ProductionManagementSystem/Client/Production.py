@@ -504,7 +504,7 @@ class Production(object):
     try:
       if parameters['BkQuery']:
         info.append('\nBK Input Data Query:')
-        for bkn, bkv in parameters['BkQuery'].iteritems():
+        for bkn, bkv in parameters['BkQuery'].items():
           info.append('%s= %s' % (bkn, bkv))
     except KeyError:
       pass
@@ -629,7 +629,7 @@ class Production(object):
                                                   bkPassInfo=bkSteps,
                                                   reqID=requestID,
                                                   derivedProd=self.ancestorProduction)
-      for parName, parValue in paramsDict.iteritems():
+      for parName, parValue in paramsDict.items():
         result = getattr(self.transformation, 'set' + parName)(parValue)
 
     else:

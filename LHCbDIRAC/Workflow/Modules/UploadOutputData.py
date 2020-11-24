@@ -140,7 +140,7 @@ class UploadOutputData(ModuleBase):
       # Get final, resolved SE list for files
       final = {}
 
-      for fileName, metadata in fileMetadata.iteritems():
+      for fileName, metadata in fileMetadata.items():
         if not SEs:
           resolvedSE = getDestinationSEList(metadata['workflowSE'], self.siteName, self.outputMode,
                                             self.workflow_commons.get('runNumber'))
@@ -152,7 +152,7 @@ class UploadOutputData(ModuleBase):
       self.log.info("The following files will be uploaded", ": %s" % ', '.join(final))
       for fileName, metadata in final.items():
         self.log.info('--------%s--------' % fileName)
-        for name, val in metadata.iteritems():
+        for name, val in metadata.items():
           self.log.info('%s = %s' % (name, val))
 
       if not self._enableModule():
@@ -341,7 +341,7 @@ class UploadOutputData(ModuleBase):
             self.log.error(result)
             return S_ERROR("Could Not Perform BK Registration")
           if 'Failed' in result['Value'] and result['Value']['Failed']:
-            for lfn, error in result['Value']['Failed'].iteritems():
+            for lfn, error in result['Value']['Failed'].items():
               lfnMetadata = {}
               for lfnMD in performBKRegistration:
                 if lfnMD['lfn'] == lfn:  # the lfn is indeed both at lfnMD['lfn'] and at lfnMD['filedict']['LFN']

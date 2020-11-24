@@ -275,7 +275,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
         if res['OK']:
           success = res['Value']['Successful']
           if ignoreFailover:
-            present.update(lfn for lfn, seList in success.iteritems() for se in seList
+            present.update(lfn for lfn, seList in success.items() for se in seList
                            if not self.dmsHelpers.isSEFailover(se))
           else:
             present.update(success)
@@ -462,7 +462,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
         if not res['OK']:
           gLogger.fatal('Error getting files metadata', res['Message'])
           DIRAC.exit(2)
-        for lfn, metadata in res['Value']['Successful'].iteritems():
+        for lfn, metadata in res['Value']['Successful'].items():
           fileType = metadata.get('FileType')
           if fileType is None:
             gLogger.notice("File type unavailable for %s" % lfn, str(metadata))
@@ -471,7 +471,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
       if not res['OK']:
         gLogger.fatal('Error getting file ancestors', res['Message'])
         DIRAC.exit(2)
-      for lfn, anc in res['Value']['Successful'].iteritems():
+      for lfn, anc in res['Value']['Successful'].items():
         ancestors[lfn] = [ancDict['FileName'] for ancDict in anc]
         if not getFileType:
           listAncestors += ancestors[lfn]
@@ -591,7 +591,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
               # Assign the daughters list to the initial LFN
               filesWithDescendants[lfn] = list(descDict[lfn])
               # Is there a file type with more than one daughter of a given file type?
-              multi = dict((ft, ftc) for ft, ftc in ft_count[lfn].iteritems() if ftc > 1)
+              multi = dict((ft, ftc) for ft, ftc in ft_count[lfn].items() if ftc > 1)
               if multi:
                 filesWithMultipleDescendants[lfn] = multi
             else:
@@ -756,7 +756,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
             for counts in descToCheck.itervalues():
               for ft in counts:
                 ft_count[ft] = ft_count.setdefault(ft, 0) + counts.get(ft, 0)
-            multi = dict((ft, ftc) for ft, ftc in ft_count.iteritems() if ftc > 1)
+            multi = dict((ft, ftc) for ft, ftc in ft_count.items() if ftc > 1)
             # Mother has at least one real descendant
             # Now check whether there are more than one descendant of the same file type
             if not multi:
@@ -855,7 +855,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
       if not res['OK']:
         gLogger.error('Error checking file in SE', res['Message'])
       else:
-        for lfn, ex in res['Value']['Successful'].iteritems():
+        for lfn, ex in res['Value']['Successful'].items():
           if ex:
             foundInSE.setdefault(lfn, []).append(se)
     return foundInSE

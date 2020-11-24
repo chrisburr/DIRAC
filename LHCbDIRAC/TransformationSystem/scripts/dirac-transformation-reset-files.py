@@ -91,7 +91,7 @@ if __name__ == "__main__":
                                                          force=force)
         if res['OK']:
           resetFiles += len(res['Value'].get('Successful', res['Value']))
-          for lfn, reason in res['Value'].get('Failed', {}).iteritems():
+          for lfn, reason in res['Value'].get('Failed', {}).items():
             if reason != 'File not found in the Transformation Database':
               failed.setdefault(reason, []).append(lfn)
         else:

@@ -67,5 +67,5 @@ if __name__ == "__main__":
       targetStats[targetSE][1] += 1
 
     gLogger.always("Transformation %d: %d assigned files found" % (transID, len(res['Value'])))
-    for targetSE, (nfiles, ntasks) in targetStats.iteritems():
+    for targetSE, (nfiles, ntasks) in targetStats.items():
       gLogger.always("\t%s: %d files in %d tasks" % (targetSE, nfiles, ntasks))

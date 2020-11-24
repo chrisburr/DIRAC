@@ -130,7 +130,7 @@ class ProdConf(object):
     """Build a string with the options that will go in."""
     string = 'from ProdConf import ProdConf\n\n'
     string = string + 'ProdConf(\n'
-    for opt, value in optsThatWillGoIn.iteritems():
+    for opt, value in optsThatWillGoIn.items():
       if self.optionsDict[opt] == 'list':
         string = string + '  ' + opt + '=' + str(value) + ',' + '\n'
       elif self.optionsDict[opt] == 'string':

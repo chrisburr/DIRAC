@@ -126,7 +126,7 @@ class RAWIntegrityAgent(AgentModule):
 
     successful = {}
     failed = {}
-    for lfn, seMetadata in filesMetadata.iteritems():
+    for lfn, seMetadata in filesMetadata.items():
       isMigrated = seMetadata.get('Migrated', False)
       # If it is not migrated, go to the next one
       if not isMigrated:
@@ -162,7 +162,7 @@ class RAWIntegrityAgent(AgentModule):
     self.log.info("Obtaining physical file metadata.")
     # Group the lfns by SEs
     seLfns = {}
-    for lfn, metadataDict in activeFiles.iteritems():
+    for lfn, metadataDict in activeFiles.items():
       se = metadataDict['SE']
       seLfns.setdefault(se, []).append(lfn)
 
@@ -200,7 +200,7 @@ class RAWIntegrityAgent(AgentModule):
           seFilesCopied = []
           seFilesNotCopied = []
           # The copied files are those in True in the successful dictionary
-          for lfn, isCopied in succCompare.iteritems():
+          for lfn, isCopied in succCompare.items():
             if isCopied:
               seFilesCopied.append(lfn)
             else:
@@ -254,7 +254,7 @@ class RAWIntegrityAgent(AgentModule):
         failedRegister.update(res['Value']['Failed'])
 
     gMonitor.addMark("ErrorRegister", len(failedRegister))
-    for lfn, reason in failedRegister.iteritems():
+    for lfn, reason in failedRegister.items():
       self.log.error("Failed to register lfn. Setting to Copied", "%s: %s" % (lfn, reason))
       res = self.rawIntegrityDB.setFileStatus(lfn, 'Copied')
       if not res['OK']:
@@ -300,7 +300,7 @@ class RAWIntegrityAgent(AgentModule):
       failedRemove = res['Value']['Failed']
 
     gMonitor.addMark("ErrorRemove", len(failedRemove))
-    for lfn, reason in failedRemove.iteritems():
+    for lfn, reason in failedRemove.items():
       self.log.error("Failed to remove lfn. Setting to Registered", "%s: %s" % (lfn, reason))
       res = self.rawIntegrityDB.setFileStatus(lfn, 'Registered')
       if not res['OK']:
@@ -356,7 +356,7 @@ class RAWIntegrityAgent(AgentModule):
     registeredFiles = {}
 
     # Assign them
-    for lfn, lfnMetadata in allUnmigratedFilesMeta.iteritems():
+    for lfn, lfnMetadata in allUnmigratedFilesMeta.items():
       status = lfnMetadata.pop('Status')
       if status == 'Active':
         activeFiles[lfn] = lfnMetadata
@@ -367,7 +367,7 @@ class RAWIntegrityAgent(AgentModule):
 
     gMonitor.addMark("WaitingFiles", len(activeFiles))
     totalSize = 0
-    for lfn, fileDict in activeFiles.iteritems():
+    for lfn, fileDict in activeFiles.items():
       totalSize += int(fileDict['Size'])
       # gMonitor.addMark("TimeInQueue", (fileDict['WaitTime'] / 60))
     gMonitor.addMark("WaitSize", (totalSize / (1024 * 1024 * 1024.0)))

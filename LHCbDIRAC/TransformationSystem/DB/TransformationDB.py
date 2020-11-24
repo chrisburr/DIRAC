@@ -401,7 +401,7 @@ class TransformationDB(DIRACTransformationDB):
     connection = self.__getConnection(connection)
     selectDict = {}
     if condDict:
-      for key, val in condDict.iteritems():
+      for key, val in condDict.items():
         if key in self.transRunParams:
           selectDict[key] = val
     req = "SELECT %s FROM TransformationRuns %s" % (intListToString(self.transRunParams),
@@ -484,12 +484,12 @@ class TransformationDB(DIRACTransformationDB):
       return res
     fileIDs = res['Value'][0]
     rDict = {}
-    for fileID, lfn in fileIDs.iteritems():
+    for fileID, lfn in fileIDs.items():
       rDict[fileID] = lfnsDict[lfn]
-    for fID, param in rDict.iteritems():
+    for fID, param in rDict.items():
       req = "UPDATE TransformationFiles SET %s \
        WHERE TransformationID = %d AND FileID = %d" % \
-          (','.join("`%s` = '%s'" % keyVal for keyVal in param.iteritems()), transID, fID)
+          (','.join("`%s` = '%s'" % keyVal for keyVal in param.items()), transID, fID)
       res = self._update(req, connection)
       if not res['OK']:
         gLogger.error("Failed to update TransformationFiles table", res['Message'])
@@ -558,7 +558,7 @@ class TransformationDB(DIRACTransformationDB):
   def setRunsMetadata(self, runID, metadataDict, connection=False):
     """Add the metadataDict to runID (if already present, does nothing)"""
     connection = self.__getConnection(connection)
-    for name, value in metadataDict.iteritems():
+    for name, value in metadataDict.items():
       res = self.__insertRunMetadata(runID, name, value, connection)
       if not res['OK']:
         return res
@@ -567,7 +567,7 @@ class TransformationDB(DIRACTransformationDB):
   def updateRunsMetadata(self, runID, metadataDict, connection=False):
     """Add the metadataDict to runID (if already present, does nothing)"""
     connection = self.__getConnection(connection)
-    for name, value in metadataDict.iteritems():
+    for name, value in metadataDict.items():
       res = self.__updateRunMetadata(runID, name, value, connection)
       if not res['OK']:
         return res

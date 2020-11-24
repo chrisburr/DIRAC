@@ -1730,7 +1730,7 @@ class LHCbBookkeepingManager(BaseESManager):
       string += "\n%s Extra information about the data processing phases:\n" % (self.comment)
       retVal = self.db_.getStepsMetadata(dataset)
       if retVal['OK']:
-        for ppass, record in retVal['Value']['Records'].iteritems():
+        for ppass, record in retVal['Value']['Records'].items():
           ppass = dataset.get('ProcessingPass', ppass)
           string += "\n%s Processing Pass: '%s' \n\n" % (self.comment, ppass)
           for i in record:
@@ -1743,7 +1743,7 @@ class LHCbBookkeepingManager(BaseESManager):
     """It generates the Root format option file."""
     string = "\nfrom Gaudi.Configuration import * "
     string += "\nfrom GaudiConf import IOHelper\n"
-    for fileFormat, lfns in filesandformats.iteritems():
+    for fileFormat, lfns in filesandformats.items():
       if fileFormat:
         string += "IOHelper('%s').inputFiles([\n" % fileFormat
       else:
@@ -1791,7 +1791,7 @@ class LHCbBookkeepingManager(BaseESManager):
       # Get file type version from BK
       retVal = self.db_.getFileTypeVersion(lfns)
       if retVal['OK']:
-        for lfn, fileFormat in retVal['Value'].iteritems():
+        for lfn, fileFormat in retVal['Value'].items():
           filesandformats.setdefault(fileFormat, []).append(lfn)
           lfns.remove(lfn)
       # If no persistency is found, set it to None
@@ -1860,7 +1860,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   def __getSelectedQualities(self):
     """data quality."""
-    return [flag for flag, val in self.dataQualities_.iteritems() if val is True]
+    return [flag for flag, val in self.dataQualities_.items() if val is True]
 
   #############################################################################
   def getStepsMetadata(self, bkDict):

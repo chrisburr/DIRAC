@@ -109,7 +109,7 @@ replicasPerSE = {}
 n = 10
 totalSoFar = 0
 fp.write("-------- Checks FC -> SE ---------------------------------------------------------\n")
-for lfn, lfnDict in allFiles.iteritems():
+for lfn, lfnDict in allFiles.items():
   # checks LFC -> SE
   totalSoFar += 1
   if totalSoFar % n == 0:
@@ -117,7 +117,7 @@ for lfn, lfnDict in allFiles.iteritems():
   if verbose:
     fp.write("LFN: %s\n" % lfn)
   lfnReplicas = []
-  for se, replicaDict in lfnDict['Replicas'].iteritems():
+  for se, replicaDict in lfnDict['Replicas'].items():
     # print 'SE: %s -- replica: %s ' % ( se, replicaDict )
     lfnReplicas.append(se)
     if not lfnReplicas:

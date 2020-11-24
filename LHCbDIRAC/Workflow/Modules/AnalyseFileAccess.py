@@ -144,7 +144,7 @@ class AnalyseFileAccess(ModuleBase):
       lfn_pfn_fail[lfn].append(pfn)
 
     # For each PFN in the lfn_pfn_fail dictionnary, we will count a failure.
-    for lfn, failedPfns in lfn_pfn_fail.iteritems():
+    for lfn, failedPfns in lfn_pfn_fail.items():
       # We add the accounting for the failure
       for pfn in failedPfns:
         remoteSE = pfn_se[pfn]
@@ -154,7 +154,7 @@ class AnalyseFileAccess(ModuleBase):
     # If the LFN is not in the lfn_pfn_fail dict, that means the first attempt was successful
     # If there are no more replicas to be tried, then the LFN was never read.
 
-    for lfn, replicaList in lfn_pfn.iteritems():
+    for lfn, replicaList in lfn_pfn.items():
       # get the index of the successful replicas
       succRepIndex = len(lfn_pfn_fail.get(lfn, []))
       try:

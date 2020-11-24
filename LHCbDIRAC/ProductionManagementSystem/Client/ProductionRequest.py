@@ -136,9 +136,9 @@ class ProductionRequest(object):
   def resolveSteps(self):
     """Given a list of steps in strings, some of which might be missing,
     resolve it into a list of dictionary of steps (self.stepsListDict)"""
-    outputVisFlag = dict([k, v] for el in self.outputVisFlag for k, v in el.iteritems()
+    outputVisFlag = dict([k, v] for el in self.outputVisFlag for k, v in el.items()
                          )  # Transform the list of dictionaries in a dictionary
-    specialOutputVisFlag = dict([k, v] for el in self.specialOutputVisFlag for k, v in el.iteritems())
+    specialOutputVisFlag = dict([k, v] for el in self.specialOutputVisFlag for k, v in el.items())
     count = 0  # Needed to add correctly the optionFiles to the list of dictonaries of steps
     for stepID in self.stepsList:
 

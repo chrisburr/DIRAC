@@ -93,7 +93,7 @@ class TransformationClient(DIRACTransformationClient):
   def _applyTransformationFilesStateMachine(self, tsFilesAsDict, dictOfProposedLFNsStatus, force):
     """Apply LHCb state machine for transformation files."""
     newStatuses = dict()
-    for lfn, newStatus in dictOfProposedLFNsStatus.iteritems():
+    for lfn, newStatus in dictOfProposedLFNsStatus.items():
       if lfn in tsFilesAsDict:
         currentStatus = tsFilesAsDict[lfn][0]
         if force:

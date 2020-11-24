@@ -46,7 +46,7 @@ class LHCbWorkflowTasks(WorkflowTasks):
     """add as JDL parameters all the other parameters that are not for inputs
     or destination."""
 
-    for paramName, paramValue in paramsDict.iteritems():
+    for paramName, paramValue in paramsDict.items():
       if paramName not in ('InputData', 'RunNumber', 'RunMetadata', 'Site', 'TargetSE'):
         if paramValue:
           self.log.verbose('Setting %s to %s' % (paramName, paramValue))

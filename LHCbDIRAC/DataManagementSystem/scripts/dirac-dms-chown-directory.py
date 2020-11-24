@@ -134,7 +134,7 @@ retCode = 0
 if errors:
   retCode = 1
   gLogger.notice("Errors:")
-  for baseDir, error in errors.iteritems():
+  for baseDir, error in errors.items():
     gLogger.notice("\tDirectory %s - " % baseDir, error)
 elif len(directories) == 1:
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript

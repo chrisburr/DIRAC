@@ -201,16 +201,16 @@ def cacheDirectories(directories):
       for infoType in storageTypes:
         # Active type will be recorded in Disk, just a special flag
         if infoType != 'LFN' and infoType not in info:
-          nf = sum(val['Files'] for se, val in res['Value'].iteritems() if isType(se, infoType))
-          size = sum(val['Size'] for se, val in res['Value'].iteritems() if isType(se, infoType))
+          nf = sum(val['Files'] for se, val in res['Value'].items() if isType(se, infoType))
+          size = sum(val['Size'] for se, val in res['Value'].items() if isType(se, infoType))
           info[infoType] = {'Files': nf, 'Size': size}
       for site in storageSites:
         if site not in info:
           nf = sum(val['Files']
-                   for se, val in res['Value'].iteritems()
+                   for se, val in res['Value'].items()
                    if isAtSite(se, site) and isType(se, 'Disk'))
           size = sum(val['Size']
-                     for se, val in res['Value'].iteritems()
+                     for se, val in res['Value'].items()
                      if isAtSite(se, site) and isType(se, 'Disk'))
           info[site] = {'Files': nf, 'Size': size}
       bkPath = bkPathForDir[dirLfn]

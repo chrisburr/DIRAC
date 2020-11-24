@@ -194,8 +194,8 @@ class DiracProduction(DiracLHCb):
     summary = {}
     submittedJobs = 0
     doneJobs = 0
-    for job, atts in statusDict['Value'].iteritems():
-      for key, val in atts.iteritems():
+    for job, atts in statusDict['Value'].items():
+      for key, val in atts.items():
         if key == 'Status':
           uniqueStatus = val.capitalize()
           if uniqueStatus not in summary:
@@ -247,11 +247,11 @@ class DiracProduction(DiracLHCb):
     message += ':\n\n'
     message += 'Status'.ljust(statAdj) + 'MinorStatus'.ljust(mStatAdj) + 'ApplicationStatus'.ljust(mStatAdj) + \
         'Total'.ljust(totalAdj) + 'Example'.ljust(exAdj) + '\n'
-    for stat, metadata in summary.iteritems():
+    for stat, metadata in summary.items():
       message += '\n'
-      for minor, appInfo in metadata.iteritems():
+      for minor, appInfo in metadata.items():
         message += '\n'
-        for appStat, jobInfo in appInfo.iteritems():
+        for appStat, jobInfo in appInfo.items():
           message += stat.ljust(statAdj) + minor.ljust(mStatAdj) + appStat.ljust(mStatAdj) + \
               str(jobInfo['Total']).ljust(totalAdj) + str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
@@ -303,7 +303,7 @@ class DiracProduction(DiracLHCb):
     submittedJobs = 0
     doneJobs = 0
     for job, atts in statusDict['Value'].ietritems():
-      for key, val in atts.iteritems():
+      for key, val in atts.items():
         if key == 'Status':
           uniqueStatus = val.capitalize()
           if uniqueStatus not in summary:
@@ -348,9 +348,9 @@ class DiracProduction(DiracLHCb):
     message += ':\n\n'
     message += 'Status'.ljust(statAdj) + 'MinorStatus'.ljust(mStatAdj) + 'Total'.ljust(totalAdj) + \
         'Example'.ljust(exAdj) + '\n'
-    for stat, metadata in summary.iteritems():
+    for stat, metadata in summary.items():
       message += '\n'
-      for minor, jobInfo in metadata.iteritems():
+      for minor, jobInfo in metadata.items():
         message += stat.ljust(statAdj) + minor.ljust(mStatAdj) + str(jobInfo['Total']).ljust(totalAdj) + \
             str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
@@ -399,8 +399,8 @@ class DiracProduction(DiracLHCb):
     submittedJobs = 0
     doneJobs = 0
 
-    for job, atts in statusDict['Value'].iteritems():
-      for key, val in atts.iteritems():
+    for job, atts in statusDict['Value'].items():
+      for key, val in atts.items():
         if key == 'Site':
           uniqueSite = val
           currentStatus = atts['Status'].capitalize()
@@ -448,9 +448,9 @@ class DiracProduction(DiracLHCb):
     message += ':\n\n'
     message += 'Site'.ljust(siteAdj) + 'Status'.ljust(statAdj) + 'Total'.ljust(totalAdj) + \
         'Example'.ljust(exAdj) + '\n'
-    for siteStr, metadata in summary.iteritems():
+    for siteStr, metadata in summary.items():
       message += '\n'
-      for stat, jobInfo in metadata.iteritems():
+      for stat, jobInfo in metadata.items():
         message += siteStr.ljust(siteAdj) + stat.ljust(statAdj) + str(jobInfo['Total']).ljust(totalAdj) + \
             str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
@@ -512,8 +512,8 @@ class DiracProduction(DiracLHCb):
     statAdj = int(self.prodAdj)
     countAdj = int(self.prodAdj)
     message = 'ProductionID'.ljust(idAdj) + 'Status'.ljust(statAdj) + 'Count'.ljust(countAdj) + '\n\n'
-    for prod, info in progress.iteritems():
-      for status, count in info.iteritems():
+    for prod, info in progress.items():
+      for status, count in info.items():
         message += str(prod).ljust(idAdj) + status.ljust(statAdj) + str(count).ljust(countAdj) + '\n'
       message += '\n'
 
@@ -545,7 +545,7 @@ class DiracProduction(DiracLHCb):
   def getProductionCommands(self):
     """Returns the list of possible commands and their meaning."""
     prodCommands = {}
-    for keyword, statusSubMode in self.commands.iteritems():
+    for keyword, statusSubMode in self.commands.items():
       prodCommands[keyword] = {'Status': statusSubMode[0], 'SubmissionMode': statusSubMode[1]}
     return S_OK(prodCommands)
 
@@ -619,7 +619,7 @@ class DiracProduction(DiracLHCb):
         totalRecords += 1
         record = ''
         recordStatus = ''
-        for n, v in lfnDict.iteritems():
+        for n, v in lfnDict.items():
           record += str(n) + ' = ' + str(v).ljust(adj) + ' '
           if n == 'Status':
             recordStatus = v
@@ -647,7 +647,7 @@ class DiracProduction(DiracLHCb):
     if printSummary:
       print('\nSummary for %s files in production %s\n' % (totalRecords, productionID))
       print('Status'.ljust(adj) + ' ' + 'Total'.ljust(adj) + 'Percentage'.ljust(adj) + '\n')
-      for n, v in summary.iteritems():
+      for n, v in summary.items():
         percentage = int(100 * int(v) / totalRecords)
         print(str(n).ljust(adj) + ' ' + str(v).ljust(adj) + ' ' + str(percentage).ljust(2) + ' % ')
       print('\n')

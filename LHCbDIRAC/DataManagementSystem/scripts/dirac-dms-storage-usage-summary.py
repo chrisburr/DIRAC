@@ -399,7 +399,7 @@ def execute(unit, minimum, depth):
     if topDirectories:
       gLogger.notice('Depth-4 directories:')
       topDirData = {}
-      for resDir, usage in dirData.iteritems():
+      for resDir, usage in dirData.items():
         topDir = '/'.join(resDir.split('/')[:topDirectories + 1]) + '/'
         topDirData.setdefault(topDir, {'Files': 0, 'Size': 0})
         topDirData[topDir]['Files'] += usage['Files']

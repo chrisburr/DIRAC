@@ -165,7 +165,7 @@ class StorageUsageDB(DB):
     if not result['OK']:
       return result
     dirIDs = result['Value']
-    for path, pathInfo in directoryDict.iteritems():
+    for path, pathInfo in directoryDict.items():
       path = _standardDirectory(path)
       try:
         files = int(pathInfo['Files'])
@@ -199,7 +199,7 @@ class StorageUsageDB(DB):
   ####
   def publishToProblematicDirs(self, directoryDict):
     """Publish an entry into the problematic data directory."""
-    for path, pathInfo in directoryDict.iteritems():
+    for path, pathInfo in directoryDict.items():
       path = _standardDirectory(path)
       spaceToken = pathInfo['SpaceToken']
       problem = pathInfo['Problem']
@@ -257,7 +257,7 @@ class StorageUsageDB(DB):
 
   def publishToSEReplicas(self, directoryDict):
     """Publish an entry to se_Usage table."""
-    for path, pathInfo in directoryDict.iteritems():
+    for path, pathInfo in directoryDict.items():
       path = _standardDirectory(path)
       seName = pathInfo['SEName']
       try:
@@ -906,7 +906,7 @@ class StorageUsageDB(DB):
       return S_OK()
     sqlSite = self._escapeString(site)['Value']
     insertedEntries = 0
-    for di, count in directoryDict.iteritems():
+    for di, count in directoryDict.items():
       di = _standardDirectory(di)
       sqlPath = self._escapeString(di)['Value']
       sqlStatus = self._escapeString(status)['Value']

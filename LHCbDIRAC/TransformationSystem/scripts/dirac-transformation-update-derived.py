@@ -63,5 +63,5 @@ for prod in idList:
       parentProd, movedFiles = res['Value']
       if movedFiles:
         print("Successfully moved files from %d to %d:" % (parentProd, prod))
-        for status, val in movedFiles.iteritems():
+        for status, val in movedFiles.items():
           print("\t%d files to status %s" % (val, status))

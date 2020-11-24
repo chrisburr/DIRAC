@@ -32,7 +32,7 @@
 #     pStarted = patcher.start()
 #     class AgentMocked():
 #       def __init__( self, *args, **kwargs ):
-#         for k, v in pStarted.__dict__.iteritems():
+#         for k, v in pStarted.__dict__.items():
 #           setattr( self, k, v )
 #
 #     sut.AgentModule = AgentMocked

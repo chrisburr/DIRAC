@@ -59,7 +59,7 @@ def reduceArgs(arguments):
     cond = parsed[3]
     parsed[3] = ''
     conditions.setdefault('/'.join(parsed), []).append((path, cond))
-  for newPath, condTuple in conditions.iteritems():
+  for newPath, condTuple in conditions.items():
     if len(condTuple) != 2:
       finalArgs += [path for (path, _c) in condTuple]
     else:
