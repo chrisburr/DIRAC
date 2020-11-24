@@ -34,8 +34,8 @@ res = bk.getAvailableFileTypes()
 
 if res['OK']:
   dbresult = res['Value']
-  print 'Filetypes:'
+  print('Filetypes:')
   for record in dbresult['Records']:
-    print str(record[0]).ljust(30) + str(record[1])
+    print(str(record[0]).ljust(30) + str(record[1]))
 
 DIRAC.exit(exitCode)

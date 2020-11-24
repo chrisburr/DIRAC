@@ -56,10 +56,10 @@ for switch in switches:
     manual = True
 
 if automatic and manual:
-  print "ERROR: decide if you want automatic or manual ( not both )."
+  print("ERROR: decide if you want automatic or manual ( not both ).")
   DIRAC.exit(2)
 elif not (automatic or manual):
-  print "ERROR: decide if you want automatic or manual."
+  print("ERROR: decide if you want automatic or manual.")
   DIRAC.exit(2)
 elif automatic:
   type = 'automatic'
@@ -79,6 +79,6 @@ for prodID in args:
     exitCode = 0
 
 for error in errorList:
-  print "ERROR %s: %s" % error
+  print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

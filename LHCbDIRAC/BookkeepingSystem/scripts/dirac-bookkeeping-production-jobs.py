@@ -43,15 +43,15 @@ res = bk.getNbOfJobsBySites(prod)
 
 if res['OK']:
   if not res['Value']:
-    print "No jobs for production", prod
+    print("No jobs for production", prod)
     DIRAC.exit(0)
   sites = dict([(site, num) for num, site in res['Value']])
   shift = 0
   for site in sites:
     shift = max(shift, len(site) + 2)
-  print 'Site Name'.ljust(shift), 'Number of jobs'
+  print('Site Name'.ljust(shift), 'Number of jobs')
   for site in sorted(sites):
-    print site.ljust(shift), str(sites[site])
+    print(site.ljust(shift), str(sites[site]))
 else:
-  print "ERROR getting number of jobs for %s:" % str(prod), res['Message']
+  print("ERROR getting number of jobs for %s:" % str(prod), res['Message'])
   exitCode = 2

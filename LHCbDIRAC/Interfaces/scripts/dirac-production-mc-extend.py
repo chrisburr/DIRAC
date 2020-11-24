@@ -24,7 +24,7 @@ args = Script.getPositionalArgs()
 def usage():
   """usage Prints script usage."""
 
-  print 'Usage: %s <Production ID> <Number Of Jobs>' % Script.scriptName
+  print('Usage: %s <Production ID> <Number Of Jobs>' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -39,8 +39,8 @@ result = diracProd.extendProduction(prodID, number, printOutput=True)
 if result['OK']:
   DIRAC.exit(0)
 elif 'Message' in result:
-  print 'Extending production failed with message:\n%s' % result['Message']
+  print('Extending production failed with message:\n%s' % result['Message'])
   DIRAC.exit(2)
 else:
-  print 'Null result for extendProduction() call'
+  print('Null result for extendProduction() call')
   DIRAC.exit(2)

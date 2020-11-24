@@ -35,12 +35,12 @@ bk = BookkeepingClient()
 if len(args) < 2:
   result = bk.getAvailableDataQuality()
   if not result['OK']:
-    print 'ERROR: %s' % (result['Message'])
+    print('ERROR: %s' % (result['Message']))
     DIRAC.exit(2)
   flags = result['Value']
-  print "Available Data Quality Flags"
+  print("Available Data Quality Flags")
   for flag in flags:
-    print flag
+    print(flag)
   Script.showHelp()
 
 exitCode = 0
@@ -49,18 +49,18 @@ flag = args[1]
 result = bk.setRunDataQuality(rnb, flag)
 
 if not result['OK']:
-  print 'ERROR: %s' % (result['Message'])
+  print('ERROR: %s' % (result['Message']))
   exitCode = 2
 else:
   succ = result['Value']['Successful']
   failed = result['Value']['Failed']
-  print 'The data quality has been set for the following files:'
+  print('The data quality has been set for the following files:')
   for i in succ:
-    print i
+    print(i)
 
   if len(failed) != 0:
-    print 'The data quality has not been set for the following files:'
+    print('The data quality has not been set for the following files:')
     for i in failed:
-      print i
+      print(i)
 
 DIRAC.exit(exitCode)

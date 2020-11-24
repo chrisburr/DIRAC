@@ -98,8 +98,8 @@ class LHCbBookkeepingManager(BaseESManager):
     self.treeLevels_ = -1
     self.advancedQuery_ = False
     if welcome:
-      print 'WELCOME'
-      print "For more information use the 'help' command! "
+      print('WELCOME')
+      print("For more information use the 'help' command! ")
     self.dataQualities_ = {}
 
     retVal = self.db_.getAvailableFileTypes()

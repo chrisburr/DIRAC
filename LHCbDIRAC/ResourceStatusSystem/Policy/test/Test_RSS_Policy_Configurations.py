@@ -43,7 +43,7 @@ class Configurations_Success(Configurations_TestCase):
     policyKeys = set(['description', 'module', 'command', 'args'])
 
     for policyName, policy in policies.items():
-      print policyName
+      print(policyName)
       self.assertEqual(policyKeys, set(policy))
       self.assertTrue(isinstance(policy['description'], str))
       self.assertTrue(isinstance(policy['module'], str))

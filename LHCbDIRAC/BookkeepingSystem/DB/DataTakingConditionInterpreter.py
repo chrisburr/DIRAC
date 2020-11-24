@@ -253,7 +253,7 @@ class BeamEnergyCondition(Conditions):
           else:
             return 'Beam' + str(int(float(value))) + 'GeV-'
     except Exception as e:
-      print e
+      print(e)
     return 'BeamOff-'
 
 #############################################################################
@@ -513,7 +513,7 @@ if __name__ == "__main__":
                 'HCAL': 'INCLUDED',
                 'VeloPosition': 'CLOSED',
                 'OT': 'INCLUDED'}
-  print datataking
+  print(datataking)
 
   context = Context(datataking, 'PRS')
   conditions = [BeamEnergyCondition(), VeloCondition(), MagneticFieldCondition(),
@@ -524,4 +524,4 @@ if __name__ == "__main__":
   for condition in conditions:
     condition.interpret(context)
 
-  print context.getOutput()
+  print(context.getOutput())

@@ -96,4 +96,4 @@ for dirname in fd:
 
 res = diracAdmin.sendMail(mailadress, subject, msg, fromAddress='joel.closier@cern.ch')
 if not res['OK']:
-  print 'The mail could not be sent'
+  print('The mail could not be sent')

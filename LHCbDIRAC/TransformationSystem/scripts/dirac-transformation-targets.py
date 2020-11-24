@@ -18,7 +18,7 @@ from DIRAC.Core.Base import Script
 
 def __getTransformations(args):
   if not len(args):
-    print "Specify transformation number..."
+    print("Specify transformation number...")
     Script.showHelp()
   else:
     ids = args[0].split(",")

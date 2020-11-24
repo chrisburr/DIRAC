@@ -132,7 +132,7 @@ def getRequests(parsedInput, sortKey):
 
   requests = reqClient.getProductionRequestList(0, 'RequestID', 'DESC', 0, 0, parsedInput)
   if not requests['OK']:
-    print requests['Message']
+    print(requests['Message'])
     return
 
   requests = requests['Value']['Rows']
@@ -159,7 +159,7 @@ def getTransformations(transClient, requestID, noFiles):
 
   transformations = transClient.getTransformations({'TransformationFamily': requestID})
   if not transformations['OK']:
-    print transformations['Message']
+    print(transformations['Message'])
     return
 
   transformations = transformations['Value']
@@ -198,7 +198,7 @@ def getFiles(transClient, transformationID):
   ts = TransformationClient()
   recordsResult = ts.getTransformationSummaryWeb({'TransformationID': transformationID}, [], 0, 1000000)
   if not recordsResult['OK']:
-    print 'TransID %s: %s' % (transformationID, recordsResult['Message'])
+    print('TransID %s: %s' % (transformationID, recordsResult['Message']))
     filesDict['Total'] = -1
     return filesDict
   records = recordsResult['Value']
@@ -207,14 +207,14 @@ def getFiles(transClient, transformationID):
   path = ts.getTransformationParameters(transformationID, ['DetailedInfo'])
 
   if not path['OK']:
-    print 'TransID %s: %s' % (transformationID, path['Message'])
+    print('TransID %s: %s' % (transformationID, path['Message']))
     filesDict['Total'] = -1
     return filesDict
   path = path['Value']
   path = path.split("BK Browsing Paths:\n", 1)[1]
 
   if not files['OK']:
-    print 'TransID %s: %s' % (transformationID, files['Message'])
+    print('TransID %s: %s' % (transformationID, files['Message']))
     filesDict['Total'] = -1
     return filesDict
   files = files['Value']
@@ -242,23 +242,23 @@ def printSelection(parsedInput, mergeAction, noFiles, sortKey):
   if parsedInput['RequestID'] is not None:
     parsedInput = {'RequestID': parsedInput['RequestID']}
 
-  print '\n'
-  print '-' * 60
-  print '                REQUESTS at %s' % datetime.now().replace(microsecond=0)
-  print '-' * 60
+  print('\n')
+  print('-' * 60)
+  print('                REQUESTS at %s' % datetime.now().replace(microsecond=0))
+  print('-' * 60)
 
-  print '  Selection parameters:'
+  print('  Selection parameters:')
 
   for key, value in parsedInput.items():
-    print '    %s : %s' % (key.ljust(25, ' '), value)
+    print('    %s : %s' % (key.ljust(25, ' '), value))
 
-  print '  Display parameters:'
-  print '    display merge transformations: %s' % ((1 and mergeAction) or 'all')
-  print '    get files information        : %s' % (not noFiles)
-  print '    sort key                     : %s' % (sortKey)
+  print('  Display parameters:')
+  print('    display merge transformations: %s' % ((1 and mergeAction) or 'all'))
+  print('    get files information        : %s' % (not noFiles))
+  print('    sort key                     : %s' % (sortKey))
 
-  print '-' * 60
-  print '\n'
+  print('-' * 60)
+  print('\n')
 
   printNow()
 
@@ -360,7 +360,7 @@ def printTransformation(requestID, transformationID, transformation, filesDict, 
     transformationID and transformation can be set to None.
   """
   if not noFiles and filesDict['Path'] is not None:
-    print 'BK Browsing Path: [%s]' % filesDict['Path']
+    print('BK Browsing Path: [%s]' % filesDict['Path'])
   if noFiles:
     filesMsg = ''
   elif filesDict['Total'] == -1:
@@ -387,7 +387,7 @@ def printTransformation(requestID, transformationID, transformation, filesDict, 
           filesDict['Failed'],
           filesDict['Hot'])
     except KeyError:
-      print "No files processed"
+      print("No files processed")
   if groupMsg is not None:
     msgTuple = (('%d\t%s\t\t' % (
                  requestID,
@@ -400,13 +400,13 @@ def printTransformation(requestID, transformationID, transformation, filesDict, 
                  transformation['transformationStatus'].ljust(10, ' '),
                  transformation['transformationType'])
                  ).ljust(40, ' '), filesMsg)
-  print '%s\t%s' % msgTuple
+  print('%s\t%s' % msgTuple)
 
 
 def printRequestsInfo(requests):
   """Prints the number of requests."""
 
-  print ' found %s requests \n' % len(requests)
+  print(' found %s requests \n' % len(requests))
   printNow()
 
 
@@ -437,7 +437,7 @@ if __name__ == "__main__":
   # Print small information
   printRequestsInfo(_requests)
 
-  print 'ReqID\tTransID\tStatus\tType\t\t\t\tCompleted\tTotal Files\tDone\tRunning\tWaiting\tFailed\tHot\n', '=' * 150
+  print('ReqID\tTransID\tStatus\tType\t\t\t\tCompleted\tTotal Files\tDone\tRunning\tWaiting\tFailed\tHot\n', '=' * 150)
 
   # Initialized here to avoid multiple initializations due to the for-loop
   transformationClient = TransformationClient()

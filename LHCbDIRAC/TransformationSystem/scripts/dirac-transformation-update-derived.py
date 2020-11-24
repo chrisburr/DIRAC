@@ -37,7 +37,7 @@ for switch in switches:
 args = Script.getPositionalArgs()
 
 if not len(args):
-  print "Specify transformation number..."
+  print("Specify transformation number...")
   DIRAC.exit(0)
 else:
   ids = args[0].split(",")
@@ -54,14 +54,14 @@ else:
 for prod in idList:
   res = transClient.getTransformation(prod, extraParams=True)
   if not res['OK']:
-    print "Error getting transformation %s" % prod, res['Message']
+    print("Error getting transformation %s" % prod, res['Message'])
   else:
     res = transClient.moveFilesToDerivedTransformation(res['Value'], resetUnused)
     if not res['OK']:
-      print "Error updating a derived transformation %d:" % prod, res['Message']
+      print("Error updating a derived transformation %d:" % prod, res['Message'])
     else:
       parentProd, movedFiles = res['Value']
       if movedFiles:
-        print "Successfully moved files from %d to %d:" % (parentProd, prod)
+        print("Successfully moved files from %d to %d:" % (parentProd, prod))
         for status, val in movedFiles.iteritems():
-          print "\t%d files to status %s" % (val, status)
+          print("\t%d files to status %s" % (val, status))

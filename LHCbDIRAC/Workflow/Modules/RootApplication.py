@@ -71,7 +71,7 @@ class RootApplication(ModuleBase):
     else:
       self.log.warn('No arguments specified')
 
-    print self.arguments
+    print(self.arguments)
 
   #############################################################################
   def execute(self, production_id=None, prod_job_id=None, wms_job_id=None,

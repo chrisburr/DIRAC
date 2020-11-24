@@ -370,4 +370,4 @@ def test_createProdConfFile(mocker, wf_c, s_cs):
   mb._resolveInputVariables()
   mb._resolveInputStep()
   res = mb.createProdConfFile(['DST', 'GAUSSHIST'], True, 123, 1)
-  print res
+  print(res)

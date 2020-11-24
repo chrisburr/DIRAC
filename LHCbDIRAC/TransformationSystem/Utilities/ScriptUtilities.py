@@ -50,7 +50,7 @@ def getTransformations(args):
   transformations."""
   transList = []
   if not len(args):
-    print "Specify transformation number..."
+    print("Specify transformation number...")
     Script.showHelp()
   else:
     ids = args[0].split(",")

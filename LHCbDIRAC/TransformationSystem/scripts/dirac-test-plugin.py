@@ -186,7 +186,7 @@ class fakeClient:
 
   def prepareForPlugin(self, lfns):
     import time
-    print "Preparing the plugin input data (%d files)" % len(lfns)
+    print("Preparing the plugin input data (%d files)" % len(lfns))
     type = self.trans.getType()['Value']
     if not lfns:
       return (None, None)
@@ -198,7 +198,7 @@ class fakeClient:
         runDict = {"RunNumber": runID, "LFN": lfn}
         files.append(runDict)
     else:
-      print "Error getting BK metadata", res['Message']
+      print("Error getting BK metadata", res['Message'])
       return ([], {})
     replicas = {}
     startTime = time.time()
@@ -215,8 +215,8 @@ class fakeClient:
           if ses:
             replicas[lfn] = sorted(ses)
       else:
-        print "Error getting replicas of %d files:" % len(lfns), res['Message']
-    print "Obtained replicas of %d files in %.3f seconds" % (len(lfns), time.time() - startTime)
+        print("Error getting replicas of %d files:" % len(lfns), res['Message'])
+    print("Obtained replicas of %d files in %.3f seconds" % (len(lfns), time.time() - startTime))
     return (files, replicas)
 
 
@@ -227,13 +227,13 @@ def printFinalSEs(transType, location, targets):
     for l in location:
       r = ','.join([se for se in l.split(',') if se not in targets])
       remain.append(r)
-    print "    Remaining SEs:", remain
+    print("    Remaining SEs:", remain)
   if transType == "Replication":
     total = []
     for l in location:
       r = l + ',' + ','.join([se for se in targets if se not in l.split(',')])
       total.append(r)
-    print "    Final SEs:", total
+    print("    Final SEs:", total)
 
 
 if __name__ == "__main__":
@@ -339,7 +339,7 @@ if __name__ == "__main__":
       checkReplica = False
     bkQueryDict = bkQuery.getQueryDict()
     if list(bkQueryDict) in ([], ['Visible']):
-      print "No BK query was given..."
+      print("No BK query was given...")
       Script.showHelp(exitCode=2)
 
   reqID = pluginScript.getRequestID()
@@ -352,31 +352,31 @@ if __name__ == "__main__":
     for key, val in pluginSEParams.items():
       res = transformation.setSEParam(key, val)
       if not res['OK']:
-        print res['Message']
+        print(res['Message'])
         DIRAC.exit(2)
   if pluginParams:
     for key, val in pluginParams.items():
       res = transformation.setAdditionalParam(key, val)
       if not res['OK']:
-        print res['Message']
+        print(res['Message'])
         DIRAC.exit(2)
 
-  print "Transformation type:", transType
+  print("Transformation type:", transType)
   if requestedLFNs:
-    print "%d requested LFNs" % len(requestedLFNs)
+    print("%d requested LFNs" % len(requestedLFNs))
   else:
-    print "BK Query:", bkQueryDict
-  print "Plugin:", plugin
-  print "Parameters:", pluginParams
+    print("BK Query:", bkQueryDict)
+  print("Plugin:", plugin)
+  print("Parameters:", pluginParams)
   if pluginSEParams:
-    print "SE parameters:", pluginSEParams
+    print("SE parameters:", pluginSEParams)
   if requestID:
-    print "RequestID:", requestID
+    print("RequestID:", requestID)
   # get the list of files from BK
   if requestedLFNs:
     lfns = requestedLFNs
   else:
-    print "Getting the files from BK"
+    print("Getting the files from BK")
     lfns = bkQuery.getLFNs(printSEUsage=((transType == 'Removal' or not plugin)
                                          and not pluginScript.getOption('Runs')
                                          and not pluginScript.getOption('DQFlags')),
@@ -384,23 +384,23 @@ if __name__ == "__main__":
     if not checkReplica:
       bkQuery.setOption('ReplicaFlag', "No")
       lfns += bkQuery.getLFNs(printSEUsage=False, printOutput=False, visible=visible)
-      print '%d files in directories:' % len(lfns)
+      print('%d files in directories:' % len(lfns))
       directories = {}
       import os
       for lfn in lfns:
         dd = os.path.dirname(lfn)
         directories[dd] = directories.setdefault(dd, 0) + 1
       for dd in sorted(directories):
-        print dd, directories[dd]
+        print(dd, directories[dd])
   if len(lfns) == 0:
-    print "No files found in BK...Exiting now"
+    print("No files found in BK...Exiting now")
     DIRAC.exit(0)
 
   if not plugin:
-    print "No plugin to be tested..."
+    print("No plugin to be tested...")
     DIRAC.exit(0)
 
-  print "\nNow testing the %s plugin %s" % (transType.lower(), plugin)
+  print("\nNow testing the %s plugin %s" % (transType.lower(), plugin))
   transformation.setPlugin(plugin)
   transformation.setBkQuery(bkQueryDict)
 
@@ -421,7 +421,7 @@ if __name__ == "__main__":
   replicas = fakeClient.getReplicas()
   files = fakeClient.getFiles()
   if not replicas:
-    print "No replicas were found, exit..."
+    print("No replicas were found, exit...")
     DIRAC.exit(2)
   oplugin.setInputData(replicas)
   oplugin.setTransformationFiles(files)
@@ -429,10 +429,10 @@ if __name__ == "__main__":
   import time
   startTime = time.time()
   res = oplugin.run()
-  print "Plugin took %.1f seconds" % (time.time() - startTime)
-  print ""
+  print("Plugin took %.1f seconds" % (time.time() - startTime))
+  print("")
   if res['OK']:
-    print len(res['Value']), "tasks created"
+    print(len(res['Value']), "tasks created")
     i = 0
     previousTask = {'First': 0, 'SEs': None, 'Location': None, 'Tasks': 0}
     noReplicaLFNs = [lfn for _targetSE, lfnList in res['Value'] for lfn in lfnList if lfn not in replicas]
@@ -458,30 +458,30 @@ if __name__ == "__main__":
           else:
             # Print out previous tasks
             if previousTask['First'] == i - 1:
-              print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'],
+              print('%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], end=' ')
               '- 1 file - Current locations:', previousTask['Location']
             else:
-              print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+              print('%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']), end=' ')
               '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
             printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
         previousTask = {'First': i, 'SEs': task[0], 'Location': location, 'Tasks': 1}
       else:
         if previousTask['Tasks']:
-          print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+          print('%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']), end=' ')
           '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
           printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
           previousTask = {'First': 0, 'SEs': None, 'Location': None, 'Tasks': 0}
-        print i, '- Target SEs:', task[0], "- %d files" % len(task[1]), " - Current locations:", location
+        print(i, '- Target SEs:', task[0], "- %d files" % len(task[1]), " - Current locations:", location)
         printFinalSEs(transType, location, task[0])
     if previousTask['Tasks']:
       i += 1
       if i - previousTask['First'] == 1:
-        print '%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], "- 1 file",
+        print('%d' % previousTask['First'], '- Target SEs:', previousTask['SEs'], "- 1 file", end=' ')
         " - Current locations:", previousTask['Location']
       else:
-        print '%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']),
+        print('%d:%d (%d tasks)' % (previousTask['First'], i - 1, i - previousTask['First']), end=' ')
         '- Target SEs:', previousTask['SEs'], "- 1 file", " - Current locations:", previousTask['Location']
       printFinalSEs(transType, previousTask['Location'], previousTask['SEs'])
   else:
-    print res['Message']
+    print(res['Message'])
   DIRAC.exit(0)

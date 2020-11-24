@@ -27,7 +27,7 @@ def usage():
   Prints script usage
   """
 
-  print 'Usage: %s <Production ID> [<DIRAC Status>]' % Script.scriptName
+  print('Usage: %s <Production ID> [<DIRAC Status>]' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -45,8 +45,8 @@ result = diracProd.getProductionJobSummary(prodID, status=stat, printOutput=True
 if result['OK']:
   DIRAC.exit(0)
 elif 'Message' in result:
-  print 'Getting production job summary failed with message:\n%s' % result['Message']
+  print('Getting production job summary failed with message:\n%s' % result['Message'])
   DIRAC.exit(2)
 else:
-  print 'Null result for getProductionJobSummary() call'
+  print('Null result for getProductionJobSummary() call')
   DIRAC.exit(2)

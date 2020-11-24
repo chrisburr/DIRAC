@@ -238,7 +238,7 @@ class StatInfo(object):
     thisName = self.name
     thatName = other.name
     if thisName != thatName:
-      print "Error substracting StatInfo for %s and %s" % (thisName, thatName)
+      print("Error substracting StatInfo for %s and %s" % (thisName, thatName))
       return StatInfo('')
     values = {}
     for item in self.items:
@@ -309,9 +309,9 @@ class ProcessingProgress(object):
     try:
       recoList.sort(cmp=(lambda p1, p2: int(recoRunRanges[p1][0] - recoRunRanges[p2][1])))
     except BaseException:
-      print "Exception in sorting productions:"
+      print("Exception in sorting productions:")
       for p in recoList:
-        print p, recoRunRanges[p]
+        print(p, recoRunRanges[p])
     gLogger.verbose("Reconstruction productions found (%d): %s" % (len(recoList), str(sorted(recoList))))
     gLogger.verbose("Reconstruction DQ flags: %s" % str(recoDQFlags))
 
@@ -351,9 +351,9 @@ class ProcessingProgress(object):
     try:
       stripList.sort(cmp=(lambda p1, p2: int(stripRunRanges[p1][0] - stripRunRanges[p2][1])))
     except Exception:
-      print "Error when sorting stripping productions:"
+      print("Error when sorting stripping productions:")
       for prodStrip in stripList:
-        print prodStrip, stripRunRanges[prodStrip]
+        print(prodStrip, stripRunRanges[prodStrip])
     gLogger.verbose("Stripping productions found (%d): %s" % (len(stripList), str(sorted(stripList))))
 
     # Get all runs corresponding to the run range used by the Reco productions

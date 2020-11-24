@@ -48,7 +48,7 @@ def initializeRunDBInterfaceHandler(serviceInfo):
   try:
     ORACLE_HOME = os.environ['ORACLE_HOME']
   except BaseException:
-    print 'ERROR: ORACLE_HOME environment variable should be set'
+    print('ERROR: ORACLE_HOME environment variable should be set')
   sys.path.append("%s" % str(ORACLE_HOME))
   import RunDatabase_Defines  # pylint: disable=import-error
   # print dir(RunDatabase_Defines)
@@ -71,12 +71,12 @@ def initializeRunDBInterfaceHandler(serviceInfo):
 
   im = __import__('RunDatabase', globals(), locals(), ['*'])
   import RunDatabase  # pylint: disable=import-error
-  print im
+  print(im)
   from DbModel import createEngine_Oracle  # pylint: disable=import-error
   try:
     server = RunDatabase.RunDbServer(engine=createEngine_Oracle())
   except BaseException:
-    print 'Failed to make an instance of runDB server'
+    print('Failed to make an instance of runDB server')
   return S_OK()
 
 
@@ -111,7 +111,7 @@ class RunDBInterfaceHandler(RequestHandler):
       filesQueryString = "success,result = server.getFilesDirac(fields=allFileFields%s)" % paramString
     else:
       filesQueryString = "success,result = server.getFilesDirac(fields=allFileFields)"
-    print filesQueryString
+    print(filesQueryString)
     exec(filesQueryString)
     if not success:  # using exec statement above -> pylint: disable=undefined-variable
       return S_ERROR(result)  # using exec statement above -> pylint: disable=undefined-variable
@@ -158,7 +158,7 @@ class RunDBInterfaceHandler(RequestHandler):
       records.append((fileID, runID, name, state, bytes, events, stream, creationTime, timeStamp, refCount))
 
     resultDict['Records'] = records
-    print resultDict
+    print(resultDict)
     return S_OK(resultDict)
 
   """
@@ -214,7 +214,7 @@ class RunDBInterfaceHandler(RequestHandler):
       jobsQueryString = "success,result = server.getRunsDirac(fields=allRunFields,runExtraParams=['magnetCurrent','magnetState']%s)" % paramString
     else:
       jobsQueryString = "success,result = server.getRunsDirac(fields=allRunFields,runExtraParams=['magnetCurrent','magnetState'])"
-    print jobsQueryString
+    print(jobsQueryString)
     exec(jobsQueryString)
     if not success:  # using exec statement above -> pylint: disable=E0601
       return S_ERROR(result)  # using exec statement above -> pylint: disable=E0601
@@ -315,8 +315,8 @@ class RunDBInterfaceHandler(RequestHandler):
     resultDict['Records'] = records
     resultDict['ParameterNames'] = allRunFields + ['files', 'events',
                                                    'size', 'magnetCurrent', 'magnetState', 'integratedLumi']
-    print 'parameter names: ', resultDict['ParameterNames']
-    print resultDict
+    print('parameter names: ', resultDict['ParameterNames'])
+    print(resultDict)
     return S_OK(resultDict)
 
   types_getRunSelections = []
@@ -337,7 +337,7 @@ class RunDBInterfaceHandler(RequestHandler):
       for key, query in queries:
         startTime = time.time()
         execString = "success,result = server.%s()" % query
-        print execString
+        print(execString)
         exec(execString)  # pylint: disable=exec-used
         gLogger.debug(
             "RunDBInterfaceHandler.getSelections: server.%s() took %.2f seconds." %

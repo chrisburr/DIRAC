@@ -94,7 +94,7 @@ class DiracProduction(DiracLHCb):
           prodInfo['AgentType'].ljust(adj) + toString(prodInfo['CreationDate']).ljust(adj) +\
           prodInfo['TransformationName'].ljust(adj)
       message.append(info)
-      print '\n'.join(message)
+      print('\n'.join(message))
     return S_OK(result['Value'])
 
   def getProductionLoggingInfo(self, productionID, printOutput=False):
@@ -126,7 +126,7 @@ class DiracProduction(DiracLHCb):
           line['AuthorDN'].split('/')[-1].ljust(2 * self.prodAdj)
       message.append(infoL)
 
-    print '\nLogging summary for productionID ' + str(productionID) + '\n\n' + '\n'.join(message)
+    print('\nLogging summary for productionID ' + str(productionID) + '\n\n' + '\n'.join(message))
 
     return result
 
@@ -271,11 +271,11 @@ class DiracProduction(DiracLHCb):
 
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
-    print '\nCurrent status of production %s:\n' % productionID
-    print 'Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
-    print 'Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
+    print('\nCurrent status of production %s:\n' % productionID)
+    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
+        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
+        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -354,7 +354,7 @@ class DiracProduction(DiracLHCb):
         message += stat.ljust(statAdj) + minor.ljust(mStatAdj) + str(jobInfo['Total']).ljust(totalAdj) + \
             str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
-    print message
+    print(message)
     # self._prettyPrint(summary)
     if status or minorStatus:
       return S_OK(summary)
@@ -370,11 +370,11 @@ class DiracProduction(DiracLHCb):
 
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
-    print '\nCurrent status of production %s:\n' % productionID
-    print 'Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
-    print 'Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
+    print('\nCurrent status of production %s:\n' % productionID)
+    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
+        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
+        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -454,7 +454,7 @@ class DiracProduction(DiracLHCb):
         message += siteStr.ljust(siteAdj) + stat.ljust(statAdj) + str(jobInfo['Total']).ljust(totalAdj) + \
             str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
-    print message
+    print(message)
     # self._prettyPrint(summary)
     result = self.getProductionProgress(productionID)
 
@@ -469,11 +469,11 @@ class DiracProduction(DiracLHCb):
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
     if not site:
-      print '\nCurrent status of production %s:\n' % productionID
-      print 'Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
-      print 'Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
+      print('\nCurrent status of production %s:\n' % productionID)
+      print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
+          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+      print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
+          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -517,7 +517,7 @@ class DiracProduction(DiracLHCb):
         message += str(prod).ljust(idAdj) + status.ljust(statAdj) + str(count).ljust(countAdj) + '\n'
       message += '\n'
 
-    print message
+    print(message)
     return result
 
   def _getActiveProductions(self, printOutput=False):
@@ -635,42 +635,42 @@ class DiracProduction(DiracLHCb):
           if selectStatus == recordStatus:
             toWrite += record + '\n'
             if printOutput:
-              print record
+              print(record)
         elif outputFile:
           toWrite += record + '\n'
           if printOutput:
-            print record
+            print(record)
         else:
           if printOutput:
-            print record
+            print(record)
 
     if printSummary:
-      print '\nSummary for %s files in production %s\n' % (totalRecords, productionID)
-      print 'Status'.ljust(adj) + ' ' + 'Total'.ljust(adj) + 'Percentage'.ljust(adj) + '\n'
+      print('\nSummary for %s files in production %s\n' % (totalRecords, productionID))
+      print('Status'.ljust(adj) + ' ' + 'Total'.ljust(adj) + 'Percentage'.ljust(adj) + '\n')
       for n, v in summary.iteritems():
         percentage = int(100 * int(v) / totalRecords)
-        print str(n).ljust(adj) + ' ' + str(v).ljust(adj) + ' ' + str(percentage).ljust(2) + ' % '
-      print '\n'
+        print(str(n).ljust(adj) + ' ' + str(v).ljust(adj) + ' ' + str(percentage).ljust(2) + ' % ')
+      print('\n')
 
     if selectStatus and not selected:
       return S_ERROR('No files were selected for production %s and status "%s"' % (productionID, selectStatus))
     elif selectStatus and selected:
-      print '%s / %s files (%s percent) were found for production %s in status "%s"' % (
+      print('%s / %s files (%s percent) were found for production %s in status "%s"' % (
           selected, totalRecords,
           int(100 * int(selected) / totalRecords),
-          productionID, selectStatus)
+          productionID, selectStatus))
 
     if outputFile:
       if os.path.exists(outputFile):
-        print 'Requested output file %s already exists, please remove this file to continue' % outputFile
+        print('Requested output file %s already exists, please remove this file to continue' % outputFile)
         return fileSummary
 
       with open(outputFile, 'w') as fopen:
         fopen.write(toWrite)
       if not selectStatus:
-        print 'Wrote %s lines to file %s' % (totalRecords, outputFile)
+        print('Wrote %s lines to file %s' % (totalRecords, outputFile))
       else:
-        print 'Wrote %s lines to file %s for status "%s"' % (selected, outputFile, selectStatus)
+        print('Wrote %s lines to file %s for status "%s"' % (selected, outputFile, selectStatus))
 
     return fileSummary
 
@@ -760,7 +760,7 @@ class DiracProduction(DiracLHCb):
       return self._errorReport(result, 'Could not extend production %s by %s jobs' % (productionID, numberOfJobs))
 
     if printOutput:
-      print 'Extended production %s by %s jobs' % (productionID, numberOfJobs)
+      print('Extended production %s by %s jobs' % (productionID, numberOfJobs))
 
     return result
 

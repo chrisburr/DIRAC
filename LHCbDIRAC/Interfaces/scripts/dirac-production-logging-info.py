@@ -24,7 +24,7 @@ args = Script.getPositionalArgs()
 def usage():
   """usage Prints script usage."""
 
-  print 'Usage: %s <Production ID> |<Production ID>' % Script.scriptName
+  print('Usage: %s <Production ID> |<Production ID>' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -47,6 +47,6 @@ for prodID in args:
     exitCode = 0
 
 for error in errorList:
-  print "ERROR %s: %s" % error
+  print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

@@ -43,20 +43,20 @@ eventTypes = args[0]
 bkQuery = BKQuery({'EventType': eventTypes, "ConfigName": "MC"},
                   fileTypes=fileType,
                   visible=True)
-print "bkQuery:", bkQuery
+print("bkQuery:", bkQuery)
 prods = bkQuery.getBKProductions()
 
 for prod in prods:
   res = BookkeepingClient().getProductionInformation(prod)
   if not res['OK']:
-    print res['Message']
+    print(res['Message'])
     DIRAC.exit(1)
   value = res['Value']
-  print value['Path'].split("\n")[1],
+  print(value['Path'].split("\n")[1], end=' ')
   for nf in value['Number of files']:
     if nf[1] == fileType:
-      print nf[0],
+      print(nf[0], end=' ')
   for ne in value['Number of events']:
     if ne[0] == fileType:
-      print ne[1],
-  print ""
+      print(ne[1], end=' ')
+  print("")

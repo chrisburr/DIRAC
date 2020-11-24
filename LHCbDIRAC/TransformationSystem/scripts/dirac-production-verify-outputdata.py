@@ -15,7 +15,7 @@ __RCSID__ = "$Id$"
 
 import sys
 if len(sys.argv) < 2:
-  print 'Usage: dirac-production-verify-outputdata transID [transID] [transID]'
+  print('Usage: dirac-production-verify-outputdata transID [transID] [transID]')
   sys.exit()
 else:
   transIDs = [int(arg) for arg in sys.argv[1:]]

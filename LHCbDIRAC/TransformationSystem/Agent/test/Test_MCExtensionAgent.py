@@ -30,7 +30,7 @@ class MCExtensionAgentTestCase(unittest.TestCase):
     self.agent.AgentModule = self.mockAM
     self.agent.DIRACMCExtensionAgent = self.mockAM
     self.agent = MCExtensionAgent()
-    print dir(self.agent)
+    print(dir(self.agent))
     self.agent.log = gLogger
 
   # def test_execute( self ):

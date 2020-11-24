@@ -144,7 +144,7 @@ class DataProcessingProgressAgent(AgentModule):
       if reportName in self.previousProdStats:
         htmlTable.writeHTMLDifference(summaryProdStats, self.previousProdStats[reportName])
       else:
-        print reportName, 'not in previous stats'
+        print(reportName, 'not in previous stats')
       self.previousProdStats[reportName] = {"Time": time.ctime(time.time()), "ProdStats": summaryProdStats}
       self.statCollector.setPreviousStats(reportName, self.previousProdStats[reportName])
       try:
@@ -152,10 +152,10 @@ class DataProcessingProgressAgent(AgentModule):
         fOpen.write("<head>\n<title>Progress of %s</title>\n</title>\n" % bkQuery.getProcessingPass())
         fOpen.write(str(htmlTable.getTable()))
         fOpen.close()
-        print "Successfully wrote HTML file", outputHTML
+        print("Successfully wrote HTML file", outputHTML)
         self.uploadHTML(outputHTML)
       except BaseException:
-        print "Failed to write HTML file", outputHTML
+        print("Failed to write HTML file", outputHTML)
 
     # Save the loop number
     self.iterationNumber += 1
@@ -183,9 +183,9 @@ class DataProcessingProgressAgent(AgentModule):
       if os.path.exists(remoteLink):
         os.remove(remoteLink)
       os.symlink(uploadedFile, remoteLink)
-      print htmlFile, "copied to", uploadedFile, "and link set at", remoteLink
+      print(htmlFile, "copied to", uploadedFile, "and link set at", remoteLink)
     except BaseException:
-      print "Failed to upload", htmlFile, "to", self.uploadDirectory
+      print("Failed to upload", htmlFile, "to", self.uploadDirectory)
 
   def am_getSection(self, section):
     res = gConfig.getSections("%s/%s" % (self.am_getModuleParam('section'), section))

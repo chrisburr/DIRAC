@@ -104,7 +104,7 @@ def _getLog(urlBase, logFile, debug=False):
   else:
     url = urlBase
   if debug:
-    print "Entering getLog", url, logFile
+    print("Entering getLog", url, logFile)
   cc = None
   if logFile and ".tgz" not in url:
     # Try first with index.html and then try and list the directory
@@ -112,30 +112,30 @@ def _getLog(urlBase, logFile, debug=False):
       try:
         fd = None
         if debug:
-          print "Try opening URL ", url
+          print("Try opening URL ", url)
         fd = urlOpener.open(url)
         if debug:
-          print "Open"
+          print("Open")
         cc = fd.read()
         # Check if the page was not found
         if "404 - Not Found" in cc or \
            "was not found on this server." in cc or \
            "There was an error loading the page you requested" in cc:
           if debug:
-            print 'File not found'
+            print('File not found')
           # If the file is not found, try with the urlBase
           if url == urlBase:
             return ""
           if debug:
-            print "Try with urlBase", urlBase
+            print("Try with urlBase", urlBase)
           url = urlBase
         else:
           if debug:
-            print "File read"
+            print("File read")
           break
       except IOError as e:
         if debug:
-          print "Exception opening %s: %s" % (url, repr(e))
+          print("Exception opening %s: %s" % (url, repr(e)))
         break
       finally:
         if fd:
@@ -152,31 +152,31 @@ def _getLog(urlBase, logFile, debug=False):
         # Find the URL
         if fnmatch(ll, '*' + logFile + '*'):
           if debug:
-            print "Match found:", ll
+            print("Match found:", ll)
           logURL = __buildURL(urlBase, ll)
         elif fnmatch(ll, '*.tgz') or fnmatch(ll, '*.tar'):
           if debug:
-            print "Match found with tgz or tar file:", ll
+            print("Match found with tgz or tar file:", ll)
           # If a tgz file is found, it could help, but still continue!
           logURL = __buildURL(urlBase, ll)
         if logURL:
           break
     if not logURL:
       if debug:
-        print 'No match found'
+        print('No match found')
       return ''
     if debug:
-      print "URL found:", logURL
+      print("URL found:", logURL)
   tmp = None
   tmp1 = None
   tf = None
   if ".tgz" in logURL or '.gz' in logURL or '.tar' in logURL:
     if debug:
-      print "Opening tar file ", logURL
+      print("Opening tar file ", logURL)
     # retrieve the zipped file
     tmp = os.path.join(tempfile.gettempdir(), "logFile.tmp")
     if debug:
-      print "Retrieve the file in ", tmp
+      print("Retrieve the file in ", tmp)
     if os.path.exists(tmp):
       os.remove(tmp)
     urlOpener.retrieve(logURL, tmp)
@@ -186,7 +186,7 @@ def _getLog(urlBase, logFile, debug=False):
       return ""
       # unpack the tarfile
     if debug:
-      print "Open tarfile ", tmp
+      print("Open tarfile ", tmp)
     if '.tar' in logURL:
       tf = tarfile.open(tmp, 'r')
     else:
@@ -194,16 +194,16 @@ def _getLog(urlBase, logFile, debug=False):
     mn = tf.getnames()
     fd = None
     if debug:
-      print "Found those members", mn, ', looking for', logFile
+      print("Found those members", mn, ', looking for', logFile)
     for fileName in mn:
       if fnmatch(fileName, logFile + '*'):
         if debug:
-          print "Found ", logFile, " in tar object ", fileName
+          print("Found ", logFile, " in tar object ", fileName)
         if '.gz' in fileName:
           # file is again a gzip file!!
           tmp1 = os.path.join(tempfile.gettempdir(), "logFile-1.tmp")
           if debug:
-            print "Extract", fileName, "into", tmp1, "and open it"
+            print("Extract", fileName, "into", tmp1, "and open it")
           tf.extract(fileName, tmp1)
           tmp1 = os.path.join(tmp1, fileName)
           fd = gzip.GzipFile(tmp1, 'r')
@@ -215,21 +215,21 @@ def _getLog(urlBase, logFile, debug=False):
       fd = urlOpener.open(logURL)
     except IOError as e:
       if debug:
-        print "Exception opening %s: %s" % (logURL, repr(e))
+        print("Exception opening %s: %s" % (logURL, repr(e)))
   # read the actual file...
   if not fd:
     if debug:
-      print "Couldn't open file..."
+      print("Couldn't open file...")
     cc = ''
   else:
     if debug:
-      print "File successfully open"
+      print("File successfully open")
     cc = fd.read()
     fd.close()
     if "was not found on this server." not in cc:
       cc = cc.split("\n")
       if debug:
-        print "Reading the file now... %d lines" % len(cc)
+        print("Reading the file now... %d lines" % len(cc))
     else:
       cc = ''
   if tf:
@@ -251,19 +251,19 @@ def _getSandbox(job, logFile, debug=False):
     tmpDir = os.path.join(tempfile.gettempdir(), "sandBoxes/")
     mkDir(tmpDir)
     if debug:
-      print 'Job', job, ': sandbox being retrieved in', tmpDir
+      print('Job', job, ': sandbox being retrieved in', tmpDir)
     from DIRAC.WorkloadManagementSystem.Client.SandboxStoreClient import SandboxStoreClient
     res = SandboxStoreClient(smdb=False).downloadSandboxForJob(job, 'Output', tmpDir)
     if res['OK']:
       if debug:
-        print 'Sandbox successfully retrieved'
+        print('Sandbox successfully retrieved')
       files = os.listdir(tmpDir)
       if debug:
-        print 'Files:', files
+        print('Files:', files)
       for lf in files:
         if fnmatch(lf, logFile):
           if debug:
-            print file, 'matched', logFile
+            print(file, 'matched', logFile)
           with open(os.path.join(tmpDir, lf), 'rt') as fd:
             return fd.readlines()
       return ''
@@ -286,12 +286,12 @@ def _checkXMLSummary(job, logURL):
     xmlFile = _getLog(logURL, 'summary*.xml*', debug=debug)
     if not xmlFile:
       if debug:
-        print "XML not found in logs"
+        print("XML not found in logs")
       xmlFile = _getSandbox(job, 'summary*.xml*', debug=debug)
       if xmlFile and debug:
-        print "XML from SB"
+        print("XML from SB")
     elif debug:
-      print "XML from logs"
+      print("XML from logs")
     lfns = {}
     if xmlFile:
       for line in xmlFile:

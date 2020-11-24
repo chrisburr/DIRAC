@@ -55,7 +55,7 @@ if __name__ == "__main__":
       jobidList += jobid.split(',')
   jobidList += bkScript.getOption('JobIDs', [])
   if not jobidList:
-    print "No jobID provided!"
+    print("No jobID provided!")
     Script.showHelp(exitCode=1)
 
   from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

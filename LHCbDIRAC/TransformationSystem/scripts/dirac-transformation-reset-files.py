@@ -39,12 +39,12 @@ if __name__ == "__main__":
     if opt == 'Status':
       val = set(val.split(','))
       if val & set(statusList) != val:
-        print "Unknown status %s... Select in %s" % (','.join(val), str(statusList))
+        print("Unknown status %s... Select in %s" % (','.join(val), str(statusList)))
         Script.showHelp(exitCode=1)
       status = list(val)
     elif opt == 'NewStatus':
       if val not in statusList:
-        print "Unknown status %s... Select in %s" % (val, str(statusList))
+        print("Unknown status %s... Select in %s" % (val, str(statusList)))
         Script.showHelp()
         DIRAC.exit(1)
       newStatus = val
@@ -67,21 +67,21 @@ if __name__ == "__main__":
     if not lfns:
       res = transClient.getTransformation(transID)
       if not res['OK']:
-        print "Failed to get transformation information: %s" % res['Message']
+        print("Failed to get transformation information: %s" % res['Message'])
         DIRAC.exit(2)
 
       selectDict = {'TransformationID': res['Value']['TransformationID'], 'Status': status}
       res = transClient.getTransformationFiles(condDict=selectDict)
       if not res['OK']:
-        print "Failed to get files: %s" % res['Message']
+        print("Failed to get files: %s" % res['Message'])
         DIRAC.exit(2)
 
       lfns = [d['LFN'] for d in res['Value']]
       if not lfns:
-        print "No files found in transformation %s, status %s" % (transID, status)
+        print("No files found in transformation %s, status %s" % (transID, status))
 
     if not lfns:
-      print "No files to be set in transformation", transID
+      print("No files to be set in transformation", transID)
     else:
       resetFiles = 0
       failed = {}
@@ -95,10 +95,10 @@ if __name__ == "__main__":
             if reason != 'File not found in the Transformation Database':
               failed.setdefault(reason, []).append(lfn)
         else:
-          print "Failed to set %d files to %s in transformation %s: %s" % \
-              (len(lfns), newStatus, transID, res['Message'])
-      print "%d files were set %s in transformation %s" % (resetFiles, newStatus, transID)
+          print("Failed to set %d files to %s in transformation %s: %s" % \
+              (len(lfns), newStatus, transID, res['Message']))
+      print("%d files were set %s in transformation %s" % (resetFiles, newStatus, transID))
       if failed:
         for reason in failed:
-          print 'Failed for %d files: %s' % (len(failed[reason]), reason)
+          print('Failed for %d files: %s' % (len(failed[reason]), reason))
   DIRAC.exit(0)

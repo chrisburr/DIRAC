@@ -55,10 +55,10 @@ for switch in Script.getUnprocessedSwitches():
     verbose = True
 
 if verbose:
-  print 'Verbose output'
+  print('Verbose output')
 
 if not dir:
-  print 'One directory should be provided!'
+  print('One directory should be provided!')
   Script.showHelp()
 
 scaleDict = {'MB': 1000 * 1000.0,
@@ -70,27 +70,27 @@ if unit not in scaleDict:
 scaleFactor = scaleDict[unit]
 
 currentDir = dir
-print 'Obtaining the catalog contents for %s directory' % currentDir
+print('Obtaining the catalog contents for %s directory' % currentDir)
 res = FileCatalog().listDirectory(currentDir)
 if not res['OK']:
-  print 'ERROR: Cannot get directory content'
+  print('ERROR: Cannot get directory content')
   DIRAC.exit(-1)
 
 successfulDirs = res['Value']['Successful']
 failedDirs = res['Value']['Failed']
-print 'Failed directories: % s' % list(failedDirs)
-print 'Successful directories: % s' % list(successfulDirs)
+print('Failed directories: % s' % list(failedDirs))
+print('Successful directories: % s' % list(successfulDirs))
 
 if not successfulDirs:
-  print 'No directory to analyse. Exit.'
+  print('No directory to analyse. Exit.')
   DIRAC.exit(0)
 
 if verbose:
-  print 'Analysing directory: %s ' % currentDir
+  print('Analysing directory: %s ' % currentDir)
 dirData = successfulDirs[currentDir]
 NumOfFilesInLFC = len(dirData['Files'])
 if verbose:
-  print 'Number of files registered in LFC: %d ' % NumOfFilesInLFC
+  print('Number of files registered in LFC: %d ' % NumOfFilesInLFC)
 LFNsInLFC = list(dirData['Files'])
 # print 'List of lfns in lfc: ' , LFNsInLFC
 
@@ -113,7 +113,7 @@ for lfn, lfnDict in allFiles.iteritems():
   # checks LFC -> SE
   totalSoFar += 1
   if totalSoFar % n == 0:
-    print '%d LFNs processed so far. %d left' % (totalSoFar, len(LFNsInLFC) - totalSoFar)
+    print('%d LFNs processed so far. %d left' % (totalSoFar, len(LFNsInLFC) - totalSoFar))
   if verbose:
     fp.write("LFN: %s\n" % lfn)
   lfnReplicas = []
@@ -167,8 +167,8 @@ if res['OK']:
   noFlagLFNs = [lfn for lfn in LFNsInLFC if metadata.get(lfn, {}).get('GotReplica') == 'No']
   okLFNs = [lfn for lfn in LFNsInLFC if metadata.get(lfn, {}).get('GotReplica') == 'Yes']
   if verbose:
-    print "Out of %d files, %d have a replica flag in the BK, %d are not in the BK and %d don't have the flag" % (
-        len(LFNsInLFC), len(okLFNs), len(missingLFNs), len(noFlagLFNs))
+    print("Out of %d files, %d have a replica flag in the BK, %d are not in the BK and %d don't have the flag" % (
+        len(LFNsInLFC), len(okLFNs), len(missingLFNs), len(noFlagLFNs)))
 
 
 fp.write(" ++++++++++++++++++++++++++++++ Final summary ++++++++++++++++++++++++++\n")
@@ -218,5 +218,5 @@ else:
   fp.write("--------->Directory is not consistent\n")
 
 fp.close()
-print "Summary written to file: %s" % outputFileName
+print("Summary written to file: %s" % outputFileName)
 DIRAC.exit(0)
