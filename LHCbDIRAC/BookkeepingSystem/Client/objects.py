@@ -10,7 +10,7 @@
 ###############################################################################
 """reimplementation of the dictionary."""
 
-from UserDict import UserDict
+from six.moves import UserDict
 
 from DIRAC import gLogger
 from LHCbDIRAC.BookkeepingSystem.Client import IndentMaker
