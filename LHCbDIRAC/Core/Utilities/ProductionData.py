@@ -231,7 +231,7 @@ def constructUserLFNs(jobID, owner, outputFiles, outputPath='', prependString=''
     for outputFile in outputFiles:
       outputFile = outputFile.replace('LFN:', '')
       lfn = os.sep + os.path.join('lhcb', 'user', initial, owner, outputPath, yearMonth,
-                                  str(jobID / 1000), str(jobID)) + os.sep + os.path.basename(outputFile)
+                                  str(int(jobID / 1000)), str(jobID)) + os.sep + os.path.basename(outputFile)
       outputLFNs[outputFile] = lfn
 
   outputData = outputLFNs.values()
@@ -280,7 +280,7 @@ def _makeProductionPath(jobID, lfnROOT, typeName, prodstring, log=False):
   if log:
     try:
       jobid = int(jobID)
-      jobindex = str(jobid / 10000).zfill(4)
+      jobindex = str(int(jobid / 10000)).zfill(4)
     except Exception:
       jobindex = '0000'
     result += jobindex
@@ -300,7 +300,7 @@ def _makeProductionLFN(jobID, lfnROOT, filetuple, prodstring):
                                                                                             str(filetuple)))
   try:
     jobid = int(jobID)
-    jobindex = str(jobid / 10000).zfill(4)
+    jobindex = str(int(jobid / 10000)).zfill(4)
   except Exception:
     jobindex = '0000'
 
