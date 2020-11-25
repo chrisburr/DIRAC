@@ -240,7 +240,7 @@ class LHCbBookkeepingManager(BaseESManager):
     return level, processedPath, procpass
 
   #############################################################################
-  # This method recursive visite all the tree nodes and found the processing pass
+  # This method recursive visits all the tree nodes and found the processing pass
   def __getLevel(self, path, visited, level, start, end, processingpath, startlevel):
     """level."""
     for i in path:
@@ -255,11 +255,12 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(int(i), long)
-          if start and result:
-            end = True
+          int(i)
         except ValueError as ex:
           gLogger.debug(str(self.__class__) + "__getLevel" + str(ex))
+        else:
+          if start:
+            end = True
         if start and not end:
           level = startlevel
           processingpath += '/' + i
@@ -284,11 +285,12 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(int(i), long)
-          if start and result:
-            end = True
+          int(i)
         except ValueError as ex:
           gLogger.warn(str(self.__class__) + "__getRunLevel" + str(ex))
+        else:
+          if start:
+            end = True
         if start and not end:
           level = startlevel
           processingpath += '/' + i
@@ -313,12 +315,14 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(int(i), long)
+          int(i)
         except ValueError as ex:
           gLogger.warn(str(self.__class__) + "__getEvtLevel" + str(ex))
-          result = i in self.__filetypes
-        if start and result:
-          end = True
+          if start and i in self.__filetypes:
+            end = True
+        else:
+          if start:
+            end = True
         if start and not end:
           level = startlevel
           processingpath += '/' + i
