@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Utilities used by LHCb TS scripts."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import six
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script

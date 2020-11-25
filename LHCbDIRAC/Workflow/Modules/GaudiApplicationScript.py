@@ -18,6 +18,9 @@ To make use of this module the LHCbJob method setApplicationScript can be called
 
 This is usually the main module run by user jobs.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

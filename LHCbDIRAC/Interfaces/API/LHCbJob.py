@@ -83,6 +83,9 @@ To execute a ROOT Macro, Python script and Executable consecutively an example s
   jobID = dirac.submitJob(j,mode='local')
   print 'Submission Result: ',jobID
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import re

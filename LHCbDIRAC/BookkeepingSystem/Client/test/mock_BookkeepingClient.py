@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """A mock of the BookkeepingClient, used for testing purposes."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 

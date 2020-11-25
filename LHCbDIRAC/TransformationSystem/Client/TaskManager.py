@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Extension of DIRAC Task Manager."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC.TransformationSystem.Client.TaskManager import WorkflowTasks
 

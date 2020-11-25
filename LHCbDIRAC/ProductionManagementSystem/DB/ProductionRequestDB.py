@@ -10,6 +10,9 @@
 ###############################################################################
 """DIRAC ProductionRequestDB class is a front-end to the repository database
 containing Production Requests and other related tables."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # Defined states:
 #'New'
 #'BK OK'

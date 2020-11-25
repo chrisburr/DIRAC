@@ -13,6 +13,9 @@
 The LHCb API exposes LHCb specific functionality in addition to the
 standard DIRAC API.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

@@ -10,6 +10,9 @@
 ###############################################################################
 """TransformationPlugin is a class wrapping the supported LHCb transformation
 plugins."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=too-many-lines
 # pylint: disable=missing-docstring

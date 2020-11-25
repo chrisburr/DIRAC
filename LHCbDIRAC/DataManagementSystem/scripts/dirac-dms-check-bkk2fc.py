@@ -22,6 +22,9 @@ If --FixIt is set, take actions
 - add files to the BK if they exist in the FC, but have replica = NO in the BK
 - set replicaFlag = No in the BK for those files that are not in the FC
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

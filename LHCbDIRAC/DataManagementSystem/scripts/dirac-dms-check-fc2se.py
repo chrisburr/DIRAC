@@ -29,6 +29,9 @@ If --FixIt is set, takes actions:
   Existing in SE and BK: register it in the FC
   Bad checksum: remove replica or file from SE and catalogs if no good replica
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 __RCSID__ = "$Id$"
 
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers

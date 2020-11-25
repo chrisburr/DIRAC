@@ -10,6 +10,9 @@
 ###############################################################################
 """Unittest for:
 LHCbDIRAC.HCbDIRAC.Core.Utilities.XMLSummaries."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import pytest
 from LHCbDIRAC.Core.Utilities.XMLSummaries import xmltojsonCat1, xmltojsonCat2, xmltojsonCat3, difisnotnull, ranges

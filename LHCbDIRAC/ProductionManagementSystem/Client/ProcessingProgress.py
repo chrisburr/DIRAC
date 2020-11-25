@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get statistics on productions related to a given processing pass."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 

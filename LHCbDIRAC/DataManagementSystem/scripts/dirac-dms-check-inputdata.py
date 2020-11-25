@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Check input files availability for a (list of) jobs."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import six

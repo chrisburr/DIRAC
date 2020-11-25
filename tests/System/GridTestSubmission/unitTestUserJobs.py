@@ -10,6 +10,9 @@
 ###############################################################################
 """ This submits user jobs and then starts a thread that checks their results
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=wrong-import-position,unused-wildcard-import,wildcard-import,invalid-name,missing-docstring
 

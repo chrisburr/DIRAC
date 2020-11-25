@@ -16,6 +16,9 @@
 :synopsis: The PopularityAnalysis Agent generates the popularity CSV file, sends it for analysis to the
            Yandex data popularity service, and sends the result by email
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # imports
 import os
 import json

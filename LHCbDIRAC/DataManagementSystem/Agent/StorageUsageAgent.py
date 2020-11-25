@@ -16,6 +16,9 @@
 :synopsis: StorageUsageAgent takes the FC as the primary source of information to
   determine storage usage.
 '''
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # # imports
 import time
 import random

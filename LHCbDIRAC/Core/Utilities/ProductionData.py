@@ -15,6 +15,9 @@ The methods here are mostly from ancient history and need to be
 reviewed, these methods were grouped together as they form the
 "interface" for production clients and workflow modules to create LFNs.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

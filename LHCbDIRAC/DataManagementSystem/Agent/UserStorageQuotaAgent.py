@@ -16,6 +16,9 @@
 :synopsis: UserStorageQuotaAgent obtains the usage by each user from the StorageUsageDB
   and compares with a quota present in the CS.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import gConfig, S_OK
 from DIRAC.Core.Base.AgentModule import AgentModule

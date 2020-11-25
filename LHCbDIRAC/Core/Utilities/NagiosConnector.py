@@ -18,6 +18,9 @@ to the right queue, which is also specified in the configuration. The
 message is built using a dictionary passed to one of the methods, which
 should contain the keys 'SAMResults' 'SAMDetails' 'GridRequiredCEs'.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import datetime
 import stomp

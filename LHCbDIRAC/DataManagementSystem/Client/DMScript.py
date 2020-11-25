@@ -11,6 +11,9 @@
 """DMScript is a class that creates default switches for DM scripts, decodes
 them and sets flags The module also provides a function for printing pretty
 results from DMS queries."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import six

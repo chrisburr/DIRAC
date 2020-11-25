@@ -25,6 +25,9 @@
               If the command itself is dirac-loop, then the first occurrence only of @arg@ is replaced,
               which allows recursive calls
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import subprocess

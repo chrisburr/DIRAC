@@ -20,6 +20,9 @@
                  Derived data are left unchanged. If one wants to flag everything, use 1.
                - else that processing pass (and derived) and the RAW are flagged OK
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

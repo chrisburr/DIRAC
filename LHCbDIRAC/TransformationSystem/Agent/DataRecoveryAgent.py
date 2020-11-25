@@ -32,6 +32,9 @@ For files in MaxReset and Assigned:
   o if there is no replica flag can proceed with file removal from LFC / storage (can be disabled by flag)
 - Mark the recovered input file status as 'Unused' in the ProductionDB if they were not in MaxReset
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

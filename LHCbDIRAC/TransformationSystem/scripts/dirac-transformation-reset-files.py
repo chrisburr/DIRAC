@@ -11,6 +11,9 @@
 ###############################################################################
 """Set the status (default Unused) of a list of LFNs or files in status
 <Status> of Transformation <TransID>"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient

@@ -11,6 +11,9 @@
 """ ModuleBase - contains the base class for LHCb workflow modules. Defines several
     common utility methods
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

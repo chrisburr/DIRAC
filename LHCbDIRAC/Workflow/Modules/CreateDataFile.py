@@ -10,6 +10,9 @@
 ###############################################################################
 """Prepare a file (data.py) which is consumed by Ganga, containing the input
 files as resolved in the workflow."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

@@ -11,6 +11,9 @@
 ###############################################################################
 """Get the GUID of a (set of) ROOT file The file can be either local, an LFN or
 an xrootd URL (root:...)"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

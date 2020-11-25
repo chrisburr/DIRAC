@@ -11,6 +11,9 @@
 """This is the Data Integrity Client which allows the simple reporting of
 problematic file and replicas to the IntegrityDB and their status correctly
 updated in the FileCatalog."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import re
 import six

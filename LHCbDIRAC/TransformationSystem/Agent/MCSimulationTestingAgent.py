@@ -15,6 +15,9 @@ from the results of the test phase and emailed to the Production Manager.
 
 Author: Simon Bidwell
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

@@ -15,6 +15,9 @@ We use test pool and summary xml files that correspond to 3 LFNs:
 * one that worked at the second attempt
 * one that did not work at all
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 from collections import defaultdict

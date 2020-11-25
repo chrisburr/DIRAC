@@ -10,6 +10,9 @@
 ###############################################################################
 """The ClientTools module provides additional functions for use by users of the
 DIRAC client in the LHCb environment."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import tempfile

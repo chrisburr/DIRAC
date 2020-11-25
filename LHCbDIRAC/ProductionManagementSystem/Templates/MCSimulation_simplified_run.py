@@ -24,8 +24,10 @@
       - for the MC: just set pr.prodsToLaunch = [1]
       - for the merge and/or stripping: set pr.prodsToLaunch, then set pr.previousProdID
 """
-
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 from six.moves import range
 
 import ast

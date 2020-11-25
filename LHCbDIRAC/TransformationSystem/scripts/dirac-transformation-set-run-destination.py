@@ -11,6 +11,9 @@
 ###############################################################################
 """Set the destination for a set of runs, based on the majority of reco
 output."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

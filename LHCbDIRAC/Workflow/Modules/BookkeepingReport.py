@@ -11,8 +11,8 @@
 """Bookkeeping Reporting module (just prepare the files, do not send them
 (which is done in the uploadOutput)"""
 from __future__ import absolute_import
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

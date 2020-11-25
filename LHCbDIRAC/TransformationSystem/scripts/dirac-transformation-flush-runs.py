@@ -11,6 +11,9 @@
 ###############################################################################
 """In a transformation, flush a list of runs or runs that are flushed in the
 transformation used in BKQuery."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 from DIRAC import gLogger

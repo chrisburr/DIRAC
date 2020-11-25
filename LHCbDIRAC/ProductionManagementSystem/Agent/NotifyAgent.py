@@ -17,6 +17,9 @@ Please note that this agent is a hybrid agent that sends aggregated emails for b
 LHCbDIRAC.ProductionManagementSystem.Utilities.Utils.informPeople and
 LHCbDIRAC.ProductionManagementSystem.Agent.ProductionStatusAgent._mailProdManager
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import sqlite3
