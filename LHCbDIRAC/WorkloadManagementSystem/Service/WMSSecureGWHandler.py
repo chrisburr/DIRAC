@@ -12,7 +12,7 @@
 
     Mostly used by BOINC
 """
-
+import six
 import json
 from types import DictType, StringTypes, ListType
 from DIRAC import S_OK, S_ERROR, gLogger
@@ -93,7 +93,7 @@ class WMSSecureGWHandler(RequestHandler):
 
     return S_OK()
 
-  types_requestJob = [[basestring, dict]]
+  types_requestJob = [[six.string_types, dict]]
 
   def export_requestJob(self, resourceDescription):
     """Serve a job to the request of an agent which is the highest priority one
@@ -102,7 +102,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ###########################################################################
-  types_setJobStatus = [[basestring, int, long], basestring, basestring, basestring]
+  types_setJobStatus = [[six.string_types, int, long], six.string_types, six.string_types, six.string_types]
 
   def export_setJobStatus(self, jobID, status, minorStatus, source='Unknown', datetime=None):
     """Set the major and minor status for job specified by its JobId.
@@ -114,7 +114,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobStatus
 
   ###########################################################################
-  types_setJobSite = [[basestring, int, long], basestring]
+  types_setJobSite = [[six.string_types, int, long], six.string_types]
 
   def export_setJobSite(self, jobID, site):
     """Allows the site attribute to be set for a job specified by its jobID."""
@@ -122,7 +122,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobSite
 
   ###########################################################################
-  types_setJobParameter = [[basestring, int, long], basestring, basestring]
+  types_setJobParameter = [[six.string_types, int, long], six.string_types, six.string_types]
 
   def export_setJobParameter(self, jobID, name, value):
     """Set arbitrary parameter specified by name/value pair for job specified
@@ -131,7 +131,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobParam
 
   ###########################################################################
-  types_setJobStatusBulk = [[basestring, int, long], dict]
+  types_setJobStatusBulk = [[six.string_types, int, long], dict]
 
   def export_setJobStatusBulk(self, jobID, statusDict):
     """Set various status fields for job specified by its JobId.
@@ -144,7 +144,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobStatus
 
   ###########################################################################
-  types_setJobParameters = [[basestring, int, long], list]
+  types_setJobParameters = [[six.string_types, int, long], list]
 
   def export_setJobParameters(self, jobID, parameters):
     """Set arbitrary parameters specified by a list of name/value pairs for job
@@ -153,7 +153,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobParams
 
   ###########################################################################
-  types_sendHeartBeat = [[basestring, int, long], dict, dict]
+  types_sendHeartBeat = [[six.string_types, int, long], dict, dict]
 
   def export_sendHeartBeat(self, jobID, dynamicData, staticData):
     """Send a heart beat sign of life for a job jobID."""
@@ -173,7 +173,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##########################################################################################
-  types_setPilotStatus = [basestring, basestring]
+  types_setPilotStatus = [six.string_types, six.string_types]
 
   def export_setPilotStatus(self, pilotRef, status, destination=None, reason=None, gridSite=None, queue=None):
     """Set the pilot agent status."""
@@ -181,7 +181,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##############################################################################
-  types_setJobForPilot = [(basestring, int, long), basestring]
+  types_setJobForPilot = [(six.string_types, int, long), six.string_types]
 
   def export_setJobForPilot(self, jobID, pilotRef, destination=None):
     """Report the DIRAC job ID which is executed by the given pilot job."""
@@ -189,7 +189,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##########################################################################################
-  types_setPilotBenchmark = [basestring, float]
+  types_setPilotBenchmark = [six.string_types, float]
 
   def export_setPilotBenchmark(self, pilotRef, mark):
     """Set the pilot agent benchmark."""
@@ -197,7 +197,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##############################################################################
-  types_getJobParameter = [[basestring, int, long], basestring]
+  types_getJobParameter = [[six.string_types, int, long], six.string_types]
 
   @staticmethod
   def export_getJobParameter(jobID, parName):
@@ -205,7 +205,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##############################################################################
-  types_getVOMSProxy = [basestring, basestring, basestring, (int, long)]
+  types_getVOMSProxy = [six.string_types, six.string_types, six.string_types, (int, long)]
 
   def export_getVOMSProxy(self, userDN, userGroup, requestPem,
                           requiredLifetime, vomsAttribute=False):  # pylint: disable=unused-argument
@@ -216,7 +216,7 @@ class WMSSecureGWHandler(RequestHandler):
     return retVal
 
   ##############################################################################
-  types_getProxy = [basestring, basestring, basestring, (int, long)]
+  types_getProxy = [six.string_types, six.string_types, six.string_types, (int, long)]
 
   def export_getProxy(self, userDN, userGroup, requestPem, requiredLifetime):  # pylint: disable=unused-argument
     """Get the Boinc User proxy."""
@@ -246,7 +246,7 @@ class WMSSecureGWHandler(RequestHandler):
 
   ########################################################################
 
-  types_hasAccess = [[basestring, dict], [basestring, list, dict]]
+  types_hasAccess = [[six.string_types, dict], [six.string_types, list, dict]]
 
   def export_hasAccess(self, paths, opType):  # pylint: disable=unused-argument
     """Access."""
@@ -277,7 +277,7 @@ class WMSSecureGWHandler(RequestHandler):
       failed[lfn] = True
     return S_OK({'Successful': {}, 'Failed': failed})
 
-  types_putRequest = [basestring]
+  types_putRequest = [six.string_types]
 
   def export_putRequest(self, requestJSON):
     """put a new request into RequestDB."""

@@ -19,6 +19,8 @@ __RCSID__ = "$Id$"
 import os
 import time
 
+import six
+
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getSites
@@ -388,7 +390,7 @@ class DiracLHCb(Dirac):
       query['DataQuality'] = dqFlag
 
     for key, val in query.items():
-      if isinstance(val, basestring) and val.lower() == 'all':
+      if isinstance(val, six.string_types) and val.lower() == 'all':
         query.pop(key)
     result = self.bkQuery(query)
     self.log.verbose(result)
@@ -1000,7 +1002,7 @@ class DiracLHCb(Dirac):
     if not ret['OK']:
       return ret
     lfn = ret['Value']
-    if isinstance(lfn, basestring):
+    if isinstance(lfn, six.string_types):
       lfn = [lfn]
     results = getAccessURL(lfn, storageElement, protocol=protocol)
     if printOutput:
@@ -1017,7 +1019,7 @@ class DiracLHCb(Dirac):
     inputData = parameters.get('InputData')
     if inputData:
       self.log.debug("DiracLHCb._getLocalInputData. InputData: %s" % inputData)
-      if isinstance(inputData, basestring):
+      if isinstance(inputData, six.string_types):
         inputData = inputData.split(';')
       inputData = [lfn.strip('LFN:') for lfn in inputData]
       ancestorsDepth = int(parameters.get('AncestorDepth', 0))

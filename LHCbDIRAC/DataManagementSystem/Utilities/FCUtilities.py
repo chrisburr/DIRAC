@@ -13,6 +13,7 @@ __RCSID__ = "$Id$"
 from DIRAC import S_OK, S_ERROR, gLogger
 import sys
 import os
+import six
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 
@@ -23,7 +24,7 @@ def chown(directories, user=None, group=None, mode=None, recursive=False, ndirs=
     ndirs = 0
   if not directories:
     return S_OK(ndirs)
-  if isinstance(directories, basestring):
+  if isinstance(directories, six.string_types):
     directories = directories.split(',')
   if fcClient is None:
     fcClient = FileCatalogClient()

@@ -15,10 +15,11 @@
 
 :synopsis: DISET request handler base class for the DatasetDB
 """
-# imports
 import os
 import time
 import sys
+
+import six
 
 # from DIRAC
 from DIRAC import gLogger, S_OK, S_ERROR
@@ -97,7 +98,7 @@ class RunDBInterfaceHandler(RequestHandler):
           for strState in selectValue:
             intStates.append(fileStateRev[strState])
           selectValue = intStates
-        if isinstance(selectValue, basestring):
+        if isinstance(selectValue, six.string_types):
           paramString = "%s,%s='%s'" % (paramString, selectParam, selectValue)
         else:
           paramString = "%s,%s=%s" % (paramString, selectParam, selectValue)
@@ -200,7 +201,7 @@ class RunDBInterfaceHandler(RequestHandler):
           for strState in selectValue:
             intStates.append(runStateRev[strState])
           selectValue = intStates
-        if isinstance(selectValue, basestring):
+        if isinstance(selectValue, six.string_types):
           paramString = "%s,%s='%s'" % (paramString, selectParam, selectValue)
         else:
           paramString = "%s,%s=%s" % (paramString, selectParam, selectValue)

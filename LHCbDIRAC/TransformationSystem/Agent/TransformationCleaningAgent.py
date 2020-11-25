@@ -126,7 +126,7 @@ class TransformationCleaningAgent(DiracTCAgent):
       return res
 
     directories = res['Value']
-    if isinstance(directories, basestring):  # Check for (stupid) formats
+    if isinstance(directories, six.string_types):  # Check for (stupid) formats
       directories = ast.literal_eval(directories)
       if not isinstance(directories, list):
         return S_ERROR("Wrong format of output directories")

@@ -901,7 +901,7 @@ class LHCbJob(Job):
     """
     kwargs = {'platform': platform}
 
-    if not isinstance(platform, basestring):
+    if not isinstance(platform, six.string_types):
       return self._reportError("Expected string for platform", **kwargs)
 
     if platform and platform.lower() != 'any':

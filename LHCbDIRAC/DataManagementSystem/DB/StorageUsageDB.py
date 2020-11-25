@@ -15,6 +15,7 @@
 
 :synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
 """
+import six
 
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
@@ -969,7 +970,7 @@ class StorageUsageDB(DB):
     time interval."""
     if startTime > endTime:
       return S_OK()
-    if not isinstance(startTime, basestring) or not isinstance(endTime, basestring):
+    if not isinstance(startTime, six.string_types) or not isinstance(endTime, six.string_types):
       return S_ERROR('wrong arguments format')
 
     sqlStartTime = self._escapeString(startTime)['Value']

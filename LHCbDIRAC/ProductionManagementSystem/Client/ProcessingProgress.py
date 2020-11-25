@@ -18,6 +18,8 @@ import pickle
 import sys
 import time
 
+import six
+
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
@@ -300,7 +302,7 @@ class ProcessingProgress(object):
       if prodBKDict:
         recoRunRanges[prod] = [prodBKDict.get("StartRun", 0), prodBKDict.get("EndRun", sys.maxsize)]
         dqFlags = prodBKDict.get("DataQualityFlag", ['UNCHECKED', 'EXPRESS_OK', 'OK'])
-        if isinstance(dqFlags, basestring):
+        if isinstance(dqFlags, six.string_types):
           dqFlags = dqFlags.split(',')
         recoDQFlags += [fl for fl in dqFlags if fl not in recoDQFlags]
       else:
@@ -636,7 +638,7 @@ class ProcessingProgress(object):
     cached = self.cachedInfo.get(bkStr, {})
     cachedTime = cached.get('Time', None)
     cachedLfns = cached.get('Lfns', {})
-    if isinstance(fileType, basestring):
+    if isinstance(fileType, six.string_types):
       fileType = [fileType]
     if set(fileType).intersection(set(self.clearCache)):
       cachedTime = datetime.datetime.utcnow() - datetime.timedelta(days=8)

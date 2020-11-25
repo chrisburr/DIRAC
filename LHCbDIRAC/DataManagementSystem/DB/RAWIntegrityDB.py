@@ -19,6 +19,8 @@ __RCSID__ = "$Id$"
 
 import types
 
+import six
+
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 from DIRAC.Core.Utilities.List import stringListToString
@@ -151,7 +153,7 @@ class RAWIntegrityDB(DB):
 
     :returns: dict {lfn: metadata}
     """
-    if isinstance(status, basestring):
+    if isinstance(status, six.string_types):
       status = [status]
 
     try:
