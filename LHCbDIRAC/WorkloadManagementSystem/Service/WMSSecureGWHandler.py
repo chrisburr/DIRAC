@@ -181,7 +181,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##############################################################################
-  types_setJobForPilot = [(six.string_types, int, long), six.string_types]
+  types_setJobForPilot = [six.string_types + six.integer_types, six.string_types]
 
   def export_setJobForPilot(self, jobID, pilotRef, destination=None):
     """Report the DIRAC job ID which is executed by the given pilot job."""
@@ -205,7 +205,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##############################################################################
-  types_getVOMSProxy = [six.string_types, six.string_types, six.string_types, (int, long)]
+  types_getVOMSProxy = [six.string_types, six.string_types, six.string_types, six.integer_types]
 
   def export_getVOMSProxy(self, userDN, userGroup, requestPem,
                           requiredLifetime, vomsAttribute=False):  # pylint: disable=unused-argument
@@ -216,7 +216,7 @@ class WMSSecureGWHandler(RequestHandler):
     return retVal
 
   ##############################################################################
-  types_getProxy = [six.string_types, six.string_types, six.string_types, (int, long)]
+  types_getProxy = [six.string_types, six.string_types, six.string_types, six.integer_types]
 
   def export_getProxy(self, userDN, userGroup, requestPem, requiredLifetime):  # pylint: disable=unused-argument
     """Get the Boinc User proxy."""
