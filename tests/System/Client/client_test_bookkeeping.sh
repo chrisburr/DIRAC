@@ -27,7 +27,7 @@ declare -a commands=(
 'dirac-bookkeeping-get-stats --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/'
 'dirac-bookkeeping-get-tck --Runs=113146,111181'
 'test $( dirac-bookkeeping-getdataquality-runs 113146 | grep 113146 | wc -l ) = 6'
-'test $( dirac-bookkeeping-job-info /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi | wc -l ) = 25'
+'test $( dirac-bookkeeping-job-info /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi | wc -l ) = 26'
 'dirac-bookkeeping-job-input-output 1495303'
 'dirac-bookkeeping-prod4path --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/'
 'test $( dirac-bookkeeping-production-files 1446 ALL | grep "lhcb/certification/test/" | wc -l ) = 48'
