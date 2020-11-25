@@ -697,7 +697,7 @@ class Production(object):
         return result
 
     if requestID and publish:
-      reqDict = {'ProductionID': long(prodID), 'RequestID': requestID, 'Used': reqUsed, 'BkEvents': 0}
+      reqDict = {'ProductionID': int(prodID), 'RequestID': requestID, 'Used': reqUsed, 'BkEvents': 0}
       result = ProductionRequestClient(timeout=120).addProductionToRequest(reqDict)
       if not result['OK']:
         gLogger.error('Attempt to add production %s to request %s failed: %s ' % (prodID, requestID,

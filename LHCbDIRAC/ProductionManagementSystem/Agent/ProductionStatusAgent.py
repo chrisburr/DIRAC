@@ -880,7 +880,7 @@ class ProductionStatusAgent(AgentModule):
       return
 
     reqClient = ProductionRequestClient(useCertificates=False, timeout=120)
-    result = reqClient.updateProductionRequest(long(prID), {'RequestState': status})
+    result = reqClient.updateProductionRequest(int(prID), {'RequestState': status})
     if not result['OK']:
       self.log.error(result)
     else:

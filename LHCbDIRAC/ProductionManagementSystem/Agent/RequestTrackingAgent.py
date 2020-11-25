@@ -97,7 +97,7 @@ class RequestTrackingAgent(AgentModule):
     if not result['Value'][0]:
       return S_OK(0)
     try:
-      sum_nr = long(result['Value'][0])
+      sum_nr = int(result['Value'][0])
     except ValueError as e:
       return S_ERROR("Can not convert result from BK call: %s" % str(e))
     return S_OK(sum_nr)

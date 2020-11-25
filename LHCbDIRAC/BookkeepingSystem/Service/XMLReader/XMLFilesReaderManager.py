@@ -113,7 +113,7 @@ class XMLFilesReaderManager(object):
 
       for inputFile in job.getJobInputFiles():
         lfn = inputFile.getFileName()
-        fileID = long(result['Value']['Successful'][lfn]['FileId'])
+        fileID = int(result['Value']['Successful'][lfn]['FileId'])
         inputFile.setFileID(fileID)
 
     outputFiles = job.getJobOutputFiles()
@@ -135,7 +135,7 @@ class XMLFilesReaderManager(object):
           return S_ERROR("[type:version] missing")
 
         self.log.debug(cahedTypeNameVersion + " added to the cache!")
-        typeID = long(result['Value'])
+        typeID = int(result['Value'])
         outputfile.setTypeID(typeID)
         self.fileTypeCache[cahedTypeNameVersion] = typeID
 
@@ -155,7 +155,7 @@ class XMLFilesReaderManager(object):
         self.log.debug('ParamName check of ' + str(paramName))
 
         if paramName == "EventType":
-          value = long(param.getParamValue())
+          value = int(param.getParamValue())
           result = self.bkClient_.checkEventType(value)
           if not result['OK']:
             errorMessage = "The event type %s is missing!" % (str(value))
@@ -163,7 +163,7 @@ class XMLFilesReaderManager(object):
 
         if paramName == "EventTypeId":
           if param.getParamValue() != '':
-            value = long(param.getParamValue())
+            value = int(param.getParamValue())
             result = self.bkClient_.checkEventType(value)
             if not result['OK']:
               errorMessage = "The event type %s is missing!" % (str(value))
@@ -275,12 +275,12 @@ class XMLFilesReaderManager(object):
               else:
                 dqvalue = None
                 message = "The rundataquality table does not contains %d %s. Consequently, \
-                the Dq flag is inherited from the ancestor file!" % (long(runnumber), proc)
+                the Dq flag is inherited from the ancestor file!" % (int(runnumber), proc)
                 self.log.warn(message)
             else:
               dqvalue = None
               self.log.warn('Bkk can not set the quality flag because the processing \
-              pass is missing for % d production (run number: %d )!' % (long(prod), long(runnumber)))
+              pass is missing for % d production (run number: %d )!' % (int(prod), int(runnumber)))
 
     inputfiles = job.getJobInputFiles()
 
@@ -321,7 +321,7 @@ class XMLFilesReaderManager(object):
         return S_ERROR(errMsg)
 
     evtinput = 0
-    if long(sumEvtStat) > long(sumEventInputStat):
+    if int(sumEvtStat) > int(sumEventInputStat):
       evtinput = sumEvtStat
     else:
       evtinput = sumEventInputStat
@@ -353,7 +353,7 @@ class XMLFilesReaderManager(object):
 
     for param in params:
       if param.getName() == "RunNumber":
-        value = long(param.getValue())
+        value = int(param.getValue())
         if value <= 0 and len(job.getJobInputFiles()) == 0:
           # The files which inherits the runs can be entered to the database
           return S_ERROR('The run number not greater 0!')
@@ -367,12 +367,12 @@ class XMLFilesReaderManager(object):
                                                                           str(result['Message']))
       return S_ERROR(errorMessage)
     else:
-      jobID = long(result['Value'])
+      jobID = int(result['Value'])
       job.setJobId(jobID)
 
     if job.exists('RunNumber'):
       try:
-        runnumber = long(job.getParam('RunNumber').getValue())
+        runnumber = int(job.getParam('RunNumber').getValue())
       except ValueError:
         runnumber = -1
       if runnumber != -1:
@@ -457,7 +457,7 @@ class XMLFilesReaderManager(object):
           self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
         return S_ERROR(errorMessage[0])
       else:
-        fileid = long(result['Value'])
+        fileid = int(result['Value'])
         outputfile.setFileID(fileid)
 
       replicas = outputfile.getReplicas()
@@ -541,7 +541,7 @@ class XMLFilesReaderManager(object):
         elif param.getName() == 'DDDB':
           dddb = param.getValue()
         elif param.getName() == 'RunNumber':
-          production = long(param.getValue()) * -1
+          production = int(param.getValue()) * -1
           found = True
 
       if job.exists('CondDB'):
@@ -566,7 +566,7 @@ class XMLFilesReaderManager(object):
         for outPutfileParam in outputFiles.getFileParams():
           outputFileParamName = outPutfileParam.getParamName()
           if outputFileParamName == "EventTypeId":
-            eventtypes.append(long(outPutfileParam.getParamValue()))
+            eventtypes.append(int(outPutfileParam.getParamValue()))
 
       steps = {'Steps':
                [{'StepId': stepid,
@@ -680,7 +680,7 @@ class XMLFilesReaderManager(object):
         message += " to file " + str(replicaFileName) + " for " + str(location) + ".\n"
         return S_ERROR(message)
       else:
-        fileID = long(result['Value'][0][0])
+        fileID = int(result['Value'][0][0])
         self.log.debug("FileId:", fileID)
 
       if delete:

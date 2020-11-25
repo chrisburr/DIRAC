@@ -208,7 +208,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
       return
     if args.num is not None:
       try:
-        nb = long(args.num)
+        nb = int(args.num)
       except ValueError as v:
         print(v)
         return

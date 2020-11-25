@@ -145,10 +145,10 @@ class DiracProduction(DiracLHCb):
       return result
 
     if productionID:
-      if long(productionID) in result['Value']:
+      if int(productionID) in result['Value']:
         newResult = S_OK()
         newResult['Value'] = {}
-        newResult['Value'][long(productionID)] = result['Value'][long(productionID)]
+        newResult['Value'][int(productionID)] = result['Value'][int(productionID)]
         result = newResult
       else:
         self.log.info('Specified productionID was not found, \
@@ -485,7 +485,7 @@ class DiracProduction(DiracLHCb):
     if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
-    productionID = long(productionID)
+    productionID = int(productionID)
 
     if not productionID:
       result = self._getActiveProductions()
@@ -562,7 +562,7 @@ class DiracProduction(DiracLHCb):
     if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
-    productionID = long(productionID)
+    productionID = int(productionID)
     if not isinstance(command, str):
       return self._errorReport('Expected string, for command')
     if not command.lower() in commands:
@@ -584,12 +584,12 @@ class DiracProduction(DiracLHCb):
     self.log.info('Setting production status to %s and submission mode to %s for productionID %s' % (actions[0],
                                                                                                      actions[1],
                                                                                                      productionID))
-    result = self.transformationClient.setTransformationParameter(long(productionID), "Status", actions[0])
+    result = self.transformationClient.setTransformationParameter(int(productionID), "Status", actions[0])
     if not result['OK']:
       self.log.warn('Problem updating transformation status with result:\n%s' % result)
       return result
     self.log.verbose('Setting transformation status to %s successful' % (actions[0]))
-    result = self.transformationClient.setTransformationParameter(long(productionID), 'AgentType', actions[1])
+    result = self.transformationClient.setTransformationParameter(int(productionID), 'AgentType', actions[1])
     if not result['OK']:
       self.log.warn('Problem updating transformation agent type with result:\n%s' % result)
       return result
@@ -693,7 +693,7 @@ class DiracProduction(DiracLHCb):
     else:
       return self._errorReport('Expected single string or list of strings for LFN(s)')
 
-    fileStatus = self.transformationClient.getFileSummary(lfns, long(productionID))
+    fileStatus = self.transformationClient.getFileSummary(lfns, int(productionID))
     if printOutput:
       self._prettyPrint(fileStatus['Value'])
     return fileStatus
@@ -755,7 +755,7 @@ class DiracProduction(DiracLHCb):
       except Exception as x:
         return self._errorReport(str(x), 'Expected integer or string for number of jobs to submit')
 
-    result = self.transformationClient.extendTransformation(long(productionID), numberOfJobs)
+    result = self.transformationClient.extendTransformation(int(productionID), numberOfJobs)
     if not result['OK']:
       return self._errorReport(result, 'Could not extend production %s by %s jobs' % (productionID, numberOfJobs))
 
@@ -770,7 +770,7 @@ class DiracProduction(DiracLHCb):
     Given a production ID will return the current WMS status information
     for all jobs in that production starting from the creation date.
     """
-    result = self.transformationClient.getTransformationParameters(long(productionID), ['CreationDate'])
+    result = self.transformationClient.getTransformationParameters(int(productionID), ['CreationDate'])
     if not result['OK']:
       self.log.warn('Problem getting production metadata for ID %s:\n%s' % (productionID, result))
       return result

@@ -111,7 +111,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
         if bkMetadata['GotReplica'] == 'Yes':
           yesReplicaFiles.append(lfn)
           if bkMetadata['FileSize']:
-            totalSize += long(bkMetadata['FileSize'])
+            totalSize += int(bkMetadata['FileSize'])
         elif bkMetadata['GotReplica'] == 'No':
           noReplicaFiles.append(lfn)
         else:

@@ -122,7 +122,7 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
       return S_OK(message)
 
     # get the associated productions/transformations progress
-    productionsProgress = self.rpcProductionRequest.getProductionProgressList(long(productionRequestID))
+    productionsProgress = self.rpcProductionRequest.getProductionProgressList(int(productionRequestID))
     if productionsProgress['OK']:
       productionsProgress = productionsProgress['Value']
     else:

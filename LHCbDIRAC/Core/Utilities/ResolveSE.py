@@ -40,7 +40,7 @@ def getDestinationSEList(outputSE, site, outputmode='Any', run=None):
     if not run:
       raise RuntimeError("Expected runNumber")
     try:
-      run = long(run)
+      run = int(run)
     except ValueError as ve:
       raise RuntimeError("Expected runNumber as a number: %s" % ve)
 

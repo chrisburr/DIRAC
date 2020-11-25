@@ -35,7 +35,7 @@ exitCode = 0
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 bk = BookkeepingClient()
 try:
-  prod = long(args[0])
+  prod = int(args[0])
 except BaseException:
   Script.showHelp(exitCode=1)
 

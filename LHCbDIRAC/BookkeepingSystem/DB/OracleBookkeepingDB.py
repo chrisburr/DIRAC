@@ -4482,8 +4482,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     fileTypeMap = {'RAW': 'MDF'}
     eventtypes = []
     if eventType:
-      if isinstance(eventType, (six.string_types + six.integer_types)):
-        eventtypes.append(long(eventType))
+      if isinstance(eventType, (six.string_types, six.integer_types)):
+        eventtypes.append(int(eventType))
       elif isinstance(eventType, list):
         eventtypes = eventType
       else:
@@ -4499,7 +4499,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           if not result['OK']:
             return S_ERROR("The type:%s, version:%s is missing." % (ftype.get('FileType'), fversion))
           else:
-            fileTypeid = long(result['Value'])
+            fileTypeid = int(result['Value'])
           retVal = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertProdnOutputFtypes',
                                                     [production, step['StepId'],
                                                      fileTypeid,

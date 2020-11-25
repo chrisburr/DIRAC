@@ -255,7 +255,7 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(long(i), long)
+          result = isinstance(int(i), long)
           if start and result:
             end = True
         except ValueError as ex:
@@ -284,7 +284,7 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(long(i), long)
+          result = isinstance(int(i), long)
           if start and result:
             end = True
         except ValueError as ex:
@@ -313,7 +313,7 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(long(i), long)
+          result = isinstance(int(i), long)
         except ValueError as ex:
           gLogger.warn(str(self.__class__) + "__getEvtLevel" + str(ex))
           result = i in self.__filetypes

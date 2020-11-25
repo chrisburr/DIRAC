@@ -81,7 +81,7 @@ class StorageUsageAgent(AgentModule):
     self.__ignoreDirsList = []
     self.__keepDirLevels = 4
 
-    self.__startExecutionTime = long(time.time())
+    self.__startExecutionTime = int(time.time())
     self.__dirExplorer = DirectoryExplorer(reverse=True)
     self.__processedDirs = 0
     self.__directoryOwners = {}
@@ -234,7 +234,7 @@ class StorageUsageAgent(AgentModule):
     self.__ignoreDirsList = self.am_getOption('Ignore', [])
     self.__keepDirLevels = self.am_getOption("KeepDirLevels", 4)
 
-    self.__startExecutionTime = long(time.time())
+    self.__startExecutionTime = int(time.time())
     self.__dirExplorer = DirectoryExplorer(reverse=True)
     self.__resetReplicaListFiles()
     self.__noProxy = set()
@@ -407,8 +407,8 @@ class StorageUsageAgent(AgentModule):
       prStr += ", %s are closed (ignored)" % len(closedDirs)
     for rmDir in closedDirs + self.__ignoreDirsList:
       subDirs.pop(rmDir, None)
-    numberOfFiles = long(dirMetadata['Files'])
-    totalSize = long(dirMetadata['TotalSize'])
+    numberOfFiles = int(dirMetadata['Files'])
+    totalSize = int(dirMetadata['TotalSize'])
     if numberOfFiles:
       prStr += " and %s files (%s bytes)" % (numberOfFiles, totalSize)
     else:

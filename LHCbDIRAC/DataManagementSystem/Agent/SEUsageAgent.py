@@ -777,7 +777,7 @@ class SEUsageAgent(AgentModule):
       signal.alarm(timeout)
     try:
       remoteFD = urllib2.urlopen(url)
-      expectedBytes = long(remoteFD.info()['Content-Length'])
+      expectedBytes = int(remoteFD.info()['Content-Length'])
       localFD = open(fileName, "wb")
       receivedBytes = 0
       data = remoteFD.read(16384)

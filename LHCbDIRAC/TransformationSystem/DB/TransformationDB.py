@@ -264,7 +264,7 @@ class TransformationDB(DIRACTransformationDB):
           value = value.split(';;;')
         if parameter in self.intFields:
           if isinstance(value, str):
-            value = long(value)
+            value = int(value)
           if isinstance(value, list):
             value = [int(x) for x in value]
           if not value:
