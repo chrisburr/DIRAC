@@ -20,6 +20,8 @@ __RCSID__ = "$Id$"
 
 import ast
 
+import six
+
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
