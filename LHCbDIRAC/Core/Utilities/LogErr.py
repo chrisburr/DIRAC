@@ -54,7 +54,7 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
     ctest = logString.count(errorString)
     test = logString.find(errorString)
     array = []
-    for i in xrange(ctest):
+    for i in range(ctest):
       start = test
       test = logString.find(errorString, start)
       alreadyFound = False

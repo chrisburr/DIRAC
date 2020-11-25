@@ -58,7 +58,7 @@ def getTransformations(args):
       for transID in ids:
         rr = transID.split(':')
         if len(rr) > 1:
-          for i in xrange(int(rr[0]), int(rr[1]) + 1):
+          for i in range(int(rr[0]), int(rr[1]) + 1):
             tid = _getTransformationID(i)
             if tid is not None:
               transList.append(tid)

@@ -133,7 +133,7 @@ def cacheDirectories(directories):
     gLogger.always('Getting BK metadata for %d directories' % len(lfnsFromBK))
     success = {}
     for lfns in breakListIntoChunks(lfnsFromBK, chunkSize):
-      for trial in xrange(10, -1, -1):
+      for trial in range(10, -1, -1):
         res = bkClient.getDirectoryMetadata(lfns)
         if not res['OK'] and not trial:
           gLogger.fatal("\nError getting BK metadata", res['Message'])
@@ -172,7 +172,7 @@ def cacheDirectories(directories):
     gLogger.always('Get LFN Storage Usage for %d directories' % len(missingSU))
     for dirLfn in missingSU:
       # LFN usage
-      for trial in xrange(10, -1, -1):
+      for trial in range(10, -1, -1):
         res = suClient.getSummary(dirLfn)
         if res['OK']:
           break
@@ -190,7 +190,7 @@ def cacheDirectories(directories):
     # Storage type is Disk, Archived, Tape and All
     gLogger.always('Check storage type and PFN usage for %d directories' % len(dirSet))
     for dirLfn in dirSet:
-      for trial in xrange(10, -1, -1):
+      for trial in range(10, -1, -1):
         res = suClient.getDirectorySummaryPerSE(dirLfn)
         if not res['OK'] and not trial:
           gLogger.fatal('Error getting storage usage per SE %s' % dirLfn, res['Message'])
@@ -263,7 +263,7 @@ def prSize(size):
 
 def getPhysicalUsage(baseDir):
   """Extract information about storage usage from the StorageusageDB."""
-  for trial in xrange(10, -1, -1):
+  for trial in range(10, -1, -1):
     res = suClient.getStorageDirectoryData(baseDir, None, None, None, timeout=3600)
     if not res['OK']:
       if not trial:

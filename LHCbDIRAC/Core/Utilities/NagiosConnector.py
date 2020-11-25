@@ -83,7 +83,7 @@ EOT"""
     statuscodes = {0: 'OK', 1: 'CRITICAL', 2: 'WARNING', 3: 'UNKNOWN'}
     if status in ['CRITICAL', 'OK', 'WARNING', 'UNKNOWN']:
       pass
-    elif status in xrange(4):
+    elif status in range(4):
       status = statuscodes[status]
 
       currentTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")

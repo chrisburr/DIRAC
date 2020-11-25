@@ -312,7 +312,7 @@ def _checkLog(logURL):
   """
   Find ERROR string, core dump or "stalled events" in a logfile
   """
-  for i in xrange(5, 0, -1):
+  for i in range(5, 0, -1):
     logFile = _getLog(logURL, '*_%d.log' % i, debug=False)
     if logFile:
       break
@@ -464,7 +464,7 @@ class TransformationDebug(object):
         if len(runRange) == 1:
           runs.append(int(runRange[0]))
         else:
-          for run in xrange(int(runRange[0]), int(runRange[1]) + 1):
+          for run in range(int(runRange[0]), int(runRange[1]) + 1):
             runs.append(run)
       selectDict = {'TransformationID': self.transID, 'RunNumber': runs}
       if runs == [0]:
@@ -943,7 +943,7 @@ class TransformationDebug(object):
           subReqDict = {}
           subReqStr = ''
           conj = ''
-          for i in xrange(len(params)):
+          for i in range(len(params)):
             subReqDict.update({params[i]: rec[i]})
             subReqStr += conj + params[i] + ': ' + rec[i]
             conj = ', '

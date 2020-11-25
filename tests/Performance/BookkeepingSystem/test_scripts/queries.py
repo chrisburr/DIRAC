@@ -454,7 +454,7 @@ class Transaction(object):
       self.custom_timers['LongQueries'] = query_time
     self.custom_timers['Bkk_ResponseTime'] = query_time
     q = dataset.get('fullpath', 0)
-    if q and q in xrange(0, c):
+    if q and q in range(0, c):
       print('Query-%s' % q)
       self.custom_timers["Query-%s" % q] = query_time
 

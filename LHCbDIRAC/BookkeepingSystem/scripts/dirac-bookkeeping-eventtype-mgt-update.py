@@ -64,7 +64,7 @@ def process_event(eventline):
     gLogger.error("syntax error at: \n" + eventline)
     Script.showHelp()
   else:
-    for i in xrange(3):
+    for i in range(3):
       if ma.group('id' + str(i) + '0'):
         if ma.group('id' + str(i) + '0') in result:
           gLogger.error(

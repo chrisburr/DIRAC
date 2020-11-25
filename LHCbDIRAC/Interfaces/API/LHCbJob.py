@@ -217,7 +217,7 @@ class LHCbJob(Job):
       if not isinstance(inputData, list):
         return self._reportError('Expected single LFN string or list of LFN(s) for inputData', __name__, **kwargs)
       if inputData != ['previousStep']:
-        for i in xrange(len(inputData)):
+        for i in range(len(inputData)):
           inputData[i] = inputData[i].replace('LFN:', '')
         inputData = ['LFN:' + x for x in inputData]
         inputDataStr = ';'.join(inputData)
@@ -368,7 +368,7 @@ class LHCbJob(Job):
       if not isinstance(inputData, list):
         return self._reportError('Expected single LFN string or list of LFN(s) for inputData', __name__, **kwargs)
       if inputData != ['previousStep']:
-        for i in xrange(len(inputData)):
+        for i in range(len(inputData)):
           inputData[i] = inputData[i].replace('LFN:', '')
         inputData = ['LFN:' + x for x in inputData]
         inputDataStr = ';'.join(inputData)

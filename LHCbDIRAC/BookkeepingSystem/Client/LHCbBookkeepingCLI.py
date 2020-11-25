@@ -107,7 +107,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
         return '/'
     else:
       newpath = ''
-      for i in xrange(len(path) - 1):
+      for i in range(len(path) - 1):
         if path[i] != '':
           newpath += '/' + path[i]
       if newpath == '':
@@ -145,7 +145,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
     if path.find('|') > -1:
       tmpPath = path.split('|')
       path = ''
-      for i in xrange(len(tmpPath) - 1):
+      for i in range(len(tmpPath) - 1):
         path += tmpPath[i].strip()
       paging = True
 

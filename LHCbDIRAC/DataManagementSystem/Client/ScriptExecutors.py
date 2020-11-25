@@ -896,7 +896,7 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
         continue
       oSe = StorageElement(se)
       for fileChunk in breakListIntoChunks(fileList, chunkSize):
-        for _i in xrange(len(fileChunk)):
+        for _i in range(len(fileChunk)):
           progressBar.loop()
         res = oSe.getFileMetadata(fileChunk)
         if res['OK']:

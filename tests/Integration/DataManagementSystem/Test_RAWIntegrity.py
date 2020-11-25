@@ -215,7 +215,7 @@ class RAWIntegrityDBTest(unittest.TestCase):
     self.assertEqual(res['Value'], {'StorageElement': [], 'Status': []})
 
     # Adding two files Assigned, 1 Failed and 1 done
-    for i in xrange(1, 5):
+    for i in range(1, 5):
       res = self.db.addFile('lfn%s' % i, 'pfn%s' % i, 5 - i, 'se%s' % (i % 2), 'GUID%s' % i,
                             'Checksum%s' % i)
       self.assertTrue(res['OK'], res)
@@ -278,7 +278,7 @@ class RAWIntegrityDBTest(unittest.TestCase):
     res = self.db.selectFiles({}, older=now)
     self.assertTrue(res['OK'], res)
     returnedLfns = [ret[0] for ret in res['Value']]
-    self.assertEqual(returnedLfns, ['lfn%i' % i for i in xrange(1, 5)])
+    self.assertEqual(returnedLfns, ['lfn%i' % i for i in range(1, 5)])
 
     # select the new file
     res = self.db.selectFiles({}, newer=now)
@@ -307,7 +307,7 @@ class RAWIntegrityDBTest(unittest.TestCase):
     self.assertEqual(returnedLfns, ['lfn6'])
 
     # clean after us
-    for i in xrange(1, 8):
+    for i in range(1, 8):
       res = self.db.removeFile('lfn%s' % i)
       self.assertTrue(res['OK'], res)
 
@@ -329,7 +329,7 @@ class RAWIntegrityDBTest(unittest.TestCase):
 #
 #    # Inserting files
 #    startTime = time.time()
-#    for i in xrange(nbFiles):
+#    for i in range(nbFiles):
 #      res = self.db.addFile('lfn%s' % i, 'pfn%s' % i, i, 'se%s' % (i % 2), 'GUID%s' % i,
 #                            'Checksum%s' % i)
 #      self.assertTrue(res['OK'], res)
@@ -349,7 +349,7 @@ class RAWIntegrityDBTest(unittest.TestCase):
 #    # Setting some of them
 #    startTime = time.time()
 #    rndIds = set()
-#    for _ in xrange(nbFiles / 10):
+#    for _ in range(nbFiles / 10):
 #      rndId = random.randint(1, nbFiles)
 #      rndIds.add(rndId)
 #      self.db.setFileStatus('lfn%s' % rndId, 'Done')
@@ -365,7 +365,7 @@ class RAWIntegrityDBTest(unittest.TestCase):
 #
 #    # deleting all of them
 #    startTime = time.time()
-#    for i in xrange(1, nbFiles):
+#    for i in range(1, nbFiles):
 #      res = self.db.removeFile('lfn%s' % i)
 #      self.assertTrue(res['OK'], res)
 #    removeTime = time.time() - startTime

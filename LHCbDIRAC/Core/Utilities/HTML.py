@@ -271,7 +271,7 @@ class Table (object):
       # see https://bugzilla.mozilla.org/show_bug.cgi?id=915
 # n_cols = max(len(self.col_styles), len(self.col_width),
 # len(self.col_align), len(self.col_valign))
-# for i in xrange(n_cols):
+# for i in range(n_cols):
 ##            col = ''
 # try:
 # if self.col_styles[i]:
@@ -471,7 +471,7 @@ if __name__ == '__main__':
 # First, header row:
 # yield TableRow(('x', 'square(x)'), header=True, bgcolor='blue')
 # Then all rows:
-    for x in xrange(1, n + 1):
+    for x in range(1, n + 1):
       yield (x, x * x)
 
   t = Table(rows=gen_table_squares(10), header_row=('x', 'square(x)'))

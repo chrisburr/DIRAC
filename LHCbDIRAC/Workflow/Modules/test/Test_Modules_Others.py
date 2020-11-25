@@ -282,7 +282,7 @@ class UploadLogFileSuccess(ModulesTestCase):
     self.assertTrue(set(res['Value']) >= set(expected))
 
     fd = open('aLongLog.log', 'w')
-    for _x in xrange(2500):
+    for _x in range(2500):
       fd.writelines("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum")
     fd.close()
     res = ulf._determineRelevantFiles()
@@ -296,7 +296,7 @@ class UploadLogFileSuccess(ModulesTestCase):
 
     open('foo.txt', 'w').close()
     fd = open('aLongLog.log', 'w')
-    for _x in xrange(2500):
+    for _x in range(2500):
       fd.writelines("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum")
     fd.close()
     open('bar.py', 'w').close()

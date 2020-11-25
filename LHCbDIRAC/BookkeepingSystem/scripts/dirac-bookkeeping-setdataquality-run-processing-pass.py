@@ -45,7 +45,7 @@ def getProcessingPasses(bkDict, headPass):
     parNames = recordList['ParameterNames']
 
     found = False
-    for thisId in xrange(len(parNames)):
+    for thisId in range(len(parNames)):
       parName = parNames[thisId]
       if parName == 'Name':
         found = True

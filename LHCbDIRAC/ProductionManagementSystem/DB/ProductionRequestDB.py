@@ -288,7 +288,7 @@ class ProductionRequestDB(DB):
         proDetail = pickleOrJsonLoads(pickledProdDetail)
       except Exception:
         return S_ERROR('Content of ProDetail field cannot be loaded')
-      for i in xrange(20):
+      for i in range(20):
         outputKey = 'p' + str(i) + 'OFT'
         inputKey = 'p' + str(i + 1) + 'IFT'
         if outputKey in proDetail and inputKey in proDetail:
