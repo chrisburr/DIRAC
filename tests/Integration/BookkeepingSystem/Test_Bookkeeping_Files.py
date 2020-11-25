@@ -16,7 +16,6 @@ It tests the insert of XML Summaries to the BookkeepingDB.
 
 from __future__ import print_function
 
-
 import datetime
 
 from DIRAC.Core.Base.Script import parseCommandLine

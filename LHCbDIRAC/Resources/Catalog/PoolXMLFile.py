@@ -32,7 +32,7 @@ def getOutputType(outputs, inputs, directory=''):
   for fname in inputs:
     try:
       tFileIn = str(catalog.getTypeByPfn(str(
-        list(catalog.getPfnsByLfn(fname)['Replicas'].values())[0]
+          list(catalog.getPfnsByLfn(fname)['Replicas'].values())[0]
       )))
     except KeyError:
       tFileIn = None

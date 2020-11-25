@@ -19,12 +19,12 @@
 #################################################################################
 #
 #class PilotWebSummaryEfficiencyPolicy_TestCase( unittest.TestCase ):
-#  
+#
 #  def setUp( self ):
 #    '''
 #    Setup
 #    '''
-#                  
+#
 #    self.moduleTested = moduleTested
 #    self.testClass    = self.moduleTested.PilotWebSummaryEfficiencyPolicy
 #
@@ -32,27 +32,27 @@
 #    '''
 #    Tear down
 #    '''
-#   
+#
 #    del self.moduleTested
 #    del self.testClass
 #
 #################################################################################
 #
 #class PilotWebSummaryEfficiencyPolicy_Success( PilotWebSummaryEfficiencyPolicy_TestCase ):
-#  
+#
 #  def test_instantiate( self ):
 #    ''' tests that we can instantiate one object of the tested class
-#    '''  
-#   
+#    '''
+#
 #    module = self.testClass()
 #    self.assertEqual( 'PilotWebSummaryEfficiencyPolicy', module.__class__.__name__ )
 #
 #  def test_evaluate( self ):
 #    ''' tests the method _evaluate
 #    '''
-#    
+#
 #    module = self.testClass()
-#    
+#
 #    res = module._evaluate( { 'OK' : False, 'Message' : 'Bo!' } )
 #    self.assertTrue(res['OK'])
 #    self.assertEqual( 'Error', res[ 'Value' ][ 'Status' ] )
@@ -71,12 +71,12 @@
 #    res = module._evaluate( { 'OK' : True, 'Value' : [{ 'A' : 1 }] } )
 #    self.assertTrue(res['OK'])
 #    self.assertEqual( 'Error', res[ 'Value' ][ 'Status' ] )
-#    self.assertEqual( '"Status" key missing', res[ 'Value' ][ 'Reason' ] )    
+#    self.assertEqual( '"Status" key missing', res[ 'Value' ][ 'Reason' ] )
 #
 #    res = module._evaluate( { 'OK' : True, 'Value' : [{ 'Status' : 1 }] } )
 #    self.assertTrue(res['OK'])
 #    self.assertEqual( 'Error', res[ 'Value' ][ 'Status' ] )
-#    self.assertEqual( '"PilotJobEff" key missing', res[ 'Value' ][ 'Reason' ] )              
+#    self.assertEqual( '"PilotJobEff" key missing', res[ 'Value' ][ 'Reason' ] )
 #
 #    res = module._evaluate( { 'OK' : True, 'Value' : [{ 'Status' : 1, 'PilotJobEff' : 1 }] } )
 #    self.assertTrue(res['OK'])
@@ -107,6 +107,6 @@
 #    self.assertTrue(res['OK'])
 #    self.assertEqual( 'Banned', res[ 'Value' ][ 'Status' ] )
 #    self.assertEqual( 'Pilots Efficiency: 1 with status Bad', res[ 'Value' ][ 'Reason' ] )
-#    
+#
 #################################################################################
 ##EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

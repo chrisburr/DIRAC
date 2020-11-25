@@ -18,4 +18,8 @@ import string
 # Main
 if __name__ == '__main__':
 
-  sys.exit(int(system('''echo Hello World %s''' % (''.join(random.choice(string.ascii_letters) for _ in range(10)))) / 256))
+  sys.exit(int(system(
+      '''echo Hello World %s''' % (
+          ''.join(random.choice(string.ascii_letters) for _ in range(10))
+      )
+  ) / 256))

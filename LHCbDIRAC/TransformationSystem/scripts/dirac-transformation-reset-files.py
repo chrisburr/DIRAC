@@ -95,8 +95,8 @@ if __name__ == "__main__":
             if reason != 'File not found in the Transformation Database':
               failed.setdefault(reason, []).append(lfn)
         else:
-          print("Failed to set %d files to %s in transformation %s: %s" % \
-              (len(lfns), newStatus, transID, res['Message']))
+          print("Failed to set %d files to %s in transformation %s: %s" %
+                (len(lfns), newStatus, transID, res['Message']))
       print("%d files were set %s in transformation %s" % (resetFiles, newStatus, transID))
       if failed:
         for reason in failed:

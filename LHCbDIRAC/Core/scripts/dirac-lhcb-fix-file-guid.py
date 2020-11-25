@@ -28,8 +28,8 @@ def leave(msg, error=None, exitCode=0):
 
   if error:
     errMsg = error.get(
-      'Message',
-      list(error.get('Value', {}).get('Failed', {'': 'Unknown reason'}).values())[0],
+        'Message',
+        list(error.get('Value', {}).get('Failed', {'': 'Unknown reason'}).values())[0],
     )
     gLogger.error(msg, ': %s' % errMsg)
   else:

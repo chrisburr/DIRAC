@@ -428,7 +428,7 @@ def execute(unit, minimum, depth):
           if summary:
             usersUsage[user] = (spaceUsed, quota)
           else:
-            print("Storage usage for user %s (quota: %.1f %s)%s" % \
+            print("Storage usage for user %s (quota: %.1f %s)%s" %
                 (user, quota, unit, ' <== User no longer registered' if not quota else (
                   ' <== Over quota' if spaceUsed > quota else '')))
             printSEUsage(totalUsage, grandTotal, scaleFactor)
@@ -476,7 +476,7 @@ def execute(unit, minimum, depth):
     for user in users:
       spaceUsed, quota = usersUsage[user]
       if spaceUsed > minimum:
-        print("Storage usage for user %8s: %6.3f %s (quota: %4.1f %s)%s" % \
+        print("Storage usage for user %8s: %6.3f %s (quota: %4.1f %s)%s" %
               (user, spaceUsed, unit, quota, unit, ' <== User no longer registered' if not quota else (
                   ' <== Over quota' if spaceUsed > quota else '')))
 

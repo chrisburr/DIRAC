@@ -26,7 +26,7 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     '  ProdID:   Production ID (mandatory)']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
-
+print("args =", args)
 if len(args) < 1:
   Script.showHelp()
 

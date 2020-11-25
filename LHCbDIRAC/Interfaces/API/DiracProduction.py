@@ -272,10 +272,10 @@ class DiracProduction(DiracLHCb):
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
     print('\nCurrent status of production %s:\n' % productionID)
-    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
-    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) +
+          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) +
+          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -371,10 +371,10 @@ class DiracProduction(DiracLHCb):
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
     print('\nCurrent status of production %s:\n' % productionID)
-    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
-    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) +
+          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) +
+          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -470,10 +470,10 @@ class DiracProduction(DiracLHCb):
     percDone = int(100 * doneJobs / createdJobs)
     if not site:
       print('\nCurrent status of production %s:\n' % productionID)
-      print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
-      print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+      print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) +
+            'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+      print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) +
+            'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -656,9 +656,9 @@ class DiracProduction(DiracLHCb):
       return S_ERROR('No files were selected for production %s and status "%s"' % (productionID, selectStatus))
     elif selectStatus and selected:
       print('%s / %s files (%s percent) were found for production %s in status "%s"' % (
-          selected, totalRecords,
-          int(100 * int(selected) / totalRecords),
-          productionID, selectStatus))
+            selected, totalRecords,
+            int(100 * int(selected) / totalRecords),
+            productionID, selectStatus))
 
     if outputFile:
       if os.path.exists(outputFile):

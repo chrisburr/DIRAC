@@ -17,4 +17,4 @@ from os import system
 # Main
 if __name__ == '__main__':
 
-  sys.exit(int(system('''echo Hello World''')/256))
+  sys.exit(int(system('''echo Hello World''') / 256))
