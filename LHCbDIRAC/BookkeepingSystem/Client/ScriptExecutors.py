@@ -881,7 +881,7 @@ def _intWithQuotes(val, quote="'"):
       chunks.append("%03d" % (val % 1000))
     else:
       chunks.append("%d" % (val % 1000))
-    val /= 1000
+    val = int(val / 1000)
   chunks.reverse()
   return quote.join(chunks)
 
