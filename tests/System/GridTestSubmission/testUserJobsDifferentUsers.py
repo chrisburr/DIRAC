@@ -14,6 +14,10 @@
 
 # pylint: disable=wrong-import-position,unused-wildcard-import,wildcard-import
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import unittest
 
 from DIRAC.Core.Base.Script import parseCommandLine
@@ -49,28 +53,28 @@ class GridSubmissionTestCase(unittest.TestCase):
 
     result = getProxyInfo()
     if result['Value']['group'] not in ['lhcb_admin']:
-      print "GET A ADMIN GROUP"
+      print("GET A ADMIN GROUP")
       exit(1)
 
     result = ResourceStatus().getElementStatus('PIC-USER', 'StorageElement', 'WriteAccess')
     if result['Value']['PIC-USER']['WriteAccess'].lower() != 'banned':
-      print "BAN PIC-USER in writing! and then restart this test"
+      print("BAN PIC-USER in writing! and then restart this test")
       exit(1)
 
     res = DataManager().getReplicas(['/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt',
                                      '/lhcb/user/f/fstagni/test/testInputFile.txt'])
     if not res['OK']:
-      print "DATAMANAGER.getRepicas failure: %s" % res['Message']
+      print("DATAMANAGER.getRepicas failure: %s" % res['Message'])
       exit(1)
     if res['Value']['Failed']:
-      print "DATAMANAGER.getRepicas failed for something: %s" % res['Value']['Failed']
+      print("DATAMANAGER.getRepicas failed for something: %s" % res['Value']['Failed'])
       exit(1)
 
     replicas = res['Value']['Successful']
     if list(replicas['/lhcb/user/f/fstagni/test/testInputFile.txt']) != ['CERN-USER', 'IN2P3-USER']:
-      print "/lhcb/user/f/fstagni/test/testInputFile.txt locations are not correct"
+      print("/lhcb/user/f/fstagni/test/testInputFile.txt locations are not correct")
     if list(replicas['/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt']) != ['CERN-USER']:
-      print "/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt locations are not correct"
+      print("/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt locations are not correct")
 
   def tearDown(self):
     pass
