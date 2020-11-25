@@ -22,6 +22,8 @@ import threading
 import copy
 import re
 
+import six
+
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.TransformationSystem.DB.TransformationDB import TransformationDB as DIRACTransformationDB
 from DIRAC.Core.Utilities.List import intListToString, breakListIntoChunks
@@ -422,7 +424,7 @@ class TransformationDB(DIRACTransformationDB):
       transDict = {}
       for param, item in zip(self.transRunParams, row):
         transDict[param] = item
-        rList.append(item if isinstance(item, (int, long)) else str(item))
+        rList.append(item if isinstance(item, six.integer_types) else str(item))
       webList.append(rList)
       resultList.append(transDict)
     result = S_OK(resultList)

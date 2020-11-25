@@ -903,7 +903,7 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
           seMetadata = res['Value']
           for url in seMetadata['Successful']:
             pfnMetadata = seMetadata['Successful'][url].copy()
-            if isinstance(pfnMetadata.get('Mode'), (int, long)):
+            if isinstance(pfnMetadata.get('Mode'), six.integer_types):
               pfnMetadata['Mode'] = '%o' % pfnMetadata['Mode']
             metadata['Successful'].setdefault(url, {})[se] = pfnMetadata if not exists \
                 else {'Exists': 'True (%sCached%s)' %

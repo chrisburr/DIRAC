@@ -241,12 +241,12 @@ class OracleDB(object):
         if isinstance(fArray, six.string_types):
           result = cursor.arrayvar(cx_Oracle.STRING, array)
           parameters += [result]
-        elif isinstance(fArray, (int, long)):
+        elif isinstance(fArray, six.integer_types):
           result = cursor.arrayvar(cx_Oracle.NUMBER, array)
           parameters += [result]
         elif isinstance(fArray, list):
           for i in array:
-            if isinstance(i, (bool, six.string_types, int, long)):
+            if isinstance(i, (bool,) + six.string_types + six.integer_types):
               parameters += [i]
             elif i:
               if isinstance(i[0], six.string_types):
