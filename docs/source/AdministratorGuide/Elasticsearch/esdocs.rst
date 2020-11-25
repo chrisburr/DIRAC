@@ -28,6 +28,8 @@ and one for certification:
 
 1. es-lhcb-dev for everything
 
+The above are all ES6 instances.
+
 ------------------------------------
 Elasticsearch performance monitoring
 ------------------------------------
@@ -52,7 +54,7 @@ Managing ES templates
 ---------------------
 
 Each ES instance has a dedicated template, what you can found in the `repository <https://gitlab.cern.ch/it-elasticsearch-project>`_ by
-searching lhcb. For example: `https://gitlab.cern.ch/it-elasticsearch-project/endpoint-lhcb-dirac-logs-settings`.
+searching lhcb. For example for the `logs <https://gitlab.cern.ch/it-elasticsearch-project/endpoint-lhcb-dirac-logs-settings>`_.
 
 -------
 Curator
