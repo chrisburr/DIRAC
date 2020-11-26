@@ -355,35 +355,7 @@ build_client_docker_image:
     # - echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
     # - docker push diracgrid/lhcbdirac:${CI_COMMIT_TAG}
 
-# When we have a git tag for a pre-release,
-# update the config of deploy-lhcbdirac
-# to have it deployed on cvmfs-dev
-# Note for the time being, it is allowed to fail
-deploy_on_cvmfs:
-  stage: deploy_release
-  allow_failure: true
-  only:
-    refs:
-      - tags
-    variables:
-      - $CI_COMMIT_TAG =~ /.*-pre.*/
-  before_script:
-    - git config --global user.email "lhcbdirac@cern.ch"
-    - git config --global user.name "LHCbDIRAC"
-  script:
-    # Get the repository
-    - cd $TMPDIR
-    - git clone https://${KRB_USERNAME}:${DEPLOY_KEY}@gitlab.cern.ch/${DEPLOY_REPO}
-    - cd deploy-lhcbdirac
-    # Edit the configuration
-    - python deploylhcbdirac/update_config.py configuration.yaml ${CI_COMMIT_TAG}
-    # show the changes that were done
-    - git diff
-    # commit and push back
-    - git commit -a -m "Autodeploy ${CI_COMMIT_TAG}"
-    - git push origin master
-
-# Template job used by deploy_on_cvmfs_new and set_cvmfs_prod_link
+# Template job used by deploy_on_cvmfs and set_cvmfs_prod_link
 .cvmfs_task:
   only:
     refs:
@@ -400,7 +372,7 @@ deploy_on_cvmfs:
 
 
 # Deploy the release on CVMFS but don't set the prod symlink
-deploy_on_cvmfs_new:
+deploy_on_cvmfs:
   extends: .cvmfs_task
   stage: deploy_release
   script:
