@@ -1,3 +1,5 @@
+.. _make-release:
+
 ==================
 LHCbDIRAC Releases
 ==================
@@ -135,11 +137,15 @@ Deploying a release means deploying it for the various installations::
 * pilot
 
 
-release for client
+Release for client
 ``````````````````
-In each tag pipeline there is a manual trigger job called set_cvmfs_prod_link, this sets the production version link to the current deployed version.
-Releases are automatically uploaded to cvmfs.
-**If any of the pipelines fails, don't try to do a release manually but rather investigate why.**
+
+Releases are automatically installed on to cvmfs with the ``deploy_on_cvmfs`` GitLab CI job.
+In addition, there is a manual GitLab CI job called ``set_cvmfs_prod_link``, this sets the production version link to the current deployed version.
+If a roll-back is required to a previous version, this job can be re-tried from an older release pipeline to re-trigger the job.
+A overview of the current installation health can be found at `here <https://monit-grafana.cern.ch/d/N9HdQ3hMk/cvmfs-installations?orgId=46&refresh=1m>`_.
+
+**Note:** It is normal for these jobs to show the ``RETRY`` status.
 
 
 Server
