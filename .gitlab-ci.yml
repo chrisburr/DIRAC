@@ -27,6 +27,7 @@ stages:
   - coverageDfs
   # If there's a new tag, build the docker images, and also deploy on CVMFS
   - deploy_release
+  - update
   # Left over tasks like tagging the devel container and setting the prod symlink
   - finish_up
   - tag
@@ -377,6 +378,43 @@ deploy_on_cvmfs:
   stage: deploy_release
   script:
     - ./.ci/trigger_cvmfs_deployment.sh deploy "${LHCB_DIRAC_SETUP}" "${CI_COMMIT_TAG}"
+
+
+# ### update instance stage ###
+# Template job used to get lhcb_admin proxy for production or certification
+.getAdminProxy:
+  tags:
+    - docker
+    - cvmfs
+  only:
+    - tags@lhcb-dirac/LHCbDIRAC
+  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
+  before_script:
+    - mkdir -p ~/.globus
+    - echo "$BOT_USERCERT_PEM" | tr -d '\r' > ~/.globus/usercert.pem
+    - echo "$BOT_USERKEY_PEM" | tr -d '\r' > ~/.globus/userkey.pem
+    - chmod 400 ~/.globus/userkey.pem
+    - chmod 644  ~/.globus/usercert.pem
+    - INSTANCE=$(echo ${CI_COMMIT_TAG} | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "lhcbdev.cern.ch"; else echo "lhcb.cern.ch"; fi)
+    - echo "Using LHCbDIRAC installation from /cvmfs/${INSTANCE}/lhcbdirac/"
+    - source /cvmfs/${INSTANCE}/lhcbdirac/bashrc
+    - export DIRAC_VOMSES=/cvmfs/lhcb.cern.ch/etc/grid-security/vomses
+    - lhcb-proxy-init -g lhcb_admin <<< $BOT_CERT_PASSPHRASE
+
+update_instance:
+  extends: .getAdminProxy
+  when: manual
+  stage: update
+  script:
+    - |
+      if [[ "${INSTANCE}" == "lhcb.cern.ch" ]]; then
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=ops/secondaryHosts.txt || echo "Allow failure"
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=ops/primaryHosts.txt
+      else
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2
+      fi
+    - dirac-admin-update-pilot ${CI_COMMIT_TAG}
+
 
 # ### finish_up stage ###
 

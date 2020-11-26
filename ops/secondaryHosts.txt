@@ -1,0 +1,7 @@
+lcgvo-lhcb-1.gridpp.rl.ac.uk
+lvox.t1.grid.kiae.ru
+ui01-lhcb.cr.cnaf.infn.it
+voboxlhcb.gridka.de
+voboxlhcb.in2p3.fr
+voboxlhcb.nikhef.nl
+voboxlhcb.pic.es

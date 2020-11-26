@@ -1,0 +1,15 @@
+lbvobox301.cern.ch
+lbvobox302.cern.ch
+lbvobox303.cern.ch
+lbvobox304.cern.ch
+lbvobox305.cern.ch
+lbvobox306.cern.ch
+lbvobox307.cern.ch
+lbvobox308.cern.ch
+lbvobox309.cern.ch
+lbvobox310.cern.ch
+lbvobox311.cern.ch
+lbvobox312.cern.ch
+lbvobox313.cern.ch
+lbvobox314.cern.ch
+lbvobox315.cern.ch
