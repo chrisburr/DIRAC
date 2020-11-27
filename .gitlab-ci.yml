@@ -406,6 +406,11 @@ update_instance:
   stage: update
   script:
     - |
+      if [ ! -L "/cvmfs/${INSTANCE}/lhcbdirac/${CI_COMMIT_TAG}" ]; then
+       echo "New version not found in CVMFS"
+       exit 1
+      fi
+    - |
       if [[ "${INSTANCE}" == "lhcb.cern.ch" ]]; then
         dirac-admin-sysadmin-cli <<< "show hosts" | awk '{print $2}' | grep -E "(\..*){2}" > allHosts.txt
         grep ".cern.ch" allHosts.txt > primaryHosts.txt
