@@ -126,7 +126,8 @@ class RunApplication(object):
         self.log.error("Trying running the same lb-run command with --debug option, it should fail immediately anyway")
         lbrunCommandWithDebug = ' '.join([self.runApp, '--debug', lbRunOptions,
                                           configString, extraPackagesString,
-                                          runtimeProjectString, externalsString])
+                                          runtimeProjectString, externalsString,
+                                          app])
         debugCommand = ' '.join([lbrunCommandWithDebug, command])
         self._runApp(debugCommand)
         raise LbRunError("Problem setting the environment: lb-run exited with status %d" % runResult['Value'][0])
