@@ -27,6 +27,7 @@ stages:
   - coverageDfs
   # If there's a new tag, build the docker images, and also deploy on CVMFS
   - deploy_release
+  - update
   # Left over tasks like tagging the devel container and setting the prod symlink
   - finish_up
   - tag
@@ -304,7 +305,7 @@ create_tarball:
   script:
     # Choose from which branch we should get the releases.cfg file
     # We take it from devel if it is a pre release, otherwise master
-    - BRANCH=$(echo ${CI_COMMIT_TAG} | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
+    - BRANCH=$(echo ${CI_COMMIT_TAG} | grep -qE '^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$'; if [ $? -eq 0 ]; then echo "master"; else echo "devel"; fi)
     # Get the releases.cfg from the appropriate branch
     - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/LHCbDIRAC/releases.cfg
     # Create the release tarball
@@ -377,6 +378,50 @@ deploy_on_cvmfs:
   stage: deploy_release
   script:
     - ./.ci/trigger_cvmfs_deployment.sh deploy "${LHCB_DIRAC_SETUP}" "${CI_COMMIT_TAG}"
+
+
+# ### update instance stage ###
+# Template job used to get lhcb_admin proxy for production or certification
+.getAdminProxy:
+  tags:
+    - docker
+    - cvmfs
+  only:
+    - tags@lhcb-dirac/LHCbDIRAC
+  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
+  before_script:
+    - mkdir -p ~/.globus
+    - echo "$BOT_USERCERT_PEM" | tr -d '\r' > ~/.globus/usercert.pem
+    - echo "$BOT_USERKEY_PEM" | tr -d '\r' > ~/.globus/userkey.pem
+    - chmod 400 ~/.globus/userkey.pem
+    - chmod 644  ~/.globus/usercert.pem
+    - INSTANCE=$(echo ${CI_COMMIT_TAG} | grep -qE '^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$'; if [ $? -eq 0 ]; then echo "lhcb.cern.ch"; else echo "lhcbdev.cern.ch"; fi)
+    - echo "Using LHCbDIRAC installation from /cvmfs/${INSTANCE}/lhcbdirac/"
+    - source /cvmfs/${INSTANCE}/lhcbdirac/bashrc
+    - lhcb-proxy-init -g lhcb_admin <<< $BOT_CERT_PASSPHRASE
+
+update_instance:
+  extends: .getAdminProxy
+  when: manual
+  stage: update
+  script:
+    - |
+      if [ ! -L "/cvmfs/${INSTANCE}/lhcbdirac/${CI_COMMIT_TAG}" ]; then
+       echo "New version not found in CVMFS"
+       exit 1
+      fi
+    - |
+      if [[ "${INSTANCE}" == "lhcb.cern.ch" ]]; then
+        dirac-admin-sysadmin-cli <<< "show hosts" | awk '{print $2}' | grep -E "(\..*){2}" > allHosts.txt
+        grep ".cern.ch" allHosts.txt > primaryHosts.txt
+        grep -v ".cern.ch" allHosts.txt > secondaryHosts.txt
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=secondaryHosts.txt || echo "Allow failure"
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=primaryHosts.txt
+      else
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2
+      fi
+    - dirac-admin-update-pilot ${CI_COMMIT_TAG}
+
 
 # ### finish_up stage ###
 
