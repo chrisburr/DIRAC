@@ -133,7 +133,7 @@ class OracleBookkeepingDB(object):
 
       stepId = in_dict.get('StepId', default)
       if stepId != default:
-        if isinstance(stepId, (six.string_types, six.integer_types)):
+        if isinstance(stepId, (six.string_types + six.integer_types)):
           condition += ' and s.stepid= %s' % (str(stepId))
         elif isinstance(stepId, (list, tuple)):
           condition += 'and s.stepid in (%s)' % ",".join([str(sid) for sid in stepId])
@@ -1469,7 +1469,7 @@ class OracleBookkeepingDB(object):
     tables = ' jobs j, files f, configurations c'
     result = None
     if production != default:
-      if isinstance(production, (six.string_types, six.integer_types)):
+      if isinstance(production, (six.string_types + six.integer_types)):
         condition += " and j.production=%d " % (int(production))
       elif isinstance(production, list):
         condition += ' and j.production in ( ' + ','.join([str(p) for p in production]) + ')'
@@ -1483,7 +1483,7 @@ class OracleBookkeepingDB(object):
       else:
         result = S_ERROR("You must provide an LFN or a list of LFNs!")
     elif diracJobids != default:
-      if isinstance(diracJobids, (six.string_types, six.integer_types)):
+      if isinstance(diracJobids, (six.string_types + six.integer_types)):
         condition += " and j.DIRACJOBID=%s " % diracJobids
       elif isinstance(diracJobids, list):
         condition += ' and j.DIRACJOBID in ( ' + ','.join([str(djobid) for djobid in diracJobids]) + ')'
@@ -2589,33 +2589,32 @@ class OracleBookkeepingDB(object):
     :param list fileNames: list of LFNs
     :return: dictionary which contains the failed and successful lfns
     """
-    result = S_ERROR()
     retVal = self.dbR_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkcheckfiles',
                                               parameters=[],
                                               output=True,
                                               array=fileNames)
-    failed = {}
     if not retVal['OK']:
       return retVal
 
+    failed = {}
     for i in retVal['Value']:
       failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
       fileNames.remove(i[0])
+
     if fileNames:
       retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
                                                 parameters=['Yes'],
                                                 output=False,
                                                 array=fileNames)
       if not retVal['OK']:
-        result = retVal
+        return retVal
       else:
         failed['Failed'] = list(failed)
         failed['Successful'] = fileNames
-        result = S_OK(failed)
-    else:  # when no files are exists
+        return S_OK(failed)
+    else:  # when no files exist
       files = {'Failed': [i[0] for i in retVal['Value']], 'Successful': []}
-      result = S_OK(files)
-    return result
+      return S_OK(files)
 
   #############################################################################
   def getRunInformations(self, runnb):
@@ -2707,7 +2706,7 @@ class OracleBookkeepingDB(object):
     if runnb == default:
       result = S_ERROR('The RunNumber must be given!')
     else:
-      if isinstance(runnb, (six.string_types, six.integer_types)):
+      if isinstance(runnb, (six.string_types + six.integer_types)):
         runnb = [runnb]
       runs = ''
       for i in runnb:
@@ -3493,7 +3492,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += ' %s.production=%s or ' % (table, str(i))
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(production, (six.string_types, six.integer_types)):
+      elif isinstance(production, (six.string_types + six.integer_types)):
         condition += ' and %s.production=%s' % (table, str(production))
 
     return S_OK((condition, tables))
@@ -3648,7 +3647,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       elif startRunID is None or endRunID is None:
         condition += " and %s " % (cond)
     else:
-      if (isinstance(startRunID, six.string_types) and startRunID.upper() is not default) or\
+      if (isinstance(startRunID, six.string_types) and startRunID.upper() != default) or\
               (isinstance(startRunID, six.integer_types) and startRunID is not None):
         condition += ' and %s.runnumber>=%s' % (table, str(startRunID))
       if (isinstance(endRunID, six.string_types) and endRunID.upper() is not default) or\
@@ -3685,7 +3684,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += " %s.eventtypeid=%s or " % (table, (str(i)))
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(evt, (six.string_types, six.integer_types)):
+      elif isinstance(evt, (six.string_types + six.integer_types)):
         condition += ' and %s.eventtypeid=%s' % (table, str(evt))
       if useMainTables:
         if isinstance(evt, (list, tuple)) and evt:
@@ -3695,7 +3694,7 @@ and files.qualityid= dataquality.qualityid" % lfn
             cond += " %s.eventtypeid=%s or " % (table, (str(i)))
           cond = cond[:-3] + ')'
           condition += cond
-        elif isinstance(evt, (six.string_types, six.integer_types)):
+        elif isinstance(evt, (six.string_types + six.integer_types)):
           condition += ' and %s.eventtypeid=%s' % (table, str(evt))
     return S_OK((condition, tables))
 
@@ -4483,7 +4482,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     fileTypeMap = {'RAW': 'MDF'}
     eventtypes = []
     if eventType:
-      if isinstance(eventType, (six.string_types, six.integer_types)):
+      if isinstance(eventType, (six.string_types + six.integer_types)):
         eventtypes.append(long(eventType))
       elif isinstance(eventType, list):
         eventtypes = eventType
