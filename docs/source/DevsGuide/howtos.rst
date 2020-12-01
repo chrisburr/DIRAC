@@ -10,8 +10,7 @@ Browsing the code running in production
 
 If you want to browse the DIRAC (and LHCbDIRAC) code running in production you'll first of all have to know which version is installed.
 Announcements of new deployments are done via the LHCb operations `eLog <http://lblogbook.cern.ch/Operations/>`_.
-The code is also always installed in the CVMFS release area (`$LHCb_release_area/DIRAC/DIRAC_vX5rYpZ/DIRAC`) 
-but you can normally use git to switch from one to another.
+The code is also always installed in the CVMFS release area (``/cvmfs/lhcb(dev).cern.ch/lhcbdirac/``) but you can normally use git to switch from one to another.
 
 
 I developed something, I want it in the next release
