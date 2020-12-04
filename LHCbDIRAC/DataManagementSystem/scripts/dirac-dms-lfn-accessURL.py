@@ -27,6 +27,9 @@ if __name__ == "__main__":
   Script.registerSwitch('', 'ForJobs', '  Select only replicas that can be used for jobs')
   Script.registerSwitch('', 'Protocol=',
                         '   Define the protocol for which a tURL is requested (default:root)')
+  Script.registerSwitch('', 'Metalink',
+                        '   Generate metalink files for parallel download with xrdcp \
+                            (one file per lfn). Implies Protocol=root')
   Script.setUsageMessage('\n'.join([__doc__,
                                     'Usage:',
                                     '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]' % Script.scriptName,

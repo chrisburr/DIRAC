@@ -15,6 +15,11 @@ import os
 import time
 import random
 import six
+import xml.etree.ElementTree as ET
+
+
+from collections import defaultdict
+from xml.dom import minidom
 
 from DIRAC import gLogger, gConfig, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
@@ -458,6 +463,7 @@ def executeAccessURL(dmScript):
   preferDisk = True
   diskOnly = False
   forJobs = False
+  generateMetalinkFiles = False
   for switch in Script.getUnprocessedSwitches():
     if switch[0] in ("a", "All"):
       active = False
@@ -467,6 +473,9 @@ def executeAccessURL(dmScript):
       preferDisk = True
     elif switch[0] == 'ForJobs':
       forJobs = True
+    elif switch[0] == 'Metalink':
+      generateMetalinkFiles = True
+      protocol = ['root']
     if switch[0] == 'Protocol':
       protocol = switch[1].lower().split(',') if switch[1] else None
 
@@ -497,6 +506,46 @@ def executeAccessURL(dmScript):
         diskOnly=diskOnly,
         preferDisk=preferDisk,
         forJobs=forJobs)
+
+    if generateMetalinkFiles and results['OK']:
+      # General information about metalink https://tools.ietf.org/html/rfc5854
+      # We generate one metalink file per LFN until xroot respects the RFC
+      # see https://github.com/xrootd/xrootd/issues/1350
+
+      gLogger.notice("Generating metalinks")
+      # first, regroup all the LFNs
+      allURLs = defaultdict(list)
+      for se, lfnDict in results['Value']['Successful'].items():
+        for lfn, url in lfnDict.items():
+          allURLs[lfn].append(url)
+
+      # Now, for each LFN write a meta4 file that looks like this
+      # <?xml version="1.0" encoding="UTF-8"?>
+      # <metalink xmlns="urn:ietf:params:xml:ns:metalink">
+      #   <file name="output.dat">
+      #     <url priority="1">root://srv3:1094//data/a048e67f-4397-4bb8-85eb-8d7e40d90763.dat</url>
+      #     <url priority="2">root://srv2:1094//data/a048e67f-4397-4bb8-85eb-8d7e40d90763.dat</url>
+      #   </file>
+      # </metalink>
+
+      for lfn, urls in allURLs.items():
+        gLogger.notice("Writing metalink for ", lfn)
+        fileName = os.path.basename(lfn)
+        metalinkElement = ET.Element('metalink')
+        metalinkElement.set('xmlns', 'urn:ietf:params:xml:ns:metalink')
+        fileElement = ET.SubElement(metalinkElement, 'file')
+        fileElement.set('name', fileName)
+        for urlPrio, url in enumerate(urls, start=1):
+          urlElement = ET.SubElement(fileElement, 'url')
+          urlElement.set('priority', str(urlPrio))
+          urlElement.text = url
+
+        # we could use the ElementTree.write method, but it is ugly,
+        # so prettify it
+        metalinkEltStr = ET.tostring(metalinkElement, 'utf-8')
+        prettyXML = minidom.parseString(metalinkEltStr).toprettyxml(indent="  ", encoding='UTF-8')
+        with open(fileName + '.meta4', 'wt') as f:
+          f.write(prettyXML)
 
     return printDMResult(results, empty="File not at SE", script="dirac-dms-lfn-accessURL")
 
