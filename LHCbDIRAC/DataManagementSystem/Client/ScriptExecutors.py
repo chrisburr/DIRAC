@@ -454,7 +454,19 @@ def executeAccessURL(dmScript):
   """Actual script executor."""
   # Use xrootd as default protocol since usually this is what users want
   protocol = ['xroot', 'root']
+  active = True
+  preferDisk = True
+  diskOnly = False
+  forJobs = False
   for switch in Script.getUnprocessedSwitches():
+    if switch[0] in ("a", "All"):
+      active = False
+    elif switch[0] == 'DiskOnly':
+      diskOnly = True
+    elif switch[0] == 'PreferDisk':
+      preferDisk = True
+    elif switch[0] == 'ForJobs':
+      forJobs = True
     if switch[0] == 'Protocol':
       protocol = switch[1].lower().split(',') if switch[1] else None
 
@@ -477,14 +489,44 @@ def executeAccessURL(dmScript):
     Script.showHelp()
     return 1
   else:
-    results = getAccessURL(lfnList, seList, protocol)
+    results = getAccessURL(
+        lfnList,
+        seList,
+        protocol=protocol,
+        active=active,
+        diskOnly=diskOnly,
+        preferDisk=preferDisk,
+        forJobs=forJobs)
+
     return printDMResult(results, empty="File not at SE", script="dirac-dms-lfn-accessURL")
 
 
-def getAccessURL(lfnList, seList, protocol=None):
-  """Get TURL at a list of SEs."""
+def getAccessURL(lfnList, seList, protocol=None, active=True, diskOnly=False, preferDisk=False, forJobs=False):
+  """Get TURL at a list of SEs.
+
+      Refer to :py:meth`DIRAC.DataManagementSystem.Client.DataManager.DataManager.getReplicas` for details
+      on the other parameters. Note that they are ignored if ``seList`` is set
+
+      :param lfnList: list of LFNs
+      :param seList: list of Storage Element names to consider.
+      :param protocol: protocol for which we want the URL
+
+      :returns: nested dict {<SEName>: { <lfn> : <url> }}  in S_OK structure
+
+  """
   dm = DataManager()
-  res = dm.getReplicas(lfnList, getUrl=False)
+
+  if seList:
+    res = dm.getReplicas(lfnList, getUrl=False)
+  elif forJobs:
+    res = dm.getReplicasForJobs(lfnList, diskOnly=diskOnly, getUrl=False)
+  else:
+    res = dm.getReplicas(lfnList, active=active, diskOnly=diskOnly, preferDisk=preferDisk, getUrl=False)
+    # If the call was okay, but returns no replicas because active was True, try with active = False
+    if res['OK'] and active and not res['Value']['Successful'] and not res['Value']['Failed']:
+      active = False
+      res = dm.getReplicas(lfnList, active=False, diskOnly=diskOnly, preferDisk=preferDisk, getUrl=False)
+
   replicas = res.get('Value', {}).get('Successful', {})
   if isinstance(seList, six.string_types):
     seList = seList.split(',')
@@ -526,6 +568,7 @@ def getAccessURL(lfnList, seList, protocol=None):
         notFoundLfns.remove(lfn)
   if notFoundLfns:
     results['Value']['Failed'] = dict.fromkeys(sorted(notFoundLfns), 'File not found in required seList')
+
   return results
 
 

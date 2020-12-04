@@ -21,6 +21,10 @@ if __name__ == "__main__":
   dmScript = DMScript()
   dmScript.registerFileSwitches()
   dmScript.registerSiteSwitches()
+  Script.registerSwitch('a', "All", "  Also show inactive replicas")
+  Script.registerSwitch('', 'DiskOnly', '  Show only disk replicas')
+  Script.registerSwitch('', 'PreferDisk', "  If disk replica, don't show tape replicas")
+  Script.registerSwitch('', 'ForJobs', '  Select only replicas that can be used for jobs')
   Script.registerSwitch('', 'Protocol=',
                         '   Define the protocol for which a tURL is requested (default:root)')
   Script.setUsageMessage('\n'.join([__doc__,
