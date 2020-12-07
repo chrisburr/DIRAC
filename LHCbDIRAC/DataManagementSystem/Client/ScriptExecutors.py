@@ -198,7 +198,7 @@ def removeReplicas(lfnList, seList, minReplicas=1, checkFC=True, allDisk=False, 
   if fullyRemoved or allDisk:
     lfnList = fullyRemoved
     for lfns in [lfns for reason, siteLFNs in errorReasons.items()  # can be an iterator
-                 for lfns in siteLFNs.itervalues() if reason == 'Only ARCHIVE replicas']:
+                 for lfns in siteLFNs.values() if reason == 'Only ARCHIVE replicas']:
       lfnList.update(dict.fromkeys(lfns, []))
     if lfnList:
       removeFilesInTransformations(list(lfnList))
@@ -800,7 +800,7 @@ def printLfnReplicas(lfnList, active=True, diskOnly=False, preferDisk=False, for
       break
   if res['OK'] and not active:
     replicas = res['Value']['Successful']
-    seSet = set(se for ses in replicas.itervalues() for se in ses)
+    seSet = set(se for ses in replicas.values() for se in ses)
     seStatus = dict((se, {True: 'Active', False: 'Banned'}[StorageElement(se).status()['Read']])
                     for se in seSet)
     value = {'Failed': res['Value']['Failed'], 'Successful': {}}
@@ -1107,7 +1107,7 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
       if res['OK']:
         lfnSize.update(res['Value']['Successful'])
     progressBar.endLoop()
-    totSize += sum(lfnSize.itervalues())
+    totSize += sum(lfnSize.values())
   for lfn, replicas in lfnReplicas.items():  # can be an iterator
     seList = set(replicas)
     dumpSE = seList & prSEList
@@ -1545,7 +1545,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
       if not res['OK']:
         errors[res['Message']] = errors.setdefault(res['Message'], 0) + len(lfnChunk)
       else:
-        nreps += sum(len(reps) for reps in chunkDict.itervalues())
+        nreps += sum(len(reps) for reps in chunkDict.values())
     progressBar.endLoop("%d replicas set %s in FC" % (nreps, status))
     for error, nb in errors.items():  # can be an iterator
       gLogger.error("Error setting replica %s in FC for %d files" % (status, nb), error)
@@ -1578,7 +1578,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
       gLogger.error("Replica flag not %s in BK for %d files:" % (status, nb), error)
 
   if transDict:
-    nb = sum(len(lfns) for lfns in transDict.itervalues())
+    nb = sum(len(lfns) for lfns in transDict.values())
     status = 'Unused' if reset else 'Problematic'
     gLogger.notice("\n%d files were set %s in the transformation system" % (nb, status))
     for transID in sorted(transDict):
@@ -1594,7 +1594,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
 
   gLogger.setLevel(savedLevel)
   if transNotSet:
-    nb = sum(len(lfns) for lfns in transNotSet.itervalues())
+    nb = sum(len(lfns) for lfns in transNotSet.values())
     status = "Unused" if reset else "Problematic"
     gLogger.notice("\n%d files could not be set %s a they were not in an acceptable status:" % (nb, status))
     for status in sorted(transNotSet):
@@ -1661,7 +1661,7 @@ def executeLfnMetadata(dmScript):
       res = __dfcGetDirectoryMetadata(catalog, dirList)
       success.update(res['Value']['Successful'])
       failed.update(res['Value']['Failed'])
-  for metadata in success.itervalues():
+  for metadata in success.values():
     if 'Mode' in metadata:
       metadata['Mode'] = '%o' % metadata['Mode']
   gLogger.setLevel(savedLevel)
