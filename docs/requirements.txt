@@ -2,7 +2,7 @@
 -r https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/requirements.txt
 -e git+https://github.com/DIRACGrid/DIRAC/@integration#egg=diracdoctools&subdirectory=docs
 # Install DIRAC to be able to execute the commands
-git+https://github.com/DIRACGrid/DIRAC/@integration
+git+https://github.com/DIRACGrid/DIRAC/@rel-v7r1
 LbPlatformUtils
 uproot
 certifi
