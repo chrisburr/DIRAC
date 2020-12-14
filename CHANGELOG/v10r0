@@ -1,3 +1,23 @@
+v10r0p23
+Based on DIRAC v7r0p42
+LHCbWebDIRAC v5r1p10
+LHCbDIRACOS v1r13
+*tests
+
+FIX: (!896) add swig to base test env as needed to install M2Crypto
+NEW: (!892) Add manual CI to trigger instance update from tag pipeline
+
+*DataManagementSystem
+
+CHANGE: (!895) dirac-dms-lfn-accessURL prefers disk replicas
+NEW: (!895) dirac-dms-lfn-accessURL can generate Metalink files
+
+*Core
+
+FIX: (!893) Fix command when falling back to lb-run --debug
+
+
+
 v10r0p22
 Based on DIRAC v7r0p41
 LHCbWebDIRAC v5r1p10
