@@ -15,6 +15,11 @@ import os
 import time
 import random
 import six
+import xml.etree.ElementTree as ET
+
+
+from collections import defaultdict
+from xml.dom import minidom
 
 from DIRAC import gLogger, gConfig, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
@@ -193,7 +198,7 @@ def removeReplicas(lfnList, seList, minReplicas=1, checkFC=True, allDisk=False, 
   if fullyRemoved or allDisk:
     lfnList = fullyRemoved
     for lfns in [lfns for reason, siteLFNs in errorReasons.items()  # can be an iterator
-                 for lfns in siteLFNs.itervalues() if reason == 'Only ARCHIVE replicas']:
+                 for lfns in siteLFNs.values() if reason == 'Only ARCHIVE replicas']:
       lfnList.update(dict.fromkeys(lfns, []))
     if lfnList:
       removeFilesInTransformations(list(lfnList))
@@ -454,7 +459,23 @@ def executeAccessURL(dmScript):
   """Actual script executor."""
   # Use xrootd as default protocol since usually this is what users want
   protocol = ['xroot', 'root']
+  active = True
+  preferDisk = True
+  diskOnly = False
+  forJobs = False
+  generateMetalinkFiles = False
   for switch in Script.getUnprocessedSwitches():
+    if switch[0] in ("a", "All"):
+      active = False
+    elif switch[0] == 'DiskOnly':
+      diskOnly = True
+    elif switch[0] == 'PreferDisk':
+      preferDisk = True
+    elif switch[0] == 'ForJobs':
+      forJobs = True
+    elif switch[0] == 'Metalink':
+      generateMetalinkFiles = True
+      protocol = ['root']
     if switch[0] == 'Protocol':
       protocol = switch[1].lower().split(',') if switch[1] else None
 
@@ -477,14 +498,84 @@ def executeAccessURL(dmScript):
     Script.showHelp()
     return 1
   else:
-    results = getAccessURL(lfnList, seList, protocol)
+    results = getAccessURL(
+        lfnList,
+        seList,
+        protocol=protocol,
+        active=active,
+        diskOnly=diskOnly,
+        preferDisk=preferDisk,
+        forJobs=forJobs)
+
+    if generateMetalinkFiles and results['OK']:
+      # General information about metalink https://tools.ietf.org/html/rfc5854
+      # We generate one metalink file per LFN until xroot respects the RFC
+      # see https://github.com/xrootd/xrootd/issues/1350
+
+      gLogger.notice("Generating metalinks")
+      # first, regroup all the LFNs
+      allURLs = defaultdict(list)
+      for se, lfnDict in results['Value']['Successful'].items():
+        for lfn, url in lfnDict.items():
+          allURLs[lfn].append(url)
+
+      # Now, for each LFN write a meta4 file that looks like this
+      # <?xml version="1.0" encoding="UTF-8"?>
+      # <metalink xmlns="urn:ietf:params:xml:ns:metalink">
+      #   <file name="output.dat">
+      #     <url priority="1">root://srv3:1094//data/a048e67f-4397-4bb8-85eb-8d7e40d90763.dat</url>
+      #     <url priority="2">root://srv2:1094//data/a048e67f-4397-4bb8-85eb-8d7e40d90763.dat</url>
+      #   </file>
+      # </metalink>
+
+      for lfn, urls in allURLs.items():
+        gLogger.notice("Writing metalink for ", lfn)
+        fileName = os.path.basename(lfn)
+        metalinkElement = ET.Element('metalink')
+        metalinkElement.set('xmlns', 'urn:ietf:params:xml:ns:metalink')
+        fileElement = ET.SubElement(metalinkElement, 'file')
+        fileElement.set('name', fileName)
+        for urlPrio, url in enumerate(urls, start=1):
+          urlElement = ET.SubElement(fileElement, 'url')
+          urlElement.set('priority', str(urlPrio))
+          urlElement.text = url
+
+        # we could use the ElementTree.write method, but it is ugly,
+        # so prettify it
+        metalinkEltStr = ET.tostring(metalinkElement, 'utf-8')
+        prettyXML = minidom.parseString(metalinkEltStr).toprettyxml(indent="  ", encoding='UTF-8')
+        with open(fileName + '.meta4', 'wt') as f:
+          f.write(prettyXML)
+
     return printDMResult(results, empty="File not at SE", script="dirac-dms-lfn-accessURL")
 
 
-def getAccessURL(lfnList, seList, protocol=None):
-  """Get TURL at a list of SEs."""
+def getAccessURL(lfnList, seList, protocol=None, active=True, diskOnly=False, preferDisk=False, forJobs=False):
+  """Get TURL at a list of SEs.
+
+      Refer to :py:meth`DIRAC.DataManagementSystem.Client.DataManager.DataManager.getReplicas` for details
+      on the other parameters. Note that they are ignored if ``seList`` is set
+
+      :param lfnList: list of LFNs
+      :param seList: list of Storage Element names to consider.
+      :param protocol: protocol for which we want the URL
+
+      :returns: nested dict {<SEName>: { <lfn> : <url> }}  in S_OK structure
+
+  """
   dm = DataManager()
-  res = dm.getReplicas(lfnList, getUrl=False)
+
+  if seList:
+    res = dm.getReplicas(lfnList, getUrl=False)
+  elif forJobs:
+    res = dm.getReplicasForJobs(lfnList, diskOnly=diskOnly, getUrl=False)
+  else:
+    res = dm.getReplicas(lfnList, active=active, diskOnly=diskOnly, preferDisk=preferDisk, getUrl=False)
+    # If the call was okay, but returns no replicas because active was True, try with active = False
+    if res['OK'] and active and not res['Value']['Successful'] and not res['Value']['Failed']:
+      active = False
+      res = dm.getReplicas(lfnList, active=False, diskOnly=diskOnly, preferDisk=preferDisk, getUrl=False)
+
   replicas = res.get('Value', {}).get('Successful', {})
   if isinstance(seList, six.string_types):
     seList = seList.split(',')
@@ -526,6 +617,7 @@ def getAccessURL(lfnList, seList, protocol=None):
         notFoundLfns.remove(lfn)
   if notFoundLfns:
     results['Value']['Failed'] = dict.fromkeys(sorted(notFoundLfns), 'File not found in required seList')
+
   return results
 
 
@@ -708,7 +800,7 @@ def printLfnReplicas(lfnList, active=True, diskOnly=False, preferDisk=False, for
       break
   if res['OK'] and not active:
     replicas = res['Value']['Successful']
-    seSet = set(se for ses in replicas.itervalues() for se in ses)
+    seSet = set(se for ses in replicas.values() for se in ses)
     seStatus = dict((se, {True: 'Active', False: 'Banned'}[StorageElement(se).status()['Read']])
                     for se in seSet)
     value = {'Failed': res['Value']['Failed'], 'Successful': {}}
@@ -1015,7 +1107,7 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
       if res['OK']:
         lfnSize.update(res['Value']['Successful'])
     progressBar.endLoop()
-    totSize += sum(lfnSize.itervalues())
+    totSize += sum(lfnSize.values())
   for lfn, replicas in lfnReplicas.items():  # can be an iterator
     seList = set(replicas)
     dumpSE = seList & prSEList
@@ -1453,7 +1545,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
       if not res['OK']:
         errors[res['Message']] = errors.setdefault(res['Message'], 0) + len(lfnChunk)
       else:
-        nreps += sum(len(reps) for reps in chunkDict.itervalues())
+        nreps += sum(len(reps) for reps in chunkDict.values())
     progressBar.endLoop("%d replicas set %s in FC" % (nreps, status))
     for error, nb in errors.items():  # can be an iterator
       gLogger.error("Error setting replica %s in FC for %d files" % (status, nb), error)
@@ -1486,7 +1578,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
       gLogger.error("Replica flag not %s in BK for %d files:" % (status, nb), error)
 
   if transDict:
-    nb = sum(len(lfns) for lfns in transDict.itervalues())
+    nb = sum(len(lfns) for lfns in transDict.values())
     status = 'Unused' if reset else 'Problematic'
     gLogger.notice("\n%d files were set %s in the transformation system" % (nb, status))
     for transID in sorted(transDict):
@@ -1502,7 +1594,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
 
   gLogger.setLevel(savedLevel)
   if transNotSet:
-    nb = sum(len(lfns) for lfns in transNotSet.itervalues())
+    nb = sum(len(lfns) for lfns in transNotSet.values())
     status = "Unused" if reset else "Problematic"
     gLogger.notice("\n%d files could not be set %s a they were not in an acceptable status:" % (nb, status))
     for status in sorted(transNotSet):
@@ -1569,7 +1661,7 @@ def executeLfnMetadata(dmScript):
       res = __dfcGetDirectoryMetadata(catalog, dirList)
       success.update(res['Value']['Successful'])
       failed.update(res['Value']['Failed'])
-  for metadata in success.itervalues():
+  for metadata in success.values():
     if 'Mode' in metadata:
       metadata['Mode'] = '%o' % metadata['Mode']
   gLogger.setLevel(savedLevel)

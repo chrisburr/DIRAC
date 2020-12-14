@@ -39,7 +39,7 @@ stages:
 .test_setup: &test_setup
   before_script:
     - yum install -y epel-release
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq
+    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq swig
     - export PYCURL_SSL_LIBRARY=openssl
      # last version supporting python 2
     - pip install 'setuptools<45'
@@ -100,7 +100,7 @@ check_docs:
   #<<: *test_setup
   image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   before_script:
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel
+    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel swig
     # One has to do it in a virtual env because pip-compile
     # generates a requirements.txt which conflicts with the
     # yum installed python packages (like ipaddress or requests)
