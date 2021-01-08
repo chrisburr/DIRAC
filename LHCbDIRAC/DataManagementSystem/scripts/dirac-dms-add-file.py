@@ -24,7 +24,7 @@ if __name__ == "__main__":
       '  SE:       DIRAC Storage Element',
       '  GUID:     GUID to use in the registration (optional)',
       '',
-      ' ++ OR ++',
+      ' ** OR **',
       '',
       'Usage:',
       '  %s [option|cfgfile] ... LocalFile' % Script.scriptName,
