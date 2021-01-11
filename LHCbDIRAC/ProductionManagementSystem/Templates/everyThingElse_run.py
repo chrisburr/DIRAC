@@ -233,7 +233,7 @@ if p1[0] == 1 and pr.prodsTypeList[0].lower() not in ('mcsimulation', 'mcfastsim
 elif p1[0] == 1 and pr.prodsTypeList[0].lower() in ('mcsimulation', 'mcfastsimulation'):
   pr.bkQueries = ['']
   pr.prodGroup = '{{pDsc}}'
-elif p1[0] != 1 and pr.prodsTypeList[0].lower() != ('mcsimulation', 'mcfastsimulation'):
+elif p1[0] != 1 and pr.prodsTypeList[0].lower() not in ('mcsimulation', 'mcfastsimulation'):
   pr.bkQueries = ['fromPreviousProd']
   if not pr.previousProdID:
     gLogger.error("Please specify an input production")
