@@ -41,7 +41,7 @@ class ElasticMCStatsDBBase(ElasticDB):
 
     result = self.index(self.indexName,  # pylint: disable=no-member
                         body=data,
-                        docID=data['ProductionID'] + '_' + data['JobID'])
+                        docID=str(data['ProductionID']) + '_' + str(data['JobID']))
     if not result['OK']:
       self.log.error("ERROR: Couldn't insert data", result['Message'])
     return result
@@ -55,7 +55,7 @@ class ElasticMCStatsDBBase(ElasticDB):
     :return: dict with all docs
     """
 
-    self.log.debug(self.__class__.__name__ + '.get(): Getting for production %s' % productionID)
+    self.log.debug(self.__class__.__name__ + '.get(): Getting for production %s' % str(productionID))
 
     resultList = []
 
@@ -92,7 +92,7 @@ class ElasticMCStatsDBBase(ElasticDB):
     :return: S_OK/S_ERROR
     """
 
-    self.log.debug(self.__class__.__name__ + '.remove(): Removing documents of production %s' % productionID)
+    self.log.debug(self.__class__.__name__ + '.remove(): Removing documents of production %s' % str(productionID))
 
     """ the following should be equivalent to
     {
