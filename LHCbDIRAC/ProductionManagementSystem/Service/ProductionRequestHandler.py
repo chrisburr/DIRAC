@@ -374,7 +374,7 @@ class ProductionRequestHandler(RequestHandler):
     elif isinstance(status, list):
       selectStatus = status
 
-    reqList = self.database.getProductionRequest([], long(0), '', '', long(0), long(0))
+    reqList = self.database.getProductionRequest([])
     if not reqList['OK']:
       return reqList
 
@@ -391,7 +391,7 @@ class ProductionRequestHandler(RequestHandler):
         continue
       if req['HasSubrequest']:
         gLogger.verbose('Simulation request %s is a parent, getting subrequests...' % iD)
-        subReq = self.database.getProductionRequest([], long(iD), '', '', long(0), long(0))
+        subReq = self.database.getProductionRequest([], int(iD))
         if not subReq['OK']:
           gLogger.error('Could not get production request for %s' % iD)
           return subReq
