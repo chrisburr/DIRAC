@@ -187,8 +187,9 @@ PROCEDURE updateluminosity(v_runnumber NUMBER);
 PROCEDURE updatedesluminosity(v_fileid NUMBER);
 PROCEDURE getfiledesjobid(v_filename VARCHAR2, a_cursor OUT udt_refcursor);
 FUNCTION getproducedevents(v_prodid NUMBER) RETURN NUMBER;
-PROCEDURE bulkgetidsfromfiles(lfns varchararray,  a_cursor OUT udt_refcursor);
+PROCEDURE bulkgetidsfromfiles(lfns varchararray, a_cursor OUT udt_refcursor);
 PROCEDURE insertprodnoutputftypes(v_production NUMBER, v_stepid NUMBER, v_filetypeid NUMBER, v_visible char, v_eventtype NUMBER);
+FUNCTION getjobidwithoutreplicacheck(v_filename VARCHAR2) RETURN NUMBER;
 END;
  /
 
@@ -2022,19 +2023,20 @@ EXCEPTION
     COMMIT;
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION getjobidwithoutreplicacheck(
-  v_filename             varchar2
- )RETURN number
- IS
- jid number;
- BEGIN
-  SELECT jobs.jobid INTO jid FROM files,jobs WHERE
-       files.jobid = jobs.jobid AND
-       files.filename = v_filename;
-
-   RETURN (jid);
-   EXCEPTION WHEN others THEN
+FUNCTION getjobidwithoutreplicacheck (
+  v_filename varchar2
+) RETURN number
+  IS
+  jid number;
+  BEGIN
+    SELECT jobs.jobid INTO jid
+    FROM files, jobs
+    WHERE
+      files.jobid = jobs.jobid AND
+      files.filename = v_filename;
+    RETURN (jid);
+    EXCEPTION WHEN others THEN
   RETURN 0;
-END;
+  END;
 END;
 /
