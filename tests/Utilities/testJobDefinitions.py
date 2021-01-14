@@ -494,6 +494,7 @@ def wrongJob():
   print "This will generate a job that should become Completed, use the failover, and only later it will be Done"
 
   job = createJob(local=False)
+  job.setName("gaudirun-gauss-stays-completed")
   res = endOfAllJobs(job)
   return res
 
