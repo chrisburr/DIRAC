@@ -301,7 +301,7 @@ def execute(unit, minimum, depth):
                'GB': 1000 * 1000 * 1000.0,
                'TB': 1000 * 1000 * 1000 * 1000.0,
                'PB': 1000 * 1000 * 1000 * 1000 * 1000.0}
-  if unit not in scaleDict.keys():
+  if unit not in scaleDict:
     Script.showHelp()
   scaleFactor = scaleDict[unit]
 

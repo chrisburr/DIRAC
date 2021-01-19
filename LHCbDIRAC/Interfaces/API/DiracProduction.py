@@ -19,6 +19,7 @@ by site, minor status and application status for a given transformation.
 __RCSID__ = "$Id$"
 
 import os
+import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities.Time import toString
@@ -72,7 +73,7 @@ class DiracProduction(DiracLHCb):
     Protects against
     LFN: being prepended and different types of production ID.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     result = self.transformationClient.getTransformation(int(productionID))
@@ -102,7 +103,7 @@ class DiracProduction(DiracLHCb):
     This includes the operation performed, any messages associated with
     the operation and the DN of the production manager performing it.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     result = self.transformationClient.getTransformationLogging(int(productionID))
@@ -136,7 +137,7 @@ class DiracProduction(DiracLHCb):
     value. If printOutput is specified, the result is printed to the
     screen.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     result = self.transformationClient.getTransformationSummary()
@@ -167,7 +168,7 @@ class DiracProduction(DiracLHCb):
     to-date snapshot of the application status combinations and
     associated WMS JobIDs.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     statusDict = self.getProdJobMetadata(productionID, status, minorStatus)
@@ -289,7 +290,7 @@ class DiracProduction(DiracLHCb):
     to-date snapshot of the job status combinations and associated WMS
     JobIDs.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     statusDict = self.getProdJobMetadata(productionID, status, minorStatus)
@@ -386,7 +387,7 @@ class DiracProduction(DiracLHCb):
     This queries the WMS for the given productionID and provides an up-
     to-date snapshot of the sites that jobs were submitted to.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     statusDict = self.getProdJobMetadata(productionID, None, None, site)
@@ -481,7 +482,7 @@ class DiracProduction(DiracLHCb):
   def getProductionProgress(self, productionID=None, printOutput=False):
     """Returns the status of jobs as seen by the production management
     infrastructure."""
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     productionID = long(productionID)
@@ -558,7 +559,7 @@ class DiracProduction(DiracLHCb):
     """
     commands = self.commands
 
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
     productionID = long(productionID)
@@ -679,10 +680,10 @@ class DiracProduction(DiracLHCb):
     All productions are considered by default but can restrict to
     productionID.
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
-    if isinstance(lfns, str):
+    if isinstance(lfns, six.string_types):
       lfns = lfns.replace('LFN:', '')
     elif isinstance(lfns, list):
       try:
@@ -716,7 +717,8 @@ class DiracProduction(DiracLHCb):
 
   def getProdJobInfo(self, productionID, jobID, printOutput=False):
     """Retrieve production job information from Production Manager service."""
-    res = self.transformationClient.getTransformationTasks(condDict={'TransformationID': productionID, 'TaskID': jobID},
+    res = self.transformationClient.getTransformationTasks(condDict={'TransformationID': productionID,
+                                                                     'TaskID': jobID},
                                                            inputVector=True)
     if not res['OK']:
       return res
@@ -744,10 +746,10 @@ class DiracProduction(DiracLHCb):
 
     Usage: extendProduction <ProductionNameOrID> nJobs
     """
-    if not isinstance(productionID, (int, long, str)):
+    if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
-    if isinstance(numberOfJobs, str):
+    if isinstance(numberOfJobs, six.string_types):
       try:
         numberOfJobs = int(numberOfJobs)
       except Exception as x:

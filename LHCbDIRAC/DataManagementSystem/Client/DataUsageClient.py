@@ -16,6 +16,8 @@
 :synopsis: Class that contains client access to the StorageUsageDB handler.
 """
 
+import six
+
 # # imports
 from DIRAC import S_ERROR
 from DIRAC.Core.Base.Client import Client, createClient
@@ -45,7 +47,9 @@ class DataUsageClient(Client):
 
   def getDataUsageSummary(self, startTime, endTime, status, rpc=None, url='', timeout=120):
     """get usage summary."""
-    if not (isinstance(startTime, basestring) and isinstance(endTime, basestring) and isinstance(status, basestring)):
+    if not (isinstance(startTime, six.string_types) and
+            isinstance(endTime, six.string_types) and
+            isinstance(status, six.string_types)):
       return S_ERROR('Supplied arguments not in correct format!')
     rpcClient = self._getRPC(rpc=rpc, url=url, timeout=timeout)
     return rpcClient.getDataUsageSummary(startTime, endTime, status)
@@ -59,7 +63,7 @@ class DataUsageClient(Client):
 
   def getDirMetadata(self, directoryList, url='', timeout=120):
     """get directory metadata."""
-    if isinstance(directoryList, basestring):
+    if isinstance(directoryList, six.string_types):
       directoryList = [directoryList]
     elif isinstance(directoryList, (set, tuple, dict)):
       directoryList = list(directoryList)
@@ -70,7 +74,7 @@ class DataUsageClient(Client):
 
   def updatePopEntryStatus(self, idList, newStatus, url='', timeout=120):
     """whatever, pop new status."""
-    if not isinstance(idList, list) or not isinstance(newStatus, basestring):
+    if not isinstance(idList, list) or not isinstance(newStatus, six.string_types):
       return S_ERROR('Supplied arguments are not in correct format!')
     rpcClient = self._getRPC(rpc=None, url=url, timeout=timeout)
     return rpcClient.updatePopEntryStatus(idList, newStatus)

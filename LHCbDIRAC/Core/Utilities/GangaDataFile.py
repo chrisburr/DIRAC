@@ -25,6 +25,7 @@ Givn input files, it will create something like::
 __RCSID__ = "$Id$"
 
 import os
+import six
 
 from DIRAC import gLogger
 
@@ -55,7 +56,7 @@ class GangaDataFile(object):
 
   def generateDataFile(self, lfns, persistency=None):
     """generate the data file."""
-    if isinstance(lfns, basestring) and lfns:
+    if isinstance(lfns, six.string_types) and lfns:
       lfns = [lfns]
     elif not isinstance(lfns, list):
       self.log.error('Was expecting a list')

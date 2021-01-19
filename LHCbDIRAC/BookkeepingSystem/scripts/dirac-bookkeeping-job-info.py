@@ -21,9 +21,9 @@ or all steps for a (list of) JobID
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
-import DIRAC
+
 from DIRAC import gLogger
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
 
 if __name__ == "__main__":
 
@@ -48,8 +48,7 @@ if __name__ == "__main__":
       bkScript.setLFNsFromFile(arg)
   lfnList = bkScript.getOption('LFNs', [])
   if not lfnList and not jobIDList:
-    Script.showHelp()
-    DIRAC.exit(0)
+    Script.showHelp(exitCode=1)
   summary = False
   for switch in Script.getUnprocessedSwitches():
     if switch[0] == 'Summary':

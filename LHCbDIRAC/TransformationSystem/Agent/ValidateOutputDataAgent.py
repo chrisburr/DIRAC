@@ -91,7 +91,7 @@ class ValidateOutputDataAgent(DIRACValidateOutputDataAgent):
     if res['Value']['Failed']:
       return S_ERROR("Failed to determine the existance of directories")
     directoryExists = res['Value']['Successful']
-    for directory in sorted(directoryExists.keys()):
+    for directory in sorted(directoryExists):
       if not directoryExists[directory]:
         continue
       iRes = self.integrityClient.catalogDirectoryToBK(directory)
@@ -102,8 +102,8 @@ class ValidateOutputDataAgent(DIRACValidateOutputDataAgent):
       catalogDirReplicas = iRes['Value']['CatalogReplicas']
       catalogMetadata = {}
       catalogReplicas = {}
-      for lfn in catalogDirMetadata.keys():
-        if lfn not in bk2catalogMetadata.keys():
+      for lfn in catalogDirMetadata:
+        if lfn not in bk2catalogMetadata:
           catalogMetadata[lfn] = catalogDirMetadata[lfn]
           if lfn in catalogDirReplicas:
             catalogReplicas[lfn] = catalogDirReplicas[lfn]

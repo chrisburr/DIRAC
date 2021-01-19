@@ -86,6 +86,7 @@ To execute a ROOT Macro, Python script and Executable consecutively an example s
 
 import os
 import re
+import six
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Interfaces.API.Job import Job
@@ -167,11 +168,11 @@ class LHCbJob(Job):
     """
     kwargs = {'appName': appName, 'appVersion': appVersion, 'optionsFiles': optionsFiles,
               'inputData': inputData, 'optionsLine': optionsLine, 'inputDataType': inputDataType, 'logFile': logFile}
-    if not isinstance(appName, str) or not isinstance(appVersion, str):
+    if not isinstance(appName, six.string_types) or not isinstance(appVersion, six.string_types):
       return self._reportError('Expected strings for application name and version', __name__, **kwargs)
 
     if logFile:
-      if isinstance(logFile, str):
+      if isinstance(logFile, six.string_types):
         logName = logFile
       else:
         return self._reportError('Expected string for log file name', __name__, **kwargs)
@@ -180,13 +181,13 @@ class LHCbJob(Job):
 
     if not inputDataType:
       inputDataType = self.inputDataType
-    if not isinstance(inputDataType, str):
+    if not isinstance(inputDataType, six.string_types):
       return self._reportError('Expected string for input data type', __name__, **kwargs)
 
     optionsFile = None
     if not optionsFiles:
       return self._reportError('Expected string or list for optionsFiles', __name__, **kwargs)
-    if isinstance(optionsFiles, str):
+    if isinstance(optionsFiles, six.string_types):
       optionsFiles = [optionsFiles]
     if not isinstance(optionsFiles, list):
       return self._reportError('Expected string or list for optionsFiles', __name__, **kwargs)
@@ -211,7 +212,7 @@ class LHCbJob(Job):
     self.log.verbose('Final options list is: %s' % optionsFile)
 
     if inputData:
-      if isinstance(inputData, str):
+      if isinstance(inputData, six.string_types):
         inputData = [inputData]
       if not isinstance(inputData, list):
         return self._reportError('Expected single LFN string or list of LFN(s) for inputData', __name__, **kwargs)
@@ -334,17 +335,17 @@ class LHCbJob(Job):
         'inputDataType': inputDataType,
         'poolXMLCatalog': poolXMLCatalog,
         'logFile': logFile}
-    if not isinstance(appName, str) or not isinstance(appVersion, str):
+    if not isinstance(appName, six.string_types) or not isinstance(appVersion, six.string_types):
       return self._reportError('Expected strings for application name and version', __name__, **kwargs)
 
-    if not script or not isinstance(script, str):
+    if not script or not isinstance(script, six.string_types):
       return self._reportError('Expected strings for script name', __name__, **kwargs)
 
     if not os.path.exists(script):
       return self._reportError('Script must exist locally', __name__, **kwargs)
 
     if logFile:
-      if isinstance(logFile, str):
+      if isinstance(logFile, six.string_types):
         logName = logFile
       else:
         return self._reportError('Expected string for log file name', __name__, **kwargs)
@@ -355,14 +356,14 @@ class LHCbJob(Job):
     self.addToInputSandbox.append(script)
 
     if arguments:
-      if not isinstance(arguments, str):
+      if not isinstance(arguments, six.string_types):
         return self._reportError('Expected string for optional script arguments', __name__, **kwargs)
 
-    if not isinstance(poolXMLCatalog, str):
+    if not isinstance(poolXMLCatalog, six.string_types):
       return self._reportError('Expected string for POOL XML Catalog name', __name__, **kwargs)
 
     if inputData:
-      if isinstance(inputData, str):
+      if isinstance(inputData, six.string_types):
         inputData = [inputData]
       if not isinstance(inputData, list):
         return self._reportError('Expected single LFN string or list of LFN(s) for inputData', __name__, **kwargs)
@@ -447,9 +448,9 @@ class LHCbJob(Job):
     """
     kwargs = {'benderVersion': benderVersion, 'modulePath': modulePath,
               'inputData': inputData, 'numberOfEvents': numberOfEvents}
-    if not isinstance(benderVersion, str):
+    if not isinstance(benderVersion, six.string_types):
       return self._reportError('Bender version should be a string', __name__, **kwargs)
-    if not isinstance(modulePath, str):
+    if not isinstance(modulePath, six.string_types):
       return self._reportError('Bender module path should be a string', __name__, **kwargs)
     if not isinstance(numberOfEvents, int):
       try:
@@ -460,7 +461,7 @@ class LHCbJob(Job):
     if not inputData:
       return S_ERROR("Need input data for Bender applications")
 
-    if isinstance(inputData, str):
+    if isinstance(inputData, six.string_types):
       inputData = [inputData]
     if not isinstance(inputData, list):
       return self._reportError('Input data should be specified as a list or a string', __name__, **kwargs)
@@ -579,7 +580,7 @@ class LHCbJob(Job):
       arguments = [arguments]
 
     for param in [rootVersion, rootScript, rootType, logFile]:
-      if not isinstance(param, str):
+      if not isinstance(param, six.string_types):
         return self._reportError('Expected strings for Root application input parameters', __name__, **kwargs)
 
     if not os.path.exists(rootScript):
@@ -648,7 +649,7 @@ class LHCbJob(Job):
     """
     kwargs = {'depth': depth}
     description = 'Level at which ancestor files are retrieved from the bookkeeping'
-    if isinstance(depth, str):
+    if isinstance(depth, six.string_types):
       try:
         self._addParameter(self.workflow, 'AncestorDepth', 'JDL', int(depth), description)
       except BaseException:
@@ -677,7 +678,7 @@ class LHCbJob(Job):
        :type inputDataType: String
     """
     description = 'User specified input data type'
-    if not isinstance(inputDataType, str):
+    if not isinstance(inputDataType, six.string_types):
       try:
         inputDataType = str(inputDataType)
       except TypeError:
@@ -752,7 +753,7 @@ class LHCbJob(Job):
       outputDataStr = ';'.join(lfns)
       description = 'List of output data files'
       self._addParameter(self.workflow, 'UserOutputData', 'JDL', outputDataStr, description)
-    elif isinstance(lfns, str):
+    elif isinstance(lfns, six.string_types):
       description = 'Output data file'
       self._addParameter(self.workflow, 'UserOutputData', 'JDL', lfns, description)
     else:
@@ -760,7 +761,7 @@ class LHCbJob(Job):
 
     if OutputSE:
       description = 'User specified Output SE'
-      if isinstance(OutputSE, str):
+      if isinstance(OutputSE, six.string_types):
         OutputSE = [OutputSE]
       elif not isinstance(OutputSE, list):
         return self._reportError('Expected string or list for OutputSE', **kwargs)
@@ -769,7 +770,7 @@ class LHCbJob(Job):
 
     if OutputPath:
       description = 'User specified Output Path'
-      if not isinstance(OutputPath, str):
+      if not isinstance(OutputPath, six.string_types):
         return self._reportError('Expected string for OutputPath', **kwargs)
       # Remove leading "/" that might cause problems with os.path.join
       while OutputPath[0] == '/':
@@ -817,7 +818,7 @@ class LHCbJob(Job):
        :type logFile: string
     """
     kwargs = {'executable': executable, 'arguments': arguments, 'applicationLog': logFile}
-    if not isinstance(executable, str):
+    if not isinstance(executable, six.string_types):
       return self._reportError('Expected strings for executable and arguments', **kwargs)
 
     if os.path.exists(executable):
@@ -831,7 +832,7 @@ class LHCbJob(Job):
       moduleName = 'CodeSegment'
 
     if logFile:
-      if isinstance(logFile, str):
+      if isinstance(logFile, six.string_types):
         logName = str(logFile)
 
     self.stepCount += 1
@@ -958,7 +959,7 @@ class LHCbJob(Job):
         typeVersion = ''
 
       else:
-        self.log.verbose('Found file types %s for LFNs: %s' % (typeVersions.values(), typeVersions.keys()))
+        self.log.verbose('Found file types %s for LFNs: %s' % (typeVersions.values(), list(typeVersions)))
         typeVersionsList = list(set(typeVersions.values()))
         if len(typeVersionsList) == 1:
           typeVersion = typeVersionsList[0]

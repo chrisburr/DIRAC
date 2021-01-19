@@ -16,7 +16,10 @@
 """Insert new file types in the Bookkeeping."""
 __RCSID__ = "$Id$"
 
+from builtins import input
+
 import DIRAC
+from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage(__doc__ + '\n'.join([
@@ -29,21 +32,21 @@ bk = BookkeepingClient()
 
 exitCode = 0
 
-ftype = raw_input("FileType: ")
-desc = raw_input("Description: ")
-version = raw_input("File type version: ")
-print 'Do you want to add this new file type? (yes or no)'
-value = raw_input('Choice:')
+ftype = input("FileType: ")
+desc = input("Description: ")
+version = input("File type version: ")
+gLogger.notice('Do you want to add this new file type? (yes or no)')
+value = input('Choice:')
 choice = value.lower()
 if choice in ['yes', 'y']:
   res = bk.insertFileTypes(ftype.upper(), desc, version)
   if res['OK']:
-    print 'The file types added successfully!'
+    gLogger.notice('The file types added successfully!')
   else:
-    print "Error discovered!", res['Message']
+    gLogger.error("Error discovered!", res['Message'])
 elif choice in ['no', 'n']:
-  print 'Aborded!'
+  gLogger.notice('Aborted!')
 else:
-  print 'Unexpected choice:', value
+  gLogger.error('Unexpected choice:', value)
 
 DIRAC.exit(exitCode)

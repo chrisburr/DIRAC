@@ -167,7 +167,7 @@ class RemoveInputDataSuccess(ModulesTestCase):
     rid = RemoveInputData(bkClient=bkc_mock, dm=dm_mock)
     # no errors, no input data
     for wf_cs in copy.deepcopy(wf_commons):
-      if 'InputData' in wf_cs.keys():
+      if 'InputData' in wf_cs:
         continue
       for s_cs in step_commons:
         self.assertTrue(rid.execute(prod_id, prod_job_id, wms_job_id,
@@ -177,7 +177,7 @@ class RemoveInputDataSuccess(ModulesTestCase):
 
     # no errors, input data
     for wf_cs in copy.deepcopy(wf_commons):
-      if 'InputData' not in wf_cs.keys():
+      if 'InputData' not in wf_cs:
         continue
       for s_cs in step_commons:
         self.assertTrue(rid.execute(prod_id, prod_job_id, wms_job_id,

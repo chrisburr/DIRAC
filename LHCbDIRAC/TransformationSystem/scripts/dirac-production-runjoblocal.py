@@ -116,6 +116,12 @@ def __downloadPilotScripts(basepath):
       context=context)
   with open('LHCbPilotCommands.py', 'wb') as localFile:
     localFile.write(remoteFile.read())
+  remoteFile = url_library_urlopen(
+      os.path.join('https://gitlab.cern.ch/lhcb-dirac/LHCbPilot/-/raw/master/LHCbPilot/LHCbPilotTools.py'),
+      timeout=10,
+      context=context)
+  with open('LHCbPilotTools.py', 'wb') as localFile:
+    localFile.write(remoteFile.read())
 
 
 def __configurePilot(basepath):

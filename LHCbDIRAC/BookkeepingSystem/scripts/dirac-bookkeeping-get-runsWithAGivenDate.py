@@ -14,24 +14,28 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve from the Bookkeeping runs from a given date range."""
+
 __RCSID__ = "$Id$"
 
+from DIRAC import gLogger, exit as DIRACexit
 from DIRAC.Core.Base import Script
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
     '  %s [option|cfgfile] ... Start [End]' % Script.scriptName,
     'Arguments:',
-    '  Start:    Start date (Format: YYYY-MM-DD)',
+    '  Start:    Start date (Format: YYYY-MM-DD) (mandatory)',
     '  End:      End date (Format: YYYY-MM-DD). Default is Start']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
+from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
+
 start = ''
 end = ''
-if len(args) > 2 or not args or not args[0]:
-  Script.showHelp()
+if len(args) < 2:
+  Script.showHelp(exitCode=1)
 
 if len(args) == 2:
   end = args[1]
@@ -43,13 +47,14 @@ in_dict['EndDate'] = end if end else start
 
 res = BookkeepingClient().getRunsForAGivenPeriod(in_dict)
 if not res['OK']:
-  print 'ERROR: Failed to retrieve runs: %s' % res['Message']
+  gLogger.error('Failed to retrieve runs: %s' % res['Message'])
+  DIRACexit(1)
+
+if not res['Value']['Runs']:
+  gLogger.notice('No runs found for the date range', (start, end))
 else:
-  if not res['Value']['Runs']:
-    print 'No runs found for the date range', start, end
-  else:
-    print 'Runs:', res['Value']['Runs']
-    if 'ProcessedRuns' in res['Value']:
-      print 'Processed runs:', res['Value']['ProcessedRuns']
-    if 'NotProcessedRuns' in res['Value']:
-      print 'Not processed runs:', res['Value']['NotProcessedRuns']
+  gLogger.notice('Runs:', res['Value']['Runs'])
+  if 'ProcessedRuns' in res['Value']:
+    gLogger.notice('Processed runs:', res['Value']['ProcessedRuns'])
+  if 'NotProcessedRuns' in res['Value']:
+    gLogger.notice('Not processed runs:', res['Value']['NotProcessedRuns'])

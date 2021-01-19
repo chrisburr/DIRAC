@@ -21,6 +21,7 @@
 import sys
 import time
 import cPickle
+import json
 import unittest
 
 from DIRAC.Core.Base.Script import parseCommandLine
@@ -47,7 +48,14 @@ class TestProductionRequestTestCaseChain(TestProductionRequestTestCase):
   """ a chain of tests
   """
 
-  def test_mix(self):
+  def test_mix_pickle(self):
+    # TODO: This should be removed when pickle is removed all together
+    return self._run_mix_test(cPickle.dumps)
+
+  def test_mix_json(self):
+    return self._run_mix_test(json.dumps)
+
+  def _run_mix_test(self, dumps_func):
     """ Calling various methods
     """
 
@@ -67,10 +75,10 @@ class TestProductionRequestTestCaseChain(TestProductionRequestTestCase):
                                                   'RequestPDG': '',
                                                   'SimCondition': 'Beam3500GeV-VeloClosed-MagUp',
                                                   'SimCondID': '429215',
-                                                  'SimCondDetail': cPickle.dumps('BlahBlahBlah'),
+                                                  'SimCondDetail': dumps_func('BlahBlahBlah'),
                                                   'ProPath': 'Blup',
                                                   'ProID': '',
-                                                  'ProDetail': cPickle.dumps('BlaaaaaahBlahBlah'),
+                                                  'ProDetail': dumps_func('BlaaaaaahBlahBlah'),
                                                   'EventType': '900000',
                                                   'NumberOfEvents': '-1',
                                                   'Description': 'Description',
@@ -97,10 +105,10 @@ class TestProductionRequestTestCaseChain(TestProductionRequestTestCase):
                                                   'RequestPDG': '',
                                                   'SimCondition': 'Beam3500GeV-VeloClosed-MagUp',
                                                   'SimCondID': '429215',
-                                                  'SimCondDetail': cPickle.dumps('BlahBlahBlah'),
+                                                  'SimCondDetail': dumps_func('BlahBlahBlah'),
                                                   'ProPath': 'Blup',
                                                   'ProID': '',
-                                                  'ProDetail': cPickle.dumps('BlaaaaaahBlahBlah'),
+                                                  'ProDetail': dumps_func('BlaaaaaahBlahBlah'),
                                                   'EventType': '900000',
                                                   'NumberOfEvents': '-1',
                                                   'Description': 'Description',

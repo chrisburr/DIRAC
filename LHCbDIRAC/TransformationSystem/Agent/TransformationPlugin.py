@@ -27,12 +27,12 @@ from DIRAC.Core.Utilities.List import breakListIntoChunks, randomize
 # from DIRAC.Core.Utilities.Time import timeThis
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
+from DIRAC.Resources.Storage.StorageElement import StorageElement
+from DIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 from DIRAC.TransformationSystem.Agent.TransformationPlugin import TransformationPlugin as DIRACTransformationPlugin
 from DIRAC.TransformationSystem.Client.Utilities import getFileGroups, sortExistingSEs
-from DIRAC.Resources.Storage.StorageElement import StorageElement
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-from LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import PluginUtilities, getActiveSEs
 

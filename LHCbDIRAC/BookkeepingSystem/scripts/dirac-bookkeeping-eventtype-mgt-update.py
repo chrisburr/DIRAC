@@ -30,7 +30,7 @@ Script.setUsageMessage('\n'.join([__doc__,
                                   'Usage:',
                                   '  %s [option|cfgfile] ... File' % Script.scriptName,
                                   'Arguments:',
-                                  '  File:     Name of the file including the description of the Types']))
+                                  '  File:     Name of the file including the description of the Types (mandatory)']))
 Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -38,8 +38,8 @@ bk = BookkeepingClient()
 
 args = Script.getPositionalArgs()
 
-if len(args) != 1:
-  Script.showHelp()
+if len(args) < 1:
+  Script.showHelp(1)
 
 exitCode = 0
 

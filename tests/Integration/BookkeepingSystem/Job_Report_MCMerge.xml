@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE Job
+  SYSTEM "book.dtd">
+<Job ConfigName="MC" ConfigVersion="2016" Date="2020-06-02" Time="14:39:40">
+    <TypedParameter Name="CPUTIME" Type="Info" Value="97.98"/>
+    <TypedParameter Name="ExecTime" Type="Info" Value="112.219002962"/>
+    <TypedParameter Name="WNMODEL" Type="Info" Value="AMD EPYC 7452 32-Core Processor"/>
+    <TypedParameter Name="WNCPUPOWER" Type="Info" Value="3076.08798437"/>
+    <TypedParameter Name="WNCACHE" Type="Info" Value="512 KB"/>
+    <TypedParameter Name="WorkerNode" Type="Info" Value="tlhcb005-6168516.0-lcg2430.gridpp.rl.ac.uk"/>
+    <TypedParameter Name="WNMEMORY" Type="Info" Value="806924.0"/>
+    <TypedParameter Name="WNCPUHS06" Type="Info" Value="17.4"/>
+    <TypedParameter Name="NumberOfProcessors" Type="Info" Value="1"/>
+    <TypedParameter Name="Production" Type="Info" Value="12345"/>
+    <TypedParameter Name="DiracJobId" Type="Info" Value="375357165"/>
+    <TypedParameter Name="Name" Type="Info" Value="00108706_00001489_1"/>
+    <TypedParameter Name="JobStart" Type="Info" Value="2020-06-02 14:37:48"/>
+    <TypedParameter Name="JobEnd" Type="Info" Value="2020-06-02 14:39:40"/>
+    <TypedParameter Name="Location" Type="Info" Value="LCG.RAL.uk"/>
+    <TypedParameter Name="JobType" Type="Info" Value="MCMerge"/>
+    <TypedParameter Name="ProgramName" Type="Info" Value="DaVinci"/>
+    <TypedParameter Name="ProgramVersion" Type="Info" Value="v45r3"/>
+    <TypedParameter Name="DiracVersion" Type="Info" Value="v10r0p2"/>
+    <TypedParameter Name="FirstEventNumber" Type="Info" Value="1"/>
+    <TypedParameter Name="StatisticsRequested" Type="Info" Value="-1"/>
+    <TypedParameter Name="StepID" Type="Info" Value="#STEP_ID#"/>
+    <TypedParameter Name="NumberOfEvents" Type="Info" Value="1766"/>
+    <InputFile Name="/lhcb/MC/2016/DSTARD02HHHH.HLTFILTER.MDST/00108705/0015/00108705_00155740_8.dstard02hhhh.hltfilter.mdst"/>
+    <InputFile Name="/lhcb/MC/2016/DSTARD02HHHH.HLTFILTER.MDST/00108705/0015/00108705_00155741_8.dstard02hhhh.hltfilter.mdst"/>
+    <OutputFile Name="/lhcb/MC/2016/DSTARD02HHHH.HLTFILTER.MDST/12345/0000/00108706_00001489_1.dstard02hhhh.hltfilter.mdst" TypeName="DSTARD02HHHH.HLTFILTER.MDST" TypeVersion="ROOT">
+        <Parameter Name="EventTypeId" Value="27165000"/>
+        <Parameter Name="EventStat" Value="1766"/>
+        <Parameter Name="FileSize" Value="128314808"/>
+        <Parameter Name="CreationDate" Value="2020-06-02 14:39:40"/>
+        <Parameter Name="MD5Sum" Value="22b9ba51c25ee0442e86aac8ee89c428"/>
+        <Parameter Name="Guid" Value="6AC644A7-DEA4-EA11-89FA-0242AC1C0536"/>
+    </OutputFile>
+    <OutputFile Name="/lhcb/MC/2016/LOG/12345/0000/00001489/DaVinci_00108706_00001489_1.log" TypeName="LOG" TypeVersion="1">
+        <Parameter Name="FileSize" Value="146554"/>
+        <Parameter Name="CreationDate" Value="2020-06-02 14:39:41"/>
+        <Replica Location="Web" Name="http://lhcb-logs.cern.ch/storage/lhcb/MC/2016/LOG/12345/0000/00001489/DaVinci_00108706_00001489_1.log"/>
+        <Parameter Name="MD5Sum" Value="f1256b731e17ed91ec86345403a10370"/>
+        <Parameter Name="Guid" Value="F1256B73-1E17-ED91-EC86-345403A10370"/>
+    </OutputFile>
+</Job>

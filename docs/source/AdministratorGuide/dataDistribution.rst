@@ -11,7 +11,7 @@ Policy
 Archive
 *******
 
-The default option is at `Operations/<Setup>/TransformationPlugins/Archive2SEs`. it can be overwritten in each plugin.
+The default option is at `Operations/<Setup>/TransformationPlugins/ArchiveSEs`. it can be overwritten in each plugin.
 The choice is done randomly.
 
 *************
@@ -155,53 +155,58 @@ Standing Transformations
 it is useful to have some transformations always at hand where you can just add a few files. Here are a few::
 
   # Replicate files to freezer
-  dirac-dms-add-transformation --Plugin ReplicateDataset --Destination CERN-FREEZER-EOS --Name 'Replicate-to-Freezer-2018' --Force
+  dirac-dms-add-transformation --Plugin ReplicateDataset --Destination CERN-FREEZER-EOS --Name 'Replicate-to-Freezer' --Force
 
   # Replicate to local buffer
-  dirac-dms-add-transformation --Plugin=ReplicateToLocalSE --Dest=Tier1-Buffer --Name 'Replicate-to-local-Buffer-2018' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateToLocalSE --Dest=Tier1-Buffer --Name 'Replicate-to-local-Buffer' --Force
 
 
   # Replicate to RAW
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CERN-RAW --Name 'Replicate-to-CERN-RAW-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=GRIDKA-RAW --Name 'Replicate-to-GRIDKA-RAW-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RAL-RAW --Name 'Replicate-to-RAL-RAW-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=IN2P3-RAW --Name 'Replicate-to-IN2P3-RAW-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CNAF-RAW --Name 'Replicate-to-CNAF-RAW-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RRCKI-RAW --Name 'Replicate-to-RRCKI-RAW-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=PIC-RAW --Name 'Replicate-to-PIC-RAW-2018' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CERN-RAW --Name 'Replicate-to-CERN-RAW' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=GRIDKA-RAW --Name 'Replicate-to-GRIDKA-RAW' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RAL-RAW --Name 'Replicate-to-RAL-RAW' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=IN2P3-RAW --Name 'Replicate-to-IN2P3-RAW' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CNAF-RAW --Name 'Replicate-to-CNAF-RAW' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RRCKI-RAW --Name 'Replicate-to-RRCKI-RAW' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=PIC-RAW --Name 'Replicate-to-PIC-RAW' --Force
 
 
   # Replicate to DST
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CERN-DST-EOS --Name 'Replicate-to-CERN-DST-EOS-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=GRIDKA-DST --Name 'Replicate-to-GRIDKA-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RAL-DST --Name 'Replicate-to-RAL-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=IN2P3-DST --Name 'Replicate-to-IN2P3-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CNAF-DST --Name 'Replicate-to-CNAF-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RRCKI-DST --Name 'Replicate-to-RRCKI-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=PIC-DST --Name 'Replicate-to-PIC-DST-2018' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CERN-DST-EOS --Name 'Replicate-to-CERN-DST-EOS' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=GRIDKA-DST --Name 'Replicate-to-GRIDKA-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RAL-DST --Name 'Replicate-to-RAL-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=IN2P3-DST --Name 'Replicate-to-IN2P3-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CNAF-DST --Name 'Replicate-to-CNAF-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RRCKI-DST --Name 'Replicate-to-RRCKI-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=PIC-DST --Name 'Replicate-to-PIC-DST' --Force
 
 
   # Replicate to MC-DST
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CERN_MC-DST-EOS --Name 'Replicate-to-CERN_MC-DST-EOS-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=GRIDKA_MC-DST --Name 'Replicate-to-GRIDKA_MC-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RAL_MC-DST --Name 'Replicate-to-RAL_MC-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=IN2P3_MC-DST --Name 'Replicate-to-IN2P3_MC-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CNAF_MC-DST --Name 'Replicate-to-CNAF_MC-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RRCKI_MC-DST --Name 'Replicate-to-RRCKI_MC-DST-2018' --Force
-  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=PIC_MC-DST --Name 'Replicate-to-PIC_MC-DST-2018' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CERN_MC-DST-EOS --Name 'Replicate-to-CERN_MC-DST-EOS' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=GRIDKA_MC-DST --Name 'Replicate-to-GRIDKA_MC-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RAL_MC-DST --Name 'Replicate-to-RAL_MC-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=IN2P3_MC-DST --Name 'Replicate-to-IN2P3_MC-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=CNAF_MC-DST --Name 'Replicate-to-CNAF_MC-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=RRCKI_MC-DST --Name 'Replicate-to-RRCKI_MC-DST' --Force
+  dirac-dms-add-transformation --Plugin=ReplicateDataset --Dest=PIC_MC-DST --Name 'Replicate-to-PIC_MC-DST' --Force
 
 
 
 
   # To reduce number of replicas, based on data popularity
-  dirac-dms-add-transformation --Plugin ReduceReplicas --Number 1 --Name 'Reduce-to-1-replica-2018' --Force
-  dirac-dms-add-transformation --Plugin ReduceReplicas --Number 2 --Name 'Reduce-to-2-replicas-2018' --Force
-  dirac-dms-add-transformation --Plugin ReduceReplicas --Number 3 --Name 'Reduce-to-3-replicas-2018' --Force
+  dirac-dms-add-transformation --Plugin ReduceReplicas --Number 1 --Name 'Reduce-to-1-replica' --Force
+  dirac-dms-add-transformation --Plugin ReduceReplicas --Number 2 --Name 'Reduce-to-2-replicas' --Force
+  dirac-dms-add-transformation --Plugin ReduceReplicas --Number 3 --Name 'Reduce-to-3-replicas' --Force
 
 
   # remove from Tier1-Buffer
-  dirac-dms-add-transformation --Plugin RemoveReplicas --From Tier1-Buffer --Name 'Remove-from-Tier1-Buffer-2018' --Force
-  dirac-dms-add-transformation --Plugin RemoveReplicas --From Tier1-DST --Name 'Remove-from-Tier1-DST-2018' --Force
+  dirac-dms-add-transformation --Plugin RemoveReplicas --From Tier1-Buffer --Name 'Remove-from-Tier1-Buffer' --Force
+  dirac-dms-add-transformation --Plugin RemoveReplicas --From Tier1-DST --Name 'Remove-from-Tier1-DST' --Force
 
   # destroy dataset
-  dirac-dms-add-transformation --Plugin=DestroyDataset --Name 'Destroy-dataset-2018' --Force
+  dirac-dms-add-transformation --Plugin=DestroyDataset --Name 'Destroy-dataset' --Force
+
+As a reminder, to add files in these transfo (see :ref:`dirac-transformation-add-files`)::
+
+  dirac-transformation-add-files <transName> [--Term | --File <file> | --LFN <lfn>] 
+  

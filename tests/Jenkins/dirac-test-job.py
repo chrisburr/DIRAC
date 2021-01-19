@@ -86,7 +86,7 @@ except IndexError:
 helloJMP.setExecutable("exe-script.py", "", "helloWorld.log")
 helloJMP.setCPUTime(17800)
 helloJMP.setDestination('DIRAC.Jenkins.ch')
-helloJMP.setTag('MultiProcessor')  # this should make the difference!
+helloJMP.setNumberOfProcessors(2)  # this should make the difference!
 result = dirac.submitJob(helloJMP)
 gLogger.info("Hello world job MP: ", result)
 if not result['OK']:

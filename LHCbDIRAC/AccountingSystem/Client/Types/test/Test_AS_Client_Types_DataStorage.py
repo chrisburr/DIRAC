@@ -15,51 +15,59 @@ import unittest
 __RCSID__ = "$Id$"
 
 dummyResults = {}
+
+
 class DummyReturn(object):
 
-  def __init__( self, *args, **kwargs ):
+  def __init__(self, *args, **kwargs):
     pass
-  def __getattr__( self, name ):
-    return self.dummyMethod
-  def dummyMethod( self, *args, **kwargs ):
-    return dummyResults[ self.__class__.__name__ ]
 
-class dBaseAccountingType( DummyReturn ):
+  def __getattr__(self, name):
+    return self.dummyMethod
+
+  def dummyMethod(self, *args, **kwargs):
+    return dummyResults[self.__class__.__name__]
+
+
+class dBaseAccountingType(DummyReturn):
   pass
 
 ################################################################################
 
-class DataStorage_TestCase( unittest.TestCase ):
 
-  def setUp( self ):
+class DataStorage_TestCase(unittest.TestCase):
+
+  def setUp(self):
     """Setup."""
 
     # We need the proper software, and then we overwrite it.
     import LHCbDIRAC.AccountingSystem.Client.Types.DataStorage as moduleTested
     moduleTested.BaseAccountingType = dBaseAccountingType
-    moduleTested.DataStorage.__bases__ = ( dBaseAccountingType, )
+    moduleTested.DataStorage.__bases__ = (dBaseAccountingType, )
 
     self.accountingType = moduleTested.DataStorage
 
-  def tearDown( self ):
+  def tearDown(self):
     """TearDown."""
     del self.accountingType
 
-class DataStorage_Success( DataStorage_TestCase ):
 
-  def test_instantiate( self ):
-    """tests that we can instantiate one object of the tested class."""     
+class DataStorage_Success(DataStorage_TestCase):
+
+  def test_instantiate(self):
+    """tests that we can instantiate one object of the tested class."""
     global dummyResults
-    dummyResults[ 'DataStorage' ] = None
-    
+    dummyResults['DataStorage'] = None
+
     accountingType = self.accountingType()
-    self.assertEqual( 'DataStorage', accountingType.__class__.__name__ )
+    self.assertEqual('DataStorage', accountingType.__class__.__name__)
 
 ################################################################################
 
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase( DataStorage_TestCase )
-  suite.addTest( unittest.defaultTestLoader.loadTestsFromTestCase( DataStorage_Success ) )
-  testResult = unittest.TextTestRunner( verbosity = 2 ).run( suite )
 
-#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF
+if __name__ == '__main__':
+  suite = unittest.defaultTestLoader.loadTestsFromTestCase(DataStorage_TestCase)
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(DataStorage_Success))
+  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+
+# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

@@ -16,6 +16,7 @@ __RCSID__ = "$Id$"
 import os
 import random
 import glob
+import six
 from operator import itemgetter
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
@@ -80,7 +81,7 @@ class UploadOutputData(ModuleBase):
     # Use LHCb utility for local running via jobexec
     if 'ProductionOutputData' in self.workflow_commons:
       self.prodOutputLFNs = self.workflow_commons['ProductionOutputData']
-      if isinstance(self.prodOutputLFNs, basestring):
+      if isinstance(self.prodOutputLFNs, six.string_types):
         self.prodOutputLFNs = [i.strip() for i in self.prodOutputLFNs.split(';')]  # pylint: disable=no-member
     else:
       self.log.info("ProductionOutputData parameter not found, creating on the fly")
@@ -148,7 +149,7 @@ class UploadOutputData(ModuleBase):
         final[fileName] = metadata
         final[fileName]['resolvedSE'] = resolvedSE
 
-      self.log.info("The following files will be uploaded", ": %s" % (', '.join(final.keys())))
+      self.log.info("The following files will be uploaded", ": %s" % ', '.join(final))
       for fileName, metadata in final.items():
         self.log.info('--------%s--------' % fileName)
         for name, val in metadata.iteritems():
@@ -157,7 +158,7 @@ class UploadOutputData(ModuleBase):
       if not self._enableModule():
         # At this point can exit and see exactly what the module would have uploaded
         self.log.info("Module disabled",
-                      "would have attempted to upload the files %s" % ', '.join(final.keys()))
+                      "would have attempted to upload the files %s" % ', '.join(final))
 
       # ## 2. Prior to uploading any files must check (for productions with input data) that no descendant files
       # ##    already exist with replica flag in the BK.
@@ -316,7 +317,7 @@ class UploadOutputData(ModuleBase):
 
       # For files correctly uploaded must report LFNs to job parameters
       if final and self._enableModule():
-        report = ', '.join(final.keys())
+        report = ', '.join(final)
         self.setJobParameter('UploadedOutputData', report)
 
       # ## 5. Can now register the successfully uploaded files in the BK i.e. set the BK replica flags

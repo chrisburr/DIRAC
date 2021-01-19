@@ -14,8 +14,11 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Retrieve files of a given type for a production."""
+
 __RCSID__ = "$Id$"
+
 from DIRAC.Core.Base import Script
+
 Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
     '  %s [option|cfgfile] ... ProdID Type' % Script.scriptName,
@@ -26,36 +29,38 @@ Script.parseCommandLine()
 args = Script.getPositionalArgs()
 
 if not len(args) == 2:
-  Script.showHelp()
+  Script.showHelp(exitCode=1)
 
 try:
   prodID = int(args[0])
 except BaseException:
-  Script.showHelp()
+  Script.showHelp(exitCode=1)
 filetype = args[1]
 
+from DIRAC import gLogger, exit as DIRACexit
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 client = BookkeepingClient()
 res = client.getProductionFiles(prodID, filetype)
 if not res['OK']:
-  print 'ERROR: Failed to retrieve production files: %s' % res['Message']
+  gLogger.error('ERROR: Failed to retrieve production files', res['Message'])
+  DIRACexit(1)
+
+if not res['Value']:
+  gLogger.notice('No files found for production %s with type %s' % (prodID, filetype))
 else:
-  if not res['Value']:
-    print 'No files found for production %s with type %s' % (prodID, filetype)
-  else:
-    print '%s %s %s %s %s' % ('FileName'.ljust(100),
-                              'Size'.ljust(10),
-                              'GUID'.ljust(40),
-                              'Replica'.ljust(8),
-                              'Visible'.ljust(8))
-    for lfn in sorted(res['Value']):
-      size = res['Value'][lfn]['FileSize']
-      guid = res['Value'][lfn]['GUID']
-      hasReplica = res['Value'][lfn]['GotReplica']
-      visible = res['Value'][lfn]['Visible']
-      print '%s %s %s %s %s' % (lfn.ljust(100),
-                                str(size).ljust(10),
-                                guid.ljust(40),
-                                str(hasReplica).ljust(8),
-                                str(visible).ljust(8))
+  gLogger.notice('%s %s %s %s %s' % ('FileName'.ljust(100),
+                                     'Size'.ljust(10),
+                                     'GUID'.ljust(40),
+                                     'Replica'.ljust(8),
+                                     'Visible'.ljust(8)))
+  for lfn in sorted(res['Value']):
+    size = res['Value'][lfn]['FileSize']
+    guid = res['Value'][lfn]['GUID']
+    hasReplica = res['Value'][lfn]['GotReplica']
+    visible = res['Value'][lfn]['Visible']
+    gLogger.notice('%s %s %s %s %s' % (lfn.ljust(100),
+                                       str(size).ljust(10),
+                                       guid.ljust(40),
+                                       str(hasReplica).ljust(8),
+                                       str(visible).ljust(8)))

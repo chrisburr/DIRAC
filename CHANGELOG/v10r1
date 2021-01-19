@@ -1,0 +1,167 @@
+v10r1-pre15
+Based on DIRAC v7r1p24
+LHCbWebDIRAC v5r2-pre6
+LHCbDIRACOS v1r13
+v10r1-pre14
+Based on DIRAC v7r1p19
+LHCbWebDIRAC v5r2-pre6
+LHCbDIRACOS v1r13
+v10r1-pre13
+Based on DIRAC v7r1p17
+LHCbWebDIRAC v5r2-pre5
+LHCbDIRACOS v1r13
+v10r1-pre12
+Based on DIRAC v7r1p15
+LHCbWebDIRAC v5r2-pre4
+LHCbDIRACOS v1r12
+v10r1-pre11
+Based on DIRAC v7r1p15
+LHCbWebDIRAC v5r2-pre4
+LHCbDIRACOS v1r9
+*Bookkeeping
+
+CHANGE: (!875) Changed definition of partition type
+
+*ProductionManagement
+
+NEW: (!874) Using specialized classes for interacting with ES MCStats indices
+NEW: (!874) Added CS flag for controlling upload of MCStats
+
+*Core
+
+CHANGE: (!874) re-simplified and changed location of prmon executable
+
+
+
+v10r1-pre10
+Based on DIRAC v7r1p11
+LHCbWebDIRAC v5r2-pre4
+LHCbDIRACOS v1r9
+
+
+v10r1-pre9
+use DIRAC v7r1p11
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre4
+
+*Core
+
+FIX: (!858) Allow the case of a missing set of nodes
+
+*tests
+
+NEW: (!861) added user MP Gaudi test job, for Jenkins
+
+*Bookkeeping
+
+NEW: (!862) added missing DELETEJOB procedure
+CHANGE: (!862) removed several unused procedures
+CHANGE: (!862) renamed few functions with typos
+
+*ProductionManagement
+
+FIX: (!863) added flag for running without Bk Query (issue 505)
+
+*Workflow
+
+FIX: (!858) Indices names in lower case
+
+
+v10r1-pre8
+use DIRAC v7r1p10
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre4
+
+*Bookkeeping
+FIX: Fix dirac-bookkeeping-get-run-ranges
+
+*Core
+FIX: Allow the case of a missing category of counters in xml Gauss summaries
+NEW: Convert Generator Log xml files into json format
+
+*ProductionManagement:
+NEW: Module that transforms XML Gauss summaries into JSON format
+CHANGE: Update UploadMC.py to ingest Gauss summaries to ES
+
+*Tests
+FIX: Correct path to random_files_creator.sh
+
+*Workflow
+NEW: Upload Generator Log json files into Elasticsearch
+
+
+v10r1-pre7
+use DIRAC v7r1p9
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre4
+includes all patches up to including v10r0p11
+
+*ProductionManagement
+NEW: Module that transforms XML Gauss summaries into JSON format
+CHANGE: Update UploadMC.py to ingest Gauss summaries to ES
+
+*Bookkeeping
+FIX: Fix type signature of getFileHistory
+FIX: Fix saving a txt file with writeJobOptions
+
+*Test
+NEW: full system test for BKK scripts
+
+
+v10r1-pre6
+use DIRAC v7r1p7
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre2
+includes all patches up to including v10r0p8
+
+
+v10r1-pre5
+use DIRAC v7r1p7
+use LHCbDIRACOS v1r9
+use LHCbWebDIRAC v5r2-pre2
+
+
+
+v10r1-pre4
+use DIRAC v7r1p6
+use LHCbDIRACOS v1r8
+use LHCbWebDIRAC v5r2-pre2
+
+NEW: (!829) Added Kibana dashboards for MCStats Gauss errors
+
+
+
+v10r1-pre3
+use DIRAC v7r1p6
+use LHCbDIRACOS v1r8
+use LHCbWebDIRAC v5r2-pre2
+
+
+
+v10r1-pre2
+use DIRAC v7r1p5
+use LHCbDIRACOS v1r7
+use LHCbWebDIRAC v5r2-pre2
+
+* CI: check_docs done in virtualenv
+* Add script to retrieve all existing parent transformations
+* Run bkk tests in gitlab
+* Removed BKK gui
+* Fixes bash scripts
+* Fix setup tools version
+
+
+
+
+v10r1-pre1
+use DIRAC v7r1p2
+use LHCbDIRACOS v1r7
+use LHCbWebDIRAC v5r2-pre1
+
+* Rename LHCbDIRAC.Core.Utilities.Pickle to LHCbDIRAC.Core.Utilities.JSONPickle
+* Replace pickle with JSON in production/transformation data
+* Test dumping production infomation with JSON as well as pickle
+* Re-enable data management tests
+
+
+

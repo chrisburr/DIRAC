@@ -8,11 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import sys
+
 from urlparse import urlparse
 from DIRAC import gLogger
 from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData
-gConfigurationData.setOptionInCFG( '/DIRAC/Security/UseServerCertificate', 'true' )
+gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'true')
 
 gLogger.setLevel('FATAL')
 from DIRAC.Core.DISET.RPCClient import RPCClient
@@ -21,11 +21,12 @@ import SimpleHTTPServer
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 import SocketServer
 
+
 class MyRequestHandler(BaseHTTPRequestHandler):
   def do_GET(self):
     if self.path == '/self':
       self.send_response(200)
-      self.send_header('Content-type','text/html')
+      self.send_header('Content-type', 'text/html')
       self.end_headers()
       # Send the html message
       self.wfile.write("I am good thanks")
@@ -41,10 +42,10 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 
     for param in ['host', 'port', 'service']:
       if param not in queryParams:
-        self.send_error(400, "Missing Param ! %s"%param )
+        self.send_error(400, "Missing Param ! %s" % param)
         return
 
-    rpc = RPCClient("dips://%(host)s:%(port)s/%(service)s"%queryParams)
+    rpc = RPCClient("dips://%(host)s:%(port)s/%(service)s" % queryParams)
     res = rpc.ping()
     if not res['OK']:
       self.send_error(418, res['Message'])
@@ -53,14 +54,13 @@ class MyRequestHandler(BaseHTTPRequestHandler):
     self.send_response(200)
     pingResult = res['Value']
 
-
-    self.send_header('Content-type','text/html')
+    self.send_header('Content-type', 'text/html')
     self.end_headers()
     # Send the html message
     self.wfile.write(pingResult)
     return
 
+
 server = HTTPServer(('0.0.0.0', 1234), MyRequestHandler)
 
 server.serve_forever()
-

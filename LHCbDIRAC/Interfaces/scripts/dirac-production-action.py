@@ -35,8 +35,7 @@ Script.parseCommandLine(ignoreErrors=True)
 
 args = Script.getPositionalArgs()
 if len(args) < 1:
-  Script.showHelp()
-  DIRAC.exit(2)
+  Script.showHelp(exitCode=2)
 
 from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 

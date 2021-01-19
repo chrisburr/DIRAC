@@ -13,8 +13,8 @@
 # File :    dirac-bookkeeping-get-run-ranges
 # Author :  Zoltan Mathe
 ########################################################################
-"""Returns run ranges, split by conditions and by run gaps or time interval
-between them."""
+"""Returns run ranges, split by conditions and by run gaps or time interval between them."""
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script

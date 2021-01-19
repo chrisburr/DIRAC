@@ -15,7 +15,7 @@ or '*' but enclose with quotes)"""
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script, ProgressBar
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script, ProgressBar
 from DIRAC import gLogger, exit
 
 if __name__ == "__main__":
@@ -33,8 +33,7 @@ if __name__ == "__main__":
       bkPaths = val.split(',')
   if not bkPaths:
     gLogger.error('No BK path provided...')
-    Script.showHelp()
-    exit(1)
+    Script.showHelp(exitCode=1)
 
   from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import getProcessingPasses, BKQuery
 

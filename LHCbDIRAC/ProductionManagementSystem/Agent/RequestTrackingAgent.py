@@ -10,8 +10,7 @@
 ###############################################################################
 """Production requests agent perform all periodic task with requests.
 
-Currently it updates the number of Input Events for processing
-productions and the number of Output Events for all productions.
+Currently it updates the number of Input Events for processing productions.
 """
 
 from DIRAC import S_OK, S_ERROR, gLogger

@@ -24,7 +24,7 @@ from DIRAC.FrameworkSystem.DB.ProxyDB import ProxyDB as DIRACProxyDB
 class ProxyDB(DIRACProxyDB):
   """Simple extension for just taking care of the message sent."""
 
-  def _notifyProxyAboutToExpire(self, userDN, userGroup, lTime, notifLimit):
+  def _notifyProxyAboutToExpire(self, userDN, lTime):
     result = Registry.getUsernameForDN(userDN)
     if not result['OK']:
       return False
@@ -42,19 +42,18 @@ Dear %s,
   information is:
 
   DN:    %s
-  Group: %s
 
   If you plan on keep using this credentials, please upload a newer proxy to
   LHCbDIRAC by executing (from lxplus.cern.ch, for example):
 
-  $ lhcb-proxy-init -g %s
+  $ lhcb-proxy-init --upload
 
   If you have been issued different certificate, please make sure you have a
   proxy uploaded with that certificate.
 
 Cheers,
  LHCbDIRAC's Proxy Manager
-""" % (userName, daysLeft, userDN, userGroup, userGroup)
+""" % (userName, daysLeft, userDN)
     fromAddr = self.getFromAddr()
     result = self.__notifClient.sendMail(userEMail, msgSubject, msgBody, fromAddress=fromAddr)
     if not result['OK']:

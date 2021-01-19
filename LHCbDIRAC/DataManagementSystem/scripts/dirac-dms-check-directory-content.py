@@ -65,7 +65,7 @@ scaleDict = {'MB': 1000 * 1000.0,
              'GB': 1000 * 1000 * 1000.0,
              'TB': 1000 * 1000 * 1000 * 1000.0,
              'PB': 1000 * 1000 * 1000 * 1000 * 1000.0}
-if unit not in scaleDict.keys():
+if unit not in scaleDict:
   Script.showHelp()
 scaleFactor = scaleDict[unit]
 
@@ -78,8 +78,8 @@ if not res['OK']:
 
 successfulDirs = res['Value']['Successful']
 failedDirs = res['Value']['Failed']
-print 'Failed directories: % s' % (failedDirs.keys())
-print 'Successful directories: % s' % (successfulDirs.keys())
+print 'Failed directories: % s' % list(failedDirs)
+print 'Successful directories: % s' % list(successfulDirs)
 
 if not successfulDirs:
   print 'No directory to analyse. Exit.'
@@ -88,10 +88,10 @@ if not successfulDirs:
 if verbose:
   print 'Analysing directory: %s ' % currentDir
 dirData = successfulDirs[currentDir]
-NumOfFilesInLFC = len(dirData['Files'].keys())
+NumOfFilesInLFC = len(dirData['Files'])
 if verbose:
   print 'Number of files registered in LFC: %d ' % NumOfFilesInLFC
-LFNsInLFC = dirData['Files'].keys()
+LFNsInLFC = list(dirData['Files'])
 # print 'List of lfns in lfc: ' , LFNsInLFC
 
 allFiles = {}
@@ -130,7 +130,7 @@ for lfn, lfnDict in allFiles.iteritems():
     fp.write("All replicas: %s \n" % lfnReplicas)
   # check each replica if it is exists on the storage
   for se in lfnReplicas:
-    if se not in replicasPerSE.keys():
+    if se not in replicasPerSE:
       replicasPerSE[se] = []
     replicasPerSE[se].append(lfn)
     if verbose:
@@ -138,7 +138,7 @@ for lfn, lfnDict in allFiles.iteritems():
     res = StorageElement(se).getFileMetadata(lfn)
     if not res['OK']:
       fp.write("ERROR: could not get storage file metadata! %s - %s \n" % (lfn, se))
-      if lfn not in problematicFiles.keys():
+      if lfn not in problematicFiles:
         problematicFiles[lfn] = {}
       if 'BadReplicas' not in problematicFiles[lfn]:
         problematicFiles[lfn]['BadReplicas'] = []
@@ -146,7 +146,7 @@ for lfn, lfnDict in allFiles.iteritems():
       continue
     if lfn in res['Value']['Failed']:
       fp.write("ERROR: bad LFN! %s\n" % lfn)
-      if lfn not in problematicFiles.keys():
+      if lfn not in problematicFiles:
         problematicFiles[lfn] = {}
         if 'BadPFN' not in problematicFiles[lfn]:
           problematicFiles[lfn]['BadPFN'] = []
@@ -174,7 +174,7 @@ if res['OK']:
 fp.write(" ++++++++++++++++++++++++++++++ Final summary ++++++++++++++++++++++++++\n")
 fp.write(" +++++++++++++++++++++++++++++ Checks LFC -> SE: ++++++++++++++++++++++++++++\n")
 fp.write("Replicas per SE:\n")
-for se in replicasPerSE.keys():
+for se in replicasPerSE:
   fp.write("SE: %s has %d replicas\n" % (se, len(replicasPerSE[se])))
   if verbose:
     for r in replicasPerSE[se]:
@@ -189,9 +189,9 @@ if zeroSizeFiles:
   directoryConsistency = False
 if problematicFiles:
   fp.write("Found some problematic replicas: \n")
-  for lfn in problematicFiles.keys():
+  for lfn in problematicFiles:
     fp.write("LFN: %s\n" % lfn)
-    for k in problematicFiles[lfn].keys():
+    for k in problematicFiles[lfn]:
       fp.write("%s : %s \n" % (k, problematicFiles[lfn][k]))
   directoryConsistency = False
 fp.write(" +++++++++++++++++++++++++++++++ Checks LFC -> Bookkeeping: +++++++++++++++++++++++++++++\n")

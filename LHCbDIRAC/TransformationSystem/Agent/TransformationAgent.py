@@ -14,11 +14,11 @@ methods."""
 __RCSID__ = "$Id$"
 
 from DIRAC import gLogger, S_OK, S_ERROR
+from DIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 from DIRAC.TransformationSystem.Agent.TransformationAgent import TransformationAgent as DIRACTransformationAgent
 
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-from LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 
 AGENT_NAME = 'Transformation/LHCbTransformationAgent'
 

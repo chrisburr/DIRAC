@@ -10,8 +10,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Check if all files have a replica in a certain (set of) SE )Tier1-Archive
-default) List the files that don't have a replica in the specified SE
-(group)"""
+default) List the files that don't have a replica in the specified SE (group)"""
+
 __RCSID__ = "$Id$"
 
 
@@ -33,7 +33,6 @@ if __name__ == '__main__':
       fixIt = True
 
   # imports
-  from DIRAC import gLogger
   from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
   cc = ConsistencyChecks()
   cc.directories = dmScript.getOption('Directory', [])

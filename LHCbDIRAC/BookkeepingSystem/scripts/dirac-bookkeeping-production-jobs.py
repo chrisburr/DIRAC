@@ -13,8 +13,7 @@
 # File :    dirac-bookkeeping-production-jobs
 # Author :  Zoltan Mathe
 ########################################################################
-"""Retrieve from Bookkeeping the number of Jobs at each Site for a given
-Production."""
+"""Retrieve from Bookkeeping the number of Jobs at each Site for a given Production."""
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
@@ -24,7 +23,7 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
     '  %s [option|cfgfile] ... ProdID' % Script.scriptName,
     'Arguments:',
-    '  ProdID:   Production ID']))
+    '  ProdID:   Production ID (mandatory)']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
@@ -38,8 +37,7 @@ bk = BookkeepingClient()
 try:
   prod = long(args[0])
 except BaseException:
-  Script.showHelp()
-  DIRAC.exit(1)
+  Script.showHelp(exitCode=1)
 
 res = bk.getNbOfJobsBySites(prod)
 

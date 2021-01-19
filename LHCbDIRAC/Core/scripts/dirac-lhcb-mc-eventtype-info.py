@@ -24,26 +24,30 @@ from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery
 
-Script.registerSwitch('', 'FileType=', 'FileType to search [ALLSTREAMS.DST]')
+Script.registerSwitch('', 'FileType=', 'FileType to search [default:ALLSTREAMS.DST]')
 
 Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
-    '  %s [option] eventType  ' % Script.scriptName]))
+    '  %s [option] eventType (mandatory)' % Script.scriptName]))
 fileType = 'ALLSTREAMS.DST'
 Script.parseCommandLine(ignoreErrors=True)
 for switch in Script.getUnprocessedSwitches():
   if switch[0] == "FileType":
     fileType = str(switch[1])
 
-eventTypes = Script.getPositionalArgs()[0]
+args = Script.getPositionalArgs()
+if len(args) < 1:
+  Script.showHelp(exitCode=1)
 
-bkQuery = BKQuery({'EventType': eventTypes, "ConfigName": "MC"}, fileTypes=fileType, visible=True)
+eventTypes = args[0]
+bkQuery = BKQuery({'EventType': eventTypes, "ConfigName": "MC"},
+                  fileTypes=fileType,
+                  visible=True)
 print "bkQuery:", bkQuery
 prods = bkQuery.getBKProductions()
 
-bk = BookkeepingClient()
 for prod in prods:
-  res = bk.getProductionInformation(prod)
+  res = BookkeepingClient().getProductionInformation(prod)
   if not res['OK']:
     print res['Message']
     DIRAC.exit(1)

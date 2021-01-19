@@ -23,6 +23,7 @@ from DIRAC.Core.Utilities.File import mkDir
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers, resolveSEGroup
 from DIRAC.Resources.Storage.StorageElement import StorageElement
+from DIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 
 from DIRAC.TransformationSystem.Client.Utilities import PluginUtilities as DIRACPluginUtilities
 from DIRAC.TransformationSystem.Client.Utilities import isArchive, getActiveSEs
@@ -30,7 +31,6 @@ from DIRAC.TransformationSystem.Client.Utilities import isArchive, getActiveSEs
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient, BKClientWithRetry
 from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery, makeBKPath
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-from LHCbDIRAC.ResourceStatusSystem.Client.ResourceManagementClient import ResourceManagementClient
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
 
@@ -503,11 +503,12 @@ get from BK" % (param, self.paramName))
     cacheLimit = datetime.datetime.utcnow() - datetime.timedelta(hours=12)
 
     if not (se in self.freeSpace) or self.freeSpace[se]['LastCheckTime'] < cacheLimit:
-      res = self.rmClient.getSEStorageSpace(se)
-      if not res['OK']:
+      res = self.rmClient.selectSpaceTokenOccupancyCache(token=se)
+      if not res['OK'] or not res['Value']:
         self.logError('Error when getting space for SE %s' % (se,), res['Message'])
         return 0
-      self.freeSpace[se] = res['Value']
+
+      self.freeSpace[se] = dict(zip(res['Columns'], res['Value'][0]))
 
     # Return free space in TB as RSS returns in MB
     free = self.freeSpace[se]['Free'] / 1000000.
@@ -1408,9 +1409,7 @@ get from BK" % (param, self.paramName))
     retCode = os.system(cmd)
     return not bool(retCode)
 
-#=================================================================
 # Set of utility functions used by LHCbDirac transformation system
-#=================================================================
 
 
 def getRemovalPlugins():
@@ -1554,8 +1553,7 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
 
 
 def stripDirectory(files, depth=None):
-  """Return set of directories for a list of LFNs, and directory for a single
-  LFN."""
+  """Return set of directories for a list of LFNs, and directory for a single LFN."""
   if depth is None:
     depth = 4
   if isinstance(files, six.string_types):

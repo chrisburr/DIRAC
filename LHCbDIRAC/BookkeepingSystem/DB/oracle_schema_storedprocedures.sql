@@ -8,461 +8,428 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                      */
 
-CREATE OR REPLACE package BOOKKEEPINGORACLEDB as
+CREATE OR REPLACE PACKAGE bookkeepingoracledb AS
 
-  type udt_RefCursor is ref cursor;
-  --TYPE ifileslist is VARRAY(30) of varchar2(10);
+  TYPE udt_refcursor IS REF CURSOR;
+  --TYPE ifileslist is VARRAY(30) of VARCHAR2(10);
 
-  TYPE ifileslist IS TABLE OF VARCHAR2(30)
-    INDEX BY PLS_INTEGER;
+  TYPE ifileslist IS TABLE OF varchar2(30)
+    INDEX BY pls_integer;
 
-  TYPE numberarray  IS TABLE OF NUMBER INDEX BY PLS_INTEGER;
-  TYPE varchararray IS TABLE OF VARCHAR2(256) INDEX BY PLS_INTEGER;
-  TYPE bigvarchararray IS TABLE OF VARCHAR2(2000) INDEX BY PLS_INTEGER;
-  
-procedure funny(a number);
-function  ext return udt_RefCursor;
-procedure getAvailableFileTypes(a_Cursor out udt_RefCursor );
-function insertFileTypes( v_name varchar2, description varchar2,filetype varchar2) return number;
-procedure getAvailableConfigurations(a_Cursor out udt_RefCursor);
-procedure getStepsForSpecificIfiles(iftypes ifileslist, a_Cursor out udt_RefCursor);
-procedure getStepsForSpecificOfiles(oftypes ifileslist, a_Cursor out udt_RefCursor);
-procedure getStepsForIfiles(iftypes ifileslist , a_Cursor out udt_RefCursor);
-procedure getStepsForOfiles(oftypes ifileslist, a_Cursor out udt_RefCursor);
-procedure getAvailebleSteps(iftypes ifileslist , a_Cursor out udt_RefCursor); --I can delete
-procedure getAvailebleStepsRealAndMC(iftypes ifileslist , a_Cursor out udt_RefCursor); --I can delete
-function getStepsForFiletypes(iftypes lists, oftypes lists, match varchar2) return step_table PIPELINED;
-function getProductionProcessingPass(prod number) return varchar2;
-function getProductionPorcPassName(v_procid number) return varchar2;
-function getProductionProcessingPassId(prod number) return number;
-function getProcessingPassId(root varchar2, fullpath varchar2) return number;
-procedure getAvailableEventTypes(a_Cursor out udt_RefCursor);
-procedure getJobInfo(lfn varchar2, a_Cursor out udt_RefCursor);
-procedure insertTag(V_name varchar2, V_tag varchar2);
-function getDataQualityId(name varchar2) return number;
-function getQFlagByRunAndProcId(rnumber number, procid number) return varchar2;
-Procedure getRunByQflagAndProcId(procid number, flag number, a_Cursor out udt_RefCursor);
-procedure getLFNsByProduction(prod number, a_Cursor out udt_RefCursor);
-function getFileID(v_FileName VARCHAR2) RETURN number;
-procedure getJobIdFromInputFiles(v_FileId number, a_Cursor out udt_RefCursor);
-procedure getFNameFiDRepWithJID(v_jobid NUMBER, a_Cursor out udt_RefCursor);
-procedure getFileAndJobMetadata( v_jobid NUMBER, prod BOOLEAN, a_Cursor out udt_RefCursor);
-procedure checkfile(name varchar2, a_Cursor out udt_RefCursor);
-function checkFileTypeAndVersion (v_NAME  VARCHAR2,  v_VERSION VARCHAR2) return number;
-procedure checkEventType (v_EVENTTYPEID NUMBER, a_Cursor out udt_RefCursor);
-function insertJobsRow(
-     v_ConfigName                  VARCHAR2,
-     v_ConfigVersion               VARCHAR2,
-     v_DiracJobId                  NUMBER,
-     v_DiracVersion                VARCHAR2,
-     v_EventInputStat              NUMBER,
-     v_ExecTime                    FLOAT,
-     v_FirstEventNumber            NUMBER,
-     v_JobEnd                      TIMESTAMP,
-     v_JobStart                    TIMESTAMP,
-     v_Location                    VARCHAR2,
-     v_Name                        VARCHAR2,
-     v_NumberOfEvents              NUMBER,
-     v_Production                  NUMBER,
-     v_ProgramName                 VARCHAR2,
-     v_ProgramVersion              VARCHAR2,
-     v_StatisticsRequested         NUMBER,
-     v_WNCPUPower                  VARCHAR2,
-     v_CPUTime                   FLOAT,
-     v_WNCache                     VARCHAR2,
-     v_WNMemory                    VARCHAR2,
-     v_WNModel                     VARCHAR2,
-     v_WorkerNode                  VARCHAR2,
-     v_runNumber                   NUMBER,
-     v_fillNumber                  NUMBER,
-     v_WNCPUHS06                   FLOAT,
-     v_totalLuminosity             NUMBER,
+  TYPE numberarray  IS TABLE OF NUMBER INDEX BY pls_integer;
+  TYPE varchararray IS TABLE OF varchar2(256) INDEX BY pls_integer;
+  TYPE bigvarchararray IS TABLE OF varchar2(2000) INDEX BY pls_integer;
+
+PROCEDURE getavailablefiletypes(a_cursor OUT udt_refcursor );
+FUNCTION insertfiletypes(v_name VARCHAR2, description VARCHAR2, filetype VARCHAR2) RETURN NUMBER;
+PROCEDURE getavailableconfigurations(a_cursor OUT udt_refcursor);
+FUNCTION getstepsforfiletypes(iftypes LISTS, oftypes LISTS, MATCH VARCHAR2) RETURN step_table pipelined;
+FUNCTION getproductionprocessingpass(prod NUMBER) RETURN VARCHAR2;
+FUNCTION getproductionporcpassname(v_procid NUMBER) RETURN VARCHAR2;
+FUNCTION getproductionprocessingpassid(prod NUMBER) RETURN NUMBER;
+FUNCTION getprocessingpassid(root VARCHAR2, fullpath VARCHAR2) RETURN NUMBER;
+PROCEDURE getavailableeventtypes(a_cursor OUT udt_refcursor);
+PROCEDURE getjobinfo(lfn VARCHAR2, a_cursor OUT udt_refcursor);
+PROCEDURE inserttag(v_name VARCHAR2, v_tag VARCHAR2);
+FUNCTION getdataqualityid(name VARCHAR2) RETURN NUMBER;
+FUNCTION getqflagbyrunandprocid(rnumber NUMBER, procid NUMBER) RETURN VARCHAR2;
+PROCEDURE getrunbyqflagandprocid(procid NUMBER, flag NUMBER, a_cursor OUT udt_refcursor);
+FUNCTION getfileid(v_filename VARCHAR2) RETURN NUMBER;  -- FIXME: is it used?
+PROCEDURE getfileandjobmetadata( v_jobid NUMBER, prod BOOLEAN, a_cursor OUT udt_refcursor);
+PROCEDURE checkfile(name VARCHAR2, a_cursor OUT udt_refcursor);
+FUNCTION checkfiletypeandversion (v_name  VARCHAR2,  v_version VARCHAR2) RETURN NUMBER;
+PROCEDURE checkeventtype (v_eventtypeid NUMBER, a_cursor OUT udt_refcursor);
+FUNCTION insertjobsrow (
+     v_configname                  VARCHAR2,
+     v_configversion               VARCHAR2,
+     v_diracjobid                  NUMBER,
+     v_diracversion                VARCHAR2,
+     v_eventinputstat              NUMBER,
+     v_exectime                    FLOAT,
+     v_firsteventnumber            NUMBER,
+     v_jobend                      TIMESTAMP,
+     v_jobstart                    TIMESTAMP,
+     v_location                    VARCHAR2,
+     v_name                        VARCHAR2,
+     v_numberofevents              NUMBER,
+     v_production                  NUMBER,
+     v_programname                 VARCHAR2,
+     v_programversion              VARCHAR2,
+     v_statisticsrequested         NUMBER,
+     v_wncpupower                  VARCHAR2,
+     v_cputime                   FLOAT,
+     v_wncache                     VARCHAR2,
+     v_wnmemory                    VARCHAR2,
+     v_wnmodel                     VARCHAR2,
+     v_workernode                  VARCHAR2,
+     v_runnumber                   NUMBER,
+     v_fillnumber                  NUMBER,
+     v_wncpuhs06                   FLOAT,
+     v_totalluminosity             NUMBER,
      v_tck                         VARCHAR2,
      v_stepid                      NUMBER,
-     v_WNMJFHS06                   FLOAT,
+     v_wnmjfhs06                   FLOAT,
      v_hlt2tck                     VARCHAR2,
      v_numproc                     NUMBER
-  ) return number;
+) RETURN NUMBER;
 
- function insertFilesRow (
-    v_Adler32                         VARCHAR2,
-    v_CreationDate                    TIMESTAMP,
-    v_EventStat                       NUMBER,
-    v_EventTypeId                     NUMBER,
-    v_FileName                        VARCHAR2,
-    v_FileTypeId                      NUMBER,
-    v_GotReplica                      VARCHAR2,
-    v_Guid                            VARCHAR2,
-    v_JobId                           NUMBER,
-    v_MD5Sum                          VARCHAR2,
-    v_FileSize                        NUMBER,
-    v_FullStat                        NUMBER,
+FUNCTION insertfilesrow (
+    v_adler32                         VARCHAR2,
+    v_creationdate                    TIMESTAMP,
+    v_eventstat                       NUMBER,
+    v_eventtypeid                     NUMBER,
+    v_filename                        VARCHAR2,
+    v_filetypeid                      NUMBER,
+    v_gotreplica                      VARCHAR2,
+    v_guid                            VARCHAR2,
+    v_jobid                           NUMBER,
+    v_md5sum                          VARCHAR2,
+    v_filesize                        NUMBER,
+    v_fullstat                        NUMBER,
     v_utc                             TIMESTAMP,
     dqflag                            VARCHAR2,
     v_luminosity                      NUMBER,
-    v_instluminosity                  Number,
-    v_visibilityFlag                  varchar2
-  )return number;
+    v_instluminosity                  NUMBER,
+    v_visibilityflag                  VARCHAR2
+) RETURN NUMBER;
 
 
-procedure insertInputFilesRow (v_FileId NUMBER, v_JobId NUMBER);
+PROCEDURE insertinputfilesrow (v_fileid NUMBER, v_jobid NUMBER);
 
-procedure updateReplicaRow(v_fileID number,v_replica varchar2);
-procedure deleteInputFiles(v_jobid number);
-procedure deletefile(v_fileid number);
-procedure deleteSetpContiner( v_prod number);
+PROCEDURE updatereplicarow(v_fileid NUMBER,v_replica VARCHAR2);
+PROCEDURE deletejob(v_jobid NUMBER);
+PROCEDURE deleteinputfiles(v_jobid NUMBER);
+PROCEDURE deletefile(v_fileid NUMBER);
+PROCEDURE deletesetpcontiner(v_prod NUMBER);  -- FIXME: to remove
+PROCEDURE deletestepcontainer(v_prod NUMBER);
 
-function insertSimConditions(
-   v_Simdesc                varchar2,
-   v_BeamCond               varchar2,
-   v_BeamEnergy             varchar2,
-   v_Generator              varchar2,
-   v_MagneticField          varchar2,
-   v_DetectorCond           varchar2,
-   v_Luminosity             varchar2,
-   v_G4settings             varchar2,
-   v_visible                varchar2
- )return number;
+FUNCTION insertsimconditions (
+    v_simdesc                VARCHAR2,
+    v_beamcond               VARCHAR2,
+    v_beamenergy             VARCHAR2,
+    v_generator              VARCHAR2,
+    v_magneticfield          VARCHAR2,
+    v_detectorcond           VARCHAR2,
+    v_luminosity             VARCHAR2,
+    v_g4settings             VARCHAR2,
+    v_visible                VARCHAR2
+) RETURN NUMBER;
 
-procedure getSimConditions(a_Cursor out udt_RefCursor);
+PROCEDURE getsimconditions(a_cursor OUT udt_refcursor);
 
-function insertDataTakingCond(
-     v_DESCRIPTION                                        VARCHAR2,
-     v_BEAMCOND                                           VARCHAR2,
-     v_BEAMENERGY                                         VARCHAR2,
-     v_MAGNETICFIELD                                      VARCHAR2,
-     v_VELO                                               VARCHAR2,
-     v_IT                                                 VARCHAR2,
-     v_TT                                                 VARCHAR2,
-     v_OT                                                 VARCHAR2,
-     v_RICH1                                              VARCHAR2,
-     v_RICH2                                              VARCHAR2,
-     v_SPD_PRS                                            VARCHAR2,
-     v_ECAL                                               VARCHAR2,
-     v_HCAL                                               VARCHAR2,
-     v_MUON                                               VARCHAR2,
-     v_L0                                                 VARCHAR2,
-     v_HLT                                                VARCHAR2,
-     v_VeloPosition                                       VARCHAR2
-  ) return number;
+FUNCTION insertdatatakingcond (
+     v_description                                        VARCHAR2,
+     v_beamcond                                           VARCHAR2,
+     v_beamenergy                                         VARCHAR2,
+     v_magneticfield                                      VARCHAR2,
+     v_velo                                               VARCHAR2,
+     v_it                                                 VARCHAR2,
+     v_tt                                                 VARCHAR2,
+     v_ot                                                 VARCHAR2,
+     v_rich1                                              VARCHAR2,
+     v_rich2                                              VARCHAR2,
+     v_spd_prs                                            VARCHAR2,
+     v_ecal                                               VARCHAR2,
+     v_hcal                                               VARCHAR2,
+     v_muon                                               VARCHAR2,
+     v_l0                                                 VARCHAR2,
+     v_hlt                                                VARCHAR2,
+     v_veloposition                                       VARCHAR2
+) RETURN NUMBER;
 
-procedure getFileMetaData(v_fileName varchar2, a_Cursor out udt_RefCursor);
-function getFileMetaData2(iftypes lists) return metadata_table PIPELINED;
-procedure getFileMetaData3(iftypes varchararray, a_Cursor out udt_RefCursor);
-function fileExists(v_fileName varchar2)return number;
-PROCEDURE inserteventTypes (v_Description VARCHAR2, v_EventTypeId NUMBER, v_Primary VARCHAR2);
-Procedure updateEventTypes(v_Description VARCHAR2, v_EventTypeId NUMBER, v_Primary VARCHAR2);
-procedure setFileInvisible(lfn varchar2);
-procedure setFileVisible(lfn varchar2);
-procedure getConfigsAndEvtType(prodId number, a_Cursor out udt_RefCursor);
-procedure getJobsbySites(prodId number,a_Cursor out udt_RefCursor);
-procedure getSteps(prodId number, a_Cursor out udt_RefCursor);
-procedure getProductionInformation(prodId number, a_Cursor out udt_RefCursor);
-procedure getNbOfFiles(prodId number, a_Cursor out udt_RefCursor);
-procedure getSizeOfFiles(prodId number, a_Cursor out udt_RefCursor);
-procedure getNumberOfEvents(prodId number, a_Cursor out udt_RefCursor);
-procedure getJobsNb(prodId number, a_Cursor out udt_RefCursor);
-procedure insertStepsContainer(v_prod number, v_stepid number, v_step number);
-procedure insertproductionscontainer_tmp(v_prod number, v_processingid number, v_simid number, v_daqperiodid number, cName varchar2, cVersion varchar2);
-procedure insertproductionscontainer(v_prod number, v_processingid number, v_simid number, v_daqperiodid number, cName varchar2, cVersion varchar2);
-procedure getEventTypes(cName varchar2, cVersion varchar2, a_Cursor out udt_RefCursor);
-function  getRunNumber(lfn varchar2) return number;
-procedure insertRunquality(run number, qid number,procid number);
-procedure getRunNbAndTck(lfn varchar2, a_Cursor out udt_RefCursor);
-procedure deleteProductionsCont(v_prod number);
-procedure getRuns(c_name varchar2, c_version varchar2,  a_Cursor out udt_RefCursor);
-function getRunProcPass(v_runNumber number) return run_proc_table;
-procedure getRunQuality(runs numberarray , a_Cursor out udt_RefCursor);
-procedure getTypeVesrsion(lfn varchar2, a_Cursor out udt_RefCursor);
-procedure getRunFiles(v_runNumber number, a_Cursor out udt_RefCursor);
-function getProcessedEvents(v_prodid number) return number;
-function isVisible(v_stepid number) return number;
-function isVisibleProd(v_prod number ) return number;
-/*function getConfToBeUpdated return conf_id_name_vers_table PIPELINED;*/
-procedure insertRuntimeProject(pr_stepid number, run_pr_stepid number);
-procedure updateRuntimeProject(pr_stepid number, run_pr_stepid number);
-procedure removeRuntimeProject(pr_stepid number);
-procedure getDirectoryMetadata(f_name varchar2, a_Cursor out udt_RefCursor);
-function getFilesForGUID(v_guid varchar2) return varchar2;
-procedure updateDataQualityFlag(v_qualityid number, lfns varchararray);
-procedure bulkcheckfiles(lfns varchararray,  a_Cursor out udt_RefCursor);
-procedure bulkupdateReplicaRow(v_replica varchar2, lfns varchararray);
-procedure bulkgetTypeVesrsion(lfns varchararray, a_Cursor out udt_RefCursor);
-procedure setObsolete;
-procedure getDirectoryMetadata_new(lfns varchararray, a_Cursor out udt_RefCursor);
-procedure bulkJobInfo(lfns varchararray, a_Cursor out udt_RefCursor);
-procedure bulkJobInfoForJobName(jobNames varchararray, a_Cursor out udt_RefCursor);
-procedure bulkJobInfoForJobId(jobids numberarray, a_Cursor out udt_RefCursor);
-procedure insertRunStatus(v_runnumber NUMBER, v_JobId NUMBER, v_Finished varchar2);
-procedure setRunFinished(v_runnumber number, isFinished varchar2);
-procedure bulkupdateFileMetaData(files bigvarchararray);
-procedure updateLuminosity(v_runnumber number);
-procedure updateDesLuminosity(v_fileid number);
-procedure getFileDesJobId(v_Filename varchar2, a_Cursor out udt_RefCursor);
-procedure getAllMetadata(v_jobid NUMBER, v_prod number, a_Cursor  out udt_RefCursor);
-function getProducedEvents(v_prodid number) return number;
-procedure bulkgetIdsFromFiles(lfns varchararray,  a_Cursor out udt_RefCursor);
-PROCEDURE insertProdnOutputFtypes(v_production number, v_stepid number, v_filetypeid number, v_visible char, v_eventtype number);
-function getJobIdWithoutReplicaCheck(v_FileName varchar2) return number;
-end;
-/
+PROCEDURE getfilemetadata(v_filename VARCHAR2, a_cursor OUT udt_refcursor);
+PROCEDURE getfilemetadata3(iftypes varchararray, a_cursor OUT udt_refcursor);
+FUNCTION fileexists(v_filename VARCHAR2)RETURN NUMBER;
+PROCEDURE inserteventtypes (v_description VARCHAR2, v_eventtypeid NUMBER, v_primary VARCHAR2);
+PROCEDURE updateeventtypes(v_description VARCHAR2, v_eventtypeid NUMBER, v_primary VARCHAR2);
+PROCEDURE setfileinvisible(lfn VARCHAR2);
+PROCEDURE setfilevisible(lfn VARCHAR2);
+PROCEDURE getconfigsandevttype(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE getjobsbysites(prodid NUMBER,a_cursor OUT udt_refcursor);
+PROCEDURE getsteps(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE getproductioninformation(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE getnboffiles(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE getsizeoffiles(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE getnumberofevents(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE getjobsnb(prodid NUMBER, a_cursor OUT udt_refcursor);
+PROCEDURE insertstepscontainer(v_prod NUMBER, v_stepid NUMBER, v_step NUMBER);
+PROCEDURE insertproductionscontainer(v_prod NUMBER, v_processingid NUMBER, v_simid NUMBER, v_daqperiodid NUMBER, cname VARCHAR2, cversion VARCHAR2);
+PROCEDURE geteventtypes(cname VARCHAR2, cversion VARCHAR2, a_cursor OUT udt_refcursor);
+FUNCTION  getrunnumber(lfn VARCHAR2) RETURN NUMBER;
+PROCEDURE insertrunquality(run NUMBER, qid NUMBER,procid NUMBER);
+PROCEDURE getrunnbandtck(lfn VARCHAR2, a_cursor OUT udt_refcursor);
+PROCEDURE deleteproductionscont(v_prod NUMBER);
+PROCEDURE getruns(c_name VARCHAR2, c_version VARCHAR2,  a_cursor OUT udt_refcursor);
+FUNCTION getrunprocpass(v_runnumber NUMBER) RETURN run_proc_table;
+PROCEDURE getrunquality(runs numberarray , a_cursor OUT udt_refcursor);
+PROCEDURE gettypevesrsion(lfn VARCHAR2, a_cursor OUT udt_refcursor);
+PROCEDURE getrunfiles(v_runnumber NUMBER, a_cursor OUT udt_refcursor);
+FUNCTION getprocessedevents(v_prodid NUMBER) RETURN NUMBER;
+FUNCTION isvisible(v_stepid NUMBER) RETURN NUMBER;
+PROCEDURE insertruntimeproject(pr_stepid NUMBER, run_pr_stepid NUMBER);
+PROCEDURE updateruntimeproject(pr_stepid NUMBER, run_pr_stepid NUMBER);
+PROCEDURE removeruntimeproject(pr_stepid NUMBER);
+PROCEDURE getdirectorymetadata(f_name VARCHAR2, a_cursor OUT udt_refcursor);
+FUNCTION getfilesforguid(v_guid VARCHAR2) RETURN VARCHAR2;
+PROCEDURE updatedataqualityflag(v_qualityid NUMBER, lfns varchararray);
+PROCEDURE bulkcheckfiles(lfns varchararray,  a_cursor OUT udt_refcursor);
+PROCEDURE bulkupdatereplicarow(v_replica VARCHAR2, lfns varchararray);
+PROCEDURE bulkgettypevesrsion(lfns varchararray, a_cursor OUT udt_refcursor);
+PROCEDURE setobsolete;
+PROCEDURE getdirectorymetadata_new(lfns varchararray, a_cursor OUT udt_refcursor);
+PROCEDURE bulkjobinfo(lfns varchararray, a_cursor OUT udt_refcursor);
+PROCEDURE bulkjobinfoforjobname(jobnames varchararray, a_cursor OUT udt_refcursor);
+PROCEDURE bulkjobinfoforjobid(jobids numberarray, a_cursor OUT udt_refcursor);
+PROCEDURE insertrunstatus(v_runnumber NUMBER, v_jobid NUMBER, v_finished VARCHAR2);
+PROCEDURE setrunfinished(v_runnumber NUMBER, isfinished VARCHAR2);
+PROCEDURE bulkupdatefilemetadata(files bigvarchararray);
+PROCEDURE updateluminosity(v_runnumber NUMBER);
+PROCEDURE updatedesluminosity(v_fileid NUMBER);
+PROCEDURE getfiledesjobid(v_filename VARCHAR2, a_cursor OUT udt_refcursor);
+FUNCTION getproducedevents(v_prodid NUMBER) RETURN NUMBER;
+PROCEDURE bulkgetidsfromfiles(lfns varchararray, a_cursor OUT udt_refcursor);
+PROCEDURE insertprodnoutputftypes(v_production NUMBER, v_stepid NUMBER, v_filetypeid NUMBER, v_visible char, v_eventtype NUMBER);
+FUNCTION getjobidwithoutreplicacheck(v_filename VARCHAR2) RETURN NUMBER;
+END;
+ /
 
 
-CREATE OR REPLACE package body BOOKKEEPINGORACLEDB as
-function  ext return udt_RefCursor is
-cur udt_RefCursor;
-begin
-open cur for
-  select * from tab;
+CREATE OR REPLACE PACKAGE BODY bookkeepingoracledb AS
 
-end;
 -------------------------------------------------------------------------------------------------------------------------------
-procedure getAvailableFileTypes(a_Cursor out udt_RefCursor )is
-begin
-open a_Cursor for
-  select distinct filetypes.name,filetypes.description from filetypes order by filetypes.name;
-end;
+PROCEDURE getavailablefiletypes(a_cursor OUT udt_refcursor )IS
+BEGIN
+OPEN a_cursor FOR
+  SELECT DISTINCT filetypes.name,filetypes.description FROM filetypes ORDER BY filetypes.name;
+END;
+
 ---------------------------------------------------------------------------------------------------------------------------------
-function insertFileTypes( v_name varchar2, description varchar2,filetype varchar2) return number is
-id number;
-found number;
-ecode    Varchar2(256);
-thisproc CONSTANT VARCHAR2(50) := 'trap_errmesg';
+FUNCTION insertfiletypes(
+  v_name VARCHAR2,
+  description VARCHAR2,
+  filetype VARCHAR2
+) RETURN NUMBER IS
+id NUMBER;
+FOUND NUMBER;
+ecode varchar2(256);
+thisproc constant varchar2(50) := 'trap_errmesg';
 found_name EXCEPTION;
 descr varchar2(256);
-begin
-found := 0;
-id := -1;
-select count(filetypeid) into found from filetypes where filetypes.name=UPPER(v_name) and filetypes.version=filetype;
-if found>0 then
-  RAISE found_name;
-else
-select distinct DESCRIPTION into descr from filetypes where
-           NAME=UPPER(v_name);
-select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
-insert into filetypes(filetypeid,name,description,version) values(id, UPPER(v_name),descr,filetype);
-commit;
-return id;
-end if;
-EXCEPTION
-  WHEN found_name then
-  raise_application_error(-20001,'The '||v_name || ' file type is already exist!!!');
-  WHEN NO_DATA_FOUND then
-   select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
-   insert into filetypes(filetypeid,name,description,version) values(id,UPPER(v_name),description,filetype);
-   commit;
-  return id;
-  WHEN OTHERS THEN
-    ecode := SQLERRM; --SQLCODE;
-    dbms_output.put_line(thisproc || ' - ' || ecode);
-    return -1;
-end;
--------------------------------------------------------------------------------------------------------------------------------
-procedure getAvailableConfigurations(
-    a_Cursor                    out udt_RefCursor
-  )is
-  begin
-   open a_Cursor for
-     select ConfigName,ConfigVersion from configurations;
-  end;
----------------------------------------------------------------------------------------------------------------------------
-procedure getStepsForSpecificIfiles(iftypes ifileslist , a_Cursor out udt_RefCursor)is
-result BOOLEAN;
-begin
-if iftypes.COUNT = 0 then
-insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion, s.OptionFiles, s.DDDb, s.condDb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mcTCK,
-                            r.stepid, r.stepname, r.ApplicationName, r.ApplicationVersion, r.OptionFiles, r.DDDb, r.condDb, r.extrapackages, r.visible, r.processingpass, r.usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mcTCK
-FROM steps s, steps r, runtimeprojects rr  where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.inputfiletypes is null;
-else
---iftypes:=inputfileslist('Charm.DST','SDST');
- for c IN (select s.stepid, s.inputfiletypes from steps s, table(s.inputfiletypes) i where i.name=iftypes(1)) LOOP
-  for i in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST loop
-  --   DBMS_OUTPUT.PUT_LINE('      Tag: '||c.inputfiletypes.FIRST(i));
-  --  DBMS_OUTPUT.PUT_LINE('      Tag: '||c.inputfiletypes(i).NAME);
-    result:=iftypes(i)=c.inputfiletypes(i).NAME;
-    EXIT WHEN not result;
-  end loop;
-  if result and iftypes.COUNT=c.inputfiletypes.LAST then
-    insert into stepsTMP select  s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion, s.OptionFiles, s.DDDb, s.condDb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mcTCK,
-                                 r.stepid, r.stepname, r.ApplicationName, r.ApplicationVersion, r.OptionFiles, r.DDDb, r.condDb, r.extrapackages, r.visible, r.processingpass, r.usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mcTCK
-    FROM steps s,  steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid;
-    DBMS_OUTPUT.PUT_LINE('      COOL: '||c.stepid);
-  end if;
-end loop;
--- LOOP
-    --inputf(i):=ftype(iftypes(i),'Y');
---    DBMS_OUTPUT.PUT_LINE('      Tag: '||iftypes(i));
--- END LOOP;
---for inputfiletypes in c1
---LOOP
-   --result := inputf = iftypes;
---   IF result THEN
---      DBMS_OUTPUT.PUT_LINE('emp1 equal to emp2');
---   END IF;
---END LOOP;
-end if;
-open  a_Cursor for
-  select * from stepsTMP;
-end;
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getStepsForFiletypes(iftypes lists, oftypes lists, match varchar2) return step_table PIPELINED is
-input BOOLEAN;
-output BOOLEAN;
 BEGIN
-IF iftypes.COUNT = 0 and oftypes.COUNT = 0 THEN
-  FOR cur in (select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion, s.OptionFiles, s.DDDb, s.condDb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.isMulticore, s.systemconfig,s.mcTCK,
-                     r.stepid as rid, r.stepname as rsname, r.ApplicationName as rappname, r.ApplicationVersion as rappver, r.OptionFiles as roptsf, r.DDDb as rdddb, r.condDb as rcondb, r.extrapackages as rextra,
-                     r.visible as rvisi, r.processingpass as rproc, r.usable as rusab, r.dqtag as rdq,r.optionsformat as ropff, r.isMulticore as rmulticore, r.systemconfig as rsystemconfig, r.mcTCK as rmctck
-  FROM steps s, steps r, runtimeprojects rr  where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.inputfiletypes is null and s.usable !='Obsolete') LOOP
-  pipe row(stepobj(cur.stepid,cur.stepname,cur.ApplicationName, cur.ApplicationVersion, cur.OptionFiles, cur.DDDb, cur.condDb, cur.extrapackages, cur.visible, cur.processingpass, cur.usable, cur.dqtag, cur.optionsformat, cur.isMulticore, cur.systemconfig, cur.mcTCK,
+  FOUND := 0;
+  id := -1;
+  SELECT count(filetypeid) INTO FOUND
+  FROM filetypes
+  WHERE filetypes.name = upper(v_name)
+    AND filetypes.version = filetype;
+  IF FOUND > 0 THEN
+    RAISE found_name;
+  ELSE
+    SELECT DISTINCT description INTO descr
+    FROM filetypes
+    WHERE name = upper(v_name);
+    SELECT coalesce(max(filetypeid) + 1, 1) INTO id
+    FROM filetypes;
+    INSERT INTO filetypes(filetypeid,
+                          name,
+                          description,
+                          VERSION)
+    VALUES(id,
+          upper(v_name),
+          descr,
+          filetype);
+    COMMIT;
+    RETURN id;
+  END IF;
+  EXCEPTION
+    WHEN found_name THEN
+      raise_application_error(-20001,'The ' || v_name || ' file type already exists!!!');
+    WHEN no_data_found THEN
+      SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
+      INSERT INTO filetypes(filetypeid,
+                           name,
+                           description,
+                           VERSION)
+      VALUES(id,
+            upper(v_name),
+            description,
+            filetype);
+      COMMIT;
+    RETURN id;
+    WHEN others THEN
+      ecode := sqlerrm; --SQLCODE;
+dbms_output.put_line(thisproc || ' - ' || ecode);
+      RETURN -1;
+END;
+
+-------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE getavailableconfigurations (
+    a_cursor                    OUT udt_refcursor
+) IS
+BEGIN
+  OPEN a_cursor FOR
+    SELECT configname,configversion FROM configurations;
+END;
+
+---------------------------------------------------------------------------------------------------------------------------
+FUNCTION getstepsforfiletypes(iftypes LISTS, oftypes LISTS, MATCH VARCHAR2) RETURN step_table pipelined IS
+INPUT BOOLEAN;
+OUTPUT BOOLEAN;
+BEGIN
+IF iftypes.count = 0 AND oftypes.count = 0 THEN
+  FOR cur IN (SELECT s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.ismulticore, s.systemconfig,s.mctck,
+                     r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra,
+                     r.visible AS rvisi, r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsystemconfig, r.mctck AS rmctck
+  FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.inputfiletypes IS NULL AND s.usable != 'Obsolete') LOOP
+  pipe row(stepobj(cur.stepid,cur.stepname,cur.applicationname, cur.applicationversion, cur.optionfiles, cur.dddb, cur.conddb, cur.extrapackages, cur.visible, cur.processingpass, cur.usable, cur.dqtag, cur.optionsformat, cur.ismulticore, cur.systemconfig, cur.mctck,
             cur.rid, cur.rsname, cur.rappname, cur.rappver, cur.roptsf, cur.rdddb, cur.rcondb, cur.rextra, cur.rvisi, cur.rproc, cur.rusab,cur.rdq,cur.ropff, cur.rmulticore, cur.rsystemconfig, cur.rmctck));
   END LOOP;
 ELSE
-IF iftypes.COUNT>0 THEN
-  FOR c IN (select s.stepid, s.inputfiletypes, s.outputfiletypes from steps s  where s.inputfiletypes is not null and s.usable!= 'Obsolete')
+IF iftypes.count > 0 THEN
+  FOR c IN (SELECT s.stepid, s.inputfiletypes, s.outputfiletypes FROM steps s  WHERE s.inputfiletypes IS NOT NULL AND s.usable != 'Obsolete')
     LOOP
      --DBMS_OUTPUT.PUT_LINE('WHY!!? '||c.stepid);
-     IF c.inputfiletypes is NOT NULL THEN
-       IF match='YES' THEN
-          IF c.inputfiletypes.COUNT != iftypes.COUNT THEN
-             input:=FALSE;
+     IF c.inputfiletypes IS NOT NULL THEN
+       IF MATCH = 'YES' THEN
+          IF c.inputfiletypes.count != iftypes.count THEN
+             INPUT:=FALSE;
           ELSE
-          FOR i IN c.inputfiletypes.FIRST .. c.inputfiletypes.LAST LOOP
-            IF i > iftypes.COUNT THEN
-              input:= FALSE;
+          FOR i IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+            IF i > iftypes.count THEN
+              INPUT:= FALSE;
             ELSE
-             input:=iftypes(i)=c.inputfiletypes(i).NAME;
+             INPUT:=iftypes(i) = c.inputfiletypes(i).name;
             END IF;
-            EXIT WHEN not input;
+            exit WHEN NOT INPUT;
           END LOOP;
           END IF;
        ELSE
-         input:=FALSE;
-         FOR i in iftypes.FIRST .. iftypes.LAST LOOP
-           FOR j in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST LOOP
-             IF iftypes(i)=c.inputfiletypes(j).NAME THEN
-	             input:=TRUE;
-               EXIT;
+         INPUT:=FALSE;
+         FOR i IN iftypes.first .. iftypes.last LOOP
+           FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+             IF iftypes(i) = c.inputfiletypes(j).name THEN
+               INPUT:=TRUE;
+               exit;
              END IF;
            END LOOP;
-         EXIT WHEN input;
+         exit WHEN INPUT;
          END LOOP;
        END IF;
      END IF;
-     IF input THEN
-       IF oftypes.COUNT > 0 THEN
-         output:=FALSE;
-         IF c.outputfiletypes is NOT NULL THEN
-           IF match='YES' THEN
-             IF c.outputfiletypes.COUNT != oftypes.COUNT THEN
-                 output:=FALSE;
+     IF INPUT THEN
+       IF oftypes.count > 0 THEN
+         OUTPUT:=FALSE;
+         IF c.outputfiletypes IS NOT NULL THEN
+           IF MATCH = 'YES' THEN
+             IF c.outputfiletypes.count != oftypes.count THEN
+                 OUTPUT:=FALSE;
              ELSE
-             FOR i in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
-               if i > iftypes.COUNT THEN
-                  output:=FALSE;
+             FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+               IF i > iftypes.count THEN
+                  OUTPUT:=FALSE;
                ELSE
-                 output:=oftypes(i)=c.outputfiletypes(i).NAME;
+                 OUTPUT:=oftypes(i) = c.outputfiletypes(i).name;
                END IF;
-               EXIT WHEN not output;
+               exit WHEN NOT OUTPUT;
              END LOOP;
              END IF;
            ELSE
-             output:=FALSE;
-             FOR i in oftypes.FIRST .. oftypes.LAST LOOP
-               FOR j in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
-                 IF oftypes(i)=c.outputfiletypes(j).NAME THEN
-	           output:=TRUE;
-                   EXIT;
+             OUTPUT:=FALSE;
+             FOR i IN oftypes.first .. oftypes.last LOOP
+               FOR j IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+                 IF oftypes(i) = c.outputfiletypes(j).name THEN
+             OUTPUT:=TRUE;
+                   exit;
                  END IF;
                END LOOP;
-               EXIT WHEN output;
+               exit WHEN OUTPUT;
              END LOOP;
            END IF;
          END IF;
        ELSE
         OUTPUT := TRUE;
        END IF;
-    IF input and output THEN
-      DBMS_OUTPUT.PUT_LINE('Insert1: '||c.stepid);
-      FOR cur in (select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion, s.OptionFiles, s.DDDb, s.condDb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.isMulticore, s.systemconfig,s.mcTCK,
-                  r.stepid as rid, r.stepname as rsname, r.ApplicationName as rappname, r.ApplicationVersion as rappver, r.OptionFiles as roptsf, r.DDDb as rdddb, r.condDb as rcondb, r.extrapackages as rextra, r.visible as rvisi,
-                  r.processingpass as rproc, r.usable as rusab, r.dqtag as rdq,r.optionsformat as ropff, r.isMulticore as rmulticore, r.systemconfig as rsysconfig, r.mctck as rmctck
-        FROM steps s, steps r, runtimeprojects rr  where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid and s.usable!='Obsolete' ) LOOP
-      pipe row(stepobj(cur.stepid,cur.stepname,cur.ApplicationName, cur.ApplicationVersion, cur.OptionFiles, cur.DDDb, cur.condDb, cur.extrapackages, cur.visible, cur.processingpass, cur.usable, cur.dqtag, cur.optionsformat, cur.isMulticore, cur.systemconfig, cur.mctck,
+    IF INPUT AND OUTPUT THEN
+      dbms_output.put_line('Insert1: ' || c.stepid);
+      FOR cur IN (SELECT s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.ismulticore, s.systemconfig,s.mctck,
+                  r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra, r.visible AS rvisi,
+                  r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsysconfig, r.mctck AS rmctck
+        FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid AND s.usable != 'Obsolete' ) LOOP
+      pipe row(stepobj(cur.stepid,cur.stepname,cur.applicationname, cur.applicationversion, cur.optionfiles, cur.dddb, cur.conddb, cur.extrapackages, cur.visible, cur.processingpass, cur.usable, cur.dqtag, cur.optionsformat, cur.ismulticore, cur.systemconfig, cur.mctck,
                cur.rid, cur.rsname, cur.rappname, cur.rappver, cur.roptsf, cur.rdddb, cur.rcondb, cur.rextra, cur.rvisi, cur.rproc, cur.rusab,cur.rdq,cur.ropff, cur.rmulticore, cur.rsysconfig, cur.mctck));
       END LOOP;
     END IF;
   END IF;
  END LOOP;
 ELSE
-  FOR c IN (select s.stepid, s.inputfiletypes, s.outputfiletypes from steps s where s.outputfiletypes is not null and s.usable!= 'Obsolete')
+  FOR c IN (SELECT s.stepid, s.inputfiletypes, s.outputfiletypes FROM steps s WHERE s.outputfiletypes IS NOT NULL AND s.usable != 'Obsolete')
     LOOP
-     output:=FALSE;
-     IF c.outputfiletypes is NOT NULL THEN
-       IF match='YES' THEN
-         if c.outputfiletypes.COUNT!=oftypes.COUNT THEN
-             output:=FALSE;
+     OUTPUT:=FALSE;
+     IF c.outputfiletypes IS NOT NULL THEN
+       IF MATCH = 'YES' THEN
+         IF c.outputfiletypes.count != oftypes.count THEN
+             OUTPUT:=FALSE;
          ELSE
-         FOR i IN c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
-           IF i > oftypes.COUNT THEN
-             output:=FALSE;
+         FOR i IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+           IF i > oftypes.count THEN
+             OUTPUT:=FALSE;
            ELSE
-             output:=oftypes(i)=c.outputfiletypes(i).NAME;
+             OUTPUT:=oftypes(i) = c.outputfiletypes(i).name;
            END IF;
-           EXIT WHEN not output;
+           exit WHEN NOT OUTPUT;
          END LOOP;
          END IF;
        ELSE
-        output:=FALSE;
-        FOR i in oftypes.FIRST .. oftypes.LAST LOOP
-          FOR j in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
-            IF oftypes(i)=c.outputfiletypes(j).NAME THEN
-	      output:=TRUE;
-              EXIT;
+        OUTPUT:=FALSE;
+        FOR i IN oftypes.first .. oftypes.last LOOP
+          FOR j IN c.outputfiletypes.first .. c.outputfiletypes.last LOOP
+            IF oftypes(i) = c.outputfiletypes(j).name THEN
+        OUTPUT:=TRUE;
+              exit;
             END IF;
           END LOOP;
-          EXIT WHEN output;
+          exit WHEN OUTPUT;
         END LOOP;
        END IF;
      END IF;
-     IF output THEN
-       IF iftypes.COUNT > 0 THEN
-         input:=FALSE;
-         IF match='YES' THEN
-           IF c.inputfiletypes.COUNT!=iftypes.COUNT THEN
-              input:=FALSE;
+     IF OUTPUT THEN
+       IF iftypes.count > 0 THEN
+         INPUT:=FALSE;
+         IF MATCH = 'YES' THEN
+           IF c.inputfiletypes.count != iftypes.count THEN
+              INPUT:=FALSE;
            ELSE
-           FOR j in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST LOOP
-             IF j > iftypes.COUNT THEN
-               input:=FALSE;
+           FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+             IF j > iftypes.count THEN
+               INPUT:=FALSE;
              ELSE
-               input:=iftypes(j)=c.inputfiletypes(j).NAME;
+               INPUT:=iftypes(j) = c.inputfiletypes(j).name;
              END IF;
-             EXIT WHEN not output;
+             exit WHEN NOT OUTPUT;
            END LOOP;
            END IF;
          ELSE
-           input:=FALSE;
-           FOR i in iftypes.FIRST .. iftypes.LAST LOOP
-             FOR j in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST LOOP
-               IF iftypes(i)=c.inputfiletypes(j).NAME THEN
-	               input:=TRUE;
-                 EXIT;
+           INPUT:=FALSE;
+           FOR i IN iftypes.first .. iftypes.last LOOP
+             FOR j IN c.inputfiletypes.first .. c.inputfiletypes.last LOOP
+               IF iftypes(i) = c.inputfiletypes(j).name THEN
+                 INPUT:=TRUE;
+                 exit;
                END IF;
              END LOOP;
-             EXIT WHEN input;
+             exit WHEN INPUT;
            END LOOP;
          END IF;
        ELSE
-        input := TRUE;
+        INPUT := TRUE;
        END IF;
-    IF input and output THEN
-      DBMS_OUTPUT.PUT_LINE('Insert2: '||c.stepid);
-      FOR cur2 in (select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion, s.OptionFiles, s.DDDb, s.condDb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.isMulticore, s.systemconfig,s.mctck,
-                          r.stepid as rid, r.stepname as rsname, r.ApplicationName as rappname, r.ApplicationVersion as rappver, r.OptionFiles as roptsf, r.DDDb as rdddb, r.condDb as rcondb, r.extrapackages as rextra, r.visible as rvisi,
-                          r.processingpass as rproc, r.usable as rusab, r.dqtag as rdq,r.optionsformat as ropff, r.isMulticore as rmulticore, r.systemconfig as rsysconfig, r.mctck as rmctck
-        FROM steps s, steps r, runtimeprojects rr  where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid and s.usable!='Obsolete') LOOP
-        pipe row(stepobj(cur2.stepid,cur2.stepname,cur2.ApplicationName, cur2.ApplicationVersion, cur2.OptionFiles, cur2.DDDb, cur2.condDb, cur2.extrapackages, cur2.visible, cur2.processingpass, cur2.usable, cur2.dqtag, cur2.optionsformat, cur2.isMulticore, cur2.systemconfig,cur2.mctck,
+    IF INPUT AND OUTPUT THEN
+      dbms_output.put_line('Insert2: ' || c.stepid);
+      FOR cur2 IN (SELECT s.stepid, s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.visible, s.processingpass, s.usable, s.dqtag,s.optionsformat, s.ismulticore, s.systemconfig,s.mctck,
+                          r.stepid AS rid, r.stepname AS rsname, r.applicationname AS rappname, r.applicationversion AS rappver, r.optionfiles AS roptsf, r.dddb AS rdddb, r.conddb AS rcondb, r.extrapackages AS rextra, r.visible AS rvisi,
+                          r.processingpass AS rproc, r.usable AS rusab, r.dqtag AS rdq,r.optionsformat AS ropff, r.ismulticore AS rmulticore, r.systemconfig AS rsysconfig, r.mctck AS rmctck
+        FROM steps s, steps r, runtimeprojects rr  WHERE s.stepid = rr.stepid( + ) AND r.stepid( + ) = rr.runtimeprojectid AND s.stepid = c.stepid AND s.usable != 'Obsolete') LOOP
+        pipe row(stepobj(cur2.stepid,cur2.stepname,cur2.applicationname, cur2.applicationversion, cur2.optionfiles, cur2.dddb, cur2.conddb, cur2.extrapackages, cur2.visible, cur2.processingpass, cur2.usable, cur2.dqtag, cur2.optionsformat, cur2.ismulticore, cur2.systemconfig,cur2.mctck,
                           cur2.rid, cur2.rsname, cur2.rappname, cur2.rappver, cur2.roptsf, cur2.rdddb, cur2.rcondb, cur2.rextra, cur2.rvisi, cur2.rproc, cur2.rusab,cur2.rdq,cur2.ropff, cur2.rmulticore, cur2.rsysconfig, cur2.rmctck));
       END LOOP;
     END IF;
@@ -471,153 +438,8 @@ ELSE
 END IF;
 END IF;
 END;
----------------------------------------------------------------------------------------------------------------------------
-procedure getStepsForSpecificOfiles(oftypes ifileslist, a_Cursor out udt_RefCursor)is
-result BOOLEAN;
-begin
-if oftypes.COUNT = 0 then
-insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion,s.OptionFiles,s.DDDb, s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig,s.mctck,
-     r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-    FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.outputfiletypes is null;
-else
- for c IN (select s.stepid, s.outputfiletypes from steps s, table(s.outputfiletypes) i where i.name=oftypes(1)) LOOP
-  for i in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST loop
-    result:=oftypes(i)=c.outputfiletypes(i).NAME;
-    EXIT WHEN not result;
-  end loop;
-  if result and oftypes.COUNT=c.outputfiletypes.LAST then
-    insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion,s.OptionFiles,s.DDDb, s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-     r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig , r.mctck
-    FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid;
-  end if;
-end loop;
-end if;
-open  a_Cursor for
-  select * from stepsTMP;
-end;
 
 ---------------------------------------------------------------------------------------------------------------------------
-procedure getStepsForIfiles(iftypes ifileslist , a_Cursor out udt_RefCursor)is
-result BOOLEAN;
-begin
-if iftypes.COUNT = 0 then
-insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName, s.ApplicationVersion,s.OptionFiles,s.DDDb, s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-     r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-     FROM steps s,steps r, runtimeprojects rr
-     where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.inputfiletypes is null;
-else
- for c IN (select s.stepid, s.inputfiletypes from steps s, table(s.inputfiletypes)) LOOP
-  for j in iftypes.FIRST .. iftypes.LAST loop
-    result := False;
-    for i in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST loop
-      result:=iftypes(j)=c.inputfiletypes(i).NAME;
-      exit when result;
-    end LOOP;
-  end loop;
-  if result then
-    insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-       FROM steps s, steps r, runtimeprojects rr
-     where s.stepid=c.stepid and s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid;
-  end if;
-end loop;
-end if;
-open  a_Cursor for
-  select distinct * from stepsTMP;
-end;
---------------------------------------------------------------------------------------
-procedure getStepsForOfiles(oftypes ifileslist, a_Cursor out udt_RefCursor) is
-result BOOLEAN;
-BEGIN
-IF oftypes.COUNT = 0 THEN
-  insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-     from steps s, steps r, runtimeprojects rr  where
- s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.outputfiletypes is null;
-ELSE
-  FOR c IN (SELECT s.stepid, s.outputfiletypes FROM steps s, table(s.outputfiletypes)) LOOP
-    FOR j IN oftypes.FIRST .. oftypes.LAST LOOP
-      result := False;
-      FOR i in c.outputfiletypes.FIRST .. c.outputfiletypes.LAST LOOP
-        result:=oftypes(j)=c.outputfiletypes(i).NAME;
-        exit when result;
-      END LOOP;
-    END LOOP;
-    IF result THEN
-      INSERT INTO stepsTMP SELECT s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-    FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid;
-    END IF;
-  END LOOP;
-END IF;
-OPEN a_Cursor for
- select distinct * from stepsTMP;
-end;
----------------------------------------------------------------------------------------------------------------------------
-procedure getAvailebleSteps(iftypes ifileslist, a_Cursor out udt_RefCursor)is
-result BOOLEAN;
-begin
-if iftypes.COUNT = 0 then
-insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable,s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-      FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.inputfiletypes is null;
-else
---iftypes:=inputfileslist('Charm.DST','SDST');
- for c IN (select s.stepid, s.inputfiletypes from steps s, table(s.inputfiletypes) i where i.name=iftypes(1)) LOOP
-  for i in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST loop
-  --   DBMS_OUTPUT.PUT_LINE('      Tag: '||c.inputfiletypes.FIRST(i));
-  --  DBMS_OUTPUT.PUT_LINE('      Tag: '||c.inputfiletypes(i).NAME);
-    result:=iftypes(i)=c.inputfiletypes(i).NAME;
-    EXIT WHEN not result;
-  end loop;
-  if result and iftypes.COUNT=c.inputfiletypes.LAST then
-    insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-    FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid;
-    DBMS_OUTPUT.PUT_LINE('      COOL: '||c.stepid);
-  end if;
-end loop;
--- LOOP
-    --inputf(i):=ftype(iftypes(i),'Y');
---    DBMS_OUTPUT.PUT_LINE('      Tag: '||iftypes(i));
--- END LOOP;
---for inputfiletypes in c1
---LOOP
-   --result := inputf = iftypes;
---   IF result THEN
---      DBMS_OUTPUT.PUT_LINE('emp1 equal to emp2');
---   END IF;
---END LOOP;
-end if;
-open  a_Cursor for
-  select * from stepsTMP;
-end;
-procedure  getAvailebleStepsRealAndMC(iftypes ifileslist , a_Cursor out udt_RefCursor)is
-result BOOLEAN;
-begin
-if iftypes.COUNT = 0 then
-insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-    FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.inputfiletypes is null;
-else
- for c IN (select s.stepid, s.inputfiletypes from steps s, table(s.inputfiletypes)) LOOP
-  for j in iftypes.FIRST .. iftypes.LAST loop
-    result := False;
-    for i in c.inputfiletypes.FIRST .. c.inputfiletypes.LAST loop
-      result:=iftypes(j)=c.inputfiletypes(i).NAME;
-      exit when result;
-    end LOOP;
-  end loop;
-  if result then
-    insert into stepsTMP select s.stepid, s.stepname, s.ApplicationName,s.ApplicationVersion,s.OptionFiles,s.DDDb,s.condDb,s.extrapackages,s.visible, s.processingpass, s.usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, s.mctck,
-    r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.isMulticore, r.systemconfig, r.mctck
-    FROM steps s, steps r, runtimeprojects rr where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid and s.stepid=c.stepid;
-  end if;
-end loop;
-end if;
-open  a_Cursor for
-  select distinct * from stepsTMP;
-end;
 
 function getProductionProcessingPass(prod NUMBER) return varchar2 is
 retval varchar2(256);
@@ -635,1282 +457,1324 @@ raise_application_error(-20004, 'error found! The processing pass does not exist
 --dbms_output.put_line(thisproc || ' - ' || ecode);
 return null;
 end;
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-function getProductionProcessingPassId(prod number) return number is
-result Number;
-ecode    NUMBER(38);
-thisproc CONSTANT VARCHAR2(50) := 'trap_errmesg';
-begin
-select distinct processingid into result from productionscontainer prod where prod.production=prod;
-return result;
-EXCEPTION WHEN OTHERS THEN
-ecode := SQLERRM;
-end;
+FUNCTION getproductionprocessingpassid(
+  prod NUMBER) RETURN NUMBER IS
+RESULT Number;
+ecode number(38);
+thisproc constant varchar2(50) := 'trap_errmesg';
+BEGIN
+  SELECT DISTINCT processingid INTO RESULT
+  FROM productionscontainer prod
+  WHERE prod.production = prod;
+  RETURN RESULT;
+  EXCEPTION WHEN others THEN
+  ecode := sqlerrm;
+END;
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getAvailableEventTypes(a_Cursor out udt_RefCursor)is
-begin
- open a_Cursor for
-   select distinct EVENTTYPEID, DESCRIPTION from eventtypes;
-end;
+PROCEDURE getavailableeventtypes(a_cursor OUT udt_refcursor) IS
+BEGIN
+  OPEN a_cursor FOR
+    SELECT DISTINCT eventtypeid, description
+    FROM eventtypes;
+END;
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getJobInfo(
-   lfn                             varchar2,
-   a_Cursor                        out udt_RefCursor
- )is
- begin
-  open a_Cursor for
-   select  jobs.DIRACJOBID, jobs.DIRACVERSION, jobs.EVENTINPUTSTAT, jobs.EXECTIME, jobs.FIRSTEVENTNUMBER,jobs.LOCATION,  jobs.NAME, jobs.NUMBEROFEVENTS,
-                 jobs.STATISTICSREQUESTED, jobs.WNCPUPOWER, jobs.CPUTIME, jobs.WNCACHE, jobs.WNMEMORY, jobs.WNMODEL, jobs.WORKERNODE, 
-                 jobs.WNCPUHS06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programName, jobs.programVersion, jobs.WNMJFHS06, jobs.HLT2TCK, jobs.NumberOfProcessors
-   from jobs,files
-   where files.jobid=jobs.jobid and  files.filename=lfn;
- end;
+PROCEDURE getjobinfo(
+   lfn                             VARCHAR2,
+   a_cursor                        OUT udt_refcursor
+) IS
+BEGIN
+  OPEN a_cursor FOR
+    SELECT jobs.diracjobid,
+           jobs.diracversion,
+           jobs.eventinputstat,
+           jobs.exectime,
+           jobs.firsteventnumber,
+           jobs.location,
+           jobs.name,
+           jobs.numberofevents,
+           jobs.statisticsrequested,
+           jobs.wncpupower,
+           jobs.cputime,
+           jobs.wncache,
+           jobs.wnmemory,
+           jobs.wnmodel,
+           jobs.workernode,
+           jobs.wncpuhs06,
+           jobs.jobid,
+           jobs.totalluminosity,
+           jobs.production,
+           jobs.programname,
+           jobs.programversion,
+           jobs.wnmjfhs06,
+           jobs.hlt2tck,
+           jobs.numberofprocessors
+    FROM jobs,files
+    WHERE files.jobid = jobs.jobid
+      AND files.filename = lfn;
+END;
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure insertTag(
-    V_name                            varchar2,
-    V_tag                             varchar2
- ) is
-  tid number;
-  begin
-  select tags_index_seq.nextval into tid from dual;
-  insert into tags(tagid,name, tag) values(tid, V_name, V_tag);
+PROCEDURE inserttag(
+    v_name                            VARCHAR2,
+    v_tag                             VARCHAR2
+) IS
+tid NUMBER;
+BEGIN
+  SELECT tags_index_seq.nextval INTO tid
+  FROM dual;
+  INSERT INTO tags(tagid,name, tag) VALUES(tid, v_name, v_tag);
   COMMIT;
-end;
+END;
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getProcessingPassId(root varchar2, fullpath varchar2) return number is
-result number;
+FUNCTION getprocessingpassid(root VARCHAR2, fullpath VARCHAR2) RETURN NUMBER IS
+RESULT NUMBER;
 ecode number(38);
-begin
-result:=-1;
-select distinct v.id into result from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID
-FROM processing v   START WITH id in (select distinct id from processing where name=root)
-CONNECT BY NOCYCLE PRIOR  id=parentid) v
-where v.path=fullpath;
-return  result;
-EXCEPTION WHEN OTHERS THEN
-ecode := SQLERRM;
-end;
+BEGIN
+  RESULT:=-1;
+  SELECT DISTINCT v.id INTO RESULT
+  FROM (SELECT DISTINCT sys_connect_by_path(name, '/') path, id id
+  FROM processing v START WITH id IN (
+    SELECT DISTINCT id
+    FROM processing
+    WHERE name = root
+    )
+  CONNECT BY NOCYCLE PRIOR  id = parentid) v
+  WHERE v.path = fullpath;
+  RETURN  RESULT;
+  EXCEPTION
+    WHEN others THEN
+      ecode := sqlerrm;
+END;
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getDataQualityId(name varchar2) return number is
-result number;
+FUNCTION getdataqualityid(name VARCHAR2) RETURN NUMBER IS
+RESULT NUMBER;
 ecode number(38);
-begin
-result:=1;
-select distinct qualityid into result from dataquality where dataqualityflag=name;
-return result;
-EXCEPTION WHEN OTHERS THEN
-ecode := SQLERRM;
-end;
+BEGIN
+  RESULT:=1;
+  SELECT DISTINCT qualityid INTO RESULT
+  FROM dataquality
+  WHERE dataqualityflag = name;
+  RETURN RESULT;
+  EXCEPTION WHEN others THEN
+  ecode := sqlerrm;
+END;
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getQFlagByRunAndProcId(rnumber number, procid number) return varchar2 is
-result varchar2(256);
+FUNCTION getqflagbyrunandprocid (
+  rnumber NUMBER,
+  procid NUMBER)
+RETURN VARCHAR2 IS RESULT varchar2(256);
 ecode number(38);
-begin
-result:= -1;
-select d.dataqualityflag into result  from dataquality d, newrunquality r where r.runnumber=rnumber and r.processingid=procid and d.qualityid=r.qualityid;
-return  result;
-EXCEPTION
-WHEN NO_DATA_FOUND THEN
-raise_application_error(-20014, 'The data quality does not exists in the newrunquality table!');
-WHEN OTHERS THEN
-ecode := SQLERRM;
-end;
+BEGIN
+  RESULT:= -1;
+  SELECT d.dataqualityflag INTO RESULT
+  FROM dataquality d, newrunquality r
+  WHERE r.runnumber = rnumber
+    AND r.processingid = procid
+    AND d.qualityid = r.qualityid;
+  RETURN RESULT;
+  EXCEPTION
+  WHEN no_data_found THEN
+  raise_application_error(-20014, 'The data quality does not exist in the newrunquality table!');
+  WHEN others THEN
+  ecode := sqlerrm;
+END;
 
-Procedure getRunByQflagAndProcId(procid number, flag number, a_Cursor                out udt_RefCursor ) is
-begin
-if flag is not null then
-open a_Cursor for select runnumber   from newrunquality where processingid=procid and qualityid=flag;
-else
-open a_Cursor for select runnumber   from newrunquality where processingid=procid;
-end if;
-end;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE getrunbyqflagandprocid(
+  procid NUMBER,
+  flag NUMBER,
+  a_cursor OUT udt_refcursor ) IS
+BEGIN
+  IF flag IS NOT NULL THEN
+    OPEN a_cursor FOR
+      SELECT runnumber
+      FROM newrunquality
+      WHERE processingid = procid
+        AND qualityid = flag;
+  ELSE
+    OPEN a_cursor FOR SELECT runnumber FROM newrunquality WHERE processingid = procid;
+  END IF;
+END;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getLFNsByProduction(
-   prod                    number,
-   a_Cursor                out udt_RefCursor
- )is
- begin
-   open a_Cursor for
-     select filename from files,jobs where jobs.jobid=files.jobid and
-     jobs.jobid=files.jobid and jobs.production=prod;
-
-/*   select filename from files join jobs on jobs.jobid=files.jobid and
-     jobs.production=1622;
- */
- end;
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getFileID(
-    v_FileName VARCHAR2
- ) RETURN number is
- fid number;
- begin
+FUNCTION getfileid(
+  v_filename VARCHAR2
+)
+RETURN NUMBER IS fid NUMBER;
+BEGIN
   fid := 0;
-  select files.fileid into fid from files where files.filename=v_FileName;
-  return fid;
-  EXCEPTION WHEN OTHERS THEN
+  SELECT files.fileid INTO fid
+  FROM files
+  WHERE files.filename = v_filename;
+  RETURN fid;
+  EXCEPTION WHEN others THEN
   RETURN NULL;
- end;
+END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getJobIdFromInputFiles(
-   v_FileId                        number,
-   a_Cursor                        out udt_RefCursor
- ) is
- begin
- open a_Cursor for
-  select inputfiles.jobid from inputfiles where inputfiles.fileid=v_FileId;
- end;
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getFNameFiDRepWithJID(
-   v_jobid NUMBER,
-   a_Cursor                        out udt_RefCursor
- ) is
- begin
-  open a_Cursor for
-   select files.fileName,files.fileid,files.gotreplica from files where files.jobid=v_jobid;
- end;
+PROCEDURE getfileandjobmetadata(
+  v_jobid NUMBER,
+  prod BOOLEAN,
+  a_cursor OUT udt_refcursor
+) IS
+BEGIN
+  IF NOT prod THEN
+    OPEN a_cursor FOR
+      SELECT files.filename,
+             files.fileid,
+             files.gotreplica,
+             0,
+             files.eventstat,
+             files.eventtypeid,
+             files.luminosity,
+             files.instluminosity,
+             filetypes.name
+      FROM files, filetypes
+      WHERE files.filetypeid = filetypes.filetypeid
+        AND files.jobid = v_jobid;
+  ELSE
+    OPEN a_cursor FOR
+      SELECT files.filename,
+             files.fileid,
+             files.gotreplica,
+             jobs.production,
+             files.eventstat,
+             files.eventtypeid,
+             files.luminosity,
+             files.instluminosity,
+             filetypes.name
+      FROM files, jobs, filetypes
+      WHERE files.filetypeid = filetypes.filetypeid
+        AND jobs.jobid = files.jobid
+        AND files.jobid = v_jobid;
+  END IF;
+END;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getFileAndJobMetadata(
-   v_jobid NUMBER,
-   prod BOOLEAN,
-   a_Cursor                        out udt_RefCursor
- ) is
- begin
-  if not prod  then
-    open a_Cursor for
-    select files.fileName,files.fileid,files.gotreplica, 0, files.eventstat,
-           files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name from files, filetypes where files.filetypeid=filetypes.filetypeid and files.jobid=v_jobid;
-  else
-    open a_Cursor for
-    select files.fileName,files.fileid,files.gotreplica, jobs.production, files.eventstat,
-           files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name from files, jobs, filetypes where files.filetypeid=filetypes.filetypeid and jobs.jobid=files.jobid and files.jobid=v_jobid;
-  end if;
- end;
-
+PROCEDURE checkfile(
+  name                            VARCHAR2,
+  a_cursor                        OUT udt_refcursor
+) IS
+BEGIN
+  OPEN a_cursor FOR
+    SELECT fileid,
+           jobid,
+           filetypeid
+    FROM files
+    WHERE filename = name;
+END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure checkfile(
-      name                            varchar2,
-      a_Cursor                        out udt_RefCursor
- )is
- begin
-   open a_Cursor for
-    select fileId, jobId, filetypeid from files where filename=name;
- end;
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function checkFileTypeAndVersion (
-       v_NAME                          VARCHAR2,
-       v_VERSION                       VARCHAR2
- ) return number is
- id number :=0;
- descr varchar2(256);
- begin
-   select filetypeId into id from filetypes where
-           NAME=v_NAME and
-           version=v_VERSION;
-   return id;
-   EXCEPTION
-    when TOO_MANY_ROWS THEN
-     select min(filetypeid) into id from filetypes where NAME=v_NAME and version=v_VERSION; return id;
-    WHEN OTHERS THEN
-   select count(*) into id from filetypes where
-           NAME=v_NAME;
-   IF id > 0 then
-   select distinct DESCRIPTION into descr from filetypes where
-           NAME=v_NAME;
-   select COALESCE(max(filetypeid)+1, 1) into id from filetypes;
-   insert into filetypes(filetypeid,name,description,version) values(id,v_NAME,descr,v_VERSION);
-   commit;
-   return id;
-   else
-     raise_application_error(-20013, 'File type does not exist!');
-   end IF;
- end;
+FUNCTION checkfiletypeandversion (
+       v_name                          VARCHAR2,
+       v_version                       VARCHAR2
+) RETURN NUMBER IS
+  id NUMBER :=0;
+  descr varchar2(256);
+  BEGIN
+    SELECT filetypeid INTO id
+    FROM filetypes
+    WHERE name = v_name
+      AND VERSION = v_version;
+    RETURN id;
+    EXCEPTION
+     WHEN too_many_rows THEN
+      SELECT min(filetypeid) INTO id
+      FROM filetypes
+      WHERE name = v_name
+        AND VERSION = v_version;RETURN id;
+     WHEN others THEN
+    SELECT count(*) INTO id
+    FROM filetypes
+    WHERE name = v_name;
+    IF id > 0 THEN
+    SELECT DISTINCT description INTO descr
+    FROM filetypes
+    WHERE name = v_name;
+    SELECT coalesce(max(filetypeid) + 1, 1) INTO id FROM filetypes;
+    INSERT INTO filetypes(filetypeid,name,description,VERSION) VALUES(id,v_name,descr,v_version);
+    COMMIT;
+    RETURN id;
+    ELSE
+      raise_application_error(-20013, 'File type does not exist!');
+    END IF;
+  END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure checkEventType (
-    v_EVENTTYPEID                  NUMBER,
-    a_Cursor                        out udt_RefCursor
- )is
- begin
-   open a_Cursor for
-    select DESCRIPTION,PRIMARY from eventtypes where
-      EVENTTYPEID=v_EVENTTYPEID;
- end;
+PROCEDURE checkeventtype (
+    v_eventtypeid                  NUMBER,
+    a_cursor                       OUT udt_refcursor
+ ) IS
+ BEGIN
+   OPEN a_cursor FOR
+    SELECT description, PRIMARY
+    FROM eventtypes
+    WHERE eventtypeid = v_eventtypeid;
+ END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function insertJobsRow (
-     v_ConfigName                  VARCHAR2,
-     v_ConfigVersion               VARCHAR2,
-     v_DiracJobId                  NUMBER,
-     v_DiracVersion                VARCHAR2,
-     v_EventInputStat              NUMBER,
-     v_ExecTime                    FLOAT,
-     v_FirstEventNumber            NUMBER,
-     v_JobEnd                      TIMESTAMP,
-     v_JobStart                    TIMESTAMP,
-     v_Location                    VARCHAR2,
-     v_Name                        VARCHAR2,
-     v_NumberOfEvents              NUMBER,
-     v_Production                  NUMBER,
-     v_ProgramName                 VARCHAR2,
-     v_ProgramVersion              VARCHAR2,
-     v_StatisticsRequested         NUMBER,
-     v_WNCPUPower                  VARCHAR2,
-     v_CPUTime                   FLOAT,
-     v_WNCache                     VARCHAR2,
-     v_WNMemory                    VARCHAR2,
-     v_WNModel                     VARCHAR2,
-     v_WorkerNode                  VARCHAR2,
-     v_runNumber                   NUMBER,
-     v_fillNumber                  NUMBER,
-     v_WNCPUHS06                   FLOAT,
-     v_totalLuminosity             NUMBER,
+FUNCTION insertjobsrow (
+     v_configname                  VARCHAR2,
+     v_configversion               VARCHAR2,
+     v_diracjobid                  NUMBER,
+     v_diracversion                VARCHAR2,
+     v_eventinputstat              NUMBER,
+     v_exectime                    FLOAT,
+     v_firsteventnumber            NUMBER,
+     v_jobend                      TIMESTAMP,
+     v_jobstart                    TIMESTAMP,
+     v_location                    VARCHAR2,
+     v_name                        VARCHAR2,
+     v_numberofevents              NUMBER,
+     v_production                  NUMBER,
+     v_programname                 VARCHAR2,
+     v_programversion              VARCHAR2,
+     v_statisticsrequested         NUMBER,
+     v_wncpupower                  VARCHAR2,
+     v_cputime                     FLOAT,
+     v_wncache                     VARCHAR2,
+     v_wnmemory                    VARCHAR2,
+     v_wnmodel                     VARCHAR2,
+     v_workernode                  VARCHAR2,
+     v_runnumber                   NUMBER,
+     v_fillnumber                  NUMBER,
+     v_wncpuhs06                   FLOAT,
+     v_totalluminosity             NUMBER,
      v_tck                         VARCHAR2,
      v_stepid                      NUMBER,
-     v_WNMJFHS06                   FLOAT,
+     v_wnmjfhs06                   FLOAT,
      v_hlt2tck                     VARCHAR2,
      v_numproc                     NUMBER
-  )return number is
-  jid       number;
-  configId  number;
-  existInDB  number;
-  ecode    Varchar2(256);
-  begin
-    configId := 0;
-    select count(*) into existInDB from configurations where ConfigName=v_ConfigName and ConfigVersion=v_ConfigVersion;
-    if existInDB=0 then
-      select configurationId_seq.nextval into configId from dual;
-      insert into configurations(ConfigurationId,ConfigName,ConfigVersion)values(configId, v_ConfigName, v_ConfigVersion);
-      commit;
-    else
-     select configurationid into configId from configurations where ConfigName=v_ConfigName and ConfigVersion=v_ConfigVersion;
-    end if;
+  )RETURN NUMBER IS
+  jid       NUMBER;
+  configid  NUMBER;
+  existindb  NUMBER;
+  ecode    varchar2(256);
+  BEGIN
+    configid := 0;
+    SELECT count(*) INTO existindb FROM configurations WHERE configname = v_configname AND configversion = v_configversion;
+    IF existindb = 0 THEN
+      SELECT configurationid_seq.nextval INTO configid FROM dual;
+      INSERT INTO configurations(configurationid,configname,configversion)VALUES(configid, v_configname, v_configversion);
+      COMMIT;
+    ELSE
+     SELECT configurationid INTO configid FROM configurations WHERE configname = v_configname AND configversion = v_configversion;
+    END IF;
 
-    select jobId_seq.nextval into jid from dual;
-     insert into jobs(
-         JobId,
-         ConfigurationId,
-         DiracJobId,
-         DiracVersion,
-         EventInputStat,
-         ExecTime,
-         FirstEventNumber,
-         JobEnd,
-         JobStart,
-         Location,
-         Name,
-         NumberOfEvents,
-         Production,
-         ProgramName,
-         ProgramVersion,
-         StatisticsRequested,
-         WNCPUPower,
-         CPUTime,
-         WNCache,
-         WNMemory,
-         WNModel,
-         WorkerNode,
-         RunNumber,
-         FillNumber,
-         WNCPUHS06,
-         TotalLuminosity,
-         Tck,
-         StepID,
-         WNMJFHS06,
-         HLT2Tck,
-         NumberOfProcessors
+    SELECT jobid_seq.nextval INTO jid FROM dual;
+     INSERT INTO jobs(
+         jobid,
+         configurationid,
+         diracjobid,
+         diracversion,
+         eventinputstat,
+         exectime,
+         firsteventnumber,
+         jobend,
+         jobstart,
+         LOCATION,
+         name,
+         numberofevents,
+         production,
+         programname,
+         programversion,
+         statisticsrequested,
+         wncpupower,
+         cputime,
+         wncache,
+         wnmemory,
+         wnmodel,
+         workernode,
+         runnumber,
+         fillnumber,
+         wncpuhs06,
+         totalluminosity,
+         tck,
+         stepid,
+         wnmjfhs06,
+         hlt2tck,
+         numberofprocessors
          )
-   values(
+   VALUES(
           jid,
-          configId,
-          v_DiracJobId,
-          v_DiracVersion,
-          v_EventInputStat,
-          v_ExecTime,
-          v_FirstEventNumber,
-          v_JobEnd,
-          v_JobStart,
-          v_Location,
-          v_Name,
-          v_NumberOfEvents,
-          v_Production,
-          v_ProgramName,
-          v_ProgramVersion,
-          v_StatisticsRequested,
-          v_WNCPUPower,
-          v_CPUTime,
-          v_WNCache,
-          v_WNMemory,
-          v_WNModel,
-          v_WorkerNode,
-          v_runNumber,
-          v_fillNumber,
-          v_WNCPUHS06,
-          v_totalLuminosity,
+          configid,
+          v_diracjobid,
+          v_diracversion,
+          v_eventinputstat,
+          v_exectime,
+          v_firsteventnumber,
+          v_jobend,
+          v_jobstart,
+          v_location,
+          v_name,
+          v_numberofevents,
+          v_production,
+          v_programname,
+          v_programversion,
+          v_statisticsrequested,
+          v_wncpupower,
+          v_cputime,
+          v_wncache,
+          v_wnmemory,
+          v_wnmodel,
+          v_workernode,
+          v_runnumber,
+          v_fillnumber,
+          v_wncpuhs06,
+          v_totalluminosity,
           v_tck,
           v_stepid,
-          v_WNMJFHS06,
+          v_wnmjfhs06,
           v_hlt2tck,
           v_numproc);
 
-  commit;
-  return jid;
+  COMMIT;
+  RETURN jid;
   EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
+  WHEN dup_val_on_index THEN
     jid:=0;
-    if v_Production < 0 then
-      select j.jobid into jid from jobs j where j.runnumber=v_runNumber and j.production<0;
-    ELSE 
-       select j.jobid into jid from jobs j where j.name=v_Name and j.production=v_Production;
+    IF v_production < 0 THEN
+      SELECT j.jobid INTO jid FROM jobs j WHERE j.runnumber = v_runnumber AND j.production < 0;
+    ELSE
+       SELECT j.jobid INTO jid FROM jobs j WHERE j.name = v_name AND j.production = v_production;
     END IF;
 
-    if jid=0 THEN
-      ecode:= SQLERRM;
+    IF jid = 0 THEN
+      ecode:= sqlerrm;
       raise_application_error(ecode, 'It is not a run!');
-    else
-       update jobs set ConfigurationId=configId,
-         DiracJobId=v_DiracJobId,
-         DiracVersion=v_DiracVersion,
-         EventInputStat=v_EventInputStat,
-         ExecTime=v_ExecTime,
-         FirstEventNumber=v_FirstEventNumber,
-         JobEnd=v_JobEnd,
-         JobStart=v_JobStart,
-         Location=v_Location,
-         Name=v_Name,
-         NumberOfEvents=v_NumberOfEvents,
-         Production=v_Production,
-         ProgramName=v_ProgramName,
-         ProgramVersion=v_ProgramVersion,
-         StatisticsRequested=v_StatisticsRequested,
-         WNCPUPower=v_WNCPUPower,
-         CPUTime=v_CPUTime,
-         WNCache=v_WNCache,
-         WNMemory=v_WNMemory,
-         WNModel=v_WNModel,
-         WorkerNode=v_WorkerNode,
-         FillNumber=v_fillNumber,
-         WNCPUHS06=v_WNCPUHS06,
-         TotalLuminosity=v_totalLuminosity,
-         StepID = v_stepid,
-         Tck=v_tck,
-         WNMJFHS06=v_WNMJFHS06,
-         HLT2Tck=v_hlt2tck,
-         NumberOfProcessors=v_numproc where jobid=jid;
-      commit;
-    return jid;
+    ELSE
+       UPDATE jobs SET configurationid = configid,
+         diracjobid = v_diracjobid,
+         diracversion = v_diracversion,
+         eventinputstat = v_eventinputstat,
+         exectime = v_exectime,
+         firsteventnumber = v_firsteventnumber,
+         jobend = v_jobend,
+         jobstart = v_jobstart,
+         LOCATION = v_location,
+         name = v_name,
+         numberofevents = v_numberofevents,
+         production = v_production,
+         programname = v_programname,
+         programversion = v_programversion,
+         statisticsrequested = v_statisticsrequested,
+         wncpupower = v_wncpupower,
+         cputime = v_cputime,
+         wncache = v_wncache,
+         wnmemory = v_wnmemory,
+         wnmodel = v_wnmodel,
+         workernode = v_workernode,
+         fillnumber = v_fillnumber,
+         wncpuhs06 = v_wncpuhs06,
+         totalluminosity = v_totalluminosity,
+         stepid = v_stepid,
+         tck = v_tck,
+         wnmjfhs06 = v_wnmjfhs06,
+         hlt2tck = v_hlt2tck,
+         numberofprocessors = v_numproc WHERE jobid = jid;
+      COMMIT;
+    RETURN jid;
     END IF;
-    return -1;
-  end;
+    RETURN -1;
+  END;
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  function insertFilesRow (
-    v_Adler32                         VARCHAR2,
-    v_CreationDate                    TIMESTAMP,
-    v_EventStat                       NUMBER,
-    v_EventTypeId                     NUMBER,
-    v_FileName                        VARCHAR2,
-    v_FileTypeId                      NUMBER,
-    v_GotReplica                      VARCHAR2,
-    v_Guid                            VARCHAR2,
-    v_JobId                           NUMBER,
-    v_MD5Sum                          VARCHAR2,
-    v_FileSize                        NUMBER,
-    v_FullStat                      NUMBER,
-    v_utc                             TIMESTAMP,
-    dqflag                            VARCHAR2,
-    v_luminosity                      NUMBER,
-    v_instluminosity                   Number,
-    v_visibilityFlag                  varchar2
-  )return number is
-  fid number;
-  dqid number;
-  Begin
+FUNCTION insertfilesrow(
+  v_adler32                         VARCHAR2,
+  v_creationdate                    TIMESTAMP,
+  v_eventstat                       NUMBER,
+  v_eventtypeid                     NUMBER,
+  v_filename                        VARCHAR2,
+  v_filetypeid                      NUMBER,
+  v_gotreplica                      VARCHAR2,
+  v_guid                            VARCHAR2,
+  v_jobid                           NUMBER,
+  v_md5sum                          VARCHAR2,
+  v_filesize                        NUMBER,
+  v_fullstat                      NUMBER,
+  v_utc                             TIMESTAMP,
+  dqflag                            VARCHAR2,
+  v_luminosity                      NUMBER,
+  v_instluminosity                   Number,
+  v_visibilityflag                  VARCHAR2
+) RETURN NUMBER IS
+  fid NUMBER;
+  dqid NUMBER;
+  BEGIN
     dqid:=1;
-    select dataquality.qualityid into dqid from dataquality where dataquality.dataqualityflag=dqflag;
-    select fileId_seq.nextval into fid from dual;
-    insert into files (
-                FileId,
-                Adler32,
-                CreationDate,
-                EventStat,
-                EventTypeId,
-                FileName,
-                FileTypeId,
-                GotReplica,
-                Guid,
-                JobId,
-                MD5Sum,
-                FileSize,
-                FullStat,
-                Qualityid,
+    SELECT dataquality.qualityid INTO dqid FROM dataquality WHERE dataquality.dataqualityflag = dqflag;
+    SELECT fileid_seq.nextval INTO fid FROM dual;
+    INSERT INTO files (
+                fileid,
+                adler32,
+                creationdate,
+                eventstat,
+                eventtypeid,
+                filename,
+                filetypeid,
+                gotreplica,
+                guid,
+                jobid,
+                md5sum,
+                filesize,
+                fullstat,
+                qualityid,
                 inserttimestamp,
-                Luminosity,
-                InstLuminosity,
-                VisibilityFlag
+                luminosity,
+                instluminosity,
+                visibilityflag
                 )
            VALUES (
                 fid,
-                v_Adler32,
-                v_CreationDate,
-                v_EventStat,
-                v_EventTypeId,
-                v_FileName,
-                v_FileTypeId,
-                v_GotReplica,
-                v_Guid,
-                v_JobId,
-                v_MD5Sum,
-                v_FileSize,
-                v_FullStat,
+                v_adler32,
+                v_creationdate,
+                v_eventstat,
+                v_eventtypeid,
+                v_filename,
+                v_filetypeid,
+                v_gotreplica,
+                v_guid,
+                v_jobid,
+                v_md5sum,
+                v_filesize,
+                v_fullstat,
                 dqid,
                 v_utc,
                 v_luminosity,
                 v_instluminosity,
-                v_visibilityFlag
+                v_visibilityflag
                 );
   COMMIT;
-  return fid;
+  RETURN fid;
   EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-    select fileid into fid from files where FileName=v_FileName;
-    update files set Adler32=v_Adler32,
-                CreationDate=v_CreationDate,
-                EventStat=v_EventStat,
-                EventTypeId=v_EventTypeId,
-                FileTypeId=v_FileTypeId,
-                Guid=v_Guid,
-                JobId=v_JobId,
-                MD5Sum=v_MD5Sum,
-                FileSize=v_FileSize,
-                FullStat=v_FullStat,
-                Qualityid=dqid,
-                inserttimestamp=v_utc,
-                Luminosity=v_luminosity,
-                InstLuminosity=v_instluminosity,
-                VisibilityFlag=v_visibilityFlag where fileid=fid;
-    commit;
-    return fid;
-  end;
+  WHEN dup_val_on_index THEN
+    SELECT fileid INTO fid FROM files WHERE filename = v_filename;
+    UPDATE files SET adler32 = v_adler32,
+                creationdate = v_creationdate,
+                eventstat = v_eventstat,
+                eventtypeid = v_eventtypeid,
+                filetypeid = v_filetypeid,
+                guid = v_guid,
+                jobid = v_jobid,
+                md5sum = v_md5sum,
+                filesize = v_filesize,
+                fullstat = v_fullstat,
+                qualityid = dqid,
+                inserttimestamp = v_utc,
+                luminosity = v_luminosity,
+                instluminosity = v_instluminosity,
+                visibilityflag = v_visibilityflag WHERE fileid = fid;
+    COMMIT;
+    RETURN fid;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertInputFilesRow (v_FileId NUMBER, v_JobId NUMBER)is
-begin
-    insert into inputfiles(
-         FileId,
-         JobId
+PROCEDURE insertinputfilesrow(
+  v_fileid NUMBER,
+  v_jobid NUMBER
+)IS
+  BEGIN
+    INSERT INTO inputfiles(
+         fileid,
+         jobid
          ) VALUES(
-                v_FileId,
-                v_JobId);
+                v_fileid,
+                v_jobid);
   COMMIT;
   EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-    DBMS_OUTPUT.PUT_LINE('The input file of the job is added: '|| v_JobId);
-  end;
+  WHEN dup_val_on_index THEN
+    dbms_output.put_line('The input file of the job is added: ' || v_jobid);
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure updateReplicaRow(
-   v_fileID number,
-   v_replica varchar2
-  )is
-  begin
-   update files set inserttimestamp = sys_extract_utc(systimestamp),gotreplica=v_replica where fileid=v_fileID;
-   commit;
-  end;
+PROCEDURE updatereplicarow(
+  v_fileid NUMBER,
+  v_replica VARCHAR2
+)IS
+  BEGIN
+    UPDATE files
+    SET inserttimestamp = sys_extract_utc(systimestamp),gotreplica = v_replica
+    WHERE fileid = v_fileid;
+    COMMIT;
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- procedure deleteInputFiles(
-  v_jobid    number
- )is
-  begin
-   delete inputfiles where jobid=v_jobid;
-   commit;
-  end;
+PROCEDURE deletejob(
+  v_jobid NUMBER
+)IS
+  BEGIN
+    DELETE FROM jobs
+    WHERE jobid = v_jobid;
+    COMMIT;
+  END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- procedure deletefile(
-   v_fileid                number
- )is
-  begin
-   delete files where fileId=v_fileid;
-   commit;
- end;
+PROCEDURE deleteinputfiles(
+  v_jobid NUMBER
+)IS
+  BEGIN
+    DELETE FROM inputfiles
+    WHERE jobid = v_jobid;
+    COMMIT;
+  END;
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE deletefile(
+  v_fileid NUMBER
+)IS
+  BEGIN
+    DELETE FROM files
+    WHERE fileid = v_fileid;
+    COMMIT;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure deleteSetpContiner(
-  v_prod number
-  )is
-   begin
-   delete stepscontainer where production=v_prod;
-   commit;
-end;
+PROCEDURE deletesetpcontiner(
+  v_prod NUMBER
+)IS
+  BEGIN
+    DELETE FROM stepscontainer
+    WHERE production = v_prod;
+    COMMIT;
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure deleteProductionsCont(
- v_prod number
-  )is
-   begin
-   delete productionscontainer where production=v_prod;
-   commit;
-end;
+PROCEDURE deletestepcontainer(
+  v_prod NUMBER
+)IS
+  BEGIN
+    DELETE FROM stepscontainer
+    WHERE production = v_prod;
+    COMMIT;
+  END;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE deleteproductionscont(
+  v_prod NUMBER
+)IS
+  BEGIN
+    DELETE FROM productionscontainer
+    WHERE production = v_prod;
+    COMMIT;
+  END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function insertSimConditions(
-   v_Simdesc                varchar2,
-   v_BeamCond               varchar2,
-   v_BeamEnergy             varchar2,
-   v_Generator              varchar2,
-   v_MagneticField          varchar2,
-   v_DetectorCond           varchar2,
-   v_Luminosity             varchar2,
-   v_G4settings             varchar2,
-   v_visible                varchar2
- )return number
- is
-  simulId number;
- begin
-  select simulationCondID_seq.nextval into simulId from dual;
-  insert into simulationconditions(
-               SimId,
-               SIMDESCRIPTION,
-               BeamCond,
-               BeamEnergy,
-               Generator,
-               MagneticField,
-               DetectorCond,
-               Luminosity,
-               G4settings,
-               visible)values(simulId,v_Simdesc,v_BeamCond,v_BeamEnergy,v_Generator,v_MagneticField,v_DetectorCond,v_Luminosity,v_G4settings, v_visible);
+FUNCTION insertsimconditions(
+   v_simdesc                VARCHAR2,
+   v_beamcond               VARCHAR2,
+   v_beamenergy             VARCHAR2,
+   v_generator              VARCHAR2,
+   v_magneticfield          VARCHAR2,
+   v_detectorcond           VARCHAR2,
+   v_luminosity             VARCHAR2,
+   v_g4settings             VARCHAR2,
+   v_visible                VARCHAR2
+)RETURN NUMBER
+  IS
+  simulid NUMBER;
+  BEGIN
+    SELECT simulationcondid_seq.nextval INTO simulid FROM dual;
+    INSERT INTO simulationconditions(
+                  simid,
+                  simdescription,
+                  beamcond,
+                  beamenergy,
+                  generator,
+                  magneticfield,
+                  detectorcond,
+                  luminosity,
+                  g4settings,
+                  visible)
+    VALUES(simulid,
+           v_simdesc,
+           v_beamcond,
+           v_beamenergy,
+           v_generator,
+           v_magneticfield,
+           v_detectorcond,
+           v_luminosity,
+           v_g4settings,
+           v_visible);
   COMMIT;
-  return simulId;
- end;
+  RETURN simulid;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getSimConditions (
-    a_Cursor                        out udt_RefCursor
-    )is
-   begin
-     open a_Cursor for
-       select * from simulationconditions where visible='Y' ORDER by simid desc;
-   end;
+PROCEDURE getsimconditions(
+  a_cursor OUT udt_refcursor
+)IS
+  BEGIN
+    OPEN a_cursor FOR
+    SELECT * FROM simulationconditions
+    WHERE visible = 'Y'
+    ORDER BY simid DESC;
+  END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function insertDataTakingCond(
-     v_DESCRIPTION                                        VARCHAR2,
-     v_BEAMCOND                                           VARCHAR2,
-     v_BEAMENERGY                                         VARCHAR2,
-     v_MAGNETICFIELD                                      VARCHAR2,
-     v_VELO                                               VARCHAR2,
-     v_IT                                                 VARCHAR2,
-     v_TT                                                 VARCHAR2,
-     v_OT                                                 VARCHAR2,
-     v_RICH1                                              VARCHAR2,
-     v_RICH2                                              VARCHAR2,
-     v_SPD_PRS                                            VARCHAR2,
-     v_ECAL                                               VARCHAR2,
-     v_HCAL                                               VARCHAR2,
-     v_MUON                                               VARCHAR2,
-     v_L0                                                 VARCHAR2,
-     v_HLT                                                VARCHAR2,
-     v_VeloPosition                                       VARCHAR2
-  ) return number
-  is
-  daq       number;
-  begin
-
+FUNCTION insertdatatakingcond(
+  v_description                                        VARCHAR2,
+  v_beamcond                                           VARCHAR2,
+  v_beamenergy                                         VARCHAR2,
+  v_magneticfield                                      VARCHAR2,
+  v_velo                                               VARCHAR2,
+  v_it                                                 VARCHAR2,
+  v_tt                                                 VARCHAR2,
+  v_ot                                                 VARCHAR2,
+  v_rich1                                              VARCHAR2,
+  v_rich2                                              VARCHAR2,
+  v_spd_prs                                            VARCHAR2,
+  v_ecal                                               VARCHAR2,
+  v_hcal                                               VARCHAR2,
+  v_muon                                               VARCHAR2,
+  v_l0                                                 VARCHAR2,
+  v_hlt                                                VARCHAR2,
+  v_veloposition                                       VARCHAR2
+) RETURN NUMBER
+IS
+daq       NUMBER;
+  BEGIN
       daq := 0;
-      select simulationCondID_seq.nextval into daq from dual;
-      if v_DESCRIPTION is null then
-      insert /* APPEND */ into data_taking_conditions(DAQPERIODID, DESCRIPTION, BEAMCOND, BEAMENERGY, MAGNETICFIELD,
-                                       VELO, IT, TT, OT, RICH1, RICH2, SPD_PRS, ECAL, HCAL, MUON, L0, HLT,VELOPOSITION)
-                                      values(
+      SELECT simulationcondid_seq.nextval INTO daq FROM dual;
+      IF v_description IS NULL THEN
+      INSERT /* APPEND */ INTO data_taking_conditions(daqperiodid, description, beamcond, beamenergy, magneticfield,
+                                       velo, it, tt, ot, rich1, rich2, spd_prs, ecal, hcal, muon, l0, hlt,veloposition)
+                                      VALUES(
                                          daq,
-                                         'DataTaking'||daq,
-                                         v_BEAMCOND,
-                                         v_BEAMENERGY,
-                                         v_MAGNETICFIELD,
-                                         v_VELO,
-                                         v_IT,
-                                         v_TT,
-                                         v_OT,
-                                         v_RICH1,
-                                         v_RICH2,
-                                         v_SPD_PRS,
-                                         v_ECAL,
-                                         v_HCAL,
-                                         v_MUON,
-                                         v_L0,
-                                         v_HLT,
-                                         v_VeloPosition);
+                                         'DataTaking' || daq,
+                                         v_beamcond,
+                                         v_beamenergy,
+                                         v_magneticfield,
+                                         v_velo,
+                                         v_it,
+                                         v_tt,
+                                         v_ot,
+                                         v_rich1,
+                                         v_rich2,
+                                         v_spd_prs,
+                                         v_ecal,
+                                         v_hcal,
+                                         v_muon,
+                                         v_l0,
+                                         v_hlt,
+                                         v_veloposition);
     COMMIT;
-    else
-       insert /* APPEND */ into data_taking_conditions(DAQPERIODID, DESCRIPTION, BEAMCOND, BEAMENERGY, MAGNETICFIELD,
-                                       VELO, IT, TT, OT, RICH1, RICH2, SPD_PRS, ECAL, HCAL, MUON, L0, HLT,VELOPOSITION)
-                                      values(
+    ELSE
+       INSERT /* APPEND */ INTO data_taking_conditions(daqperiodid, description, beamcond, beamenergy, magneticfield,
+                                       velo, it, tt, ot, rich1, rich2, spd_prs, ecal, hcal, muon, l0, hlt,veloposition)
+                                      VALUES(
                                          daq,
-                                         v_DESCRIPTION,
-                                         v_BEAMCOND,
-                                         v_BEAMENERGY,
-                                         v_MAGNETICFIELD,
-                                         v_VELO,
-                                         v_IT,
-                                         v_TT,
-                                         v_OT,
-                                         v_RICH1,
-                                         v_RICH2,
-                                         v_SPD_PRS,
-                                         v_ECAL,
-                                         v_HCAL,
-                                         v_MUON,
-                                         v_L0,
-                                         v_HLT,
-                                         v_VeloPosition);
-    commit;
-    end if;
+                                         v_description,
+                                         v_beamcond,
+                                         v_beamenergy,
+                                         v_magneticfield,
+                                         v_velo,
+                                         v_it,
+                                         v_tt,
+                                         v_ot,
+                                         v_rich1,
+                                         v_rich2,
+                                         v_spd_prs,
+                                         v_ecal,
+                                         v_hcal,
+                                         v_muon,
+                                         v_l0,
+                                         v_hlt,
+                                         v_veloposition);
+    COMMIT;
+    END IF;
 
-    return (daq);
-    EXCEPTION WHEN OTHERS THEN
+    RETURN (daq);
+    EXCEPTION WHEN others THEN
     RETURN 0;
-  end;
+  END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-procedure getFileMetaData(
-   v_fileName              varchar2,
-   a_Cursor                out udt_RefCursor
-  )is
-  begin
-   open a_Cursor for
-     select files.FILENAME,files.ADLER32,files.CREATIONDATE,files.EVENTSTAT,files.EVENTTYPEID,filetypes.Name,files.GOTREPLICA,files.GUID,files.MD5SUM,files.FILESIZE, files.FullStat, dataquality.DATAQUALITYFLAG, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity from files,filetypes,dataquality,jobs where
-         filename=v_fileName and
-         jobs.jobid=files.jobid and
-         files.filetypeid=filetypes.filetypeid and
-         files.QUALITYID=DataQuality.qualityID;
-  end;
+PROCEDURE getfilemetadata(
+   v_filename VARCHAR2,
+   a_cursor   OUT udt_refcursor
+)IS
+  BEGIN
+   OPEN a_cursor FOR
+     SELECT files.filename,files.adler32,files.creationdate,files.eventstat,files.eventtypeid,filetypes.name,files.gotreplica,files.guid,files.md5sum,files.filesize, files.fullstat, dataquality.dataqualityflag, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity FROM files,filetypes,dataquality,jobs WHERE
+         filename = v_filename AND
+         jobs.jobid = files.jobid AND
+         files.filetypeid = filetypes.filetypeid AND
+         files.qualityid = dataquality.qualityid;
+  END;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getFileMetaData2(iftypes lists) return metadata_table PIPELINED
-is
-BEGIN
-FOR j in iftypes.FIRST .. iftypes.LAST LOOP
-  DBMS_OUTPUT.PUT_LINE('FileName: '|| iftypes(j));
-  FOR cur in (select files.FILENAME,files.ADLER32,files.CREATIONDATE,files.EVENTSTAT,files.EVENTTYPEID,filetypes.Name,files.GOTREPLICA,files.GUID,files.MD5SUM,files.FILESIZE, files.FullStat, dataquality.DATAQUALITYFLAG, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity, files.VISIBILITYFLAG from files,filetypes,dataquality,jobs where
-         filename=iftypes(j) and
-         jobs.jobid=files.jobid and
-         files.filetypeid=filetypes.filetypeid and
-         files.QUALITYID=DataQuality.qualityID) LOOP
-        pipe row(metadata0bj(cur.FILENAME, cur.ADLER32,cur.CREATIONDATE,cur.EVENTSTAT, cur.EVENTTYPEID, cur.Name, cur.GOTREPLICA, cur.GUID, cur.MD5SUM, cur.FILESIZE, cur.FullStat, cur.DATAQUALITYFLAG, cur.jobid, cur.runnumber, cur.inserttimestamp, cur.luminosity, cur.instluminosity, cur.VISIBILITYFLAG, NULL, NULL));
-  END LOOP;
-END LOOP;
-END;
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getFileMetaData3(iftypes varchararray, a_Cursor out udt_RefCursor)
-is
+PROCEDURE getfilemetadata3(iftypes varchararray, a_cursor OUT udt_refcursor)
+IS
 lfnmeta metadata_table := metadata_table();
 n integer := 0;
 BEGIN
-FOR j in iftypes.FIRST .. iftypes.LAST LOOP
-  DBMS_OUTPUT.PUT_LINE('FileName: '|| iftypes(j));
-  FOR cur in (select files.FILENAME,files.ADLER32,files.CREATIONDATE,files.EVENTSTAT,files.EVENTTYPEID,filetypes.Name,files.GOTREPLICA,files.GUID,files.MD5SUM,files.FILESIZE, files.FullStat, dataquality.DATAQUALITYFLAG, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity, files.VISIBILITYFLAG from files,filetypes,dataquality,jobs where
-         filename=iftypes(j) and
-         jobs.jobid=files.jobid and
-         files.filetypeid=filetypes.filetypeid and
-         files.QUALITYID=DataQuality.qualityID) LOOP
+FOR j IN iftypes.first .. iftypes.last LOOP
+  dbms_output.put_line('FileName: ' || iftypes(j));
+  FOR cur IN (SELECT files.filename,files.adler32,files.creationdate,files.eventstat,files.eventtypeid,filetypes.name,files.gotreplica,files.guid,files.md5sum,files.filesize, files.fullstat, dataquality.dataqualityflag, files.jobid, jobs.runnumber, files.inserttimestamp,files.luminosity,files.instluminosity, files.visibilityflag FROM files,filetypes,dataquality,jobs WHERE
+         filename = iftypes(j) AND
+         jobs.jobid = files.jobid AND
+         files.filetypeid = filetypes.filetypeid AND
+         files.qualityid = dataquality.qualityid) LOOP
  lfnmeta.extend;
- n:=n+1;
- lfnmeta (n):=metadata0bj(cur.FILENAME, cur.ADLER32,cur.CREATIONDATE,cur.EVENTSTAT, cur.EVENTTYPEID, cur.Name, cur.GOTREPLICA, cur.GUID, cur.MD5SUM, cur.FILESIZE, cur.FullStat, cur.DATAQUALITYFLAG, cur.jobid, cur.runnumber, cur.inserttimestamp, cur.luminosity, cur.instluminosity, cur.VISIBILITYFLAG, NULL, NULL);
+ n:=n + 1;
+ lfnmeta (n):=metadata0bj(cur.filename, cur.adler32,cur.creationdate,cur.eventstat, cur.eventtypeid, cur.name, cur.gotreplica, cur.guid, cur.md5sum, cur.filesize, cur.fullstat, cur.dataqualityflag, cur.jobid, cur.runnumber, cur.inserttimestamp, cur.luminosity, cur.instluminosity, cur.visibilityflag, NULL, NULL);
   END LOOP;
 END LOOP;
-open a_Cursor for select * from table(lfnmeta);
+OPEN a_cursor FOR SELECT * FROM table(lfnmeta);
 END;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function fileExists(
-    v_fileName            varchar2
-  )return number is
-  fid number;
-  begin
-   select fileid into fid from files where filename=v_fileName;
-  return (fid);
-    EXCEPTION WHEN OTHERS THEN
+FUNCTION fileexists (
+    v_filename            VARCHAR2
+)RETURN NUMBER IS
+  fid NUMBER;
+  BEGIN
+    SELECT fileid INTO fid
+    FROM files
+    WHERE filename = v_filename;
+  RETURN (fid);
+    EXCEPTION WHEN others THEN
     RETURN 0;
 
-end;
+END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE inserteventTypes (
-        v_Description           VARCHAR2,
-        v_EventTypeId           NUMBER,
-        v_Primary               VARCHAR2
- )
- is
- begin
-   insert into eventtypes(Description,EventTypeId,Primary) values (v_Description, v_EventTypeId, v_Primary);
-   commit;
- end;
+PROCEDURE inserteventtypes(
+  v_description           VARCHAR2,
+  v_eventtypeid           NUMBER,
+  v_primary               VARCHAR2
+) IS
+  BEGIN
+    INSERT INTO eventtypes(description, eventtypeid, PRIMARY)
+    VALUES (v_description, v_eventtypeid, v_primary);
+    COMMIT;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Procedure  updateEventTypes(
-        v_Description           VARCHAR2,
-        v_EventTypeId           NUMBER,
-        v_Primary               VARCHAR2
- )
- is
- begin
-   update eventtypes set Description=v_Description, Primary=v_Primary where EventTypeId=v_EventTypeId;
-   commit;
- end;
+PROCEDURE  updateeventtypes(
+        v_description           VARCHAR2,
+        v_eventtypeid           NUMBER,
+        v_primary               VARCHAR2
+) IS
+  BEGIN
+    UPDATE eventtypes
+    SET description = v_description, PRIMARY = v_primary
+    WHERE eventtypeid = v_eventtypeid;
+    COMMIT;
+  END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure setFileInvisible(
-  lfn varchar2
- )is
- begin
-  update files set visibilityFlag='N',inserttimestamp = sys_extract_utc(systimestamp) where files.filename=lfn;
-  commit;
- end;
+PROCEDURE setfileinvisible (
+  lfn VARCHAR2
+ )IS
+ BEGIN
+  UPDATE files
+  SET visibilityflag = 'N',inserttimestamp = sys_extract_utc(systimestamp)
+  WHERE files.filename = lfn;
+  COMMIT;
+ END;
 
-procedure setFileVisible(
-  lfn varchar2
- )is
- begin
-  update files set visibilityFlag='Y',inserttimestamp = sys_extract_utc(systimestamp) where files.filename=lfn;
-  commit;
- end;
+PROCEDURE setfilevisible(
+  lfn VARCHAR2
+ )IS
+ BEGIN
+  UPDATE files
+  SET visibilityflag = 'Y',inserttimestamp = sys_extract_utc(systimestamp)
+  WHERE files.filename = lfn;
+  COMMIT;
+ END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getConfigsAndEvtType(
-   prodId                  number,
-   a_Cursor                out udt_RefCursor
-  )is
-  begin
-    open a_Cursor for
-    SELECT c.configName,c.ConfigVersion,prod.eventtypeid from productionoutputfiles prod, configurations c,
-    productionscontainer cont WHERE prod.production=prodID AND cont.production=prod.production AND cont.configurationid=c.configurationid
-    GROUP BY c.configName,c.ConfigVersion,prod.eventtypeid;
-  end;
+PROCEDURE getconfigsandevttype(
+   prodid                  NUMBER,
+   a_cursor                OUT udt_refcursor
+)IS
+  BEGIN
+    OPEN a_cursor FOR
+    SELECT c.configname,c.configversion,prod.eventtypeid
+    FROM productionoutputfiles prod, configurations c, productionscontainer cont
+    WHERE prod.production = prodid
+      AND cont.production = prod.production
+      AND cont.configurationid = c.configurationid
+    GROUP BY c.configname,c.configversion,prod.eventtypeid;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getJobsbySites(
-   prodId                  number,
-   a_Cursor                out udt_RefCursor
- )is
-  begin
-   open a_Cursor for
-    select count(*), jobs.Location from jobs where production=prodId Group By Location;
-  end;
+PROCEDURE getjobsbysites(
+   prodid                  NUMBER,
+   a_cursor                OUT udt_refcursor
+)IS
+  BEGIN
+   OPEN a_cursor FOR
+    SELECT count(*), jobs.location
+    FROM jobs
+    WHERE production = prodid
+    GROUP BY LOCATION;
+  END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getSteps(
-   prodId                  number,
-   a_Cursor                out udt_RefCursor
-  )is
-  begin
-   open a_Cursor for
-    select s.stepName, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.stepid, s.visible
-      from steps s, stepscontainer prod where
-      prod.stepid=s.stepid and
-      prod.production=prodId order by prod.step;
+PROCEDURE getsteps(
+   prodid                  NUMBER,
+   a_cursor                OUT udt_refcursor
+)IS
+  BEGIN
+   OPEN a_cursor FOR
+    SELECT s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, s.stepid, s.visible
+    FROM steps s, stepscontainer prod
+    WHERE prod.stepid = s.stepid
+      AND prod.production = prodid
+    ORDER BY prod.step;
   EXCEPTION
-  WHEN OTHERS THEN
+  WHEN others THEN
     raise_application_error(-20003, 'error found the production does not exists  in the productionscontainer table!');
-  end;
+  END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getProductionInformation(
-   prodId                  number,
-   a_Cursor                out udt_RefCursor
-  )is
-  pid number;
-  begin
-   open a_Cursor for
-     select distinct c.configName,c.ConfigVersion,f.eventtypeid,s.stepName, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, prod.step
-          from steps s, stepscontainer prod, jobs j, configurations c, files f where
-           j.jobid=f.jobid and
-           f.eventtypeid>0 and
-           j.production=prodId and
-           c.configurationid=j.configurationid and
-           prod.stepid=s.stepid and
-           prod.production=j.production order by prod.step;
-  end;
+PROCEDURE getproductioninformation(
+   prodid                  NUMBER,
+   a_cursor                OUT udt_refcursor
+  )IS
+  pid NUMBER;
+  BEGIN
+   OPEN a_cursor FOR
+     SELECT DISTINCT c.configname,c.configversion,f.eventtypeid,s.stepname, s.applicationname, s.applicationversion, s.optionfiles, s.dddb, s.conddb, s.extrapackages, prod.step
+          FROM steps s, stepscontainer prod, jobs j, configurations c, files f WHERE
+           j.jobid = f.jobid AND
+           f.eventtypeid > 0 AND
+           j.production = prodid AND
+           c.configurationid = j.configurationid AND
+           prod.stepid = s.stepid AND
+           prod.production = j.production ORDER BY prod.step;
+  END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getNbOfFiles( prodId                  number,
-    a_Cursor                out udt_RefCursor
-  )is
-  total number;
-  begin
-   select /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ count(*) into total from files, jobs where files.jobid=jobs.jobid and jobs.production=prodId;
-   open a_Cursor for
-     select /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ count(*), filetypes.Name,total as TotalFiles from files, jobs,filetypes where
-        files.jobid=jobs.jobid and
-        jobs.production=prodId and
-        filetypes.filetypeid=files.filetypeid GROUP By filetypes.NAME;
-  end;
+PROCEDURE getnboffiles( prodid                  NUMBER,
+    a_cursor                OUT udt_refcursor
+  )IS
+  total NUMBER;
+  BEGIN
+   SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ count(*) INTO total FROM files, jobs WHERE files.jobid = jobs.jobid AND jobs.production = prodid;
+   OPEN a_cursor FOR
+     SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ count(*), filetypes.name,total AS totalfiles FROM files, jobs,filetypes WHERE
+        files.jobid = jobs.jobid AND
+        jobs.production = prodid AND
+        filetypes.filetypeid = files.filetypeid GROUP BY filetypes.name;
+  END;
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getSizeOfFiles(
-    prodId                  number,
-    a_Cursor                out udt_RefCursor
-  )is
-  begin
-  open a_Cursor for
-    select /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */  sum(FILESIZE) from files,jobs where files.jobid=jobs.jobid and jobs.production=prodId;
-  end;
+PROCEDURE getsizeoffiles(
+    prodid                  NUMBER,
+    a_cursor                OUT udt_refcursor
+  )IS
+  BEGIN
+  OPEN a_cursor FOR
+    SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */  sum(filesize) FROM files,jobs WHERE files.jobid = jobs.jobid AND jobs.production = prodid;
+  END;
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getNumberOfEvents(
-    prodId                  number,
-    a_Cursor                out udt_RefCursor
-  )is
-  begin
-  open a_Cursor for
-   select /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ filetypes.name,sum(files.EVENTSTAT), files.eventtypeid, sum(jobs.eventinputstat) from files,jobs,filetypes where
-            files.jobid=jobs.jobid and
-            files.gotreplica='Yes' and
-            jobs.production=prodId and
-            filetypes.filetypeid=files.filetypeid GROUP by filetypes.name, files.eventtypeid;
-  end;
+PROCEDURE getnumberofevents(
+    prodid                  NUMBER,
+    a_cursor                OUT udt_refcursor
+  )IS
+  BEGIN
+  OPEN a_cursor FOR
+   SELECT /*+ INDEX(files FILES_JOB_EVENT_FILETYPE) */ filetypes.name,sum(files.eventstat), files.eventtypeid, sum(jobs.eventinputstat) FROM files,jobs,filetypes WHERE
+            files.jobid = jobs.jobid AND
+            files.gotreplica = 'Yes' AND
+            jobs.production = prodid AND
+            filetypes.filetypeid = files.filetypeid GROUP BY filetypes.name, files.eventtypeid;
+  END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getJobsNb(
-    prodId            number,
-    a_Cursor                out udt_RefCursor
-  )is
-  begin
-  open a_Cursor for
-    select count(*) from jobs where production=prodId;
-end;
+PROCEDURE getjobsnb(
+    prodid            NUMBER,
+    a_cursor                OUT udt_refcursor
+)IS
+  BEGIN
+  OPEN a_cursor FOR
+    SELECT count(*)
+    FROM jobs
+    WHERE production = prodid;
+END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure insertStepsContainer(v_prod number, v_stepid number, v_step number)is
-alreadyExists number;
-begin
-insert into stepscontainer(production,stepid,step)values(v_prod, v_stepid, v_step);
-commit;
-EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-   dbms_output.put_line(v_prod || 'already in the steps container table');
-   SELECT count(*) INTO alreadyExists FROM stepscontainer WHERE production=v_prod AND stepid=v_stepid AND step=v_step;
-   IF alreadyExists > 0 then
-   	raise_application_error(-20005, 'The production already exists in the steps container table!');
-   END IF;
-end;
+PROCEDURE insertstepscontainer(
+    v_prod NUMBER,
+    v_stepid NUMBER,
+    v_step NUMBER
+  )IS
+  alreadyexists NUMBER;
+  BEGIN
+  INSERT INTO stepscontainer(production,stepid,step) VALUES(v_prod, v_stepid, v_step);
+  COMMIT;
+  EXCEPTION
+    WHEN dup_val_on_index THEN
+      dbms_output.put_line(v_prod || 'already in the steps container table');
+      SELECT count(*) INTO alreadyexists
+      FROM stepscontainer
+      WHERE production = v_prod
+        AND stepid = v_stepid
+        AND step = v_step;
+     IF alreadyexists > 0 THEN
+       raise_application_error(-20005, 'The production already exists in the steps container table!');
+     END IF;
+END;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure insertproductionscontainer_tmp(v_prod number, v_processingid number, v_simid number, v_daqperiodid number, cName varchar2, cVersion varchar2) is
-configId number;
-existInDB number;
+PROCEDURE insertproductionscontainer(v_prod NUMBER, v_processingid NUMBER, v_simid NUMBER, v_daqperiodid NUMBER, cname VARCHAR2, cversion VARCHAR2) IS
+configid NUMBER;
+existindb NUMBER;
 BEGIN
-configId := 0;
-select count(*) into existInDB from configurations where ConfigName=cName and ConfigVersion=cVersion;
-if existInDB=0 then
-  select configurationId_seq.nextval into configId from dual;
-  insert into configurations(ConfigurationId,ConfigName,ConfigVersion)values(configId, cName, cVersion);
-  commit;
-else
- select configurationid into configId from configurations where ConfigName=cName and ConfigVersion=cVersion;
-end if;
-insert into productionscontainer(production,processingid,simid,daqperiodid, configurationid)values(v_prod, v_processingid, v_simid, v_daqperiodid, configId);
-commit;
+configid := 0;
+SELECT count(*) INTO existindb FROM configurations WHERE configname = cname AND configversion = cversion;
+IF existindb = 0 THEN
+  SELECT configurationid_seq.nextval INTO configid FROM dual;
+  INSERT INTO configurations(configurationid,configname,configversion)VALUES(configid, cname, cversion);
+  COMMIT;
+ELSE
+ SELECT configurationid INTO configid FROM configurations WHERE configname = cname AND configversion = cversion;
+END IF;
+INSERT INTO productionscontainer(production,processingid,simid,daqperiodid, configurationid)VALUES(v_prod, v_processingid, v_simid, v_daqperiodid, configid);
+COMMIT;
 EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-   existInDB := 0;
+  WHEN dup_val_on_index THEN
+   existindb := 0;
    dbms_output.put_line(v_prod || 'already in the steps container table');
-   SELECT count(*) INTO existInDB FROM productionscontainer WHERE production=v_prod and processingid=v_processingid AND  simid=v_simid AND daqperiodid=v_daqperiodid and configurationid=configId;
-   IF existInDB > 0 then
+   SELECT count(*) INTO existindb FROM productionscontainer WHERE production = v_prod AND processingid = v_processingid AND  simid = v_simid AND daqperiodid = v_daqperiodid AND configurationid = configid;
+   IF existindb > 0 THEN
     raise_application_error(-20005, 'The production already exists in the productionscontainer table!');
    END IF;
-end;
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure insertproductionscontainer(v_prod number, v_processingid number, v_simid number, v_daqperiodid number, cName varchar2, cVersion varchar2) is
-configId number;
-existInDB number;
-BEGIN
-configId := 0;
-select count(*) into existInDB from configurations where ConfigName=cName and ConfigVersion=cVersion;
-if existInDB=0 then
-  select configurationId_seq.nextval into configId from dual;
-  insert into configurations(ConfigurationId,ConfigName,ConfigVersion)values(configId, cName, cVersion);
-  commit;
-else
- select configurationid into configId from configurations where ConfigName=cName and ConfigVersion=cVersion;
-end if;
-insert into productionscontainer(production,processingid,simid,daqperiodid, configurationid)values(v_prod, v_processingid, v_simid, v_daqperiodid, configId);
-commit;
-EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-   existInDB := 0;
-   dbms_output.put_line(v_prod || 'already in the steps container table');
-   SELECT count(*) INTO existInDB FROM productionscontainer WHERE production=v_prod and processingid=v_processingid AND  simid=v_simid AND daqperiodid=v_daqperiodid and configurationid=configId;
-   IF existInDB > 0 then
-    raise_application_error(-20005, 'The production already exists in the productionscontainer table!');
-   END IF;
-end;
+END;
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- procedure getEventTypes(
-    cName                 varchar2,
-    cVersion              varchar2,
-    a_Cursor              out udt_RefCursor
-   ) is
-begin
-  open a_Cursor for
-    select distinct e.EVENTTYPEID, e.DESCRIPTION from productionoutputfiles prod, eventtypes e, productionscontainer cont,
-    configurations c where 
-    c.CONFIGNAME=cName and c.CONFIGVERSION=cVersion AND
-    c.configurationid=cont.configurationid AND cont.production=prod.production AND
-    prod.eventtypeid=e.eventtypeid
-    ORDER By e.EVENTTYPEID DESC;
-   end;
+ PROCEDURE geteventtypes(
+    cname                 VARCHAR2,
+    cversion              VARCHAR2,
+    a_cursor              OUT udt_refcursor
+   ) IS
+BEGIN
+  OPEN a_cursor FOR
+    SELECT DISTINCT e.eventtypeid, e.description FROM productionoutputfiles prod, eventtypes e, productionscontainer cont,
+    configurations c WHERE
+    c.configname = cname AND c.configversion = cversion AND
+    c.configurationid = cont.configurationid AND cont.production = prod.production AND
+    prod.eventtypeid = e.eventtypeid
+    ORDER BY e.eventtypeid DESC;
+   END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function  getRunNumber(lfn varchar2) return number is
-id number;
-begin
-select jobs.runnumber into id from jobs,files where files.jobid=jobs.jobid and files.filename=lfn;
-return id;
+FUNCTION  getrunnumber(lfn VARCHAR2) RETURN NUMBER IS
+id NUMBER;
+BEGIN
+SELECT jobs.runnumber INTO id FROM jobs,files WHERE files.jobid = jobs.jobid AND files.filename = lfn;
+RETURN id;
 EXCEPTION
-  WHEN OTHERS THEN
-  return null;
-end;
+  WHEN others THEN
+  RETURN NULL;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure insertRunquality(run number, qid number, procid number) is
-begin
-insert into newrunquality(runnumber,qualityid, processingid) values(run,qid,procid);
-commit;
+PROCEDURE insertrunquality(run NUMBER, qid NUMBER, procid NUMBER) IS
+BEGIN
+INSERT INTO newrunquality(runnumber,qualityid, processingid) VALUES(run,qid,procid);
+COMMIT;
 EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-    UPDATE newrunquality set qualityid=qid where processingid=procid and runnumber=run;
-commit;
-end;
+  WHEN dup_val_on_index THEN
+    UPDATE newrunquality SET qualityid = qid WHERE processingid = procid AND runnumber = run;
+COMMIT;
+END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getRunNbAndTck(lfn varchar2, a_Cursor out udt_RefCursor) is
-begin
-open a_Cursor for
-  select jobs.runnumber, jobs.Tck from jobs,files where files.jobid=jobs.jobid and files.filename=lfn;
-end;
+PROCEDURE getrunnbandtck(lfn VARCHAR2, a_cursor OUT udt_refcursor) IS
+BEGIN
+OPEN a_cursor FOR
+  SELECT jobs.runnumber, jobs.tck FROM jobs,files WHERE files.jobid = jobs.jobid AND files.filename = lfn;
+END;
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getRuns(c_name varchar2, c_version varchar2,  a_Cursor out udt_RefCursor) is
-begin
-open a_Cursor for
-  select distinct run.runnumber from productionoutputfiles prod, prodrunview run, configurations c, productionscontainer cont where 
-  prod.production=run.production and c.configname=c_name and c.configversion=c_version AND
-  cont.configurationid=c.configurationid AND cont.production=prod.production;
-end;
+PROCEDURE getruns(c_name VARCHAR2, c_version VARCHAR2,  a_cursor OUT udt_refcursor) IS
+BEGIN
+OPEN a_cursor FOR
+  SELECT DISTINCT run.runnumber FROM productionoutputfiles prod, prodrunview run, configurations c, productionscontainer cont WHERE
+  prod.production = run.production AND c.configname = c_name AND c.configversion = c_version AND
+  cont.configurationid = c.configurationid AND cont.production = prod.production;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getRunProcPass(v_runNumber number) return run_proc_table
-is
+FUNCTION getrunprocpass(v_runnumber NUMBER) RETURN run_proc_table
+IS
 ret_tab run_proc_table := run_proc_table();
 n integer := 0;
 ret varchar2(256);
-begin
-  for r in (select distinct production from jobs where runnumber=v_runNumber and production>0)
-    loop
+BEGIN
+  FOR r IN (SELECT DISTINCT production FROM jobs WHERE runnumber = v_runnumber AND production > 0)
+    LOOP
       ret_tab.extend;
       n := n + 1;
-      ret:=getProductionProcessingPass(r.production);
-      ret_tab(n) := runnb_proc(v_runNumber,ret);
-      end loop;
-return ret_tab;
-end;
+      ret:=getproductionprocessingpass(r.production);
+      ret_tab(n) := runnb_proc(v_runnumber,ret);
+      END LOOP;
+RETURN ret_tab;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getRunQuality(runs numberarray , a_Cursor out udt_RefCursor)
-is
+PROCEDURE getrunquality(runs numberarray , a_cursor OUT udt_refcursor)
+IS
 ret_tab bulk_collect_run_quality_evt:= bulk_collect_run_quality_evt();
 n integer := 0;
-begin
-FOR i in 1 .. runs.COUNT LOOP
- for record in (select distinct jobs.runnumber,dataquality.dataqualityflag,files. eventtypeid from files, jobs,dataquality where files.jobid=jobs.jobid and files.qualityid=dataquality.qualityid  and jobs.production<0 and jobs.runnumber=runs(i)) LOOP
+BEGIN
+FOR i IN 1 .. runs.count LOOP
+ FOR record IN (SELECT DISTINCT jobs.runnumber,dataquality.dataqualityflag,files. eventtypeid FROM files, jobs,dataquality WHERE files.jobid = jobs.jobid AND files.qualityid = dataquality.qualityid  AND jobs.production < 0 AND jobs.runnumber = runs(i)) LOOP
   ret_tab.extend;
   n := n + 1;
   ret_tab(n):= runnb_quality_eventtype(record.runnumber,record.dataqualityflag,record.eventtypeid);
   END LOOP;
   END LOOP;
-open a_Cursor for select * from table(ret_tab);
+OPEN a_cursor FOR SELECT * FROM table(ret_tab);
 END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getTypeVesrsion(lfn varchar2, a_Cursor out udt_RefCursor)
-is
-begin
-open a_Cursor for select ftype.version from files f, filetypes ftype where f.filetypeid=ftype.filetypeid and f.filename=lfn;
-end;
+PROCEDURE gettypevesrsion(lfn VARCHAR2, a_cursor OUT udt_refcursor)
+IS
+BEGIN
+OPEN a_cursor FOR SELECT ftype.version FROM files f, filetypes ftype WHERE f.filetypeid = ftype.filetypeid AND f.filename = lfn;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getRunFiles(v_runNumber number, a_Cursor out udt_RefCursor)
-is
-begin
-open a_Cursor for
-select f.filename, f.gotreplica, f.filesize,f.guid, f.luminosity, f.INSTLUMINOSITY, f.eventstat, f.fullstat
-from jobs j ,files f, filetypes ft
-where j.jobid=f.jobid and ft.filetypeid=f.filetypeid and ft.name='RAW' and  j.production<0 and j.runnumber=v_runNumber;
-end;
+PROCEDURE getrunfiles(v_runnumber NUMBER, a_cursor OUT udt_refcursor)
+IS
+BEGIN
+OPEN a_cursor FOR
+SELECT f.filename, f.gotreplica, f.filesize,f.guid, f.luminosity, f.instluminosity, f.eventstat, f.fullstat
+FROM jobs j ,files f, filetypes ft
+WHERE j.jobid = f.jobid AND ft.filetypeid = f.filetypeid AND ft.name = 'RAW' AND  j.production < 0 AND j.runnumber = v_runnumber;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getProcessedEvents(v_prodid number) return number
-is
-retVal number := 0;
-begin
-select sum(j.numberofevents) into retVal from jobs j, (select scont.production, s.stepid
-from stepscontainer scont, steps s
-where scont.stepid = s.stepid and
-scont.production=v_prodid and
-scont.step=(select max(step) from stepscontainer where stepscontainer.production=v_prodid)) firsts where j.production=firsts.production and j.stepid=firsts.stepid;
-return retVal;
+FUNCTION getprocessedevents(v_prodid NUMBER) RETURN NUMBER
+IS
+retval NUMBER := 0;
+BEGIN
+SELECT sum(j.numberofevents) INTO retval FROM jobs j, (SELECT scont.production, s.stepid
+FROM stepscontainer scont, steps s
+WHERE scont.stepid = s.stepid AND
+scont.production = v_prodid AND
+scont.step = (SELECT max(step) FROM stepscontainer WHERE stepscontainer.production = v_prodid)) firsts WHERE j.production = firsts.production AND j.stepid = firsts.stepid;
+RETURN retval;
 EXCEPTION
-  WHEN OTHERS THEN
-    raise_application_error(-20005, 'error found during the event number calculation');
-end;
-function isVisible(v_stepid number) return number
-is
+  WHEN others THEN
+    raise_application_error(-20005, 'error found during the event NUMBER calculation');
+END;
+FUNCTION isvisible(v_stepid NUMBER) RETURN NUMBER
+IS
 vis char;
-c number;
-begin
-select count(*) into c from TABLE(SELECT s.outputfiletypes FROM steps s WHERE s.stepid=v_stepid);
-if c = 0 then
-return v_stepid;
-else
-SELECT distinct visible into vis FROM TABLE(SELECT s.outputfiletypes FROM steps s WHERE s.stepid=v_stepid)
-    WHERE ViSible='Y';
-if vis='Y' then
-return v_stepid;
-else
-return 0;
-end if;
-end if;
+c NUMBER;
+BEGIN
+SELECT count(*) INTO c FROM table(SELECT s.outputfiletypes FROM steps s WHERE s.stepid = v_stepid);
+IF c = 0 THEN
+RETURN v_stepid;
+ELSE
+SELECT DISTINCT visible INTO vis FROM table(SELECT s.outputfiletypes FROM steps s WHERE s.stepid = v_stepid)
+    WHERE visible = 'Y';
+IF vis = 'Y' THEN
+RETURN v_stepid;
+ELSE
+RETURN 0;
+END IF;
+END IF;
 EXCEPTION
-   WHEN NO_DATA_FOUND THEN
-    return -1;
-end;
+   WHEN no_data_found THEN
+    RETURN -1;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function isVisibleProd(v_prod number) return number
-is
-sid number := 0;
-res number := 0;
-begin
-select st.stepid into sid from stepscontainer st where st.production=v_prod and st.step=(select max(step) from stepscontainer st2 where st2.production=v_prod);
-res := isVisible(sid);
-if res > 0 then
-return v_prod;
-else
-return -1;
-end if;
-/*EXCEPTION
-   WHEN NO_DATA_FOUND THEN
-    return v_prod;*/
-end;
+PROCEDURE insertruntimeproject(pr_stepid NUMBER, run_pr_stepid NUMBER)
+IS
+BEGIN
+INSERT INTO runtimeprojects(stepid, runtimeprojectid) VALUES (pr_stepid,run_pr_stepid);
+COMMIT;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-/*function getConfToBeUpdated return conf_id_name_vers_table PIPELINED is
-v_configurations_table conf_id_name_vers_table := conf_id_name_vers_table();
-begin
-for cur in ( select * from configurations where configname='LHCb')
-LOOP
-pipe row(conf_id_name_vers(cur.configurationid,cur.configname,cur.configversion));
-END LOOP;
---RETURN v_configurations_table;
-END;*/
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure insertRuntimeProject(pr_stepid number, run_pr_stepid number)
-is
-begin
-insert into runtimeprojects(stepid, runtimeprojectid) values (pr_stepid,run_pr_stepid);
-commit;
-end;
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure updateRuntimeProject(pr_stepid number, run_pr_stepid number)
-is
+PROCEDURE updateruntimeproject(pr_stepid NUMBER, run_pr_stepid NUMBER)
+IS
 counter Number;
-begin
- select count(*) into counter from runtimeprojects where stepid=pr_stepid;
- if counter > 0 then
-  update runtimeprojects set runtimeprojectid=run_pr_stepid where stepid=pr_stepid;
-  else
-    insertRuntimeProject (pr_stepid, run_pr_stepid);
-  end if;
-commit;
-end;
+BEGIN
+ SELECT count(*) INTO counter FROM runtimeprojects WHERE stepid = pr_stepid;
+ IF counter > 0 THEN
+  UPDATE runtimeprojects SET runtimeprojectid = run_pr_stepid WHERE stepid = pr_stepid;
+  ELSE
+    insertruntimeproject (pr_stepid, run_pr_stepid);
+  END IF;
+COMMIT;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure removeRuntimeProject(pr_stepid number)
-is
-begin
-delete runtimeprojects where stepid=pr_stepid;
-commit;
-end;
-procedure funny(a number)is
-b number;
-begin
-if a > 0 then
-  b:=a-1;
-  dbms_output.put_line(b || ' - ' || 'coool!');
-  funny(b);
-end if;
-end;
+PROCEDURE removeruntimeproject(pr_stepid NUMBER)
+IS
+BEGIN
+DELETE FROM runtimeprojects WHERE stepid = pr_stepid;
+COMMIT;
+END;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getProductionPorcPassName(v_procid number) return varchar2 is
+FUNCTION getproductionporcpassname(v_procid NUMBER) RETURN VARCHAR2 IS
 retval varchar2(256);
-ecode    NUMBER(38);
-thisproc CONSTANT VARCHAR2(50) := 'trap_errmesg';
-begin
- select v.path into retval from (SELECT distinct  LEVEL-1 Pathlen, SYS_CONNECT_BY_PATH(name, '/') Path
+ecode    number(38);
+thisproc constant varchar2(50) := 'trap_errmesg';
+BEGIN
+ SELECT v.path INTO retval FROM (SELECT DISTINCT  LEVEL-1 pathlen, sys_connect_by_path(name, '/') path
    FROM processing
-   WHERE LEVEL > 0 and id=v_procid
-   CONNECT BY NOCYCLE PRIOR id=parentid order by Pathlen desc) v where rownum<=1;
-return retval;
-EXCEPTION WHEN OTHERS THEN
+   WHERE LEVEL > 0 AND id = v_procid
+   CONNECT BY NOCYCLE PRIOR id = parentid ORDER BY pathlen DESC) v WHERE rownum <= 1;
+RETURN retval;
+EXCEPTION WHEN others THEN
 raise_application_error(-20004, 'error found! The processing pass does not exists!');
 --ecode := SQLERRM; --SQLCODE;
 --dbms_output.put_line(thisproc || ' - ' || ecode);
-return null;
-end;
+RETURN NULL;
+END;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getDirectoryMetadata(f_name varchar2, a_Cursor out udt_RefCursor)
-is
+PROCEDURE getdirectorymetadata(f_name VARCHAR2, a_cursor OUT udt_refcursor)
+IS
 /*create or replace  type
 directoryMetadata is object
-(production number,
-configname varchar2(256),
-configversion  varchar2(256),
-eventtypeid number,
-filetype varchar2(256),
-processingpass varchar2(256),
-ConditionDescription varchar2(256),
+(production NUMBER,
+configname VARCHAR2(256),
+configversion  VARCHAR2(256),
+eventtypeid NUMBER,
+filetype VARCHAR2(256),
+processingpass VARCHAR2(256),
+ConditionDescription VARCHAR2(256),
 VISIBILITYFLAG CHAR(1));
 create or replace
 type bulk_collect_directoryMetadata is table of directoryMetadata;
 */
-lfnmeta bulk_collect_directoryMetadata := bulk_collect_directoryMetadata();
+lfnmeta bulk_collect_directorymetadata := bulk_collect_directorymetadata();
 n integer := 0;
-procName varchar2(256);
+procname varchar2(256);
 simdesc varchar2(256);
 daqdesc varchar2(256);
-begin
-for c in (select /*+ INDEX(f FILES_FILENAME_UNIQUE) */ distinct j.production, c.configname, c.configversion, ft.name, f.eventtypeid, f.VISIBILITYFLAG from files f, jobs j, filetypes ft, configurations c where
-c.configurationid=j.configurationid and ft.filetypeid = f.filetypeid and j.jobid=f.jobid and f.gotreplica='Yes' and f.filename like f_name)
+BEGIN
+FOR c IN (SELECT /*+ INDEX(f FILES_FILENAME_UNIQUE) */ DISTINCT j.production, c.configname, c.configversion, ft.name, f.eventtypeid, f.visibilityflag FROM files f, jobs j, filetypes ft, configurations c WHERE
+c.configurationid = j.configurationid AND ft.filetypeid = f.filetypeid AND j.jobid = f.jobid AND f.gotreplica = 'Yes' AND f.filename LIKE f_name)
 LOOP
-  select getProductionPorcPassName(prod.processingid),sim.simdescription, daq.description into procName, simdesc, daqdesc from productionscontainer prod, simulationconditions sim, data_taking_conditions daq where
-   production=c.production and
-   prod.simid=sim.simid(+) and
-   prod.daqperiodid=daq.daqperiodid(+);
+  SELECT getproductionporcpassname(prod.processingid),sim.simdescription, daq.description INTO procname, simdesc, daqdesc FROM productionscontainer prod, simulationconditions sim, data_taking_conditions daq WHERE
+   production = c.production AND
+   prod.simid = sim.simid( + ) AND
+   prod.daqperiodid = daq.daqperiodid( + );
    lfnmeta.extend;
-   n:=n+1;
-   if simdesc is NULL or simdesc='' then
-     lfnmeta (n):= directoryMetadata(c.production,c.configname, c.configversion, c.eventtypeid, c.name, procname,daqdesc,c.VISIBILITYFLAG);
-   else
-     lfnmeta (n):= directoryMetadata(c.production,c.configname, c.configversion, c.eventtypeid, c.name, procname,simdesc,c.VISIBILITYFLAG);
-   END if;
+   n:=n + 1;
+   IF simdesc IS NULL OR simdesc = '' THEN
+     lfnmeta (n):= directorymetadata(c.production,c.configname, c.configversion, c.eventtypeid, c.name, procname,daqdesc,c.visibilityflag);
+   ELSE
+     lfnmeta (n):= directorymetadata(c.production,c.configname, c.configversion, c.eventtypeid, c.name, procname,simdesc,c.visibilityflag);
+   END IF;
 END LOOP;
-open a_Cursor for select * from table(lfnmeta);
+OPEN a_cursor FOR SELECT * FROM table(lfnmeta);
 EXCEPTION
-   WHEN NO_DATA_FOUND THEN
-    raise_application_error(-20088, 'The file '||f_name||' does not exists in the bookkeeping database!');
-end;
+   WHEN no_data_found THEN
+    raise_application_error(-20088, 'The file ' || f_name || ' does not exists in the bookkeeping database!');
+END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getDirectoryMetadata_new(lfns varchararray, a_Cursor out udt_RefCursor)
-is
+PROCEDURE getdirectorymetadata_new(lfns varchararray, a_cursor OUT udt_refcursor)
+IS
 /*create or replace  type
 directoryMetadata_new is object
-(lfn varchar2(256),
-production number,
-configname varchar2(256),
-configversion  varchar2(256),
-eventtypeid number,
-filetype varchar2(256),
-processingpass varchar2(256),
-ConditionDescription varchar2(256),
+(lfn VARCHAR2(256),
+production NUMBER,
+configname VARCHAR2(256),
+configversion  VARCHAR2(256),
+eventtypeid NUMBER,
+filetype VARCHAR2(256),
+processingpass VARCHAR2(256),
+ConditionDescription VARCHAR2(256),
 VISIBILITYFLAG CHAR(1));
 create or replace
 type bulk_collect_directoryMet_new is table of directoryMetadata_new;
 */
-lfnmeta bulk_collect_directoryMet_new := bulk_collect_directoryMet_new();
+lfnmeta bulk_collect_directorymet_new := bulk_collect_directorymet_new();
 n integer := 0;
-procName varchar2(256);
+procname varchar2(256);
 simdesc varchar2(256);
 daqdesc varchar2(256);
 allfiletypes varchar2(256);
-found number := 0;
+FOUND NUMBER := 0;
 BEGIN
-FOR i in lfns.FIRST .. lfns.LAST LOOP
-  for c in (select distinct j.production, c.configname, c.configversion, ft.name, f.eventtypeid, f.VISIBILITYFLAG from files f, jobs j, filetypes ft, configurations c where
-   c.configurationid=j.configurationid and ft.filetypeid = f.filetypeid and j.jobid=f.jobid and f.gotreplica='Yes' and f.filename like lfns(i)) LOOP
-   select count(*) into found from productionscontainer where production=c.production;
-   if found>0then
-     select getProductionPorcPassName(prod.processingid),sim.simdescription, daq.description into procName, simdesc, daqdesc from productionscontainer prod, simulationconditions sim, data_taking_conditions daq where
-       production=c.production and
-       prod.simid=sim.simid(+) and
-       prod.daqperiodid=daq.daqperiodid(+);
+FOR i IN lfns.first .. lfns.last LOOP
+  FOR c IN (SELECT DISTINCT j.production, c.configname, c.configversion, ft.name, f.eventtypeid, f.visibilityflag FROM files f, jobs j, filetypes ft, configurations c WHERE
+   c.configurationid = j.configurationid AND ft.filetypeid = f.filetypeid AND j.jobid = f.jobid AND f.gotreplica = 'Yes' AND f.filename LIKE lfns(i)) LOOP
+   SELECT count(*) INTO FOUND FROM productionscontainer WHERE production = c.production;
+   IF FOUND > 0 THEN
+     SELECT getproductionporcpassname(prod.processingid),sim.simdescription, daq.description INTO procname, simdesc, daqdesc FROM productionscontainer prod, simulationconditions sim, data_taking_conditions daq WHERE
+       production = c.production AND
+       prod.simid = sim.simid( + ) AND
+       prod.daqperiodid = daq.daqperiodid( + );
      lfnmeta.extend;
-     n:=n+1;
+     n:=n + 1;
     allfiletypes := '';
     --we have to make the list of file types....
-    for ff in (select distinct ft.name from files f, jobs j, filetypes ft, configurations c where
-      c.configurationid=j.configurationid and ft.filetypeid = f.filetypeid and j.jobid=f.jobid and f.gotreplica='Yes' and f.filename like lfns(i)) LOOP
-       allfiletypes := CONCAT(allfiletypes, CONCAT(ff.name,','));
+    FOR ff IN (SELECT DISTINCT ft.name FROM files f, jobs j, filetypes ft, configurations c WHERE
+      c.configurationid = j.configurationid AND ft.filetypeid = f.filetypeid AND j.jobid = f.jobid AND f.gotreplica = 'Yes' AND f.filename LIKE lfns(i)) LOOP
+       allfiletypes := concat(allfiletypes, concat(ff.name,','));
     END LOOP;
     --remove the coma
     allfiletypes := substr(allfiletypes, 0, length(allfiletypes)-1);
-    if simdesc is NULL or simdesc='' then
-      lfnmeta (n):= directoryMetadata_new(lfns(i),c.production,c.configname, c.configversion, c.eventtypeid, allfiletypes, procname,daqdesc, c.VISIBILITYFLAG);
-    else
-      lfnmeta (n):= directoryMetadata_new(lfns(i),c.production,c.configname, c.configversion, c.eventtypeid, allfiletypes, procname,simdesc, c.VISIBILITYFLAG);
-    END if;
+    IF simdesc IS NULL OR simdesc = '' THEN
+      lfnmeta (n):= directorymetadata_new(lfns(i),c.production,c.configname, c.configversion, c.eventtypeid, allfiletypes, procname,daqdesc, c.visibilityflag);
+    ELSE
+      lfnmeta (n):= directorymetadata_new(lfns(i),c.production,c.configname, c.configversion, c.eventtypeid, allfiletypes, procname,simdesc, c.visibilityflag);
+    END IF;
  END IF;
   END LOOP;
 END LOOP;
---do not return the duplicated rows.
-open a_Cursor for select distinct lfn, production, configname, configversion,eventtypeid, filetype, processingpass,ConditionDescription, VISIBILITYFLAG from table(lfnmeta);
+--do not RETURN the duplicated rows.
+OPEN a_cursor FOR SELECT DISTINCT lfn, production, configname, configversion,eventtypeid, filetype, processingpass,conditiondescription, visibilityflag FROM table(lfnmeta);
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getFilesForGUID(v_guid varchar2) return varchar2 is
-result varchar2(256);
+FUNCTION getfilesforguid(v_guid VARCHAR2) RETURN VARCHAR2 IS
+RESULT varchar2(256);
 BEGIN
-select filename into result from files where guid=v_guid;
-return result;
+SELECT filename INTO RESULT FROM files WHERE guid = v_guid;
+RETURN RESULT;
 EXCEPTION
-   WHEN NO_DATA_FOUND THEN
-    raise_application_error(-20088, 'The file which corresponds to GUID: '||v_guid||' does not exists in the bookkeeping database!');
+   WHEN no_data_found THEN
+    raise_application_error(-20088, 'The file which corresponds to GUID: ' || v_guid || ' does not exists in the bookkeeping database!');
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure updateDataQualityFlag(v_qualityid number, lfns varchararray )
-is
+PROCEDURE updatedataqualityflag(v_qualityid NUMBER, lfns varchararray )
+IS
 BEGIN
-FOR i in lfns.FIRST .. lfns.LAST LOOP
-  update files set inserttimestamp=sys_extract_utc(systimestamp), qualityid= v_qualityid where filename=lfns(i);
+FOR i IN lfns.first .. lfns.last LOOP
+  UPDATE files SET inserttimestamp = sys_extract_utc(systimestamp), qualityid = v_qualityid WHERE filename = lfns(i);
 END LOOP;
-commit;
+COMMIT;
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkcheckfiles(lfns varchararray,  a_Cursor out udt_RefCursor)
-is
+PROCEDURE bulkcheckfiles(lfns varchararray,  a_cursor OUT udt_refcursor)
+IS
 lfnmeta metadata_table := metadata_table();
 n integer := 0;
-found number := 0;
+FOUND NUMBER := 0;
 BEGIN
-FOR i in lfns.FIRST .. lfns.LAST LOOP
-  select count(filename) into found from files where filename=lfns(i);
-  IF found = 0 THEN
+FOR i IN lfns.first .. lfns.last LOOP
+  SELECT count(filename) INTO FOUND FROM files WHERE filename = lfns(i);
+  IF FOUND = 0 THEN
     lfnmeta.extend;
-    n:=n+1;
+    n:=n + 1;
     lfnmeta (n):=metadata0bj(lfns(i), NULL,NULL,NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
   END IF;
 END LOOP;
-open a_Cursor for select filename from table(lfnmeta);
+OPEN a_cursor FOR SELECT filename FROM table(lfnmeta);
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkupdateReplicaRow(v_replica varchar2, lfns varchararray)
-is
+PROCEDURE bulkupdatereplicarow(v_replica VARCHAR2, lfns varchararray)
+IS
 BEGIN
-FOR i in lfns.FIRST .. lfns.LAST LOOP
- update files set inserttimestamp = sys_extract_utc(systimestamp),gotreplica=v_replica where filename=lfns(i);
- commit;
+FOR i IN lfns.first .. lfns.last LOOP
+ UPDATE files SET inserttimestamp = sys_extract_utc(systimestamp),gotreplica = v_replica WHERE filename = lfns(i);
+ COMMIT;
 END LOOP;
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkgetTypeVesrsion(lfns varchararray, a_Cursor out udt_RefCursor)
-is
+PROCEDURE bulkgettypevesrsion(lfns varchararray, a_cursor OUT udt_refcursor)
+IS
 lfnmeta metadata_table := metadata_table();
 n integer := 0;
-found number := 0;
+FOUND NUMBER := 0;
 ftype varchar2(256);
 
-begin
-FOR i in lfns.FIRST .. lfns.LAST LOOP
-  select count(ftype.version) into found from files f, filetypes ftype where f.filetypeid=ftype.filetypeid and f.filename=lfns(i);
-  IF found > 0 THEN
-    select ftype.version into ftype from files f, filetypes ftype where f.filetypeid=ftype.filetypeid and f.filename=lfns(i);
+BEGIN
+FOR i IN lfns.first .. lfns.last LOOP
+  SELECT count(ftype.version) INTO FOUND FROM files f, filetypes ftype WHERE f.filetypeid = ftype.filetypeid AND f.filename = lfns(i);
+  IF FOUND > 0 THEN
+    SELECT ftype.version INTO ftype FROM files f, filetypes ftype WHERE f.filetypeid = ftype.filetypeid AND f.filename = lfns(i);
     lfnmeta.extend;
-    n:=n+1;
+    n:=n + 1;
     lfnmeta (n):=metadata0bj(lfns(i), ftype ,NULL,NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL);
   END IF;
 END LOOP;
-open a_Cursor for select * from table(lfnmeta);
-end;
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure setObsolete
-is
-BEGIN
-update steps set usable='Obsolete' where stepid in (select stepid from steps where trunc(INSERTTIMESTAMPS)<=add_months(sysdate+1,-12) and usable!='Obsolete');
-commit;
+OPEN a_cursor FOR SELECT * FROM table(lfnmeta);
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkJobInfo(lfns varchararray, a_Cursor out udt_RefCursor)
-is
-/*create or replace  type jobMetadata is object(lfn varchar2(256),
+PROCEDURE setobsolete
+IS
+BEGIN
+UPDATE steps SET usable = 'Obsolete' WHERE stepid IN (SELECT stepid FROM steps WHERE trunc(inserttimestamps) <= add_months(sysdate + 1,-12) AND usable != 'Obsolete');
+COMMIT;
+END;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE bulkjobinfo(lfns varchararray, a_cursor OUT udt_refcursor)
+IS
+/*create or replace  type jobMetadata is object(lfn VARCHAR2(256),
   DiracJobId                  NUMBER,
   DiracVersion                VARCHAR2(256),
   EventInputStat              NUMBER,
@@ -1925,9 +1789,9 @@ is
   WNCache                     VARCHAR2(256),
   WNMemory                    VARCHAR2(256),
   WNModel                     VARCHAR2(256),
-  WORKERNODE                  varchar2(256),
+  WORKERNODE                  VARCHAR2(256),
   WNCPUHS06                   FLOAT,
-  jobid                       number,
+  jobid                       NUMBER,
   totalLuminosity             NUMBER,
   production                  NUMBER,
   ProgramName                 VARCHAR2(256),
@@ -1937,220 +1801,242 @@ create or replace
 type bulk_collect_jobMetadata is table of jobMetadata;
 */
 n integer := 0;
-jobmeta bulk_collect_jobMetadata := bulk_collect_jobMetadata();
+jobmeta bulk_collect_jobmetadata := bulk_collect_jobmetadata();
 BEGIN
-FOR i in lfns.FIRST .. lfns.LAST LOOP
-  for c in (select  jobs.DIRACJOBID, jobs.DIRACVERSION, jobs.EVENTINPUTSTAT, jobs.EXECTIME, jobs.FIRSTEVENTNUMBER,jobs.LOCATION,  jobs.NAME, jobs.NUMBEROFEVENTS,
-                 jobs.STATISTICSREQUESTED, jobs.WNCPUPOWER, jobs.CPUTIME, jobs.WNCACHE, jobs.WNMEMORY, jobs.WNMODEL, jobs.WORKERNODE, jobs.WNCPUHS06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programName, jobs.programVersion, jobs.WNMJFHS06
-   from jobs,files where files.jobid=jobs.jobid and  files.filename=lfns(i)) LOOP
+FOR i IN lfns.first .. lfns.last LOOP
+  FOR c IN (SELECT  jobs.diracjobid, jobs.diracversion, jobs.eventinputstat, jobs.exectime, jobs.firsteventnumber,jobs.location,  jobs.name, jobs.numberofevents,
+                 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion, jobs.wnmjfhs06
+   FROM jobs,files WHERE files.jobid = jobs.jobid AND  files.filename = lfns(i)) LOOP
      jobmeta.extend;
-     n:=n+1;
-    jobmeta (n):= jobMetadata(lfns(i), c.DIRACJOBID, c.DIRACVERSION, c.EVENTINPUTSTAT, c.EXECTIME, c.FIRSTEVENTNUMBER,c.LOCATION,  c.NAME, c.NUMBEROFEVENTS,
-                 c.STATISTICSREQUESTED, c.WNCPUPOWER, c.CPUTIME, c.WNCACHE, c.WNMEMORY, c.WNMODEL, c.WORKERNODE, c.WNCPUHS06, c.jobid, c.totalluminosity, c.production, c.programName, c.programVersion, c.WNMJFHS06);
+     n:=n + 1;
+    jobmeta (n):= jobmetadata(lfns(i), c.diracjobid, c.diracversion, c.eventinputstat, c.exectime, c.firsteventnumber,c.location,  c.name, c.numberofevents,
+                 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
   END LOOP;
 END LOOP;
-open a_Cursor for select * from table(jobmeta);
+OPEN a_cursor FOR SELECT * FROM table(jobmeta);
 END;
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkJobInfoForJobName(jobNames varchararray, a_Cursor out udt_RefCursor)
-is
+PROCEDURE bulkjobinfoforjobname(jobnames varchararray, a_cursor OUT udt_refcursor)
+IS
 n integer := 0;
-jobmeta bulk_collect_jobMetadata := bulk_collect_jobMetadata();
+jobmeta bulk_collect_jobmetadata := bulk_collect_jobmetadata();
 BEGIN
-FOR i in jobNames.FIRST .. jobNames.LAST LOOP
-  for c in (select  jobs.DIRACJOBID, jobs.DIRACVERSION, jobs.EVENTINPUTSTAT, jobs.EXECTIME, jobs.FIRSTEVENTNUMBER,jobs.LOCATION,  jobs.NAME, jobs.NUMBEROFEVENTS,
-                 jobs.STATISTICSREQUESTED, jobs.WNCPUPOWER, jobs.CPUTIME, jobs.WNCACHE, jobs.WNMEMORY, jobs.WNMODEL, jobs.WORKERNODE, jobs.WNCPUHS06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programName, jobs.programVersion,WNMJFHS06
-   from jobs,files where files.jobid=jobs.jobid and  jobs.name=jobNames(i)) LOOP
+FOR i IN jobnames.first .. jobnames.last LOOP
+  FOR c IN (SELECT  jobs.diracjobid, jobs.diracversion, jobs.eventinputstat, jobs.exectime, jobs.firsteventnumber,jobs.location,  jobs.name, jobs.numberofevents,
+                 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion,wnmjfhs06
+   FROM jobs,files WHERE files.jobid = jobs.jobid AND  jobs.name = jobnames(i)) LOOP
      jobmeta.extend;
-     n:=n+1;
-    jobmeta (n):= jobMetadata(jobNames(i), c.DIRACJOBID, c.DIRACVERSION, c.EVENTINPUTSTAT, c.EXECTIME, c.FIRSTEVENTNUMBER,c.LOCATION,  c.NAME, c.NUMBEROFEVENTS,
-                 c.STATISTICSREQUESTED, c.WNCPUPOWER, c.CPUTIME, c.WNCACHE, c.WNMEMORY, c.WNMODEL, c.WORKERNODE, c.WNCPUHS06, c.jobid, c.totalluminosity, c.production, c.programName, c.programVersion, c.WNMJFHS06);
+     n:=n + 1;
+    jobmeta (n):= jobmetadata(jobnames(i), c.diracjobid, c.diracversion, c.eventinputstat, c.exectime, c.firsteventnumber,c.location,  c.name, c.numberofevents,
+                 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
   END LOOP;
 END LOOP;
-open a_Cursor for select * from table(jobmeta);
+OPEN a_cursor FOR SELECT * FROM table(jobmeta);
 END;
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkJobInfoForJobId(jobids numberarray, a_Cursor out udt_RefCursor)
-is
+PROCEDURE bulkjobinfoforjobid(jobids numberarray, a_cursor OUT udt_refcursor)
+IS
 n integer := 0;
-jobmeta bulk_collect_jobMetadata := bulk_collect_jobMetadata();
+jobmeta bulk_collect_jobmetadata := bulk_collect_jobmetadata();
 BEGIN
-FOR i in jobids.FIRST .. jobids.LAST LOOP
-  for c in (select  distinct jobs.DIRACJOBID, jobs.DIRACVERSION, jobs.EVENTINPUTSTAT, jobs.EXECTIME, jobs.FIRSTEVENTNUMBER,jobs.LOCATION,  jobs.NAME, jobs.NUMBEROFEVENTS,
-                 jobs.STATISTICSREQUESTED, jobs.WNCPUPOWER, jobs.CPUTIME, jobs.WNCACHE, jobs.WNMEMORY, jobs.WNMODEL, jobs.WORKERNODE, jobs.WNCPUHS06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programName, jobs.programVersion, WNMJFHS06
-   from jobs,files where files.jobid=jobs.jobid and  jobs.diracjobid= jobids(i) Order by jobs.name) LOOP
+FOR i IN jobids.first .. jobids.last LOOP
+  FOR c IN (SELECT  DISTINCT jobs.diracjobid, jobs.diracversion, jobs.eventinputstat, jobs.exectime, jobs.firsteventnumber,jobs.location,  jobs.name, jobs.numberofevents,
+                 jobs.statisticsrequested, jobs.wncpupower, jobs.cputime, jobs.wncache, jobs.wnmemory, jobs.wnmodel, jobs.workernode, jobs.wncpuhs06, jobs.jobid, jobs.totalluminosity, jobs.production, jobs.programname, jobs.programversion, wnmjfhs06
+   FROM jobs,files WHERE files.jobid = jobs.jobid AND  jobs.diracjobid = jobids(i) ORDER BY jobs.name) LOOP
      jobmeta.extend;
-     n:=n+1;
-    jobmeta (n):= jobMetadata(jobids(i), c.DIRACJOBID, c.DIRACVERSION, c.EVENTINPUTSTAT, c.EXECTIME, c.FIRSTEVENTNUMBER,c.LOCATION,  c.NAME, c.NUMBEROFEVENTS,
-                 c.STATISTICSREQUESTED, c.WNCPUPOWER, c.CPUTIME, c.WNCACHE, c.WNMEMORY, c.WNMODEL, c.WORKERNODE, c.WNCPUHS06, c.jobid, c.totalluminosity, c.production, c.programName, c.programVersion, c.WNMJFHS06);
+     n:=n + 1;
+    jobmeta (n):= jobmetadata(jobids(i), c.diracjobid, c.diracversion, c.eventinputstat, c.exectime, c.firsteventnumber,c.location,  c.name, c.numberofevents,
+                 c.statisticsrequested, c.wncpupower, c.cputime, c.wncache, c.wnmemory, c.wnmodel, c.workernode, c.wncpuhs06, c.jobid, c.totalluminosity, c.production, c.programname, c.programversion, c.wnmjfhs06);
   END LOOP;
 END LOOP;
-open a_Cursor for select * from table(jobmeta);
+OPEN a_cursor FOR SELECT * FROM table(jobmeta);
 END;
 
-procedure insertRunStatus(v_runnumber NUMBER, v_JobId NUMBER, v_Finished varchar2)is
-nbrows number;
-begin
+PROCEDURE insertrunstatus(v_runnumber NUMBER, v_jobid NUMBER, v_finished VARCHAR2)IS
+nbrows NUMBER;
+BEGIN
     nbrows := 0;
-    select count(*) into nbrows from runstatus where runnumber=v_runnumber;
-    if nbrows = 0 then
-      insert into runstatus(
+    SELECT count(*) INTO nbrows FROM runstatus WHERE runnumber = v_runnumber;
+    IF nbrows = 0 THEN
+      INSERT INTO runstatus(
          runnumber,
-         JobId,
+         jobid,
          finished
          ) VALUES(
                 v_runnumber,
-                v_JobId,
-                v_Finished);
+                v_jobid,
+                v_finished);
    COMMIT;
    END IF;
   EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-   update runstatus set Finished= v_Finished where runnumber=v_runnumber and jobid=v_JobId;
-   commit;
-  end;
+  WHEN dup_val_on_index THEN
+   UPDATE runstatus SET finished = v_finished WHERE runnumber = v_runnumber AND jobid = v_jobid;
+   COMMIT;
+  END;
 
-procedure setRunFinished(
-  v_runnumber number,
-  isFinished varchar2
- )is
- begin
-  update runstatus set Finished= isFinished where runnumber=v_runnumber;
- if SQL%ROWCOUNT = 0 then
-  raise_application_error(-20088, 'The '|| v_runnumber ||' does not exists in the bookkeeping database!');
- else
-   commit;
- end if;
-end;
+PROCEDURE setrunfinished(
+  v_runnumber NUMBER,
+  isfinished VARCHAR2
+ )IS
+ BEGIN
+  UPDATE runstatus SET finished = isfinished WHERE runnumber = v_runnumber;
+ IF SQL % rowcount = 0 THEN
+  raise_application_error(-20088, 'The ' || v_runnumber || ' does not exists in the bookkeeping database!');
+ ELSE
+   COMMIT;
+ END IF;
+END;
 
-procedure bulkupdateFileMetaData(files bigvarchararray) is
-n number;
-begin
-FOR i in files.FIRST .. files.LAST LOOP
+PROCEDURE bulkupdatefilemetadata(files bigvarchararray) IS
+n NUMBER;
+BEGIN
+FOR i IN files.first .. files.last LOOP
    EXECUTE IMMEDIATE files(i);
 END LOOP;
-end;
+END;
 
-procedure updateLuminosity(v_runnumber number)is
-begin
-for c in (select f.filename, f.luminosity, f.fileid from jobs j, files f where j.jobid=f.jobid and j.runnumber=v_runnumber and j.production<0) LOOP
-  updateDesLuminosity(c.fileid);
+PROCEDURE updateluminosity(v_runnumber NUMBER)IS
+BEGIN
+FOR c IN (SELECT f.filename, f.luminosity, f.fileid FROM jobs j, files f WHERE j.jobid = f.jobid AND j.runnumber = v_runnumber AND j.production < 0) LOOP
+  updatedesluminosity(c.fileid);
 END LOOP;
-end;
+END;
 
-procedure updateDesLuminosity(v_fileid number)is
-lumi number;
-begin
-if v_fileid = 0 then
-  return;
-end if; 
-for c in (select f.filename, f.fileid, j.jobid from jobs j, files f, inputfiles i, filetypes ft where ft.filetypeid=f.filetypeid and ft.name!='LOG' and j.jobid=f.jobid and  j.jobid=i.jobid and i.fileid=v_fileid) LOOP
-  select sum(f.luminosity) into lumi from inputfiles i, files f where f.fileid=i.fileid and i.jobid=c.jobid; 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE updatedesluminosity(v_fileid NUMBER)IS
+lumi NUMBER;
+BEGIN
+IF v_fileid = 0 THEN
+  RETURN;
+END IF;
+FOR c IN (
+  SELECT
+    f.filename,
+    f.fileid,
+    j.jobid
+  FROM 
+    jobs j,
+    files f,
+    inputfiles i,
+    filetypes ft
+  WHERE
+    ft.filetypeid = f.filetypeid AND
+    ft.name != 'LOG' AND
+    j.jobid = f.jobid AND
+    j.jobid = i.jobid AND
+    i.fileid = v_fileid
+  ) LOOP
+    SELECT sum(f.luminosity) INTO lumi
+    FROM inputfiles i, files f
+    WHERE
+      f.fileid = i.fileid AND
+      i.jobid = c.jobid;
   IF lumi > 0 THEN
-    --dbms_output.put_line('update files set luminosity=' || lumi || ' where filename='||c.filename);
-    update files set luminosity=lumi where fileid=c.fileid;
-    updateDesLuminosity(c.fileid);
+    --dbms_output.put_line('update files set luminosity=' || lumi || ' WHERE filename='||c.filename);
+    UPDATE files
+    SET luminosity = lumi
+    WHERE fileid = c.fileid;
+    updatedesluminosity(c.fileid);
   END IF;
 END LOOP;
-end;
+END;
 
-procedure getFileDesJobId(
-   v_Filename                      varchar2,
-   a_Cursor                        out udt_RefCursor
- ) is
- begin
-    open a_Cursor for
-      select i.jobid from inputfiles i, files f where i.fileid=f.fileid and f.filename=v_Filename;  
- end;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure getAllMetadata(
-   v_jobid NUMBER,
-   v_prod   number,
-   a_Cursor                        out udt_RefCursor
- ) is
- begin
-  if v_prod > 0  then
-    open a_Cursor for
-    select files.fileName,files.fileid,files.gotreplica, jobs.production, files.eventstat,
-           files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name from files, jobs, filetypes where files.filetypeid=filetypes.filetypeid and jobs.jobid=files.jobid and files.jobid=v_jobid and jobs.production=v_prod;
-    else
-    open a_Cursor for
-      select files.fileName,files.fileid,files.gotreplica, 0, files.eventstat,
-           files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name from files, filetypes where files.filetypeid=filetypes.filetypeid and files.jobid=v_jobid;
-  end if;
- end;
+PROCEDURE getfiledesjobid (
+  v_filename VARCHAR2,
+  a_cursor   OUT udt_refcursor
+ ) IS
+ BEGIN
+    OPEN a_cursor FOR
+      SELECT i.jobid FROM inputfiles i, files f WHERE i.fileid = f.fileid AND f.filename = v_filename;
+ END;
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getProducedEvents(v_prodid number) return number
-is
-retVal number := 0;
-begin
-select sum(f.eventstat) into retVal 
-  from files f, 
-       jobs j, 
-       (select scont.production, s.stepid 
-          from stepscontainer scont, 
-               steps s
-          where 
-            scont.stepid = s.stepid and
-            scont.production=v_prodid and
-            scont.step=(select max(step) from stepscontainer where stepscontainer.production=v_prodid)) firsts 
-  where j.jobid=f.jobid and
-        j.production=firsts.production and 
-        j.stepid=firsts.stepid;
-return retVal;
+FUNCTION getproducedevents(v_prodid NUMBER) RETURN NUMBER
+IS
+retval NUMBER := 0;
+BEGIN
+SELECT sum(files.eventstat) INTO retval
+  FROM files,
+       jobs,
+       ( SELECT
+           stepscontainer.production,
+           steps.stepid
+         FROM
+           stepscontainer,
+           steps
+         WHERE
+            stepscontainer.stepid = steps.stepid AND
+            stepscontainer.production = v_prodid AND
+            stepscontainer.step = ( SELECT max(step)
+                                    FROM stepscontainer
+                                    WHERE stepscontainer.production = v_prodid
+                                  )
+      ) firsts
+  WHERE jobs.jobid = files.jobid AND
+        jobs.production = firsts.production AND
+        jobs.stepid = firsts.stepid;
+RETURN retval;
 EXCEPTION
-  WHEN OTHERS THEN
-    raise_application_error(-20005, 'error found during the event number calculation');
-end;
+  WHEN others THEN
+    raise_application_error(-20005, 'error found during the event NUMBER calculation');
+END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-procedure bulkgetIdsFromFiles(lfns varchararray,  a_Cursor out udt_RefCursor)
-is
+PROCEDURE bulkgetidsfromfiles(lfns varchararray,  a_cursor OUT udt_refcursor)
+IS
 lfnmeta metadata_table := metadata_table();
 n integer := 0;
-fileid number := 0;
-filetypeid number := 0;
-jobid number := 0;
+fileid NUMBER := 0;
+filetypeid NUMBER := 0;
+jobid NUMBER := 0;
 BEGIN
-FOR i in lfns.FIRST .. lfns.LAST LOOP
-  BEGIN 
-    select fileid, jobid, filetypeid INTO fileid, jobid, filetypeid from files where filename=lfns(i);
+FOR i IN lfns.first .. lfns.last LOOP
+  BEGIN
+    SELECT fileid, jobid, filetypeid INTO fileid, jobid, filetypeid FROM files WHERE filename = lfns(i);
     lfnmeta.extend;
-    n:=n+1;
+    n:=n + 1;
     lfnmeta(n):=metadata0bj(lfns(i), NULL,NULL,NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, jobid,NULL, NULL, NULL, NULL, NULL, fileid,filetypeid);
-  EXCEPTION WHEN NO_DATA_FOUND THEN
+  EXCEPTION WHEN no_data_found THEN
          NULL;
   END;
  END LOOP;
-open a_Cursor for select FILENAME, jobid, fileid, filetypeid from table(lfnmeta);
+OPEN a_cursor FOR SELECT filename, jobid, fileid, filetypeid FROM table(lfnmeta);
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PROCEDURE insertProdnOutputFtypes(v_production number, v_stepid number, v_filetypeid number, v_visible char, v_eventtype number)IS
+PROCEDURE insertprodnoutputftypes(
+  v_production NUMBER,
+  v_stepid NUMBER,
+  v_filetypeid NUMBER,
+  v_visible char,
+  v_eventtype NUMBER
+)IS
 BEGIN
-	INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid)VALUES(v_production,v_stepid, v_filetypeid, v_visible,v_eventtype);
-	COMMIT;
+  INSERT INTO productionoutputfiles(production, stepid, filetypeid, visible, eventtypeid)
+  VALUES(v_production,v_stepid, v_filetypeid, v_visible,v_eventtype);
+  COMMIT;
 EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN
-    DBMS_OUTPUT.put_line ('EXISTS:'||v_production||'->'||v_stepid||'->'||v_filetypeid||'->'||v_visible||'->'||v_eventtype);
+  WHEN dup_val_on_index THEN
+    dbms_output.put_line ('EXISTS:' || v_production || '->' || v_stepid || '->' || v_filetypeid || '->' || v_visible || '->' || v_eventtype);
     --NOT: If the production is already in the table, we only change the step!!!
-    UPDATE productionoutputfiles SET stepid=v_stepid WHERE production=v_production and filetypeid=v_filetypeid and visible =v_visible and eventtypeid=v_eventtype;
-    commit;
+    UPDATE productionoutputfiles SET stepid = v_stepid WHERE production = v_production AND filetypeid = v_filetypeid AND visible = v_visible AND eventtypeid = v_eventtype;
+    COMMIT;
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function getJobIdWithoutReplicaCheck(
-  v_FileName             varchar2
- )return number
- is
- jId number;
- begin
-  select jobs.jobid into jId from files,jobs where
-       files.jobid=jobs.jobid and
-       files.FileName=v_FileName;
-
-   return (jId);
-   EXCEPTION WHEN OTHERS THEN
-  return 0;
-end;
-END; 
+FUNCTION getjobidwithoutreplicacheck (
+  v_filename varchar2
+) RETURN number
+  IS
+  jid number;
+  BEGIN
+    SELECT jobs.jobid INTO jid
+    FROM files, jobs
+    WHERE
+      files.jobid = jobs.jobid AND
+      files.filename = v_filename;
+    RETURN (jid);
+    EXCEPTION WHEN others THEN
+  RETURN 0;
+  END;
+END;
 /

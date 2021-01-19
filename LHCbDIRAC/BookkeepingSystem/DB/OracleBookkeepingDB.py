@@ -14,6 +14,7 @@ from __future__ import print_function
 
 import datetime
 import re
+import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
@@ -107,9 +108,9 @@ class OracleBookkeepingDB(object):
         return S_ERROR('Wrong Equal value!')
 
       if infiletypes != default or outfiletypes != default:
-        if isinstance(infiletypes, basestring):
+        if isinstance(infiletypes, six.string_types):
           infiletypes = []
-        if isinstance(outfiletypes, basestring):
+        if isinstance(outfiletypes, six.string_types):
           outfiletypes = []
         infiletypes.sort()
         outfiletypes.sort()
@@ -132,7 +133,7 @@ class OracleBookkeepingDB(object):
 
       stepId = in_dict.get('StepId', default)
       if stepId != default:
-        if isinstance(stepId, (basestring, int, long)):
+        if isinstance(stepId, (six.string_types + six.integer_types)):
           condition += ' and s.stepid= %s' % (str(stepId))
         elif isinstance(stepId, (list, tuple)):
           condition += 'and s.stepid in (%s)' % ",".join([str(sid) for sid in stepId])
@@ -141,7 +142,7 @@ class OracleBookkeepingDB(object):
 
       stepName = in_dict.get('StepName', default)
       if stepName != default:
-        if isinstance(stepName, basestring):
+        if isinstance(stepName, six.string_types):
           condition += " and s.stepname='%s'" % (stepName)
         elif isinstance(stepName, list):
           values = ' and ('
@@ -151,7 +152,7 @@ class OracleBookkeepingDB(object):
 
       appName = in_dict.get('ApplicationName', default)
       if appName != default:
-        if isinstance(appName, basestring):
+        if isinstance(appName, six.string_types):
           condition += " and s.applicationName='%s'" % (appName)
         elif isinstance(appName, list):
           values = ' and ('
@@ -161,7 +162,7 @@ class OracleBookkeepingDB(object):
 
       appVersion = in_dict.get('ApplicationVersion', default)
       if appVersion != default:
-        if isinstance(appVersion, basestring):
+        if isinstance(appVersion, six.string_types):
           condition += " and s.applicationversion='%s'" % (appVersion)
         elif isinstance(appVersion, list):
           values = ' and ('
@@ -171,7 +172,7 @@ class OracleBookkeepingDB(object):
 
       optFile = in_dict.get('OptionFiles', default)
       if optFile != default:
-        if isinstance(optFile, basestring):
+        if isinstance(optFile, six.string_types):
           condition += " and s.optionfiles='%s'" % (optFile)
         elif isinstance(optFile, list):
           values = ' and ('
@@ -181,7 +182,7 @@ class OracleBookkeepingDB(object):
 
       dddb = in_dict.get('DDDB', default)
       if dddb != default:
-        if isinstance(dddb, basestring):
+        if isinstance(dddb, six.string_types):
           condition += " and s.dddb='%s'" % (dddb)
         elif isinstance(dddb, list):
           values = ' and ('
@@ -191,7 +192,7 @@ class OracleBookkeepingDB(object):
 
       conddb = in_dict.get('CONDDB', default)
       if conddb != default:
-        if isinstance(conddb, basestring):
+        if isinstance(conddb, six.string_types):
           condition += " and s.conddb='%s'" % (conddb)
         elif isinstance(conddb, list):
           values = ' and ('
@@ -201,7 +202,7 @@ class OracleBookkeepingDB(object):
 
       extraP = in_dict.get('ExtraPackages', default)
       if extraP != default:
-        if isinstance(extraP, basestring):
+        if isinstance(extraP, six.string_types):
           condition += " and s.extrapackages='%s'" % (extraP)
         elif isinstance(extraP, list):
           values = ' and ('
@@ -211,7 +212,7 @@ class OracleBookkeepingDB(object):
 
       visible = in_dict.get('Visible', default)
       if visible != default:
-        if isinstance(visible, basestring):
+        if isinstance(visible, six.string_types):
           condition += " and s.visible='%s'" % (visible)
         elif isinstance(visible, list):
           values = ' and ('
@@ -221,7 +222,7 @@ class OracleBookkeepingDB(object):
 
       procPass = in_dict.get('ProcessingPass', default)
       if procPass != default:
-        if isinstance(procPass, basestring):
+        if isinstance(procPass, six.string_types):
           condition += " and s.processingpass like'%%%s%%'" % (procPass)
         elif isinstance(procPass, list):
           values = ' and ('
@@ -231,7 +232,7 @@ class OracleBookkeepingDB(object):
 
       usable = in_dict.get('Usable', default)
       if usable != default:
-        if isinstance(usable, basestring):
+        if isinstance(usable, six.string_types):
           condition += " and s.usable='%s'" % (usable)
         elif isinstance(usable, list):
           values = ' and ('
@@ -245,7 +246,7 @@ class OracleBookkeepingDB(object):
 
       dqtag = in_dict.get('DQTag', default)
       if dqtag != default:
-        if isinstance(dqtag, basestring):
+        if isinstance(dqtag, six.string_types):
           condition += " and s.dqtag='%s'" % (dqtag)
         elif isinstance(dqtag, list):
           values = ' and ('
@@ -255,7 +256,7 @@ class OracleBookkeepingDB(object):
 
       optsf = in_dict.get('OptionsFormat', default)
       if optsf != default:
-        if isinstance(optsf, basestring):
+        if isinstance(optsf, six.string_types):
           condition += " and s.optionsFormat='%s'" % (optsf)
         elif isinstance(optsf, list):
           values = ' and ('
@@ -289,7 +290,7 @@ class OracleBookkeepingDB(object):
           for item in items:
             order += 's.%s,' % (item)
           condition += ' %s %s' % (order[:-1], order)
-        elif isinstance(items, basestring):
+        elif isinstance(items, six.string_types):
           condition += ' s.%s %s' % (items, order)
         else:
           result = S_ERROR('SortItems is not properly defined!')
@@ -650,34 +651,41 @@ class OracleBookkeepingDB(object):
 
     :param int stepid: step id to be deleted
     """
-    result = S_ERROR()
-    command = " delete runtimeprojects where stepid=%d" % (stepid)
-    retVal = self.dbW_.query(command)
+    self.log.warn("Deleting step", stepid)
+
+    retVal = self.dbW_.query("DELETE runtimeprojects WHERE stepid=%d" % (stepid))
     if not retVal['OK']:
-      result = retVal
-    else:
-      # now we can delete the step
-      command = "delete steps where stepid=%d" % (stepid)
-      result = self.dbW_.query(command)
-    return result
+      return retVal
+    # now we can delete the step
+    return self.dbW_.query("DELETE steps WHERE stepid=%d" % (stepid))
 
   #############################################################################
+
+  @deprecated("Use deleteStepContainer")
   def deleteSetpContiner(self, prod):
+    return self.deleteStepContainer(prod)
+
+  def deleteStepContainer(self, prod):
     """delete a production from the step container.
 
     :param int prod: production number
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteSetpContiner', [prod], False)
-    return result
+    self.log.warn("Deleting step container for prod", prod)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteStepContainer', [prod], False)
 
   #############################################################################
+
+  @deprecated("Use deleteProductionsContainer")
   def deleteProductionsContiner(self, prod):
+    return self.deleteProductionsContainer(prod)
+
+  def deleteProductionsContainer(self, prod):
     """delete a production from the productions container.
 
     :param int prod: the production number
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteProductionsCont', [prod], False)
-    return result
+    self.log.warn("Deleting production container for prod", prod)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteProductionsCont', [prod], False)
 
   #############################################################################
   def updateStep(self, in_dict):
@@ -721,7 +729,7 @@ class OracleBookkeepingDB(object):
         condition = " where stepid=%s" % (str(stepid))
         command = 'update steps set '
         for i in in_dict:
-          if isinstance(in_dict[i], basestring):
+          if isinstance(in_dict[i], six.string_types):
             command += " %s='%s'," % (i, str(in_dict[i]))
           else:
             if in_dict[i]:
@@ -1015,7 +1023,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1067,7 +1075,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1082,7 +1090,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnb, None, None, condition, tables, useMainTables=False)
+    retVal = self._buildRunnumbers(runnb, None, None, condition, tables, useMainTables=False)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1164,7 +1172,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1184,7 +1192,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -1461,21 +1469,21 @@ class OracleBookkeepingDB(object):
     tables = ' jobs j, files f, configurations c'
     result = None
     if production != default:
-      if isinstance(production, (basestring, long, int)):
+      if isinstance(production, (six.string_types + six.integer_types)):
         condition += " and j.production=%d " % (int(production))
       elif isinstance(production, list):
         condition += ' and j.production in ( ' + ','.join([str(p) for p in production]) + ')'
       else:
         result = S_ERROR("The production type is invalid. It can be a list, integer or string!")
     elif lfn != default:
-      if isinstance(lfn, basestring):
+      if isinstance(lfn, six.string_types):
         condition += " and f.filename='%s' " % (lfn)
       elif isinstance(lfn, list):
         condition += ' and (' + ' or '.join(["f.filename='%s'" % l for l in lfn]) + ')'
       else:
         result = S_ERROR("You must provide an LFN or a list of LFNs!")
     elif diracJobids != default:
-      if isinstance(diracJobids, (basestring, long, int)):
+      if isinstance(diracJobids, (six.string_types + six.integer_types)):
         condition += " and j.DIRACJOBID=%s " % diracJobids
       elif isinstance(diracJobids, list):
         condition += ' and j.DIRACJOBID in ( ' + ','.join([str(djobid) for djobid in diracJobids]) + ')'
@@ -2023,7 +2031,7 @@ class OracleBookkeepingDB(object):
       logicalFileNames['Failed'] += failed
       logicalFileNames['NotProcessed'] += notprocessed
       if files:
-        ancestorList[fileName] = files.keys()
+        ancestorList[fileName] = list(files)
         filesWithMetadata[fileName] = files
     logicalFileNames['Successful'] = ancestorList
     logicalFileNames['WithMetadata'] = filesWithMetadata
@@ -2228,24 +2236,23 @@ class OracleBookkeepingDB(object):
         attrList[param] = fileobject[param]
     utctime = datetime.datetime.utcnow()
 
-    result = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', int,
-                                              [attrList['Adler32'],
-                                               attrList['CreationDate'],
-                                               attrList['EventStat'],
-                                               attrList['EventTypeId'],
-                                               attrList['FileName'],
-                                               attrList['FileTypeId'],
-                                               attrList['GotReplica'],
-                                               attrList['Guid'],
-                                               attrList['JobId'],
-                                               attrList['MD5Sum'],
-                                               attrList['FileSize'],
-                                               attrList['FullStat'], utctime,
-                                               attrList['QualityId'],
-                                               attrList['Luminosity'],
-                                               attrList['InstLuminosity'],
-                                               attrList['VisibilityFlag']])
-    return result
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.insertFilesRow', int,
+                                            [attrList['Adler32'],
+                                             attrList['CreationDate'],
+                                             attrList['EventStat'],
+                                             attrList['EventTypeId'],
+                                             attrList['FileName'],
+                                             attrList['FileTypeId'],
+                                             attrList['GotReplica'],
+                                             attrList['Guid'],
+                                             attrList['JobId'],
+                                             attrList['MD5Sum'],
+                                             attrList['FileSize'],
+                                             attrList['FullStat'], utctime,
+                                             attrList['QualityId'],
+                                             attrList['Luminosity'],
+                                             attrList['InstLuminosity'],
+                                             attrList['VisibilityFlag']])
 
   #############################################################################
   def updateReplicaRow(self, fileID, replica):  # , name, location):
@@ -2254,8 +2261,7 @@ class OracleBookkeepingDB(object):
     :param long fileID: internal bookkeeping file id
     :param str replica: replica flag
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateReplicaRow', [fileID, replica], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateReplicaRow', [fileID, replica], False)
 
   #############################################################################
   def deleteJob(self, jobID):
@@ -2263,26 +2269,26 @@ class OracleBookkeepingDB(object):
 
     :param long jobID: internal bookkeeping job id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteJob', [jobID], False)
-    return result
+    self.log.warn("Deleting job", jobID)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteJob', [jobID], False)
 
   #############################################################################
-  def deleteInputFiles(self, jobid):
+  def deleteInputFiles(self, jobID):
     """deletes the input files of a job.
 
     :param long jobid:internal bookkeeping job id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteInputFiles', [jobid], False)
-    return result
+    self.log.warn("Deleting input files of", jobID)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteInputFiles', [jobID], False)
 
   #############################################################################
-  def deleteFile(self, fileid):
+  def deleteFile(self, fileID):
     """deletes a file.
 
     :param long fileid: internal bookkeeping file id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deletefile', [fileid], False)
-    return result
+    self.log.warn("Deleting file", fileID)
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deletefile', [fileID], False)
 
   #############################################################################
   @staticmethod
@@ -2403,7 +2409,7 @@ class OracleBookkeepingDB(object):
         if not retVal['OK']:
           result = retVal
         else:
-          failed['Failed'] = failed.keys()
+          failed['Failed'] = list(failed)
           failed['Successful'] = fileNames
           result = S_OK(failed)
       else:  # when no files are exists
@@ -2583,34 +2589,32 @@ class OracleBookkeepingDB(object):
     :param list fileNames: list of LFNs
     :return: dictionary which contains the failed and successful lfns
     """
-    result = S_ERROR()
     retVal = self.dbR_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkcheckfiles',
                                               parameters=[],
                                               output=True,
                                               array=fileNames)
-    failed = {}
     if not retVal['OK']:
-      result = retVal
-    else:
-      for i in retVal['Value']:
-        failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
-        fileNames.remove(i[0])
-      if fileNames:
-        retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
-                                                  parameters=['Yes'],
-                                                  output=False,
-                                                  array=fileNames)
-        if not retVal['OK']:
-          result = retVal
-        else:
-          failed['Failed'] = list(failed)
-          failed['Successful'] = fileNames
-          result = S_OK(failed)
-      else:  # when no files are exists
-        files = {'Failed': [i[0] for i in retVal['Value']], 'Successful': []}
-        result = S_OK(files)
+      return retVal
 
-    return result
+    failed = {}
+    for i in retVal['Value']:
+      failed[i[0]] = 'The file %s does not exist in the BKK database!!!' % (i[0])
+      fileNames.remove(i[0])
+
+    if fileNames:
+      retVal = self.dbW_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.bulkupdateReplicaRow',
+                                                parameters=['Yes'],
+                                                output=False,
+                                                array=fileNames)
+      if not retVal['OK']:
+        return retVal
+      else:
+        failed['Failed'] = list(failed)
+        failed['Successful'] = fileNames
+        return S_OK(failed)
+    else:  # when no files exist
+      files = {'Failed': [i[0] for i in retVal['Value']], 'Successful': []}
+      return S_OK(files)
 
   #############################################################################
   def getRunInformations(self, runnb):
@@ -2628,64 +2632,63 @@ class OracleBookkeepingDB(object):
         j.production<0 and prod.daqperiodid=daq.daqperiodid and\
          j.production=prod.production and j.runnumber=%d" % (runnb)
     retVal = self.dbR_.query(command)
+    if not retVal['OK']:
+      return retVal
 
+    value = retVal['Value']
+    if not value:
+      return S_ERROR('This run is missing in the BKK DB!')
+
+    values = {'Configuration Name': value[0][1], 'Configuration Version': value[0][2], 'FillNumber': value[0][0]}
+    values['DataTakingDescription'] = value[0][3]
+    values['RunStart'] = value[0][4]
+    values['RunEnd'] = value[0][5]
+    values['Tck'] = value[0][6]
+    values['TotalLuminosity'] = value[0][7]
+
+    retVal = self.getRunProcessingPass(runnb)
     if not retVal['OK']:
       result = retVal
     else:
-      value = retVal['Value']
-      if not value:
-        result = S_ERROR('This run is missing in the BKK DB!')
+      values['ProcessingPass'] = retVal['Value']
+      command = ' select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.fullstat), \
+      files.eventtypeid , sum(files.luminosity), sum(files.instLuminosity)  from files,jobs \
+           where files.JobId=jobs.JobId and  \
+           files.gotReplica=\'Yes\' and \
+           jobs.production<0 and \
+           jobs.runnumber=' + str(runnb) + ' Group by files.eventtypeid'
+      retVal = self.dbR_.query(command)
+      if not retVal['OK']:
+        result = retVal
       else:
-        values = {'Configuration Name': value[0][1], 'Configuration Version': value[0][2], 'FillNumber': value[0][0]}
-        values['DataTakingDescription'] = value[0][3]
-        values['RunStart'] = value[0][4]
-        values['RunEnd'] = value[0][5]
-        values['Tck'] = value[0][6]
-        values['TotalLuminosity'] = value[0][7]
-
-        retVal = self.getRunProcessingPass(runnb)
-        if not retVal['OK']:
-          result = retVal
+        value = retVal['Value']
+        if not value:
+          result = S_ERROR('Replica flag is not set!')
         else:
-          values['ProcessingPass'] = retVal['Value']
-          command = ' select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.fullstat), \
-          files.eventtypeid , sum(files.luminosity), sum(files.instLuminosity)  from files,jobs \
-               where files.JobId=jobs.JobId and  \
-               files.gotReplica=\'Yes\' and \
-               jobs.production<0 and \
-               jobs.runnumber=' + str(runnb) + ' Group by files.eventtypeid'
-          retVal = self.dbR_.query(command)
-          if not retVal['OK']:
-            result = retVal
-          else:
-            value = retVal['Value']
-            if not value:
-              result = S_ERROR('Replica flag is not set!')
-            else:
-              nbfile = []
-              nbevent = []
-              fsize = []
-              fstat = []
-              stream = []
-              luminosity = []
-              ilumi = []
-              for i in value:
-                nbfile += [i[0]]
-                nbevent += [i[1]]
-                fsize += [i[2]]
-                fstat += [i[3]]
-                stream += [i[4]]
-                luminosity += [i[5]]
-                ilumi += [i[6]]
+          nbfile = []
+          nbevent = []
+          fsize = []
+          fstat = []
+          stream = []
+          luminosity = []
+          ilumi = []
+          for i in value:
+            nbfile += [i[0]]
+            nbevent += [i[1]]
+            fsize += [i[2]]
+            fstat += [i[3]]
+            stream += [i[4]]
+            luminosity += [i[5]]
+            ilumi += [i[6]]
 
-              values['Number of file'] = nbfile
-              values['Number of events'] = nbevent
-              values['File size'] = fsize
-              values['FullStat'] = fstat
-              values['Stream'] = stream
-              values['luminosity'] = luminosity
-              values['InstLuminosity'] = ilumi
-              result = S_OK(values)
+          values['Number of file'] = nbfile
+          values['Number of events'] = nbevent
+          values['File size'] = fsize
+          values['FullStat'] = fstat
+          values['Stream'] = stream
+          values['luminosity'] = luminosity
+          values['InstLuminosity'] = ilumi
+          result = S_OK(values)
 
     return result
 
@@ -2703,7 +2706,7 @@ class OracleBookkeepingDB(object):
     if runnb == default:
       result = S_ERROR('The RunNumber must be given!')
     else:
-      if isinstance(runnb, (basestring, int, long)):
+      if isinstance(runnb, (six.string_types + six.integer_types)):
         runnb = [runnb]
       runs = ''
       for i in runnb:
@@ -2934,7 +2937,7 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddesc, condition, tables)
+    retVal = self._buildConditions(default, conddesc, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3368,7 +3371,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3403,7 +3406,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(simdesc, datataking, condition, tables)
+    retVal = self._buildConditions(simdesc, datataking, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3489,7 +3492,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += ' %s.production=%s or ' % (table, str(i))
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(production, (basestring, int, long)):
+      elif isinstance(production, (six.string_types + six.integer_types)):
         condition += ' and %s.production=%s' % (table, str(production))
 
     return S_OK((condition, tables))
@@ -3511,7 +3514,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           tcks.remove(default)
         if tcks:
           condition += ' and ( ' + ' or '.join([" j.tck='%s'" % i for i in tcks]) + ')'
-      elif isinstance(tcks, basestring):
+      elif isinstance(tcks, six.string_types):
         condition += " and j.tck='%s'" % (tcks)
       else:
         return S_ERROR('The TCK should be a list or a string')
@@ -3582,7 +3585,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += " ft.name='%s' or " % (i)
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(ftype, basestring):
+      elif isinstance(ftype, six.string_types):
         condition += " and ft.name='%s'" % (ftype)
       else:
         return S_ERROR('File type problem!')
@@ -3592,7 +3595,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       else:
         condition += ' and ft.filetypeid=prod.filetypeid'
 
-    if isinstance(ftype, basestring) and ftype == 'RAW' and 'jobs' in tables:
+    if isinstance(ftype, six.string_types) and ftype == 'RAW' and 'jobs' in tables:
       # we know the production of a run is lees than 0.
       # this is needed to speed up the queries when the file type is raw
       # (we reject all recostructed + stripped jobs/files. ).
@@ -3601,7 +3604,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
   #############################################################################
   @staticmethod
-  def __buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables, useMainTables=True):
+  def _buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables, useMainTables=True):
     """it adds the run numbers or start end run to the jobs table.
 
     :param list runnumbers: list of runs
@@ -3624,9 +3627,9 @@ and files.qualityid= dataquality.qualityid" % lfn
       if 'productionscontainer' not in tables.lower():
         tables += ' ,productionscontainer cont'
     cond = None
-    if isinstance(runnumbers, (int, long)):
+    if isinstance(runnumbers, six.integer_types):
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
-    elif isinstance(runnumbers, basestring) and runnumbers.upper() != default:
+    elif isinstance(runnumbers, six.string_types) and runnumbers.upper() != default:
       condition += ' and %s.runnumber=%s' % (table, str(runnumbers))
     elif isinstance(runnumbers, list) and runnumbers:
       cond = ' ( '
@@ -3644,11 +3647,11 @@ and files.qualityid= dataquality.qualityid" % lfn
       elif startRunID is None or endRunID is None:
         condition += " and %s " % (cond)
     else:
-      if (isinstance(startRunID, basestring) and startRunID.upper() is not default) or\
-              (isinstance(startRunID, (int, long)) and startRunID is not None):
+      if (isinstance(startRunID, six.string_types) and startRunID.upper() != default) or\
+              (isinstance(startRunID, six.integer_types) and startRunID is not None):
         condition += ' and %s.runnumber>=%s' % (table, str(startRunID))
-      if (isinstance(endRunID, basestring) and endRunID.upper() is not default) or\
-              (isinstance(endRunID, (int, long)) and endRunID is not None):
+      if (isinstance(endRunID, six.string_types) and endRunID.upper() is not default) or\
+              (isinstance(endRunID, six.integer_types) and endRunID is not None):
         condition += ' and %s.runnumber<=%s' % (table, str(endRunID))
     return S_OK((condition, tables))
 
@@ -3681,7 +3684,7 @@ and files.qualityid= dataquality.qualityid" % lfn
           cond += " %s.eventtypeid=%s or " % (table, (str(i)))
         cond = cond[:-3] + ')'
         condition += cond
-      elif isinstance(evt, (basestring, int, long)):
+      elif isinstance(evt, (six.string_types + six.integer_types)):
         condition += ' and %s.eventtypeid=%s' % (table, str(evt))
       if useMainTables:
         if isinstance(evt, (list, tuple)) and evt:
@@ -3691,7 +3694,7 @@ and files.qualityid= dataquality.qualityid" % lfn
             cond += " %s.eventtypeid=%s or " % (table, (str(i)))
           cond = cond[:-3] + ')'
           condition += cond
-        elif isinstance(evt, (basestring, int, long)):
+        elif isinstance(evt, (six.string_types + six.integer_types)):
           condition += ' and %s.eventtypeid=%s' % (table, str(evt))
     return S_OK((condition, tables))
 
@@ -3813,7 +3816,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     return S_OK((condition, tables))
 
   #############################################################################
-  def __buildConditions(self, simdesc, datataking, condition, tables):
+  def _buildConditions(self, simdesc, datataking, condition, tables):
     """adds the data taking or simulation conditions to the query.
 
     :param str simdesc it is used to construct the simulation condition query filter
@@ -3940,7 +3943,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runNumbers, startRun, endRun, condition, tables)
+    retVal = self._buildRunnumbers(runNumbers, startRun, endRun, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -3950,7 +3953,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conditionDescription, condition, tables)
+    retVal = self._buildConditions(default, conditionDescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -4037,7 +4040,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildConditions(default, conddescription, condition, tables)
+    retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -4072,7 +4075,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildRunnumbers(runnb, None, None, condition, tables)
+    retVal = self._buildRunnumbers(runnb, None, None, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
@@ -4104,7 +4107,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = 'select DaqPeriodId from data_taking_conditions where '
     for param in condition:
-      if isinstance(condition[param], basestring) and not condition[param].strip():
+      if isinstance(condition[param], six.string_types) and not condition[param].strip():
         command += str(param) + ' is NULL and '
       elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4118,7 +4121,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select DaqPeriodId from data_taking_conditions where '
         for param in condition:
           if param != 'Description':
-            if isinstance(condition[param], basestring) and not condition[param].strip():
+            if isinstance(condition[param], six.string_types) and not condition[param].strip():
               command += str(param) + ' is NULL and '
             elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4143,7 +4146,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = 'select description from data_taking_conditions where '
     for param in condition:
-      if isinstance(condition[param], basestring) and not condition[param].strip():
+      if isinstance(condition[param], six.string_types) and not condition[param].strip():
         command += str(param) + ' is NULL and '
       elif condition[param] is not None:
         command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4157,7 +4160,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         command = 'select DaqPeriodId from data_taking_conditions where '
         for param in condition:
           if param != 'Description':
-            if isinstance(condition[param], basestring) and not condition[param].strip():
+            if isinstance(condition[param], six.string_types) and not condition[param].strip():
               command += str(param) + ' is NULL and '
             elif condition[param] is not None:
               command += str(param) + '=\'' + condition[param] + '\' and '
@@ -4454,10 +4457,11 @@ and files.qualityid= dataquality.qualityid" % lfn
         return S_ERROR('Data taking condition is missing')
     if simcond is not None:
       retVal = self.__getSimulationConditionId(simcond)
-      if retVal['OK'] and retVal['Value'] > -1:
-        sim = retVal['Value']
-      else:
+      if not retVal['OK']:
+        return retVal
+      if retVal['Value'] == -1:
         return S_ERROR('Simulation condition is missing')
+      sim = retVal['Value']
     retVal = self.insertproductionscontainer(production, processingid, sim, did, configName, configVersion)
     if not retVal['OK']:
       return retVal
@@ -4478,7 +4482,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     fileTypeMap = {'RAW': 'MDF'}
     eventtypes = []
     if eventType:
-      if isinstance(eventType, (basestring, int, long)):
+      if isinstance(eventType, (six.string_types + six.integer_types)):
         eventtypes.append(long(eventType))
       elif isinstance(eventType, list):
         eventtypes = eventType
@@ -5177,7 +5181,7 @@ and files.qualityid= dataquality.qualityid" % lfn
         for item in items:
           order += 'sim.%s,' % (item)
         condition += ' %s' % order[:-1]
-      elif isinstance(items, basestring):
+      elif isinstance(items, six.string_types):
         condition += ' sim.%s %s' % (items, order)
       else:
         result = S_ERROR('SortItems is not properly defined!')
@@ -5438,7 +5442,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       if not retVal['OK']:
         failed.append({evtId: {'Error': retVal['Message'], 'EvtentType': evt}})
 
-    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(i.keys()[0] for i in failed))
+    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(list(i)[0] for i in failed))
     return S_OK({'Failed': failed, 'Successful': successful})
 
   #############################################################################
@@ -5464,7 +5468,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       if not retVal['OK']:
         failed.append({evtId: {'Error': retVal['Message'], 'EvtentType': evt}})
 
-    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(i.keys()[0] for i in failed))
+    successful = list(set(evt['EVTTYPEID'] for evt in eventtypes) - set(list(i)[0] for i in failed))
     return S_OK({'Failed': failed, 'Successful': successful})
 
   def getRunConfigurationsAndDataTakingCondition(self, runnumber):
@@ -5555,5 +5559,5 @@ and files.qualityid= dataquality.qualityid" % lfn
     for record in retVal['Value']:
       result[record[0]] = dict(zip(fileParams, record[1:]))
 
-    failed = list(set(lfns) - set(result.keys()))
+    failed = list(set(lfns) - set(result))
     return S_OK({'Successful': result, 'Failed': failed})

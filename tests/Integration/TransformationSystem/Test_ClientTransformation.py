@@ -172,11 +172,9 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase, DIRACTrans
     self.assertTrue(res['OK'])
     res1 = self.transClient.getTransformationParameters(transID, 'aParamName')
     self.assertTrue(res1['OK'])
-    res2 = self.transClient.getTransformationParameters(transID, ('aParamName', ))
+    res2 = self.transClient.getTransformationParameters(transID, ['aParamName'])
     self.assertTrue(res2['OK'])
-    res3 = self.transClient.getTransformationParameters(transID, ['aParamName'])
-    self.assertTrue(res3['OK'])
-    self.assertTrue(res1['Value'] == res2['Value'] == res3['Value'])
+    self.assertTrue(res1['Value'] == res2['Value'])
 
     # file status
     lfns = ['/aa/lfn.1.txt', '/aa/lfn.2.txt', '/aa/lfn.3.txt', '/aa/lfn.4.txt']

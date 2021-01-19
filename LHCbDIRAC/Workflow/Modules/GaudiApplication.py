@@ -14,6 +14,11 @@
     This is the module used for each and every job of productions. It can also be used by users.
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+
 __RCSID__ = "$Id$"
 
 import re
@@ -21,7 +26,7 @@ import os
 import subprocess
 import shlex
 
-from DIRAC import S_OK, S_ERROR, gLogger
+from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities import DErrno
 
 from LHCbDIRAC.Core.Utilities.ProductionOptions import getDataOptions, getModuleOptions
@@ -124,6 +129,14 @@ class GaudiApplication(ModuleBase):
             "stepOutputs, stepOutputTypes, histogram  ==>  %s, %s, %s" %
             (stepOutputs, stepOutputTypes, histogram))
 
+      # Simple check for slow processors: auto increase of Event Timeout
+      cpuNormalization = int(gConfig.getValue("/LocalSite/CPUNormalizationFactor", 10))
+      if cpuNormalization < 10:
+        options = "from Configurables import StalledEventMonitor;"
+        options += "StalledEventMonitor(EventTimeout=%s)" % str(int(3600 * 10 / cpuNormalization))
+        if 'StalledEventMonitor' not in self.extraOptionsLine:
+          self.extraOptionsLine += options
+
       prodConfFileName = ''
       if self.optionsLine or self.jobType.lower() == 'user':
         # Prepare standard project run time options
@@ -142,7 +155,7 @@ class GaudiApplication(ModuleBase):
                                        firstEventNumberGauss,
                                        self.jobType)['Value']  # always OK
         self.log.info('Extra options generated for %s %s step:' % (self.applicationName, self.applicationVersion))
-        print projectOpts  # Always useful to see in the logs (don't use gLogger as we often want to cut n' paste)
+        print(projectOpts)  # Always useful to see in the logs (don't use gLogger as we often want to cut n' paste)
         with open(generatedOpts, 'w') as options:
           options.write(projectOpts)
         commandOptions.append(generatedOpts)
@@ -155,6 +168,7 @@ class GaudiApplication(ModuleBase):
       # lb-run stuff
       ra.applicationName = self.applicationName
       ra.applicationVersion = self.applicationVersion
+      ra.usePrmon = self.usePrmon
       ra.systemConfig = self.systemConfig
       ra.extraPackages = self.extraPackages
       ra.runTimeProject = self.runTimeProjectName

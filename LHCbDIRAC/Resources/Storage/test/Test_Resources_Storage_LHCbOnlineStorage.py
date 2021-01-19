@@ -163,14 +163,14 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     res = resource.removeFile(['A', 'B'])
     self.assertEqual(True, res['OK'])
     self.assertEqual({'A': True}, res['Value']['Successful'])
-    self.assertEqual(['B'], res['Value']['Failed'].keys())
+    self.assertEqual(['B'], list(res['Value']['Failed']))
 
     resource.server.endMigratingFileBulk.side_effect = Exception('Boom!')
     res = resource.removeFile(['A', 'B'])
     #FIXME: This should return S_ERROR !!
     self.assertEqual(True, res['OK'])
     self.assertEqual({}, res['Value']['Successful'])
-    self.assertEqual(['A', 'B'], res['Value']['Failed'].keys())
+    self.assertEqual(['A', 'B'], list(res['Value']['Failed']))
 
   def test_retransferOnlineFile(self):
     """tests output of retransferOnlineFile."""
@@ -207,15 +207,11 @@ class LHCbOnlineStorage_Success(LHCbOnlineStorage_TestCase):
     res = resource.retransferOnlineFile(['A', 'B'])
     self.assertEqual(True, res['OK'])
     self.assertEqual({'A': True}, res['Value']['Successful'])
-    self.assertEqual(['B'], res['Value']['Failed'].keys())
+    self.assertEqual(['B'], list(res['Value']['Failed']))
 
     resource.server.errorMigratingFile.side_effect = Exception('Boom!')
     res = resource.retransferOnlineFile(['A', 'B'])
     #FIXME: This should return S_ERROR !!
     self.assertEqual(True, res['OK'])
     self.assertEqual({}, res['Value']['Successful'])
-    self.assertEqual(['A', 'B'], res['Value']['Failed'].keys())
-
-
-################################################################################
-#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF
+    self.assertEqual(['A', 'B'], list(res['Value']['Failed']))

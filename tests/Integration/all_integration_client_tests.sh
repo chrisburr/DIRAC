@@ -22,17 +22,13 @@ echo -e '******' "LHCb client -> server tests" '******\n'
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-
-#-------------------------------------------------------------------------------#
-echo -e "*** $(date -u) **** LHCb RSS TESTS ****\n"
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ResourceStatusSystem/Test_ResourceManagement.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+pytest "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb TS TESTS ****\n"
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/TransformationSystem/Test_ClientTransformation.py" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/TransformationSystem/Test_ClientTransformation.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb WMS TESTS ****\n"
-"$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh" 2>&1 | tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+"$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))

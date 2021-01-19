@@ -20,7 +20,7 @@ class JobStep(BaseAccountingType):
 
   def __init__(self):
 
-    BaseAccountingType.__init__(self)
+    super(JobStep, self).__init__()
 
     self.definitionKeyFields = [('JobGroup', 'VARCHAR(32)'),
                                 ('RunNumber', 'VARCHAR(32)'),
@@ -31,9 +31,9 @@ class JobStep(BaseAccountingType):
                                 ('FinalStepState', 'VARCHAR(32)')
                                 ]
 
-    self.definitionAccountingFields = [('CPUTime', "INT UNSIGNED"),
-                                       ('NormCPUTime', "INT UNSIGNED"),
-                                       ('ExecTime', "INT UNSIGNED"),
+    self.definitionAccountingFields = [('CPUTime', "INT UNSIGNED"),  # utime + stime + cutime + cstime
+                                       ('NormCPUTime', "INT UNSIGNED"),  # CPUTime * CPUNormalizationFactor
+                                       ('ExecTime', "INT UNSIGNED"),  # elapsed_time (wall time) * numberOfProcessors
                                        ('InputData', 'BIGINT UNSIGNED'),
                                        ('OutputData', 'BIGINT UNSIGNED'),
                                        ('InputEvents', 'BIGINT UNSIGNED'),

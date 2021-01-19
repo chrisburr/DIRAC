@@ -35,11 +35,9 @@ def prettyMsg(msg, msgList):
   gLogger.always('The following file%s %s:\n%s' % (areIs, msg, '\n'.join(msgList)))
 
 
-#====================================
 if __name__ == "__main__":
 
   from DIRAC.Core.Base import Script
-  import sys
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
   dmScript = DMScript()
 
@@ -49,7 +47,7 @@ if __name__ == "__main__":
 
   Script.parseCommandLine(ignoreErrors=True)
   import DIRAC
-  from DIRAC import gLogger, gConfig
+  from DIRAC import gLogger
   from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 
   verbose = False
@@ -188,7 +186,7 @@ if __name__ == "__main__":
       notInFC = res['Value']['Failed']
       if notInFC:
         # Check if files has replica flag in the FC, If not ignore the problem
-        res = bk.getFileMetadata(notInFC.keys())
+        res = bk.getFileMetadata(list(notInFC))
         if not res['OK']:
           gLogger.always('Error getting BK metadata for %d files' % len(notInFC), res['Message'])
           continue
@@ -197,7 +195,7 @@ if __name__ == "__main__":
         if notInFC:
           pbFound = True
           prettyMsg('not in the FC but in BK', notInFC)
-      notFoundReplicas = replicas.keys()
+      notFoundReplicas = list(replicas)
       missingReplicas = []
       accessibleReplicas = []
       seUsed = []

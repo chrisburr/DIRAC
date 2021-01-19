@@ -25,6 +25,7 @@ This page is the work in progress. See more material here soon !
    sandboxStore
    Popularity/index.rst
    LHCbWebApp/index.rst
+   MySQL/mysql.rst
    Elasticsearch/esdocs.rst
    install
    CommandReference/Admin/index.rst

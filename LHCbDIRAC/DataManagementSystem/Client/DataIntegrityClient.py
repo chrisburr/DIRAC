@@ -13,7 +13,7 @@ problematic file and replicas to the IntegrityDB and their status correctly
 updated in the FileCatalog."""
 
 import re
-import types
+import six
 
 from DIRAC import S_OK, gLogger
 from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
@@ -67,7 +67,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
         return res
       catalogMetadata.update(res['Value'])
     # Get the replicas for the files found to exist in the catalog
-    res = self.cc._getCatalogReplicas(catalogMetadata.keys())
+    res = self.cc._getCatalogReplicas(list(catalogMetadata))
     if not res['OK']:
       return res
     replicas, zeroReplicaFiles = res['Value']
@@ -85,7 +85,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
       gLogger.error('Failed to get catalog metadata', res['Message'])
       return res
     allMetadata = res['Value']['Successful']
-    existingCatalogFiles = allMetadata.keys()
+    existingCatalogFiles = list(allMetadata)
     if existingCatalogFiles:
       self._reportProblematicFiles(existingCatalogFiles, 'BKReplicaNo')
     gLogger.info('Checking the catalog existence of files complete')
@@ -104,7 +104,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     badBKFileSize = []
     badBKGUID = []
     allMetadata = res['Value']
-    gLogger.info("Obtained at total of %s files" % len(allMetadata.keys()))
+    gLogger.info("Obtained at total of %s files" % len(allMetadata))
     totalSize = 0
     for lfn, bkMetadata in allMetadata.iteritems():
       if bkMetadata['FileType'] != 'LOG':
@@ -142,7 +142,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->BK check")
     gLogger.info("-" * 40)
-    if isinstance(lfnDir, basestring):
+    if isinstance(lfnDir, six.string_types):
       lfnDir = [lfnDir]
     res = self.__getCatalogDirectoryContents(lfnDir)
     if not res['OK']:
@@ -169,7 +169,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     gLogger.info("-" * 40)
     gLogger.info("Performing the FC->BK check")
     gLogger.info("-" * 40)
-    if type(lfns) in types.StringTypes:
+    if isinstance(lfns, six.string_types):
       lfns = [lfns]
 
     res = self.cc._getCatalogMetadata(lfns)
@@ -181,7 +181,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     if zeroSizeFiles:
       self._reportProblematicFiles(zeroSizeFiles, 'LFNZeroSize')
 
-    res = self.cc._getCatalogReplicas(catalogMetadata.keys())
+    res = self.cc._getCatalogReplicas(list(catalogMetadata))
     if not res['OK']:
       return res
     replicas, _zeroReplicaFiles = res['Value']

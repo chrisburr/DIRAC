@@ -44,7 +44,7 @@
 <Parameter name="eventType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Event Type of the production"><value><![CDATA[11166161]]></value></Parameter>
 <Parameter name="numberOfEvents" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Number of events requested"><value><![CDATA[-1]]></value></Parameter>
 <Parameter name="CPUe" type="string" linked_module="" linked_parameter="" in="True" out="False" description="CPU time per event"><value><![CDATA[1300]]></value></Parameter>
-<Parameter name="maxNumberOfEvents" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Maximum number of events to produce (Gauss only)"><value><![CDATA[1120]]></value></Parameter>
+<Parameter name="maxNumberOfEvents" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Maximum number of events to produce (Gauss only)"><value><![CDATA[2]]></value></Parameter>
 <Parameter name="multicore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Flag for enabling gaudi parallel"><value><![CDATA[True]]></value></Parameter>
 <Parameter name="outputDataStep" type="string" linked_module="" linked_parameter="" in="True" out="False" description="outputDataStep Mask"><value><![CDATA[3]]></value></Parameter>
 <Parameter name="SoftwarePackages" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="LHCbSoftwarePackages"><value><![CDATA[Gauss.v45r8;AppConfig.v3r200;DecFiles.v27r33;ProdConf;Boole.v26r3;AppConfig.v3r164;Moore.v14r8p1;AppConfig.v3r164;ProdConf]]></value></Parameter>
@@ -104,6 +104,18 @@ from LHCbDIRAC.Workflow.Modules.ErrorLogging import ErrorLogging
 <required></required>
 <version>0.0</version>
 <type>ErrorLogging</type>
+</ModuleDefinition>
+<ModuleDefinition>
+<body><![CDATA[
+from LHCbDIRAC.Workflow.Modules.UploadMC import UploadMC
+]]></body>
+<origin></origin>
+<description><![CDATA[ UploadMC module is used to upload to ES the json files for MC statistics
+]]></description>
+<descr_short></descr_short>
+<required></required>
+<version>0.0</version>
+<type>UploadMC</type>
 </ModuleDefinition>
 <ModuleDefinition>
 <body><![CDATA[
@@ -246,6 +258,11 @@ from LHCbDIRAC.Workflow.Modules.StepAccounting import StepAccounting
 <type>UploadLogFile</type>
 <name>UploadLogFile</name>
 <descr_short></descr_short>
+</ModuleInstance>
+<ModuleInstance>
+<type>UploadMC</type>
+<name>UploadMC</name>
+<descr_short/>
 </ModuleInstance>
 <ModuleInstance>
 <type>FailoverRequest</type>

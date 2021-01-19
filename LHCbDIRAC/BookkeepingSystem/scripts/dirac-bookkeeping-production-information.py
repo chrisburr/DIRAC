@@ -24,12 +24,12 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     'Usage:',
     '  %s [option|cfgfile] ... ProdID' % Script.scriptName,
     'Arguments:',
-    '  ProdID:   Production ID']))
+    '  ProdID:   Production ID (mandatory)']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 1:
-  Script.showHelp()
+  Script.showHelp(exitCode=1)
 
 exitCode = 0
 

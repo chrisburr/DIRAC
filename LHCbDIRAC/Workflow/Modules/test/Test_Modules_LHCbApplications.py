@@ -26,7 +26,6 @@ from LHCbDIRAC.Workflow.Modules.mock_Commons import prod_id, prod_job_id, wms_jo
     workflowStatus, stepStatus, step_id, step_number,\
     step_commons, wf_commons
 
-from LHCbDIRAC.Workflow.Modules.GaudiApplication import GaudiApplication
 from LHCbDIRAC.Workflow.Modules.GaudiApplicationScript import GaudiApplicationScript
 from LHCbDIRAC.Workflow.Modules.RootApplication import RootApplication
 from LHCbDIRAC.Workflow.Modules.LHCbScript import LHCbScript
@@ -49,30 +48,6 @@ class ModulesApplicationsTestCase(unittest.TestCase):
         os.remove(fileProd)
       except OSError:
         continue
-
-#############################################################################
-# GaudiApplication.py
-#############################################################################
-
-
-class GaudiApplicationSuccess(ModulesApplicationsTestCase):
-
-  @patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.RunApplication", side_effect=MagicMock())
-  @patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.ModuleBase._manageAppOutput", side_effect=MagicMock())
-  @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
-  def test_execute(self, _patch, _patched, _ppatched):
-
-    ga = GaudiApplication(bkClient=bkc_mock, dm=dm_mock)
-    ga.siteName = 'LCG.PIPPO.org'
-    ga.jobType = 'user'
-
-    # no errors, no input data
-    for wf_cs in copy.deepcopy(wf_commons):
-      for s_cs in step_commons:
-        self.assertTrue(ga.execute(prod_id, prod_job_id, wms_job_id,
-                                   workflowStatus, stepStatus,
-                                   wf_cs, s_cs,
-                                   step_number, step_id)['OK'])
 
 
 #############################################################################
@@ -212,7 +187,6 @@ class ErrorLoggingSuccess(ModulesApplicationsTestCase):
 
 if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(ModulesApplicationsTestCase)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(GaudiApplicationSuccess))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(GaudiApplicationScriptSuccess))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LHCbScriptSuccess))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LHCbScriptFailure))

@@ -12,7 +12,6 @@
 Transformation."""
 __RCSID__ = "$Id$"
 
-import cPickle
 import os
 from collections import defaultdict
 
@@ -21,6 +20,7 @@ from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
+from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonLoads
 from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -97,8 +97,7 @@ def executeAddTransformation(pluginScript):
 
   if not plugin and not listProcessingPasses:
     gLogger.fatal("ERROR: No plugin supplied...")
-    Script.showHelp()
-    DIRAC.exit(0)
+    Script.showHelp(exitCode=1)
   prods = pluginScript.getOption('Productions')
   requestID = pluginScript.getOption('RequestID')
   fileType = pluginScript.getOption('FileType')
@@ -145,7 +144,7 @@ def executeAddTransformation(pluginScript):
     prodReq = res['Value']['Rows']
     reqDict = defaultdict(set)
     for row in prodReq:
-      mcVersion = cPickle.loads(row['Extra'])['mcConfigVersion']
+      mcVersion = pickleOrJsonLoads(row['Extra'])['mcConfigVersion']
       # If "all" we take all numerical values, otherwise we take the explicit values
       if ('all' in mcVersions and mcVersion.isdigit()) or mcVersion in mcVersions:
         simVersion = row['ProPath'].split('/')[0]
@@ -172,8 +171,7 @@ def executeAddTransformation(pluginScript):
       bkQuery = pluginScript.getBKQuery()
     if not bkQuery and not force:
       gLogger.fatal("No LFNs and no BK query were given...")
-      Script.showHelp()
-      DIRAC.exit(2)
+      Script.showHelp(exitCode=2)
     if bkQuery:
       processingPass = bkQuery.getProcessingPass()
       if '...' in processingPass or '*' in processingPass:
@@ -341,8 +339,7 @@ def executeAddTransformation(pluginScript):
       else:
         # Should not happen here, but who knows ;-)
         gLogger.error("No BK query provided...")
-        Script.showHelp()
-        DIRAC.exit(0)
+        Script.showHelp(exitCode=1)
 
     if force:
       lfns = []

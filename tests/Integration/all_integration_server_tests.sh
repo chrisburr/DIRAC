@@ -23,16 +23,22 @@ echo -e '********** LHCb server tests ***********\n'
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
 pytest --ignore=. "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_Files.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_MCProds.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Accounting TESTS ****\n"
-python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/AccountingSystem/Test_Plotter.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/AccountingSystem/Test_Plotter.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb DMS TESTS ****\n"
-python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/DataManagementSystem/Test_RAWIntegrity.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/DataManagementSystem/Test_RAWIntegrity.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
-python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_MCStatsElasticDB.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-TESTCODE=$TESTCODE python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" 2>&1 | tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+# pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticApplicationSummaryDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+# pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticGeneratorLogDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticMCBooleLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticMCGaussLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticPrMonDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+TEST_CODE_LOC=$TESTCODE python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))

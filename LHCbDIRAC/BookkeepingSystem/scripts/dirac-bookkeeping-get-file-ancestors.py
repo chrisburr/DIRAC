@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """returns ancestors for a (list of) LFN(s)"""
+
 __RCSID__ = "$Id$"
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
@@ -24,7 +25,7 @@ if __name__ == "__main__":
   level = 1
   Script.registerSwitch('', 'All', 'Do not restrict to ancestors with replicas')
   Script.registerSwitch('', 'Full', 'Get full metadata information on ancestors')
-  Script.registerSwitch('', 'Depth=', 'Number of processing levels (default:%d)' % level)
+  Script.registerSwitch('', 'Depth=', 'Number of processing levels (default: %d)' % level)
   Script.setUsageMessage(__doc__ + '\n'.join([
       'Usage:',
       '  %s [option|cfgfile] ... [LFN|File] [Level]' % Script.scriptName,

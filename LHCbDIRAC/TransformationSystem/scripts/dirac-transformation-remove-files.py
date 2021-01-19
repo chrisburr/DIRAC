@@ -37,7 +37,6 @@ def __getTransformations(args):
 
 
 if __name__ == "__main__":
-  import os
   import DIRAC
   from DIRAC import gLogger
   from DIRAC.Core.Base import Script

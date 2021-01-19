@@ -20,9 +20,10 @@ __RCSID__ = "$Id$"
 
 ################################################################################
 
-class RAWIntegrityClient_TestCase( unittest.TestCase ):
 
-  def setUp( self ):
+class RAWIntegrityClient_TestCase(unittest.TestCase):
+
+  def setUp(self):
     """Setup."""
 
     gLogger.setLevel('DEBUG')
@@ -33,7 +34,7 @@ class RAWIntegrityClient_TestCase( unittest.TestCase ):
     self.mock_pathFinder = mock_pathFinder
 
     mock_RPC = mock.MagicMock()
-    mock_RPC.addFile.return_value = { 'OK' : True }
+    mock_RPC.addFile.return_value = {'OK': True}
 #    mock_RPC.addMigratingReplicas.return_value    = { 'OK' : True }
 #    mock_RPC.removeMigratingFiles.return_value    = { 'OK' : True }
 #    mock_RPC.removeMigratingReplicas.return_value = { 'OK' : True }
@@ -49,7 +50,7 @@ class RAWIntegrityClient_TestCase( unittest.TestCase ):
     self.moduleTested = moduleTested
     self.testClass = self.moduleTested.RAWIntegrityClient
 
-  def tearDown( self ):
+  def tearDown(self):
     """TearDown."""
     del self.testClass
     del self.moduleTested
@@ -58,48 +59,49 @@ class RAWIntegrityClient_TestCase( unittest.TestCase ):
 
 ################################################################################
 
-class RAWIntegrityClient_Success( RAWIntegrityClient_TestCase ):
 
-  def test_instantiate( self ):
+class RAWIntegrityClient_Success(RAWIntegrityClient_TestCase):
+
+  def test_instantiate(self):
     """tests that we can instantiate one object of the tested class."""
 
     catalog = self.testClass()
-    self.assertEqual( 'RAWIntegrityClient', catalog.__class__.__name__ )
+    self.assertEqual('RAWIntegrityClient', catalog.__class__.__name__)
 
-  def test_exists( self ):
+  def test_exists(self):
     """tests the output of exists."""
 
     catalog = self.testClass()
 
-    res = catalog.exists( '1' )
+    res = catalog.exists('1')
     self.assertTrue(res['OK'])
 
-    res = catalog.exists( {} )
-    self.assertFalse( res['OK'] )
+    res = catalog.exists({})
+    self.assertFalse(res['OK'])
 
-    res = catalog.exists( [ 'path1' ] )
+    res = catalog.exists(['path1'])
     self.assertTrue(res['OK'])
 
-    res = catalog.exists( { 'A' : 1, 'B' : 2 } )
+    res = catalog.exists({'A': 1, 'B': 2})
     self.assertTrue(res['OK'])
-    self.assertEqual( { 'Failed' : {}, 'Successful' : { 'A' : False, 'B' : False} }, res['Value'] )
+    self.assertEqual({'Failed': {}, 'Successful': {'A': False, 'B': False}}, res['Value'])
 
-  def test_addFile( self ):
+  def test_addFile(self):
     """tests the output of addFile."""
 
     catalog = self.testClass()
     catalog.rawIntegritySrv = mock.MagicMock()
 
-    res = catalog.addFile( {'1':{'PFN':'pfn', 'Size': 123, 'SE': 'aSe', 'GUID': 'aGuid', 'Checksum': 'aCksm'}} )
+    res = catalog.addFile({'1': {'PFN': 'pfn', 'Size': 123, 'SE': 'aSe', 'GUID': 'aGuid', 'Checksum': 'aCksm'}})
     self.assertTrue(res['OK'])
 
-    fileDict = {'PFN'      : 'pfn',
-                 'Size'     : '10',
-                 'SE'       : 'se',
-                 'GUID'     : 'guid',
-                 'Checksum' : 'checksum'}
+    fileDict = {'PFN': 'pfn',
+                'Size': '10',
+                'SE': 'se',
+                'GUID': 'guid',
+                'Checksum': 'checksum'}
 
-    fileDict[ 'Size' ] = '10'
+    fileDict['Size'] = '10'
 
 #    res = catalog.addFile( { 'lfn1' : fileDict } )
 #    self.assertTrue(res['OK'])
@@ -125,7 +127,7 @@ class RAWIntegrityClient_Success( RAWIntegrityClient_TestCase ):
 
     # Restore the module
     self.moduleTested.RPCClient.return_value = self.mock_RPCClient
-    reload( self.moduleTested )
+    reload(self.moduleTested)
 
 ################################################################################
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

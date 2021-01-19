@@ -13,6 +13,8 @@
 
 __RCSID__ = "$Id$"
 
+import sys
+
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
@@ -21,7 +23,6 @@ from DIRAC import gLogger
 from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import TransformationCleaningAgent
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
-import sys
 if len(sys.argv) < 2:
   print 'Usage: dirac-production-remove-output transID [transID] [transID]'
   DIRACExit(1)

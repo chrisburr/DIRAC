@@ -52,7 +52,7 @@ class NagiosConnector(object):
 
     try:
       self.config['MsgPort'] = int(self.config['MsgPort'])
-    except TypeError:
+    except (TypeError, ValueError):
       self.config['MsgPort'] = 6163
 
   def useDebugMessage(self):

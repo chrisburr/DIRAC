@@ -13,19 +13,22 @@
 
 1. We flag OK or BAD without specifying a processing pass: this flags the RAW and all derived files as OK or BAD
 2. If a processing pass is specified (and we allow one PP at a time only):
-     2.1 For BAD, only that processing pass (and derived) is flagged BAD. RAW is left unchanged unless PP is '/Real Data' which is then similar to 1
+     2.1 For BAD, only that processing pass (and derived) is flagged BAD.
+         RAW is left unchanged unless PP is '/Real Data' which is then similar to 1
      2.2 For OK:
-               - if '/Real Data', only the RAW are flagged OK. Derived data are left unchanged. If one wants to flag everything, use 1.
+               - if '/Real Data', only the RAW are flagged OK.
+                 Derived data are left unchanged. If one wants to flag everything, use 1.
                - else that processing pass (and derived) and the RAW are flagged OK
 """
+
+__RCSID__ = "$Id$"
+
+import os
+
 import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
-import sys
-import re
-import os
 
 bkClient = BookkeepingClient()
 

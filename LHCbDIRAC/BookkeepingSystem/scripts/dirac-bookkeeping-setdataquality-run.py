@@ -14,6 +14,7 @@
 # Author :  Zoltan Mathe
 ########################################################################
 """Set Data Quality Flag for the given run."""
+
 __RCSID__ = "$Id$"
 
 import DIRAC

@@ -15,7 +15,11 @@
         Federico Stagni fstagni@cern.ch
 """
 
+from __future__ import print_function
+
 __RCSID__ = "$Id$"
+
+import six
 
 import DIRAC
 from DIRAC import gLogger
@@ -37,9 +41,8 @@ for p, _v in Script.getUnprocessedSwitches():
   break
 
 args = Script.getPositionalArgs()
-if len(args) != 1:
-  Script.showHelp()
-  DIRAC.exit(1)
+if len(args) < 1:
+  Script.showHelp(exitCode=1)
 
 eventType = args[0]
 
@@ -64,7 +67,7 @@ for prodID in sorted(prodIDs):
     continue
   prodInfo = res['Value']
   steps = prodInfo['Steps']
-  if isinstance(steps, str):
+  if isinstance(steps, six.string_types):
     continue
   files = prodInfo["Number of files"]
   events = prodInfo["Number of events"]
@@ -97,4 +100,4 @@ for prodID in sorted(prodIDs):
     p, s, e = path.rpartition('/')
     if s and e:
       path = '/%d/%d/%s' % (prodID, int(eventType), e)
-  print (path, dddb, conddb, nfiles, evts, prodID)
+  print(path, dddb, conddb, nfiles, evts, prodID)
