@@ -28,8 +28,8 @@ rootPath = os.path.dirname(os.path.realpath(__path__[0]))
 # Define Version
 
 majorVersion = 10
-minorVersion = 0
-patchLevel = 24
+minorVersion = 1
+patchLevel = 0
 preVersion = 0
 
 version = "v%sr%s" % (majorVersion, minorVersion)
