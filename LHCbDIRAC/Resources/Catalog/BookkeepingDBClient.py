@@ -175,7 +175,7 @@ class BookkeepingDBClient(FileCatalogClientBase):
       if not res['OK']:
         failed.update(dict.fromkeys(lfnList, res['Message']))
       else:
-        # It is a dirty, but ...
+        # It is dirty, but ...
         failed.update(dict.fromkeys([lfn for lfn in res['Value']['Failed']], 'File does not exist'))
         successful.update(dict.fromkeys([lfn for lfn in res['Value']['Successful']], True))
     return S_OK({'Successful': successful, 'Failed': failed})

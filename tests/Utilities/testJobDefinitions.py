@@ -278,7 +278,7 @@ def jobWithSingleInputDataCERN():
   job.setExecutable("exe-script-with-input-single-location.py", "", "exeWithInput.log")
   # this file should be at CERN-USER only
   job.setInputData('/lhcb/user/f/fstagni/test/testInputFileSingleLocation.txt')
-  job.setInputDataPolicy('protocol')
+  job.setInputDataPolicy('download')
   job.setDestination(['LCG.CERN.cern'])
   res = endOfAllJobs(job)
   return res
@@ -494,7 +494,7 @@ def wrongJob():
   print "This will generate a job that should become Completed, use the failover, and only later it will be Done"
 
   job = createJob(local=False)
-  job.setName("gaudirun-gauss-completed-than-done")
+  job.setName("gaudirun-gauss-stays-completed")
   res = endOfAllJobs(job)
   return res
 

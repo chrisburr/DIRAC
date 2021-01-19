@@ -187,8 +187,9 @@ PROCEDURE updateluminosity(v_runnumber NUMBER);
 PROCEDURE updatedesluminosity(v_fileid NUMBER);
 PROCEDURE getfiledesjobid(v_filename VARCHAR2, a_cursor OUT udt_refcursor);
 FUNCTION getproducedevents(v_prodid NUMBER) RETURN NUMBER;
-PROCEDURE bulkgetidsfromfiles(lfns varchararray,  a_cursor OUT udt_refcursor);
+PROCEDURE bulkgetidsfromfiles(lfns varchararray, a_cursor OUT udt_refcursor);
 PROCEDURE insertprodnoutputftypes(v_production NUMBER, v_stepid NUMBER, v_filetypeid NUMBER, v_visible char, v_eventtype NUMBER);
+FUNCTION getjobidwithoutreplicacheck(v_filename VARCHAR2) RETURN NUMBER;
 END;
  /
 
@@ -1903,25 +1904,49 @@ FOR c IN (SELECT f.filename, f.luminosity, f.fileid FROM jobs j, files f WHERE j
 END LOOP;
 END;
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE updatedesluminosity(v_fileid NUMBER)IS
 lumi NUMBER;
 BEGIN
 IF v_fileid = 0 THEN
   RETURN;
 END IF;
-FOR c IN (SELECT f.filename, f.fileid, j.jobid FROM jobs j, files f, inputfiles i, filetypes ft WHERE ft.filetypeid = f.filetypeid AND ft.name != 'LOG' AND j.jobid = f.jobid AND  j.jobid = i.jobid AND i.fileid = v_fileid) LOOP
-  SELECT sum(f.luminosity) INTO lumi FROM inputfiles i, files f WHERE f.fileid = i.fileid AND i.jobid = c.jobid;
+FOR c IN (
+  SELECT
+    f.filename,
+    f.fileid,
+    j.jobid
+  FROM 
+    jobs j,
+    files f,
+    inputfiles i,
+    filetypes ft
+  WHERE
+    ft.filetypeid = f.filetypeid AND
+    ft.name != 'LOG' AND
+    j.jobid = f.jobid AND
+    j.jobid = i.jobid AND
+    i.fileid = v_fileid
+  ) LOOP
+    SELECT sum(f.luminosity) INTO lumi
+    FROM inputfiles i, files f
+    WHERE
+      f.fileid = i.fileid AND
+      i.jobid = c.jobid;
   IF lumi > 0 THEN
     --dbms_output.put_line('update files set luminosity=' || lumi || ' WHERE filename='||c.filename);
-    UPDATE files SET luminosity = lumi WHERE fileid = c.fileid;
+    UPDATE files
+    SET luminosity = lumi
+    WHERE fileid = c.fileid;
     updatedesluminosity(c.fileid);
   END IF;
 END LOOP;
 END;
 
-PROCEDURE getfiledesjobid(
-   v_filename                      VARCHAR2,
-   a_cursor                        OUT udt_refcursor
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROCEDURE getfiledesjobid (
+  v_filename VARCHAR2,
+  a_cursor   OUT udt_refcursor
  ) IS
  BEGIN
     OPEN a_cursor FOR
@@ -1932,19 +1957,26 @@ FUNCTION getproducedevents(v_prodid NUMBER) RETURN NUMBER
 IS
 retval NUMBER := 0;
 BEGIN
-SELECT sum(f.eventstat) INTO retval
-  FROM files f,
-       jobs j,
-       (SELECT scont.production, s.stepid
-          FROM stepscontainer scont,
-               steps s
-          WHERE
-            scont.stepid = s.stepid AND
-            scont.production = v_prodid AND
-            scont.step = (SELECT max(step) FROM stepscontainer WHERE stepscontainer.production = v_prodid)) firsts
-  WHERE j.jobid = f.jobid AND
-        j.production = firsts.production AND
-        j.stepid = firsts.stepid;
+SELECT sum(files.eventstat) INTO retval
+  FROM files,
+       jobs,
+       ( SELECT
+           stepscontainer.production,
+           steps.stepid
+         FROM
+           stepscontainer,
+           steps
+         WHERE
+            stepscontainer.stepid = steps.stepid AND
+            stepscontainer.production = v_prodid AND
+            stepscontainer.step = ( SELECT max(step)
+                                    FROM stepscontainer
+                                    WHERE stepscontainer.production = v_prodid
+                                  )
+      ) firsts
+  WHERE jobs.jobid = files.jobid AND
+        jobs.production = firsts.production AND
+        jobs.stepid = firsts.stepid;
 RETURN retval;
 EXCEPTION
   WHEN others THEN
@@ -1991,19 +2023,20 @@ EXCEPTION
     COMMIT;
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION getjobidwithoutreplicacheck(
-  v_filename             varchar2
- )RETURN number
- IS
- jid number;
- BEGIN
-  SELECT jobs.jobid INTO jid FROM files,jobs WHERE
-       files.jobid = jobs.jobid AND
-       files.filename = v_filename;
-
-   RETURN (jid);
-   EXCEPTION WHEN others THEN
+FUNCTION getjobidwithoutreplicacheck (
+  v_filename varchar2
+) RETURN number
+  IS
+  jid number;
+  BEGIN
+    SELECT jobs.jobid INTO jid
+    FROM files, jobs
+    WHERE
+      files.jobid = jobs.jobid AND
+      files.filename = v_filename;
+    RETURN (jid);
+    EXCEPTION WHEN others THEN
   RETURN 0;
-END;
+  END;
 END;
 /

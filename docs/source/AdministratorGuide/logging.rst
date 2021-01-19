@@ -67,7 +67,7 @@ All the logs (up to the VERBOSE level) from the Agents and services are visible 
 More details
 ------------
 
-Each and every component send their logs at the VERBOSE level in a message queue. This is configured using the `message queue backend <https://dirac.readthedocs.io/en/latest/DeveloperGuide/AddingNewComponents/Utilities/gLogger/Backends/index.html#messagequeuebackend>`_ , and the queue is described in the `MQServices resources <https://dirac.readthedocs.io/en/latest/AdministratorGuide/DIRACSites/MessageQueues/index.html?highlight=MQServices#message-queues>`_
+Each and every component send their logs at the VERBOSE level in a message queue. This is configured using the `message queue backend <https://dirac.readthedocs.io/en/latest/DeveloperGuide/AddingNewComponents/Utilities/gLogger/Backends/index.html#messagequeuebackend>`_ , and the queue is described in the `MQServices resources <https://dirac.readthedocs.io/en/latest/AdministratorGuide/Resources/messagequeues.html>`_
 
 The logs are then consumed by a logstash server (`lbdiraclogstash{01,02}.cern.ch`), and forwarded to ElasticSearch. This is configured in the `ai-puppet-hostgroup-volhcb repository <https://gitlab.cern.ch/ai/it-puppet-hostgroup-volhcb>`_.
 

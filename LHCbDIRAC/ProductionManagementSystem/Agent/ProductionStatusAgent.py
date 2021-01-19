@@ -423,17 +423,17 @@ class ProductionStatusAgent(AgentModule):
     else:
       self.cacheFile = os.path.realpath('cache.db')
 
-    # For processing transformations, it can happened that there are some Unused files
-    # with which to tasks can be created. The number of such files can be different depending
+    # For processing transformations, it can happen that there are some Unused files
+    # with which no tasks can be created. The number of such files can be different depending
     # from the module and distrubution between centres.
-    # So we declire such transfomrations isIdle() once there is no jobs, no files in other
+    # So we declare such transformations isIdle() once there is no jobs, no files in other
     # pending states and the number of Unused files was not changed last cyclesTillIdle times
     self.cyclesTillIdle = 1
     self.filesUnused = {}  # <tID: { 'Number': x, 'NotChanged': n }
 
     self.prMasters = {}  # [ prID: [<subrequests> ...] ]
     self.prSummary = {}
-    self.prProds = {}  # <prID>, map produciton to known request, from _getProductionRequestsProgress
+    self.prProds = {}  # <prID>, map production to known request, from _getProductionRequestsProgress
     self.notPrTrans = {}  # transformation without PR, from _getTransformationsState
     self.toUpdate = []
 
@@ -477,7 +477,7 @@ class ProductionStatusAgent(AgentModule):
     #     'isIdle', 'isProcIdle' for each 'Active' or 'Idle' production, 'isSimulation' - from _getIdleProductionRequestProductions()
     #     'isFinished' - from _applyProductionRequestsLogic()
     # }
-    self.prProds = {}  # <prID>, map produciton to known request, from _getProductionRequestsProgress
+    self.prProds = {}  # <prID>, map production to known request, from _getProductionRequestsProgress
 
     self.notPrTrans = {}  # transformation without PR, from _getTransformationsState
 
