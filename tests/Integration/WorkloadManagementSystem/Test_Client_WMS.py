@@ -38,8 +38,8 @@ import tempfile
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from DIRAC.tests.Utilities.utils import find_all
-from DIRAC.tests.Utilities.WMS import helloWorldJob, parametricJob, createFile
+from unittests.Utilities.utils import find_all
+from unittests.Utilities.WMS import helloWorldJob, parametricJob, createFile
 
 from DIRAC import gLogger
 from DIRAC.Interfaces.API.Job import Job

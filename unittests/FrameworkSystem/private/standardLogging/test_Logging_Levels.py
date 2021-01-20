@@ -12,7 +12,7 @@ __RCSID__ = "$Id$"
 import pytest
 
 from DIRAC.FrameworkSystem.private.standardLogging.LogLevels import LogLevels
-from DIRAC.FrameworkSystem.private.standardLogging.test.TestLogUtilities import gLogger, gLoggerReset, cleaningLog
+from unittests.FrameworkSystem.private.standardLogging.TestLogUtilities import gLogger, gLoggerReset, cleaningLog
 
 
 def test_getAllPossibleLevels():

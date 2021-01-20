@@ -6,7 +6,7 @@ from __future__ import print_function
 import logging
 import pytest
 
-from DIRAC.tests.Utilities.assertingUtils import AgentOptionsTest
+from unittests.Utilities.assertingUtils import AgentOptionsTest
 from DIRAC import S_OK
 
 AGENTS = [('DIRAC.AccountingSystem.Agent.NetworkAgent', {'IgnoreOptions': ['MessageQueueURI']}),

@@ -8,9 +8,9 @@ import os
 import shutil
 
 from DIRAC import gLogger
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
-from DIRAC.Resources.Computing.test.utilities import jobScript, _stopJob
+from unittests.Resources.Computing.utilities import jobScript, _stopJob
 from DIRAC.WorkloadManagementSystem.Utilities.Utils import createJobWrapper
 
 # sut

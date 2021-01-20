@@ -15,7 +15,7 @@ from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.TransformationSystem.Agent.DataRecoveryAgent import DataRecoveryAgent
 from DIRAC.TransformationSystem.Utilities.JobInfo import TaskInfoException
 
-from DIRAC.tests.Utilities.utils import MatchStringWith
+from unittests.Utilities.utils import MatchStringWith
 
 __RCSID__ = "$Id$"
 

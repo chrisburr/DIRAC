@@ -14,7 +14,7 @@ parseCommandLine()
 
 from DIRAC import gLogger
 
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
 from DIRAC.Interfaces.API.Job import Job
 from DIRAC.Interfaces.API.Dirac import Dirac

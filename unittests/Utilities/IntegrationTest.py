@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 import unittest
 
-from DIRAC.tests.Utilities.utils import cleanTestDir
+from unittests.Utilities.utils import cleanTestDir
 
 from DIRAC import gLogger
 from DIRAC.Interfaces.API.Dirac import Dirac

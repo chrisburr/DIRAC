@@ -10,7 +10,7 @@ from __future__ import print_function
 
 import os
 
-from DIRAC.tests.Utilities.plots import compare
+from unittests.Utilities.plots import compare
 
 # sut
 from DIRAC.MonitoringSystem.private.Plotters.ComponentMonitoringPlotter import ComponentMonitoringPlotter

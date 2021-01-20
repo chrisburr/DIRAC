@@ -7,8 +7,8 @@ __RCSID__ = "$Id$"
 from six.moves import _thread as thread
 import pytest
 
-from DIRAC.FrameworkSystem.private.standardLogging.test.TestLogUtilities import gLogger, gLoggerReset
-from DIRAC.FrameworkSystem.private.standardLogging.test.TestLogUtilities import cleaningLog, captureBackend
+from unittests.FrameworkSystem.private.standardLogging.TestLogUtilities import gLogger, gLoggerReset
+from unittests.FrameworkSystem.private.standardLogging.TestLogUtilities import cleaningLog, captureBackend
 
 
 def test_showFormatOptionsInit():

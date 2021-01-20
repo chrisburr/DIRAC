@@ -6,7 +6,7 @@ __RCSID__ = "$Id$"
 
 import pytest
 
-from DIRAC.FrameworkSystem.private.standardLogging.test.TestLogUtilities import gLogger, gLoggerReset
+from unittests.FrameworkSystem.private.standardLogging.TestLogUtilities import gLogger, gLoggerReset
 
 
 def test_getSubLoggerLogRecord():

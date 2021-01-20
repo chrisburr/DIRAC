@@ -19,8 +19,8 @@ from DIRAC import gLogger
 from DIRAC.AccountingSystem.Client.DataStoreClient import gDataStoreClient
 from DIRAC.AccountingSystem.Client.Types.DataOperation import DataOperation
 from DIRAC.AccountingSystem.Client.Types.StorageOccupancy import StorageOccupancy
-from DIRAC.tests.Utilities.Accounting import createDataOperationAccountingRecord
-from DIRAC.tests.Utilities.Accounting import createStorageOccupancyAccountingRecord
+from unittests.Utilities.Accounting import createDataOperationAccountingRecord
+from unittests.Utilities.Accounting import createStorageOccupancyAccountingRecord
 
 gLogger.setLevel('DEBUG')
 

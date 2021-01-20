@@ -8,7 +8,7 @@ from __future__ import print_function
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 from DIRAC.Interfaces.API.Job import Job
 
 

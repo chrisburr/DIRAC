@@ -6,7 +6,7 @@ from __future__ import division
 import tempfile
 
 from DIRAC.Interfaces.API.Job import Job
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
 
 def helloWorldJob():

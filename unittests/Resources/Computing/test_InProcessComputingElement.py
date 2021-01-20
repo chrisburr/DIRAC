@@ -8,7 +8,7 @@ import shutil
 
 import pytest
 
-from DIRAC.Resources.Computing.test.utilities import jobScript, _stopJob
+from unittests.Resources.Computing.utilities import jobScript, _stopJob
 from DIRAC.WorkloadManagementSystem.Utilities.Utils import createJobWrapper
 
 # sut

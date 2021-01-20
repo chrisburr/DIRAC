@@ -12,7 +12,7 @@ import logging
 from six import StringIO
 import pytest
 
-from DIRAC.FrameworkSystem.private.standardLogging.test.TestLogUtilities import gLogger, cleaningLog, gLoggerReset
+from unittests.FrameworkSystem.private.standardLogging.TestLogUtilities import gLogger, cleaningLog, gLoggerReset
 
 
 @pytest.mark.parametrize("isEnabled, loggingLevel, numberHandlers, handlerType", [

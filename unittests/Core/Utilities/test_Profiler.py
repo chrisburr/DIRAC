@@ -28,7 +28,8 @@ def test_base():
 
   mainProcess = Popen([
       'python',
-      join(dirname(DIRAC.__file__), 'tests/Utilities/ProcessesCreator_withChildren.py'),
+      join(dirname(__file__), '../../Utilities/ProcessesCreator_withChildren.py'),
+      join(dirname(__file__), '../../Utilities/ProcessesCreator_withChildren.py'),
   ])
   time.sleep(1)
   p = Profiler(mainProcess.pid)
@@ -85,7 +86,7 @@ def test_base():
 def test_cpuUsage():
   mainProcess = Popen([
       'python',
-      join(dirname(DIRAC.__file__), 'tests/Utilities/ProcessesCreator_withChildren.py'),
+      join(dirname(__file__), '../../Utilities/ProcessesCreator_withChildren.py'),
   ])
   time.sleep(2)
   p = Profiler(mainProcess.pid)

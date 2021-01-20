@@ -15,7 +15,7 @@ from datetime import datetime
 
 import pytest
 
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()

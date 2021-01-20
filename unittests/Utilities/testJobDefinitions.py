@@ -15,7 +15,7 @@ from DIRAC import rootPath
 from DIRAC.Interfaces.API.Job import Job
 from DIRAC.Interfaces.API.Dirac import Dirac
 
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
 # parameters
 

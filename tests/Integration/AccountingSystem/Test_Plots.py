@@ -18,7 +18,7 @@ from DIRAC.Core.Utilities.Plotting.Plots import generateHistogram, generateStack
     generatePiePlot, generateCumulativePlot, generateQualityPlot, generateTimedStackedBarPlot, \
     generateNoDataPlot, generateErrorMessagePlot
 
-from DIRAC.tests.Utilities.plots import compare
+from unittests.Utilities.plots import compare
 
 plots_directory = os.path.join(os.path.dirname(__file__), 'plots')
 filename = "plot.png"

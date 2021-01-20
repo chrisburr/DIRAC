@@ -11,7 +11,7 @@ import time
 import json
 import pytest
 
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()

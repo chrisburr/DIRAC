@@ -35,7 +35,7 @@ from __future__ import division
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.utils import find_all
 
 from DIRAC import gLogger
 

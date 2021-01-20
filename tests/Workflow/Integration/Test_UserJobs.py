@@ -17,8 +17,8 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 from DIRAC import gLogger, rootPath
-from DIRAC.tests.Utilities.IntegrationTest import IntegrationTest
-from DIRAC.tests.Utilities.utils import find_all
+from unittests.Utilities.IntegrationTest import IntegrationTest
+from unittests.Utilities.utils import find_all
 
 from DIRAC.Interfaces.API.Job import Job
 from DIRAC.Interfaces.API.Dirac import Dirac

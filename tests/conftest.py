@@ -1,5 +1,8 @@
 import pytest
 
+from os.path import dirname
+import sys
+sys.path.append(dirname(dirname(__file__)))
 
 # Adds the --runslow command line arg based on the example in the docs
 # https://docs.pytest.org/en/stable/example/simple.html
