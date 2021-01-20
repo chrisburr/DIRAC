@@ -16,6 +16,7 @@ from DIRAC.Resources.Computing.PoolComputingElement import PoolComputingElement
 from DIRAC.Resources.Computing.test.utilities import jobScript, _stopJob
 
 
+@pytest.mark.slow
 def test_executeJob():
 
   ceParameters = {'WholeNode': True,

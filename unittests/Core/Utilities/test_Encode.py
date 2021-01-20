@@ -15,7 +15,6 @@ from string import printable
 import datetime
 import sys
 
-
 from DIRAC.Core.Utilities.DEncode import encode as disetEncode, decode as disetDecode, g_dEncodeFunctions
 from DIRAC.Core.Utilities.JEncode import encode as jsonEncode, decode as jsonDecode, JSerializable
 from DIRAC.Core.Utilities.MixedEncode import encode as mixEncode, decode as mixDecode
@@ -276,6 +275,7 @@ class Serializable(JSerializable):
     return all([getattr(self, attr) == getattr(other, attr) for attr in self._attrToSerialize])
 
 
+@mark.slow
 @settings(suppress_health_check=(HealthCheck.too_slow,) + function_scoped)
 @given(data=nestedStrategyJson)
 def test_Serializable(data):
@@ -318,6 +318,7 @@ def test_missingAttrToSerialize():
     agnosticTestFunction(jsonTuple, objData)
 
 
+@mark.slow
 @settings(suppress_health_check=function_scoped)
 @given(data=nestedStrategyJson)
 def test_nestedSerializable(data):
