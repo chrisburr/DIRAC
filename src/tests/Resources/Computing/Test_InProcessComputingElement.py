@@ -6,7 +6,7 @@ tests for InProcessComputingElement module
 import os
 import shutil
 
-from DIRAC.Resources.Computing.test.Test_PoolComputingElement import jobScript, _stopJob
+from DIRAC.Resources.Computing.test.utilities import jobScript, _stopJob
 from DIRAC.WorkloadManagementSystem.Utilities.Utils import createJobWrapper
 
 # sut
