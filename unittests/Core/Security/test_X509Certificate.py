@@ -18,7 +18,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-from DIRAC.Core.Security.test.x509TestUtilities import (
+from unittests.Core.Security.x509TestUtilities import (
     deimportDIRAC, CERTS, CERTCONTENTS, getCertOption, HOSTCERT, VOMSPROXY, VOMS_PROXY_ATTR
 )
 

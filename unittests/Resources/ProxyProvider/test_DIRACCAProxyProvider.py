@@ -21,16 +21,14 @@ import tempfile
 from DIRAC import gLogger, rootPath
 from DIRAC.Core.Security.X509Chain import X509Chain  # pylint: disable=import-error
 from DIRAC.Resources.ProxyProvider.DIRACCAProxyProvider import DIRACCAProxyProvider
-
-
-certsPath = os.path.join(rootPath, 'DIRAC/Core/Security/test/certs')
+from unittests.Core.Security.x509TestUtilities import CERTDIR
 
 testCAPath = os.path.join(tempfile.mkdtemp(dir='/tmp'), 'ca')
 testCAConfigFile = os.path.join(testCAPath, 'openssl_config_ca.cnf')
 
 diracCADict = {'ProviderType': 'DIRACCA',
-               'CertFile': os.path.join(certsPath, 'ca/ca.cert.pem'),
-               'KeyFile': os.path.join(certsPath, 'ca/ca.key.pem'),
+               'CertFile': os.path.join(CERTDIR, 'ca/ca.cert.pem'),
+               'KeyFile': os.path.join(CERTDIR, 'ca/ca.key.pem'),
                'Supplied': ['O', 'OU', 'CN'],
                'Optional': ['emailAddress'],
                'DNOrder': ['O', 'OU', 'CN', 'emailAddress'],
@@ -49,7 +47,7 @@ class DIRACCAProviderTestCase(unittest.TestCase):
   def setUpClass(cls):
     cls.failed = False
 
-    shutil.copytree(os.path.join(certsPath, 'ca'), testCAPath)
+    shutil.copytree(os.path.join(CERTDIR, 'ca'), testCAPath)
 
     # Parse
     lines = []

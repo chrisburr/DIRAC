@@ -43,7 +43,7 @@ if sys.version_info.major >= 3:
 else:
   function_scoped = tuple()
 
-from DIRAC.Core.Security.test.x509TestUtilities import (
+from unittests.Core.Security.x509TestUtilities import (
     CERTS, CERTKEYS, CERTCONTENTS, deimportDIRAC, ENCRYPTEDKEYPASS,
     ENCRYPTEDKEY, getCertOption, HOSTCERT, KEYCONTENTS_PKCS8, USERCERT, get_X509Chain_class,
     X509CHAINTYPES, get_X509Request, get_X509Chain_from_X509Request,

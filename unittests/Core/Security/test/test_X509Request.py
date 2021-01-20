@@ -30,8 +30,11 @@ from string import ascii_letters
 from pytest import mark, fixture, skip, raises, approx
 parametrize = mark.parametrize
 
-from .x509TestUtilities import CERTS, CERTKEYS, CERTCONTENTS, deimportDIRAC, ENCRYPTEDKEYPASS,\
-    ENCRYPTEDKEY, getCertOption, HOSTCERT, KEYCONTENTS_PKCS8, USERCERT, X509REQUESTTYPES, get_X509Request
+from unittests.Core.Security.x509TestUtilities import (
+    CERTS, CERTKEYS, CERTCONTENTS, deimportDIRAC, ENCRYPTEDKEYPASS,
+    ENCRYPTEDKEY, getCertOption, HOSTCERT, KEYCONTENTS_PKCS8, USERCERT,
+    X509REQUESTTYPES, get_X509Request,
+)
 
 
 def test_dumpRequest_notInitialized(get_X509Request):
@@ -53,7 +56,7 @@ def test_dumpRequest(get_X509Request):
   res = x509Req.dumpRequest()
 
   assert res['OK']
-  assert 'CERTIFICATE REQUEST' in res['Value']
+  assert b'CERTIFICATE REQUEST' in res['Value']
 
 
 def test_loadAllFromString_fromDumpRequest(get_X509Request):

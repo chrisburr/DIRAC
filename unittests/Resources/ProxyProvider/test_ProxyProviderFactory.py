@@ -9,17 +9,15 @@ import unittest
 
 from DIRAC import S_OK, S_ERROR, gLogger, rootPath
 from DIRAC.Resources.ProxyProvider.ProxyProviderFactory import ProxyProviderFactory
-
-
-certsPath = os.path.join(rootPath, 'DIRAC/Core/Security/test/certs')
+from unittests.Core.Security.x509TestUtilities import CERTDIR
 
 
 def sf_getInfoAboutProviders(of, providerName, option, section):
   if of == 'Proxy' and option == 'all' and section == 'all':
     if providerName == 'MY_DIRACCA':
       return S_OK({'ProviderType': 'DIRACCA',
-                   'CertFile': os.path.join(certsPath, 'ca/ca.cert.pem'),
-                   'KeyFile': os.path.join(certsPath, 'ca/ca.key.pem'),
+                   'CertFile': os.path.join(CERTDIR, 'ca/ca.cert.pem'),
+                   'KeyFile': os.path.join(CERTDIR, 'ca/ca.key.pem'),
                    'Supplied': ['O', 'OU', 'CN'],
                    'Optional': ['emailAddress'],
                    'DNOrder': ['O', 'OU', 'CN', 'emailAddress'],
