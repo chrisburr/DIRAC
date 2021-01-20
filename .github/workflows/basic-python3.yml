@@ -39,7 +39,7 @@ jobs:
         source "${CONDA}/bin/activate"
         conda activate dirac-testing
         set -euxo pipefail
-        export PYTHONPATH=${PWD}/src
+        pip install .
         ${{ matrix.command }}
       env:
         REFERENCE_BRANCH: ${{ github['base_ref'] || github['head_ref'] }}
