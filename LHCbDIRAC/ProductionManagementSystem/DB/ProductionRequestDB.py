@@ -709,7 +709,9 @@ class ProductionRequestDB(DB):
 
     update = {}     # Decide what to update (and if that is required)
     for x in rec:
-      if x in ('ProDetail', 'SimCondDetail'):
+      if x in ('ProDetail', 'SimCondDetail', 'Extra'):
+        if rec[x] == old[x]:
+          continue
         try:
           recx = pickleOrJsonLoads(rec[x])
           oldx = pickleOrJsonLoads(old[x])
@@ -719,7 +721,7 @@ class ProductionRequestDB(DB):
           # This happens if, for example, oldx is None (meaning there was not prodetail, while now there is).
           # Which means that now we can update
           pass
-      elif x != 'ProDetail' and str(rec[x]) == str(old[x]):
+      elif str(rec[x]) == str(old[x]):
         continue
 
       if x == 'RetentionRate' and float(rec[x]) == old[x]:
