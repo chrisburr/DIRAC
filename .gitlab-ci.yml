@@ -43,7 +43,7 @@ stages:
     - export PYCURL_SSL_LIBRARY=openssl
      # last version supporting python 2
     - pip install 'setuptools<45'
-    - pip install --upgrade pip
+    - pip install --upgrade 'pip<21'
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
@@ -60,7 +60,7 @@ stages:
     - source DIRAC_VENV/bin/activate
      # last version supporting python 2
     - pip install 'setuptools<45'
-    - pip install --upgrade pip
+    - pip install --upgrade 'pip<21'
     - pip install -r DIRAC/requirements.txt
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
@@ -110,7 +110,7 @@ check_docs:
     - export PYCURL_SSL_LIBRARY=openssl
      # last version supporting python 2
     - pip install 'setuptools<45'
-    - pip install --upgrade pip
+    - pip install --upgrade 'pip<21'
     - pip install pip-tools
   script:
     # We need to use m2crypto, otherwise it looks for GSI, which is annoying

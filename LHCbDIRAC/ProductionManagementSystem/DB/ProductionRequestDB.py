@@ -194,11 +194,13 @@ class ProductionRequestDB(DB):
       rec['Comments'] = self.__prefixComments(rec['Comments'], '', creds['User'])
     rec['IsModel'] = 0
 
-    recl = [rec[x] for x in self.requestFields[1:-10]]
+    recl = [rec[x] for x in self.requestFields[1:-9]]
     result = self._fixedEscapeValues(recl)
     if not result['OK']:
       return result
-    recls = result['Value'] + ['"None"']  # This is FastSimulationType, which can be None
+    recls = result['Value']
+    if recl[-1] == "NULL":  # This is FastSimulationType, which can be None
+      recls[-1] = '"None"'
 
     for dateValues in self.dateColumns:
       recls.append("STR_TO_DATE('%s','%s')" %
@@ -709,7 +711,9 @@ class ProductionRequestDB(DB):
 
     update = {}     # Decide what to update (and if that is required)
     for x in rec:
-      if x in ('ProDetail', 'SimCondDetail'):
+      if x in ('ProDetail', 'SimCondDetail', 'Extra'):
+        if rec[x] == old[x]:
+          continue
         try:
           recx = pickleOrJsonLoads(rec[x])
           oldx = pickleOrJsonLoads(old[x])
@@ -719,7 +723,7 @@ class ProductionRequestDB(DB):
           # This happens if, for example, oldx is None (meaning there was not prodetail, while now there is).
           # Which means that now we can update
           pass
-      elif x != 'ProDetail' and str(rec[x]) == str(old[x]):
+      elif str(rec[x]) == str(old[x]):
         continue
 
       if x == 'RetentionRate' and float(rec[x]) == old[x]:
