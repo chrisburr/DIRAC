@@ -72,6 +72,7 @@ stages:
 run_pylint:
   <<: *test_setup
   script:
+    - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd LHCbDIRAC
     - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
 
@@ -79,6 +80,7 @@ run_pylint:
 run_pytest:
   <<: *test_setup
   script:
+    - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd LHCbDIRAC
     - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
   coverage: '/\d+\%\s*$/'
