@@ -218,7 +218,8 @@ def execute():
           fo.close()
           gLogger.always("==> You must add %s to your list of options file" % catOption)
     else:
-      gLogger.always("Error getting the list of PFNs:", result['Message'])
+      gLogger.error("Error getting the list of PFNs:", result['Message'])
+      rc = 1
   except Exception as e:
     gLogger.exception("Exception caught while creating catalog or option file:", '', e)
     rc = 1
@@ -229,6 +230,5 @@ def execute():
 
 
 if __name__ == "__main__":
-
   execute()
   DIRAC.exit(0)
