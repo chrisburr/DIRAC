@@ -196,8 +196,6 @@ class ModuleBase(object):
   def finalize(self, version=None):
     """Just finalizing."""
 
-    self.log.flushAllMessages(0)
-
     if version:
       self.log.info('===== Terminating ' + version + ' ===== ')
 
