@@ -197,7 +197,8 @@ integration_tests:
     # Get DIRAC
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
-    - git checkout "$diracRef"
+    #- git checkout "$diracRef" there is no branch with name rel-v7r2 currently
+    - git checkout integration
     - cd ..
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
