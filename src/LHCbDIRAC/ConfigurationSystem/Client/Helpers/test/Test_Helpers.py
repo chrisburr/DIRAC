@@ -122,8 +122,13 @@ def test_listPlatforms(applicationName, applicationVersion, expected):
 
   from six.moves import xmlrpc_client
   import ssl
+  context = ssl.create_default_context(capath="/cvmfs/lhcb.cern.ch/etc/grid-security/certificates")
   try:
-    xmlrpc_client.ServerProxy('https://lbsoftdb.cern.ch/read/', allow_none=True).listApplications()
+    xmlrpc_client.ServerProxy(
+        'https://lbsoftdb.cern.ch/read/',
+        allow_none=True,
+        context=context,
+    ).listApplications()
   except ssl.SSLError:
     pytest.skip('CERN certificate authority must be trusted')
 
