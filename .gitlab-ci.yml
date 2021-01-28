@@ -47,8 +47,7 @@ stages:
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
-    # - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - diracTAG=" v7r2-pre31"
+    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
     # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
@@ -198,8 +197,7 @@ integration_tests:
     # Get DIRAC
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
-    - git checkout integration
-    # - git checkout "$diracRef"
+    - git checkout "$diracRef"
     - cd ..
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
