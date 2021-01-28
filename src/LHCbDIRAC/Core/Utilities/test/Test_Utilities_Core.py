@@ -170,7 +170,7 @@ class ProdConfSuccess(UtilitiesTestCase):
     fopen.close()
     string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='LHCb',\n  "
     string += "InputFiles=['pippo', 'pluto'],\n  AppVersion='v30r0',\n)"
-    self.assertEqual(string, fileString)
+    self.assertEqual(set(string.split()), set(fileString.split()))
 
     pc1.putOptionsIn({'InputFiles': []})
     self.assertEqual(pc1.whatsIn, {'Application': 'LHCb', 'InputFiles': [], 'AppVersion': 'v30r0'})
@@ -179,7 +179,7 @@ class ProdConfSuccess(UtilitiesTestCase):
     fopen.close()
     string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='LHCb',\n  "
     string += "InputFiles=[],\n  AppVersion='v30r0',\n)"
-    self.assertEqual(string, fileString)
+    self.assertEqual(set(string.split()), set(fileString.split()))
 
     pc1.putOptionsIn({'Application': '', 'RunNumber': 12345})
     self.assertEqual(pc1.whatsIn, {'Application': '', 'InputFiles': [], 'AppVersion': 'v30r0', 'RunNumber': 12345})
@@ -188,7 +188,7 @@ class ProdConfSuccess(UtilitiesTestCase):
     fopen.close()
     string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='',\n  "
     string += "InputFiles=[],\n  AppVersion='v30r0',\n  RunNumber=12345,\n)"
-    self.assertEqual(string, fileString)
+    self.assertEqual(set(string.split()), set(fileString.split()))
 
 
 #################################################
@@ -363,7 +363,7 @@ class ProductionDataSuccess(UtilitiesTestCase):
 
     outputDataFileMasks = ('', 'dst', 'DST', ['digi', 'dst'], 'ALLSTREAMS.DST', ['dst', 'allstreams.dst'])
 
-    for outputDataFileMask, resL in itertools.izip(outputDataFileMasks, reslist):
+    for outputDataFileMask, resL in zip(outputDataFileMasks, reslist):
       paramDict['outputDataFileMask'] = outputDataFileMask
 
       res = constructProductionLFNs(paramDict, bkc_mock)
@@ -422,7 +422,7 @@ class ProductionDataSuccess(UtilitiesTestCase):
              ]
             )
 
-    for mask, res in itertools.izip(wfMask, dtlM):
+    for mask, res in zip(wfMask, dtlM):
       r = _applyMask(mask, dtl)
 
       self.assertEqual(r, res)

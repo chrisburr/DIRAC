@@ -63,7 +63,7 @@ longer needed.
 __RCSID__ = "$Id$"
 
 
-import Queue
+from six.moves import queue as Queue
 import time
 import threading
 import six

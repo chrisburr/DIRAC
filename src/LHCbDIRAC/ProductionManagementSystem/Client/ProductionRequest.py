@@ -165,8 +165,7 @@ class ProductionRequest(object):
       self.fullListOfOutputFileTypes = self.fullListOfOutputFileTypes + fileTypesList
       stepsListDictItem['fileTypesOut'] = fileTypesList
 
-      for parameter, value in itertools.izip(stepDict['ParameterNames'],
-                                             stepDict['Records'][0]):
+      for parameter, value in zip(stepDict['ParameterNames'], stepDict['Records'][0]):
         if parameter.lower() in ['conddb', 'dddb', 'dqtag'] and value:
           if value.lower() == 'frompreviousstep':
             value = self.stepsListDict[-1][parameter]
@@ -445,8 +444,7 @@ class ProductionRequest(object):
   def _determineOutputSEs(self):
     """Fill outputSEsPerFileType based on outputSEs, fullListOfOutputFileTypes
     and specialOutputSEs."""
-    for outputSE, specialOutputSEs in itertools.izip(self.outputSEs,
-                                                     self.specialOutputSEs):
+    for outputSE, specialOutputSEs in zip(self.outputSEs, self.specialOutputSEs):
       outputSEDict = {}
       if not self.fullListOfOutputFileTypes:
         raise ValueError("No steps defined")
@@ -614,7 +612,7 @@ class ProductionRequest(object):
 
     for prodType, stepsInProd, bkQuery, removeInputsFlag, outputSE, priority, \
         cpu, inputD, outputMode, outFileMask, outFileStep, target, groupSize, plugin, idp, \
-        previousProd, events, multicore, processors, ancestorDepth in itertools.izip(
+        previousProd, events, multicore, processors, ancestorDepth in zip(
             self.prodsTypeList,
             self.stepsInProds,
             self.bkQueries,

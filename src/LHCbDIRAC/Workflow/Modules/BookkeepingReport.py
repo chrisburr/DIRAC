@@ -227,7 +227,7 @@ class BookkeepingReport(ModuleBase):
     prettyXMLDoc = doc.toprettyxml(indent="    ", encoding="ISO-8859-1")
 
     # horrible, necessary hack!
-    prettyXMLDoc = prettyXMLDoc.replace('\'book.dtd\'', '\"book.dtd\"')
+    prettyXMLDoc = prettyXMLDoc.replace(b'\'book.dtd\'', b'\"book.dtd\"')
 
     return prettyXMLDoc
 

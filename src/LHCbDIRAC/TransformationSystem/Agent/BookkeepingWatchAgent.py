@@ -22,7 +22,7 @@ import os
 import time
 import datetime
 import pickle
-import Queue
+from six.moves import queue as Queue
 import six
 
 from DIRAC import S_OK

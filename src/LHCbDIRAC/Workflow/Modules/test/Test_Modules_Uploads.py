@@ -19,7 +19,7 @@ __RCSID__ = "$Id$"
 
 import os
 import copy
-import itertools
+import json
 
 from mock import MagicMock
 import pytest
@@ -265,5 +265,14 @@ def test__cleanUp(mocker):
                 '2.txt': {'lfn': '/a/2.txt'},
                 'notPresent.txt': {'lfn': '/a/notPresent.txt'}})
 
-  for opsR, opsE in itertools.izip(uod.request, expected):
-    assert str(opsR) == str(opsE)
+  for opsR, opsE in zip(uod.request, expected):
+    opsRLoaded = json.loads(str(opsR))
+    opsELoaded = json.loads(str(opsE))
+    for k in set(opsRLoaded) | set(opsELoaded):
+      if k == "Files":
+        assert (
+            sorted(opsRLoaded[k], key=lambda x: x["LFN"]) ==
+            sorted(opsELoaded[k], key=lambda x: x["LFN"])
+        )
+      else:
+        assert opsRLoaded[k] == opsELoaded[k]

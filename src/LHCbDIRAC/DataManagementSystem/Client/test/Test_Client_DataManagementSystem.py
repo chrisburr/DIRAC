@@ -123,7 +123,10 @@ class ConsistencyChecksSuccess(UtilitiesTestCase):
     res = self.cc.getDescendants(['aa.raw'])
     filesWithDescendants, filesWithoutDescendants, filesWitMultipleDescendants, \
         descendants, inFCNotInBK, inBKNotInFC, removedFiles, inFailover = res
-    self.assertEqual(filesWithDescendants, {'aa.raw': ['bb.log', 'bb.raw']})
+    self.assertEqual(
+      {k: set(v) for k, v in filesWithDescendants.items()},
+      {'aa.raw': {'bb.log', 'bb.raw'}},
+    )
     self.assertEqual(filesWithoutDescendants, {})
     self.assertEqual(filesWitMultipleDescendants, {})
     self.assertEqual(descendants, ['bb.raw'])

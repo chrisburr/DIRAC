@@ -109,7 +109,7 @@ class XMLTreeParser(object):
     dictionary = {}
     if element.attributes:
       for attr in element.attributes.values():
-        dictionary[attr.name.encode('ascii')] = attr.value.encode('ascii')
+        dictionary[attr.name] = attr.value
     return dictionary
 
   def __handleTextElement(self, textElement):
@@ -121,7 +121,7 @@ class XMLTreeParser(object):
     """get the TEXT."""
     data = ''
     if node.nodeType == node.TEXT_NODE or node.nodeType == node.CDATA_SECTION_NODE:
-      data = node.data.encode('ascii')
+      data = node.data
     return data
 
 # Utilies for XML Report

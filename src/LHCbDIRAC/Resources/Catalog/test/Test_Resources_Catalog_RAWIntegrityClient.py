@@ -16,6 +16,7 @@ from __future__ import print_function
 import mock
 import unittest
 
+from six.moves import reload_module
 from DIRAC import gLogger
 import LHCbDIRAC.Resources.Catalog.RAWIntegrityClient as moduleTested
 
@@ -130,7 +131,7 @@ class RAWIntegrityClient_Success(RAWIntegrityClient_TestCase):
 
     # Restore the module
     self.moduleTested.RPCClient.return_value = self.mock_RPCClient
-    reload(self.moduleTested)
+    reload_module(self.moduleTested)
 
 ################################################################################
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF
