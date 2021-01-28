@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :    dirac-bookkeeping-filetypes-list
 # Author :  Zoltan Mathe
@@ -34,8 +37,8 @@ res = bk.getAvailableFileTypes()
 
 if res['OK']:
   dbresult = res['Value']
-  print 'Filetypes:'
+  print('Filetypes:')
   for record in dbresult['Records']:
-    print str(record[0]).ljust(30) + str(record[1])
+    print(str(record[0]).ljust(30) + str(record[1]))
 
 DIRAC.exit(exitCode)

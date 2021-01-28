@@ -8,6 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 """DIRAC Basic Oracle Class It provides access to the basic Oracle methods in a
 multithread-safe mode keeping used connections in a python Queue for further
@@ -241,12 +244,12 @@ class OracleDB(object):
         if isinstance(fArray, six.string_types):
           result = cursor.arrayvar(cx_Oracle.STRING, array)
           parameters += [result]
-        elif isinstance(fArray, (int, long)):
+        elif isinstance(fArray, six.integer_types):
           result = cursor.arrayvar(cx_Oracle.NUMBER, array)
           parameters += [result]
         elif isinstance(fArray, list):
           for i in array:
-            if isinstance(i, (bool, six.string_types, int, long)):
+            if isinstance(i, (bool,) + six.string_types + six.integer_types):
               parameters += [i]
             elif i:
               if isinstance(i[0], six.string_types):

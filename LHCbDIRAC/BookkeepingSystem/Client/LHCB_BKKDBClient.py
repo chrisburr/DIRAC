@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """LHCb Bookkeeping database client."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from LHCbDIRAC.BookkeepingSystem.Client.BaseESClient import BaseESClient
 from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingManager import LHCbBookkeepingManager

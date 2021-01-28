@@ -10,6 +10,9 @@
 ###############################################################################
 """ JSON encoder - slighltly modified version for LHCbDIRAC purposes
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import json
 import datetime
@@ -50,11 +53,11 @@ class JSONDateTimeDecoder(json.JSONDecoder):
 
 
 def dumps(obj):
-  return json.dumps(obj, cls=JSONDateTimeEncoder, encoding='utf-8')
+  return json.dumps(obj, cls=JSONDateTimeEncoder)
 
 
 def loads(obj):
-  return json.loads(obj, cls=JSONDateTimeDecoder, encoding='utf-8')
+  return json.loads(obj, cls=JSONDateTimeDecoder)
 
 
 def load(fd):

@@ -13,11 +13,16 @@
 The LHCb API exposes LHCb specific functionality in addition to the
 standard DIRAC API.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
 import os
 import time
+
+import six
 
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -138,7 +143,7 @@ class DiracLHCb(Dirac):
     if not result['OK']:
       self.log.error('Could not get ancestors', result['Message'])
       return result
-    ancestors = set(x['FileName'] for ancestors in result['Value']['Successful'].itervalues() for x in ancestors)
+    ancestors = set(x['FileName'] for ancestors in result['Value']['Successful'].values() for x in ancestors)
 
     return S_OK(lfns + list(ancestors))
 
@@ -388,7 +393,7 @@ class DiracLHCb(Dirac):
       query['DataQuality'] = dqFlag
 
     for key, val in query.items():
-      if isinstance(val, basestring) and val.lower() == 'all':
+      if isinstance(val, six.string_types) and val.lower() == 'all':
         query.pop(key)
     result = self.bkQuery(query)
     self.log.verbose(result)
@@ -555,7 +560,7 @@ class DiracLHCb(Dirac):
             ' in addition to a Simulation or DataTaking Condition')
 
     self.log.verbose('Final BK query dictionary is:')
-    for item in bkQueryDict.iteritems():
+    for item in bkQueryDict.items():
       self.log.verbose('%s : %s' % item)
 
     start = time.time()
@@ -932,7 +937,7 @@ class DiracLHCb(Dirac):
       return replicaDict
     replicas = replicaDict['Value']['Successful']
     if not replicas:
-      return self._errorReport(replicaDict['Value']['Failed'].items()[0],
+      return self._errorReport(list(replicaDict['Value']['Failed'].items())[0],
                                'Failed to get replica information')
     siteLfns = {}
     for lfn, reps in replicas.items():
@@ -1000,7 +1005,7 @@ class DiracLHCb(Dirac):
     if not ret['OK']:
       return ret
     lfn = ret['Value']
-    if isinstance(lfn, basestring):
+    if isinstance(lfn, six.string_types):
       lfn = [lfn]
     results = getAccessURL(lfn, storageElement, protocol=protocol)
     if printOutput:
@@ -1017,7 +1022,7 @@ class DiracLHCb(Dirac):
     inputData = parameters.get('InputData')
     if inputData:
       self.log.debug("DiracLHCb._getLocalInputData. InputData: %s" % inputData)
-      if isinstance(inputData, basestring):
+      if isinstance(inputData, six.string_types):
         inputData = inputData.split(';')
       inputData = [lfn.strip('LFN:') for lfn in inputData]
       ancestorsDepth = int(parameters.get('AncestorDepth', 0))
@@ -1028,7 +1033,7 @@ class DiracLHCb(Dirac):
           self.log.error("Can't get ancestors", res['Message'])
           return res
         ancestorsLFNs = []
-        for ancestorsLFN in res['Value']['Successful'].itervalues():
+        for ancestorsLFN in res['Value']['Successful'].values():
           ancestorsLFNs += [i['FileName'] for i in ancestorsLFN]
         self.log.info("DiracLHCb._getLocalInputData: adding %d ancestors" % len(ancestorsLFNs))
         self.log.verbose("%s", ', '.join(ancestorsLFNs))

@@ -10,6 +10,9 @@
 ###############################################################################
 """Resolve SE takes the workflow SE description and returns the list of
 destination storage elements for uploading an output file."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from random import shuffle
 
@@ -40,7 +43,7 @@ def getDestinationSEList(outputSE, site, outputmode='Any', run=None):
     if not run:
       raise RuntimeError("Expected runNumber")
     try:
-      run = long(run)
+      run = int(run)
     except ValueError as ve:
       raise RuntimeError("Expected runNumber as a number: %s" % ve)
 

@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """DISET request handler for the LHCbDIRAC/TransformationDB."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

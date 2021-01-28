@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -21,13 +24,13 @@ import DIRAC
 from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import TransformationCleaningAgent
 
 if len(sys.argv) < 2:
-  print 'Usage: dirac-transformation-archive transID [transID] [transID]'
+  print('Usage: dirac-transformation-archive transID [transID] [transID]')
   DIRAC.exit(1)
 else:
   try:
     transIDs = [int(arg) for arg in sys.argv[1:]]
   except BaseException:
-    print 'Invalid list of transformations'
+    print('Invalid list of transformations')
     DIRAC.exit(1)
 
 

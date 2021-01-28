@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test of the ProductionRequest and Production modules."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=line-too-long,invalid-name,protected-access,missing-docstring
 
@@ -1499,7 +1502,7 @@ class ProductionRequestSuccess(ClientTestCase):
   #
   #   pr = ProductionRequest( self.bkClientFake, self.diracProdIn )
   #   # stepsListDict = {}
-  #   # for prodDict in prodsDict.itervalues():
+  #   # for prodDict in prodsDict.values():
   #   #   stepsInProdDAG = pr._getStepsInProdDAG(prodDict, stepsListDict)
   #   #   self.assertEqual(stepsInProdDAG.graph, {})
   #

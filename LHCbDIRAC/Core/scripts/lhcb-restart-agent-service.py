@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 #####################################
 # Author: Joel Closier
 # File : lhcb-restart-agent-service
@@ -22,7 +25,7 @@ import os
 import sys
 
 if 'DIRAC' not in os.environ:
-  print "The DIRAC environment is not set"
+  print("The DIRAC environment is not set")
   sys.exit(0)
 else:
   diracroot = os.environ['DIRAC']
@@ -39,20 +42,20 @@ if os.path.isdir(os.path.join(diracroot, 'runit')) and os.path.isdir(os.path.joi
 
       diracsystem = os.path.join(diracrunit, system)
       if not os.path.isdir(os.path.join(diracroot, 'control', system, agent)):
-        print diracsystem
-        print agent
+        print(diracsystem)
+        print(agent)
         os.mkdir(os.path.join(diracroot, 'control', system, agent))
 
-      print 'Restart Agent ' + agent
+      print('Restart Agent ' + agent)
       filename_stop = os.path.join(diracroot, 'control', system, agent, 'stop_agent')
-      print filename_stop
+      print(filename_stop)
       with open(filename_stop, 'w'):
         pass
     else:
       if re.search('Framework_SystemAdministrator', link):
-        print 'Skip Framework_SystemAdministrator'
+        print('Skip Framework_SystemAdministrator')
       else:
-        print 'Restart Service ' + os.path.join(diracstartup, link)
+        print('Restart Service ' + os.path.join(diracstartup, link))
         os.system('runsvctrl t ' + os.path.join(diracstartup, link))
 
 sys.exit(0)

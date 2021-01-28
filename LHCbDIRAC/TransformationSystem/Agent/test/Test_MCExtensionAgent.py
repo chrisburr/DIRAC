@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Unit test for the MCExtensionAgent."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import datetime
 import copy
@@ -30,7 +33,7 @@ class MCExtensionAgentTestCase(unittest.TestCase):
     self.agent.AgentModule = self.mockAM
     self.agent.DIRACMCExtensionAgent = self.mockAM
     self.agent = MCExtensionAgent()
-    print dir(self.agent)
+    print(dir(self.agent))
     self.agent.log = gLogger
 
   # def test_execute( self ):

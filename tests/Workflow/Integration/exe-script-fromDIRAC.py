@@ -10,12 +10,15 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 '''Script to run Executable application'''
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 
-print "This is the environment in which I am running"
-print os.environ
-print "Now I will try importing DIRAC"
+print("This is the environment in which I am running")
+print(os.environ)
+print("Now I will try importing DIRAC")
 
 import DIRAC
 from DIRAC import gLogger

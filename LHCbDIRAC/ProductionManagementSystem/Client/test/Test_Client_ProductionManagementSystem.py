@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test of the ProductionRequest and Production modules."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import pytest
 

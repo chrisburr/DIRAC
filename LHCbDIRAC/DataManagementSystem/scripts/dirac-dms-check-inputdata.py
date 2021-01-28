@@ -10,12 +10,16 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Check input files availability for a (list of) jobs."""
-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 __RCSID__ = "$Id$"
+
+import six
 
 
 def inaccessibleReplicas(lfn, se):
-  if isinstance(se, basestring):
+  if isinstance(se, six.string_types):
     seList = [se]
   else:
     seList = se

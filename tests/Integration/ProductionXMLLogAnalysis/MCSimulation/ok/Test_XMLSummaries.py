@@ -10,6 +10,9 @@
 ###############################################################################
 """Unittest for:
 LHCbDIRAC.ProductionManagementSystem.Utilities.XMLtoJSON."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
 

@@ -11,6 +11,9 @@
 ###############################################################################
 """ "Integration" production jobs. StepIDs are taken from REAL productions that ran "recently"
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=line-too-long,protected-access,invalid-name,wrong-import-position
 

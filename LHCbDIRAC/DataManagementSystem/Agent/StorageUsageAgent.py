@@ -16,6 +16,9 @@
 :synopsis: StorageUsageAgent takes the FC as the primary source of information to
   determine storage usage.
 '''
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # # imports
 import time
 import random
@@ -81,7 +84,7 @@ class StorageUsageAgent(AgentModule):
     self.__ignoreDirsList = []
     self.__keepDirLevels = 4
 
-    self.__startExecutionTime = long(time.time())
+    self.__startExecutionTime = int(time.time())
     self.__dirExplorer = DirectoryExplorer(reverse=True)
     self.__processedDirs = 0
     self.__directoryOwners = {}
@@ -234,7 +237,7 @@ class StorageUsageAgent(AgentModule):
     self.__ignoreDirsList = self.am_getOption('Ignore', [])
     self.__keepDirLevels = self.am_getOption("KeepDirLevels", 4)
 
-    self.__startExecutionTime = long(time.time())
+    self.__startExecutionTime = int(time.time())
     self.__dirExplorer = DirectoryExplorer(reverse=True)
     self.__resetReplicaListFiles()
     self.__noProxy = set()
@@ -251,7 +254,7 @@ class StorageUsageAgent(AgentModule):
     iterMaxDirs = 100
     while self.__dirExplorer.isActive():
       startT = time.time()
-      d2E = [self.__dirExplorer.getNextDir() for _i in xrange(iterMaxDirs) if self.__dirExplorer.isActive()]
+      d2E = [self.__dirExplorer.getNextDir() for _i in range(iterMaxDirs) if self.__dirExplorer.isActive()]
       self.__exploreDirList(d2E)
       iterTime = time.time() - startT
       totalIterTime += iterTime
@@ -407,8 +410,8 @@ class StorageUsageAgent(AgentModule):
       prStr += ", %s are closed (ignored)" % len(closedDirs)
     for rmDir in closedDirs + self.__ignoreDirsList:
       subDirs.pop(rmDir, None)
-    numberOfFiles = long(dirMetadata['Files'])
-    totalSize = long(dirMetadata['TotalSize'])
+    numberOfFiles = int(dirMetadata['Files'])
+    totalSize = int(dirMetadata['TotalSize'])
     if numberOfFiles:
       prStr += " and %s files (%s bytes)" % (numberOfFiles, totalSize)
     else:

@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :    dirac-bookkeeping-job-input-output
 # Author :  Zoltan Mathe
@@ -55,7 +58,7 @@ if __name__ == "__main__":
       jobidList += jobid.split(',')
   jobidList += bkScript.getOption('JobIDs', [])
   if not jobidList:
-    print "No jobID provided!"
+    print("No jobID provided!")
     Script.showHelp(exitCode=1)
 
   from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

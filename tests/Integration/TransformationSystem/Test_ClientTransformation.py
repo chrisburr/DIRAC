@@ -15,6 +15,9 @@
 
     It extends the DIRAC one
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=invalid-name,wrong-import-position
 
@@ -149,9 +152,9 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase, DIRACTrans
     # clean
     res = self.transClient.cleanTransformation(transID)
     self.assertTrue(res['OK'])
-    print res
+    print(res)
     res = self.transClient.getTransformationParameters(transID, 'Status')
-    print res
+    print(res)
     self.assertTrue(res['OK'])
     self.assertEqual(res['Value'], 'TransformationCleaned')
 

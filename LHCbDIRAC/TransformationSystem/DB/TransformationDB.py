@@ -15,12 +15,17 @@ information in order to automate the task of job preparation for high
 level transformations. This class is typically used as a base class for
 more specific data processing databases
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
 import threading
 import copy
 import re
+
+import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.TransformationSystem.DB.TransformationDB import TransformationDB as DIRACTransformationDB
@@ -264,7 +269,7 @@ class TransformationDB(DIRACTransformationDB):
           value = value.split(';;;')
         if parameter in self.intFields:
           if isinstance(value, str):
-            value = long(value)
+            value = int(value)
           if isinstance(value, list):
             value = [int(x) for x in value]
           if not value:
@@ -401,7 +406,7 @@ class TransformationDB(DIRACTransformationDB):
     connection = self.__getConnection(connection)
     selectDict = {}
     if condDict:
-      for key, val in condDict.iteritems():
+      for key, val in condDict.items():
         if key in self.transRunParams:
           selectDict[key] = val
     req = "SELECT %s FROM TransformationRuns %s" % (intListToString(self.transRunParams),
@@ -422,7 +427,7 @@ class TransformationDB(DIRACTransformationDB):
       transDict = {}
       for param, item in zip(self.transRunParams, row):
         transDict[param] = item
-        rList.append(item if isinstance(item, (int, long)) else str(item))
+        rList.append(item if isinstance(item, six.integer_types) else str(item))
       webList.append(rList)
       resultList.append(transDict)
     result = S_OK(resultList)
@@ -484,12 +489,12 @@ class TransformationDB(DIRACTransformationDB):
       return res
     fileIDs = res['Value'][0]
     rDict = {}
-    for fileID, lfn in fileIDs.iteritems():
+    for fileID, lfn in fileIDs.items():
       rDict[fileID] = lfnsDict[lfn]
-    for fID, param in rDict.iteritems():
+    for fID, param in rDict.items():
       req = "UPDATE TransformationFiles SET %s \
        WHERE TransformationID = %d AND FileID = %d" % \
-          (','.join("`%s` = '%s'" % keyVal for keyVal in param.iteritems()), transID, fID)
+          (','.join("`%s` = '%s'" % keyVal for keyVal in param.items()), transID, fID)
       res = self._update(req, connection)
       if not res['OK']:
         gLogger.error("Failed to update TransformationFiles table", res['Message'])
@@ -558,7 +563,7 @@ class TransformationDB(DIRACTransformationDB):
   def setRunsMetadata(self, runID, metadataDict, connection=False):
     """Add the metadataDict to runID (if already present, does nothing)"""
     connection = self.__getConnection(connection)
-    for name, value in metadataDict.iteritems():
+    for name, value in metadataDict.items():
       res = self.__insertRunMetadata(runID, name, value, connection)
       if not res['OK']:
         return res
@@ -567,7 +572,7 @@ class TransformationDB(DIRACTransformationDB):
   def updateRunsMetadata(self, runID, metadataDict, connection=False):
     """Add the metadataDict to runID (if already present, does nothing)"""
     connection = self.__getConnection(connection)
-    for name, value in metadataDict.iteritems():
+    for name, value in metadataDict.items():
       res = self.__updateRunMetadata(runID, name, value, connection)
       if not res['OK']:
         return res

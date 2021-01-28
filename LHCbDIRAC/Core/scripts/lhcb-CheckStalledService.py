@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 #
 """check if a service or an agent is stalled."""
@@ -96,4 +99,4 @@ for dirname in fd:
 
 res = diracAdmin.sendMail(mailadress, subject, msg, fromAddress='joel.closier@cern.ch')
 if not res['OK']:
-  print 'The mail could not be sent'
+  print('The mail could not be sent')

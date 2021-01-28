@@ -15,6 +15,10 @@
 
 :synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+import six
 
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
@@ -165,7 +169,7 @@ class StorageUsageDB(DB):
     if not result['OK']:
       return result
     dirIDs = result['Value']
-    for path, pathInfo in directoryDict.iteritems():
+    for path, pathInfo in directoryDict.items():
       path = _standardDirectory(path)
       try:
         files = int(pathInfo['Files'])
@@ -199,7 +203,7 @@ class StorageUsageDB(DB):
   ####
   def publishToProblematicDirs(self, directoryDict):
     """Publish an entry into the problematic data directory."""
-    for path, pathInfo in directoryDict.iteritems():
+    for path, pathInfo in directoryDict.items():
       path = _standardDirectory(path)
       spaceToken = pathInfo['SpaceToken']
       problem = pathInfo['Problem']
@@ -257,7 +261,7 @@ class StorageUsageDB(DB):
 
   def publishToSEReplicas(self, directoryDict):
     """Publish an entry to se_Usage table."""
-    for path, pathInfo in directoryDict.iteritems():
+    for path, pathInfo in directoryDict.items():
       path = _standardDirectory(path)
       seName = pathInfo['SEName']
       try:
@@ -328,7 +332,7 @@ class StorageUsageDB(DB):
     """Get the ID from the problematicDirs table, for a given directory
     {Path:seInfo}"""
     self.log.verbose("entry to be removed: %s" % dirList)
-    dirPath, dirInfo = dirList.items()[0]
+    dirPath, dirInfo = list(dirList.items())[0]
     dirPath = _standardDirectory(dirPath)
     spaceToken = dirInfo['SpaceToken']
     sqlPath = self._escapeString(dirPath)['Value']
@@ -346,7 +350,7 @@ class StorageUsageDB(DB):
 
   def __getIDsFromSe_Usage(self, dirList):
     """Get the ID of the entry corresponding to the directory {path:seInfo}"""
-    dirPath, dirInfo = dirList.items()[0]
+    dirPath, dirInfo = list(dirList.items())[0]
     dirPath = _standardDirectory(dirPath)
 
     # take into account that SEName might not be available
@@ -524,7 +528,7 @@ class StorageUsageDB(DB):
   def purgeOutdatedEntries(self, rootDir=False, outdatedSeconds=86400, preserveDirsList=None):
     preserveDirsList = preserveDirsList if preserveDirsList else []
     try:
-      outdatedSeconds = max(1, long(outdatedSeconds))
+      outdatedSeconds = max(1, int(outdatedSeconds))
     except ValueError:
       return S_ERROR("Ooutdated seconds needs to be a number")
 
@@ -581,7 +585,7 @@ class StorageUsageDB(DB):
       sqlCond.append("d.Path LIKE '%%/%s%%'" % fileType)
     if production:
       try:
-        sqlCond.append("d.Path LIKE '%%/%08.d%%'" % long(production))
+        sqlCond.append("d.Path LIKE '%%/%08.d%%'" % int(production))
       except ValueError:
         return S_ERROR("production has to be a number")
     if SEs:
@@ -603,7 +607,7 @@ class StorageUsageDB(DB):
       return result
     usageDict = {}
     for gf, size, files in result['Value']:
-      usageDict[gf] = {'Size': long(size), 'Files': long(files)}
+      usageDict[gf] = {'Size': int(size), 'Files': int(files)}
     return S_OK(usageDict)
 
   def getStorageSummary(self, path, fileType=False, production=False, SEs=[]):
@@ -639,7 +643,7 @@ class StorageUsageDB(DB):
       return result
     userStorage = {}
     for row in result['Value']:
-      userStorage[row[0]] = long(row[1])
+      userStorage[row[0]] = int(row[1])
     return S_OK(userStorage)
 
   def getUserSummaryPerSE(self, userName=False):
@@ -661,7 +665,7 @@ class StorageUsageDB(DB):
       seName = row[1]
       if userName not in userData:
         userData[userName] = {}
-      userData[userName][seName] = {'Size': long(row[2]), 'Files': long(row[3])}
+      userData[userName][seName] = {'Size': int(row[2]), 'Files': int(row[3])}
     return S_OK(userData)
 
   def getDirectorySummaryPerSE(self, directory):
@@ -678,15 +682,15 @@ class StorageUsageDB(DB):
       seName = row[0]
       if seName not in data:
         data[seName] = {}
-      data[seName] = {'Size': long(row[1]), 'Files': long(row[2])}
+      data[seName] = {'Size': int(row[1]), 'Files': int(row[2])}
     return S_OK(data)
 
   def publishTose_STSummary(self, site, spaceToken, totalSize, totalFiles, storageDumpLastUpdate):
     """Publish total size and total files extracted from the storage dumps to
     the se_STSummary."""
     try:
-      sqlTotalSize = long(totalSize)
-      sqlTotalFiles = long(totalFiles)
+      sqlTotalSize = int(totalSize)
+      sqlTotalFiles = int(totalFiles)
     except ValueError as e:
       return S_ERROR("Values must be ints: %s" % repr(e))
     sqlSpaceToken = self._escapeString(spaceToken)['Value']
@@ -798,7 +802,7 @@ class StorageUsageDB(DB):
         data[thisRun] = {}
         for row in result['Value']:
           seName = row[0]
-          data[thisRun][seName] = {'Size': long(row[1]), 'Files': long(row[2])}
+          data[thisRun][seName] = {'Size': int(row[1]), 'Files': int(row[2])}
     else:
       sqlCmd = "SELECT su.SEName, SUM(su.Size), SUM(su.Files)  FROM su_Directory AS d, su_SEUsage AS su WHERE " \
           "d.DID=su.DID and d.Path LIKE '/lhcb/data/%%/RAW/%%/%%/%%/%d/' GROUP BY su.SEName" % (run)
@@ -808,7 +812,7 @@ class StorageUsageDB(DB):
         return S_ERROR(result)
       for row in result['Value']:
         seName = row[0]
-        data[seName] = {'Size': long(row[1]), 'Files': long(row[2])}
+        data[seName] = {'Size': int(row[1]), 'Files': int(row[2])}
 
     return S_OK(data)
 
@@ -864,7 +868,7 @@ class StorageUsageDB(DB):
       sqlCond.append("Path LIKE '%%/%s%%'" % fileType)
     if production:
       try:
-        sqlCond.append("Path LIKE '%%/%08.d%%'" % long(production))
+        sqlCond.append("Path LIKE '%%/%08.d%%'" % int(production))
       except ValueError:
         return S_ERROR("production has to be a number")
     return sqlCond
@@ -881,7 +885,7 @@ class StorageUsageDB(DB):
       return result
     usageDict = {}
     for gf, size, files in result['Value']:
-      usageDict[gf] = {'Size': long(size), 'Files': long(files)}
+      usageDict[gf] = {'Size': int(size), 'Files': int(files)}
     return S_OK(usageDict)
 
   def getSummary(self, path, fileType=False, production=False):
@@ -906,7 +910,7 @@ class StorageUsageDB(DB):
       return S_OK()
     sqlSite = self._escapeString(site)['Value']
     insertedEntries = 0
-    for di, count in directoryDict.iteritems():
+    for di, count in directoryDict.items():
       di = _standardDirectory(di)
       sqlPath = self._escapeString(di)['Value']
       sqlStatus = self._escapeString(status)['Value']
@@ -969,7 +973,7 @@ class StorageUsageDB(DB):
     time interval."""
     if startTime > endTime:
       return S_OK()
-    if not isinstance(startTime, basestring) or not isinstance(endTime, basestring):
+    if not isinstance(startTime, six.string_types) or not isinstance(endTime, six.string_types):
       return S_ERROR('wrong arguments format')
 
     sqlStartTime = self._escapeString(startTime)['Value']

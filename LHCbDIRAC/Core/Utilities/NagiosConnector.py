@@ -18,6 +18,9 @@ to the right queue, which is also specified in the configuration. The
 message is built using a dictionary passed to one of the methods, which
 should contain the keys 'SAMResults' 'SAMDetails' 'GridRequiredCEs'.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import datetime
 import stomp
@@ -83,7 +86,7 @@ EOT"""
     statuscodes = {0: 'OK', 1: 'CRITICAL', 2: 'WARNING', 3: 'UNKNOWN'}
     if status in ['CRITICAL', 'OK', 'WARNING', 'UNKNOWN']:
       pass
-    elif status in xrange(4):
+    elif status in range(4):
       status = statuscodes[status]
 
       currentTime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")

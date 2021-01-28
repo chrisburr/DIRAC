@@ -32,6 +32,9 @@ For files in MaxReset and Assigned:
   o if there is no replica flag can proceed with file removal from LFC / storage (can be disabled by flag)
 - Mark the recovered input file status as 'Unused' in the ProductionDB if they were not in MaxReset
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -118,7 +121,7 @@ class DataRecoveryAgent(AgentModule):
                                                                ', '.join(self.transformationTypes)))
     self.log.verbose('Transformations selected:\n%s' % (', '.join(transformationDict)))
 
-    for transformation, typeName in transformationDict.iteritems():
+    for transformation, typeName in transformationDict.items():
       self.transLogger = self.log.getSubLogger('Trans-%s' % transformation)
       result = self.__selectTransformationFiles(transformation, fileSelectionStatus)
       if not result['OK']:
@@ -150,7 +153,7 @@ class DataRecoveryAgent(AgentModule):
       self.transLogger.verbose("Looking at WMS jobs %s" %
                                ','.join(str(jobID) for jobID in jobFileDict))
 
-      fileCount = sum(len(lfnList) for lfnList in jobFileDict.itervalues())
+      fileCount = sum(len(lfnList) for lfnList in jobFileDict.values())
       self.transLogger.verbose('%s files are selected after examining WMS jobs' %
                                (str(fileCount) if fileCount else 'No'))
       if not fileCount:
@@ -166,7 +169,7 @@ class DataRecoveryAgent(AgentModule):
         self.transLogger.info('No WMS jobs without pending requests to process.')
         continue
 
-      fileCount = sum(len(lfnList) for lfnList in jobFileDict.itervalues())
+      fileCount = sum(len(lfnList) for lfnList in jobFileDict.values())
       self.transLogger.info('%s files are selected in %d jobs after removing any job with pending requests' %
                             (str(fileCount) if fileCount else 'No', len(jobFileDict)))
       if not fileCount:
@@ -185,7 +188,7 @@ class DataRecoveryAgent(AgentModule):
       filesToUpdate = []
       filesMaxReset = []
       filesWithDescendants = []
-      for job, fileList in jobFileDict.iteritems():
+      for job, fileList in jobFileDict.items():
         if job in jobsThatDidntProduceOutputs:
           recoverableFiles = set(lfn for lfn in fileList if fileDict[lfn][1] not in unrecoverableStatus)
           filesToUpdate += list(recoverableFiles)
@@ -293,7 +296,7 @@ class DataRecoveryAgent(AgentModule):
         continue
 
       # Must map unique files -> jobs in expected state
-      jobFileDict[wmsID] = [lfn for lfn, (tID, _st) in fileDict.iteritems() if int(tID) == int(taskID)]
+      jobFileDict[wmsID] = [lfn for lfn, (tID, _st) in fileDict.items() if int(tID) == int(taskID)]
 
       self.transLogger.info('Found %d files for taskID %s, jobID %s (%s), last update %s' %
                             (len(jobFileDict[wmsID]), taskID, wmsID, wmsStatus, taskDict['LastUpdateTime']))
@@ -318,7 +321,7 @@ class DataRecoveryAgent(AgentModule):
       self.transLogger.verbose('None of the jobs have pending requests')
       return S_OK()
 
-    for jobID, requestID in result['Value']['Successful'].iteritems():
+    for jobID, requestID in result['Value']['Successful'].items():
       res = self.reqClient.getRequestStatus(requestID)
       if not res['OK']:
         self.transLogger.error('Failed to get Status for Request', '%s:%s' % (requestID, res['Message']))
@@ -338,7 +341,7 @@ class DataRecoveryAgent(AgentModule):
     jobsThatProducedOutputs = []
 
     self.consChecks.prod = transformation
-    for job, fileList in jobFileDict.iteritems():
+    for job, fileList in jobFileDict.items():
       result = self.consChecks.getDescendants(fileList)
       filesWithDesc = result[0]
       filesWithMultipleDesc = result[2]

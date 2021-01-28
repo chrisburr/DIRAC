@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :    dirac-bookkeeping-production-jobs
 # Author :  Zoltan Mathe
@@ -26,7 +29,7 @@ Script.setUsageMessage(__doc__ + '\n'.join([
     '  ProdID:   Production ID (mandatory)']))
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
-
+print("args =", args)
 if len(args) < 1:
   Script.showHelp()
 
@@ -35,7 +38,7 @@ exitCode = 0
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 bk = BookkeepingClient()
 try:
-  prod = long(args[0])
+  prod = int(args[0])
 except BaseException:
   Script.showHelp(exitCode=1)
 
@@ -43,15 +46,15 @@ res = bk.getNbOfJobsBySites(prod)
 
 if res['OK']:
   if not res['Value']:
-    print "No jobs for production", prod
+    print("No jobs for production", prod)
     DIRAC.exit(0)
   sites = dict([(site, num) for num, site in res['Value']])
   shift = 0
   for site in sites:
     shift = max(shift, len(site) + 2)
-  print 'Site Name'.ljust(shift), 'Number of jobs'
+  print('Site Name'.ljust(shift), 'Number of jobs')
   for site in sorted(sites):
-    print site.ljust(shift), str(sites[site])
+    print(site.ljust(shift), str(sites[site]))
 else:
-  print "ERROR getting number of jobs for %s:" % str(prod), res['Message']
+  print("ERROR getting number of jobs for %s:" % str(prod), res['Message'])
   exitCode = 2

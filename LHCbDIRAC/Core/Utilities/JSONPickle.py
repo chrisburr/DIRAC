@@ -8,7 +8,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import cPickle
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from six.moves import cPickle
 import json
 
 from DIRAC import gLogger

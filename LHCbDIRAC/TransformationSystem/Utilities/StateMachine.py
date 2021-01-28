@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Transformation Files state machine (LHCb specific)"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC.ResourceStatusSystem.PolicySystem.StateMachine import State
 from LHCbDIRAC.ProductionManagementSystem.Utilities.StateMachine import LHCbStateMachine

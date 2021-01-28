@@ -10,6 +10,9 @@
 ###############################################################################
 """An agent to extend MC productions based on the remaining events to
 produce."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -122,7 +125,7 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
       return S_OK(message)
 
     # get the associated productions/transformations progress
-    productionsProgress = self.rpcProductionRequest.getProductionProgressList(long(productionRequestID))
+    productionsProgress = self.rpcProductionRequest.getProductionProgressList(int(productionRequestID))
     if productionsProgress['OK']:
       productionsProgress = productionsProgress['Value']
     else:

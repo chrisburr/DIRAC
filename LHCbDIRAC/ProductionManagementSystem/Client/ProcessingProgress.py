@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get statistics on productions related to a given processing pass."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 
@@ -17,6 +20,8 @@ import os
 import pickle
 import sys
 import time
+
+import six
 
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.List import breakListIntoChunks
@@ -100,7 +105,7 @@ class HTMLProgressTable(object):
   @staticmethod
   def __sumProdStats(summaryProdStats):
     sumStats = []
-    for ind in xrange(4):
+    for ind in range(4):
       info = None
       for prodStats in summaryProdStats:
         if not prodStats:
@@ -123,7 +128,7 @@ class HTMLProgressTable(object):
     prodStats = self.__sumProdStats(summaryProdStats)
     prevProdStats = self.__sumProdStats(previousProdStats)
     diffStats = 4 * [None]
-    for ind in xrange(4):
+    for ind in range(4):
       diffStats[ind] = prodStats[ind] - prevProdStats[ind]
       row = self.__tableRow(diffStats[ind])
       self.table.rows.append(row)
@@ -238,7 +243,7 @@ class StatInfo(object):
     thisName = self.name
     thatName = other.name
     if thisName != thatName:
-      print "Error substracting StatInfo for %s and %s" % (thisName, thatName)
+      print("Error substracting StatInfo for %s and %s" % (thisName, thatName))
       return StatInfo('')
     values = {}
     for item in self.items:
@@ -300,7 +305,7 @@ class ProcessingProgress(object):
       if prodBKDict:
         recoRunRanges[prod] = [prodBKDict.get("StartRun", 0), prodBKDict.get("EndRun", sys.maxsize)]
         dqFlags = prodBKDict.get("DataQualityFlag", ['UNCHECKED', 'EXPRESS_OK', 'OK'])
-        if isinstance(dqFlags, basestring):
+        if isinstance(dqFlags, six.string_types):
           dqFlags = dqFlags.split(',')
         recoDQFlags += [fl for fl in dqFlags if fl not in recoDQFlags]
       else:
@@ -309,9 +314,9 @@ class ProcessingProgress(object):
     try:
       recoList.sort(cmp=(lambda p1, p2: int(recoRunRanges[p1][0] - recoRunRanges[p2][1])))
     except BaseException:
-      print "Exception in sorting productions:"
+      print("Exception in sorting productions:")
       for p in recoList:
-        print p, recoRunRanges[p]
+        print(p, recoRunRanges[p])
     gLogger.verbose("Reconstruction productions found (%d): %s" % (len(recoList), str(sorted(recoList))))
     gLogger.verbose("Reconstruction DQ flags: %s" % str(recoDQFlags))
 
@@ -351,9 +356,9 @@ class ProcessingProgress(object):
     try:
       stripList.sort(cmp=(lambda p1, p2: int(stripRunRanges[p1][0] - stripRunRanges[p2][1])))
     except Exception:
-      print "Error when sorting stripping productions:"
+      print("Error when sorting stripping productions:")
       for prodStrip in stripList:
-        print prodStrip, stripRunRanges[prodStrip]
+        print(prodStrip, stripRunRanges[prodStrip])
     gLogger.verbose("Stripping productions found (%d): %s" % (len(stripList), str(sorted(stripList))))
 
     # Get all runs corresponding to the run range used by the Reco productions
@@ -496,7 +501,7 @@ class ProcessingProgress(object):
     if len(prodStats) < 4:
       outputString += "No statistics found for this BK query"
       return outputString
-    for i in xrange(4):
+    for i in range(4):
       info = prodStats[i]
       if not info:
         continue
@@ -636,7 +641,7 @@ class ProcessingProgress(object):
     cached = self.cachedInfo.get(bkStr, {})
     cachedTime = cached.get('Time', None)
     cachedLfns = cached.get('Lfns', {})
-    if isinstance(fileType, basestring):
+    if isinstance(fileType, six.string_types):
       fileType = [fileType]
     if set(fileType).intersection(set(self.clearCache)):
       cachedTime = datetime.datetime.utcnow() - datetime.timedelta(days=8)

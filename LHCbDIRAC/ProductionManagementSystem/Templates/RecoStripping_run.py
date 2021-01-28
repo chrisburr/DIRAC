@@ -22,8 +22,10 @@ Exotic things you might want to do:
   pre: remember to check if your input file is online, if not use lcg-bringonline <PFN>
 * run only part of the request on the Grid:
 """
-
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 from six.moves import range
 
 import ast

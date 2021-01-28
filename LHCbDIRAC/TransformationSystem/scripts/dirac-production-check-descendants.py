@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Does a TS -> BK check for processed files with descendants."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 
 # imports
@@ -232,7 +235,7 @@ if __name__ == '__main__':
       if not fp:
         fp = open(fileName, 'w')
       fp.write('\nProcMultDesc '.join([''] + ['%s: %s' % (lfn, str(multi))
-                                              for lfn, multi in cc.prcdWithMultDesc.iteritems()]))
+                                              for lfn, multi in cc.prcdWithMultDesc.items()]))
       gLogger.notice("I'm not doing anything for them, neither with the 'FixIt' option")
     else:
       gLogger.notice("No processed LFNs with multiple descendants found -> OK!")
@@ -244,7 +247,7 @@ if __name__ == '__main__':
       badLfns = set()
       if res['OK']:
         # Check the DQ flag of these files
-        badLfns = set(lfn for lfn, meta in res['Value']['Successful'].iteritems() if meta['DataqualityFlag'] == 'BAD')
+        badLfns = set(lfn for lfn, meta in res['Value']['Successful'].items() if meta['DataqualityFlag'] == 'BAD')
       if badLfns:
         gLogger.notice("Processed LFNs without descendants (%d)" % len(lfns))
         gLogger.notice(

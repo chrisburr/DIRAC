@@ -22,6 +22,9 @@ Whatever:
     'Production':7421
   }
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import tempfile
 import six
@@ -544,7 +547,7 @@ class BKClientWithRetry():
 
   def __executeMethod(self, *args, **kwargs):
     fcn = getattr(self.bk, self.method)
-    for _i in xrange(self.retries):
+    for _i in range(self.retries):
       res = fcn(*args, **kwargs)
       if res['OK']:
         break

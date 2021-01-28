@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 """Set files Removed in a transformation."""
 
@@ -18,7 +21,7 @@ __RCSID__ = "$Id$"
 def __getTransformations(args):
   transList = []
   if not len(args):
-    print "Specify transformation number..."
+    print("Specify transformation number...")
     Script.showHelp()
   else:
     ids = args[0].split(",")

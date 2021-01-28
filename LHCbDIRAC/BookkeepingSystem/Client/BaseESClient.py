@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Base Entity System client."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import S_ERROR
 from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager

@@ -11,6 +11,9 @@
 ###############################################################################
 """Set the destination for a set of runs, based on the majority of reco
 output."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -73,17 +76,17 @@ def execute():
       errors.setdefault(res['Message'], []).extend(lfnChunk)
     else:
       replicas.update(res['Value']['Successful'])
-      for lfn, error in res['Value']['Failed'].iteritems():
+      for lfn, error in res['Value']['Failed'].items():
         errors.setdefault(error, []).append(lfn)
   progressBar.endLoop()
-  for error, lfns in errors.iteritems():
+  for error, lfns in errors.items():
     gLogger.error(error, 'for %d files' % len(lfns))
 
   tier1RDST = set(resolveSEGroup('Tier1-RDST'))
   setOK = 0
   errors = {}
   progressBar = ProgressBar(len(runLFNs), title='Defining destination for %d runs' % len(runLFNs), step=10)
-  for run, lfns in runLFNs.iteritems():
+  for run, lfns in runLFNs.items():
     progressBar.loop()
     res = tr.getDestinationForRun(run)
     if res.get('Value'):
@@ -97,7 +100,7 @@ def execute():
     # print seCounts
     maxi = 0
     seMax = None
-    for se, count in seCounts.iteritems():
+    for se, count in seCounts.items():
       if count > maxi:
         seMax = se
         maxi = count
@@ -114,7 +117,7 @@ def execute():
       else:
         setOK += 1
   progressBar.endLoop('Successfully set destination for %d runs' % setOK)
-  for error, runs in errors.iteritems():
+  for error, runs in errors.items():
     gLogger.error(error, 'for runs %s' % ','.join(runs))
 
 

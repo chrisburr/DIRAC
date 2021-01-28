@@ -11,6 +11,9 @@
 ###############################################################################
 """Check if all files have a replica in a certain (set of) SE )Tier1-Archive
 default) List the files that don't have a replica in the specified SE (group)"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

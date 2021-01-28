@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Utilities to check the XML summary files."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import ast
@@ -333,7 +336,7 @@ class XMLSummary(object):
         self.log.warn('Input File on unknown status', '%s: %s' % (fileIn, status))
         fileCounter['other'] += 1
 
-    files = ['%d input file(s) on %s status' % (v, k) for k, v in fileCounter.iteritems() if v > 0]
+    files = ['%d input file(s) on %s status' % (v, k) for k, v in fileCounter.items() if v > 0]
     filesMsg = ', '.join(files)
     self.log.info('Inputs on status', filesMsg)
 
@@ -447,7 +450,7 @@ class XMLSummary(object):
         self.log.warn('Output File on unknown status', '%s: %s.' % (filename, status))
         fileCounter['other'] += 1
 
-    files = ['%d output file(s) on %s status' % (v, k) for k, v in fileCounter.iteritems() if v > 0]
+    files = ['%d output file(s) on %s status' % (v, k) for k, v in fileCounter.items() if v > 0]
     filesMsg = ', '.join(files)
     self.log.info('Outputs on status', filesMsg)
 

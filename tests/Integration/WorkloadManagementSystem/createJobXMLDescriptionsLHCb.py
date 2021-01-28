@@ -11,6 +11,9 @@
 """ This simply invokes DIRAC APIs for creating 2 jobDescription.xml files,
     one with an application that will end with status 0, and a second with status != 0
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 #  pylint: disable=wrong-import-position, protected-access
 

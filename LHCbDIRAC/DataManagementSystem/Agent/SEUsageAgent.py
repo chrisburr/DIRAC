@@ -15,6 +15,9 @@
 
 :synopsis: SEUsageAgent browses the SEs to determine their content and store it into a DB.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # # imports
 import os
 import time
@@ -351,7 +354,7 @@ class SEUsageAgent(AgentModule):
 
     self.log.info("--------- End of cycle ------------------")
     self.log.info("checked sites:")
-    for site, siteTiming in timingPerSite.iteritems():
+    for site, siteTiming in timingPerSite.items():
       self.log.info("Site: %s -  total time %s" % (site, siteTiming))
     return S_OK()
 
@@ -777,7 +780,7 @@ class SEUsageAgent(AgentModule):
       signal.alarm(timeout)
     try:
       remoteFD = urllib2.urlopen(url)
-      expectedBytes = long(remoteFD.info()['Content-Length'])
+      expectedBytes = int(remoteFD.info()['Content-Length'])
       localFD = open(fileName, "wb")
       receivedBytes = 0
       data = remoteFD.read(16384)
@@ -923,7 +926,7 @@ class SEUsageAgent(AgentModule):
                        " site=%s, path= %s, type of replica =%s  " % (site, lfcPath, replicaType))
         continue
     self.log.info("Found the following problematic directories:")
-    for replicaType, problematicDir in problematicDirectories.iteritems():
+    for replicaType, problematicDir in problematicDirectories.items():
       self.log.info("replica type: %s , directories: %s " % (replicaType, problematicDir))
     # retrieve the list of files belonging to problematic directories from the merged files:
     filesInProblematicDirs = {}

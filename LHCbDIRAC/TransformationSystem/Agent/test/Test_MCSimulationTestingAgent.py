@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test class for the MCSimulationTestingAgent."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import datetime
 import importlib

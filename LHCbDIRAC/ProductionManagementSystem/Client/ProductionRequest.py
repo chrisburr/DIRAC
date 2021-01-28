@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Module for creating, describing and managing production requests objects."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -136,9 +139,9 @@ class ProductionRequest(object):
   def resolveSteps(self):
     """Given a list of steps in strings, some of which might be missing,
     resolve it into a list of dictionary of steps (self.stepsListDict)"""
-    outputVisFlag = dict([k, v] for el in self.outputVisFlag for k, v in el.iteritems()
+    outputVisFlag = dict([k, v] for el in self.outputVisFlag for k, v in el.items()
                          )  # Transform the list of dictionaries in a dictionary
-    specialOutputVisFlag = dict([k, v] for el in self.specialOutputVisFlag for k, v in el.iteritems())
+    specialOutputVisFlag = dict([k, v] for el in self.specialOutputVisFlag for k, v in el.items())
     count = 0  # Needed to add correctly the optionFiles to the list of dictonaries of steps
     for stepID in self.stepsList:
 
@@ -461,7 +464,7 @@ class ProductionRequest(object):
       self.bkQueries += ['fromPreviousProd'] * (len(self.prodsTypeList) - len(self.bkQueries))
 
     if len(self.previousProds) != len(self.prodsTypeList):
-      self.previousProds += xrange(1, len(self.prodsTypeList))
+      self.previousProds += range(1, len(self.prodsTypeList))
 
     if len(self.events) != len(self.prodsTypeList):
       self.events += ['-1'] * (len(self.prodsTypeList) - len(self.events))
@@ -564,7 +567,7 @@ class ProductionRequest(object):
           newSteps.reverse()
           self.stepsListDict.remove(stepToSplit)
           last = self.stepsInProds.pop(index)[0]
-          for x in xrange(numberOfProdsToInsert):
+          for x in range(numberOfProdsToInsert):
             self.prodsTypeList.insert(index, 'Merge')
             self.plugins.insert(index, plugin)
             self.outputSEs.insert(index, outputSE)
@@ -593,7 +596,7 @@ class ProductionRequest(object):
     toInsert = self.stepsInProds[0][0]
     lengths = [len(x) for x in self.stepsInProds]
     for length in lengths:
-      li = [toInsert + x for x in xrange(length)]
+      li = [toInsert + x for x in range(length)]
       toInsert += length
       correctedStepsInProds.append(li)
 

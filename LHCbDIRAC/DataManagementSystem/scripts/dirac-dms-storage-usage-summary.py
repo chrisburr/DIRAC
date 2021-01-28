@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 """Get the storage usage summary for the given directories."""
 __RCSID__ = "$Id$"
@@ -54,8 +57,8 @@ def orderSEs(listSEs):
 def printSEUsage(totalUsage, grandTotal, scaleFactor):
   """Nice printout of SE usage."""
   dashes = '-' * 48
-  print dashes
-  print '%s %s %s' % ('DIRAC SE'.ljust(20), ('Size (%s)' % unit).ljust(20), 'Files'.ljust(20))
+  print(dashes)
+  print('%s %s %s' % ('DIRAC SE'.ljust(20), ('Size (%s)' % unit).ljust(20), 'Files'.ljust(20)))
   form = '%.1f'
   orderedSEs = orderSEs(totalUsage)
   for se in orderedSEs:
@@ -69,25 +72,25 @@ def printSEUsage(totalUsage, grandTotal, scaleFactor):
     newSvcClass = seSvcClass(se)
     if newSvcClass != svcClass:
       if svcClass:
-        print "%s %s %s" % (('Total (%s)' % svcClass).ljust(20),
+        print("%s %s %s" % (('Total (%s)' % svcClass).ljust(20),
                             (form % (sumSize)).ljust(20),
-                            str(sumFiles).ljust(20))
+                            str(sumFiles).ljust(20)))
         sumFiles = 0
         sumSize = 0.
-      print dashes
+      print(dashes)
     svcClass = newSvcClass
     usageDict = totalUsage[se]
     files = usageDict['Files']
     size = usageDict['Size'] / scaleFactor
     sumFiles += files
     sumSize += size
-    print "%s %s %s" % (se.ljust(20), (form % (size)).ljust(20), str(files).ljust(20))
+    print("%s %s %s" % (se.ljust(20), (form % (size)).ljust(20), str(files).ljust(20)))
   if grandTotal:
     size = grandTotal['Size'] / scaleFactor
-    print "%s %s %s" % ('Total (disk)'.ljust(20),
+    print("%s %s %s" % ('Total (disk)'.ljust(20),
                         (form % (size)).ljust(20),
-                        str(grandTotal['Files']).ljust(20))
-  print dashes
+                        str(grandTotal['Files']).ljust(20)))
+  print(dashes)
 
 
 def printBigTable(siteList, bigTable):
@@ -105,10 +108,10 @@ def printBigTable(siteList, bigTable):
   prStr = 'Conditions'.ljust(just[0]) + 'ProcessingPass'.ljust(just[1])
   for site in siteList:
     prStr += site.ljust(just[2])
-  print prStr
+  print(prStr)
   grandTotal = {}
   for cond in sorted(bigTable):
-    print cond.ljust(just[0])
+    print(cond.ljust(just[0]))
     for processingPass in sorted(bigTable[cond]):
       prStr = ''.ljust(just[0]) + processingPass.ljust(just[1])
       bigTableUsage = bigTable[cond][processingPass][1]
@@ -120,14 +123,14 @@ def printBigTable(siteList, bigTable):
           prStr += '0'.ljust(just[2])
         else:
           prStr += '-'.ljust(just[2])
-      print prStr
+      print(prStr)
   prStr = '\n' + ''.ljust(just[0]) + 'Grand-Total'.ljust(just[1])
   for site in siteList:
     if site in grandTotal:
       prStr += ('%.3f' % grandTotal[site]).ljust(just[2])
     else:
       prStr += '-'.ljust(just[2])
-  print prStr
+  print(prStr)
 
 
 infoStringLength = 1
@@ -149,11 +152,11 @@ def browseBK(bkQuery, ses, scaleFactor):
 
   bkPath = bkQuery.getPath()
   if not bkQuery.getConfiguration():
-    print "The Configuration should be specified in the --BKQuery option: %s" % bkPath
+    print("The Configuration should be specified in the --BKQuery option: %s" % bkPath)
     return None
   conditions = bkQuery.getBKConditions()
   if not conditions:
-    print 'No Conditions found for this Configuration %s' % bkPath
+    print('No Conditions found for this Configuration %s' % bkPath)
     return None
   requestedEventTypes = bkQuery.getEventTypeList()
   requestedFileTypes = bkQuery.getFileTypeList()
@@ -212,7 +215,7 @@ def browseBK(bkQuery, ses, scaleFactor):
       writeInfo('')
       if allProds:
         allProds.sort()
-        print cond, processingPass, allProds
+        print(cond, processingPass, allProds)
         printSEUsage(totalUsage, grandTotal, scaleFactor)
         processingPass = processingPass.replace('/Real Data', '')
         bigTable.setdefault(cond, {})[processingPass] = [allProds, {}]
@@ -234,7 +237,7 @@ def browseBK(bkQuery, ses, scaleFactor):
       bkQuery.setProcessingPass(requestedPP)
     bkQuery.setConditions(requestedConditions)
   import datetime
-  print '\n', bkQuery.getPath(), str(datetime.datetime.today()).split()[0]
+  print('\n', bkQuery.getPath(), str(datetime.datetime.today()).split()[0])
   printBigTable(siteList, bigTable)
 
 
@@ -310,7 +313,7 @@ def execute(unit, minimum, depth):
   for site in sites:
     res = gConfig.getOptionsDict('/Resources/Sites/LCG/%s' % site)
     if not res['OK']:
-      print 'Site %s not known' % site
+      print('Site %s not known' % site)
       Script.showHelp()
     ses.extend(res['Value']['SE'].replace(' ', '').split(','))
 
@@ -329,7 +332,7 @@ def execute(unit, minimum, depth):
     else:
       res = rpc.getStorageDirectories('/lhcb/user', None, None, None)
       if not res['OK']:
-        print 'Error getting directories in /lhcb/user:', res['Message']
+        print('Error getting directories in /lhcb/user:', res['Message'])
         DIRAC.exit(2)
       dirs += sorted(set(['/'.join(d.split('/')[0:5]) for d in res['Value']]))
       users = [user for user in [d.split('/')[-1] for d in dirs] if user]
@@ -344,22 +347,22 @@ def execute(unit, minimum, depth):
       bkFileTypes = bkQuery.getFileTypeList()
       if bkFileTypes:
         fileTypes = bkFileTypes
-      print "BK query:", bkQuery
+      print("BK query:", bkQuery)
       if fileTypes == ['RAW']:
         # For RAW data, get the list of directories...
         dirs = bkQuery.getDirs()
       else:
         prods = sorted(bkQuery.getBKProductions())
         if not prods:
-          print 'No productions found for bkQuery %s' % str(bkQuery)
+          print('No productions found for bkQuery %s' % str(bkQuery))
           DIRAC.exit(0)
         # As storageSummary deals with directories and not real file types,
         #    add DST in order to cope with old naming convention
         if fileTypes and 'FULL.DST' not in fileTypes and 'DST' not in fileTypes:
           fileTypes.append('DST')
-        print "Looking for %d productions:" % len(prods), prods
+        print("Looking for %d productions:" % len(prods), prods)
     elif fileTypes and fileTypes[0]:
-      print 'FileTypes:', fileTypes
+      print('FileTypes:', fileTypes)
 
   if not prods:
     prods = ['']
@@ -390,7 +393,7 @@ def execute(unit, minimum, depth):
         for dirName in dirs:
           res = rpc.getStorageDirectoryData(dirName, fileType, prodID, ses)
           if not res['OK']:
-            print 'Failed to get directories', res['Message']
+            print('Failed to get directories', res['Message'])
             DIRAC.exit(2)
           dirData.update(res['Value'])
     if full:
@@ -399,7 +402,7 @@ def execute(unit, minimum, depth):
     if topDirectories:
       gLogger.notice('Depth-4 directories:')
       topDirData = {}
-      for resDir, usage in dirData.iteritems():
+      for resDir, usage in dirData.items():
         topDir = '/'.join(resDir.split('/')[:topDirectories + 1]) + '/'
         topDirData.setdefault(topDir, {'Files': 0, 'Size': 0})
         topDirData[topDir]['Files'] += usage['Files']
@@ -428,9 +431,9 @@ def execute(unit, minimum, depth):
           if summary:
             usersUsage[user] = (spaceUsed, quota)
           else:
-            print "Storage usage for user %s (quota: %.1f %s)%s" % \
+            print("Storage usage for user %s (quota: %.1f %s)%s" %
                 (user, quota, unit, ' <== User no longer registered' if not quota else (
-                  ' <== Over quota' if spaceUsed > quota else ''))
+                  ' <== Over quota' if spaceUsed > quota else '')))
             printSEUsage(totalUsage, grandTotal, scaleFactor)
         else:
           totalUsage, grandTotal = getStorageSummary(totalUsage, grandTotal, dirName, fileType, prodID, ses)
@@ -456,16 +459,16 @@ def execute(unit, minimum, depth):
         if seStatus['DiskSE']:
           diskTotalFiles += files
           diskTotalSize += size
-    print '%s %s %s' % ('Storage Type'.ljust(20),
+    print('%s %s %s' % ('Storage Type'.ljust(20),
                         ('Size (%s)' % unit).ljust(20),
-                        'Files'.ljust(20))
-    print '-' * 50
-    print "%s %s %s" % ('T1D*'.ljust(20),
+                        'Files'.ljust(20)))
+    print('-' * 50)
+    print("%s %s %s" % ('T1D*'.ljust(20),
                         ('%.1f' % (tapeTotalSize / scaleFactor)).ljust(20),
-                        str(tapeTotalFiles).ljust(20))
-    print "%s %s %s" % ('T*D1'.ljust(20),
+                        str(tapeTotalFiles).ljust(20)))
+    print("%s %s %s" % ('T*D1'.ljust(20),
                         ('%.1f' % (diskTotalSize / scaleFactor)).ljust(20),
-                        str(diskTotalFiles).ljust(20))
+                        str(diskTotalFiles).ljust(20)))
     DIRAC.exit(0)
 
   if not users:
@@ -476,9 +479,9 @@ def execute(unit, minimum, depth):
     for user in users:
       spaceUsed, quota = usersUsage[user]
       if spaceUsed > minimum:
-        print "Storage usage for user %8s: %6.3f %s (quota: %4.1f %s)%s" % \
+        print("Storage usage for user %8s: %6.3f %s (quota: %4.1f %s)%s" %
               (user, spaceUsed, unit, quota, unit, ' <== User no longer registered' if not quota else (
-                  ' <== Over quota' if spaceUsed > quota else ''))
+                  ' <== Over quota' if spaceUsed > quota else '')))
 
   DIRAC.exit(0)
 

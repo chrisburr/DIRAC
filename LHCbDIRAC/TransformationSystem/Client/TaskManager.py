@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Extension of DIRAC Task Manager."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC.TransformationSystem.Client.TaskManager import WorkflowTasks
 
@@ -46,7 +49,7 @@ class LHCbWorkflowTasks(WorkflowTasks):
     """add as JDL parameters all the other parameters that are not for inputs
     or destination."""
 
-    for paramName, paramValue in paramsDict.iteritems():
+    for paramName, paramValue in paramsDict.items():
       if paramName not in ('InputData', 'RunNumber', 'RunMetadata', 'Site', 'TargetSE'):
         if paramValue:
           self.log.verbose('Setting %s to %s' % (paramName, paramValue))

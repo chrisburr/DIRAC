@@ -9,13 +9,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 __RCSID__ = "$Id$"
 
 import sys
 if len(sys.argv) < 2:
-  print 'Usage: dirac-production-verify-outputdata transID [transID] [transID]'
+  print('Usage: dirac-production-verify-outputdata transID [transID] [transID]')
   sys.exit()
 else:
   transIDs = [int(arg) for arg in sys.argv[1:]]

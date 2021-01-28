@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Fix incorrect file GUIDs."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import os
@@ -27,7 +30,10 @@ def leave(msg, error=None, exitCode=0):
     gLogger.info("Local file %s removed" % localFile)
 
   if error:
-    errMsg = error.get('Message', error.get('Value', {}).get('Failed', {'': 'Unknown reason'}).values()[0])
+    errMsg = error.get(
+        'Message',
+        list(error.get('Value', {}).get('Failed', {'': 'Unknown reason'}).values())[0],
+    )
     gLogger.error(msg, ': %s' % errMsg)
   else:
     gLogger.always(msg)

@@ -25,6 +25,9 @@
               If the command itself is dirac-loop, then the first occurrence only of @arg@ is replaced,
               which allows recursive calls
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import subprocess
@@ -59,7 +62,7 @@ def reduceArgs(arguments):
     cond = parsed[3]
     parsed[3] = ''
     conditions.setdefault('/'.join(parsed), []).append((path, cond))
-  for newPath, condTuple in conditions.iteritems():
+  for newPath, condTuple in conditions.items():
     if len(condTuple) != 2:
       finalArgs += [path for (path, _c) in condTuple]
     else:

@@ -9,7 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Bookkeeping file system."""
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import sys
 import cmd
@@ -107,7 +109,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
         return '/'
     else:
       newpath = ''
-      for i in xrange(len(path) - 1):
+      for i in range(len(path) - 1):
         if path[i] != '':
           newpath += '/' + path[i]
       if newpath == '':
@@ -145,7 +147,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
     if path.find('|') > -1:
       tmpPath = path.split('|')
       path = ''
-      for i in xrange(len(tmpPath) - 1):
+      for i in range(len(tmpPath) - 1):
         path += tmpPath[i].strip()
       paging = True
 
@@ -208,7 +210,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
       return
     if args.num is not None:
       try:
-        nb = long(args.num)
+        nb = int(args.num)
       except ValueError as v:
         print(v)
         return

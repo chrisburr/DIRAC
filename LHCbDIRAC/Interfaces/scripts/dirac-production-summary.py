@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -27,7 +30,7 @@ def usage():
   Prints script usage
   """
 
-  print 'Usage: %s [<Production ID>]' % Script.scriptName
+  print('Usage: %s [<Production ID>]' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -44,8 +47,8 @@ result = diracProd.getProductionSummary(prodID, printOutput=True)
 if result['OK']:
   DIRAC.exit(0)
 elif 'Message' in result:
-  print 'Listing production summary failed with message:\n%s' % result['Message']
+  print('Listing production summary failed with message:\n%s' % result['Message'])
   DIRAC.exit(2)
 else:
-  print 'Null result for getProductionSummary() call'
+  print('Null result for getProductionSummary() call')
   DIRAC.exit(2)

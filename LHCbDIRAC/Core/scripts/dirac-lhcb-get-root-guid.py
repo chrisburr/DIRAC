@@ -11,6 +11,9 @@
 ###############################################################################
 """Get the GUID of a (set of) ROOT file The file can be either local, an LFN or
 an xrootd URL (root:...)"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -56,7 +59,7 @@ for localFile in files:
 
 fileGUIDs = getRootFileGUIDs(list(existFiles))
 for status in ('Successful', 'Failed'):
-  for file in fileGUIDs.get('Value', {}).get(status, {}):
+  for file in list(fileGUIDs.get('Value', {}).get(status, {})):
     fileGUIDs['Value'][status][existFiles.get(file, file)] = fileGUIDs['Value'][status].pop(file)
 if nonExisting:
   fileGUIDs['Value']['Failed'].update(dict.fromkeys(nonExisting, 'Non existing file'))

@@ -11,10 +11,12 @@
 """
 This test connects directly to the DB, which must be present, and defined in the "CS"
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=invalid-name,wrong-import-position
 
-from __future__ import print_function
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()

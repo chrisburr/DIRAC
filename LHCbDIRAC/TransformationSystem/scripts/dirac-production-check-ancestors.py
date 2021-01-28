@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Gets a list of files from BK and checks if they have common ancestors."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 
 # imports
@@ -52,7 +55,7 @@ def removeFile(lfns):
         gLogger.always('Successfully fully removed %d files that only had the duplicate ancestors' % len(success))
         if failed:
           errors = {}
-          for lfn, reason in failed.iteritems():
+          for lfn, reason in failed.items():
             errors.setdefault(reason, []).append(lfn)
           gLogger.error(
               'Failed to remove %d files' %
@@ -61,7 +64,7 @@ def removeFile(lfns):
                   (reason, errors[reason]) for reason in errors))
     success = []
     failed = {}
-    for se, replicas in seLfns.iteritems():
+    for se, replicas in seLfns.items():
       replicas = [lfn for lfn in replicas if lfn not in removeFiles]
       if replicas:
         res = dm.removeReplica(se, replicas)
@@ -76,7 +79,7 @@ def removeFile(lfns):
     if failed:
       errors = {}
       for se in failed:
-        for lfn, reason in failed[se].iteritems():
+        for lfn, reason in failed[se].items():
           errors.setdefault(reason + ' @%s' % se, []).append(lfn)
       gLogger.error('Failed to remove replicas\n', '\n'.join('%s: %s' % (reason, errors[reason]) for reason in errors))
     elif not success and not removeFiles:
@@ -94,10 +97,10 @@ def removeFile(lfns):
           transFiles.setdefault(fileDict['TransformationID'], []).append(fileDict['LFN'])
       if processedFiles:
         gLogger.always('WARNING: some files were already processed!')
-        for transID, lfns in processedFiles.iteritems():
+        for transID, lfns in processedFiles.items():
           gLogger.always('%d: %d files' % (transID, len(lfns)))
           gLogger.info('\n'.join(sorted(lfns)))
-      for transID, lfns in transFiles.iteritems():
+      for transID, lfns in transFiles.items():
         res = transClient.setFileStatusForTransformation(transID, 'Removed', lfns)
         if res['OK']:
           gLogger.always('%d: %d files set Removed' % (transID, len(lfns)))
@@ -123,9 +126,9 @@ def analyzeAncestors(commonAncestors, ancestors):
   res = bkClient.getFileMetadata(allLfns)
   lfnRuns = {}
   if res['OK']:
-    for lfn, metadata in res['Value']['Successful'].iteritems():
+    for lfn, metadata in res['Value']['Successful'].items():
       lfnRuns[lfn] = metadata['RunNumber']
-  for lfnStr, anc in commonAncestors.iteritems():
+  for lfnStr, anc in commonAncestors.items():
     lfns = lfnStr.split(',')
     run = lfnRuns.get(lfns[0], 'Unknown')
     gLogger.always('\n%s (run %s):\n\t%s' % ('\n'.join(lfns), str(run), '\n\t'.join(anc)))

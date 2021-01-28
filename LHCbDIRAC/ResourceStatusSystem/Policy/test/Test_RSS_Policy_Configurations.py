@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test_RSS_Policy_Configurations."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import unittest
 
@@ -43,7 +46,7 @@ class Configurations_Success(Configurations_TestCase):
     policyKeys = set(['description', 'module', 'command', 'args'])
 
     for policyName, policy in policies.items():
-      print policyName
+      print(policyName)
       self.assertEqual(policyKeys, set(policy))
       self.assertTrue(isinstance(policy['description'], str))
       self.assertTrue(isinstance(policy['module'], str))

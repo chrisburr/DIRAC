@@ -13,6 +13,9 @@ add files to the RAW IntegrityDB.
 
 USED at OnLine
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import S_OK
 from DIRAC.Resources.Catalog.Utilities import checkCatalogArguments

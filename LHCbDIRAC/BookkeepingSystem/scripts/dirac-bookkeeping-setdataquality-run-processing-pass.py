@@ -16,6 +16,9 @@ Parameters:
    <run> : run number
    <flag> : flag to set
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 from DIRAC import gLogger
@@ -45,7 +48,7 @@ def getProcessingPasses(bkDict, headPass):
     parNames = recordList['ParameterNames']
 
     found = False
-    for thisId in xrange(len(parNames)):
+    for thisId in range(len(parNames)):
       parName = parNames[thisId]
       if parName == 'Name':
         found = True
@@ -88,7 +91,7 @@ flag = args[2]
 #
 
 if realData not in processing:
-  print 'You forgot /Real Data in the processing pass:  ', processing
+  print('You forgot /Real Data in the processing pass:  ', processing)
   DIRAC.exit(2)
 #
 # Make sure it is a known processing pass
@@ -126,19 +129,19 @@ if realData in recoPasses:
 res = bkClient.setRunAndProcessingPassDataQuality(run, realData, flag)
 
 if not res['OK']:
-  print res['Message']
+  print(res['Message'])
   DIRAC.exit(2)
 else:
-  print 'Run %s RAW files flagged %s' % (run, flag)
+  print('Run %s RAW files flagged %s' % (run, flag))
 
 # Now the reconstruction and stripping processing passes
 for thisPass in recoPasses:
   res = bkClient.setRunAndProcessingPassDataQuality(run, thisPass, flag)
 
   if not res['OK']:
-    print res['Message']
+    print(res['Message'])
     DIRAC.exit(2)
   else:
-    print 'Run %s Processing Pass %s flagged %s' % (run, thisPass, flag)
+    print('Run %s Processing Pass %s flagged %s' % (run, thisPass, flag))
 
 DIRAC.exit(0)

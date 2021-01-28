@@ -12,6 +12,9 @@
 
 Currently it updates the number of Input Events for processing productions.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.AgentModule import AgentModule
@@ -97,7 +100,7 @@ class RequestTrackingAgent(AgentModule):
     if not result['Value'][0]:
       return S_OK(0)
     try:
-      sum_nr = long(result['Value'][0])
+      sum_nr = int(result['Value'][0])
     except ValueError as e:
       return S_ERROR("Can not convert result from BK call: %s" % str(e))
     return S_OK(sum_nr)

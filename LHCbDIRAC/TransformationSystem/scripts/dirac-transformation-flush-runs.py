@@ -11,6 +11,9 @@
 ###############################################################################
 """In a transformation, flush a list of runs or runs that are flushed in the
 transformation used in BKQuery."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 from DIRAC import gLogger
@@ -43,7 +46,7 @@ if __name__ == "__main__":
           else:
             runRange = run.split(':')
             if len(runRange) == 2 and runRange[0].isdigit() and runRange[1].isdigit():
-              runList += xrange(int(runRange[0]), int(runRange[1]) + 1)
+              runList += range(int(runRange[0]), int(runRange[1]) + 1)
       except Exception as x:
         gLogger.exception('Bad run parameter', lException=x)
 
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     for id in ids:
       r = id.split(':')
       if len(r) > 1:
-        for i in xrange(int(r[0]), int(r[1]) + 1):
+        for i in range(int(r[0]), int(r[1]) + 1):
           idList.append(i)
       else:
         idList.append(int(r[0]))

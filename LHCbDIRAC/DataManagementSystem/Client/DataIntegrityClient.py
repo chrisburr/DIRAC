@@ -11,6 +11,9 @@
 """This is the Data Integrity Client which allows the simple reporting of
 problematic file and replicas to the IntegrityDB and their status correctly
 updated in the FileCatalog."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import re
 import six
@@ -106,12 +109,12 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     allMetadata = res['Value']
     gLogger.info("Obtained at total of %s files" % len(allMetadata))
     totalSize = 0
-    for lfn, bkMetadata in allMetadata.iteritems():
+    for lfn, bkMetadata in allMetadata.items():
       if bkMetadata['FileType'] != 'LOG':
         if bkMetadata['GotReplica'] == 'Yes':
           yesReplicaFiles.append(lfn)
           if bkMetadata['FileSize']:
-            totalSize += long(bkMetadata['FileSize'])
+            totalSize += int(bkMetadata['FileSize'])
         elif bkMetadata['GotReplica'] == 'No':
           noReplicaFiles.append(lfn)
         else:
@@ -266,7 +269,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     gLogger.info("-" * 40)
 
     seLfns = {}
-    for lfn, replicaDict in replicas.iteritems():
+    for lfn, replicaDict in replicas.items():
       for se in replicaDict:
         if (ses) and (se not in ses):
           continue
@@ -283,7 +286,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
       if not res['OK']:
         gLogger.error('Failed to get physical file metadata.', res['Message'])
         return res
-      for lfn, metadata in res['Value'].iteritems():
+      for lfn, metadata in res['Value'].items():
         if lfn in catalogMetadata:
           if (metadata['Size'] != catalogMetadata[lfn]['Size']) and (metadata['Size'] != 0):
             sizeMismatch.append((lfn, 'deprecatedUrl', se, 'CatalogPFNSizeMismatch'))
@@ -316,7 +319,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     pfnMetadataDict = res['Value']['Successful']
     # If the replicas are completely missing
     missingReplicas = []
-    for lfn, reason in res['Value']['Failed'].iteritems():
+    for lfn, reason in res['Value']['Failed'].items():
       if re.search('File does not exist', reason):
         missingReplicas.append((lfn, 'deprecatedUrl', se, 'PFNMissing'))
     if missingReplicas:
@@ -325,7 +328,7 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     unavailableReplicas = []
     zeroSizeReplicas = []
     # If the files are not accessible
-    for lfn, metadata in pfnMetadataDict.iteritems():
+    for lfn, metadata in pfnMetadataDict.items():
       if metadata.get('Lost', False):
         lostReplicas.append((lfn, se, 'PFNLost'))
       if metadata.get('Unavailable', not metadata['Accessible']):
@@ -387,9 +390,9 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
     zeroSizeFiles = []
     allReplicaDict = {}
     allMetadataDict = {}
-    for lfn, lfnDict in allFiles.iteritems():
+    for lfn, lfnDict in allFiles.items():
       lfnReplicas = {}
-      for se, replicaDict in lfnDict['Replicas'].iteritems():
+      for se, replicaDict in lfnDict['Replicas'].items():
         lfnReplicas[se] = replicaDict['PFN']
       if not lfnReplicas:
         zeroReplicaFiles.append(lfn)

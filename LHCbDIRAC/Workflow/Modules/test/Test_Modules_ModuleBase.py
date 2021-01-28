@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test class for ModuleBase."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=protected-access, missing-docstring, invalid-name
 
@@ -370,4 +373,4 @@ def test_createProdConfFile(mocker, wf_c, s_cs):
   mb._resolveInputVariables()
   mb._resolveInputStep()
   res = mb.createProdConfFile(['DST', 'GAUSSHIST'], True, 123, 1)
-  print res
+  print(res)

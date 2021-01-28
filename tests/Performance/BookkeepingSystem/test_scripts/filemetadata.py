@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import time
 import random
@@ -36,7 +39,7 @@ class Transaction(object):
     start_time = time.time()
     retVal = bk.getFileMetadata(lfns[:nb])
     if not retVal['OK']:
-      print retVal['Message']
+      print(retVal['Message'])
     end_time = time.time()
 
     self.custom_timers['Bkk_ResponseTime'] = end_time - start_time
@@ -45,4 +48,4 @@ class Transaction(object):
 if __name__ == '__main__':
   trans = Transaction()
   trans.run()
-  print trans.custom_timers
+  print(trans.custom_timers)

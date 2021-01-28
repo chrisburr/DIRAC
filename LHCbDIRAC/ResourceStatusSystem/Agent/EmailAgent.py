@@ -17,6 +17,9 @@ status changes in the LHCb logbook ("lblogbook.cern.ch").
 This is done by sending a request to a restful API which is used to post the data to the LHCb logbook.
 The authentication is done by providing a valid username and password in the configuration file of dirac.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = '$Id$'
 

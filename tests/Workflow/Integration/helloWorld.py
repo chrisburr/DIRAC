@@ -8,6 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # dirac job created by ganga
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
@@ -37,4 +40,4 @@ j.setBannedSites( tier1s )
 
 # submit the job to dirac
 result = dirac.submitJob(j)
-print result
+print(result)

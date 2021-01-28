@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -24,14 +27,14 @@ diracProd = DiracProduction()
 
 
 def usage():
-  print 'Usage: %s <Command> <Production ID> |<Production ID>' % Script.scriptName
+  print('Usage: %s <Command> <Production ID> |<Production ID>' % Script.scriptName)
   commands = diracProd.getProductionCommands()['Value']
-  print "\nCommands include: %s" % ', '.join(commands)
-  print '\nDescription:\n'
+  print("\nCommands include: %s" % ', '.join(commands))
+  print('\nDescription:\n')
   for n, v in commands.items():
-    print '%s:' % n
+    print('%s:' % n)
     for i, j in v.items():
-      print '     %s = %s' % (i, j)
+      print('     %s = %s' % (i, j))
 
   DIRAC.exit(2)
 
@@ -56,6 +59,6 @@ for prodID in args[1:]:
     exitCode = 0
 
 for error in errorList:
-  print "ERROR %s: %s" % error
+  print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

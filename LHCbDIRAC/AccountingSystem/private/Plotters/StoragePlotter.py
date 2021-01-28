@@ -13,6 +13,9 @@
 StoragePlotter.__bases__:
   DIRAC.AccountingSystem.private.Plotters.BaseReporter.BaseReporter
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.AccountingSystem.private.Plotters.BaseReporter import BaseReporter
@@ -578,8 +581,8 @@ class StoragePlotter(BaseReporter):
             finalData[k] = {}
           finalData[k][bt] = dataDict[k][bt] / bucketTotals[bt]
 
-#    for key, bucketTotal in dataDict.iteritems():
-#      for bt in bucketTotal.itervalues():
+#    for key, bucketTotal in dataDict.items():
+#      for bt in bucketTotal.values():
 #        if bt in bucketTotals:
 #          if key not in finalData:
 #            finalData[ key ] = {}

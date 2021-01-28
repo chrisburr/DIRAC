@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :    dirac-bookkeeping-eventtype-mgt-update
 # Author :  Zoltan Mathe
@@ -64,7 +67,7 @@ def process_event(eventline):
     gLogger.error("syntax error at: \n" + eventline)
     Script.showHelp()
   else:
-    for i in xrange(3):
+    for i in range(3):
       if ma.group('id' + str(i) + '0'):
         if ma.group('id' + str(i) + '0') in result:
           gLogger.error(
@@ -114,7 +117,7 @@ else:
   if result['Value']['Failed']:
     gLogger.error("Failed to update the following event types:")
     for evt in result['Value']['Failed']:
-      for i in evt.itervalues():
+      for i in evt.values():
         gLogger.error("%s : %s" % (repr(i.get('EvtentType')), i.get('Error')))
 
   if result['Value']['Successful']:

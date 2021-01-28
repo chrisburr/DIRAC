@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Utilities used by LHCb TS scripts."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import six
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
@@ -50,7 +53,7 @@ def getTransformations(args):
   transformations."""
   transList = []
   if not len(args):
-    print "Specify transformation number..."
+    print("Specify transformation number...")
     Script.showHelp()
   else:
     ids = args[0].split(",")
@@ -58,7 +61,7 @@ def getTransformations(args):
       for transID in ids:
         rr = transID.split(':')
         if len(rr) > 1:
-          for i in xrange(int(rr[0]), int(rr[1]) + 1):
+          for i in range(int(rr[0]), int(rr[1]) + 1):
             tid = _getTransformationID(i)
             if tid is not None:
               transList.append(tid)

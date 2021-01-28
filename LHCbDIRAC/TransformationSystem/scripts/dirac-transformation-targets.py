@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Gets all Assigned files in a transformation and reports by target SE."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -18,7 +21,7 @@ from DIRAC.Core.Base import Script
 
 def __getTransformations(args):
   if not len(args):
-    print "Specify transformation number..."
+    print("Specify transformation number...")
     Script.showHelp()
   else:
     ids = args[0].split(",")
@@ -26,7 +29,7 @@ def __getTransformations(args):
     for transID in ids:
       r = transID.split(':')
       if len(r) > 1:
-        for i in xrange(int(r[0]), int(r[1]) + 1):
+        for i in range(int(r[0]), int(r[1]) + 1):
           transList.append(i)
       else:
         transList.append(int(r[0]))
@@ -67,5 +70,5 @@ if __name__ == "__main__":
       targetStats[targetSE][1] += 1
 
     gLogger.always("Transformation %d: %d assigned files found" % (transID, len(res['Value'])))
-    for targetSE, (nfiles, ntasks) in targetStats.iteritems():
+    for targetSE, (nfiles, ntasks) in targetStats.items():
       gLogger.always("\t%s: %d files in %d tasks" % (targetSE, nfiles, ntasks))

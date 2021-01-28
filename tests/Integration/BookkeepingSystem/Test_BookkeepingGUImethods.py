@@ -12,6 +12,9 @@
 It is used to test the methods used by the User Interface
 It requires an Oracle database
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # FIXME: check if still valid
 # FIXME: restore + move to pytest

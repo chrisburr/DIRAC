@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """LHCb Bookkeeping database manager."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import os
 import types
 import time
@@ -98,8 +101,8 @@ class LHCbBookkeepingManager(BaseESManager):
     self.treeLevels_ = -1
     self.advancedQuery_ = False
     if welcome:
-      print 'WELCOME'
-      print "For more information use the 'help' command! "
+      print('WELCOME')
+      print("For more information use the 'help' command! ")
     self.dataQualities_ = {}
 
     retVal = self.db_.getAvailableFileTypes()
@@ -240,7 +243,7 @@ class LHCbBookkeepingManager(BaseESManager):
     return level, processedPath, procpass
 
   #############################################################################
-  # This method recursive visite all the tree nodes and found the processing pass
+  # This method recursive visits all the tree nodes and found the processing pass
   def __getLevel(self, path, visited, level, start, end, processingpath, startlevel):
     """level."""
     for i in path:
@@ -255,11 +258,12 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(long(i), long)
-          if start and result:
-            end = True
+          int(i)
         except ValueError as ex:
           gLogger.debug(str(self.__class__) + "__getLevel" + str(ex))
+        else:
+          if start:
+            end = True
         if start and not end:
           level = startlevel
           processingpath += '/' + i
@@ -284,11 +288,12 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(long(i), long)
-          if start and result:
-            end = True
+          int(i)
         except ValueError as ex:
           gLogger.warn(str(self.__class__) + "__getRunLevel" + str(ex))
+        else:
+          if start:
+            end = True
         if start and not end:
           level = startlevel
           processingpath += '/' + i
@@ -313,12 +318,14 @@ class LHCbBookkeepingManager(BaseESManager):
       else:
         level += 1
         try:
-          result = isinstance(long(i), long)
+          int(i)
         except ValueError as ex:
           gLogger.warn(str(self.__class__) + "__getEvtLevel" + str(ex))
-          result = i in self.__filetypes
-        if start and result:
-          end = True
+          if start and i in self.__filetypes:
+            end = True
+        else:
+          if start:
+            end = True
         if start and not end:
           level = startlevel
           processingpath += '/' + i
@@ -1730,7 +1737,7 @@ class LHCbBookkeepingManager(BaseESManager):
       string += "\n%s Extra information about the data processing phases:\n" % (self.comment)
       retVal = self.db_.getStepsMetadata(dataset)
       if retVal['OK']:
-        for ppass, record in retVal['Value']['Records'].iteritems():
+        for ppass, record in retVal['Value']['Records'].items():
           ppass = dataset.get('ProcessingPass', ppass)
           string += "\n%s Processing Pass: '%s' \n\n" % (self.comment, ppass)
           for i in record:
@@ -1743,7 +1750,7 @@ class LHCbBookkeepingManager(BaseESManager):
     """It generates the Root format option file."""
     string = "\nfrom Gaudi.Configuration import * "
     string += "\nfrom GaudiConf import IOHelper\n"
-    for fileFormat, lfns in filesandformats.iteritems():
+    for fileFormat, lfns in filesandformats.items():
       if fileFormat:
         string += "IOHelper('%s').inputFiles([\n" % fileFormat
       else:
@@ -1791,7 +1798,7 @@ class LHCbBookkeepingManager(BaseESManager):
       # Get file type version from BK
       retVal = self.db_.getFileTypeVersion(lfns)
       if retVal['OK']:
-        for lfn, fileFormat in retVal['Value'].iteritems():
+        for lfn, fileFormat in retVal['Value'].items():
           filesandformats.setdefault(fileFormat, []).append(lfn)
           lfns.remove(lfn)
       # If no persistency is found, set it to None
@@ -1807,7 +1814,7 @@ class LHCbBookkeepingManager(BaseESManager):
     evtTypes = {}
     if not isinstance(files, dict):
       return evtTypes
-    for metadata in files.itervalues():
+    for metadata in files.values():
       evtType = metadata.get('EventType')
       if evtType:
         try:
@@ -1860,7 +1867,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
   def __getSelectedQualities(self):
     """data quality."""
-    return [flag for flag, val in self.dataQualities_.iteritems() if val is True]
+    return [flag for flag, val in self.dataQualities_.items() if val is True]
 
   #############################################################################
   def getStepsMetadata(self, bkDict):

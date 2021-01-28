@@ -9,12 +9,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :   dirac-production-file-summary
 # Author : Stuart Paterson
 ########################################################################
 
-from __future__ import absolute_import, division, print_function
 
 __RCSID__ = "$Id$"
 

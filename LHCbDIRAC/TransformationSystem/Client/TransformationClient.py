@@ -12,6 +12,9 @@
 
 This is a very simple extension to the DIRAC one
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import S_OK, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -76,8 +79,8 @@ class TransformationClient(DIRACTransformationClient):
   def _applyTransformationStatusStateMachine(self, transIDAsDict, dictOfProposedstatus, force):
     """Performs a state machine check for productions when asked to change the
     status."""
-    originalStatus, transformationType = transIDAsDict.values()[0][0:2]
-    proposedStatus = dictOfProposedstatus.values()[0]
+    originalStatus, transformationType = list(transIDAsDict.values())[0][0:2]
+    proposedStatus = list(dictOfProposedstatus.values())[0]
     if force:
       return proposedStatus
     else:
@@ -93,7 +96,7 @@ class TransformationClient(DIRACTransformationClient):
   def _applyTransformationFilesStateMachine(self, tsFilesAsDict, dictOfProposedLFNsStatus, force):
     """Apply LHCb state machine for transformation files."""
     newStatuses = dict()
-    for lfn, newStatus in dictOfProposedLFNsStatus.iteritems():
+    for lfn, newStatus in dictOfProposedLFNsStatus.items():
       if lfn in tsFilesAsDict:
         currentStatus = tsFilesAsDict[lfn][0]
         if force:

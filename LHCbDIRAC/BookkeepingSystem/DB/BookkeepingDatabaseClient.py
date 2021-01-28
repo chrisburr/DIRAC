@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """interface for the database."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from LHCbDIRAC.BookkeepingSystem.DB.IBookkeepingDatabaseClient import IBookkeepingDatabaseClient
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB

@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """BookkeepingManager service is the front-end to the Bookkeeping database."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import six
 

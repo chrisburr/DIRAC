@@ -16,6 +16,9 @@ The arguments dictionary from the Job Wrapper includes the file
 catalogue result and in principle has all necessary information to
 resolve input data for applications.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC import S_OK
 from DIRAC.WorkloadManagementSystem.Client.PoolXMLSlice import PoolXMLSlice

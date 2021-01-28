@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import DIRAC
 from DIRAC.Core.Base import Script
@@ -19,7 +22,7 @@ args = Script.getPositionalArgs()
 
 
 def usage():
-  print 'Usage: %s <Production ID> <DIRAC Status>' % (Script.scriptName)
+  print('Usage: %s <Production ID> <DIRAC Status>' % (Script.scriptName))
   DIRAC.exit(2)
 
 
@@ -33,8 +36,8 @@ result = diracProd.getProductionApplicationSummary(prodID, status=stat, printOut
 if result['OK']:
   DIRAC.exit(0)
 elif 'Message' in result:
-  print 'Getting production application status summary failed with message:\n%s' % (result['Message'])
+  print('Getting production application status summary failed with message:\n%s' % (result['Message']))
   DIRAC.exit(2)
 else:
-  print 'Null result for getProductionApplicationSummary() call'
+  print('Null result for getProductionApplicationSummary() call')
   DIRAC.exit(2)

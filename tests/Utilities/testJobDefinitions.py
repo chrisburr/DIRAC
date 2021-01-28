@@ -10,6 +10,9 @@
 ###############################################################################
 """ Collection of user jobs for testing purposes
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=protected-access, wrong-import-position, invalid-name, missing-docstring, unused-wildcard-import
 
@@ -490,8 +493,8 @@ def gaudiApplicationScriptJob():
 @executeWithUserProxy
 def wrongJob():
 
-  print "\n Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info"
-  print "This will generate a job that should become Completed, use the failover, and only later it will be Done"
+  print("\n Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info")
+  print("This will generate a job that should become Completed, use the failover, and only later it will be Done")
 
   job = createJob(local=False)
   job.setName("gaudirun-gauss-stays-completed")

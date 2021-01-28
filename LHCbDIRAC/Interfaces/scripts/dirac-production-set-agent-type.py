@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :   dirac-production-set-agent-type
 # Author : Mario Ubeda Garcia
@@ -56,10 +59,10 @@ for switch in switches:
     manual = True
 
 if automatic and manual:
-  print "ERROR: decide if you want automatic or manual ( not both )."
+  print("ERROR: decide if you want automatic or manual ( not both ).")
   DIRAC.exit(2)
 elif not (automatic or manual):
-  print "ERROR: decide if you want automatic or manual."
+  print("ERROR: decide if you want automatic or manual.")
   DIRAC.exit(2)
 elif automatic:
   type = 'automatic'
@@ -79,6 +82,6 @@ for prodID in args:
     exitCode = 0
 
 for error in errorList:
-  print "ERROR %s: %s" % error
+  print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

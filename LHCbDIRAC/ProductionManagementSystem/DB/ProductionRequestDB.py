@@ -10,6 +10,9 @@
 ###############################################################################
 """DIRAC ProductionRequestDB class is a front-end to the repository database
 containing Production Requests and other related tables."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # Defined states:
 #'New'
 #'BK OK'
@@ -167,7 +170,7 @@ class ProductionRequestDB(DB):
         rec[x] = requestDict[x]  # set only known not empty fields
     if rec['NumberOfEvents']:  # Set RealNumberOfEvents if specified
       try:
-        num = long(rec['NumberOfEvents'])
+        num = int(rec['NumberOfEvents'])
         if num > 0:
           rec['RealNumberOfEvents'] = num
       except ValueError:
@@ -215,7 +218,7 @@ class ProductionRequestDB(DB):
 
     if rec['MasterID']:  # have to check ParentID and MasterID consistency
       try:
-        masterID = long(rec['MasterID'])
+        masterID = int(rec['MasterID'])
       except ValueError:
         self.lock.release()
         return S_ERROR('MasterID is not a number')
@@ -223,7 +226,7 @@ class ProductionRequestDB(DB):
         self.lock.release()
         return S_ERROR('MasterID can not be without ParentID')
       try:
-        parentID = long(rec['ParentID'])
+        parentID = int(rec['ParentID'])
       except ValueError:
         self.lock.release()
         return S_ERROR('ParentID is not a number')
@@ -242,7 +245,7 @@ class ProductionRequestDB(DB):
         return S_ERROR("Only request author can add subrequests")
     elif rec['ParentID']:
       try:
-        parentID = long(rec['ParentID'])
+        parentID = int(rec['ParentID'])
       except ValueError:
         self.lock.release()
         return S_ERROR('ParentID is not a number')
@@ -290,7 +293,7 @@ class ProductionRequestDB(DB):
         proDetail = pickleOrJsonLoads(pickledProdDetail)
       except Exception:
         return S_ERROR('Content of ProDetail field cannot be loaded')
-      for i in xrange(20):
+      for i in range(20):
         outputKey = 'p' + str(i) + 'OFT'
         inputKey = 'p' + str(i + 1) + 'IFT'
         if outputKey in proDetail and inputKey in proDetail:
@@ -349,7 +352,7 @@ class ProductionRequestDB(DB):
       filterIn = {}
     try:  # test parameters
       for x in requestIDList:
-        y = long(x)
+        y = int(x)
     except ValueError:
       return S_ERROR("Bad parameters (all request IDs must be numbers)")
     idFilter = False
@@ -742,7 +745,7 @@ class ProductionRequestDB(DB):
     if 'NumberOfEvents' in update:  # Update RealNumberOfEvents if specified
       num = 0
       try:
-        num = long(rec['NumberOfEvents'])
+        num = int(rec['NumberOfEvents'])
         if num < 0:
           num = 0
       except ValueError:
@@ -832,7 +835,7 @@ class ProductionRequestDB(DB):
     Available is New and Rejected states only
     """
     try:
-      requestID = long(requestID)
+      requestID = int(requestID)
     except ValueError:
       return S_ERROR('RequestID is not a number')
     self.lock.acquire()  # transaction begin ?? may be after connection ??
@@ -981,7 +984,7 @@ class ProductionRequestDB(DB):
     # Clear RealNumberOfEvents if required
     try:
       num = 0
-      num = long(rec['NumberOfEvents'])
+      num = int(rec['NumberOfEvents'])
       if num < 0:
         num = 0
     except ValueError:
@@ -1038,7 +1041,7 @@ class ProductionRequestDB(DB):
       if not result['OK']:
         return result
 
-    return S_OK(long(newRequestID))
+    return S_OK(int(newRequestID))
 
   def duplicateProductionRequest(self, requestID, creds, clearpp):
     """Duplicate production request with all it's subrequests (but without
@@ -1049,7 +1052,7 @@ class ProductionRequestDB(DB):
     (of the master) are cleaned.
     """
     try:
-      requestID = long(requestID)
+      requestID = int(requestID)
     except ValueError:
       return S_ERROR('RequestID is not a number')
     self.lock.acquire()  # transaction begin ?? may be after connection ??
@@ -1127,14 +1130,14 @@ class ProductionRequestDB(DB):
     state can request the split.
     """
     try:
-      requestID = long(requestID)
+      requestID = int(requestID)
     except ValueError:
       return S_ERROR('RequestID is not a number')
     if not splitlist:
       return S_ERROR('Split list is empty')
     isplitlist = []
     try:
-      isplitlist = [long(x) for x in splitlist]
+      isplitlist = [int(x) for x in splitlist]
     except ValueError:
       return S_ERROR('RequestID in split list is not a number')
 
@@ -1170,9 +1173,9 @@ class ProductionRequestDB(DB):
     keeplist = []
     for ch in result['Value']:
       if ch[0] in isplitlist and ch[1] == requestID:
-        fisplitlist.append(long(ch[0]))
+        fisplitlist.append(int(ch[0]))
       elif ch[1]:
-        keeplist.append(long(ch[0]))
+        keeplist.append(int(ch[0]))
     if len(isplitlist) != len(fisplitlist):
       self.lock.release()
       return S_ERROR('Requested for spliting subrequests are no longer exist')
@@ -1198,7 +1201,7 @@ class ProductionRequestDB(DB):
     if not result['OK']:
       self.lock.release()
       return result
-    newRequestID = long(result['Value'][0][0])
+    newRequestID = int(result['Value'][0][0])
 
     # Move subrequests (!! Errors are not fatal !!)
     rsplitlist = []
@@ -1256,7 +1259,7 @@ class ProductionRequestDB(DB):
     """
     try:
       for x in self.progressFields:
-        pdict[x] = long(pdict[x])
+        pdict[x] = int(pdict[x])
     except ValueError:
       return S_ERROR('Bad parameters')
 
@@ -1338,8 +1341,8 @@ class ProductionRequestDB(DB):
     # check parameters
     try:
       for x in update:
-        x['ProductionID'] = long(x['ProductionID'])
-        x['BkEvents'] = long(x['BkEvents'])
+        x['ProductionID'] = int(x['ProductionID'])
+        x['BkEvents'] = int(x['BkEvents'])
     except ValueError:
       return S_ERROR('Bad parameters')
     except TypeError:
@@ -1377,7 +1380,7 @@ class ProductionRequestDB(DB):
         continue
       del res['SimCondDetail']
       try:
-        num = long(res['RealNumberOfEvents'])
+        num = int(res['RealNumberOfEvents'])
       except ValueError:
         num = 0
       except TypeError:
@@ -1392,8 +1395,8 @@ class ProductionRequestDB(DB):
     # check parameters
     try:
       for x in update:
-        x['RequestID'] = long(x['RequestID'])
-        x['RealNumberOfEvents'] = long(x['RealNumberOfEvents'])
+        x['RequestID'] = int(x['RequestID'])
+        x['RealNumberOfEvents'] = int(x['RealNumberOfEvents'])
     except ValueError:
       return S_ERROR('Bad parameters')
     except TypeError:

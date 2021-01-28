@@ -13,6 +13,9 @@
 Initially written for use after merged outputs have been successfully
 uploaded to an SE.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

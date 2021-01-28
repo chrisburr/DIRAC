@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 """Move files that are Unused or MaxReset from a parent production to its
 derived production The argument is a list of productions: comma separated list
@@ -37,7 +40,7 @@ for switch in switches:
 args = Script.getPositionalArgs()
 
 if not len(args):
-  print "Specify transformation number..."
+  print("Specify transformation number...")
   DIRAC.exit(0)
 else:
   ids = args[0].split(",")
@@ -45,7 +48,7 @@ else:
   for transId in ids:
     r = transId.split(':')
     if len(r) > 1:
-      for i in xrange(int(r[0]), int(r[1]) + 1):
+      for i in range(int(r[0]), int(r[1]) + 1):
         idList.append(i)
     else:
       idList.append(int(r[0]))
@@ -54,14 +57,14 @@ else:
 for prod in idList:
   res = transClient.getTransformation(prod, extraParams=True)
   if not res['OK']:
-    print "Error getting transformation %s" % prod, res['Message']
+    print("Error getting transformation %s" % prod, res['Message'])
   else:
     res = transClient.moveFilesToDerivedTransformation(res['Value'], resetUnused)
     if not res['OK']:
-      print "Error updating a derived transformation %d:" % prod, res['Message']
+      print("Error updating a derived transformation %d:" % prod, res['Message'])
     else:
       parentProd, movedFiles = res['Value']
       if movedFiles:
-        print "Successfully moved files from %d to %d:" % (parentProd, prod)
-        for status, val in movedFiles.iteritems():
-          print "\t%d files to status %s" % (val, status)
+        print("Successfully moved files from %d to %d:" % (parentProd, prod))
+        for status, val in movedFiles.items():
+          print("\t%d files to status %s" % (val, status))

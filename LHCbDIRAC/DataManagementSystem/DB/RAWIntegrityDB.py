@@ -14,10 +14,15 @@ are awating migration.
 It offers a simple interface to add files, get files and modify their
 status.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
 import types
+
+import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
@@ -151,7 +156,7 @@ class RAWIntegrityDB(DB):
 
     :returns: dict {lfn: metadata}
     """
-    if isinstance(status, basestring):
+    if isinstance(status, six.string_types):
       status = [status]
 
     try:

@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """remove output of production."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -24,13 +27,13 @@ from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import Tra
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 if len(sys.argv) < 2:
-  print 'Usage: dirac-production-remove-output transID [transID] [transID]'
+  print('Usage: dirac-production-remove-output transID [transID] [transID]')
   DIRACExit(1)
 else:
   try:
     transIDs = [int(arg) for arg in sys.argv[1:]]
   except BaseException:
-    print 'Invalid list of productions'
+    print('Invalid list of productions')
     DIRACExit(1)
 
 

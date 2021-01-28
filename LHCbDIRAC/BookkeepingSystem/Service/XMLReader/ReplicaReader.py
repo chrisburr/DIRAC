@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """It stores the replica."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.Replica import Replica
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.ReplicaParam import ReplicaParam

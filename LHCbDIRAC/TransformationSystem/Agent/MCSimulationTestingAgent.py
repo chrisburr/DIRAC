@@ -15,6 +15,9 @@ from the results of the test phase and emailed to the Production Manager.
 
 Author: Simon Bidwell
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -241,7 +244,7 @@ class MCSimulationTestingAgent (AgentModule):
 
     events = 0
     CPUeJobTotal = 0.0
-    for job in successful.itervalues():
+    for job in successful.values():
       cpuJob = 0
       for bkJob in job:
         if bkJob['ApplicationName'] in ['Gauss', 'Boole', 'Moore', 'Brunel', 'DaVinci']:

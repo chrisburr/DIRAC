@@ -15,6 +15,9 @@ This class allows to monitor the progress of productions operationally.
 Of particular use are the monitoring functions allowing to drill down
 by site, minor status and application status for a given transformation.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -85,7 +88,7 @@ class DiracProduction(DiracLHCb):
       adj = self.prodAdj
       prodInfo = result['Value']
       top = ''
-      for i in self.prodHeaders.itervalues():
+      for i in self.prodHeaders.values():
         top += i.ljust(adj)
       message = ['ProductionID'.ljust(adj) + top + '\n']
       # very painful to make this consistent, better improved first on the server side
@@ -94,7 +97,7 @@ class DiracProduction(DiracLHCb):
           prodInfo['AgentType'].ljust(adj) + toString(prodInfo['CreationDate']).ljust(adj) +\
           prodInfo['TransformationName'].ljust(adj)
       message.append(info)
-      print '\n'.join(message)
+      print('\n'.join(message))
     return S_OK(result['Value'])
 
   def getProductionLoggingInfo(self, productionID, printOutput=False):
@@ -126,7 +129,7 @@ class DiracProduction(DiracLHCb):
           line['AuthorDN'].split('/')[-1].ljust(2 * self.prodAdj)
       message.append(infoL)
 
-    print '\nLogging summary for productionID ' + str(productionID) + '\n\n' + '\n'.join(message)
+    print('\nLogging summary for productionID ' + str(productionID) + '\n\n' + '\n'.join(message))
 
     return result
 
@@ -145,10 +148,10 @@ class DiracProduction(DiracLHCb):
       return result
 
     if productionID:
-      if long(productionID) in result['Value']:
+      if int(productionID) in result['Value']:
         newResult = S_OK()
         newResult['Value'] = {}
-        newResult['Value'][long(productionID)] = result['Value'][long(productionID)]
+        newResult['Value'][int(productionID)] = result['Value'][int(productionID)]
         result = newResult
       else:
         self.log.info('Specified productionID was not found, \
@@ -194,8 +197,8 @@ class DiracProduction(DiracLHCb):
     summary = {}
     submittedJobs = 0
     doneJobs = 0
-    for job, atts in statusDict['Value'].iteritems():
-      for key, val in atts.iteritems():
+    for job, atts in statusDict['Value'].items():
+      for key, val in atts.items():
         if key == 'Status':
           uniqueStatus = val.capitalize()
           if uniqueStatus not in summary:
@@ -247,11 +250,11 @@ class DiracProduction(DiracLHCb):
     message += ':\n\n'
     message += 'Status'.ljust(statAdj) + 'MinorStatus'.ljust(mStatAdj) + 'ApplicationStatus'.ljust(mStatAdj) + \
         'Total'.ljust(totalAdj) + 'Example'.ljust(exAdj) + '\n'
-    for stat, metadata in summary.iteritems():
+    for stat, metadata in summary.items():
       message += '\n'
-      for minor, appInfo in metadata.iteritems():
+      for minor, appInfo in metadata.items():
         message += '\n'
-        for appStat, jobInfo in appInfo.iteritems():
+        for appStat, jobInfo in appInfo.items():
           message += stat.ljust(statAdj) + minor.ljust(mStatAdj) + appStat.ljust(mStatAdj) + \
               str(jobInfo['Total']).ljust(totalAdj) + str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
@@ -271,11 +274,11 @@ class DiracProduction(DiracLHCb):
 
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
-    print '\nCurrent status of production %s:\n' % productionID
-    print 'Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
-    print 'Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
+    print('\nCurrent status of production %s:\n' % productionID)
+    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) +
+          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) +
+          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -303,7 +306,7 @@ class DiracProduction(DiracLHCb):
     submittedJobs = 0
     doneJobs = 0
     for job, atts in statusDict['Value'].ietritems():
-      for key, val in atts.iteritems():
+      for key, val in atts.items():
         if key == 'Status':
           uniqueStatus = val.capitalize()
           if uniqueStatus not in summary:
@@ -348,13 +351,13 @@ class DiracProduction(DiracLHCb):
     message += ':\n\n'
     message += 'Status'.ljust(statAdj) + 'MinorStatus'.ljust(mStatAdj) + 'Total'.ljust(totalAdj) + \
         'Example'.ljust(exAdj) + '\n'
-    for stat, metadata in summary.iteritems():
+    for stat, metadata in summary.items():
       message += '\n'
-      for minor, jobInfo in metadata.iteritems():
+      for minor, jobInfo in metadata.items():
         message += stat.ljust(statAdj) + minor.ljust(mStatAdj) + str(jobInfo['Total']).ljust(totalAdj) + \
             str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
-    print message
+    print(message)
     # self._prettyPrint(summary)
     if status or minorStatus:
       return S_OK(summary)
@@ -370,11 +373,11 @@ class DiracProduction(DiracLHCb):
 
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
-    print '\nCurrent status of production %s:\n' % productionID
-    print 'Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-        'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
-    print 'Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-        'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
+    print('\nCurrent status of production %s:\n' % productionID)
+    print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) +
+          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+    print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) +
+          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -399,8 +402,8 @@ class DiracProduction(DiracLHCb):
     submittedJobs = 0
     doneJobs = 0
 
-    for job, atts in statusDict['Value'].iteritems():
-      for key, val in atts.iteritems():
+    for job, atts in statusDict['Value'].items():
+      for key, val in atts.items():
         if key == 'Site':
           uniqueSite = val
           currentStatus = atts['Status'].capitalize()
@@ -448,13 +451,13 @@ class DiracProduction(DiracLHCb):
     message += ':\n\n'
     message += 'Site'.ljust(siteAdj) + 'Status'.ljust(statAdj) + 'Total'.ljust(totalAdj) + \
         'Example'.ljust(exAdj) + '\n'
-    for siteStr, metadata in summary.iteritems():
+    for siteStr, metadata in summary.items():
       message += '\n'
-      for stat, jobInfo in metadata.iteritems():
+      for stat, jobInfo in metadata.items():
         message += siteStr.ljust(siteAdj) + stat.ljust(statAdj) + str(jobInfo['Total']).ljust(totalAdj) + \
             str(jobInfo['JobList'][0]).ljust(exAdj) + '\n'
 
-    print message
+    print(message)
     # self._prettyPrint(summary)
     result = self.getProductionProgress(productionID)
 
@@ -469,11 +472,11 @@ class DiracProduction(DiracLHCb):
     percSub = int(100 * submittedJobs / createdJobs)
     percDone = int(100 * doneJobs / createdJobs)
     if not site:
-      print '\nCurrent status of production %s:\n' % productionID
-      print 'Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) + \
-          'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
-      print 'Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) + \
-          'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )'
+      print('\nCurrent status of production %s:\n' % productionID)
+      print('Submitted'.ljust(12) + str(percSub).ljust(3) + '%  ( ' + str(submittedJobs).ljust(7) +
+            'Submitted / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
+      print('Done'.ljust(12) + str(percDone).ljust(3) + '%  ( ' + str(doneJobs).ljust(7) +
+            'Done / '.ljust(15) + str(createdJobs).ljust(7) + ' Created jobs )')
     result = S_OK()
     result['Totals'] = {'Submitted': int(submittedJobs), 'Created': int(createdJobs), 'Done': int(doneJobs)}
     result['Value'] = summary
@@ -485,7 +488,7 @@ class DiracProduction(DiracLHCb):
     if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
-    productionID = long(productionID)
+    productionID = int(productionID)
 
     if not productionID:
       result = self._getActiveProductions()
@@ -512,12 +515,12 @@ class DiracProduction(DiracLHCb):
     statAdj = int(self.prodAdj)
     countAdj = int(self.prodAdj)
     message = 'ProductionID'.ljust(idAdj) + 'Status'.ljust(statAdj) + 'Count'.ljust(countAdj) + '\n\n'
-    for prod, info in progress.iteritems():
-      for status, count in info.iteritems():
+    for prod, info in progress.items():
+      for status, count in info.items():
         message += str(prod).ljust(idAdj) + status.ljust(statAdj) + str(count).ljust(countAdj) + '\n'
       message += '\n'
 
-    print message
+    print(message)
     return result
 
   def _getActiveProductions(self, printOutput=False):
@@ -545,7 +548,7 @@ class DiracProduction(DiracLHCb):
   def getProductionCommands(self):
     """Returns the list of possible commands and their meaning."""
     prodCommands = {}
-    for keyword, statusSubMode in self.commands.iteritems():
+    for keyword, statusSubMode in self.commands.items():
       prodCommands[keyword] = {'Status': statusSubMode[0], 'SubmissionMode': statusSubMode[1]}
     return S_OK(prodCommands)
 
@@ -562,7 +565,7 @@ class DiracProduction(DiracLHCb):
     if not isinstance(productionID, (six.integer_types, six.string_types)):
       return self._errorReport('Expected string, long or int for production ID')
 
-    productionID = long(productionID)
+    productionID = int(productionID)
     if not isinstance(command, str):
       return self._errorReport('Expected string, for command')
     if not command.lower() in commands:
@@ -584,12 +587,12 @@ class DiracProduction(DiracLHCb):
     self.log.info('Setting production status to %s and submission mode to %s for productionID %s' % (actions[0],
                                                                                                      actions[1],
                                                                                                      productionID))
-    result = self.transformationClient.setTransformationParameter(long(productionID), "Status", actions[0])
+    result = self.transformationClient.setTransformationParameter(int(productionID), "Status", actions[0])
     if not result['OK']:
       self.log.warn('Problem updating transformation status with result:\n%s' % result)
       return result
     self.log.verbose('Setting transformation status to %s successful' % (actions[0]))
-    result = self.transformationClient.setTransformationParameter(long(productionID), 'AgentType', actions[1])
+    result = self.transformationClient.setTransformationParameter(int(productionID), 'AgentType', actions[1])
     if not result['OK']:
       self.log.warn('Problem updating transformation agent type with result:\n%s' % result)
       return result
@@ -619,7 +622,7 @@ class DiracProduction(DiracLHCb):
         totalRecords += 1
         record = ''
         recordStatus = ''
-        for n, v in lfnDict.iteritems():
+        for n, v in lfnDict.items():
           record += str(n) + ' = ' + str(v).ljust(adj) + ' '
           if n == 'Status':
             recordStatus = v
@@ -635,42 +638,42 @@ class DiracProduction(DiracLHCb):
           if selectStatus == recordStatus:
             toWrite += record + '\n'
             if printOutput:
-              print record
+              print(record)
         elif outputFile:
           toWrite += record + '\n'
           if printOutput:
-            print record
+            print(record)
         else:
           if printOutput:
-            print record
+            print(record)
 
     if printSummary:
-      print '\nSummary for %s files in production %s\n' % (totalRecords, productionID)
-      print 'Status'.ljust(adj) + ' ' + 'Total'.ljust(adj) + 'Percentage'.ljust(adj) + '\n'
-      for n, v in summary.iteritems():
+      print('\nSummary for %s files in production %s\n' % (totalRecords, productionID))
+      print('Status'.ljust(adj) + ' ' + 'Total'.ljust(adj) + 'Percentage'.ljust(adj) + '\n')
+      for n, v in summary.items():
         percentage = int(100 * int(v) / totalRecords)
-        print str(n).ljust(adj) + ' ' + str(v).ljust(adj) + ' ' + str(percentage).ljust(2) + ' % '
-      print '\n'
+        print(str(n).ljust(adj) + ' ' + str(v).ljust(adj) + ' ' + str(percentage).ljust(2) + ' % ')
+      print('\n')
 
     if selectStatus and not selected:
       return S_ERROR('No files were selected for production %s and status "%s"' % (productionID, selectStatus))
     elif selectStatus and selected:
-      print '%s / %s files (%s percent) were found for production %s in status "%s"' % (
-          selected, totalRecords,
-          int(100 * int(selected) / totalRecords),
-          productionID, selectStatus)
+      print('%s / %s files (%s percent) were found for production %s in status "%s"' % (
+            selected, totalRecords,
+            int(100 * int(selected) / totalRecords),
+            productionID, selectStatus))
 
     if outputFile:
       if os.path.exists(outputFile):
-        print 'Requested output file %s already exists, please remove this file to continue' % outputFile
+        print('Requested output file %s already exists, please remove this file to continue' % outputFile)
         return fileSummary
 
       with open(outputFile, 'w') as fopen:
         fopen.write(toWrite)
       if not selectStatus:
-        print 'Wrote %s lines to file %s' % (totalRecords, outputFile)
+        print('Wrote %s lines to file %s' % (totalRecords, outputFile))
       else:
-        print 'Wrote %s lines to file %s for status "%s"' % (selected, outputFile, selectStatus)
+        print('Wrote %s lines to file %s for status "%s"' % (selected, outputFile, selectStatus))
 
     return fileSummary
 
@@ -693,7 +696,7 @@ class DiracProduction(DiracLHCb):
     else:
       return self._errorReport('Expected single string or list of strings for LFN(s)')
 
-    fileStatus = self.transformationClient.getFileSummary(lfns, long(productionID))
+    fileStatus = self.transformationClient.getFileSummary(lfns, int(productionID))
     if printOutput:
       self._prettyPrint(fileStatus['Value'])
     return fileStatus
@@ -755,12 +758,12 @@ class DiracProduction(DiracLHCb):
       except Exception as x:
         return self._errorReport(str(x), 'Expected integer or string for number of jobs to submit')
 
-    result = self.transformationClient.extendTransformation(long(productionID), numberOfJobs)
+    result = self.transformationClient.extendTransformation(int(productionID), numberOfJobs)
     if not result['OK']:
       return self._errorReport(result, 'Could not extend production %s by %s jobs' % (productionID, numberOfJobs))
 
     if printOutput:
-      print 'Extended production %s by %s jobs' % (productionID, numberOfJobs)
+      print('Extended production %s by %s jobs' % (productionID, numberOfJobs))
 
     return result
 
@@ -770,7 +773,7 @@ class DiracProduction(DiracLHCb):
     Given a production ID will return the current WMS status information
     for all jobs in that production starting from the creation date.
     """
-    result = self.transformationClient.getTransformationParameters(long(productionID), ['CreationDate'])
+    result = self.transformationClient.getTransformationParameters(int(productionID), ['CreationDate'])
     if not result['OK']:
       self.log.warn('Problem getting production metadata for ID %s:\n%s' % (productionID, result))
       return result

@@ -33,6 +33,9 @@ To do: review usage of production API(s) and re-factor into Production Client
 
 AZ 10.14: merged with a part from RequestTrackingAgent to avoid race conditions
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import time
 import os
@@ -93,16 +96,16 @@ class ProductionRequestSIM(object):
   def getAllProductionProgress(self):
     """Returns all known productions."""
     answer = {}
-    for prID, summary in self.pr.iteritems():
+    for prID, summary in self.pr.items():
       answer[prID] = {}
-      for tID, tInfo in summary['prods'].iteritems():
+      for tID, tInfo in summary['prods'].items():
         answer[prID][tID] = {'Used': tInfo['Used'], 'Events': tInfo['Events']}
     return S_OK(answer)
 
   def getProductionRequestList(self, master, u1, u2, u3, u4, rfilter):
     """Only works for the calls used in this agent."""
     answer = []
-    for prID, summary in self.pr.iteritems():
+    for prID, summary in self.pr.items():
       toInclude = False
       if not master and summary['state'] == 'Active':  # Return Active requests
         toInclude = True
@@ -111,7 +114,7 @@ class ProductionRequestSIM(object):
       if toInclude:
         hasSubrequest = 2 if len(summary['prods']) == 0 else 0
         bkTotal = 0
-        for _tID, tInfo in summary['prods'].iteritems():
+        for _tID, tInfo in summary['prods'].items():
           if tInfo['Used']:
             bkTotal += tInfo['Events']
         answer.append({'RequestID': prID,
@@ -133,7 +136,7 @@ class ProductionRequestSIM(object):
   def updateTrackedProductions(self, toUpdate):
     """Update production progress."""
     for it in toUpdate:
-      for _prID, summary in self.pr.iteritems():
+      for _prID, summary in self.pr.items():
         if it['ProductionID'] in summary['prods']:
           summary['prods'][it['ProductionID']]['Events'] = it['BkEvents']
           break
@@ -141,7 +144,7 @@ class ProductionRequestSIM(object):
 
   def __getPrForT(self, tID):
     """For simulation only."""
-    for _prID, summary in self.pr.iteritems():
+    for _prID, summary in self.pr.items():
       if tID in summary['prods']:
         return summary
     return {}
@@ -150,7 +153,7 @@ class ProductionRequestSIM(object):
     """For simulation only."""
     bkTotal = 0
     summary = self.__getPrForT(tID)
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if tInfo['Used']:
         bkTotal += tInfo['Events']
     return bkTotal
@@ -174,7 +177,7 @@ class TransformationAndBookkeepingSIM(object):
                     16: 'MCSimulation', 17: 'MCReconstruction', 18: 'DataStripping', 19: 'MCMerge',
                     100: 'Replication'}
     self.t = {}
-    for tID, tType in self.t_types.iteritems():
+    for tID, tType in self.t_types.items():
       self.t[tID] = {'status': 'Active', 'processedEvents': 0, 'Type': tType,
                      'filesStat': {'Processed': 0, 'Unused': 0, 'Assigned': 0},
                      'tasksStat': {'TotalCreated': 0, 'Running': 0, 'Done': 0, 'Failed': 0}
@@ -352,7 +355,7 @@ class TransformationAndBookkeepingSIM(object):
 
   # the rest is for TransformationClient
   def getTransformationWithStatus(self, status):
-    return S_OK([tID for tID, tInfo in self.t.iteritems() if tInfo['status'] == status])
+    return S_OK([tID for tID, tInfo in self.t.items() if tInfo['status'] == status])
 
   def getTransformation(self, tID):
     if tID not in self.t:
@@ -518,7 +521,7 @@ class ProductionStatusAgent(AgentModule):
 
     if updatedT:
       self.log.info('Transformations updated this cycle:')
-      for name, value in updatedT.iteritems():
+      for name, value in updatedT.items():
         self.log.info('Transformations %s: %s => %s' % (name, value['from'], value['to']))
 
     if updatedPr:
@@ -547,7 +550,7 @@ class ProductionStatusAgent(AgentModule):
       return S_ERROR('Could not retrieve production progress summary: %s' % result['Message'])
     progressSummary = result['Value']  # { <prID> : [ <prodId> : { 'Used', 'Events' } ] }
 
-    for prID, summary in self.prSummary.iteritems():
+    for prID, summary in self.prSummary.items():
       # Setting it before updating will give grace period before SM ops
       summary['isDone'] = True if summary['bkTotal'] >= summary['prTotal'] else False
       summary['prods'] = progressSummary.get(prID, {})
@@ -644,7 +647,7 @@ class ProductionStatusAgent(AgentModule):
     except RuntimeError as error:
       self.log.error(error)
 
-    for tID, prID in self.prProds.iteritems():
+    for tID, prID in self.prProds.items():
       if 'state' not in self.prSummary[prID]['prods'][tID]:
         self.prSummary[prID]['prods'][tID]['state'] = 'Other'
 
@@ -728,7 +731,7 @@ class ProductionStatusAgent(AgentModule):
     failures are rememberd and are taken into account later
     """
     self.log.verbose("Checking idle productions...")
-    for tID, prID in self.prProds.iteritems():
+    for tID, prID in self.prProds.items():
       tInfo = self.prSummary[prID]['prods'][tID]
       if tInfo['state'] in ('Active', 'Idle'):
         try:
@@ -755,7 +758,7 @@ class ProductionStatusAgent(AgentModule):
     # Using 10 threads, and waiting for the results before continuing
     futureThreads = []
     with ThreadPoolExecutor(10) as threadPool:
-      for tID, prID in self.prProds.iteritems():
+      for tID, prID in self.prProds.items():
         futureThreads.append(threadPool.submit(self._getProducedEvents, tID, prID))
       wait(futureThreads)
 
@@ -800,7 +803,7 @@ class ProductionStatusAgent(AgentModule):
       if tID in self.prProds:
         continue
       used = False
-      for _status, IDs in self.notPrTrans.iteritems():
+      for _status, IDs in self.notPrTrans.items():
         if tID in IDs:
           used = True
           break
@@ -858,7 +861,7 @@ class ProductionStatusAgent(AgentModule):
         except sqlite3.OperationalError:
           self.log.error("Could not queue mail")
 
-        for tID, val in updatedT.iteritems():
+        for tID, val in updatedT.items():
           conn.execute("INSERT INTO ProductionStatusAgentCache (production, from_status, to_status, time)"
                        " VALUES (?, ?, ?, ?)", (tID, val['from'], val['to'], time.asctime())
                        )
@@ -880,7 +883,7 @@ class ProductionStatusAgent(AgentModule):
       return
 
     reqClient = ProductionRequestClient(useCertificates=False, timeout=120)
-    result = reqClient.updateProductionRequest(long(prID), {'RequestState': status})
+    result = reqClient.updateProductionRequest(int(prID), {'RequestState': status})
     if not result['OK']:
       self.log.error(result)
     else:
@@ -924,7 +927,7 @@ class ProductionStatusAgent(AgentModule):
   def _isReallyDone(self, summary):
     """Evaluate 'isDone' from current update cycle."""
     bkTotal = 0
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if tInfo['Used']:
         bkTotal += tInfo['Events']
     return True if bkTotal >= summary['prTotal'] else False
@@ -932,7 +935,7 @@ class ProductionStatusAgent(AgentModule):
   def _producersAreIdle(self, summary):
     """Return True in case all producers (not 'Used') transformations are Idle,
     Finished or not exist."""
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if tInfo['Used']:
         continue
       if tInfo['isIdle'] != 'Yes' and tInfo['state'] != 'Finished':
@@ -942,7 +945,7 @@ class ProductionStatusAgent(AgentModule):
   def _producersAreProcIdle(self, summary):
     """Return True in case all producers (not 'Used') transformations are
     procIdle or finished or not exist."""
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if tInfo['Used']:
         continue
       if tInfo['isProcIdle'] != 'Yes' and tInfo['state'] != 'Finished':
@@ -952,7 +955,7 @@ class ProductionStatusAgent(AgentModule):
   def _processorsAreProcIdle(self, summary):
     """Return True in case all processors ('Used' or not Sim) transformations
     are procIdle or finished or not exist."""
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if not tInfo['Used'] and tInfo['isSimulation']:
         continue
       if tInfo['isProcIdle'] != 'Yes' and tInfo['state'] != 'Finished':
@@ -962,7 +965,7 @@ class ProductionStatusAgent(AgentModule):
   def _mergersAreDone(self, summary):
     """Return True in case all mergers ('Used') transformations are finished or
     not exist."""
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if not tInfo['Used']:
         continue
       if tInfo['state'] != 'Finished':
@@ -972,7 +975,7 @@ class ProductionStatusAgent(AgentModule):
   def _mergersAreProcIdle(self, summary):
     """Return True in case all mergers ('Used') transformations are procIdle or
     finished or not exist."""
-    for _tID, tInfo in summary['prods'].iteritems():
+    for _tID, tInfo in summary['prods'].items():
       if not tInfo['Used']:
         continue
       if tInfo['isProcIdle'] != 'Yes' and tInfo['state'] != 'Finished':
@@ -994,10 +997,10 @@ class ProductionStatusAgent(AgentModule):
     """
     self.log.verbose("Production Requests logic...")
 
-    for prID, summary in self.prSummary.iteritems():
+    for prID, summary in self.prSummary.items():
       countFinished = 0
 
-      for tID, tInfo in summary['prods'].iteritems():
+      for tID, tInfo in summary['prods'].items():
         if tInfo['state'] == 'Finished':
           # Do nothing with finished transformations
           countFinished += 1
@@ -1072,7 +1075,7 @@ class ProductionStatusAgent(AgentModule):
       if summary['isFinished'] and not summary['master'] and summary['type'] == 'Simulation':
         self.__updateProductionRequestStatus(prID, 'Done', updatedPr)
 
-    for masterID, prList in self.prMasters.iteritems():
+    for masterID, prList in self.prMasters.items():
       countFinished = 0
       for prID in prList:
         if self.prSummary[prID]['isFinished']:

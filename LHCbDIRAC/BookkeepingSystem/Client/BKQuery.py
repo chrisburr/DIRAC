@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """BKQuery is a class that decodes BK paths, queries the BK at a high level."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -93,7 +96,7 @@ def parseRuns(bkQuery, runs):
       else:
         runRange = run.split(':')
         if len(runRange) == 2 and runRange[0].isdigit() and runRange[1].isdigit():
-          runList += xrange(int(runRange[0]), int(runRange[1]) + 1)
+          runList += range(int(runRange[0]), int(runRange[1]) + 1)
         else:
           gLogger.error("Run numbers must be numbers...")
           raise BadRunRange

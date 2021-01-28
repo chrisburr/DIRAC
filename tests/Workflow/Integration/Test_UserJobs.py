@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=protected-access, wrong-import-position, invalid-name, missing-docstring
 
@@ -40,7 +43,7 @@ class UserJobTestCase(IntegrationTest):
   def setUp(self):
     super(UserJobTestCase, self).setUp()
 
-    print "\n \n ********************************* \n   Running a new test \n *********************************"
+    print("\n \n ********************************* \n   Running a new test \n *********************************")
 
     self.dLHCb = DiracLHCb()
     try:
@@ -293,8 +296,8 @@ class UserJobsFailingLocalSuccess(FailingUserJobTestCase):
     """ This job will fail everything that can fail
     """
 
-    print "Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info"
-    print "This will generate a local job"
+    print("Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info")
+    print("This will generate a local job")
     os.environ['JOBID'] = '12345'
 
     gaudirunJob = createJob()

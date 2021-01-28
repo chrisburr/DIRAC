@@ -15,7 +15,10 @@
 
 :synopsis: Implementation of the Data Usage service in the DISET framework.
 """
-# # imports
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+import six
 # # from DIRAC
 from DIRAC import S_OK
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
@@ -40,21 +43,21 @@ class DataUsageHandler(RequestHandler):
   """
   .. class:: DataUsageHandler
   """
-  types_sendDataUsageReport = [basestring, dict]
+  types_sendDataUsageReport = [six.string_types, dict]
 
   @staticmethod
   def export_sendDataUsageReport(site, directoryDict, status='New'):
     """export of sendDataUsageReport."""
     return gStorageUsageDB.sendDataUsageReport(site, directoryDict, status)
 
-  types_getDataUsageSummary = [basestring, basestring, basestring]
+  types_getDataUsageSummary = [six.string_types, six.string_types, six.string_types]
 
   @staticmethod
   def export_getDataUsageSummary(startTime, endTime, status):
     """export of getDataUsageSummary."""
     return gStorageUsageDB.getDataUsageSummary(startTime, endTime, status)
 
-  types_getDataUsageForDirectory = [basestring]
+  types_getDataUsageForDirectory = [six.string_types]
 
   @staticmethod
   def export_getDataUsageForDirectory(path):
@@ -68,7 +71,7 @@ class DataUsageHandler(RequestHandler):
     """export of sendDataUsageReport (new version)"""
     return gStorageUsageDB.sendDataUsageReport_2(directoryDict)
 
-  types_updatePopEntryStatus = [list, basestring]
+  types_updatePopEntryStatus = [list, six.string_types]
 
   @staticmethod
   def export_updatePopEntryStatus(idList, newStatus):

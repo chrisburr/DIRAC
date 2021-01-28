@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Root Application Class."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -71,7 +74,7 @@ class RootApplication(ModuleBase):
     else:
       self.log.warn('No arguments specified')
 
-    print self.arguments
+    print(self.arguments)
 
   #############################################################################
   def execute(self, production_id=None, prod_job_id=None, wms_job_id=None,

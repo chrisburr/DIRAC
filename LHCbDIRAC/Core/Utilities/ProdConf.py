@@ -16,6 +16,9 @@ ones if already existing. This is used by the production API to create
 production workflows but also provides lists of options files for test
 jobs.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -130,7 +133,7 @@ class ProdConf(object):
     """Build a string with the options that will go in."""
     string = 'from ProdConf import ProdConf\n\n'
     string = string + 'ProdConf(\n'
-    for opt, value in optsThatWillGoIn.iteritems():
+    for opt, value in optsThatWillGoIn.items():
       if self.optionsDict[opt] == 'list':
         string = string + '  ' + opt + '=' + str(value) + ',' + '\n'
       elif self.optionsDict[opt] == 'string':

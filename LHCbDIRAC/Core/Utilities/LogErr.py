@@ -10,6 +10,9 @@
 ###############################################################################
 """Reads .log-files and outputs summary of counters as a .json-file and a
 .html-file."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import os
 import json
 
@@ -54,7 +57,7 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
     ctest = logString.count(errorString)
     test = logString.find(errorString)
     array = []
-    for i in xrange(ctest):
+    for i in range(ctest):
       start = test
       test = logString.find(errorString, start)
       alreadyFound = False

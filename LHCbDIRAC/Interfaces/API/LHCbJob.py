@@ -83,6 +83,9 @@ To execute a ROOT Macro, Python script and Executable consecutively an example s
   jobID = dirac.submitJob(j,mode='local')
   print 'Submission Result: ',jobID
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import re
@@ -217,7 +220,7 @@ class LHCbJob(Job):
       if not isinstance(inputData, list):
         return self._reportError('Expected single LFN string or list of LFN(s) for inputData', __name__, **kwargs)
       if inputData != ['previousStep']:
-        for i in xrange(len(inputData)):
+        for i in range(len(inputData)):
           inputData[i] = inputData[i].replace('LFN:', '')
         inputData = ['LFN:' + x for x in inputData]
         inputDataStr = ';'.join(inputData)
@@ -368,7 +371,7 @@ class LHCbJob(Job):
       if not isinstance(inputData, list):
         return self._reportError('Expected single LFN string or list of LFN(s) for inputData', __name__, **kwargs)
       if inputData != ['previousStep']:
-        for i in xrange(len(inputData)):
+        for i in range(len(inputData)):
           inputData[i] = inputData[i].replace('LFN:', '')
         inputData = ['LFN:' + x for x in inputData]
         inputDataStr = ';'.join(inputData)
@@ -901,7 +904,7 @@ class LHCbJob(Job):
     """
     kwargs = {'platform': platform}
 
-    if not isinstance(platform, basestring):
+    if not isinstance(platform, six.string_types):
       return self._reportError("Expected string for platform", **kwargs)
 
     if platform and platform.lower() != 'any':
@@ -932,7 +935,7 @@ class LHCbJob(Job):
         return res
 
       runNumbers = []
-      for fileMeta in res['Value']['Successful'].itervalues():
+      for fileMeta in res['Value']['Successful'].values():
         try:
           if fileMeta['RunNumber'] not in runNumbers and fileMeta['RunNumber'] is not None:
             runNumbers.append(fileMeta['RunNumber'])

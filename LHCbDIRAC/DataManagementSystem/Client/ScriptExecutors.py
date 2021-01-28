@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Set of functions used by the DMS scripts."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import sys
 import os
@@ -896,14 +899,14 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
         continue
       oSe = StorageElement(se)
       for fileChunk in breakListIntoChunks(fileList, chunkSize):
-        for _i in xrange(len(fileChunk)):
+        for _i in range(len(fileChunk)):
           progressBar.loop()
         res = oSe.getFileMetadata(fileChunk)
         if res['OK']:
           seMetadata = res['Value']
           for url in seMetadata['Successful']:
             pfnMetadata = seMetadata['Successful'][url].copy()
-            if isinstance(pfnMetadata.get('Mode'), (int, long)):
+            if isinstance(pfnMetadata.get('Mode'), six.integer_types):
               pfnMetadata['Mode'] = '%o' % pfnMetadata['Mode']
             metadata['Successful'].setdefault(url, {})[se] = pfnMetadata if not exists \
                 else {'Exists': 'True (%sCached%s)' %

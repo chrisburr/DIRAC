@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 from DIRAC.Core.Base import Script
 Script.parseCommandLine(ignoreErrors=True)
 
@@ -20,7 +23,7 @@ args = Script.getPositionalArgs()
 
 def usage():
   """usage Prints script usage."""
-  print 'Usage: %s <Production ID> <Production Job ID>' % Script.scriptName
+  print('Usage: %s <Production ID> <Production Job ID>' % Script.scriptName)
   DIRAC.exit(2)
 
 
@@ -34,15 +37,15 @@ try:
   prodID = int(prodID)
   jobID = int(jobID)
 except Exception as x:
-  print 'ERROR ProdID and Production JobID must be integers'
+  print('ERROR ProdID and Production JobID must be integers')
   DIRAC.exit(2)
 
 result = diracProd.getProdJobInfo(prodID, jobID, printOutput=True)
 if result['OK']:
   DIRAC.exit(0)
 elif 'Message' in result:
-  print 'Getting production job info failed with message:\n%s' % (result['Message'])
+  print('Getting production job info failed with message:\n%s' % (result['Message']))
   DIRAC.exit(2)
 else:
-  print 'Null result for getProdJobInfo() call'
+  print('Null result for getProdJobInfo() call')
   DIRAC.exit(2)

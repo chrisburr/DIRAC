@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 ########################################################################
 # File :    dirac-bookkeeping-run-informations
 # Author :  Zoltan Mathe
@@ -145,24 +148,24 @@ if item != 'Finished':
       tck = info.get('Tck', 'Unknown')
 
       if sep:
-        print sep
-      print "Run  Informations for run %d: " % run
-      print "Run Start:".ljust(30), str(runstart)
-      print "Run End:".ljust(30), str(runend)
-      print "Total luminosity:".ljust(30), str(totalLuminosity)
-      print "  Configuration Name:".ljust(30), configname
-      print "  Configuration Version:".ljust(30), configversion
-      print "  FillNumber:".ljust(30), fillnb
-      print "  Finished:".ljust(30), finished
-      print "  Data taking description:".ljust(30), datataking
-      print "  Processing pass:".ljust(30), processing
-      print "  TCK:".ljust(30), tck
-      print "  Stream:".ljust(30), stream
+        print(sep)
+      print("Run  Informations for run %d: " % run)
+      print("Run Start:".ljust(30), str(runstart))
+      print("Run End:".ljust(30), str(runend))
+      print("Total luminosity:".ljust(30), str(totalLuminosity))
+      print("  Configuration Name:".ljust(30), configname)
+      print("  Configuration Version:".ljust(30), configversion)
+      print("  FillNumber:".ljust(30), fillnb)
+      print("  Finished:".ljust(30), finished)
+      print("  Data taking description:".ljust(30), datataking)
+      print("  Processing pass:".ljust(30), processing)
+      print("  TCK:".ljust(30), tck)
+      print("  Stream:".ljust(30), stream)
       just = len(str(fsize)) + 3
-      print "  FullStat:".ljust(30), str(fullstat).ljust(just), " Total: ".ljust(10) + str(sum(fullstat))
-      print "  Number of events:".ljust(30), str(nbofe).ljust(just), " Total:".ljust(10) + str(sum(nbofe))
-      print "  Number of files:".ljust(30), str(nboff).ljust(just), " Total: ".ljust(10) + str(sum(nboff))
-      print "  File size:".ljust(30), str(fsize).ljust(just), " Total: ".ljust(10) + str(sum(fsize))
+      print("  FullStat:".ljust(30), str(fullstat).ljust(just), " Total: ".ljust(10) + str(sum(fullstat)))
+      print("  Number of events:".ljust(30), str(nbofe).ljust(just), " Total:".ljust(10) + str(sum(nbofe)))
+      print("  Number of files:".ljust(30), str(nboff).ljust(just), " Total: ".ljust(10) + str(sum(nboff)))
+      print("  File size:".ljust(30), str(fsize).ljust(just), " Total: ".ljust(10) + str(sum(fsize)))
       sep = 20 * '='
     elif item:
       failed[run] = res['Message']

@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get production numbers given a dataset path."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -23,10 +26,10 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 
 def printProds(title, prods):
   typeDict = {}
-  for prod, prodType in prods.iteritems():
+  for prod, prodType in prods.items():
     typeDict.setdefault(prodType, []).append(prod)
   gLogger.notice(title)
-  for prodType, prodList in typeDict.iteritems():
+  for prodType, prodList in typeDict.items():
     gLogger.notice('(%s): %s' % (prodType, ','.join([str(prod) for prod in sorted(prodList)])))
 
 

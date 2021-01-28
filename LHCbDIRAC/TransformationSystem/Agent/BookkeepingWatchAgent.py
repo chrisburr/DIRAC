@@ -14,6 +14,9 @@ files in input to a transformation.
 
 A pickle file is used as a cache.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import time

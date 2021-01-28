@@ -11,10 +11,11 @@
 """
 It tests the insert of XML Summaries to the BookkeepingDB.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=invalid-name,wrong-import-position
-
-from __future__ import print_function
 
 
 import datetime
@@ -37,7 +38,7 @@ __RCSID__ = "$Id$"
 runnb = '1122'
 # 5 fake files
 files = ['/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw' % (runnb,
-                                                                 runnb, i) for i in xrange(5)]
+                                                                 runnb, i) for i in range(5)]
 
 # Construction of an XML Job report
 # (this should be similar to what comes from online)

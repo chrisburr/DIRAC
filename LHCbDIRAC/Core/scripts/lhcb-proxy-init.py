@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Use dirac-proxy-init to get a proxy."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -30,4 +33,4 @@ if not os.path.isdir(os.environ['X509_VOMS_DIR']):
   sys.exit('the directory %s does not exist' % os.environ['X509_VOMS_DIR'])
 
 out = os.system("dirac-proxy-init -o LogLevel=NOTICE --strict --rfc '%s'" % "' '".join(sys.argv[1:]))
-sys.exit(out / 256)
+sys.exit(int(out / 256))

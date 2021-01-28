@@ -10,6 +10,9 @@
 ###############################################################################
 """StepAccounting module performs several common operations at the end of a
 workflow step, in particular prepares and sends the step accounting data."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 

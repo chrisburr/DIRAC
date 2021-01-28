@@ -20,6 +20,9 @@ Notes:
   can automatically construct and publish the BK pass info and transformations
 - Uses __getOutputLFNs() function to add production output directory parameter
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -504,7 +507,7 @@ class Production(object):
     try:
       if parameters['BkQuery']:
         info.append('\nBK Input Data Query:')
-        for bkn, bkv in parameters['BkQuery'].iteritems():
+        for bkn, bkv in parameters['BkQuery'].items():
           info.append('%s= %s' % (bkn, bkv))
     except KeyError:
       pass
@@ -629,7 +632,7 @@ class Production(object):
                                                   bkPassInfo=bkSteps,
                                                   reqID=requestID,
                                                   derivedProd=self.ancestorProduction)
-      for parName, parValue in paramsDict.iteritems():
+      for parName, parValue in paramsDict.items():
         result = getattr(self.transformation, 'set' + parName)(parValue)
 
     else:
@@ -697,7 +700,7 @@ class Production(object):
         return result
 
     if requestID and publish:
-      reqDict = {'ProductionID': long(prodID), 'RequestID': requestID, 'Used': reqUsed, 'BkEvents': 0}
+      reqDict = {'ProductionID': int(prodID), 'RequestID': requestID, 'Used': reqUsed, 'BkEvents': 0}
       result = ProductionRequestClient(timeout=120).addProductionToRequest(reqDict)
       if not result['OK']:
         gLogger.error('Attempt to add production %s to request %s failed: %s ' % (prodID, requestID,

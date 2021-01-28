@@ -10,6 +10,9 @@
 ###############################################################################
 """ Running this file with "ganga gangaJobs.py" will submit some user jobs via Ganga
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 
 #pylint: skip-file

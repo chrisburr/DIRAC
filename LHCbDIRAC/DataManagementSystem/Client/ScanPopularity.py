@@ -9,6 +9,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Methods for scanning the popularity table."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
@@ -133,7 +136,7 @@ def cacheDirectories(directories):
     gLogger.always('Getting BK metadata for %d directories' % len(lfnsFromBK))
     success = {}
     for lfns in breakListIntoChunks(lfnsFromBK, chunkSize):
-      for trial in xrange(10, -1, -1):
+      for trial in range(10, -1, -1):
         res = bkClient.getDirectoryMetadata(lfns)
         if not res['OK'] and not trial:
           gLogger.fatal("\nError getting BK metadata", res['Message'])
@@ -172,7 +175,7 @@ def cacheDirectories(directories):
     gLogger.always('Get LFN Storage Usage for %d directories' % len(missingSU))
     for dirLfn in missingSU:
       # LFN usage
-      for trial in xrange(10, -1, -1):
+      for trial in range(10, -1, -1):
         res = suClient.getSummary(dirLfn)
         if res['OK']:
           break
@@ -183,14 +186,14 @@ def cacheDirectories(directories):
       infoType = 'LFN'
       gLogger.verbose('Directory %s: %s' % (dirLfn, str(res['Value'])))
       bkPathUsage.setdefault(bkPath, {}).setdefault(infoType, [0, 0])
-      bkPathUsage[bkPath][infoType][0] += sum(val.get('Files', 0) for val in res['Value'].itervalues())
-      bkPathUsage[bkPath][infoType][1] += sum(val.get('Size', 0) for val in res['Value'].itervalues())
+      bkPathUsage[bkPath][infoType][0] += sum(val.get('Files', 0) for val in res['Value'].values())
+      bkPathUsage[bkPath][infoType][1] += sum(val.get('Size', 0) for val in res['Value'].values())
 
     # # get the PFN usage per storage type
     # Storage type is Disk, Archived, Tape and All
     gLogger.always('Check storage type and PFN usage for %d directories' % len(dirSet))
     for dirLfn in dirSet:
-      for trial in xrange(10, -1, -1):
+      for trial in range(10, -1, -1):
         res = suClient.getDirectorySummaryPerSE(dirLfn)
         if not res['OK'] and not trial:
           gLogger.fatal('Error getting storage usage per SE %s' % dirLfn, res['Message'])
@@ -201,16 +204,16 @@ def cacheDirectories(directories):
       for infoType in storageTypes:
         # Active type will be recorded in Disk, just a special flag
         if infoType != 'LFN' and infoType not in info:
-          nf = sum(val['Files'] for se, val in res['Value'].iteritems() if isType(se, infoType))
-          size = sum(val['Size'] for se, val in res['Value'].iteritems() if isType(se, infoType))
+          nf = sum(val['Files'] for se, val in res['Value'].items() if isType(se, infoType))
+          size = sum(val['Size'] for se, val in res['Value'].items() if isType(se, infoType))
           info[infoType] = {'Files': nf, 'Size': size}
       for site in storageSites:
         if site not in info:
           nf = sum(val['Files']
-                   for se, val in res['Value'].iteritems()
+                   for se, val in res['Value'].items()
                    if isAtSite(se, site) and isType(se, 'Disk'))
           size = sum(val['Size']
-                     for se, val in res['Value'].iteritems()
+                     for se, val in res['Value'].items()
                      if isAtSite(se, site) and isType(se, 'Disk'))
           info[site] = {'Files': nf, 'Size': size}
       bkPath = bkPathForDir[dirLfn]
@@ -263,7 +266,7 @@ def prSize(size):
 
 def getPhysicalUsage(baseDir):
   """Extract information about storage usage from the StorageusageDB."""
-  for trial in xrange(10, -1, -1):
+  for trial in range(10, -1, -1):
     res = suClient.getStorageDirectoryData(baseDir, None, None, None, timeout=3600)
     if not res['OK']:
       if not trial:

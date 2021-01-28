@@ -14,6 +14,9 @@ NagiosTopologyAgent.__bases__: DIRAC.Core.Base.AgentModule.AgentModule
 
 xml_append
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import time
@@ -314,7 +317,7 @@ class NagiosTopologyAgent(AgentModule):
     self.dryRun = self.am_getOption('DryRun', self.dryRun)
     if self.dryRun:
       self.log.info("Dry Run: XML file will not be created, just printed")
-      print xml_doc.toxml()
+      print(xml_doc.toxml())
 
     else:
       # produce the xml

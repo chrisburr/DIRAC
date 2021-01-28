@@ -11,6 +11,9 @@
 """DMScript is a class that creates default switches for DM scripts, decodes
 them and sets flags The module also provides a function for printing pretty
 results from DMS queries."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import six
@@ -33,7 +36,7 @@ def __printDictionary(dictionary, offset=0, shift=0, empty="Empty directory", de
   """Dictionary pretty printing."""
   key_max = 0
   value_max = 0
-  for key, value in dictionary.iteritems():
+  for key, value in dictionary.items():
     key_max = max(key_max, len(str(key)))
     value_max = max(value_max, len(str(value)))
   center = key_max + offset
@@ -273,7 +276,7 @@ class DMScript(object):
       for prod in arg.split(','):
         if prod.find(":") > 0:
           pr = prod.split(":")
-          for i in xrange(int(pr[0]), int(pr[1]) + 1):
+          for i in range(int(pr[0]), int(pr[1]) + 1):
             prods.append(i)
         else:
           prods.append(prod)

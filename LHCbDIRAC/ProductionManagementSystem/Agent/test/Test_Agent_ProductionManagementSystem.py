@@ -8,6 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # import mock
 # if mock.__version__ < '1.0.1':
 #   print 'Invalid Mock version %s !' % mock.__version__
@@ -32,7 +35,7 @@
 #     pStarted = patcher.start()
 #     class AgentMocked():
 #       def __init__( self, *args, **kwargs ):
-#         for k, v in pStarted.__dict__.iteritems():
+#         for k, v in pStarted.__dict__.items():
 #           setattr( self, k, v )
 #
 #     sut.AgentModule = AgentMocked

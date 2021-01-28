@@ -15,10 +15,15 @@
 
 :synopsis: clean up of finalised transformations
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
 import ast
+
+import six
 
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
@@ -83,7 +88,7 @@ class TransformationCleaningAgent(DiracTCAgent):
     fileToRemove = []
     yesReplica = []
     self.log.info("Found a total of %d files in the BK for transformation %d" % (len(bkMetadata), transID))
-    for lfn, metadata in bkMetadata.iteritems():
+    for lfn, metadata in bkMetadata.items():
       if metadata['FileType'] != 'LOG':
         fileToRemove.append(lfn)
         if metadata['GotReplica'] == 'Yes':
@@ -96,7 +101,7 @@ class TransformationCleaningAgent(DiracTCAgent):
       gConfigurationData.setOptionInCFG('/DIRAC/Security/UseServerCertificate', 'true')
       if not res['OK']:
         return res
-      for lfn, reason in res['Value']['Failed'].iteritems():
+      for lfn, reason in res['Value']['Failed'].items():
         self.log.error("Failed to remove file found in BK", "%s %s" % (lfn, reason))
       if res['Value']['Failed']:
         return S_ERROR("Failed to remove all files found in the BK")
@@ -105,7 +110,7 @@ class TransformationCleaningAgent(DiracTCAgent):
         res = FileCatalog(catalogs=['BookkeepingDB']).removeFile(yesReplica)
         if not res['OK']:
           return res
-        for lfn, reason in res['Value']['Failed'].iteritems():
+        for lfn, reason in res['Value']['Failed'].items():
           self.log.error("Failed to remove file from BK", "%s %s" % (lfn, reason))
         if res['Value']['Failed']:
           return S_ERROR("Failed to remove all files from the BK")
@@ -126,7 +131,7 @@ class TransformationCleaningAgent(DiracTCAgent):
       return res
 
     directories = res['Value']
-    if isinstance(directories, basestring):  # Check for (stupid) formats
+    if isinstance(directories, six.string_types):  # Check for (stupid) formats
       directories = ast.literal_eval(directories)
       if not isinstance(directories, list):
         return S_ERROR("Wrong format of output directories")

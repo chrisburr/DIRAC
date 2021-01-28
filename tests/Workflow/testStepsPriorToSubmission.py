@@ -43,6 +43,9 @@
 
     Once you're done, it'd better if you remove (or better rename) the ~/.dirac.cfg file.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 
 ##################################

@@ -8,6 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 """The job path resolution module is a VO-specific plugin that allows to define
 VO job policy in a simple way.  This allows the inclusion of LHCb specific WMS

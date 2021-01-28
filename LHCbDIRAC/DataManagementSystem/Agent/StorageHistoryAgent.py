@@ -14,6 +14,9 @@ grouped by processing pass or other interesting parameters.
 Initially this will dump the information to a file but eventually can be
 inserted in a new DB table and made visible via the web portal.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import os
 import time
@@ -255,7 +258,7 @@ class StorageHistoryAgent(AgentModule):
     metaForList = self.__getMetadataForAcc(self.dirDict.values())
 
     # loop on all directories  to get the bkk metadata
-    for dirLfn, fullDirectory in self.dirDict.iteritems():
+    for dirLfn, fullDirectory in self.dirDict.items():
       if dirLfn not in fullDirectory:
         self.log.error("ERROR: fullDirectory should include the dirname: %s %s " % (fullDirectory, dirLfn))
         continue

@@ -11,6 +11,9 @@
 ###############################################################################
 """ Sends the XML Bookkeeping Report
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()
@@ -23,4 +26,4 @@ with open(xmlFile, 'r') as fd:
   bkXML = fd.read()
 
 res = BookkeepingClient().sendXMLBookkeepingReport(bkXML)
-print res
+print(res)
