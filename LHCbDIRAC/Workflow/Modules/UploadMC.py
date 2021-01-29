@@ -159,7 +159,7 @@ class UploadMC(ModuleBase):
 
         except Exception as ve:
           self.log.error(repr(ve))
-          self.log.verbose("Exception creating/loading the XMLSummary JSON file")
+          self.log.exception("Exception creating/loading the XMLSummary JSON file")
           # do not fail the job for this
 
       else:
@@ -197,7 +197,7 @@ class UploadMC(ModuleBase):
 
         except Exception as ve:
           self.log.error(repr(ve))
-          self.log.verbose("Exception creating/loading the GeneratorLog JSON file")
+          self.log.exception("Exception creating/loading the GeneratorLog JSON file")
           # do not fail the job for this
 
       else:
