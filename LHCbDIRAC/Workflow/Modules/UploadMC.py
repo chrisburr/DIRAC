@@ -131,36 +131,46 @@ class UploadMC(ModuleBase):
       # looking for xml files that are 'summaryGauss_self.production_id_self.prod_job_id_1.xml'
       xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.prod_job_id)
       if os.path.exists(xmlfl):
-        jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
-        xmlData = XMLSummary(xmlfl)
-        xmlData.xmltojson()
-        # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
-        with io.open(jsonfl) as JS:
-          try:
-            jsonData = json.load(JS)
-            ids = dict()
-            ids['JobID'] = self.jobID
-            ids['ProductionID'] = self.production_id
-            ids['prod_job_id'] = self.prod_job_id
-            jsonData['Counters']['ID'] = ids
-            with io.open(jsonfl, 'w', encoding="utf-8") as output:
-              output.write(unicode(json.dumps(jsonData, indent=2)))
 
-            self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
-            if self._enableModule() and self.opsH.getValue('Productions/UploadES_XMLSummary', False):
-              res = mcStatsClient.set('XMLSummary', jsonData)
-              if not res['OK']:
-                self.log.error('Gauss Summaries data not set, exiting without affecting workflow status',
-                               "%s: %s" % (str(jsonData), res['Message']))
-            else:
-              # At this point we can see exactly what the module would have uploaded
-              self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
-          except Exception as ve:
-            self.log.error(repr(ve))
-            self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
-            self.log.verbose(JS.read())
-            # do not fail the job for this
-            # raise
+        try:
+
+          xmlData = XMLSummary(xmlfl)
+          xmlData.xmltojson()
+
+          # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
+          jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
+          with io.open(jsonfl) as JS:
+            try:
+              jsonData = json.load(JS)
+              ids = dict()
+              ids['JobID'] = self.jobID
+              ids['ProductionID'] = self.production_id
+              ids['prod_job_id'] = self.prod_job_id
+              jsonData['Counters']['ID'] = ids
+              with io.open(jsonfl, 'w', encoding="utf-8") as output:
+                output.write(unicode(json.dumps(jsonData, indent=2)))
+
+              self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
+              if self._enableModule() and self.opsH.getValue('Productions/UploadES_XMLSummary', False):
+                res = mcStatsClient.set('XMLSummary', jsonData)
+                if not res['OK']:
+                  self.log.error('Gauss Summaries data not set, exiting without affecting workflow status',
+                                 "%s: %s" % (str(jsonData), res['Message']))
+              else:
+                # At this point we can see exactly what the module would have uploaded
+                self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
+            except Exception as ve:
+              self.log.error(repr(ve))
+              self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
+              self.log.verbose(JS.read())
+              # do not fail the job for this
+              raise
+
+        except Exception as ve:
+          self.log.error(repr(ve))
+          self.log.verbose("Exception creating/loading the XMLSummary JSON file")
+          # do not fail the job for this
+
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
 
@@ -168,36 +178,45 @@ class UploadMC(ModuleBase):
       # looking for xml files that are 'GeneratorLog.xml'
       xmlfile = 'GeneratorLog.xml'
       if os.path.exists(xmlfile):
-        jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
-        xmlData = GeneratorLog()
-        xmlData.generatorLogJson(jsonfile)
-        # At this point 'GeneratorLog_self.production_id_self.prod_job_id.json' should have been created
-        with io.open(jsonfile) as JS:
-          try:
-            jsonData = json.load(JS)
-            ids = dict()
-            ids['JobID'] = self.jobID
-            ids['ProductionID'] = self.production_id
-            ids['prod_job_id'] = self.prod_job_id
-            jsonData['generatorCounters']['ID'] = ids
-            with io.open(jsonfile, 'w', encoding="utf-8") as output:
-              output.write(unicode(json.dumps(jsonData)))
 
-            self.log.verbose("Content of JSON file", "%s: %s" % (jsonfile, jsonData))
-            if self._enableModule() and self.opsH.getValue('Productions/UploadES_GeneratorLog', False):
-              res = mcStatsClient.set('generatorLog', jsonData)
-              if not res['OK']:
-                self.log.error('Generator Log data not set, exiting without affecting workflow status',
-                               "%s: %s" % (str(jsonData), res['Message']))
-            else:
-              # At this point we can see exactly what the module would have uploaded
-              self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfile)
-          except Exception as ve:
-            self.log.error(repr(ve))
-            self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfile)
-            self.log.verbose(JS.read())
-            # do not fail the job for this
-            # raise
+        try:
+
+          jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
+          xmlData = GeneratorLog()
+          xmlData.generatorLogJson(jsonfile)
+          # At this point 'GeneratorLog_self.production_id_self.prod_job_id.json' should have been created
+          with io.open(jsonfile) as JS:
+            try:
+              jsonData = json.load(JS)
+              ids = dict()
+              ids['JobID'] = self.jobID
+              ids['ProductionID'] = self.production_id
+              ids['prod_job_id'] = self.prod_job_id
+              jsonData['generatorCounters']['ID'] = ids
+              with io.open(jsonfile, 'w', encoding="utf-8") as output:
+                output.write(unicode(json.dumps(jsonData)))
+
+              self.log.verbose("Content of JSON file", "%s: %s" % (jsonfile, jsonData))
+              if self._enableModule() and self.opsH.getValue('Productions/UploadES_GeneratorLog', False):
+                res = mcStatsClient.set('generatorLog', jsonData)
+                if not res['OK']:
+                  self.log.error('Generator Log data not set, exiting without affecting workflow status',
+                                 "%s: %s" % (str(jsonData), res['Message']))
+              else:
+                # At this point we can see exactly what the module would have uploaded
+                self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfile)
+            except Exception as ve:
+              self.log.error(repr(ve))
+              self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfile)
+              self.log.verbose(JS.read())
+              # do not fail the job for this
+              raise
+
+        except Exception as ve:
+          self.log.error(repr(ve))
+          self.log.verbose("Exception creating/loading the GeneratorLog JSON file")
+          # do not fail the job for this
+
       else:
         self.log.info("XML GeneratorLog file not found", xmlfile)
 
