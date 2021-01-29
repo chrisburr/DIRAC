@@ -227,14 +227,14 @@ def printFinalSEs(transType, location, targets):
   targets = targets.split(',')
   if transType == "Removal":
     remain = []
-    for l in location:
-      r = ','.join([se for se in l.split(',') if se not in targets])
+    for x in location:
+      r = ','.join([se for se in x.split(',') if se not in targets])
       remain.append(r)
     print("    Remaining SEs:", remain)
   if transType == "Replication":
     total = []
-    for l in location:
-      r = l + ',' + ','.join([se for se in targets if se not in l.split(',')])
+    for x in location:
+      r = x + ',' + ','.join([se for se in targets if se not in x.split(',')])
       total.append(r)
     print("    Final SEs:", total)
 
@@ -380,10 +380,15 @@ if __name__ == "__main__":
     lfns = requestedLFNs
   else:
     print("Getting the files from BK")
-    lfns = bkQuery.getLFNs(printSEUsage=((transType == 'Removal' or not plugin)
-                                         and not pluginScript.getOption('Runs')
-                                         and not pluginScript.getOption('DQFlags')),
-                           printOutput=checkReplica, visible=visible)
+    lfns = bkQuery.getLFNs(
+        printSEUsage=(
+            (transType == 'Removal' or not plugin) and
+            not pluginScript.getOption('Runs') and
+            not pluginScript.getOption('DQFlags')
+        ),
+        printOutput=checkReplica,
+        visible=visible,
+    )
     if not checkReplica:
       bkQuery.setOption('ReplicaFlag', "No")
       lfns += bkQuery.getLFNs(printSEUsage=False, printOutput=False, visible=visible)

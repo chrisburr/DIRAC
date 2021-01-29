@@ -36,8 +36,8 @@ class UserStorageQuotaAgent(AgentModule):
 
   :param int deafultQuota: default quota in MB
   :param NotificationClient notificationClient: NotificationClient instance
-  :param LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB.StorageUsageDB
-         storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
+  :param LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB.StorageUsageDB storageUsageDB:
+         StorageUsageDB or RPC client pointing to StorageUsageDB
   """
 
   defaultQuota = 1000

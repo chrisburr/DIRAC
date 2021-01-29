@@ -30,7 +30,7 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB
+from .Utilities import wipeOutDB
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 

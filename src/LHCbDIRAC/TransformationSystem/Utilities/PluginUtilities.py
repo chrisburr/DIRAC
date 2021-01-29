@@ -585,12 +585,17 @@ get from BK" % (param, self.paramName))
     # 1. add mandatory SEs
     candidateSEs = [se for se in mandatorySEs if not self.isSameSEInList(se, existingSEs)]
     # 2. add existing disk SEs that are either mandatory or secondary
-    candidateSEs += [se for se in existingSEs if se in (mandatorySEs + secondarySEs)
-                     and not self.isSameSEInList(se, targetSEs + candidateSEs)
-                     and not isArchive(se)]
+    candidateSEs += [
+        se for se in existingSEs
+        if se in (mandatorySEs + secondarySEs) and
+        not self.isSameSEInList(se, targetSEs + candidateSEs) and
+        not isArchive(se)
+    ]
     # 3. add ranked list of secondary SEs
-    candidateSEs += [se for se in self.rankSEs(secondaryActiveSEs)
-                     if not self.isSameSEInList(se, targetSEs + candidateSEs + existingSEs)]
+    candidateSEs += [
+        se for se in self.rankSEs(secondaryActiveSEs)
+        if not self.isSameSEInList(se, targetSEs + candidateSEs + existingSEs)
+    ]
     # 4. Select the proper number of SEs in the candidate ordered list
     candidateSEs = self.selectSEs(candidateSEs, numberOfCopies, existingSEs)
     self.logVerbose("Selected SecondarySEs: %s" % candidateSEs)

@@ -24,7 +24,7 @@ from DIRAC.Core.Workflow.Workflow import fromXMLString
 from DIRAC import gLogger
 
 try:
-  with open('./LHCbDIRAC/TransformationSystem/Agent/test/testWF.xml') as fd:
+  with open('./src/LHCbDIRAC/TransformationSystem/Agent/test/testWF.xml') as fd:
     storedJobDescription = fd.read()
 except IOError:
   with open('./TransformationSystem/Agent/test/testWF.xml') as fd:

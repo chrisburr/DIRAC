@@ -24,7 +24,7 @@ parseCommandLine()
 from DIRAC import gLogger
 gLogger.setLevel('VERBOSE')
 
-from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB
+from .Utilities import wipeOutDB
 
 # # sut
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB

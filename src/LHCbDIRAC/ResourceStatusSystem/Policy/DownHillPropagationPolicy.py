@@ -21,12 +21,12 @@ from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
 
 __RCSID__ = "$Id$"
 
-#...............................................................................
+# ..............................................................................
 #
 #
 # OBSOLETE CODE. TODO: refactor it !
 #
-#...............................................................................
+# ..............................................................................
 
 
 class DownHillPropagationPolicy(PolicyBase):
@@ -75,6 +75,3 @@ class DownHillPropagationPolicy(PolicyBase):
     result['Status'] = commandResult
     result['Reason'] = 'DownHill propagated status: %s' % commandResult
     return result
-
-#...............................................................................
-# EOF

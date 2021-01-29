@@ -138,7 +138,7 @@ check_docs:
   script:
     # We need to use m2crypto, otherwise it looks for GSI, which is annoying
     - export DIRAC_USE_M2CRYPTO=True
-    - export PYTHONPATH=$PWD:$PYTHONPATH
+    - export PYTHONPATH=$PWD/src
     - cd docs
     # We need to compile the requirements.txt because the crappy pip dependency
     # resolution cannot figure out matplotlib dependency properly

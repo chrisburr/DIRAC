@@ -101,19 +101,18 @@ class ProductionsStateMachine(LHCbStateMachine):
                    }
 
     # NEW states proposal
-#    self.states = {
-#                   'Cleaned'    : State( 10 ), # final state
-#                   'Cleaning'   : State( 9, ['Cleaned'] ),
-#                   'Completing' : State( 8, ['Validating', 'Cleaning'], defState = 'Validating' ),
-#                   'TransformationCleaned': State( 16, ['Archived', 'Cleaned'], defState = 'Archived' ),
-#                   'Stopped'    : State( 7, ['Active', 'Flush', 'Cleaning'], defState = 'Active' ),
-#                   'Archived'   : State( 6 ),  # final state
-#                   'Completed'  : State( 5, ['Archived'], defState = 'Archived' ),
-#                   'Validating' : State( 4, ['Active', 'Completed', 'Cleaning'], defState = 'Completed' ),
-#                    #Idle to Completed? Should it be that when setting a prod to completed it actually goes to validating?
-#                   'Idle'       : State( 3, ['Active', 'Validating', 'Cleaning'], defState = 'Active' ),
-#                   'Flush'      : State( 2, ['Active', 'Cleaning'], defState = 'Active' ),
-#                   'Active'     : State( 1, ['Flush', 'Idle', 'Stopped', 'Completing', 'Validating', 'Cleaning'],
-#                                         defState = 'Flush' ),
-#                   'New'        : State( 0, ['Active', 'Cleaning'], defState = 'Active' )  # initial state
-#                  }
+    # self.states = {
+    #     'Cleaned': State(10), # final state
+    #     'Cleaning': State(9, ['Cleaned']),
+    #     'Completing': State(8, ['Validating', 'Cleaning'], defState = 'Validating'),
+    #     'TransformationCleaned': State(16, ['Archived', 'Cleaned'], defState = 'Archived'),
+    #     'Stopped': State(7, ['Active', 'Flush', 'Cleaning'], defState = 'Active'),
+    #     'Archived': State(6),  # final state
+    #     'Completed': State(5, ['Archived'], defState = 'Archived'),
+    #     'Validating': State(4, ['Active', 'Completed', 'Cleaning'], defState = 'Completed'),
+    #     # Idle to Completed? Should it be that when setting a prod to completed it actually goes to validating?
+    #     'Idle': State(3, ['Active', 'Validating', 'Cleaning'], defState = 'Active'),
+    #     'Flush': State(2, ['Active', 'Cleaning'], defState = 'Active'),
+    #     'Active': State(1, ['Flush', 'Idle', 'Stopped', 'Completing', 'Validating', 'Cleaning'], defState = 'Flush'),
+    #     'New': State(0, ['Active', 'Cleaning'], defState = 'Active')  # initial state
+    # }

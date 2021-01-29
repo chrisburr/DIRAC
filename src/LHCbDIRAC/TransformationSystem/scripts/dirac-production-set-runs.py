@@ -89,7 +89,7 @@ startRun = bkDict.get('StartRun', 0)
 endRun = bkDict.get('EndRun', 0)
 runNumbers = bkDict.get('RunNumbers', 'All')
 
-if ('StartRun'in settings or 'EndRun' in settings) and runNumbers and runNumbers != 'All':
+if ('StartRun' in settings or 'EndRun' in settings) and runNumbers and runNumbers != 'All':
   gLogger.notice("Transformation %d has RunNumbers key" % prodId)
   settings = {'List': True}
 
@@ -102,7 +102,7 @@ if 'AddRuns' in settings and (not runNumbers or runNumbers == 'All'):
   settings = {'List': True}
 
 changed = False
-if 'StartRun'in settings:
+if 'StartRun' in settings:
   changed = True
   runId = settings['StartRun']
   res = client.setBookkeepingQueryStartRun(prodId, runId)

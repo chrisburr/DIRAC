@@ -1379,9 +1379,9 @@ class TransformationDebug(object):
             for lfns in badLfns.values():
               lfnsFound &= set(lfns)
             if lfnsFound:
-              for lfn, job, reason in [(l, job, badLfns[job][l])
+              for lfn, job, reason in [(x, job, badLfns[job][x])
                                        for job, lfns in badLfns.items()
-                                       for l in set(lfns) & lfnsFound]:  # can be an iterator
+                                       for x in set(lfns) & lfnsFound]:  # can be an iterator
                 if job in exitedJobs:
                   exitStatus = exitedJobs[job].split('status ')
                   if len(exitStatus) == 2:

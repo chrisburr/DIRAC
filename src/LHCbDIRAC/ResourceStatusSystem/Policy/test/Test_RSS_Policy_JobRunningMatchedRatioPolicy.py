@@ -39,7 +39,6 @@ from __future__ import print_function
 #    del self.testClass
 
 
-
 # class JobRunningMatchedRatioPolicy_Success( JobRunningMatchedRatioPolicy_TestCase ):
 
 #  def test_instantiate( self ):
@@ -98,4 +97,3 @@ from __future__ import print_function
 #    self.assertTrue(res['OK'])
 #    self.assertEqual( 'Active', res[ 'Value' ][ 'Status' ] )
 #    self.assertEqual( 'Job Running / Matched ratio of 1.00', res[ 'Value' ][ 'Reason' ] )
-

@@ -176,9 +176,10 @@ class NagiosTopologyAgent(AgentModule):
 
           # Building the storage_endpoints section
           seDetails = dict()
-          ep = os.path.join(diracSEoption['Protocol'] + '://' + diracSEoption['Host'].strip('/')
-                            + ':' + diracSEoption['Port'],
-                            diracSEoption['Path'].strip('/'))
+          ep = os.path.join(
+              diracSEoption['Protocol'] + '://' + diracSEoption['Host'].strip('/') + ':' + diracSEoption['Port'],
+              diracSEoption['Path'].strip('/'),
+          )
           seDetails['endpoint_url'] = ep
           seDetails['interface_type'] = diracSEoption['Protocol']
           seDetails['monitored'] = 'yes' if wlcgName else 'no'

@@ -162,7 +162,7 @@ class ModulesUtilitiesSuccess(ModulesUtilitiesTestCase):
           <value></value>
         </Parameter>
       </Workflow>
-    '''
+    '''  # noqa
     productionXML = '''
       <Workflow>
         <origin></origin>
@@ -175,7 +175,7 @@ class ModulesUtilitiesSuccess(ModulesUtilitiesTestCase):
           <value><![CDATA[MCSimulation]]></value>
         </Parameter>
       </Workflow>
-    '''
+    '''  # noqa
 
     parameterName = 'JobType'
 

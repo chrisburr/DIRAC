@@ -23,7 +23,7 @@ import datetime
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB, addBasicData
+from .Utilities import wipeOutDB, addBasicData
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

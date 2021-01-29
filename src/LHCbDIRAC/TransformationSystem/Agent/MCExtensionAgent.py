@@ -185,9 +185,11 @@ class MCExtensionAgent(DIRACMCExtensionAgent):
       # -> there is probably no stripping production, no extension factor necessary
       return self._extendProduction(simulation, 1.0, missingEvents)
     else:
-      # the number of events produced by the simulation is more than the number of events requested, yet events are missing
-      # -> there is probably a stripping production, an extension factor is needed to account for stripped events
-      # some events may still be processed (eg. merged), so wait that all the productions are idle
+      # the number of events produced by the simulation is more than the number
+      # of events requested, yet events are missing -> there is probably a
+      # stripping production, an extension factor is needed to account for
+      # stripped events some events may still be processed (eg. merged), so
+      # wait that all the productions are idle
       if all(production['Status'].lower() == 'idle' for production in productions):
         try:
           extensionFactor = float(simulationProgress['BkEvents']) / float(productionRequestSummary['bkTotal'])

@@ -180,8 +180,10 @@ if __name__ == '__main__':
       gLogger.notice('First %d files:' % nMax if not verbose and len(lfns) > nMax else 'All files:',
                      '\n'.join([''] + lfns[0:nMax]))
       gLogger.notice(
-          "To fix it:   grep InFCNotInBK %s | dirac-dms-check-fc2bkk\n\tBeware you can then either fix the BK or the FC/SE" %
-          fileName)
+          "To fix it:   grep InFCNotInBK %s | dirac-dms-check-fc2bkk\n"
+          "\tBeware you can then either fix the BK or the FC/SE" %
+          fileName
+      )
 
     if cc.inFailover:
       lfns = cc.inFailover
@@ -191,7 +193,10 @@ if __name__ == '__main__':
       fp.write('\nInFailover '.join([''] + lfns))
       gLogger.notice('First %d files:' % nMax if not verbose and len(lfns) > nMax else 'All files:',
                      '\n'.join([''] + lfns[0:nMax]))
-      gLogger.notice("You should check whether they are in a failover request by looking at their job status and in the RMS...")
+      gLogger.notice(
+          "You should check whether they are in a failover request by looking "
+          "at their job status and in the RMS..."
+      )
       gLogger.notice("To list them:     grep InFailover %s" % fileName)
 
     if cc.inBKNotInFC:

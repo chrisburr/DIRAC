@@ -1499,16 +1499,16 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(prod.gaudiSteps, ['DaVinci_1', 'LHCb_2'])
 
   # def test__getStepsInProdDAG( self ):
-  
+
   #   pr = ProductionRequest( self.bkClientFake, self.diracProdIn )
   #   # stepsListDict = {}
   #   # for prodDict in prodsDict.values():
   #   #   stepsInProdDAG = pr._getStepsInProdDAG(prodDict, stepsListDict)
   #   #   self.assertEqual(stepsInProdDAG.graph, {})
-  
+
   #   stepsListDict = [step1Dict, mergeStepBHADRON]
   #   stepsInProdDAG = pr._getStepsInProdDAG(prodsDict[1], stepsListDict)
-  
+
   #   self.assertEqual(
   #       stepsInProdDAG.graph,
   #       {frozenset([('DDDB', ''),
