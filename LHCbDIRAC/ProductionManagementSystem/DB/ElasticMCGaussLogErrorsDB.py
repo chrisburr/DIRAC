@@ -59,7 +59,7 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
 
     self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
     # Verifying if the index is there, and if not create it
-    if not self.exists(self.indexName):
+    if not self.client.indices.exists(self.indexName):
       result = self.createIndex(self.indexName, mapping, period=None)
       if not result['OK']:
         self.log.error(result['Message'])

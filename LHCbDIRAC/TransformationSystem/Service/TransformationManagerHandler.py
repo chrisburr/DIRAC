@@ -31,12 +31,6 @@ def initializeTransformationManagerHandler(serviceInfo):
 
 
 class TransformationManagerHandler(TManagerBase):
-
-  def __init__(self, *args, **kargs):
-    """c'tor."""
-    self.setDatabase(database)
-    TManagerBase.__init__(self, *args, **kargs)
-
   types_deleteTransformation = [six.integer_types]
 
   def export_deleteTransformation(self, transID):
