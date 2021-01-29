@@ -385,16 +385,20 @@ class ProcessingProgress(object):
             break
         if not openProd:
           continue
-      recoRunList += [run for run in fullRunList if run not in recoRunList and run
-                      >= recoRunRanges[prod][0] and run <= recoRunRanges[prod][1]]
+      recoRunList += [
+          run for run in fullRunList
+          if run not in recoRunList and run >= recoRunRanges[prod][0] and run <= recoRunRanges[prod][1]
+      ]
     gLogger.verbose("List of runs matching Reco (%d): %s" % (len(recoRunList), str(sorted(recoRunList))))
 
     restrictToStripping = True
     if restrictToStripping and not openProd and stripList:
       runList = []
       for prod in stripList:
-        runList += [run for run in recoRunList if run not in runList and run
-                    >= stripRunRanges[prod][0] and run <= stripRunRanges[prod][1]]
+        runList += [
+            run for run in recoRunList
+            if run not in runList and run >= stripRunRanges[prod][0] and run <= stripRunRanges[prod][1]
+        ]
     else:
       runList = recoRunList
     gLogger.verbose("Final list of runs matching Reco and Stripping (%d): %s" % (len(runList), str(sorted(runList))))
@@ -551,10 +555,13 @@ class ProcessingProgress(object):
     now = datetime.datetime.utcnow()
     # Set to True to renew the cache
     clearCache = 'RAW' in self.clearCache
-    newRuns = [run for run in runList if clearCache
-               or run not in self.cachedInfo
-               or 'DQFlag' not in self.cachedInfo[run]
-               or (now - self.cachedInfo[run]['Time']) < datetime.timedelta(days=2)]
+    newRuns = [
+        run for run in runList if
+        clearCache or
+        run not in self.cachedInfo or
+        'DQFlag' not in self.cachedInfo[run] or
+        (now - self.cachedInfo[run]['Time']) < datetime.timedelta(days=2)
+    ]
     if newRuns:
       runFlags = self.__getRunsDQFlag(newRuns, evtType)
     else:

@@ -74,8 +74,7 @@ from __future__ import print_function
 #     self.assertFalse( self.psa._updateProductionStatus.called )
 #     self.psa._updateProductionStatus.reset_mock()
 
-    ###########################################################################
-    # simulations and other type, idle and non idle
+#     simulations and other type, idle and non idle
 
 #     updatedProductions = []
 #     prods = [1L, 2L, 3L]

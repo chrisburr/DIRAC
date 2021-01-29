@@ -98,13 +98,13 @@ EOT"""
       message += "summaryData: %s\n" % details
       # all other fields are not used in SAM-Nagios
       # they are left here for compatibility / legacy
-      #message += "gatheredAt: %s\n" % msginfos['ce']
-      #message += "metricName: org.lhcb.WN-%s-lhcb\n" % msginfos[ 'JobName' ]
-      #message += "serviceFlavour: %s\n" % msginfos['serviceFlavour']
-      #message += "role: site\n"
-      #message += "voName: lhcb\n"
-      #message += "serviceType: org.lhcb.WN\n"
-      #message += "detailsData: %s\n" % msginfos[ 'testDetails' ]
+      # message += "gatheredAt: %s\n" % msginfos['ce']
+      # message += "metricName: org.lhcb.WN-%s-lhcb\n" % msginfos[ 'JobName' ]
+      # message += "serviceFlavour: %s\n" % msginfos['serviceFlavour']
+      # message += "role: site\n"
+      # message += "voName: lhcb\n"
+      # message += "serviceType: org.lhcb.WN\n"
+      # message += "detailsData: %s\n" % msginfos[ 'testDetails' ]
       message += "EOT\n"
       self.message = message
 

@@ -128,15 +128,15 @@ if __name__ == "__main__":
     jdl = res['Value'].splitlines()
     ind = 0
     found = 0
-    for l in jdl:
-      if 'InputData =' in l:
+    for line in jdl:
+      if 'InputData =' in line:
         found = ind
       if ind == found + 1:
-        if '{' in l:
+        if '{' in line:
           found = ind + 1
         else:
           end = ind
-      if found and '}' in l:
+      if found and '}' in line:
         end = ind
         break
       ind += 1
@@ -203,7 +203,7 @@ if __name__ == "__main__":
       missingReplicas = []
       accessibleReplicas = []
       seUsed = []
-      for lfn in [l for l in inputData if l in replicas]:
+      for lfn in [x for x in inputData if x in replicas]:
         for se in [se for se in replicas[lfn] if se in seList]:
           # Found a replica at the site
           if se not in seUsed:

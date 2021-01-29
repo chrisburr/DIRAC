@@ -490,10 +490,10 @@ class JobStepPlotter(BaseReporter):
     if not retVal['OK']:
       return retVal
     dataDict = retVal['Value']
-    #bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
-    #numBins = len(bins)
+    # bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
+    # numBins = len(bins)
     # for key in dataDict:
-    #  dataDict[ key ] = float(dataDict[ key ] / numBins)
+    #   dataDict[ key ] = float(dataDict[ key ] / numBins)
     return S_OK({'data': dataDict})
 
   def __plotPie(self, reportRequest, plotInfo, filename, title, label):
@@ -669,8 +669,8 @@ class JobStepPlotter(BaseReporter):
       return retVal
 
     dataDict = retVal['Value']
-    #bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
-    #numBins = len(bins)
+    # bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
+    # numBins = len(bins)
     # for key in dataDict:
     #  dataDict[ key ] = float(dataDict[ key ] / numBins)
     return S_OK({'data': dataDict})

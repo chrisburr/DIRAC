@@ -293,7 +293,6 @@ class XMLSummary(object):
 
     return files, failedURLs
 
-
 ################################################################################
 
   def __getInputFileStats(self):

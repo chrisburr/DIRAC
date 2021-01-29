@@ -14,19 +14,19 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 # Defined states:
-#'New'
-#'BK OK'
-#'Rejected'
-#'BK Check'
-#'Submitted'
-#'PPG OK'
-#'On-hold'
-#'Tech OK'
-#'Accepted'
-#'Active'
-#'Completed'
-#'Done'
-#'Cancelled'
+# 'New'
+# 'BK OK'
+# 'Rejected'
+# 'BK Check'
+# 'Submitted'
+# 'PPG OK'
+# 'On-hold'
+# 'Tech OK'
+# 'Accepted'
+# 'Active'
+# 'Completed'
+# 'Done'
+# 'Cancelled'
 
 import time
 import threading

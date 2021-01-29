@@ -18,7 +18,7 @@ __author__ = 'Philippe Lagadec'
 
 __RCSID__ = "$Id$"
 
-#--- LICENSE ------------------------------------------------------------------
+# -- LICENSE ------------------------------------------------------------------
 
 # Copyright Philippe Lagadec - see http://www.decalage.info/contact for contact info
 #
@@ -54,7 +54,7 @@ __RCSID__ = "$Id$"
 # knowledge of the CeCILL license and that you accept its terms.
 
 
-#--- CHANGES ------------------------------------------------------------------
+# -- CHANGES ------------------------------------------------------------------
 
 # 2008-10-06 v0.01 PL: - First version
 # 2008-10-13 v0.02 PL: - added cellspacing and cellpadding to table
@@ -69,7 +69,7 @@ TABLE_STYLE_THINBORDER = "border: 1px solid #000000; border-collapse: collapse;"
 # TABLE_STYLE_THINBORDER = "border: 1px solid #000000;"
 
 
-#=== CLASSES ===================================================================
+# == CLASSES ===================================================================
 
 class TableCell (object):
   """a TableCell object is used to create a cell in a HTML table. (TD or TH)
@@ -135,7 +135,7 @@ class TableCell (object):
     else:
       return '  <TD%s>%s</TD>\n' % (attribs_str, text)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class TableRow (object):
@@ -195,7 +195,7 @@ class TableRow (object):
     result += ' </TR>\n'
     return result
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class Table (object):
@@ -272,24 +272,24 @@ class Table (object):
 # n_cols = max(len(self.col_styles), len(self.col_width),
 # len(self.col_align), len(self.col_valign))
 # for i in range(n_cols):
-##            col = ''
+#             col = ''
 # try:
 # if self.col_styles[i]:
-##                    col += ' style="%s"' % self.col_styles[i]
+#                     col += ' style="%s"' % self.col_styles[i]
 # except: pass
 # try:
 # if self.col_width[i]:
-##                    col += ' width="%s"' % self.col_width[i]
+#                     col += ' width="%s"' % self.col_width[i]
 # except: pass
 # try:
 # if self.col_align[i]:
-##                    col += ' align="%s"' % self.col_align[i]
+#                     col += ' align="%s"' % self.col_align[i]
 # except: pass
 # try:
 # if self.col_valign[i]:
-##                    col += ' valign="%s"' % self.col_valign[i]
+#                     col += ' valign="%s"' % self.col_valign[i]
 # except: pass
-##            result += '<COL%s>\n' % col
+#             result += '<COL%s>\n' % col
     # First insert a header row if specified:
     if self.header_row:
       if not isinstance(self.header_row, TableRow):
@@ -317,7 +317,7 @@ class Table (object):
     return result
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class List (object):
   """a List object is used to create an ordered or unordered list in HTML.
@@ -365,34 +365,34 @@ class List (object):
 # class Link (object):
 # """
 # a Link object is used to create link in HTML. (<a> tag)
-##
+#
 # Attributes:
 # - text: str, text of the link
 # - url: str, URL of the link
 # - attribs: dict, additional attributes for the A tag
-##
+#
 # Reference: http://www.w3.org/TR/html4
 # """
-##
+#
 # def __init__(self, text, url=None, attribs=None):
-##        """Link constructor"""
-##        self.text = text
-##        self.url = url
+#         """Link constructor"""
+#         self.text = text
+#         self.url = url
 # if attribs:
-##            self.attribs = attribs
+#             self.attribs = attribs
 # else:
-##            self.attribs = {}
-##
+#             self.attribs = {}
+#
 # def __str__(self):
-##        """return the HTML code for the link as a string"""
-##        attribs_str = ""
-##        if self.url:  self.attribs['href'] = self.url
+#         """return the HTML code for the link as a string"""
+#         attribs_str = ""
+#         if self.url:  self.attribs['href'] = self.url
 # for attr in self.attribs:
-##            attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
+#             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
 # return '<a%s>%s</a>' % (attribs_str, text)
 
 
-#=== FUNCTIONS ================================================================
+# == FUNCTIONS ================================================================
 
 # much simpler definition of a link as a function:
 def Link(text, url):
@@ -421,7 +421,7 @@ def list(*args, **kwargs):
   return str(List(*args, **kwargs))
 
 
-#=== MAIN =====================================================================
+# == MAIN =====================================================================
 
 # Show sample usage when this file is launched as a script.
 

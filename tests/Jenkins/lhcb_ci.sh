@@ -52,6 +52,7 @@ findRelease(){
     # get the releases.cfg file
     cp "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
   else
+    # TODO: This needs to be changed...
     (cd "${TESTCODE}/LHCbDIRAC"
      git remote add "ci-upstream" "https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git" || true
      git remote -v

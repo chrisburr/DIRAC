@@ -410,9 +410,9 @@ class DMScript(object):
     vo = self.__voName()
     if vo:
       vo = '/%s' % vo
-      lfnList = [l.split('LFN:')[-1].strip() for l in lfnList]
+      lfnList = [x.split('LFN:')[-1].strip() for x in lfnList]
       for sep in ('"', ',', "'", ':', '(', ')', ';', '|'):
-        lfnList = [l.replace(sep, ' ') for l in lfnList]
+        lfnList = [x.replace(sep, ' ') for x in lfnList]
       lfnList = [vo + lfn.split(vo)[-1].split()[0]
                  if vo in lfn
                  else lfn if lfn == vo else ''

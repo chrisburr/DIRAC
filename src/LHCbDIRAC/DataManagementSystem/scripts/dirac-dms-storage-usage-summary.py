@@ -431,9 +431,12 @@ def execute(unit, minimum, depth):
           if summary:
             usersUsage[user] = (spaceUsed, quota)
           else:
-            print("Storage usage for user %s (quota: %.1f %s)%s" %
-                (user, quota, unit, ' <== User no longer registered' if not quota else (
-                  ' <== Over quota' if spaceUsed > quota else '')))
+            print("Storage usage for user %s (quota: %.1f %s)%s" % (
+                user,
+                quota,
+                unit,
+                ' <== User no longer registered' if not quota else (' <== Over quota' if spaceUsed > quota else '')
+            ))
             printSEUsage(totalUsage, grandTotal, scaleFactor)
         else:
           totalUsage, grandTotal = getStorageSummary(totalUsage, grandTotal, dirName, fileType, prodID, ses)
@@ -486,7 +489,6 @@ def execute(unit, minimum, depth):
   DIRAC.exit(0)
 
 
-#=====================================================================================
 if __name__ == "__main__":
 
   dmScript = DMScript()

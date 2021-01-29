@@ -1481,7 +1481,7 @@ class OracleBookkeepingDB(object):
       if isinstance(lfn, six.string_types):
         condition += " and f.filename='%s' " % (lfn)
       elif isinstance(lfn, list):
-        condition += ' and (' + ' or '.join(["f.filename='%s'" % l for l in lfn]) + ')'
+        condition += ' and (' + ' or '.join(["f.filename='%s'" % x for x in lfn]) + ')'
       else:
         result = S_ERROR("You must provide an LFN or a list of LFNs!")
     elif diracJobids != default:

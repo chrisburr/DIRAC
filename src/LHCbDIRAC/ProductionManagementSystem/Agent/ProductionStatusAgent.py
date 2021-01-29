@@ -477,7 +477,8 @@ class ProductionStatusAgent(AgentModule):
     #     'type', 'master', 'bkTotal', 'prTotal',  - from _getActiveProductionRequests()
     #     'isDone', 'prods': [ <prodIf> : { 'Used', 'Events' } ] - from __getProductionRequestsProgress
     #     'state' for each production - from _getTransformationsState()
-    #     'isIdle', 'isProcIdle' for each 'Active' or 'Idle' production, 'isSimulation' - from _getIdleProductionRequestProductions()
+    #     'isIdle', 'isProcIdle' for each 'Active' or 'Idle' production,
+    #     'isSimulation' - from _getIdleProductionRequestProductions()
     #     'isFinished' - from _applyProductionRequestsLogic()
     # }
     self.prProds = {}  # <prID>, map production to known request, from _getProductionRequestsProgress

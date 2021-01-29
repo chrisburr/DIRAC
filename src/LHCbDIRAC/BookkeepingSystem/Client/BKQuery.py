@@ -285,7 +285,7 @@ class BKQuery():
       except BadRunRange:
         return self.__bkQueryDict
 
-    ###### Query given as a list of production ######
+    # Query given as a list of production
     if prods and str(prods[0]).upper() != 'ALL':
       try:
         bkQuery.setdefault('Production', []).extend([int(prod) for prod in prods])

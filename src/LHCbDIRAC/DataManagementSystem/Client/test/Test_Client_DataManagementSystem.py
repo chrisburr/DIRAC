@@ -124,8 +124,8 @@ class ConsistencyChecksSuccess(UtilitiesTestCase):
     filesWithDescendants, filesWithoutDescendants, filesWitMultipleDescendants, \
         descendants, inFCNotInBK, inBKNotInFC, removedFiles, inFailover = res
     self.assertEqual(
-      {k: set(v) for k, v in filesWithDescendants.items()},
-      {'aa.raw': {'bb.log', 'bb.raw'}},
+        {k: set(v) for k, v in filesWithDescendants.items()},
+        {'aa.raw': {'bb.log', 'bb.raw'}},
     )
     self.assertEqual(filesWithoutDescendants, {})
     self.assertEqual(filesWitMultipleDescendants, {})

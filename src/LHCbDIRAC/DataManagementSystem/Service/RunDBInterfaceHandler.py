@@ -44,8 +44,8 @@ fileStateRev = {}
 
 def initializeRunDBInterfaceHandler(serviceInfo):
   global server
-  #sys.path.insert(0, '/home/rainer/projects/RunDatabase/python')
-  #sys.path.append( '/group/online/rundb/RunDatabase/python' )
+  # sys.path.insert(0, '/home/rainer/projects/RunDatabase/python')
+  # sys.path.append( '/group/online/rundb/RunDatabase/python' )
   sys.path.append('/admin/RunDatabase/python')
   from path import SQL_ALCHEMY_PATH  # pylint: disable=import-error,no-name-in-module
   sys.path.append(SQL_ALCHEMY_PATH)
@@ -214,10 +214,12 @@ class RunDBInterfaceHandler(RequestHandler):
       if sortList[0][1] == 'DESC':
         decending = True
     paramString = "%s,no=%s" % (paramString, sys.maxsize)
+    jobsQueryString = "success,result = "
+    jobsQueryString += "server.getRunsDirac("
+    jobsQueryString += "fields=allRunFields,runExtraParams=['magnetCurrent','magnetState']"
     if paramString:
-      jobsQueryString = "success,result = server.getRunsDirac(fields=allRunFields,runExtraParams=['magnetCurrent','magnetState']%s)" % paramString
-    else:
-      jobsQueryString = "success,result = server.getRunsDirac(fields=allRunFields,runExtraParams=['magnetCurrent','magnetState'])"
+      jobsQueryString += "%s" % paramString
+    jobsQueryString += ")"
     print(jobsQueryString)
     exec(jobsQueryString)
     if not success:  # using exec statement above -> pylint: disable=E0601
@@ -254,7 +256,22 @@ class RunDBInterfaceHandler(RequestHandler):
     # prepare the standard structure now
     runCounters = {}
     for runTuple in runList:
-      runID, fillID, state, runType, partitionName, partitionID, startTime, endTime, destination, startLumi, endLumi, beamEnergy, magnetCurrent, magnetState = runTuple
+      (
+          runID,
+          fillID,
+          state,
+          runType,
+          partitionName,
+          partitionID,
+          startTime,
+          endTime,
+          destination,
+          startLumi,
+          endLumi,
+          beamEnergy,
+          magnetCurrent,
+          magnetState,
+      ) = runTuple
       runCounters[runID] = {'Size': 0, 'Events': 0, 'Files': 0}
 
     # Now sum the number of events and files in the run
@@ -286,7 +303,22 @@ class RunDBInterfaceHandler(RequestHandler):
 
     records = []
     for runTuple in runList:
-      runID, fillID, state, runType, partitionName, partitionID, startTime, endTime, destination, startLumi, endLumi, beamEnergy, magnetCurrent, magnetState = runTuple
+      (
+          runID,
+          fillID,
+          state,
+          runType,
+          partitionName,
+          partitionID,
+          startTime,
+          endTime,
+          destination,
+          startLumi,
+          endLumi,
+          beamEnergy,
+          magnetCurrent,
+          magnetState
+      ) = runTuple
       startTime = str(startTime)
       endTime = str(endTime)
       if state in runStates:

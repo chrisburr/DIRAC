@@ -1499,72 +1499,78 @@ class ProductionRequestSuccess(ClientTestCase):
     self.assertEqual(prod.gaudiSteps, ['DaVinci_1', 'LHCb_2'])
 
   # def test__getStepsInProdDAG( self ):
-  #
+  
   #   pr = ProductionRequest( self.bkClientFake, self.diracProdIn )
   #   # stepsListDict = {}
   #   # for prodDict in prodsDict.values():
   #   #   stepsInProdDAG = pr._getStepsInProdDAG(prodDict, stepsListDict)
   #   #   self.assertEqual(stepsInProdDAG.graph, {})
-  #
+  
   #   stepsListDict = [step1Dict, mergeStepBHADRON]
   #   stepsInProdDAG = pr._getStepsInProdDAG(prodsDict[1], stepsListDict)
-  #
-  #   self.assertEqual( stepsInProdDAG.graph,
-  #                     {frozenset([('DDDB', ''),
-  #                                 ('ExtraPackages', 'eps'),
-  #                                 ('OptionsFormat', ''),
-  #                                 ('visibilityFlag', frozenset([{'Visible':'N', 'FileType': 'BHADRON.DST'},{'Visible':'N', 'FileType': 'CALIBRATION.DST'}])),
-  #                                 ('fileTypesOut', frozenset(['CALIBRATION.DST', 'BHADRON.DST'])),
-  #                                 ('DQTag', ''),
-  #                                 ('CONDDB', '123456'),
-  #                                 ('mcTCK', ''),
-  #                                 ('ApplicationName', 'DaVinci'),
-  #                                 ('ApplicationVersion', 'v2r2'),
-  #                                 ('Visible', 'Yes'),
-  #                                 ('ProcessingPass', 'procPass'),
-  #                                 ('fileTypesIn', frozenset(['SDST'])),
-  #                                 ('isMulticore', 'N'),
-  #                                 ('SystemConfig', ''),
-  #                                 ('prodStepID', "123['SDST']"),
-  #                                 ('StepName', 'Stripping14-Stripping'),
-  #                                 ('StepId', 123),
-  #                                 ('OptionFiles', 'optsFiles'),
-  #                                 ('ExtraOptions', '')]): set([frozenset([('DDDB', 'head-20110302'),
-  #                                                                         ('ExtraPackages', 'AppConfig.v3r104'),
-  #                                                                         ('fileTypesOut', frozenset(['BHADRON.DST'])),
-  #                                                                         ('CONDDB', 'head-20110407'),
-  #                                                                         ('mcTCK', ''),
-  #                                                                         ('visibilityFlag', frozenset([''])),
-  #                                                                         ('ApplicationName', 'DaVinci'),
-  #                                                                         ('ApplicationVersion', 'v28r3p1'),
-  #                                                                         ('ProcessingPass', 'Merging'),
-  #                                                                         ('fileTypesIn', frozenset(['BHADRON.DST'])),
-  #                                                                         ('prodStepID', "456['BHADRON.DST']"),
-  #                                                                         ('StepName', 'Stripping14-Merging'),
-  #                                                                         ('StepId', 456),
-  #                                                                         ('SystemConfig', ''),
-  #                                                                         ('Usable', 'Yes'),
-  #                                                                         ('Visible', 'N'),
-  #                                                                         ('OptionFiles', '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py')])]),
-  #                      frozenset([('DDDB', 'head-20110302'),
-  #                                 ('ExtraPackages', 'AppConfig.v3r104'),
-  #                                 ('fileTypesOut', frozenset(['BHADRON.DST'])),
-  #                                 ('CONDDB', 'head-20110407'),
-  #                                 ('mcTCK', ''),
-  #                                 ('visibilityFlag', frozenset([''])),
-  #                                 ('ApplicationName', 'DaVinci'),
-  #                                 ('ApplicationVersion', 'v28r3p1'),
-  #                                 ('ProcessingPass', 'Merging'),
-  #                                 ('fileTypesIn', frozenset(['BHADRON.DST'])),
-  #                                 ('prodStepID', "456['BHADRON.DST']"),
-  #                                 ('StepName', 'Stripping14-Merging'),
-  #                                 ('StepId', 456),
-  #                                 ('SystemConfig', ''),
-  #                                 ('Usable', 'Yes'),
-  #                                 ('Visible', 'N'),
-  #                                 ('OptionFiles', '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py')]): set([]),
-  #                     }
-  #                   )
+  
+  #   self.assertEqual(
+  #       stepsInProdDAG.graph,
+  #       {frozenset([('DDDB', ''),
+  #                   ('ExtraPackages', 'eps'),
+  #                   ('OptionsFormat', ''),
+  #                   ('visibilityFlag', frozenset([
+  #                       {'Visible':'N', 'FileType': 'BHADRON.DST'},
+  #                       {'Visible':'N', 'FileType': 'CALIBRATION.DST'},
+  #                   ])),
+  #                   ('fileTypesOut', frozenset(['CALIBRATION.DST', 'BHADRON.DST'])),
+  #                   ('DQTag', ''),
+  #                   ('CONDDB', '123456'),
+  #                   ('mcTCK', ''),
+  #                   ('ApplicationName', 'DaVinci'),
+  #                   ('ApplicationVersion', 'v2r2'),
+  #                   ('Visible', 'Yes'),
+  #                   ('ProcessingPass', 'procPass'),
+  #                   ('fileTypesIn', frozenset(['SDST'])),
+  #                   ('isMulticore', 'N'),
+  #                   ('SystemConfig', ''),
+  #                   ('prodStepID', "123['SDST']"),
+  #                   ('StepName', 'Stripping14-Stripping'),
+  #                   ('StepId', 123),
+  #                   ('OptionFiles', 'optsFiles'),
+  #                   ('ExtraOptions', '')]): set([frozenset([
+  #                       ('DDDB', 'head-20110302'),
+  #                       ('ExtraPackages', 'AppConfig.v3r104'),
+  #                       ('fileTypesOut', frozenset(['BHADRON.DST'])),
+  #                       ('CONDDB', 'head-20110407'),
+  #                       ('mcTCK', ''),
+  #                       ('visibilityFlag', frozenset([''])),
+  #                       ('ApplicationName', 'DaVinci'),
+  #                       ('ApplicationVersion', 'v28r3p1'),
+  #                       ('ProcessingPass', 'Merging'),
+  #                       ('fileTypesIn', frozenset(['BHADRON.DST'])),
+  #                       ('prodStepID', "456['BHADRON.DST']"),
+  #                       ('StepName', 'Stripping14-Merging'),
+  #                       ('StepId', 456),
+  #                       ('SystemConfig', ''),
+  #                       ('Usable', 'Yes'),
+  #                       ('Visible', 'N'),
+  #                       ('OptionFiles', '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py')
+  #                   ])]),
+  #         frozenset([('DDDB', 'head-20110302'),
+  #                   ('ExtraPackages', 'AppConfig.v3r104'),
+  #                   ('fileTypesOut', frozenset(['BHADRON.DST'])),
+  #                   ('CONDDB', 'head-20110407'),
+  #                   ('mcTCK', ''),
+  #                   ('visibilityFlag', frozenset([''])),
+  #                   ('ApplicationName', 'DaVinci'),
+  #                   ('ApplicationVersion', 'v28r3p1'),
+  #                   ('ProcessingPass', 'Merging'),
+  #                   ('fileTypesIn', frozenset(['BHADRON.DST'])),
+  #                   ('prodStepID', "456['BHADRON.DST']"),
+  #                   ('StepName', 'Stripping14-Merging'),
+  #                   ('StepId', 456),
+  #                   ('SystemConfig', ''),
+  #                   ('Usable', 'Yes'),
+  #                   ('Visible', 'N'),
+  #                   ('OptionFiles', '$APPCONFIGOPTS/Merging/DV-Stripping14-Merging.py')]): set([]),
+  #       }
+  #     )
 
   def test__getBKKQuery(self):
 
@@ -1799,9 +1805,9 @@ class ProductionRequestFullChain(ClientTestCase):
 
     self.assertEqual(res, {'OK': True, 'Value': [321, 321, 321]})
 
-#############################################################################
+# ###########################################################################
 # Test Suite run
-#############################################################################
+# ###########################################################################
 
 
 if __name__ == '__main__':

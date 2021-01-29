@@ -131,10 +131,7 @@ class ModulesTestCase(unittest.TestCase):
         continue
 
 
-#############################################################################
 # FailoverRequest.py
-#############################################################################
-
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class FailoverRequestSuccess(ModulesTestCase):
 
@@ -156,10 +153,7 @@ class FailoverRequestSuccess(ModulesTestCase):
                                    step_number, step_id)['OK'])
 
 
-##############################################################################
-# # RemoveInputData.py
-##############################################################################
-
+# RemoveInputData.py
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class RemoveInputDataSuccess(ModulesTestCase):
 
@@ -188,11 +182,8 @@ class RemoveInputDataSuccess(ModulesTestCase):
                                     wf_cs, s_cs,
                                     step_number, step_id)['OK'])
 
-#############################################################################
+
 # StepAccounting.py
-#############################################################################
-
-
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class StepAccountingSuccess(ModulesTestCase):
 
@@ -213,15 +204,10 @@ class StepAccountingSuccess(ModulesTestCase):
                                    step_number, step_id,
                                    self.jobStep_mock, self.xf_o_mock)['OK'])
 
-#############################################################################
+
 # UploadLogFile.py
-#############################################################################
-
-
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class UploadLogFileSuccess(ModulesTestCase):
-
-  #################################################
 
   @patch("LHCbDIRAC.Workflow.Modules.UploadLogFile.getDestinationSEList", side_effect=getDestinationSEListMockCNAF)
   def test_execute(self, _patch, _patch1):
@@ -250,7 +236,7 @@ class UploadLogFileSuccess(ModulesTestCase):
                                     workflowStatus, stepStatus,
                                     wf_cs, s_cs,
                                     step_number, step_id)['OK'])
-#        self.assertTrue( ulf.finalize( rm_mock, self.ft_mock )['OK'] )
+      # self.assertTrue( ulf.finalize( rm_mock, self.ft_mock )['OK'] )
 
   @patch("LHCbDIRAC.Workflow.Modules.UploadLogFile.getDestinationSEList", side_effect=getDestinationSEListMockCNAF)
   def test__uploadLogToFailoverSE(self, _patch, _patch1):
@@ -286,7 +272,15 @@ class UploadLogFileSuccess(ModulesTestCase):
 
     fd = open('aLongLog.log', 'w')
     for _x in range(2500):
-      fd.writelines("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum")
+      fd.writelines(
+          "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
+          "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim "
+          "ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
+          "aliquip ex ea commodo consequat. Duis aute irure dolor in "
+          "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
+          "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+          "culpa qui officia deserunt mollit anim id est laborum"
+      )
     fd.close()
     res = ulf._determineRelevantFiles()
     self.assertTrue(res['OK'])
@@ -300,7 +294,15 @@ class UploadLogFileSuccess(ModulesTestCase):
     open('foo.txt', 'w').close()
     fd = open('aLongLog.log', 'w')
     for _x in range(2500):
-      fd.writelines("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum")
+      fd.writelines(
+          "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
+          "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim "
+          "ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
+          "aliquip ex ea commodo consequat. Duis aute irure dolor in "
+          "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
+          "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+          "culpa qui officia deserunt mollit anim id est laborum"
+      )
     fd.close()
     open('bar.py', 'w').close()
     res = ulf._determineRelevantFiles()
@@ -313,14 +315,9 @@ class UploadLogFileSuccess(ModulesTestCase):
     self.assertTrue(set(res['Value']) >= set(expected))
 
 
-##############################################################################
-# # UserJobFinalization.py
-##############################################################################
-
+# UserJobFinalization.py
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class UserJobFinalizationSuccess(ModulesTestCase):
-
-  #################################################
 
   def test_execute(self, _patch):
 
@@ -375,11 +372,8 @@ class UserJobFinalizationSuccess(ModulesTestCase):
     res = ujf._getOrderedSEsList()
     self.assertEqual(res, ['CNAF'])
 
-#############################################################################
+
 # FileUsage.py
-#############################################################################
-
-
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class FileUsageSuccess(ModulesTestCase):
 
@@ -432,10 +426,7 @@ class FileUsageSuccess(ModulesTestCase):
                                    step_number, step_id)['OK'])
 
 
-#############################################################################
 # FileUsage.py
-#############################################################################
-
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class CreateDataFileSuccess(ModulesTestCase):
 
@@ -455,11 +446,5 @@ class CreateDataFileSuccess(ModulesTestCase):
                                     step_number, step_id)['OK'])
 
 
-#############################################################################
-# Test Suite run
-#############################################################################
-
 if __name__ == '__main__':
   unittest.main()
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

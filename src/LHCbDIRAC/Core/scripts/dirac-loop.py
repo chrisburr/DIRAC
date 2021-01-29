@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import subprocess
 
+
 def reduceArgs(arguments):
   """If the arguments look like BK paths (start with /LHCb or /MC), try to
   reduce the list of BK paths by merging event types or file types into a

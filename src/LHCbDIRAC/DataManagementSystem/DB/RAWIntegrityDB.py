@@ -121,9 +121,14 @@ class RAWIntegrityDB(DB):
     associated metadata."""
     try:
       gLogger.info(
-          "RAWIntegrityDB.getActiveFiles: Obtaining files awaiting migration from database.")
-      req = "SELECT LFN,PFN,Size,StorageElement,GUID,FileChecksum,TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),SubmitTime)) from Files WHERE Status = 'Active';"
-      res = self._query(req)
+          "RAWIntegrityDB.getActiveFiles: "
+          "Obtaining files awaiting migration from database."
+      )
+      res = self._query(
+          "SELECT "
+          "LFN,PFN,Size,StorageElement,GUID,FileChecksum,TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),SubmitTime)) "
+          "from Files WHERE Status = 'Active';"
+      )
       if not res['OK']:
         gLogger.error("RAWIntegrityDB.getActiveFiles: Failed to get files from database.",
                       res['Message'])
@@ -161,9 +166,12 @@ class RAWIntegrityDB(DB):
 
     try:
       gLogger.info("RAWIntegrityDB.getActiveFiles: Obtaining files in status %s." % status)
-      req = "SELECT LFN,Status,PFN,Size,StorageElement,GUID,FileChecksum,TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),SubmitTime)),SubmitTime from Files WHERE Status in (%s);" % (
-          stringListToString(status))
-      res = self._query(req)
+      res = self._query(
+          "SELECT "
+          "LFN,Status,PFN,Size,StorageElement,GUID,FileChecksum,"
+          "TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),SubmitTime)),SubmitTime "
+          "from Files WHERE Status in (%s);" % (stringListToString(status))
+      )
       if not res['OK']:
         gLogger.error("RAWIntegrityDB.getActiveFiles: Failed to get files from database.",
                       res['Message'])
@@ -378,8 +386,11 @@ class RAWIntegrityDB(DB):
         condition = condition + ' ' + orderType
     if limit:
       condition = condition + ' LIMIT ' + str(limit)
-    cmd = 'SELECT LFN,PFN,Size,StorageElement,GUID,FileChecksum,SubmitTime,CompleteTime,Status from Files %s' % condition
-    res = self._query(cmd)
+    res = self._query(
+        "SELECT "
+        "LFN,PFN,Size,StorageElement,GUID,FileChecksum,SubmitTime,CompleteTime,Status "
+        "from Files %s" % condition
+    )
     if not res['OK']:
       return res
     if not len(res['Value']):

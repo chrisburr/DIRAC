@@ -124,10 +124,6 @@ class ModulesTestCase(unittest.TestCase):
         continue
 
 
-#############################################################################
-# AnalyseXMLSummary.py
-#############################################################################
-
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 class AnalyseXMLSummarySuccess(ModulesTestCase):
 
@@ -149,18 +145,20 @@ class AnalyseXMLSummarySuccess(ModulesTestCase):
     with open(axlf.XMLSummary, 'w') as f:
       f.write("""<?xml version="1.0" encoding="UTF-8"?>
 
-  <summary version="1.0" xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <success>True</success>
-          <step>finalize</step>
-          <usage>
-                  <stat unit="KB" useOf="MemoryMaximum">866104.0</stat>
-          </usage>
-          <input>
-                  <file GUID="CCE96707-4BE9-E011-81CD-003048F35252" name="LFN:00012478_00000532_1.sim" status="full">200</file>
-          </input>
-          <output>
-                  <file GUID="229BBEF1-66E9-E011-BBD0-003048F35252" name="PFN:00012478_00000532_2.xdigi" status="full">200</file>
-          </output>
+  <summary version="1.0"
+           xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <success>True</success>
+    <step>finalize</step>
+    <usage>
+      <stat unit="KB" useOf="MemoryMaximum">866104.0</stat>
+    </usage>
+    <input>
+      <file GUID="CCE96707-4BE9-E011-81CD-003048F35252" name="LFN:00012478_00000532_1.sim" status="full">200</file>
+    </input>
+    <output>
+      <file GUID="229BBEF1-66E9-E011-BBD0-003048F35252" name="PFN:00012478_00000532_2.xdigi" status="full">200</file>
+    </output>
   </summary>
   """)
 
@@ -192,18 +190,20 @@ class AnalyseXMLSummarySuccess(ModulesTestCase):
     f = open('XMLSummaryFile', 'w')
     f.write("""<?xml version="1.0" encoding="UTF-8"?>
 
-<summary version="1.0" xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <success>True</success>
-        <step>finalize</step>
-        <usage>
-                <stat unit="KB" useOf="MemoryMaximum">866104.0</stat>
-        </usage>
-        <input>
-                <file GUID="CCE96707-4BE9-E011-81CD-003048F35252" name="LFN:00012478_00000532_1.sim" status="full">200</file>
-        </input>
-        <output>
-                <file GUID="229BBEF1-66E9-E011-BBD0-003048F35252" name="PFN:00012478_00000532_2.xdigi" status="full">200</file>
-        </output>
+<summary version="1.0"
+         xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <success>True</success>
+  <step>finalize</step>
+  <usage>
+    <stat unit="KB" useOf="MemoryMaximum">866104.0</stat>
+  </usage>
+  <input>
+    <file GUID="CCE96707-4BE9-E011-81CD-003048F35252" name="LFN:00012478_00000532_1.sim" status="full">200</file>
+  </input>
+  <output>
+    <file GUID="229BBEF1-66E9-E011-BBD0-003048F35252"name="PFN:00012478_00000532_2.xdigi" status="full">200</file>
+  </output>
 </summary>
 """)
     f.close()
@@ -261,12 +261,6 @@ class AnalyseXMLSummarySuccess(ModulesTestCase):
     self.assertTrue(res)
     self.assertEqual(axlf.fileReport.statusDict, {'aa/1.txt': 'Problematic'})
 
-#############################################################################
-# Test Suite run
-#############################################################################
-
 
 if __name__ == '__main__':
   unittest.main()
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

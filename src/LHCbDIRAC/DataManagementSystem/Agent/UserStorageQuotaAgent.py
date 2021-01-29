@@ -36,7 +36,8 @@ class UserStorageQuotaAgent(AgentModule):
 
   :param int deafultQuota: default quota in MB
   :param NotificationClient notificationClient: NotificationClient instance
-  :param LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB.StorageUsageDB storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
+  :param LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB.StorageUsageDB
+         storageUsageDB: StorageUsageDB or RPC client pointing to StorageUsageDB
   """
 
   defaultQuota = 1000
@@ -121,7 +122,11 @@ class UserStorageQuotaAgent(AgentModule):
         managerMsg += msg + "\n"
     if managerMsg or errorMsg:
       if managerMsg:
-        managerMsg = "Mails have been sent to the following list of users being close to or above quota:\n\n" + managerMsg
+        managerMsg = (
+            "Mails have been sent to the following list of users " +
+            "being close to or above quota:\n\n" +
+            managerMsg
+        )
       if errorMsg:
         managerMsg += "\nThe following errors have been found by the UserStorageQuotaAgent:\n" + errorMsg
       fromAddress = 'LHCb Data Manager <lhcb-datamanagement@cern.ch>'
@@ -145,7 +150,8 @@ You have received this mail because you are approaching your Grid storage usage 
 
 You are currently using %.1f GB.
 
-Please reduce you usage by removing some files. If you have reduced your usage in the last 24 hours please ignore this message.
+Please reduce you usage by removing some files. If you have reduced your usage in the last 24 hours
+please ignore this message.
 
 Explanations can be found at https://twiki.cern.ch/twiki/bin/view/LHCb/GridStorageQuota
 """ % (int(quota), usage)
@@ -170,7 +176,9 @@ You have received this mail because your Grid storage usage has exceeded your qu
 
 You are currently using %.1f GB.
 
-Please reduce you usage by removing some files. If you have reduced your usage in the last 24 hours please ignore this message.
+Please reduce you usage by removing some files. If you have reduced your usage in the last 24 hours
+please ignore this message.
+
 Explanations can be found at https://twiki.cern.ch/twiki/bin/view/LHCb/GridStorageQuota
 """ % (int(quota), usage)
     fromAddress = 'LHCb Data Manager <lhcb-datamanagement@cern.ch>'
@@ -194,7 +202,8 @@ You have received this mail because your Grid storage usage has exceeded your qu
 
 You are currently using %.1f GB.
 
-Your account could soon been given a lower priority and your jobs will run at a lower pace if you don't create space.
+Your account could soon been given a lower priority and your jobs will run at a lower pace if you
+don't create space.
 If you have reduced your usage in the last 24 hours please ignore this message.
 Explanations can be found at https://twiki.cern.ch/twiki/bin/view/LHCb/GridStorageQuota
 """ % (int(quota), usage)

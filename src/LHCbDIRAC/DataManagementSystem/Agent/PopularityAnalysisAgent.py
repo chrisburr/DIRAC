@@ -222,7 +222,13 @@ class PopularityAnalysisAgent(AgentModule):
                </head>
                <body>
                  <table>
-                   <tr><th>Name</th><th>Size</th><th>Current Replicas</th><th>Recommended number of disk replicas</th><th>Archived</th></tr>
+                   <tr>
+                     <th>Name</th>
+                     <th>Size</th>
+                     <th>Current Replicas</th>
+                     <th>Recommended number of disk replicas</th>
+                     <th>Archived</th>
+                   </tr>
     """
 
     archivedDataset = set()
