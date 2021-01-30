@@ -9,18 +9,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Get the metadata of a (list of) LFNs from the FC."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-dms-lfn-metadata
-# Author :  Philippe Charpentier
-########################################################################
-"""Get the metadata of a (list of) LFNs from the FC."""
-__RCSID__ = "$Id$"
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-if __name__ == "__main__":
+__RCSID__ = "$Id$"
+
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -35,3 +36,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeLfnMetadata
   from DIRAC import exit
   exit(executeLfnMetadata(dmScript))
+
+
+if __name__ == "__main__":
+  main()

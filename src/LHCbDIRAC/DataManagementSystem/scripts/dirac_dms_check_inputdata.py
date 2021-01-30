@@ -17,15 +17,20 @@ __RCSID__ = "$Id$"
 
 import six
 
+from DIRAC import gLogger
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
 
 def inaccessibleReplicas(lfn, se):
+  from DIRAC.DataManagementSystem.Client.DataManager import DataManager
+
   if isinstance(se, six.string_types):
     seList = [se]
   else:
     seList = se
   failed = {}
   for se in seList:
-    res = dm.getReplicaMetadata(lfn, se)
+    res = DataManager().getReplicaMetadata(lfn, se)
     if not res['OK']:
       gLogger.always('Error getting metadata of %s at %s' % (lfn, se), res['Message'])
       continue
@@ -39,8 +44,8 @@ def prettyMsg(msg, msgList):
   gLogger.always('The following file%s %s:\n%s' % (areIs, msg, '\n'.join(msgList)))
 
 
-if __name__ == "__main__":
-
+@DIRACScript()
+def main():
   from DIRAC.Core.Base import Script
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
   dmScript = DMScript()
@@ -51,7 +56,6 @@ if __name__ == "__main__":
 
   Script.parseCommandLine(ignoreErrors=True)
   import DIRAC
-  from DIRAC import gLogger
   from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 
   verbose = False
@@ -237,3 +241,7 @@ if __name__ == "__main__":
       if not pbFound:
         gLogger.always('No particular problem was found with %d input file%s at %s (SEs: %s)' %
                        (len(inputData), 's' if len(inputData) > 1 else '', site, str(seUsed)))
+
+
+if __name__ == "__main__":
+  main()

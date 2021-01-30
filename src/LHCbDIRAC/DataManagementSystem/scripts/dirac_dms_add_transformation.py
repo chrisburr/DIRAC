@@ -9,18 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Create a new dataset replication or removal transformation according to
+plugin."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""Create a new dataset replication or removal transformation according to
-plugin."""
-
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script
 
   pluginScript = PluginScript()
   pluginScript.registerPluginSwitches()
@@ -51,3 +53,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.DataManagementSystem.Client.AddTransformation import executeAddTransformation
   executeAddTransformation(pluginScript)
+
+
+if __name__ == "__main__":
+  main()

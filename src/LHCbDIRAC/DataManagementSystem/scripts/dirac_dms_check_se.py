@@ -17,9 +17,11 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == '__main__':
 
+@DIRACScript()
+def main():
   # Script initialization
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
@@ -51,3 +53,7 @@ if __name__ == '__main__':
 
   from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckSE
   doCheckSE(cc, seList, fixIt)
+
+
+if __name__ == "__main__":
+  main()

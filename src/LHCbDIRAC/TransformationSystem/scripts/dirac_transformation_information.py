@@ -15,11 +15,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
+@DIRACScript()
 def main():
-
+  from DIRAC.Core.Base import Script
   informations = ['AuthorDN', 'AuthorGroup', 'Body', 'CreationDate',
                   'Description', 'EventsPerTask', 'FileMask', 'GroupSize', 'Hot',
                   'InheritedFrom', 'LastUpdate', 'LongDescription', 'MaxNumberOfTasks',

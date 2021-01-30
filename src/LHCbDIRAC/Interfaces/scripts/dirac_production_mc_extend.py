@@ -15,35 +15,42 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-from DIRAC.Core.Base import Script
-Script.parseCommandLine(ignoreErrors=True)
-
 import DIRAC
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-
-args = Script.getPositionalArgs()
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
   """usage Prints script usage."""
-
+  from DIRAC.Core.Base import Script
   print('Usage: %s <Production ID> <Number Of Jobs>' % Script.scriptName)
   DIRAC.exit(2)
 
 
-if len(args) < 2 or len(args) > 2:
-  usage()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  Script.parseCommandLine(ignoreErrors=True)
 
-diracProd = DiracProduction()
-prodID = args[0]
-number = args[1]
+  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-result = diracProd.extendProduction(prodID, number, printOutput=True)
-if result['OK']:
-  DIRAC.exit(0)
-elif 'Message' in result:
-  print('Extending production failed with message:\n%s' % result['Message'])
-  DIRAC.exit(2)
-else:
-  print('Null result for extendProduction() call')
-  DIRAC.exit(2)
+  args = Script.getPositionalArgs()
+  if len(args) < 2 or len(args) > 2:
+    usage()
+
+  diracProd = DiracProduction()
+  prodID = args[0]
+  number = args[1]
+
+  result = diracProd.extendProduction(prodID, number, printOutput=True)
+  if result['OK']:
+    DIRAC.exit(0)
+  elif 'Message' in result:
+    print('Extending production failed with message:\n%s' % result['Message'])
+    DIRAC.exit(2)
+  else:
+    print('Null result for extendProduction() call')
+    DIRAC.exit(2)
+
+
+if __name__ == "__main__":
+  main()

@@ -16,13 +16,17 @@ from __future__ import division
 from __future__ import print_function
 
 import DIRAC
-from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
-from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+  from DIRAC.Core.Utilities.List import breakListIntoChunks
+
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+  from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -105,3 +109,7 @@ if __name__ == "__main__":
         for reason in failed:
           print('Failed for %d files: %s' % (len(failed[reason]), reason))
   DIRAC.exit(0)
+
+
+if __name__ == "__main__":
+  main()

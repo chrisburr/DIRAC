@@ -9,36 +9,41 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""List file types from the Bookkeeping."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-filetypes-list
-# Author :  Zoltan Mathe
-########################################################################
-"""List file types from the Bookkeeping."""
+
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC.Core.Base import Script
-
-Script.setUsageMessage(__doc__ + '\n'.join([
-    'Usage:',
-    '  %s [option|cfgfile]' % Script.scriptName]))
-Script.parseCommandLine(ignoreErrors=True)
-
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-bk = BookkeepingClient()
-exitCode = 0
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
-mfiletypes = []
-res = bk.getAvailableFileTypes()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
 
-if res['OK']:
-  dbresult = res['Value']
-  print('Filetypes:')
-  for record in dbresult['Records']:
-    print(str(record[0]).ljust(30) + str(record[1]))
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      'Usage:',
+      '  %s [option|cfgfile]' % Script.scriptName]))
+  Script.parseCommandLine(ignoreErrors=True)
 
-DIRAC.exit(exitCode)
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+  bk = BookkeepingClient()
+  exitCode = 0
+
+  mfiletypes = []
+  res = bk.getAvailableFileTypes()
+
+  if res['OK']:
+    dbresult = res['Value']
+    print('Filetypes:')
+    for record in dbresult['Records']:
+      print(str(record[0]).ljust(30) + str(record[1]))
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

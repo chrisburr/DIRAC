@@ -35,21 +35,19 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import sys
+__RCSID__ = "$Id$"
 
 from datetime import datetime
+import sys
 
 from DIRAC import exit as DIRACExit
-from DIRAC.Core.Base import Script
-from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
-
-__RCSID__ = "$Id$"
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def doParse():
   """Function that contains all the switches definition and isolates the rest
   of the module from parseCommandLine."""
+  from DIRAC.Core.Base import Script
 
   # Switch description
   Script.registerSwitch('i:', 'requestID=', 'ID of the request')
@@ -123,7 +121,7 @@ def doParse():
 def getRequests(parsedInput, sortKey):
   """Gets the requests from the database using the filters given by the
   user."""
-
+  from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
   reqClient = ProductionRequestClient()
 
   for key, value in parsedInput.items():
@@ -159,7 +157,6 @@ def getRequests(parsedInput, sortKey):
 
 def getTransformations(transClient, requestID, noFiles):
   """Given a requestID, returns all its transformations."""
-
   transformations = transClient.getTransformations({'TransformationFamily': requestID})
   if not transformations['OK']:
     print(transformations['Message'])
@@ -187,6 +184,9 @@ def getTransformations(transClient, requestID, noFiles):
 
 def getFiles(transClient, transformationID):
   """Given a transformationID, returns the status of their files."""
+  from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+
+  ts = TransformationClient()
 
   filesDict = {'Total': 0,
                'Processed': 0,
@@ -196,9 +196,8 @@ def getFiles(transClient, transformationID):
                'Hot': 0,
                }
 
-  files = transClient.getTransformationFilesSummaryWeb({'TransformationID': transformationID}, [], 0, 1000000)
-# This gets the interesting values
-  ts = TransformationClient()
+  files = ts.getTransformationFilesSummaryWeb({'TransformationID': transformationID}, [], 0, 1000000)
+  # This gets the interesting values
   recordsResult = ts.getTransformationSummaryWeb({'TransformationID': transformationID}, [], 0, 1000000)
   if not recordsResult['OK']:
     print('TransID %s: %s' % (transformationID, recordsResult['Message']))
@@ -222,7 +221,7 @@ def getFiles(transClient, transformationID):
     return filesDict
   files = files['Value']
 
-# This shows the interesting values
+  # This shows the interesting values
   filesDict['Total'] = files['TotalRecords']
   filesDict['Running'] = moreValues['Jobs_Running']
   filesDict['Failed'] = moreValues['Jobs_Failed']
@@ -274,13 +273,12 @@ def printResults(request, mergeAction):
   transformations from the summary or group all them together in one
   line if the value is group.
   """
+  # infoTuple = (request['requestID'], request['requestState'], request['requestType'][:4],
+  #             request['proPath'], request['simCondition'], request['eventType'])
+  # infoTuple = (request['requestID'], request['requestState'])
 
-# infoTuple = (request['requestID'], request['requestState'], request['requestType'][:4],
-#              request['proPath'], request['simCondition'], request['eventType'])
-#  infoTuple = (request['requestID'], request['requestState'])
-
-#  print 'Req. No (%d) [%s][%s/%s][%s/%s]' % infoTuple
-#  print '\tTransID\tStatus\t\tType\t\t\t\tCompleted\tTotal Files\t\tRunning\t\tFailed\t\tHot '
+  # print 'Req. No (%d) [%s][%s/%s][%s/%s]' % infoTuple
+  # print '\tTransID\tStatus\t\tType\t\t\t\tCompleted\tTotal Files\t\tRunning\t\tFailed\t\tHot '
 
   groupedMerge = {'Merged': 0,
                   'Total': 0,
@@ -295,7 +293,6 @@ def printResults(request, mergeAction):
                   }
 
   for transformationID, transformation in request['transformations'].items():
-
     filesMsg = ''
 
     filesDict = transformation['transformationFiles']
@@ -420,14 +417,17 @@ def printNow():
   sys.stdout.flush()
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+
   # Main function. Parses command line, get requests, their transformations and
   # prints summary.
 
   # Get input from command line
   _parsedInput, _mergeAction, _noFiles, _sortKey = doParse()
-#  if _mergeAction == 'hot':
-#    _sortkey = filesDict['Path']
+  # if _mergeAction == 'hot':
+  #   _sortkey = filesDict['Path']
 
   # Print summary header
   printSelection(_parsedInput, _mergeAction, _noFiles, _sortKey)
@@ -447,7 +447,6 @@ if __name__ == "__main__":
 
   # Print summary per request
   for _request in _requests:
-
     _requestID = _request['requestID']
 
     _transformations = getTransformations(transformationClient, _requestID, _noFiles)
@@ -458,5 +457,6 @@ if __name__ == "__main__":
   # And that's all folks.
   DIRACExit(0)
 
-################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF
+
+if __name__ == "__main__":
+  main()

@@ -14,14 +14,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
-# imports
 import time
 from DIRAC import gLogger
-# Code
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+fixIt = None
 
 
-def removeFile(lfns):
+def removeFile(lfns, transClient, dm, bkClient):
   """Method for removing a file in the RM as well as in the Transformation
   system."""
   res = bkClient.setFilesInvisible(lfns)
@@ -118,7 +118,7 @@ def removeFile(lfns):
                            sorted(failed)))
 
 
-def analyzeAncestors(commonAncestors, ancestors):
+def analyzeAncestors(commonAncestors, ancestors, transClient, dm, bkClient):
   """Analyse the list of common ancestors and checks whether one can remove
   some files."""
   lfnsToRemove = set()
@@ -144,12 +144,13 @@ def analyzeAncestors(commonAncestors, ancestors):
           if len(lfns) == 1:
             break
   if lfnsToRemove:
-    removeFile(list(lfnsToRemove))
+    removeFile(list(lfnsToRemove), transClient=transClient, dm=dm, bkClient=bkClient)
 
 
-if __name__ == '__main__':
+@DIRACScript()
+def main():
+  global fixIt
 
-  # Script initialization
   from DIRAC.Core.Base import Script
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
@@ -200,4 +201,8 @@ if __name__ == '__main__':
     gLogger.always('No files found with common ancestors ==> OK')
   else:
     gLogger.always('Found %d sets of files with common ancestors ==> ERROR' % len(cc.commonAncestors))
-    analyzeAncestors(cc.commonAncestors, cc.ancestors)
+    analyzeAncestors(cc.commonAncestors, cc.ancestors, transClient=transClient, dm=dm, bkClient=bkClient)
+
+
+if __name__ == "__main__":
+  main()

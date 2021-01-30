@@ -9,20 +9,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Replicate a (list of) existing LFN(s) to Ses defined by the run
+destination."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-dms-replicate-to-run-destination
-# Author  : Philippe Charpentier
-########################################################################
-"""Replicate a (list of) existing LFN(s) to Ses defined by the run
-destination."""
+
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+
   dmScript = DMScript()
   dmScript.registerFileSwitches()
   dmScript.registerSiteSwitches()
@@ -43,3 +44,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeReplicateToRunDestination
   from DIRAC import exit
   exit(executeReplicateToRunDestination(dmScript))
+
+
+if __name__ == "__main__":
+  main()

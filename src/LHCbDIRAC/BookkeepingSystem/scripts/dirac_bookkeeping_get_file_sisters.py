@@ -9,20 +9,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Report sisters or cousins (i.e. descendant of a parent or ancestor) for a (list of) LFN(s)"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-get-file-sisters
-# Author :  Zoltan Mathe
-########################################################################
-"""Report sisters or cousins (i.e. descendant of a parent or ancestor) for a (list of) LFN(s)"""
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -44,3 +43,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFileSisters
   executeFileSisters(dmScript, level=level)
+
+
+if __name__ == "__main__":
+  main()

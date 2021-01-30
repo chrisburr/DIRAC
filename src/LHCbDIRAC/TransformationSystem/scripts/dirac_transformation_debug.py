@@ -17,10 +17,12 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
 
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
   from DIRAC.Core.Base import Script
 
   infoList = ("files", "runs", "tasks", 'jobs', 'alltasks', 'flush', 'log')
@@ -61,3 +63,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.TransformationSystem.Client.TransformationDebug import TransformationDebug
   TransformationDebug().debugTransformation(dmScript, infoList, statusList)
+
+
+if __name__ == "__main__":
+  main()

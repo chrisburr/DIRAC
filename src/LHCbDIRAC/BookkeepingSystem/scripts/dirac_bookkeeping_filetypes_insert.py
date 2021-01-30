@@ -9,47 +9,53 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Insert new file types in the Bookkeeping."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-filetypes-insert.py
-# Author :  Zoltan Mathe
-########################################################################
-"""Insert new file types in the Bookkeeping."""
+
 __RCSID__ = "$Id$"
 
 from builtins import input
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-Script.setUsageMessage(__doc__ + '\n'.join([
-    'Usage:',
-    '  %s [option|cfgfile]' % Script.scriptName]))
-Script.parseCommandLine(ignoreErrors=True)
 
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-bk = BookkeepingClient()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
 
-exitCode = 0
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      'Usage:',
+      '  %s [option|cfgfile]' % Script.scriptName]))
+  Script.parseCommandLine(ignoreErrors=True)
 
-ftype = input("FileType: ")
-desc = input("Description: ")
-version = input("File type version: ")
-gLogger.notice('Do you want to add this new file type? (yes or no)')
-value = input('Choice:')
-choice = value.lower()
-if choice in ['yes', 'y']:
-  res = bk.insertFileTypes(ftype.upper(), desc, version)
-  if res['OK']:
-    gLogger.notice('The file types added successfully!')
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+  bk = BookkeepingClient()
+
+  exitCode = 0
+
+  ftype = input("FileType: ")
+  desc = input("Description: ")
+  version = input("File type version: ")
+  gLogger.notice('Do you want to add this new file type? (yes or no)')
+  value = input('Choice:')
+  choice = value.lower()
+  if choice in ['yes', 'y']:
+    res = bk.insertFileTypes(ftype.upper(), desc, version)
+    if res['OK']:
+      gLogger.notice('The file types added successfully!')
+    else:
+      gLogger.error("Error discovered!", res['Message'])
+  elif choice in ['no', 'n']:
+    gLogger.notice('Aborted!')
   else:
-    gLogger.error("Error discovered!", res['Message'])
-elif choice in ['no', 'n']:
-  gLogger.notice('Aborted!')
-else:
-  gLogger.error('Unexpected choice:', value)
+    gLogger.error('Unexpected choice:', value)
 
-DIRAC.exit(exitCode)
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

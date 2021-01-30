@@ -13,16 +13,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
 __RCSID__ = "$Id$"
 
-from DIRAC.Core.Base import Script
-Script.parseCommandLine(ignoreErrors=True)
-
 import DIRAC
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-
-args = Script.getPositionalArgs()
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
@@ -30,37 +24,50 @@ def usage():
 
   Prints script usage
   """
-
+  from DIRAC.Core.Base import Script
   print('Usage: %s <WMS Job ID> [<WMS Job ID>]' % Script.scriptName)
   DIRAC.exit(2)
 
 
-if len(args) < 1:
-  usage()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  Script.parseCommandLine(ignoreErrors=True)
 
-jobIDs = []
-diracProd = DiracProduction()
-try:
-  jobIDs = [int(jobID) for jobID in args]
-except Exception as x:
-  print('ERROR WMS JobID(s) must be integers')
-  DIRAC.exit(2)
+  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-exitCode = 0
-errorList = []
+  args = Script.getPositionalArgs()
 
-for job in jobIDs:
-  result = diracProd.getWMSProdJobID(job, printOutput=True)
-  if 'Message' in result:
-    errorList.append((job, result['Message']))
-    exitCode = 2
-  elif not result:
-    errorList.append((job, 'Null result for getWMSProdJobID() call'))
-    exitCode = 2
-  else:
-    exitCode = 0
+  if len(args) < 1:
+    usage()
 
-for error in errorList:
-  print("ERROR %s: %s" % error)
+  jobIDs = []
+  diracProd = DiracProduction()
+  try:
+    jobIDs = [int(jobID) for jobID in args]
+  except Exception as x:
+    print('ERROR WMS JobID(s) must be integers')
+    DIRAC.exit(2)
 
-DIRAC.exit(exitCode)
+  exitCode = 0
+  errorList = []
+
+  for job in jobIDs:
+    result = diracProd.getWMSProdJobID(job, printOutput=True)
+    if 'Message' in result:
+      errorList.append((job, result['Message']))
+      exitCode = 2
+    elif not result:
+      errorList.append((job, 'Null result for getWMSProdJobID() call'))
+      exitCode = 2
+    else:
+      exitCode = 0
+
+  for error in errorList:
+    print("ERROR %s: %s" % error)
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

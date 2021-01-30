@@ -13,15 +13,21 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 import os
 
 import DIRAC
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+keep = None
+localFile = None
 
 
 def leave(msg, error=None, exitCode=0):
+  from DIRAC import gLogger
+
   if error is None:
     error = {}
 
@@ -40,112 +46,121 @@ def leave(msg, error=None, exitCode=0):
   DIRAC.exit(exitCode)
 
 
-Script.registerSwitch("f:", "OldLFN=", "LFN of existing file to be fixed.")
-Script.registerSwitch("n:", "NewLFN=",
-                      "Optional: specify a new LFN for the file (retaining the existing file with incorrect GUID).")
-Script.registerSwitch("D:", "Directory=", "Optional: directory to download file (defaults to TMPDIR then PWD).")
-Script.registerSwitch("k", "Keep", "Optional: specify this switch to retain the local copy of the downloaded file")
-Script.registerSwitch("m", "SafeMode",
-                      "Optional: specify this switch to run the script in safe mode (will check the GUIDs only)")
-Script.setUsageMessage('\n'.join([__doc__,
-                                  'Usage:',
-                                  '  %s [option|cfgfile] [OldLFN]' % Script.scriptName]))
-Script.parseCommandLine(ignoreErrors=True)
+@DIRACScript()
+def main():
+  global keep
+  global localFile
 
-args = Script.getPositionalArgs()
+  from DIRAC.Core.Base import Script
+  Script.registerSwitch("f:", "OldLFN=", "LFN of existing file to be fixed.")
+  Script.registerSwitch("n:", "NewLFN=",
+                        "Optional: specify a new LFN for the file (retaining the existing file with incorrect GUID).")
+  Script.registerSwitch("D:", "Directory=", "Optional: directory to download file (defaults to TMPDIR then PWD).")
+  Script.registerSwitch("k", "Keep", "Optional: specify this switch to retain the local copy of the downloaded file")
+  Script.registerSwitch("m", "SafeMode",
+                        "Optional: specify this switch to run the script in safe mode (will check the GUIDs only)")
+  Script.setUsageMessage('\n'.join([__doc__,
+                                    'Usage:',
+                                    '  %s [option|cfgfile] [OldLFN]' % Script.scriptName]))
+  Script.parseCommandLine(ignoreErrors=True)
 
-from DIRAC.Interfaces.API.Dirac import Dirac
-from LHCbDIRAC.Core.Utilities.File import makeGuid
+  args = Script.getPositionalArgs()
 
-from DIRAC import gLogger
+  from DIRAC.Interfaces.API.Dirac import Dirac
+  from LHCbDIRAC.Core.Utilities.File import makeGuid
 
-oldLFN = ''
-newLFN = ''
-localFile = ''
-keep = False
-safe = False
-directory = os.getcwd()
-if 'TMPDIR' in os.environ:
-  directory = os.environ['TMPDIR']
+  from DIRAC import gLogger
 
-dirac = Dirac()
+  oldLFN = ''
+  newLFN = ''
+  localFile = ''
+  keep = False
+  safe = False
+  directory = os.getcwd()
+  if 'TMPDIR' in os.environ:
+    directory = os.environ['TMPDIR']
 
-if args:
-  oldLFN = args.pop(0)
+  dirac = Dirac()
 
-for switch in Script.getUnprocessedSwitches():
-  if switch[0].lower() in ('f', 'oldlfn'):
-    oldLFN = switch[1]
-  elif switch[0].lower() in ('n', 'newlfn'):
-    newLFN = switch[1]
-  elif switch[0].lower() in ('d', 'directory'):
-    directory = switch[1]
-  elif switch[0].lower() in ('k', 'keep'):
-    keep = True
-  elif switch[0].lower() in ('m', 'safemode'):
-    safe = True
+  if args:
+    oldLFN = args.pop(0)
 
-oldLFN = oldLFN.replace('LFN:', '')
-newLFN = newLFN.replace('LFN:', '')
+  for switch in Script.getUnprocessedSwitches():
+    if switch[0].lower() in ('f', 'oldlfn'):
+      oldLFN = switch[1]
+    elif switch[0].lower() in ('n', 'newlfn'):
+      newLFN = switch[1]
+    elif switch[0].lower() in ('d', 'directory'):
+      directory = switch[1]
+    elif switch[0].lower() in ('k', 'keep'):
+      keep = True
+    elif switch[0].lower() in ('m', 'safemode'):
+      safe = True
 
-if not oldLFN:
-  leave('The original LFN of the file to be fixed must be specified', exitCode=2)
+  oldLFN = oldLFN.replace('LFN:', '')
+  newLFN = newLFN.replace('LFN:', '')
 
-if not os.path.exists(directory):
-  leave("Optional directory %s doesn't exist" % directory, exitCode=2)
+  if not oldLFN:
+    leave('The original LFN of the file to be fixed must be specified', exitCode=2)
 
-if not newLFN:
-  gLogger.verbose('No new LFN specified, will replace the existing LFN %s' % (oldLFN))
-  newLFN = oldLFN
+  if not os.path.exists(directory):
+    leave("Optional directory %s doesn't exist" % directory, exitCode=2)
 
+  if not newLFN:
+    gLogger.verbose('No new LFN specified, will replace the existing LFN %s' % (oldLFN))
+    newLFN = oldLFN
 
-gLogger.verbose('Directory for downloading file is set to %s' % directory)
+  gLogger.verbose('Directory for downloading file is set to %s' % directory)
 
-replicaInfo = dirac.getReplicas(oldLFN)
-if not replicaInfo['OK'] or replicaInfo['Value']['Failed']:
-  leave('Could not get replica information for %s' % oldLFN, replicaInfo, exitCode=2)
+  replicaInfo = dirac.getReplicas(oldLFN)
+  if not replicaInfo['OK'] or replicaInfo['Value']['Failed']:
+    leave('Could not get replica information for %s' % oldLFN, replicaInfo, exitCode=2)
 
-replicas = replicaInfo['Value']['Successful'][oldLFN]
-storageElements = list(replicas)
-if not storageElements:
-  leave('Could not determine SEs for replicas of %s' % oldLFN, exitCode=2)
+  replicas = replicaInfo['Value']['Successful'][oldLFN]
+  storageElements = list(replicas)
+  if not storageElements:
+    leave('Could not determine SEs for replicas of %s' % oldLFN, exitCode=2)
 
-gLogger.info('Existing LFN has replicas at: %s' % ', '.join(storageElements))
+  gLogger.info('Existing LFN has replicas at: %s' % ', '.join(storageElements))
 
-oldGUID = dirac.getLfnMetadata(oldLFN)
-if not oldGUID['OK'] or oldGUID['Value']['Failed']:
-  leave('Could not obtain GUID from LFC for %s - %s' % oldLFN, oldGUID, exitCode=2)
-oldGUID = oldGUID['Value']['Successful'][oldLFN]['GUID']
-gLogger.verbose('Existing GUID is %s' % oldGUID)
+  oldGUID = dirac.getLfnMetadata(oldLFN)
+  if not oldGUID['OK'] or oldGUID['Value']['Failed']:
+    leave('Could not obtain GUID from LFC for %s - %s' % oldLFN, oldGUID, exitCode=2)
+  oldGUID = oldGUID['Value']['Successful'][oldLFN]['GUID']
+  gLogger.verbose('Existing GUID is %s' % oldGUID)
 
-# retrieve original file
-localFile = os.path.join(directory, os.path.basename(oldLFN))
-if not os.path.exists(localFile):
-  download = dirac.getFile(oldLFN, directory)
-  if not download['OK'] or download['Value']['Failed']:
-    leave('Could not download file with message - %s' % download['Message'], download, exitCode=2)
-else:
-  gLogger.always('Found file %s in local directory, will not re-download' % os.path.basename(oldLFN))
+  # retrieve original file
+  localFile = os.path.join(directory, os.path.basename(oldLFN))
+  if not os.path.exists(localFile):
+    download = dirac.getFile(oldLFN, directory)
+    if not download['OK'] or download['Value']['Failed']:
+      leave('Could not download file with message - %s' % download['Message'], download, exitCode=2)
+  else:
+    gLogger.always('Found file %s in local directory, will not re-download' % os.path.basename(oldLFN))
 
-newGUID = makeGuid(localFile)[localFile]
+  newGUID = makeGuid(localFile)[localFile]
 
-if newGUID == oldGUID:
-  leave('Old and new GUIDs have the same value (%s), exiting without changes' % oldGUID)
+  if newGUID == oldGUID:
+    leave('Old and new GUIDs have the same value (%s), exiting without changes' % oldGUID)
 
-if safe:
-  leave('Safe mode - found file GUID = %s and existing GUID = %s, exiting without changes' % (newGUID, oldGUID))
+  if safe:
+    leave('Safe mode - found file GUID = %s and existing GUID = %s, exiting without changes' % (newGUID, oldGUID))
 
-gLogger.verbose('Will set old GUID to %s from %s' % (newGUID, oldGUID))
-if newLFN == oldLFN:
-  gLogger.always('Removing old LFN from storages before adding new LFN')
-  result = dirac.removeFile(oldLFN)
+  gLogger.verbose('Will set old GUID to %s from %s' % (newGUID, oldGUID))
+  if newLFN == oldLFN:
+    gLogger.always('Removing old LFN from storages before adding new LFN')
+    result = dirac.removeFile(oldLFN)
+    if not result['OK']:
+      leave('Could not remove existing LFN from Grid storage', result, exitCode=2)
+
+  gLogger.always('Uploading %s as LFN:%s with replica at %s and GUID = %s' % (localFile, newLFN,
+                                                                              storageElements[0], newGUID))
+  result = dirac.addFile(newLFN, localFile, storageElements[0], fileGuid=newGUID, printOutput=False)
   if not result['OK']:
-    leave('Could not remove existing LFN from Grid storage', result, exitCode=2)
+    leave('Failed to copy and register new LFN:%s' % newLFN, result, exitCode=2)
 
-gLogger.always('Uploading %s as LFN:%s with replica at %s and GUID = %s' % (localFile, newLFN,
-                                                                            storageElements[0], newGUID))
-result = dirac.addFile(newLFN, localFile, storageElements[0], fileGuid=newGUID, printOutput=False)
-if not result['OK']:
-  leave('Failed to copy and register new LFN:%s' % newLFN, result, exitCode=2)
+  leave('')
 
-leave('')
+
+if __name__ == "__main__":
+  main()

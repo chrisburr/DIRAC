@@ -18,10 +18,8 @@ __RCSID__ = "$Id$"
 
 import time
 import six
-from DIRAC.Core.Base import Script
 from DIRAC import gLogger, exit
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
-from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def printProds(title, prods):
@@ -33,7 +31,10 @@ def printProds(title, prods):
     gLogger.notice('(%s): %s' % (prodType, ','.join([str(prod) for prod in sorted(prodList)])))
 
 
-def execute():
+def execute(dmScript):
+  from DIRAC.Core.Base import Script
+  from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+
   tr = TransformationClient()
 
   for switch in Script.getUnprocessedSwitches():
@@ -69,15 +70,20 @@ def execute():
   gLogger.notice('Completed in %.1f seconds' % (time.time() - startTime))
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
   dmScript = DMScript()
   dmScript.registerBKSwitches()
-
   Script.setUsageMessage(__doc__ + '\n'.join([
       'Usage:',
       '  %s [option|cfgfile]' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=False)
+  execute(dmScript)
 
-  execute()
+
+if __name__ == "__main__":
+  main()

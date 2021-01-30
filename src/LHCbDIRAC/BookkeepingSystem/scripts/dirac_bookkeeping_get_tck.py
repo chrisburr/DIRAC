@@ -9,20 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Returns list of TCKs for a run range, by default only if there is a FULL stream."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-get-tck
-# Author :  Zoltan Mathe
-########################################################################
-"""Returns list of TCKs for a run range, by default only if there is a FULL stream."""
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script
+
   Script.registerSwitch('', 'Runs=', 'Run range or list')
   Script.registerSwitch('', 'ByRange', 'List by range rather than by item value')
   Script.registerSwitch('', 'Force', 'Include runs even if no FULL stream is present')
@@ -35,3 +35,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeRunInfo
   executeRunInfo('Tck')
+
+
+if __name__ == "__main__":
+  main()

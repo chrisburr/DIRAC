@@ -10,49 +10,28 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-eventtype-mgt-insert
-# Author :  Zoltan Mathe
-########################################################################
 """This tool inserts new event types.
 
 The "<File>" lists the event types on which to operate. Each line must
 have the following format: EVTTYPEID="<evant id>",
 DESCRIPTION="<description>", PRIMARY="<primary description>"
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
 import re
 import DIRAC
 from DIRAC import gLogger
-
-from DIRAC.Core.Base import Script
-Script.setUsageMessage('\n'.join([__doc__,
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... File' % Script.scriptName,
-                                  'Arguments:',
-                                  '  File:     Name of the file including the description of the Types (mandatory)']))
-Script.parseCommandLine(ignoreErrors=True)
-
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-bk = BookkeepingClient()
-
-args = Script.getPositionalArgs()
-
-if len(args) < 1:
-  Script.showHelp(exitCode=1)
-
-exitCode = 0
-
-fileName = args[0]
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def process_event(eventline):
   """process one event type."""
+  from DIRAC.Core.Base import Script
+
   try:
     eventline.index('EVTTYPEID')
     eventline.index('DESCRIPTION')
@@ -100,28 +79,54 @@ def process_event(eventline):
   return result
 
 
-eventtypes = []
-try:
-  with open(fileName) as fd:
-    for line in fd:
-      evt = process_event(line)
-      eventtypes.append(evt)
-except IOError:
-  gLogger.error('Cannot open file ' + fileName)
-  DIRAC.exit(2)
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  Script.setUsageMessage('\n'.join([__doc__,
+                                    'Usage:',
+                                    '  %s [option|cfgfile] ... File' % Script.scriptName,
+                                    'Arguments:',
+                                    '  File:     Name of the file including the description of the Types (mandatory)']))
+  Script.parseCommandLine(ignoreErrors=True)
 
-result = bk.bulkinsertEventType(eventtypes)
-if not result['OK']:
-  gLogger.error(result['Message'])
-  exitCode = 2
-else:
-  if result['Value']['Failed']:
-    gLogger.error("Failed to insert the following event types:")
-    for evt in result['Value']['Failed']:
-      for i in evt.values():
-        gLogger.error("%s : %s" % (repr(i.get('EvtentType')), i.get('Error')))
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+  bk = BookkeepingClient()
 
-  if result['Value']['Successful']:
-    gLogger.notice("The following event types are inserted: %s" % repr(result['Value']['Successful']))
+  args = Script.getPositionalArgs()
 
-DIRAC.exit(exitCode)
+  if len(args) < 1:
+    Script.showHelp(exitCode=1)
+
+  exitCode = 0
+
+  fileName = args[0]
+
+  eventtypes = []
+  try:
+    with open(fileName) as fd:
+      for line in fd:
+        evt = process_event(line)
+        eventtypes.append(evt)
+  except IOError:
+    gLogger.error('Cannot open file ' + fileName)
+    DIRAC.exit(2)
+
+  result = bk.bulkinsertEventType(eventtypes)
+  if not result['OK']:
+    gLogger.error(result['Message'])
+    exitCode = 2
+  else:
+    if result['Value']['Failed']:
+      gLogger.error("Failed to insert the following event types:")
+      for evt in result['Value']['Failed']:
+        for i in evt.values():
+          gLogger.error("%s : %s" % (repr(i.get('EvtentType')), i.get('Error')))
+
+    if result['Value']['Successful']:
+      gLogger.notice("The following event types are inserted: %s" % repr(result['Value']['Successful']))
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

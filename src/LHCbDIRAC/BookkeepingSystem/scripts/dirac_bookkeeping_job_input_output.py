@@ -9,23 +9,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""It returns the input and output files of a given list of DIRAC Jobids."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-job-input-output
-# Author :  Zoltan Mathe
-########################################################################
-"""It returns the input and output files of a given list of DIRAC Jobids."""
 
 __RCSID__ = "$Id$"
 
 import os
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-from DIRAC.Core.Base import Script
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
 
   bkScript = DMScript()
   bkScript.registerJobsSwitches()
@@ -76,3 +74,7 @@ if __name__ == "__main__":
         success[job].pop('InputFiles' if not inputFiles else 'OutputFiles')
 
   printDMResult(retVal, empty="File does not exists in the Bookkeeping")
+
+
+if __name__ == "__main__":
+  main()

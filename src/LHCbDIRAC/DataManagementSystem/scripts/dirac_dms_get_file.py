@@ -9,22 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Retrieve a single file or list of files from Grid storage to the current directory."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-dms-get-file
-# Author :  Stuart Paterson
-########################################################################
-"""Retrieve a single file or list of files from Grid storage to the current directory."""
 
 __RCSID__ = "$Id$"
 
 import os
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -39,3 +37,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeGetFile
   from DIRAC import exit
   exit(executeGetFile(dmScript))
+
+
+if __name__ == "__main__":
+  main()

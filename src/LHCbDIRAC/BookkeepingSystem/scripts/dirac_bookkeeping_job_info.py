@@ -9,26 +9,25 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-job-info
-# Author :  Zoltan Mathe
-########################################################################
 """
 Returns metadata of the job step(s) that created a (list of) LFNs,
 or all steps for a (list of) JobID
-
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-from DIRAC import gLogger
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+
+  from DIRAC import gLogger
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult
 
   bkScript = DMScript()
   bkScript.registerFileSwitches()
@@ -132,3 +131,7 @@ if __name__ == "__main__":
     gLogger.always(','.join(sorted(set('%s' % val['DIRACJobId'] for val in jobDict.values()))))  # Can be an iterator
   else:
     printDMResult(retVal, empty="File/job does not exist in the Bookkeeping")
+
+
+if __name__ == "__main__":
+  main()

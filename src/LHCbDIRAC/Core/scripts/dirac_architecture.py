@@ -16,10 +16,15 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
+import LbPlatformUtils
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
 
 def sendMail(msg=''):
   """send a notification mail when no platform is found."""
   from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
+  from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
+  from DIRAC import gConfig
 
   mailAddress = Operations().getValue('EMail/JobFailures', 'Vladimir.Romanovskiy@cern.ch')
   site = gConfig.getValue('LocalSite/Site')
@@ -33,14 +38,14 @@ def sendMail(msg=''):
                                   body, 'federico.stagni@cern.ch', localAttempt=False)
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
   from DIRAC.Core.Base import Script
   Script.registerSwitch('', 'BinaryTag', '   Print the host binary tag instead of the host dirac_platform')
   Script.parseCommandLine(ignoreErrors=True)
 
   from DIRAC import gConfig, gLogger, exit as dExit
   from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
-  import LbPlatformUtils
 
   parList = Script.getUnprocessedSwitches()
   for switch, _val in parList:
@@ -93,3 +98,7 @@ if __name__ == "__main__":
     gLogger.exception(msg, lException=e)
     sendMail(msg)
     dExit(1)
+
+
+if __name__ == "__main__":
+  main()

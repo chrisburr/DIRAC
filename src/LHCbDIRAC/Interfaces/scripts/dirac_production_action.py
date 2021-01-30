@@ -9,82 +9,86 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Start or stop the production(s)"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :   dirac-production-action
-# Author : Mario Ubeda Garcia
-########################################################################
-"""Start or stop the production(s)"""
-
 
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-Script.setUsageMessage(__doc__ + '\n'.join([
-    'Usage:',
-    '  %s <Production ID> |<Production ID>' % Script.scriptName,
-    'Arguments:',
-    '  <Production ID>:      DIRAC Production Id']))
 
-Script.registerSwitch('t', 'start', "Start the production")
-Script.registerSwitch('p', 'stop', "Stop the production")
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
 
-Script.parseCommandLine(ignoreErrors=True)
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      'Usage:',
+      '  %s <Production ID> |<Production ID>' % Script.scriptName,
+      'Arguments:',
+      '  <Production ID>:      DIRAC Production Id']))
 
-args = Script.getPositionalArgs()
-if len(args) < 1:
-  Script.showHelp(exitCode=2)
+  Script.registerSwitch('t', 'start', "Start the production")
+  Script.registerSwitch('p', 'stop', "Stop the production")
 
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+  Script.parseCommandLine(ignoreErrors=True)
 
-Script.parseCommandLine(ignoreErrors=True)
-args = Script.getPositionalArgs()
+  args = Script.getPositionalArgs()
+  if len(args) < 1:
+    Script.showHelp(exitCode=2)
 
-diracProd = DiracProduction()
-exitCode = 0
-errorList = []
-start = False
-stop = False
-action = ''
+  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-switches = Script.getUnprocessedSwitches()
+  Script.parseCommandLine(ignoreErrors=True)
+  args = Script.getPositionalArgs()
 
-for switch in switches:
-  opt = switch[0].lower()
+  diracProd = DiracProduction()
+  exitCode = 0
+  errorList = []
+  start = False
+  stop = False
+  action = ''
 
-  if opt in ('t', 'start'):
-    start = True
-  if opt in ('p', 'stop'):
-    stop = True
+  switches = Script.getUnprocessedSwitches()
 
-if start and stop:
-  print("ERROR: decide if you want to start or stop ( not both ).")
-  DIRAC.exit(2)
-elif not (start or stop):
-  print("ERROR: decide if you want to start or stop.")
-  DIRAC.exit(2)
-elif start:
-  action = 'start'
-elif stop:
-  action = 'stop'
+  for switch in switches:
+    opt = switch[0].lower()
 
-for prodID in args:
+    if opt in ('t', 'start'):
+      start = True
+    if opt in ('p', 'stop'):
+      stop = True
 
-  result = diracProd.production(prodID, action, disableCheck=False)
-  if 'Message' in result:
-    errorList.append((prodID, result['Message']))
-    exitCode = 2
-  elif not result:
-    errorList.append((prodID, 'Null result for production() call'))
-    exitCode = 2
-  else:
-    exitCode = 0
+  if start and stop:
+    print("ERROR: decide if you want to start or stop ( not both ).")
+    DIRAC.exit(2)
+  elif not (start or stop):
+    print("ERROR: decide if you want to start or stop.")
+    DIRAC.exit(2)
+  elif start:
+    action = 'start'
+  elif stop:
+    action = 'stop'
 
-for error in errorList:
-  print("ERROR %s" % error)
+  for prodID in args:
 
-DIRAC.exit(exitCode)
+    result = diracProd.production(prodID, action, disableCheck=False)
+    if 'Message' in result:
+      errorList.append((prodID, result['Message']))
+      exitCode = 2
+    elif not result:
+      errorList.append((prodID, 'Null result for production() call'))
+      exitCode = 2
+    else:
+      exitCode = 0
+
+  for error in errorList:
+    print("ERROR %s" % error)
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

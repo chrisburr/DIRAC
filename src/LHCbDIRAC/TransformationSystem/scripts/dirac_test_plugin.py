@@ -9,21 +9,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""
+ Test a plugin
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""
- Test a plugin
-"""
-
 __RCSID__ = "$Id$"
 
+import DIRAC
 from DIRAC import S_OK, gLogger
-from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
-class fakeClient:
+class FakeClient(object):
   def __init__(self, trans, transID, lfns, asIfProd):
     self.trans = trans
     self.transID = transID
@@ -68,7 +68,7 @@ class fakeClient:
 
   def getBookkeepingQuery(self, transID):
     if transID == self.transID and self.asIfProd:
-      return self.transClient.getBookkeepingQuery(asIfProd)
+      return self.transClient.getBookkeepingQuery(self.asIfProd)
     return self.trans.getBkQuery()
 
   def insertTransformationRun(self, transID, runID, xx):
@@ -239,10 +239,12 @@ def printFinalSEs(transType, location, targets):
     print("    Final SEs:", total)
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
   import DIRAC
   from DIRAC.Core.Base import Script
   from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript
+  from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
   pluginScript = PluginScript()
   pluginScript.registerPluginSwitches()
@@ -418,7 +420,7 @@ if __name__ == "__main__":
   pluginParams['Status'] = "Active"
   pluginParams['Type'] = transType
   # Create a fake transformation client
-  fakeClient = fakeClient(transformation, transID, lfns, asIfProd)
+  fakeClient = FakeClient(transformation, transID, lfns, asIfProd)
   from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
   from DIRAC.DataManagementSystem.Client.DataManager import DataManager
   oplugin = TransformationPlugin(plugin, transClient=fakeClient,
@@ -493,3 +495,7 @@ if __name__ == "__main__":
   else:
     print(res['Message'])
   DIRAC.exit(0)
+
+
+if __name__ == "__main__":
+  main()

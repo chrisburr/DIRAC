@@ -13,11 +13,15 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   days = 0
   months = 0
@@ -46,3 +50,7 @@ if __name__ == "__main__":
   from DIRAC import exit
 
   exit(executeListDirectory(dmScript, days, months, years, wildcard, depth))
+
+
+if __name__ == "__main__":
+  main()

@@ -9,20 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Returns run ranges, split by conditions and by run gaps or time interval between them."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-get-run-ranges
-# Author :  Zoltan Mathe
-########################################################################
-"""Returns run ranges, split by conditions and by run gaps or time interval between them."""
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script
+
   Script.registerSwitch('', 'Activity=', 'Specify the BK activity (e.g. Collision15)')
   Script.registerSwitch('', 'Runs=', 'Run range or list (can be used with --Activity to reduce the run range)')
   Script.registerSwitch('', 'Fast', 'Include runs even if no FULL stream is present (much faster)')
@@ -37,3 +37,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeRunInfo
   executeRunInfo('Ranges')
+
+
+if __name__ == "__main__":
+  main()

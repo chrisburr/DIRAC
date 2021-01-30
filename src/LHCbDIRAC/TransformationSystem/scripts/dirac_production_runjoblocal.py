@@ -22,6 +22,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+__RCSID__ = "$Id$"
+
 import sys
 import os
 import shutil
@@ -35,33 +37,8 @@ else:
   from urllib.error import URLError as url_library_URLError  # pylint: disable=no-name-in-module,import-error
 
 from DIRAC import S_OK
-from DIRAC.Core.Base import Script
-
-Script.registerSwitch('D:', 'Download=', 'Defines data acquisition as DownloadInputData')
-Script.registerSwitch('P:', 'Protocol=', 'Defines data acquisition as InputDataByProtocol')
-Script.parseCommandLine(ignoreErrors=False)
-
-Script.setUsageMessage(__doc__ + '\n'.join([
-    '\nUsage:',
-    'dirac-production-runjoblocal [Data imput mode] [job ID]'
-    '\nArguments:',
-    '  Download (Job ID): Defines data aquisition as DownloadInputData',
-    '  Protocol (Job ID): Defines data acquisition as InputDataByProtocol\n']))
-
 from DIRAC.Core.Utilities.File import mkDir
-
-__RCSID__ = "$Id$"
-
-_downloadinputdata = False
-_jobID = None
-
-for switch in Script.getUnprocessedSwitches():
-  if switch[0] in ('D', 'Download'):
-    _downloadinputdata = True
-    _jobID = switch[1]
-  if switch[0] in ('P', 'Protocol'):
-    _downloadinputdata = False
-    _jobID = switch[1]
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def __runSystemDefaults(jobID=None):
@@ -99,9 +76,7 @@ def __modifyJobDescription(jobID, basepath, downloadinputdata):
 def __downloadPilotScripts(basepath):
   """
   Downloads the scripts necessary to configure the pilot
-
   """
-
   context = ssl._create_unverified_context()
   for fileName in ['dirac-pilot.py', 'dirac-install.py',
                    'pilotCommands.py', 'pilotTools',
@@ -155,7 +130,32 @@ def __runJobLocally(jobID, basepath):
   localJob.runLocal()
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+
+  Script.registerSwitch('D:', 'Download=', 'Defines data acquisition as DownloadInputData')
+  Script.registerSwitch('P:', 'Protocol=', 'Defines data acquisition as InputDataByProtocol')
+  Script.parseCommandLine(ignoreErrors=False)
+
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      '\nUsage:',
+      'dirac-production-runjoblocal [Data imput mode] [job ID]'
+      '\nArguments:',
+      '  Download (Job ID): Defines data acquisition as DownloadInputData',
+      '  Protocol (Job ID): Defines data acquisition as InputDataByProtocol\n']))
+
+  _downloadinputdata = False
+  _jobID = None
+
+  for switch in Script.getUnprocessedSwitches():
+    if switch[0] in ('D', 'Download'):
+      _downloadinputdata = True
+      _jobID = switch[1]
+    if switch[0] in ('P', 'Protocol'):
+      _downloadinputdata = False
+      _jobID = switch[1]
+
   usedDir = os.path.expanduser('~') + os.path.sep
   try:
     _path = __runSystemDefaults(_jobID)
@@ -173,3 +173,7 @@ if __name__ == "__main__":
   finally:
     os.chdir(usedDir)
     os.rename(usedDir + '.dirac.cfg.old', usedDir + '.dirac.cfg')
+
+
+if __name__ == "__main__":
+  main()

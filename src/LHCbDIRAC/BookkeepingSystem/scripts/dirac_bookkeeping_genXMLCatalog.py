@@ -19,8 +19,7 @@ import time
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 __RCSID__ = "$Id$"
 
@@ -58,6 +57,8 @@ def __getLfnsFromFile(optFiles, gaudiVerbose):
 
 
 def execute():
+  from DIRAC.Core.Base import Script
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
   catalog = 'pool_xml_catalog.xml'
   depth = 1
@@ -232,6 +233,11 @@ def execute():
   DIRAC.exit(rc)
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
   execute()
   DIRAC.exit(0)
+
+
+if __name__ == "__main__":
+  main()

@@ -9,21 +9,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-########################################################################
-# File :    dirac-dms-pfn-metadata.py
-# Author :  Ph. Charpentier
-########################################################################
 """Check existence of a (list of) LHCb LFNs/PFNs given a valid DIRAC SE (or for
 all replicas) Only the LFN contained in the PFN is considered, unlike the DIRAC
 similar script."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script, printDMResult
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script, printDMResult
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -40,3 +40,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executePfnMetadata
   from DIRAC import exit
   exit(executePfnMetadata(dmScript, check=True, exists=True))
+
+
+if __name__ == "__main__":
+  main()

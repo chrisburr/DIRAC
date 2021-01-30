@@ -9,21 +9,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Get the storage usage summary for the given directories."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-"""Get the storage usage summary for the given directories."""
+
 __RCSID__ = "$Id$"
 
 import DIRAC
 from DIRAC.Core.Base import Script
 from DIRAC import gConfig, gLogger
-
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
-from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 seSvcClassDict = {}
+infoStringLength = 1
+unit = None
+dmScript = None
 
 
 def seSvcClass(se):
@@ -133,9 +134,6 @@ def printBigTable(siteList, bigTable):
   print(prStr)
 
 
-infoStringLength = 1
-
-
 def writeInfo(str):
   global infoStringLength
   import sys
@@ -242,6 +240,8 @@ def browseBK(bkQuery, ses, scaleFactor):
 
 
 def getStorageSummary(totalUsage, grandTotal, dirName, fileTypes, prodID, ses):
+  from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
+
   if not totalUsage:
     totalUsage = {}
   if not grandTotal:
@@ -262,6 +262,7 @@ def getStorageSummary(totalUsage, grandTotal, dirName, fileTypes, prodID, ses):
 
 
 def execute(unit, minimum, depth):
+  from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
 
   # gLogger.setLevel( 'FATAL' )
   lcg = False
@@ -489,7 +490,12 @@ def execute(unit, minimum, depth):
   DIRAC.exit(0)
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  global unit
+  global dmScript
+
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
   dmScript = DMScript()
   dmScript.registerBKSwitches()
@@ -521,3 +527,7 @@ if __name__ == "__main__":
   Script.parseCommandLine(ignoreErrors=False)
 
   execute(unit, minimum, depth)
+
+
+if __name__ == "__main__":
+  main()

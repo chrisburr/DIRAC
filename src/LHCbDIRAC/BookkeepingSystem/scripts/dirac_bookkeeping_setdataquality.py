@@ -31,21 +31,14 @@ import os
 import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base import Script
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
-bkClient = BookkeepingClient()
-
-################################################################################
-#                                                                              #
-# checkDQFlag:                                                                 #
-#                                                                              #
-# Make sure the DQ flag is a known one.                                        #
-#                                                                              #
-################################################################################
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def checkDQFlag(dqFlag):
-  res = bkClient.getAvailableDataQuality()
+  """Make sure the DQ flag is a known one."""
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
+  res = BookkeepingClient().getAvailableDataQuality()
   if not res['OK']:
     return res
 
@@ -54,21 +47,14 @@ def checkDQFlag(dqFlag):
   else:
     return S_ERROR("Data quality flag is not in the db")
 
-################################################################################
-#                                                                              #
-# flagFileList:                                                                #
-#                                                                              #
-# Flag a LFN or a list of LFN contained in a file.                             #
-#                                                                              #
-################################################################################
-
 
 def flagFileList(filename, dqFlag):
+  """Flag a LFN or a list of LFN contained in a file."""
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
   lfns = []
 
-  #
   # Load the list of LFN
-  #
   try:
     with open(filename) as f:
       for lfn in f:
@@ -76,11 +62,8 @@ def flagFileList(filename, dqFlag):
   except IOError:
     lfns = filename.split(',')
 
-  #
   # Now flag the LFN
-  #
-
-  res = bkClient.setFileDataQuality(lfns, dqFlag)
+  res = BookkeepingClient().setFileDataQuality(lfns, dqFlag)
 
   if not res['OK']:
     return res
@@ -89,16 +72,10 @@ def flagFileList(filename, dqFlag):
 
   return S_OK()
 
-################################################################################
-#                                                                              #
-# flagRun:                                                                     #
-#                                                                              #
-# Flag a run given its number, the processing pass and the DQ flag.            #
-#                                                                              #
-################################################################################
-
 
 def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
+  """Flag a run given its number, the processing pass and the DQ flag."""
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
   res = getProcessingPasses(runNumber, '/Real Data')
   if not res['OK']:
@@ -124,9 +101,11 @@ def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
 
     # Flag the processing passes
   for processingPass in processingPasses:
-    res = bkClient.setRunAndProcessingPassDataQuality(runNumber,
-                                                      processingPass,
-                                                      dqFlag)
+    res = BookkeepingClient().setRunAndProcessingPassDataQuality(
+        runNumber,
+        processingPass,
+        dqFlag,
+    )
     if not res['OK']:
       return S_ERROR('flagRun: processing pass %s\n error: %s' % (processingPass, res['Message']))
     else:
@@ -136,17 +115,12 @@ def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
 
   return S_OK()
 
-################################################################################
-#                                                                              #
-# getProcessingPasses:                                                         #
-#                                                                              #
-# Find all known processing passes for the selected configurations.            #
-#                                                                              #
-################################################################################
-
 
 def getProcessingPasses(runNumber, procPass):
-  res = bkClient.getRunConfigurationsAndDataTakingCondition(int(runNumber))
+  """Find all known processing passes for the selected configurations."""
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
+  res = BookkeepingClient().getRunConfigurationsAndDataTakingCondition(int(runNumber))
   if not res['OK']:
     return res
 
@@ -165,8 +139,9 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
 
   The visited processing passes are kept in visitedProcessingPass
   """
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-  res = bkClient.getProcessingPass(bkDict, processingPass)
+  res = BookkeepingClient().getProcessingPass(bkDict, processingPass)
   if not res['OK']:
     gLogger.error('Cannot load the processing passes for head % in Version %s Data taking condition %s' %
                   (processingPass, bkDict['ConfigVersion'], bkDict['ConditionDescription']))
@@ -189,112 +164,121 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
   return S_OK()
 
 
-################################################################################
-#                                                                              #
-#                                  >>> Main <<<                                #
-#                                                                              #
-################################################################################
+@DIRACScript()
+def main():
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
+  Script.registerSwitch("l:", "lfnfile=", "Flag a LFN or list of LFN")
+  Script.registerSwitch("r:", "run=", "Flag a run")
+  Script.registerSwitch("p:", "processingPass=", "Processing pass for which a run should be flagged")
+  Script.registerSwitch("q:", "dataqualityflag=", "Data quality flag")
 
-Script.registerSwitch("l:", "lfnfile=", "Flag a LFN or list of LFN")
-Script.registerSwitch("r:", "run=", "Flag a run")
-Script.registerSwitch("p:", "processingPass=", "Processing pass for which a run should be flagged")
-Script.registerSwitch("q:", "dataqualityflag=", "Data quality flag")
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      '\nArguments:',
+      '  lfnfile (string) : [LFN|filename]',
+      '  processingPass (string) : porcessing pass(es)',
+      '  runNumber (int): run number to be flagged',
+      '  dataqualityflag (string): data quality\n', ]))
 
-Script.setUsageMessage(__doc__ + '\n'.join([
-    '\nArguments:',
-    '  lfnfile (string) : [LFN|filename]',
-    '  processingPass (string) : porcessing pass(es)',
-    '  runNumber (int): run number to be flagged',
-    '  dataqualityflag (string): data quality\n', ]))
+  Script.parseCommandLine(ignoreErrors=True)
 
+  exitCode = 0
 
-Script.parseCommandLine(ignoreErrors=True)
+  params = {'lfn': None,
+            'runnumber': None,
+            'dqflag': None,
+            'processingpass': None}
 
+  for switch in Script.getUnprocessedSwitches():
+    if switch[0].lower() in ('l', 'lfnfile'):
+      params['lfn'] = switch[1]
+    elif switch[0].lower() in ('r', 'run'):
+      params['runnumber'] = int(switch[1])
+    elif switch[0].lower() in ('q', 'dataqualityflag'):
+      params['dqflag'] = switch[1]
+    elif switch[0].lower() in ('p', 'processingPass'):
+      params['processingpass'] = switch[1]
 
-exitCode = 0
-
-params = {'lfn': None,
-          'runnumber': None,
-          'dqflag': None,
-          'processingpass': None}
-
-for switch in Script.getUnprocessedSwitches():
-  if switch[0].lower() in ('l', 'lfnfile'):
-    params['lfn'] = switch[1]
-  elif switch[0].lower() in ('r', 'run'):
-    params['runnumber'] = int(switch[1])
-  elif switch[0].lower() in ('q', 'dataqualityflag'):
-    params['dqflag'] = switch[1]
-  elif switch[0].lower() in ('p', 'processingPass'):
-    params['processingpass'] = switch[1]
-
-if params['lfn'] is None and params['runnumber'] is None:
-  gLogger.fatal('Please specify run number or an lfn!')
-  DIRAC.exit(1)
-if params['dqflag'] is None:
-  gLogger.fatal('Please specify the data quality flag!')
-  DIRAC.exit(1)
-
-processingPass = None
-if params['processingpass']:
-  if len(params['processingpass'].split(',')) > 1:
-    gLogger.fatal("More than one processing pass is given. Please use only one processing pass!")
+  if params['lfn'] is None and params['runnumber'] is None:
+    gLogger.fatal('Please specify run number or an lfn!')
     DIRAC.exit(1)
-  else:
-    processingPass = params['processingpass']
-    if not processingPass.startswith('/'):
-      processingPass = '/' + processingPass
-    processingPass = processingPass.replace('RealData', 'Real Data')  # To be consistent with other BK scripts ;-)
-    if not processingPass.startswith('/Real Data'):
-      processingPass = '/Real Data' + processingPass
+  if params['dqflag'] is None:
+    gLogger.fatal('Please specify the data quality flag!')
+    DIRAC.exit(1)
 
-res = checkDQFlag(params['dqflag'])
-if not res['OK']:
-  gLogger.fatal("%s - %s" % (params['dqflag'], res['Message']))
-  DIRAC.exit(1)
-
-if params['lfn']:
-  res = flagFileList(params['lfn'], params['dqflag'])
-  if res['OK']:
-    gLogger.notice("Files are flagged!")
-    DIRAC.exit(exitCode)
-  else:
-    gLogger.fatal(res['Message'])
-
-if params['runnumber']:
-  if not processingPass:  # processing pass is not given
-    # this flags the RAW and all derived files as the given dq flag
-    res = flagRun(runNumber=params['runnumber'],
-                  procPass='/',
-                  dqFlag=params['dqflag'],
-                  flagRAW=True)
-    if not res['OK']:
-      gLogger.fatal(res['Message'])
+  processingPass = None
+  if params['processingpass']:
+    if len(params['processingpass'].split(',')) > 1:
+      gLogger.fatal("More than one processing pass is given. Please use only one processing pass!")
       DIRAC.exit(1)
-  else:  # the processing pass is given
-    if params['dqflag'] == 'BAD':  # only that processing pass (and derived) is flagged BAD. RAW is left unchanged
-      res = flagRun(runNumber=params['runnumber'],
-                    procPass=processingPass,
-                    dqFlag=params['dqflag'])
+    else:
+      processingPass = params['processingpass']
+      if not processingPass.startswith('/'):
+        processingPass = '/' + processingPass
+      processingPass = processingPass.replace('RealData', 'Real Data')  # To be consistent with other BK scripts ;-)
+      if not processingPass.startswith('/Real Data'):
+        processingPass = '/Real Data' + processingPass
+
+  res = checkDQFlag(params['dqflag'])
+  if not res['OK']:
+    gLogger.fatal("%s - %s" % (params['dqflag'], res['Message']))
+    DIRAC.exit(1)
+
+  if params['lfn']:
+    res = flagFileList(params['lfn'], params['dqflag'])
+    if res['OK']:
+      gLogger.notice("Files are flagged!")
+      DIRAC.exit(exitCode)
+    else:
+      gLogger.fatal(res['Message'])
+
+  if params['runnumber']:
+    if not processingPass:  # processing pass is not given
+      # this flags the RAW and all derived files as the given dq flag
+      res = flagRun(
+          runNumber=params['runnumber'],
+          procPass='/',
+          dqFlag=params['dqflag'],
+          flagRAW=True
+      )
       if not res['OK']:
         gLogger.fatal(res['Message'])
         DIRAC.exit(1)
-    elif params['dqflag'] == 'OK':
-      if processingPass == '/Real Data':  # only flag the RAW
-        res = bkClient.setRunAndProcessingPassDataQuality(params['runnumber'], '/Real Data', params['dqflag'])
+    else:  # the processing pass is given
+      if params['dqflag'] == 'BAD':  # only that processing pass (and derived) is flagged BAD. RAW is left unchanged
+        res = flagRun(
+            runNumber=params['runnumber'],
+            procPass=processingPass,
+            dqFlag=params['dqflag'],
+        )
         if not res['OK']:
           gLogger.fatal(res['Message'])
           DIRAC.exit(1)
+      elif params['dqflag'] == 'OK':
+        if processingPass == '/Real Data':  # only flag the RAW
+          res = BookkeepingClient().setRunAndProcessingPassDataQuality(
+              params['runnumber'],
+              '/Real Data',
+              params['dqflag'],
+          )
+          if not res['OK']:
+            gLogger.fatal(res['Message'])
+            DIRAC.exit(1)
+          else:
+            gLogger.notice("%d flagged OK" % params['runnumber'])
         else:
-          gLogger.notice("%d flagged OK" % params['runnumber'])
-      else:
-        res = flagRun(runNumber=params['runnumber'],
-                      procPass=processingPass,
-                      dqFlag=params['dqflag'],
-                      flagRAW=True)
-        if not res['OK']:
-          gLogger.fatal(res['Message'])
-          DIRAC.exit(1)
+          res = flagRun(
+              runNumber=params['runnumber'],
+              procPass=processingPass,
+              dqFlag=params['dqflag'],
+              flagRAW=True,
+          )
+          if not res['OK']:
+            gLogger.fatal(res['Message'])
+            DIRAC.exit(1)
 
-DIRAC.exit(exitCode)
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

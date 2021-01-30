@@ -18,13 +18,14 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC.Core.Base import Script
-from DIRAC import gLogger
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
-def execute():
+def execute(dmScript):
   """Parse the options and execute the script."""
+  from DIRAC import gLogger
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
+
   bkQuery = dmScript.getBKQuery()
   fileType = bkQuery.getFileTypeList()
   if not set(fileType) & {'FULL.DST', 'RDST', 'SDST'}:
@@ -121,7 +122,10 @@ def execute():
     gLogger.error(error, 'for runs %s' % ','.join(runs))
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
   dmScript = DMScript()
   dmScript.registerBKSwitches()
@@ -132,4 +136,8 @@ if __name__ == "__main__":
 
   Script.parseCommandLine(ignoreErrors=False)
 
-  execute()
+  execute(dmScript)
+
+
+if __name__ == "__main__":
+  main()

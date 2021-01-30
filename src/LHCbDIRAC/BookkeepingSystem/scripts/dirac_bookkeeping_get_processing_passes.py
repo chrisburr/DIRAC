@@ -9,19 +9,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""List all BK paths matching a wildcard path ('...' is the wildcard character,
+or '*' but enclose with quotes)"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""List all BK paths matching a wildcard path ('...' is the wildcard character,
-or '*' but enclose with quotes)"""
-
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script, ProgressBar
-from DIRAC import gLogger, exit
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script, ProgressBar
+  from DIRAC import gLogger, exit
 
   Script.registerSwitch("B:", "BKQuery=", "   Bookkeeping query path")
   Script.setUsageMessage(__doc__ + '\n'.join([
@@ -52,3 +54,7 @@ if __name__ == "__main__":
                                        for procPass in sorted(processingPasses)]))
     else:
       gLogger.notice("No processing passes matching the BK path")
+
+
+if __name__ == "__main__":
+  main()

@@ -9,81 +9,89 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Retrieve production summary from the Bookkeeping."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-productions-summary
-# Author :  Zoltan Mathe
-########################################################################
-"""Retrieve production summary from the Bookkeeping."""
 
 __RCSID__ = "$Id$"
 
 import DIRAC
 from DIRAC import gLogger
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-dmScript = DMScript()
-dmScript.registerBKSwitches()
-Script.setUsageMessage(__doc__ + '\n'.join([
-    'Usage:',
-    '  %s [option|cfgfile] ...' % Script.scriptName]))
-Script.parseCommandLine(ignoreErrors=True)
-args = Script.getPositionalArgs()
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-exitCode = 0
+  dmScript = DMScript()
+  dmScript.registerBKSwitches()
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      'Usage:',
+      '  %s [option|cfgfile] ...' % Script.scriptName]))
+  Script.parseCommandLine(ignoreErrors=True)
+  args = Script.getPositionalArgs()
 
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-bk = BookkeepingClient()
+  exitCode = 0
 
-bkQuery = dmScript.getBKQuery()
-if not bkQuery:
-  gLogger.error("No BKQuery given...")
-  DIRAC.exit(1)
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+  bk = BookkeepingClient()
 
-bkQueryDict = bkQuery.getQueryDict()
-dictItems = (
-    'ConfigName',
-    'ConfigVersion',
-    'Production',
-    'ConditionDescription',
-    'ProcessingPass',
-    'FileType',
-    'EventType')
-for item in dictItems:
-  bkQueryDict.setdefault(item, 'ALL')
-for item in list(bkQueryDict):
-  if item not in dictItems:
-    bkQueryDict.pop(item)
+  bkQuery = dmScript.getBKQuery()
+  if not bkQuery:
+    gLogger.error("No BKQuery given...")
+    DIRAC.exit(1)
 
-gLogger.verbose('BKQuery:', bkQueryDict)
-res = bk.getProductionSummary(bkQueryDict)
+  bkQueryDict = bkQuery.getQueryDict()
+  dictItems = (
+      'ConfigName',
+      'ConfigVersion',
+      'Production',
+      'ConditionDescription',
+      'ProcessingPass',
+      'FileType',
+      'EventType')
+  for item in dictItems:
+    bkQueryDict.setdefault(item, 'ALL')
+  for item in list(bkQueryDict):
+    if item not in dictItems:
+      bkQueryDict.pop(item)
 
-if not res["OK"]:
-  gLogger.error(res["Message"])
-  DIRAC.exit(1)
+  gLogger.verbose('BKQuery:', bkQueryDict)
+  res = bk.getProductionSummary(bkQueryDict)
 
-records = res['Value']['Records']
-params = res['Value']['ParameterNames']
-width = 20
+  if not res["OK"]:
+    gLogger.error(res["Message"])
+    DIRAC.exit(1)
 
-gLogger.showHeaders(False)
+  records = res['Value']['Records']
+  params = res['Value']['ParameterNames']
+  width = 20
 
-gLogger.notice('')
-gLogger.notice(params[0].ljust(30) + str(params[1]).ljust(30) +
-               str(params[2]).ljust(30) + str(params[3]).ljust(30) +
-               str(params[4]).ljust(30) + str(params[5]).ljust(30) +
-               str(params[6]).ljust(20) + str(params[7]).ljust(20) +
-               str(params[8]).ljust(20))
-gLogger.notice('')
-for record in records:
-  gLogger.notice(str(record[0]).ljust(15) + str(record[1]).ljust(15) +
-                 str(record[2]).ljust(20) + str(record[3]).ljust(width) +
-                 str(record[4]).ljust(width) + str(record[5]).ljust(width) +
-                 str(record[6]).ljust(width) + str(record[7]).ljust(width) +
-                 str(record[8]).ljust(width))
+  gLogger.showHeaders(False)
 
-gLogger.notice('')
-gLogger.notice("TotalRecords = %d" % res['Value']['TotalRecords'])
+  gLogger.notice('')
+  gLogger.notice(
+      params[0].ljust(30) + str(params[1]).ljust(30) +
+      str(params[2]).ljust(30) + str(params[3]).ljust(30) +
+      str(params[4]).ljust(30) + str(params[5]).ljust(30) +
+      str(params[6]).ljust(20) + str(params[7]).ljust(20) +
+      str(params[8]).ljust(20),
+  )
+  gLogger.notice('')
+  for record in records:
+    gLogger.notice(
+        str(record[0]).ljust(15) + str(record[1]).ljust(15) +
+        str(record[2]).ljust(20) + str(record[3]).ljust(width) +
+        str(record[4]).ljust(width) + str(record[5]).ljust(width) +
+        str(record[6]).ljust(width) + str(record[7]).ljust(width) +
+        str(record[8]).ljust(width),
+    )
+
+  gLogger.notice('')
+  gLogger.notice("TotalRecords = %d" % res['Value']['TotalRecords'])
+
+
+if __name__ == "__main__":
+  main()

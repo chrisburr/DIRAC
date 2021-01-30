@@ -28,10 +28,11 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-# Code
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == '__main__':
 
+@DIRACScript()
+def main():
   # Script initialization
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
   from DIRAC import gLogger
@@ -73,3 +74,7 @@ if __name__ == '__main__':
       gLogger.always("Processed production %d" % cc.prod)
   else:
     doCheckBK2FC(cc, checkAll, fixIt)
+
+
+if __name__ == "__main__":
+  main()

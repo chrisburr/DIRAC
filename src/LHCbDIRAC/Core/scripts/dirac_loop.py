@@ -32,8 +32,10 @@ from __future__ import print_function
 import os
 import subprocess
 
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-def reduceArgs(arguments):
+
+def reduceArgs(noMerge, arguments):
   """If the arguments look like BK paths (start with /LHCb or /MC), try to
   reduce the list of BK paths by merging event types or file types into a
   list."""
@@ -75,8 +77,8 @@ def reduceArgs(arguments):
   return sorted(others + finalArgs)
 
 
-if __name__ == '__main__':
-
+@DIRACScript()
+def main():
   from DIRAC import gLogger
   from DIRAC.Core.Base import Script
 
@@ -133,7 +135,7 @@ if __name__ == '__main__':
     # Escape any space left
     argList.append(arg.replace(' ', r'\ '))
 
-  for arg in reduceArgs(argList):
+  for arg in reduceArgs(noMerge, argList):
     if arg:
       for command in commands:
         if '@arg@' in command:
@@ -150,3 +152,7 @@ if __name__ == '__main__':
           gLogger.notice(output[:-1] if terse else output)
         except subprocess.CalledProcessError as e:
           gLogger.error("Error calling command, return code %d\n" % e.returncode, e.output)
+
+
+if __name__ == "__main__":
+  main()

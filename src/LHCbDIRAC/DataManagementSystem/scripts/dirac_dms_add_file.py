@@ -13,10 +13,14 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
-if __name__ == "__main__":
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
+
+@DIRACScript()
+def main():
   from DIRAC.Core.Base import Script
   Script.setUsageMessage(__doc__ + '\n'.join([
       'Usage:',
@@ -42,3 +46,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeAddFile
   from DIRAC import exit
   exit(executeAddFile())
+
+
+if __name__ == "__main__":
+  main()

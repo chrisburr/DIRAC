@@ -14,17 +14,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
-# imports
 import sys
 import os
 import time
+
 import DIRAC
 from DIRAC import gLogger
-# Code
-if __name__ == '__main__':
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-  # Script initialization
+
+@DIRACScript()
+def main():
   from DIRAC.Core.Base import Script
   from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
@@ -334,3 +334,7 @@ if __name__ == '__main__':
       fp.close()
       gLogger.notice('Complete list of files is in %s' % fileName)
     gLogger.notice("Processed production %d in %.1f seconds" % (cc.prod, time.time() - startTime))
+
+
+if __name__ == "__main__":
+  main()

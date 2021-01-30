@@ -9,79 +9,85 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Set the Agent Type for a(the) given transformation(s)"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :   dirac-production-set-agent-type
-# Author : Mario Ubeda Garcia
-########################################################################
-"""Set the Agent Type for a(the) given transformation(s)"""
+
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC.Core.Base import Script
 
-Script.setUsageMessage(__doc__ + '\n'.join([
-    'Usage:',
-    '  %s <Production ID> |<Production ID>' % Script.scriptName,
-    'Arguments:',
-    '  <Production ID>:      DIRAC Production Id']))
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-Script.registerSwitch('a', 'automatic', "Set automatic agent type")
-Script.registerSwitch('m', 'manual', "Set manual agent type")
 
-Script.parseCommandLine(ignoreErrors=True)
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
 
-args = Script.getPositionalArgs()
-if len(args) < 1:
-  Script.showHelp(exitCode=2)
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      'Usage:',
+      '  %s <Production ID> |<Production ID>' % Script.scriptName,
+      'Arguments:',
+      '  <Production ID>:      DIRAC Production Id']))
 
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+  Script.registerSwitch('a', 'automatic', "Set automatic agent type")
+  Script.registerSwitch('m', 'manual', "Set manual agent type")
 
-diracProd = DiracProduction()
-exitCode = 0
-errorList = []
-command = args[0]
+  Script.parseCommandLine(ignoreErrors=True)
 
-automatic = False
-manual = False
-type = ''
+  args = Script.getPositionalArgs()
+  if len(args) < 1:
+    Script.showHelp(exitCode=2)
 
-switches = Script.getUnprocessedSwitches()
+  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-for switch in switches:
-  opt = switch[0].lower()
+  diracProd = DiracProduction()
+  exitCode = 0
+  errorList = []
+  command = args[0]
 
-  if opt in ('a', 'automatic'):
-    automatic = True
-  if opt in ('m', 'manual'):
-    manual = True
+  automatic = False
+  manual = False
+  type = ''
 
-if automatic and manual:
-  print("ERROR: decide if you want automatic or manual ( not both ).")
-  DIRAC.exit(2)
-elif not (automatic or manual):
-  print("ERROR: decide if you want automatic or manual.")
-  DIRAC.exit(2)
-elif automatic:
-  type = 'automatic'
-elif manual:
-  type = 'manual'
+  switches = Script.getUnprocessedSwitches()
 
-for prodID in args:
+  for switch in switches:
+    opt = switch[0].lower()
 
-  result = diracProd.production(prodID, type, disableCheck=False)
-  if 'Message' in result:
-    errorList.append((prodID, result['Message']))
-    exitCode = 2
-  elif not result:
-    errorList.append((prodID, 'Null result for production() call'))
-    exitCode = 2
-  else:
-    exitCode = 0
+    if opt in ('a', 'automatic'):
+      automatic = True
+    if opt in ('m', 'manual'):
+      manual = True
 
-for error in errorList:
-  print("ERROR %s: %s" % error)
+  if automatic and manual:
+    print("ERROR: decide if you want automatic or manual ( not both ).")
+    DIRAC.exit(2)
+  elif not (automatic or manual):
+    print("ERROR: decide if you want automatic or manual.")
+    DIRAC.exit(2)
+  elif automatic:
+    type = 'automatic'
+  elif manual:
+    type = 'manual'
 
-DIRAC.exit(exitCode)
+  for prodID in args:
+    result = diracProd.production(prodID, type, disableCheck=False)
+    if 'Message' in result:
+      errorList.append((prodID, result['Message']))
+      exitCode = 2
+    elif not result:
+      errorList.append((prodID, 'Null result for production() call'))
+      exitCode = 2
+    else:
+      exitCode = 0
+
+  for error in errorList:
+    print("ERROR %s: %s" % error)
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

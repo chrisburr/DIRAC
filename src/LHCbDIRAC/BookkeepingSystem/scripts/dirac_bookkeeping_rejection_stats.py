@@ -16,9 +16,12 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerBKSwitches()
@@ -34,3 +37,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeRejectionStats
   executeRejectionStats(dmScript)
+
+
+if __name__ == "__main__":
+  main()

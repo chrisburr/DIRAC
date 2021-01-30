@@ -14,11 +14,16 @@ storage."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+
   dmScript = DMScript()
   dmScript.registerBKSwitches()
   dmScript.registerFileSwitches()
@@ -36,3 +41,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveFiles
   from DIRAC import exit
   exit(executeRemoveFiles(dmScript))
+
+
+if __name__ == "__main__":
+  main()

@@ -16,19 +16,7 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC.Core.Base import Script
-
-Script.registerSwitch("", "ProductionID=", "Restrict query to given production ID (default is to show status for all)")
-Script.parseCommandLine(ignoreErrors=True)
-
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-
-prodID = ''
-for switch in Script.getUnprocessedSwitches():
-  if switch[0].lower() == "productionid":
-    prodID = switch[1]
-
-args = Script.getPositionalArgs()
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
@@ -36,26 +24,51 @@ def usage():
 
   Prints script usage
   """
+  from DIRAC.Core.Base import Script
 
   print('Usage: %s <LFN> [<LFN>] [--ProductionID=<ID>] [Try -h,--help for more information]' % Script.scriptName)
   DIRAC.exit(2)
 
 
-if len(args) < 1:
-  usage()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
 
-if prodID:
-  try:
-    prodID = int(prodID)
-  except Exception as x:
-    print('ERROR ProductionID should be an integer')
-    DIRAC.exit(2)
+  Script.registerSwitch(
+      "",
+      "ProductionID=",
+      "Restrict query to given production ID (default is to show status for all)",
+  )
+  Script.parseCommandLine(ignoreErrors=True)
 
-diracProd = DiracProduction()
-exitCode = 0
-result = diracProd.checkFilesStatus(args, prodID, printOutput=False)
-if not result['OK']:
-  print('ERROR %s' % (result['Message']))
-  exitCode = 2
+  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-DIRAC.exit(exitCode)
+  prodID = ''
+  for switch in Script.getUnprocessedSwitches():
+    if switch[0].lower() == "productionid":
+      prodID = switch[1]
+
+  args = Script.getPositionalArgs()
+
+  if len(args) < 1:
+    usage()
+
+  if prodID:
+    try:
+      prodID = int(prodID)
+    except Exception as x:
+      print('ERROR ProductionID should be an integer')
+      DIRAC.exit(2)
+
+  diracProd = DiracProduction()
+  exitCode = 0
+  result = diracProd.checkFilesStatus(args, prodID, printOutput=False)
+  if not result['OK']:
+    print('ERROR %s' % (result['Message']))
+    exitCode = 2
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

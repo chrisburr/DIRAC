@@ -9,21 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Return the BK path for the directories of a (list of) files."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-file-path
-# Author :  Zoltan Mathe
-########################################################################
-
-"""Return the BK path for the directories of a (list of) files."""
 
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+
   dmScript = DMScript()
   dmScript.registerFileSwitches()
   Script.registerSwitch('', 'Full', '   Print out full BK dictionary (default: print out BK path)')
@@ -43,3 +42,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFilePath
   executeFilePath(dmScript)
+
+
+if __name__ == "__main__":
+  main()

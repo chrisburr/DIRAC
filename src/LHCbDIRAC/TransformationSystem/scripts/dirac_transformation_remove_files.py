@@ -9,16 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Set files Removed in a transformation."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""Set files Removed in a transformation."""
-
 __RCSID__ = "$Id$"
+
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def __getTransformations(args):
+  from DIRAC.Core.Base import Script
+  from DIRAC import gLogger
+
   transList = []
   if not len(args):
     print("Specify transformation number...")
@@ -39,7 +43,8 @@ def __getTransformations(args):
   return transList
 
 
-if __name__ == "__main__":
+@DIRACScript()
+def main():
   import DIRAC
   from DIRAC import gLogger
   from DIRAC.Core.Base import Script
@@ -83,3 +88,7 @@ if __name__ == "__main__":
                      (len(requestedLFNs), transID), res['Message'])
       rc = 2
   DIRAC.exit(rc)
+
+
+if __name__ == "__main__":
+  main()

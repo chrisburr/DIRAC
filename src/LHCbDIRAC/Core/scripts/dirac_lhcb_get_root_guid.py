@@ -19,50 +19,59 @@ __RCSID__ = "$Id$"
 
 import os
 
-from DIRAC.Core.Base import Script
-Script.setUsageMessage('\n'.join([__doc__,
-                                  'Usage:',
-                                  '  %s [option|cfgfile] file1 [file2 ...]' % Script.scriptName]))
-Script.parseCommandLine(ignoreErrors=True)
-files = []
-for oFile in Script.getPositionalArgs():
-  files += oFile.split(',')
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-import DIRAC
-from DIRAC.Interfaces.API.Dirac import Dirac
-from LHCbDIRAC.Core.Utilities.File import getRootFileGUIDs
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import printDMResult
 
-if not files:
-  Script.showHelp(exitCode=1)
-existFiles = {}
-nonExisting = []
-dirac = Dirac()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  Script.setUsageMessage('\n'.join([__doc__,
+                                    'Usage:',
+                                    '  %s [option|cfgfile] file1 [file2 ...]' % Script.scriptName]))
+  Script.parseCommandLine(ignoreErrors=True)
+  files = []
+  for oFile in Script.getPositionalArgs():
+    files += oFile.split(',')
 
-for localFile in files:
-  if os.path.exists(localFile):
-    existFiles[os.path.realpath(localFile)] = localFile
-  elif localFile.startswith('/lhcb'):
-    res = dirac.getReplicas(localFile, active=True, preferDisk=True)
-    if res['OK'] and localFile in res['Value']['Successful']:
-      ses = list(res['Value']['Successful'][localFile])
-      for se in ses:
-        res = dirac.getAccessURL(localFile, se, protocol=['root', 'xroot'])
-        if res['OK'] and localFile in res['Value']['Successful']:
-          existFiles[res['Value']['Successful'][localFile]] = "%s @ %s" % (localFile, se)
+  import DIRAC
+  from DIRAC.Interfaces.API.Dirac import Dirac
+  from LHCbDIRAC.Core.Utilities.File import getRootFileGUIDs
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import printDMResult
+
+  if not files:
+    Script.showHelp(exitCode=1)
+  existFiles = {}
+  nonExisting = []
+  dirac = Dirac()
+
+  for localFile in files:
+    if os.path.exists(localFile):
+      existFiles[os.path.realpath(localFile)] = localFile
+    elif localFile.startswith('/lhcb'):
+      res = dirac.getReplicas(localFile, active=True, preferDisk=True)
+      if res['OK'] and localFile in res['Value']['Successful']:
+        ses = list(res['Value']['Successful'][localFile])
+        for se in ses:
+          res = dirac.getAccessURL(localFile, se, protocol=['root', 'xroot'])
+          if res['OK'] and localFile in res['Value']['Successful']:
+            existFiles[res['Value']['Successful'][localFile]] = "%s @ %s" % (localFile, se)
+      else:
+        nonExisting.append(localFile)
+    elif localFile.startswith('root:'):
+      existFiles[localFile] = localFile
     else:
       nonExisting.append(localFile)
-  elif localFile.startswith('root:'):
-    existFiles[localFile] = localFile
-  else:
-    nonExisting.append(localFile)
 
-fileGUIDs = getRootFileGUIDs(list(existFiles))
-for status in ('Successful', 'Failed'):
-  for file in list(fileGUIDs.get('Value', {}).get(status, {})):
-    fileGUIDs['Value'][status][existFiles.get(file, file)] = fileGUIDs['Value'][status].pop(file)
-if nonExisting:
-  fileGUIDs['Value']['Failed'].update(dict.fromkeys(nonExisting, 'Non existing file'))
-printDMResult(fileGUIDs)
+  fileGUIDs = getRootFileGUIDs(list(existFiles))
+  for status in ('Successful', 'Failed'):
+    for file in list(fileGUIDs.get('Value', {}).get(status, {})):
+      fileGUIDs['Value'][status][existFiles.get(file, file)] = fileGUIDs['Value'][status].pop(file)
+  if nonExisting:
+    fileGUIDs['Value']['Failed'].update(dict.fromkeys(nonExisting, 'Non existing file'))
+  printDMResult(fileGUIDs)
 
-DIRAC.exit(0)
+  DIRAC.exit(0)
+
+
+if __name__ == "__main__":
+  main()

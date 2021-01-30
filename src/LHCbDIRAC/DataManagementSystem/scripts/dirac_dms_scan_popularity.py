@@ -13,9 +13,12 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-if __name__ == '__main__':
 
-  # Script initialization
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+
+@DIRACScript()
+def main():
   from DIRAC.Core.Base import Script
 
   since = 30
@@ -37,3 +40,7 @@ if __name__ == '__main__':
 
   from LHCbDIRAC.DataManagementSystem.Client.ScanPopularity import scanPopularity
   scanPopularity(since, getAllDatasets)
+
+
+if __name__ == "__main__":
+  main()

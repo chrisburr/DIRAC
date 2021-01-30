@@ -15,41 +15,49 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-from DIRAC.Core.Base import Script
-Script.parseCommandLine(ignoreErrors=True)
-
 import DIRAC
-from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-
-args = Script.getPositionalArgs()
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
   """usage Prints script usage."""
-
+  from DIRAC.Core.Base import Script
   print('Usage: %s <Production ID> |<Production ID>' % Script.scriptName)
   DIRAC.exit(2)
 
 
-if len(args) < 1:
-  usage()
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
+  Script.parseCommandLine(ignoreErrors=True)
 
-diracProd = DiracProduction()
-exitCode = 0
-errorList = []
+  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-for prodID in args:
-  result = diracProd.getProductionLoggingInfo(prodID, printOutput=True)
-  if 'Message' in result:
-    errorList.append((prodID, result['Message']))
-    exitCode = 2
-  elif not result:
-    errorList.append((prodID, 'Null result for getProduction() call'))
-    exitCode = 2
-  else:
-    exitCode = 0
+  args = Script.getPositionalArgs()
 
-for error in errorList:
-  print("ERROR %s: %s" % error)
+  if len(args) < 1:
+    usage()
 
-DIRAC.exit(exitCode)
+  diracProd = DiracProduction()
+  exitCode = 0
+  errorList = []
+
+  for prodID in args:
+    result = diracProd.getProductionLoggingInfo(prodID, printOutput=True)
+    if 'Message' in result:
+      errorList.append((prodID, result['Message']))
+      exitCode = 2
+    elif not result:
+      errorList.append((prodID, 'Null result for getProduction() call'))
+      exitCode = 2
+    else:
+      exitCode = 0
+
+  for error in errorList:
+    print("ERROR %s: %s" % error)
+
+  DIRAC.exit(exitCode)
+
+
+if __name__ == "__main__":
+  main()

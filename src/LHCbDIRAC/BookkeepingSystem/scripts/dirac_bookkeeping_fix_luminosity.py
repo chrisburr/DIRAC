@@ -9,17 +9,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Fix the luminosity of all descendants of a set of RAW files, if the run is finished."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""Fix the luminosity of all descendants of a set of RAW files, if the run is finished."""
-
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerBKSwitches()
@@ -38,3 +40,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFixLuminosity
   executeFixLuminosity(dmScript)
+
+
+if __name__ == "__main__":
+  main()

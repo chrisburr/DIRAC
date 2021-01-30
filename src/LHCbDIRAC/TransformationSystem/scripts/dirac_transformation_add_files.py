@@ -9,17 +9,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Add files to a transformation."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""Add files to a transformation."""
-
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
+
   import os
   import DIRAC
   from DIRAC import gLogger
@@ -91,3 +94,7 @@ if __name__ == "__main__":
       gLogger.always('Failed to add %d files to transformation %d' % (len(requestedLFNs), transID), res['Message'])
       rc = 2
   DIRAC.exit(rc)
+
+
+if __name__ == "__main__":
+  main()

@@ -16,10 +16,11 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def __getTransformations(args):
+  from DIRAC.Core.Base import Script
   if not len(args):
     print("Specify transformation number...")
     Script.showHelp()
@@ -36,16 +37,16 @@ def __getTransformations(args):
   return transList
 
 
-def __getTask(transID, taskID):
+def __getTask(transClient, transID, taskID):
   res = transClient.getTransformationTasks({'TransformationID': transID, "TaskID": taskID})
   if not res['OK'] or not res['Value']:
     return None
   return res['Value'][0]
 
 
-# ====================================
-if __name__ == "__main__":
-
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
   Script.parseCommandLine(ignoreErrors=True)
   transList = __getTransformations(Script.getPositionalArgs())
 
@@ -64,7 +65,7 @@ if __name__ == "__main__":
       taskID = fileDict['TaskID']
       taskDict[taskID] = taskDict.setdefault(taskID, 0) + 1
     for taskID in taskDict:
-      task = __getTask(transID, taskID)
+      task = __getTask(transClient, transID, taskID)
       targetSE = task.get('TargetSE', None)
       targetStats[targetSE][0] = targetStats.setdefault(targetSE, [0, 0])[0] + taskDict[taskID]
       targetStats[targetSE][1] += 1
@@ -72,3 +73,7 @@ if __name__ == "__main__":
     gLogger.always("Transformation %d: %d assigned files found" % (transID, len(res['Value'])))
     for targetSE, (nfiles, ntasks) in targetStats.items():
       gLogger.always("\t%s: %d files in %d tasks" % (targetSE, nfiles, ntasks))
+
+
+if __name__ == "__main__":
+  main()

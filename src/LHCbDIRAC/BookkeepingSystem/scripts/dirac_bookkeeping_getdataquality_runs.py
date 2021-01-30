@@ -9,50 +9,54 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Get Data Quality Flag for the given run."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-########################################################################
-# File :    dirac-bookkeeping-getdataquality-runs.py
-# Author :  Zoltan Mathe
-########################################################################
-"""Get Data Quality Flag for the given run."""
 
 __RCSID__ = "$Id$"
 
 import DIRAC
 
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
-Script.setUsageMessage(__doc__ + '\n'.join([
-    'Usage:',
-    '  %s [option|cfgfile] ... Run ...' % Script.scriptName,
-    'Arguments:',
-    '  Run:      Run number']))
-Script.parseCommandLine(ignoreErrors=True)
-runSet = set(int(id) for arg in Script.getPositionalArgs() for id in arg.split(','))
+@DIRACScript()
+def main():
+  from DIRAC.Core.Base import Script
 
-if not runSet:
-  Script.showHelp(exitCode=1)
+  Script.setUsageMessage(__doc__ + '\n'.join([
+      'Usage:',
+      '  %s [option|cfgfile] ... Run ...' % Script.scriptName,
+      'Arguments:',
+      '  Run:      Run number']))
+  Script.parseCommandLine(ignoreErrors=True)
+  runSet = set(int(id) for arg in Script.getPositionalArgs() for id in arg.split(','))
 
-gLogger.showHeaders(False)
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-cl = BookkeepingClient()
+  if not runSet:
+    Script.showHelp(exitCode=1)
 
-gLogger.notice("Run Number".ljust(15) + "Stream".ljust(10) + "Flag".ljust(10))
+  gLogger.showHeaders(False)
+  from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+  cl = BookkeepingClient()
 
-error = False
-for runId in sorted(runSet):
-  retVal = cl.getRunFilesDataQuality(runId)
-  if retVal['OK']:
-    for run, stream, flag in sorted((run, stream, flag) for run, flag, stream in retVal["Value"]):
-      gLogger.notice(str(run).ljust(15) + str(stream).ljust(10) + str(flag).ljust(10))
-    gLogger.notice("-----------------------------------")
-  else:
-    gLogger.error(retVal["Message"])
-    error = True
+  gLogger.notice("Run Number".ljust(15) + "Stream".ljust(10) + "Flag".ljust(10))
 
-if error:
-  DIRAC.exit(1)
+  error = False
+  for runId in sorted(runSet):
+    retVal = cl.getRunFilesDataQuality(runId)
+    if retVal['OK']:
+      for run, stream, flag in sorted((run, stream, flag) for run, flag, stream in retVal["Value"]):
+        gLogger.notice(str(run).ljust(15) + str(stream).ljust(10) + str(flag).ljust(10))
+      gLogger.notice("-----------------------------------")
+    else:
+      gLogger.error(retVal["Message"])
+      error = True
+
+  if error:
+    DIRAC.exit(1)
+
+
+if __name__ == "__main__":
+  main()

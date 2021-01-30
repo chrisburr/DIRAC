@@ -9,17 +9,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Retrieve an access URL for an LFN replica given a valid DIRAC SE."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""Retrieve an access URL for an LFN replica given a valid DIRAC SE."""
-
 __RCSID__ = "$Id$"
 
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()
@@ -44,3 +46,7 @@ if __name__ == "__main__":
   from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeAccessURL
   from DIRAC import exit
   exit(executeAccessURL(dmScript))
+
+
+if __name__ == "__main__":
+  main()

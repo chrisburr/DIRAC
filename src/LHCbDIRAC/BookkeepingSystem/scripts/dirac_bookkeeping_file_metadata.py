@@ -9,18 +9,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+"""Retrieve metadata from the Bookkeeping for the given files."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-"""Retrieve metadata from the Bookkeeping for the given files."""
-
 __RCSID__ = "$Id$"
 
-import DIRAC.Core.Base.Script as Script
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  import DIRAC.Core.Base.Script as Script
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+
   dmScript = DMScript()
   dmScript.registerFileSwitches()
   Script.registerSwitch('', 'Full', '   Print out all metadata')
@@ -34,3 +37,7 @@ if __name__ == "__main__":
 
   from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFileMetadata
   executeFileMetadata(dmScript)
+
+
+if __name__ == "__main__":
+  main()

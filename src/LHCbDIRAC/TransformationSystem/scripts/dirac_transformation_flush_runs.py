@@ -16,10 +16,14 @@ from __future__ import division
 from __future__ import print_function
 
 import DIRAC
-from DIRAC import gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
-if __name__ == "__main__":
+
+@DIRACScript()
+def main():
+  from DIRAC import gLogger
+  from DIRAC.Core.Base import Script
+
   Script.registerSwitch('', 'Runs=', '   list of runs to flush (comma separated, ranges r1:r2)')
   Script.registerSwitch('', 'NoAction', '   No action taken, just give stats')
   Script.registerSwitch('', 'Active', '   If used, selects all active runs')
@@ -127,3 +131,7 @@ if __name__ == "__main__":
       else:
         ok += 1
     gLogger.always('%d runs set to Flush in transformation %d' % (ok, transID))
+
+
+if __name__ == "__main__":
+  main()
