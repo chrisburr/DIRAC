@@ -80,8 +80,7 @@ stages:
     - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
     - conda activate test-env
     - pip install ../DIRAC
-    # - pip install .
-    - mamba install LbEnv LbPlatformUtils uproot cx_Oracle==7.3 xmltodict
+    - pip install .
 
 # This runs pylint and fails if there are errors
 run_pylint:
@@ -106,8 +105,7 @@ run_pytest:
 run_pytest_py3:
   extends: .test_setup_py3
   script:
-    - cd src/LHCbDIRAC
-    - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
+    - DIRAC_DEPRECATED_FAIL=True pytest src/LHCbDIRAC
 
 # This runs pycodestyle
 run_pycodestyle:
@@ -121,32 +119,12 @@ run_pycodestyle:
 
 # Check that the documentation does not generate any error/warning
 check_docs:
-  #<<: *test_setup
-  image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
-  before_script:
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel swig
-    # One has to do it in a virtual env because pip-compile
-    # generates a requirements.txt which conflicts with the
-    # yum installed python packages (like ipaddress or requests)
-    - virtualenv /tmp/generateDoc
-    - source /tmp/generateDoc/bin/activate
-    - export PYCURL_SSL_LIBRARY=openssl
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
-    - pip install pip-tools
+  extends: .test_setup_py3
   script:
-    # We need to use m2crypto, otherwise it looks for GSI, which is annoying
-    - export DIRAC_USE_M2CRYPTO=True
-    - export PYTHONPATH=$PWD/src
+    - pip install ../DIRAC/docs
     - cd docs
-    # We need to compile the requirements.txt because the crappy pip dependency
-    # resolution cannot figure out matplotlib dependency properly
-    - mv requirements.txt requirements.in
-    - pip-compile requirements.in
-    - pip install -r requirements.txt
     # We need to export the DIRAC env variable so that the makefile knows where to find the documentation tools
-    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print diracdoctools.__file__"))
+    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print(diracdoctools.__file__)"))
     # Remove  numpy from DIRAC_DOC_MOCK_LIST as uproot fails to import without it
     - sed -i "s@'numpy',@@" "${DIRACDOCTOOLS}/__init__.py"
     - SPHINXOPTS=-wsphinxWarnings make htmlall || { echo "Failed to build documentation, check for errors above" ; exit 1; }
