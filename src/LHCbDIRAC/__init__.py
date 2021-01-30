@@ -30,6 +30,7 @@ import six
 
 rootPath = os.path.dirname(os.path.realpath(__path__[0]))
 
+# Define Version
 if six.PY3:
   from pkg_resources import get_distribution, DistributionNotFound
 
@@ -56,3 +57,9 @@ else:
     version = "%s-pre%s" % (version, preVersion)
     __version__ += "a%s" % preVersion
     buildVersion = "%s pre %s" % (buildVersion, preVersion)
+
+
+def extension_metadata():
+  return {
+      "priority": 100,
+  }

@@ -334,8 +334,7 @@ class BookkeepingReport(ModuleBase):
     typedParams.append(("ProgramVersion", self.applicationVersion))
 
     # DIRAC version
-    tempVar = "v%dr%dp%d" % (LHCbDIRAC.majorVersion, LHCbDIRAC.minorVersion, LHCbDIRAC.patchLevel)
-    typedParams.append(("DiracVersion", tempVar))
+    typedParams.append(("DiracVersion", LHCbDIRAC.__version__))
 
     typedParams.append(("FirstEventNumber", 1))
 
