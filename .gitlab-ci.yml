@@ -217,11 +217,10 @@ integration_tests:
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
     - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
     # Get DIRAC
-    - git clone https://github.com/DIRACGrid/DIRAC.git
-    - cd DIRAC
-    #- git checkout "$diracRef" there is no branch with name rel-v7r2 currently
-    - git checkout integration
-    - cd ..
+    # There is no branch with name rel-v7r2 currently
+    # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracRef"
+    # - git clone https://github.com/DIRACGrid/DIRAC.git -b integration
+    - git clone https://github.com/chrisburr/DIRAC.git -b "lhcbdirac-fixes"
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
