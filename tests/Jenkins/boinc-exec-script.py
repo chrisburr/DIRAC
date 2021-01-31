@@ -21,6 +21,6 @@ import time
 
 if __name__ == '__main__':
   arg = sys.argv[1]
-  with open('%s_toto.txt'%arg, 'w') as f:
-    f.write("%s"%arg)
+  with open('%s_toto.txt' % arg, 'w') as f:
+    f.write("%s" % arg)
   sys.exit(0)

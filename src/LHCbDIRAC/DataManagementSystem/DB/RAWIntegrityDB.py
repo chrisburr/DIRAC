@@ -397,4 +397,3 @@ class RAWIntegrityDB(DB):
 
 
 # ...............................................................................
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

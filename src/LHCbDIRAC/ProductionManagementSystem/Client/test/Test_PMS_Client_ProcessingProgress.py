@@ -67,4 +67,3 @@ class HTMLProgressTable_Success(HTMLProgressTable_TestCase):
     self.assertEqual('HTMLProgressTable', progress.__class__.__name__)
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

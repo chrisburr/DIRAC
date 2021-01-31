@@ -657,6 +657,3 @@ if __name__ == '__main__':
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(DataStoragePlotterTestCase))
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(DataStoragePlotterUnitTestCrashes))
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

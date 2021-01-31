@@ -16,4 +16,3 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

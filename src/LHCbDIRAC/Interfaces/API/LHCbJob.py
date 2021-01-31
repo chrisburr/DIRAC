@@ -29,7 +29,7 @@ An example DaVinci application script would be::
   optionsLine='ApplicationMgr.EvtMax=1',
   inputData=['/lhcb/production/DC06/phys-v2-lumi2/00001650/DST/0000/00001650_00000054_5.dst'])
   j.setName('MyJobName')
-  #j.setDestination('LCG.CERN.cern')
+  j.setDestination('LCG.CERN.cern')
 
   dirac = DiracLHCb()
   jobID = dirac.submitJob(j)
@@ -47,7 +47,7 @@ Another example for executing a script in the Gaudi Application environment is::
   j.setApplicationScript('DaVinci','v19r11','myGaudiPythonScript.py',
   inputData=['/lhcb/production/DC06/phys-lumi2/00001501/DST/0000/00001501_00000320_5.dst'])
   j.setName('MyJobName')
-  #j.setDestination('LCG.CERN.cern')
+  j.setDestination('LCG.CERN.cern')
 
   dirac = DiracLHCb()
   jobID = dirac.submitJob(j)

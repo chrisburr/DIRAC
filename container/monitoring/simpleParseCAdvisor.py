@@ -46,7 +46,7 @@ def defaultFetch(dataDict):
   fields = {}
   for key, value in dataDict.items():
     if isinstance(value, dict):
-      #print "CHRIS %s"%dataDict
+      # print "CHRIS %s"%dataDict
       continue
       fields.update(dict(("%s_%s" % (key, k1), v1) for k1, v1 in value.items()))
     else:
