@@ -223,7 +223,7 @@ class TransformationDB(DIRACTransformationDB):
       else:
         value = queryDict[field]
 
-        if isinstance(value, (int, long, float)):
+        if isinstance(value, six.integer_types + (float,)):
           value = str(value)
         if isinstance(value, (list, tuple)):
           value = ';;;'.join(str(x) for x in value)

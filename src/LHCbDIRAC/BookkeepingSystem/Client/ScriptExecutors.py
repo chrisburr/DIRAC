@@ -925,17 +925,18 @@ def _getCollidingBunches(fills):
 
   :return: dictionary {fill:nbCollisingBunches}
   """
-  import urllib2
+  from six.moves.urllib.request import urlopen
+  from six.moves.urllib.error import HTTPError
   import json
   result = {}
   for fill in fills:
     try:
       runDbUrl = 'https://lbrundb.cern.ch/api/fill/%d/' % fill
-      fillInfo = json.load(urllib2.urlopen(runDbUrl))
+      fillInfo = json.load(urlopen(runDbUrl))
       result[fill] = int(fillInfo['nCollidingBunches'])
     except (KeyError, ValueError) as e:
       gLogger.exception("Exception getting info for fill", str(fill), lException=e)
-    except urllib2.HTTPError as e:
+    except HTTPError as e:
       pass
   return result
 
@@ -1432,7 +1433,9 @@ def executeRunInfo(item):
       elif (runValue != itemValue or gap) and firstRun is not None:
         # We are now in a new range, print out the previous range
         if lastRun != firstRun:
-          rangeStr = '%d:%d' % (firstRun, lastRun)
+          # This should be "disable=bad-string-format-type" but this
+          # isn't support in Python 2 versions of pylint
+          rangeStr = '%d:%d' % (firstRun, lastRun)  # pylint: disable=E
         else:
           rangeStr = '%d' % firstRun
         if lastRunDesc:

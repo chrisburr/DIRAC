@@ -67,7 +67,7 @@ class RemoveInputData(ModuleBase):
       if not self._enableModule():
         return S_OK()
 
-      result = self._resolveInputVariables()
+      self._resolveInputVariables()
 
       # Try to remove the file list with failover if necessary
       failover = []

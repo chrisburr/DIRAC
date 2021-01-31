@@ -93,7 +93,7 @@ run_pylint:
 run_pylint_py3:
   extends: .test_setup_py3
   script:
-    - pylint -E --rcfile=../DIRAC/.pylintrc src/LHCbDIRAC tests/
+    - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
 
 # This runs pytest and generates the coverage report
 run_pytest:

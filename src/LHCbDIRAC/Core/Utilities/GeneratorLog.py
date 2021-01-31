@@ -15,6 +15,7 @@ from __future__ import print_function
 import io
 import ast
 import json
+import six
 import xmltodict
 
 
@@ -133,6 +134,6 @@ class GeneratorLog(object):
     dictGenerator['generatorCounters'] = dictElements
 
     with io.open(fileName, 'w', encoding="utf-8") as fp:
-        fp.write(unicode(json.dumps(dictGenerator, indent=2)))
+        fp.write(six.text_type(json.dumps(dictGenerator, indent=2)))
 
     return dictGenerator

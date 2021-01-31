@@ -21,10 +21,10 @@ from __future__ import print_function
 import os
 import time
 import xml.dom.minidom
-import urllib
 import json
 import socket
 
+from six.moves.urllib.request import urlopen
 from DIRAC import S_OK, rootPath, gLogger, gConfig
 from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getSites
 from DIRAC.ConfigurationSystem.Client.Helpers.Path import cfgPath
@@ -232,7 +232,7 @@ class NagiosTopologyAgent(AgentModule):
     writeHeaderInfo(xml_doc, xml_root)
 
     # loop over sites
-    response = urllib.urlopen(self.urljson)
+    response = urlopen(self.urljson)
     wlcg = json.loads(response.read())
 
     organized_list_of_sites = []

@@ -196,7 +196,7 @@ class PluginUtilities(DIRACPluginUtilities):
     if not res['OK']:
       self.logError("There is no CS section %s" % section, res['Message'])
       return res
-    rawFraction = None
+    rawFraction = {}
     if backupSE:
       # Apply these processing fractions to the RAW distribution shares
       rawFraction = res['Value']

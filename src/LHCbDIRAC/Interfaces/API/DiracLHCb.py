@@ -52,7 +52,7 @@ def getSiteForSE(se):
 
 
 def translateBKPath(bkPath, procPassID=3):
-  bk = filter(None, bkPath.split('/'))
+  bk = [s for s in bkPath.split('/') if s]
   if procPassID < 0:
     return bk
   try:
@@ -60,7 +60,7 @@ def translateBKPath(bkPath, procPassID=3):
     bkNodes.append('/' + '/'.join(bk[procPassID:-2]))
     bkNodes.append(bk[-2])
     bkNodes.append(bk[-1])
-  except BaseException:
+  except Exception:
     gLogger.error("Incorrect BKQuery")
     bkNodes = None
   return bkNodes

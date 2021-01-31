@@ -13,8 +13,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
-
 import unittest
 import copy
 import os
@@ -107,8 +105,7 @@ class LHCbScriptSuccess(ModulesApplicationsTestCase):
         lhcbScript.workflow_commons = wf_cs
         lhcbScript.step_commons = s_cs
         lhcbScript._setCommand()
-        res = lhcbScript._executeCommand()
-        self.assertIsNone(res)
+        lhcbScript._executeCommand()
 
 
 class LHCbScriptFailure(ModulesApplicationsTestCase):

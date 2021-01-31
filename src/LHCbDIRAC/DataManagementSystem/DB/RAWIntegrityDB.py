@@ -20,8 +20,6 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-import types
-
 import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
@@ -335,7 +333,7 @@ class RAWIntegrityDB(DB):
         if not ret['OK']:
           return ret
         attrName = "`" + ret['Value'][1:-1] + "`"
-        if isinstance(attrValue, types.ListType):
+        if isinstance(attrValue, list):
           multiValueList = []
           for x in attrValue:
             ret = self._escapeString(x)
