@@ -79,8 +79,8 @@ stages:
     - git clone https://github.com/chrisburr/DIRAC.git -b "lhcbdirac-fixes" ../DIRAC
     - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
     - conda activate test-env
-    - pip install ../DIRAC
-    - pip install .
+    - pip install ../DIRAC[server]
+    - pip install .[server]
 
 # This runs pylint and fails if there are errors
 run_pylint:
@@ -89,6 +89,11 @@ run_pylint:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
     - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
+
+run_pylint_py3:
+  extends: .test_setup_py3
+  script:
+    - pylint -E --rcfile=../DIRAC/.pylintrc src/LHCbDIRAC tests/
 
 # This runs pytest and generates the coverage report
 run_pytest:
@@ -116,6 +121,11 @@ run_pycodestyle:
     - git fetch --no-tags GL
     - git branch -avv
     - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
+
+pycodestyle_py3:
+  extends: .test_setup_py3
+  script:
+    - pycodestyle
 
 # Check that the documentation does not generate any error/warning
 check_docs:
