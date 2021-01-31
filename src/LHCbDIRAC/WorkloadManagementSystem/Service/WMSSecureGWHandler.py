@@ -17,7 +17,6 @@ from __future__ import division
 from __future__ import print_function
 import six
 import json
-from types import DictType, StringTypes, ListType
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Security import Properties
 from DIRAC.ConfigurationSystem.Client.Helpers.Registry import getDNForUsername, findDefaultGroupForDN
@@ -105,7 +104,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ###########################################################################
-  types_setJobStatus = [[six.string_types, int, long], six.string_types, six.string_types, six.string_types]
+  types_setJobStatus = [(six.string_types, six.integer_types), six.string_types, six.string_types, six.string_types]
 
   def export_setJobStatus(self, jobID, status, minorStatus, source='Unknown', datetime=None):
     """Set the major and minor status for job specified by its JobId.
@@ -117,7 +116,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobStatus
 
   ###########################################################################
-  types_setJobSite = [[six.string_types, int, long], six.string_types]
+  types_setJobSite = [(six.string_types, six.integer_types), six.string_types]
 
   def export_setJobSite(self, jobID, site):
     """Allows the site attribute to be set for a job specified by its jobID."""
@@ -125,7 +124,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobSite
 
   ###########################################################################
-  types_setJobParameter = [[six.string_types, int, long], six.string_types, six.string_types]
+  types_setJobParameter = [(six.string_types, six.integer_types), six.string_types, six.string_types]
 
   def export_setJobParameter(self, jobID, name, value):
     """Set arbitrary parameter specified by name/value pair for job specified
@@ -134,7 +133,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobParam
 
   ###########################################################################
-  types_setJobStatusBulk = [[six.string_types, int, long], dict]
+  types_setJobStatusBulk = [(six.string_types, six.integer_types), dict]
 
   def export_setJobStatusBulk(self, jobID, statusDict):
     """Set various status fields for job specified by its JobId.
@@ -147,7 +146,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobStatus
 
   ###########################################################################
-  types_setJobParameters = [[six.string_types, int, long], list]
+  types_setJobParameters = [(six.string_types, six.integer_types), list]
 
   def export_setJobParameters(self, jobID, parameters):
     """Set arbitrary parameters specified by a list of name/value pairs for job
@@ -156,7 +155,7 @@ class WMSSecureGWHandler(RequestHandler):
     return jobParams
 
   ###########################################################################
-  types_sendHeartBeat = [[six.string_types, int, long], dict, dict]
+  types_sendHeartBeat = [(six.string_types, six.integer_types), dict, dict]
 
   def export_sendHeartBeat(self, jobID, dynamicData, staticData):
     """Send a heart beat sign of life for a job jobID."""
@@ -200,7 +199,7 @@ class WMSSecureGWHandler(RequestHandler):
     return result
 
   ##############################################################################
-  types_getJobParameter = [[six.string_types, int, long], six.string_types]
+  types_getJobParameter = [(six.string_types, six.integer_types), six.string_types]
 
   @staticmethod
   def export_getJobParameter(jobID, parName):
@@ -259,7 +258,7 @@ class WMSSecureGWHandler(RequestHandler):
     resDict = {'Successful': successful, 'Failed': {}}
     return S_OK(resDict)
 
-  types_exists = [[ListType, DictType] + list(StringTypes)]
+  types_exists = [[list, dict] + list(six.string_types)]
 
   def export_exists(self, lfns):
     """Check whether the supplied paths exists."""
@@ -271,7 +270,7 @@ class WMSSecureGWHandler(RequestHandler):
 
   ########################################################################
 
-  types_addFile = [[ListType, DictType] + list(StringTypes)]
+  types_addFile = [[list, dict] + list(six.string_types)]
 
   def export_addFile(self, lfns):
     """Register supplied files."""

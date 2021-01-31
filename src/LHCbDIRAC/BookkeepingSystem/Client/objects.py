@@ -134,7 +134,7 @@ class Entity(dict):
 #          s += "\n " + str(key) + " : "
 #          value = self[key]
 #
-#          if isinstance(value, types.DictType):
+#          if isinstance(value, dict):
 #            value = Entity(value)
 #            s += "\n" + IndentMaker.prepend(str(value), (len(str(key))+3)*" ")
 #            #childrenString += str(Entity(child)) + "\n"
