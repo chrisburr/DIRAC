@@ -22,7 +22,7 @@ from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
 from DIRAC import gLogger
-from tests.Integration.ProductionManagementSystem.MCStatsSampleData import boole_errors_1
+from .MCStatsSampleData import boole_errors_1
 
 # sut
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCBooleLogErrorsDB import ElasticMCBooleLogErrorsDB

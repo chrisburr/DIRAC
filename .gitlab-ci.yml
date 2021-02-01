@@ -46,8 +46,8 @@ stages:
     - pip install --upgrade 'pip<21'
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
-    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
     # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
@@ -67,12 +67,28 @@ stages:
   only:
     - branches
 
+.test_setup_py3:
+  stage: test
+  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
+  before_script:
+    - eval "$(python -m conda shell.bash hook)"
+    - conda install --yes mamba diraccfg git jq
+    - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracTAG" ../DIRAC
+    - git clone https://github.com/chrisburr/DIRAC.git -b "lhcbdirac-fixes" ../DIRAC
+    - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
+    - conda activate test-env
+    - pip install ../DIRAC
+    # - pip install .
+    - mamba install LbEnv LbPlatformUtils uproot cx_Oracle==7.3 xmltodict
+
 # This runs pylint and fails if there are errors
 run_pylint:
   <<: *test_setup
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
-    - cd LHCbDIRAC
+    - cd src/LHCbDIRAC
     - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
 
 # This runs pytest and generates the coverage report
@@ -80,18 +96,24 @@ run_pytest:
   <<: *test_setup
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
-    - cd LHCbDIRAC
+    - cd src/LHCbDIRAC
     - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
   coverage: '/\d+\%\s*$/'
   artifacts:
     paths:
       - LHCbDIRAC/htmlcov/
 
+run_pytest_py3:
+  extends: .test_setup_py3
+  script:
+    - cd src/LHCbDIRAC
+    - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
+
 # This runs pycodestyle
 run_pycodestyle:
   <<: *test_setup
   script:
-    - lhcbDiracBranch=$(python -c "s = open('LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
+    - lhcbDiracBranch=$(python -c "s = open('src/LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
     - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
     - git fetch --no-tags GL
     - git branch -avv
@@ -116,7 +138,7 @@ check_docs:
   script:
     # We need to use m2crypto, otherwise it looks for GSI, which is annoying
     - export DIRAC_USE_M2CRYPTO=True
-    - export PYTHONPATH=$PWD:$PYTHONPATH
+    - export PYTHONPATH=$PWD/src
     - cd docs
     # We need to compile the requirements.txt because the crappy pip dependency
     # resolution cannot figure out matplotlib dependency properly
@@ -189,17 +211,16 @@ integration_tests:
     - apk add jq python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - LHCBDIRAC_RELEASE=$(python3 -c "from LHCbDIRAC import version; print(version)")
+    - LHCBDIRAC_RELEASE=$(cd src && python3 -c "from LHCbDIRAC import version; print(version)")
     - export LHCBDIRAC_RELEASE
-    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
     - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
     # Get DIRAC
-    - git clone https://github.com/DIRACGrid/DIRAC.git
-    - cd DIRAC
-    #- git checkout "$diracRef" there is no branch with name rel-v7r2 currently
-    - git checkout integration
-    - cd ..
+    # There is no branch with name rel-v7r2 currently
+    # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracRef"
+    # - git clone https://github.com/DIRACGrid/DIRAC.git -b integration
+    - git clone https://github.com/chrisburr/DIRAC.git -b "lhcbdirac-fixes"
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
@@ -207,8 +228,8 @@ integration_tests:
     - export CI_REGISTRY_IMAGE=diracgrid
     # ALTERNATIVE_MODULES
     - declare -a ALTERNATIVE_MODULES
-    - ALTERNATIVE_MODULES+=("$PWD/LHCbDIRAC")
-    - ALTERNATIVE_MODULES+=("$PWD/DIRAC")
+    - ALTERNATIVE_MODULES+=("$PWD/LHCbDIRAC/src/LHCbDIRAC")
+    - ALTERNATIVE_MODULES+=("$PWD/DIRAC/src/DIRAC")
     # TESTREPO
     - declare -a TESTREPO
     - TESTREPO+=("$PWD/LHCbDIRAC")
@@ -311,6 +332,7 @@ create_tarball:
     - BRANCH=$(echo ${CI_COMMIT_TAG} | grep -qE '^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$'; if [ $? -eq 0 ]; then echo "master"; else echo "devel"; fi)
     # Get the releases.cfg from the appropriate branch
     - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/LHCbDIRAC/releases.cfg
+    # - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/src/LHCbDIRAC/releases.cfg
     # Create the release tarball
     # The last line output by the script is the command to run in order to deploy
     - python3 /dirac-distribution.py -r ${CI_COMMIT_TAG} -l LHCb -C file:///$(pwd)/releases.cfg | tail -n 1  > /tmp/deploy.sh
@@ -486,6 +508,7 @@ make_tag:
     - rm -f releases.cfg
     # Get the master version of the releases.cfg from the LHCbDIRAC main repo devel branch
     - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/LHCbDIRAC/releases.cfg
+    # - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/src/LHCbDIRAC/releases.cfg
     # init the dirac bot gitlab user
     - eval `ssh-agent -s`
     - mkdir -p ~/.ssh
@@ -508,14 +531,14 @@ make_tag:
     - rm -rf LHCbDIRAC
     # checkout the repo
     - git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbDIRAC.git LHCbDIRAC
-    - cd LHCbDIRAC
+    - cd src/LHCbDIRAC
     # checkout the correct branch we can only be on master or devel
     - git checkout ${CI_COMMIT_REF_NAME}
     # get the last releases.cfg
     - mv ../releases.cfg releases.cfg
     # Call the python script that generated all the artifacts for the release
     - python3 tests/Utilities/createReleaseFiles.py
-    - mv releases.cfg LHCbDIRAC/releases.cfg
+    - mv releases.cfg src/LHCbDIRAC/releases.cfg
     - export SERIES=`cat series.txt`
     - export VERSION=`cat version.txt`
     # insert new release notes into the changelog
@@ -523,7 +546,7 @@ make_tag:
     - mv newNotes.txt CHANGELOG/$SERIES
     # show all the changes we have done
     - cp CHANGELOG/$SERIES ../changes.txt
-    - cp LHCbDIRAC/releases.cfg ../releases.cfg
+    - cp src/LHCbDIRAC/releases.cfg ../releases.cfg
     - git diff
     - git add -u
     # commit all the changes to the current branch
@@ -538,11 +561,11 @@ make_tag:
     - git checkout devel
     - git reset --hard origin/devel
     - cp ../changes.txt CHANGELOG/$SERIES
-    - cp ../releases.cfg LHCbDIRAC/releases.cfg
+    - cp ../releases.cfg src/LHCbDIRAC/releases.cfg
     # Only push this changes to devel if master was tagged. Don't push if you tagged devel
     - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then git commit -av -m "Add release ${VERSION} to releases.cfg and CHANGELOG"  ; fi
     - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then git push origin devel ; fi
-    - cd ..
+    - cd ../..
     # Create release in gitlab
     - echo "GITLABTOKEN = \"$GITLABTOKEN\"" >& GitTokens.py
     - python3 dirac-docs-get-release-notes.py -g -i 3588 --tagName ${VERSION} --releaseNotes notes.txt --deployRelease

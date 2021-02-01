@@ -1,3 +1,3 @@
-LHCbDIRAC/__init__.py merge=ours
+src/LHCbDIRAC/__init__.py merge=ours
 container/lhcbdirac/Dockerfile merge=ours
-LHCbDIRAC/releases.cfg merge=ours
+src/LHCbDIRAC/releases.cfg merge=ours

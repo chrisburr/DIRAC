@@ -21,7 +21,7 @@ import time
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from tests.Integration.ProductionManagementSystem.MCStatsSampleData import prMon_1
+from .MCStatsSampleData import prMon_1
 
 # sut
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticPrMonDB import ElasticPrMonDB

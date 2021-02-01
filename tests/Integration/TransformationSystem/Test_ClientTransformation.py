@@ -27,9 +27,6 @@ import unittest
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from DIRAC.tests.Integration.TransformationSystem.Test_Client_Transformation import TransformationClientChain as \
-    DIRACTransformationClientChain
-
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 
@@ -42,7 +39,148 @@ class TestClientTransformationTestCase(unittest.TestCase):
     pass
 
 
-class LHCbTransformationClientChain(TestClientTransformationTestCase, DIRACTransformationClientChain):
+class LHCbTransformationClientChain(TestClientTransformationTestCase):
+  def test_addAndRemove(self):
+    # add
+    res = self.transClient.addTransformation('transName', 'description', 'longDescription', 'MCSimulation', 'Standard',
+                                             'Manual', '')
+    self.assertTrue(res['OK'])
+    transID = res['Value']
+
+    # try to add again (this should fail)
+    res = self.transClient.addTransformation('transName', 'description', 'longDescription', 'MCSimulation', 'Standard',
+                                             'Manual', '')
+    self.assertFalse(res['OK'])
+
+    # clean
+    res = self.transClient.cleanTransformation(transID)
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationParameters(transID, 'Status')
+    self.assertTrue(res['OK'])
+    self.assertEqual(res['Value'], 'TransformationCleaned')
+
+    # really delete
+    res = self.transClient.deleteTransformation(transID)
+    self.assertTrue(res['OK'])
+
+    # delete non existing one (fails)
+    res = self.transClient.deleteTransformation(transID)
+    self.assertFalse(res['OK'])
+
+  def test_addTasksAndFiles(self):
+    res = self.transClient.addTransformation('transName', 'description', 'longDescription', 'MCSimulation', 'Standard',
+                                             'Manual', '')
+    self.assertTrue(res['OK'])
+    transID = res['Value']
+
+    # add tasks - no lfns
+    res = self.transClient.addTaskForTransformation(transID)
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationTasks({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 1)
+    res = self.transClient.getTransformationFiles({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 0)
+
+    # add tasks - with lfns
+    res = self.transClient.addTaskForTransformation(transID, ['/aa/lfn.1.txt', '/aa/lfn.2.txt'])
+    # fails because the files are not present
+    self.assertFalse(res['OK'])
+    # so now adding them
+    res = self.transClient.addFilesToTransformation(transID, ['/aa/lfn.1.txt', '/aa/lfn.2.txt',
+                                                              '/aa/lfn.3.txt', '/aa/lfn.4.txt'])
+    self.assertTrue(res['OK'])
+
+    # now it should be ok
+    res = self.transClient.addTaskForTransformation(transID, ['/aa/lfn.1.txt', '/aa/lfn.2.txt'])
+    self.assertTrue(res['OK'])
+    res = self.transClient.addTaskForTransformation(transID, ['/aa/lfn.3.txt', '/aa/lfn.4.txt'])
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationTasks({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 3)
+    index = 1
+    for task in res['Value']:
+      self.assertEqual(task['ExternalStatus'], 'Created')
+      self.assertEqual(task['TaskID'], index)
+      index += 1
+    res = self.transClient.getTransformationFiles({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 4)
+    for f in res['Value']:
+      self.assertEqual(f['Status'], 'Assigned')
+
+    # now adding a new Transformation with new tasks, and introducing a mix of insertion,
+    # to test that the trigger works as it should
+    res = self.transClient.addTransformation(
+        'transName-new',
+        'description',
+        'longDescription',
+        'MCSimulation',
+        'Standard',
+        'Manual',
+        '')
+    transIDNew = res['Value']
+    # add tasks - no lfns
+    res = self.transClient.addTaskForTransformation(transIDNew)
+    self.assertTrue(res['OK'])
+    res = self.transClient.addTaskForTransformation(transIDNew)
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationTasks({'TransformationID': transIDNew})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 2)
+    index = 1
+    for task in res['Value']:
+      self.assertEqual(task['ExternalStatus'], 'Created')
+      self.assertEqual(task['TaskID'], index)
+      index += 1
+    # now mixing things
+    res = self.transClient.addTaskForTransformation(transID)
+    self.assertTrue(res['OK'])
+    res = self.transClient.addTaskForTransformation(transIDNew)
+    self.assertTrue(res['OK'])
+    res = self.transClient.addTaskForTransformation(transID)
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationTasks({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 5)
+    index = 1
+    for task in res['Value']:
+      self.assertEqual(task['ExternalStatus'], 'Created')
+      self.assertEqual(task['TaskID'], index)
+      index += 1
+    res = self.transClient.getTransformationTasks({'TransformationID': transIDNew})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 3)
+    index = 1
+    for task in res['Value']:
+      self.assertEqual(task['ExternalStatus'], 'Created')
+      self.assertEqual(task['TaskID'], index)
+      index += 1
+
+    # clean
+    res = self.transClient.cleanTransformation(transID)
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationFiles({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 0)
+    res = self.transClient.getTransformationTasks({'TransformationID': transID})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 0)
+
+    res = self.transClient.cleanTransformation(transIDNew)
+    self.assertTrue(res['OK'])
+    res = self.transClient.getTransformationFiles({'TransformationID': transIDNew})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 0)
+    res = self.transClient.getTransformationTasks({'TransformationID': transIDNew})
+    self.assertTrue(res['OK'])
+    self.assertEqual(len(res['Value']), 0)
+
+    # delete it in the end
+    self.transClient.deleteTransformation(transID)
+    self.transClient.deleteTransformation(transIDNew)
 
   def test_LHCbOnly(self):
 
