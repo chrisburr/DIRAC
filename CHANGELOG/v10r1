@@ -1,3 +1,13 @@
+v10r1p2
+Based on DIRAC v7r1p26
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r13
+*Workflow
+
+FIX: (!906) Added protection for unknown formats in XMLSummaries
+
+
+
 v10r1p1
 Based on DIRAC v7r1p26
 LHCbWebDIRAC v5r2
