@@ -131,12 +131,13 @@ class UploadMC(ModuleBase):
       # looking for xml files that are 'summaryGauss_self.production_id_self.prod_job_id_1.xml'
       xmlfl = 'summaryGauss_%s_%s_1.xml' % (self.production_id, self.prod_job_id)
       if os.path.exists(xmlfl):
-        jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
-        xmlData = XMLSummary(xmlfl)
-        xmlData.xmltojson()
-        # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
-        with io.open(jsonfl) as JS:
-          try:
+
+        try:
+          xmlData = XMLSummary(xmlfl)
+          xmlData.xmltojson()
+          # At this point 'summaryGauss_self.production_id_self.prod_job_id_1.json' should have been created
+          jsonfl = 'summaryGauss_%s_%s_1.json' % (self.production_id, self.prod_job_id)
+          with io.open(jsonfl) as JS:
             jsonData = json.load(JS)
             ids = dict()
             ids['JobID'] = self.jobID
@@ -155,12 +156,11 @@ class UploadMC(ModuleBase):
             else:
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
-          except Exception as ve:
-            self.log.error(repr(ve))
-            self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfl)
-            self.log.verbose(JS.read())
-            # do not fail the job for this
-            # raise
+
+        except Exception:
+          self.log.exception("Exception creating/loading the XMLSummary JSON file")
+          # do not fail the job for this
+
       else:
         self.log.info("XML Gauss summary file not found", xmlfl)
 
@@ -168,12 +168,13 @@ class UploadMC(ModuleBase):
       # looking for xml files that are 'GeneratorLog.xml'
       xmlfile = 'GeneratorLog.xml'
       if os.path.exists(xmlfile):
-        jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
-        xmlData = GeneratorLog()
-        xmlData.generatorLogJson(jsonfile)
-        # At this point 'GeneratorLog_self.production_id_self.prod_job_id.json' should have been created
-        with io.open(jsonfile) as JS:
-          try:
+
+        try:
+          jsonfile = 'GeneratorLog_%s_%s.json' % (self.production_id, self.prod_job_id)
+          xmlData = GeneratorLog()
+          xmlData.generatorLogJson(jsonfile)
+          # At this point 'GeneratorLog_self.production_id_self.prod_job_id.json' should have been created
+          with io.open(jsonfile) as JS:
             jsonData = json.load(JS)
             ids = dict()
             ids['JobID'] = self.jobID
@@ -192,12 +193,11 @@ class UploadMC(ModuleBase):
             else:
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfile)
-          except Exception as ve:
-            self.log.error(repr(ve))
-            self.log.verbose("Exception loading the JSON file: content of %s follows" % jsonfile)
-            self.log.verbose(JS.read())
-            # do not fail the job for this
-            # raise
+
+        except Exception:
+          self.log.exception("Exception creating/loading the GeneratorLog JSON file")
+          # do not fail the job for this
+
       else:
         self.log.info("XML GeneratorLog file not found", xmlfile)
 
