@@ -157,8 +157,7 @@ class UploadMC(ModuleBase):
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfl)
 
-        except Exception as ve:
-          self.log.error(repr(ve))
+        except Exception:
           self.log.exception("Exception creating/loading the XMLSummary JSON file")
           # do not fail the job for this
 
@@ -195,8 +194,7 @@ class UploadMC(ModuleBase):
               # At this point we can see exactly what the module would have uploaded
               self.log.info("Module disabled", "would have attempted to upload the following file %s" % jsonfile)
 
-        except Exception as ve:
-          self.log.error(repr(ve))
+        except Exception:
           self.log.exception("Exception creating/loading the GeneratorLog JSON file")
           # do not fail the job for this
 
