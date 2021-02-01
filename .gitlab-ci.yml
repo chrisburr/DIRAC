@@ -507,8 +507,7 @@ make_tag:
     - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
     - rm -f releases.cfg
     # Get the master version of the releases.cfg from the LHCbDIRAC main repo devel branch
-    - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/LHCbDIRAC/releases.cfg
-    # - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/src/LHCbDIRAC/releases.cfg
+    - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/src/LHCbDIRAC/releases.cfg
     # init the dirac bot gitlab user
     - eval `ssh-agent -s`
     - mkdir -p ~/.ssh
