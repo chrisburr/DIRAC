@@ -58,8 +58,8 @@ class ShiftDBAgent(AgentModule):
     self.lbshiftdburl = self.am_getOption('lbshiftdburl', self.lbshiftdburl)
     self.wsdl = self.am_getOption('wsdl', self.wsdl)
 
-    self.user = self.am_getOption('Egroupuser')
-    self.passwd = self.am_getOption('Egrouppassword')
+    self.user = self.am_getOption('user')
+    self.passwd = self.am_getOption('password')
 
     if not (self.user and self.passwd):
       self.log.error("User and/or password for %s not provided" % self.wsdl)
