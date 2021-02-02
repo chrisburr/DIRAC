@@ -331,8 +331,7 @@ create_tarball:
     # We take it from devel if it is a pre release, otherwise master
     - BRANCH=$(echo ${CI_COMMIT_TAG} | grep -qE '^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$'; if [ $? -eq 0 ]; then echo "master"; else echo "devel"; fi)
     # Get the releases.cfg from the appropriate branch
-    - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/LHCbDIRAC/releases.cfg
-    # - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/src/LHCbDIRAC/releases.cfg
+    - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/src/LHCbDIRAC/releases.cfg
     # Create the release tarball
     # The last line output by the script is the command to run in order to deploy
     - python3 /dirac-distribution.py -r ${CI_COMMIT_TAG} -l LHCb -C file:///$(pwd)/releases.cfg | tail -n 1  > /tmp/deploy.sh
@@ -507,8 +506,7 @@ make_tag:
     - curl -O https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/docs/diracdoctools/scripts/dirac-docs-get-release-notes.py
     - rm -f releases.cfg
     # Get the master version of the releases.cfg from the LHCbDIRAC main repo devel branch
-    - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/LHCbDIRAC/releases.cfg
-    # - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/src/LHCbDIRAC/releases.cfg
+    - curl -O https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/src/LHCbDIRAC/releases.cfg
     # init the dirac bot gitlab user
     - eval `ssh-agent -s`
     - mkdir -p ~/.ssh

@@ -57,7 +57,7 @@ findRelease(){
      git remote add "ci-upstream" "https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git" || true
      git remote -v
      git fetch --all || true
-     git show "remotes/ci-upstream/devel:LHCbDIRAC/releases.cfg" > "${TESTCODE}/releases.cfg")
+     git show "remotes/ci-upstream/devel:src/LHCbDIRAC/releases.cfg" > "${TESTCODE}/releases.cfg")
   fi
 
   # Match project ( LHCbDIRAC ) version from releases.cfg
