@@ -158,7 +158,7 @@ class ShiftDBAgent(AgentModule):
 
         # There are three shifts per day, so we take into account what time is it
         # before sending the email.
-            emailperson=item['email']
+            emailperson = item['email']
             self.log.info(emailperson)
             return S_OK(emailperson)
 
