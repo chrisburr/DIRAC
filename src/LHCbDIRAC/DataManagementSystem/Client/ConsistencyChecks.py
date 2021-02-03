@@ -912,7 +912,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
         else:
           printout = True
           topDir = os.path.dirname(directory)
-          res = self.dataManager.getCatalogListDirectory(topDir)
+          res = self.fileCatalog.listDirectory(topDir)
           if not res['OK']:
             raise RuntimeError("Error listing directory: " + res['Message'])
           else:
