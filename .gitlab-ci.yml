@@ -75,7 +75,7 @@ stages:
     - conda install --yes mamba diraccfg git jq
     - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracTAG" ../DIRAC
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b integration ../DIRAC
     - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
     - conda activate test-env
     - pip install ../DIRAC[server]
