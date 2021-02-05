@@ -195,6 +195,3 @@ class AnalyseFileAccess(ModuleBase):
       oDataOperation.setEndTime()
 
     return oDataOperation
-
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

@@ -743,4 +743,3 @@ class BookkeepingDBClient_Success(BookkeepingDBClientt_TestCase):
     self.assertEqual({'Successful': {'A': 1, 'B': 2}, 'Failed': {'C': 'File does not exist'}}, res['Value'])
 
 #################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

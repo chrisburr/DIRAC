@@ -22,7 +22,7 @@ from __future__ import print_function
 :synopsis: DISET interface to the RAWIntegrityDB.
 """
 # imports
-from types import IntType, DictType, ListType, StringTypes
+import six
 # from DIRAC
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
@@ -50,7 +50,10 @@ class RAWIntegrityHandler(RequestHandler):
   .. class:: RAWIntegrityHandler
   """
 
-  types_addFile = [StringTypes, StringTypes, IntType, StringTypes, StringTypes, StringTypes]
+  types_addFile = [
+      six.string_types, six.string_types, six.integer_types,
+      six.string_types, six.string_types, six.string_types,
+  ]
 
   @staticmethod
   def export_addFile(lfn, pfn, size, se, guid, checksum):
@@ -100,7 +103,7 @@ class RAWIntegrityHandler(RequestHandler):
       gLogger.exception(errStr, lException=x)
       return S_ERROR(errStr)
 
-  types_getFilesSummaryWeb = [DictType, ListType, IntType, IntType]
+  types_getFilesSummaryWeb = [dict, list, six.integer_types, six.integer_types]
 
   @staticmethod
   def export_getFilesSummaryWeb(selectDict, sortList, startItem, maxItems):
@@ -152,7 +155,7 @@ class RAWIntegrityHandler(RequestHandler):
     resultDict['Extras'] = statusCountDict
     return S_OK(resultDict)
 
-  types_getStatistics = [StringTypes, DictType]
+  types_getStatistics = [six.string_types, dict]
 
   @staticmethod
   def export_getStatistics(attribute, selectDict):

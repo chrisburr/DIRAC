@@ -288,4 +288,3 @@ class NotifyAgent(AgentModule):
       return S_OK()
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

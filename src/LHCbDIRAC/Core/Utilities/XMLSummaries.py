@@ -17,6 +17,7 @@ import os
 import ast
 import io
 import json
+import six
 import xmltodict
 
 from DIRAC import gLogger
@@ -549,9 +550,9 @@ class XMLSummary(object):
     dico = ast.literal_eval(text)
     # Taking only the name of the file without the .xml in the end
     with io.open(self.xmlFileName[:-3] + 'json', 'w', encoding="utf-8") as fp:
-      fp.write(unicode(json.dumps(dico, indent=2)))
+      fp.write(six.text_type(json.dumps(dico, indent=2)))
 
-    return(dico)
+    return dico
 
 ################################################################################
 

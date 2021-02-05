@@ -117,4 +117,3 @@ if __name__ == '__main__':
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

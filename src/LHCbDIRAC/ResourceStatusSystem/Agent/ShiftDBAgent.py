@@ -20,8 +20,8 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 # FIXME: should add a "DryRun" option to run in certification setup
-
-import urllib2
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.error import URLError
 import suds.client
 
 from DIRAC import gConfig, S_OK, S_ERROR
@@ -147,8 +147,8 @@ class ShiftDBAgent(AgentModule):
     """Get role email from shiftDB."""
 
     try:
-      web = urllib2.urlopen(self.lbshiftdburl, timeout=60)
-    except urllib2.URLError as e:
+      web = urlopen(self.lbshiftdburl, timeout=60)
+    except URLError as e:
       return S_ERROR('Cannot open URL: %s, erorr %s' % (self.lbshiftdburl, e))
 
     emaillist = []

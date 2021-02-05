@@ -136,5 +136,3 @@ class StepAccounting(ModuleBase):
 
     finally:
       super(StepAccounting, self).finalize(self.version)
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

@@ -15,18 +15,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from collections import defaultdict
 import sys
 import os
 import datetime
 import gzip
-import urllib
 import ssl
 import tarfile
 from fnmatch import fnmatch
 import tempfile
 import six
-
-from collections import defaultdict
+from six.moves.urllib.request import FancyURLopener
 
 import DIRAC
 from DIRAC.Core.Utilities.File import mkDir
@@ -101,7 +100,7 @@ def _getLog(urlBase, logFile, debug=False):
   # In order to use https with the correct CA, use the FancyURLOpener and the user proxy as certificate
   context = ssl.create_default_context(capath=os.environ['X509_CERT_DIR'])
   proxyFile = getProxyLocation()
-  urlOpener = urllib.FancyURLopener(cert_file=proxyFile, context=context)
+  urlOpener = FancyURLopener(cert_file=proxyFile, context=context)
   if os.path.basename(urlBase) == '':
     url = os.path.join(urlBase, 'index.html')
   else:
@@ -266,7 +265,7 @@ def _getSandbox(job, logFile, debug=False):
       for lf in files:
         if fnmatch(lf, logFile):
           if debug:
-            print(file, 'matched', logFile)
+            print(lf, 'matched', logFile)
           with open(os.path.join(tmpDir, lf), 'rt') as fd:
             return fd.readlines()
       return ''

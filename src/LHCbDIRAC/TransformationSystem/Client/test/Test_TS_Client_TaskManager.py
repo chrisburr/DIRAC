@@ -46,4 +46,3 @@ class TaskManager_Success(TaskManager_TestCase):
     self.assertEqual('LHCbWorkflowTasks', instance.__class__.__name__)
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

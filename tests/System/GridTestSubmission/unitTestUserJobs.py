@@ -224,6 +224,7 @@ class LHCbsubmitSuccess(GridSubmissionTestCase, DIRACGridSubmissionTestCase):
     self.assertTrue(res['OK'])
     jobsSubmittedList.append(res['Value'])
 
+
 ########################################################################################
 #
 # class monitorSuccess( GridSubmissionTestCase ):
@@ -271,5 +272,5 @@ class LHCbsubmitSuccess(GridSubmissionTestCase, DIRACGridSubmissionTestCase):
 if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(GridSubmissionTestCase)
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LHCbsubmitSuccess))
-#   suite.addTest( unittest.defaultTestLoader.loadTestsFromTestCase( monitorSuccess ) )
+  # suite.addTest( unittest.defaultTestLoader.loadTestsFromTestCase( monitorSuccess ) )
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)

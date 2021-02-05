@@ -72,5 +72,3 @@ if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(DataStorage_TestCase)
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(DataStorage_Success))
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

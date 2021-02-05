@@ -549,7 +549,7 @@ class ProcessingProgress(object):
     return runDQFlags
 
   def _getStatsFromRuns(self, evtType, runList, recoDQFlags):
-    info = dict.fromkeys(('Events', 'Runs', 'Files', 'Lumi'), {})
+    info = {k: {} for k in ('Events', 'Runs', 'Files', 'Lumi')}
     for inf in info:
       info[inf] = dict.fromkeys(('Bad', 'OK', ''), 0)
     now = datetime.datetime.utcnow()
@@ -682,7 +682,7 @@ class ProcessingProgress(object):
     self.cachedInfo[bkStr] = {'Time': cachedTime, 'Lfns': cachedLfns}
 
     # Now sum up all information for the files
-    info = dict.fromkeys(('Events', 'Runs', 'Files', 'Lumi'), {})
+    info = {k: {} for k in ('Events', 'Runs', 'Files', 'Lumi')}
     for inf in info:
       if inf == 'Runs':
         for flag in ('Bad', 'OK', ''):

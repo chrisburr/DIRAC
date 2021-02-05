@@ -264,5 +264,3 @@ if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(JobStepPlotterTestCase)
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(JobStepPlotterUnitTest))
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

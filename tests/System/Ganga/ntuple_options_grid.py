@@ -16,7 +16,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-#pylint: skip-file
+# pylint: skip-file
 
 from GaudiConf import IOHelper
 from Configurables import DaVinci, DecayTreeTuple

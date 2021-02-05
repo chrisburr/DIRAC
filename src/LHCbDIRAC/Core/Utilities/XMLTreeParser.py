@@ -187,4 +187,3 @@ def addChildNode(parentNode, tag, returnChildren, args):
   return parentNode
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

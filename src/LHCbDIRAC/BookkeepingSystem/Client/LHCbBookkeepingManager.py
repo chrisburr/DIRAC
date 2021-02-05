@@ -13,7 +13,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import os
-import types
 import time
 
 from DIRAC import gLogger, S_OK, S_ERROR
@@ -1265,7 +1264,7 @@ class LHCbBookkeepingManager(BaseESManager):
   @staticmethod
   def _getEntityFromPath(presentPath, newPathElement, level, leveldescription=None, selection=None, method=None):
     """create a entity."""
-    if isinstance(newPathElement, types.DictType):
+    if isinstance(newPathElement, dict):
       # this must be a file
       entity = objects.Entity(newPathElement)
       newPathElement = str(entity['name']).rsplit("/", 1)[1]
@@ -1315,7 +1314,7 @@ class LHCbBookkeepingManager(BaseESManager):
                                  leveldescription=None,
                                  selection=None, method=None):
     """crate a specific entity."""
-    if isinstance(value, types.DictType):
+    if isinstance(value, dict):
       entity = objects.Entity(value)
       name = newPathElement
 
@@ -1361,7 +1360,7 @@ class LHCbBookkeepingManager(BaseESManager):
     if isinstance(entityList, objects.Entity):
       # convert it into a list
       entityList = [entityList]
-    elif not isinstance(entityList, types.ListType):
+    elif not isinstance(entityList, list):
       # neither entity nor list
       gLogger.warn("couldn't cache invalid entity(list) of type " + str(entityList.__class__))
       return

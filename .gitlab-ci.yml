@@ -75,13 +75,11 @@ stages:
     - conda install --yes mamba diraccfg git jq
     - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracTAG" ../DIRAC
-    - git clone https://github.com/chrisburr/DIRAC.git -b "lhcbdirac-fixes" ../DIRAC
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b integration ../DIRAC
     - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
     - conda activate test-env
-    - pip install ../DIRAC
-    # - pip install .
-    - mamba install LbEnv LbPlatformUtils uproot cx_Oracle==7.3 xmltodict
+    - pip install ../DIRAC[server]
+    - pip install .[server]
 
 # This runs pylint and fails if there are errors
 run_pylint:
@@ -90,6 +88,11 @@ run_pylint:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
     - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
+
+run_pylint_py3:
+  extends: .test_setup_py3
+  script:
+    - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
 
 # This runs pytest and generates the coverage report
 run_pytest:
@@ -106,8 +109,7 @@ run_pytest:
 run_pytest_py3:
   extends: .test_setup_py3
   script:
-    - cd src/LHCbDIRAC
-    - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
+    - DIRAC_DEPRECATED_FAIL=True pytest src/LHCbDIRAC
 
 # This runs pycodestyle
 run_pycodestyle:
@@ -119,34 +121,19 @@ run_pycodestyle:
     - git branch -avv
     - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
 
+pycodestyle_py3:
+  extends: .test_setup_py3
+  script:
+    - pycodestyle
+
 # Check that the documentation does not generate any error/warning
 check_docs:
-  #<<: *test_setup
-  image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
-  before_script:
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel swig
-    # One has to do it in a virtual env because pip-compile
-    # generates a requirements.txt which conflicts with the
-    # yum installed python packages (like ipaddress or requests)
-    - virtualenv /tmp/generateDoc
-    - source /tmp/generateDoc/bin/activate
-    - export PYCURL_SSL_LIBRARY=openssl
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
-    - pip install pip-tools
+  extends: .test_setup_py3
   script:
-    # We need to use m2crypto, otherwise it looks for GSI, which is annoying
-    - export DIRAC_USE_M2CRYPTO=True
-    - export PYTHONPATH=$PWD/src
+    - pip install ../DIRAC/docs
     - cd docs
-    # We need to compile the requirements.txt because the crappy pip dependency
-    # resolution cannot figure out matplotlib dependency properly
-    - mv requirements.txt requirements.in
-    - pip-compile requirements.in
-    - pip install -r requirements.txt
     # We need to export the DIRAC env variable so that the makefile knows where to find the documentation tools
-    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print diracdoctools.__file__"))
+    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print(diracdoctools.__file__)"))
     # Remove  numpy from DIRAC_DOC_MOCK_LIST as uproot fails to import without it
     - sed -i "s@'numpy',@@" "${DIRACDOCTOOLS}/__init__.py"
     - SPHINXOPTS=-wsphinxWarnings make htmlall || { echo "Failed to build documentation, check for errors above" ; exit 1; }
@@ -208,10 +195,14 @@ integration_tests:
     # Login to GitLab
     - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
     # Add some dependencies
-    - apk add jq python3
+    - apk add jq python2 python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - LHCBDIRAC_RELEASE=$(cd src && python3 -c "from LHCbDIRAC import version; print(version)")
+    # Needs to use Python 2 as it hasn't been installed so setuptools_scm doesn't find a version
+    - curl -O -L https://diracos.web.cern.ch/diracos/bootstrap/get-pip.py
+    - python2 get-pip.py pip==20.2.4
+    - python2 -m pip install six
+    - LHCBDIRAC_RELEASE=$(cd src && python2 -c "from LHCbDIRAC import version; print(version)")
     - export LHCBDIRAC_RELEASE
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
@@ -219,8 +210,7 @@ integration_tests:
     # Get DIRAC
     # There is no branch with name rel-v7r2 currently
     # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracRef"
-    # - git clone https://github.com/DIRACGrid/DIRAC.git -b integration
-    - git clone https://github.com/chrisburr/DIRAC.git -b "lhcbdirac-fixes"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b integration
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master

@@ -134,4 +134,3 @@ class RAWIntegrityClient_Success(RAWIntegrityClient_TestCase):
     reload_module(self.moduleTested)
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

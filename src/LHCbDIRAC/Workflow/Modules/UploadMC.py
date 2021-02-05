@@ -19,6 +19,7 @@ import os
 import io
 import json
 
+import six
 from DIRAC import S_OK, S_ERROR, gLogger
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
@@ -147,7 +148,7 @@ class UploadMC(ModuleBase):
             ids['prod_job_id'] = self.prod_job_id
             jsonData['Counters']['ID'] = ids
             with io.open(jsonfl, 'w', encoding="utf-8") as output:
-              output.write(unicode(json.dumps(jsonData, indent=2)))
+              output.write(six.text_type(json.dumps(jsonData, indent=2)))
 
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfl, jsonData))
             if self._enableModule() and self.opsH.getValue('Productions/UploadES_XMLSummary', False):
@@ -184,7 +185,7 @@ class UploadMC(ModuleBase):
             ids['prod_job_id'] = self.prod_job_id
             jsonData['generatorCounters']['ID'] = ids
             with io.open(jsonfile, 'w', encoding="utf-8") as output:
-              output.write(unicode(json.dumps(jsonData)))
+              output.write(six.text_type(json.dumps(jsonData)))
 
             self.log.verbose("Content of JSON file", "%s: %s" % (jsonfile, jsonData))
             if self._enableModule() and self.opsH.getValue('Productions/UploadES_GeneratorLog', False):

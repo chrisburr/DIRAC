@@ -17,7 +17,12 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import os
-import commands
+# TODO: This should be modernised to use subprocess(32)
+try:
+  import commands
+except ImportError:
+  # Python 3's subprocess module contains a compatibility layer
+  import subprocess as commands
 
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript

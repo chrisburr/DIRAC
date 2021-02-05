@@ -14,14 +14,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# pylint: disable=protected-access, wrong-import-position, invalid-name, missing-docstring, unused-wildcard-import
-
-# imports
+import os
 import time
 import errno
 
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
-from DIRAC.tests.Utilities.testJobDefinitions import *
+from DIRAC.tests.Utilities.testJobDefinitions import baseToAllJobs, endOfAllJobs, find_all
 from DIRAC.Core.Utilities.Proxy import executeWithUserProxy
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb

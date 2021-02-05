@@ -21,10 +21,11 @@ from __future__ import print_function
 # # imports
 import os
 import time
-import urllib2
 import tarfile
 import signal
 from datetime import datetime
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.error import HTTPError
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR, rootPath, gConfig
 from DIRAC.Core.Base.AgentModule import AgentModule
@@ -779,7 +780,7 @@ class SEUsageAgent(AgentModule):
       # set timeout alarm
       signal.alarm(timeout)
     try:
-      remoteFD = urllib2.urlopen(url)
+      remoteFD = urlopen(url)
       expectedBytes = int(remoteFD.info()['Content-Length'])
       localFD = open(fileName, "wb")
       receivedBytes = 0
@@ -793,7 +794,7 @@ class SEUsageAgent(AgentModule):
       if receivedBytes != expectedBytes:
         self.log.info("File should be %s bytes but received %s" % (expectedBytes, receivedBytes))
         return False
-    except urllib2.HTTPError as x:
+    except HTTPError as x:
       if x.code == 404:
         self.log.info("%s does not exist" % url)
         return False

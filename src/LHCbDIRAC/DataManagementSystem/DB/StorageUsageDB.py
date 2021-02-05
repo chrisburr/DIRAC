@@ -1107,4 +1107,3 @@ class StorageUsageDB(DB):
     return S_OK(metadata)
 
 ################################################################################
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF

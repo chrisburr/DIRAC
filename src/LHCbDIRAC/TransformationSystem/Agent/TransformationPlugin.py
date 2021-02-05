@@ -87,7 +87,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                                 debug=debug, transInThread=transInThread if transInThread else {})
     self.setDebug(self.util.getPluginParam('Debug', False))
 
-    self.processingShares = (None, None)
+    self.processingShares = ({}, {})
     self._alreadyProcessedLFNs = {}
 
   def voidMethod(self, _id, invalidateCache=False):
@@ -401,7 +401,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     if not preStageShares:
       return S_OK()
 
-    if self.processingShares[0] is None:
+    if not self.processingShares[0]:
       res = self.util.getPluginShares(section=preStageShares, backupSE=backupSE)
       if not res['OK']:
         self.util.logError("Error getting CPU shares for RAW processing", res['Message'])
