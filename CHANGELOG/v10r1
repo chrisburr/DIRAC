@@ -1,3 +1,17 @@
+v10r1p3
+Based on DIRAC v7r1p28
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r14
+*DataManagementSystem
+
+FIX: (!913) replace deprecated DataManager method with direct FC call in ConsistencyChecks
+
+*ResourceStatusSystem
+
+CHANGE: (!907) use the new lbshiftdb URL
+
+
+
 v10r1p2
 Based on DIRAC v7r1p26
 LHCbWebDIRAC v5r2
