@@ -42,7 +42,7 @@ class ShiftDBAgent(AgentModule):
     # Members initialization
 
     # ShiftDB url where to find shifter emails
-    self.lbshiftdburl = 'https://lbshiftdb.cern.ch/list_email.php'
+    self.lbshiftdburl = 'https://lbshiftdb.cern.ch/list_email'
     # soap wsdl to access eGroups
     self.wsdl = 'https://foundservices.cern.ch/ws/egroups/v1/EgroupsWebService/EgroupsWebService.wsdl'
 
