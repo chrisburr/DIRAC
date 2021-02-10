@@ -36,11 +36,11 @@ class SiteDirector(DIRACSiteDirector):
 
     return S_OK()
 
-  def _getPilotOptions(self, queue, pilotsToSubmit):
+  def _getPilotOptions(self, queue):
     """Adding LHCb specific options."""
-    pilotOptions, newPilotsToSubmit = DIRACSiteDirector._getPilotOptions(self, queue, pilotsToSubmit)
+    pilotOptions = super(SiteDirector, self)._getPilotOptions(queue)
 
     if self.lbRunOnly:
       pilotOptions.append('-o lbRunOnly')
 
-    return [pilotOptions, newPilotsToSubmit]
+    return pilotOptions
