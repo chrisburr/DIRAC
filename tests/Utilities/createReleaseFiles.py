@@ -104,13 +104,17 @@ with open('series.txt', 'a') as fser:
   fser.write("v%sr%s" % (version[0], version[1]))
 
 # change the __init__.py
-lineReplace("LHCbDIRAC/__init__.py", 29, "majorVersion = %s" % version[0])
-lineReplace("LHCbDIRAC/__init__.py", 30, "minorVersion = %s" % version[1])
-lineReplace("LHCbDIRAC/__init__.py", 31, "patchLevel = %s" % version[2])
-if preRelease:
-  lineReplace("LHCbDIRAC/__init__.py", 32, "preVersion = %s" % version[3])
+# Currently master and devel have different layout
+if not preRelease:
+  lineReplace("LHCbDIRAC/__init__.py", 40, "  majorVersion = %s" % version[0])
+  lineReplace("LHCbDIRAC/__init__.py", 41, "  minorVersion = %s" % version[1])
+  lineReplace("LHCbDIRAC/__init__.py", 42, "  patchLevel = %s" % version[2])
+  lineReplace("LHCbDIRAC/__init__.py", 43, "  preVersion = %s" % 0)
 else:
-  lineReplace("LHCbDIRAC/__init__.py", 32, "preVersion = %s" % 0)
+  lineReplace("src/LHCbDIRAC/__init__.py", 43, "  majorVersion = %s" % version[0])
+  lineReplace("src/LHCbDIRAC/__init__.py", 44, "  minorVersion = %s" % version[1])
+  lineReplace("src/LHCbDIRAC/__init__.py", 45, "  patchLevel = %s" % 0)
+  lineReplace("src/LHCbDIRAC/__init__.py", 46, "  preVersion = %s" % version[3])
 
 # Update the dockerfile
 lineReplace("container/lhcbdirac/Dockerfile", 20, "ENV LHCB_DIRAC_VERSION %s" % versionString)
