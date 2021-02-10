@@ -1,0 +1,35 @@
+v10r2-pre2
+Based on DIRAC v7r2-pre33
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r15
+
+*tests
+
+FIX: (!902) adjust pylint and pytest for new repo layout
+
+*ConfigurationSystem
+
+CHANGE: (!905) Get CA certificates from CVMFS when querying the software configuration database
+
+*Python3
+
+NEW: (!904) Move to src repository layout
+NEW: (!904) Run unit tests with Python 3
+
+*Python 3
+
+CHANGE: (!910) Convert scripts to new entrypoint compatible style
+NEW: (!911) Support installing a client with pip
+
+v10r2-pre1
+Based on DIRAC v7r2-pre33
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r15
+
+
+
+v10r2-pre1
+Based on DIRAC v7r2-pre31
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r13
+Start of the v10r2 LHCbDIRAC series, based on DIRAC v7r2.
