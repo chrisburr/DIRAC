@@ -13,12 +13,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import json
+import ssl
 
 import LbPlatformUtils
 from six.moves import xmlrpc_client
 
 from DIRAC import S_OK, S_ERROR, gLogger
 import DIRAC.ConfigurationSystem.Client.Helpers.Resources
+from DIRAC.Core.Security.Locations import getCAsLocation
 
 try:
   FileNotFoundError
@@ -132,7 +134,8 @@ def _listPlatforms(applicationName, applicationVersion, xmlrpcUrl, fallbackPath)
   applicationVersion = applicationVersion.lower()
   platforms = None
 
-  proxy = xmlrpc_client.ServerProxy(xmlrpcUrl, allow_none=True)
+  context = ssl.create_default_context(capath=getCAsLocation())
+  proxy = xmlrpc_client.ServerProxy(xmlrpcUrl, allow_none=True, context=context)
   try:
     platforms = proxy.listPlatforms(applicationName, applicationVersion)
   except xmlrpc_client.Fault as e:
