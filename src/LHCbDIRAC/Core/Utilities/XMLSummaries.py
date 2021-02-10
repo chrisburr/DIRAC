@@ -402,7 +402,8 @@ class XMLSummary(object):
     for output in summary.childrens('output'):
       for fileIn in output.childrens('file'):
         outputEventsTotal += int(fileIn.value)
-        outputsEvents[fileIn.attributes['name'].replace('LFN:', '').replace('PFN:', '').split('/').pop()] = fileIn.value
+        outputsEvents[
+            fileIn.attributes['name'].replace('LFN:', '').replace('PFN:', '').split('/').pop()] = fileIn.value
 
     return outputEventsTotal, outputsEvents
 

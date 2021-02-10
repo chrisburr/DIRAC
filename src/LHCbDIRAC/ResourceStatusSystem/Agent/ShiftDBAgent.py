@@ -22,6 +22,7 @@ __RCSID__ = "$Id$"
 # FIXME: should add a "DryRun" option to run in certification setup
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.error import URLError
+import json
 import suds.client
 
 from DIRAC import gConfig, S_OK, S_ERROR
@@ -44,7 +45,7 @@ class ShiftDBAgent(AgentModule):
     # Members initialization
 
     # ShiftDB url where to find shifter emails
-    self.lbshiftdburl = 'https://lbshiftdb.cern.ch/shiftdb_list_mails.php'
+    self.lbshiftdburl = 'https://lbshiftdb.cern.ch/list_email'
     # soap wsdl to access eGroups
     self.wsdl = 'https://foundservices.cern.ch/ws/egroups/v1/EgroupsWebService/EgroupsWebService.wsdl'
 
@@ -155,25 +156,14 @@ class ShiftDBAgent(AgentModule):
     emailperson = []
 
     for line in web.readlines():
-
-      if role in line:
+      for item in json.loads(line):
+          if role in item['role']:
 
         # There are three shifts per day, so we take into account what time is it
         # before sending the email.
-        morning, afternoon, evening = line.split('|')[4: 7]
-
-        if morning != '':
-          emaillist.append(morning)
-        if afternoon != '':
-          emaillist.append(afternoon)
-        if evening != '':
-          emaillist.append(evening)
-
-        for person in emaillist:
-          if ':' in person:
-            emailperson.append(person.split(':')[1].strip())
-        self.log.info(emailperson)
-        return S_OK(emailperson)
+            emailperson = item['email']
+            self.log.info(emailperson)
+            return S_OK(emailperson)
 
     return S_ERROR('Email not found')
 
@@ -223,6 +213,7 @@ class ShiftDBAgent(AgentModule):
     # Adding a member means it will be the only one in the eGroup, as it is overwritten
     if email != []:
       res = self.__addMember(email, client, eGroup)
+      self.log.info(email)
       if not res['OK']:
         self.log.error(res['Message'])
         return res
@@ -241,15 +232,15 @@ class ShiftDBAgent(AgentModule):
     self.log.info('Adding member %s to eGroup %s' % (email, wgroup))
 
     members = []
-    for personEmail in email:
-      newmember = client.factory.create('ns0:MemberType')
-      newmember.Type = "External"
-      newmember.Email = personEmail
+    newmember = client.factory.create('ns0:MemberType')
+    newmember.Type = "External"
+    newmember.Email = email
 
-      members.append(newmember)
+    members.append(newmember)
 
     try:
       # The last boolean flag is to overwrite
+      self.log.info(members)
       client.service.AddEgroupMembers(wgroup, True, members)
     except suds.WebFault as wError:
       return S_ERROR(wError)
