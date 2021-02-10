@@ -18,6 +18,7 @@ import pytest
 
 from DIRAC import gLogger
 
+from DIRAC.Core.Security.Locations import getCAsLocation
 import LHCbDIRAC.ConfigurationSystem.Client.Helpers.Resources as moduleTested
 
 gLogger.setLevel('DEBUG')
@@ -122,7 +123,7 @@ def test_listPlatforms(applicationName, applicationVersion, expected):
 
   from six.moves import xmlrpc_client
   import ssl
-  context = ssl.create_default_context(capath="/cvmfs/lhcb.cern.ch/etc/grid-security/certificates")
+  context = ssl.create_default_context(capath=getCAsLocation())
   try:
     xmlrpc_client.ServerProxy(
         'https://lbsoftdb.cern.ch/read/',

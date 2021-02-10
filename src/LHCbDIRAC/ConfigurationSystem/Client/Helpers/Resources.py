@@ -20,6 +20,7 @@ from six.moves import xmlrpc_client
 
 from DIRAC import S_OK, S_ERROR, gLogger
 import DIRAC.ConfigurationSystem.Client.Helpers.Resources
+from DIRAC.Core.Security.Locations import getCAsLocation
 
 try:
   FileNotFoundError
@@ -133,7 +134,7 @@ def _listPlatforms(applicationName, applicationVersion, xmlrpcUrl, fallbackPath)
   applicationVersion = applicationVersion.lower()
   platforms = None
 
-  context = ssl.create_default_context(capath="/cvmfs/lhcb.cern.ch/etc/grid-security/certificates")
+  context = ssl.create_default_context(capath=getCAsLocation())
   proxy = xmlrpc_client.ServerProxy(xmlrpcUrl, allow_none=True, context=context)
   try:
     platforms = proxy.listPlatforms(applicationName, applicationVersion)

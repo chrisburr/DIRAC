@@ -32,7 +32,7 @@ from DIRAC.Core.Utilities.File import mkDir
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
-from DIRAC.Core.Security.Locations import getProxyLocation
+from DIRAC.Core.Security.Locations import getCAsLocation, getProxyLocation
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient, printOperation
@@ -98,7 +98,7 @@ def _getLog(urlBase, logFile, debug=False):
   # Otherwise it can either be referenced within urlBase or contained (.tar.gz)
 
   # In order to use https with the correct CA, use the FancyURLOpener and the user proxy as certificate
-  context = ssl.create_default_context(capath=os.environ['X509_CERT_DIR'])
+  context = ssl.create_default_context(capath=getCAsLocation())
   proxyFile = getProxyLocation()
   urlOpener = FancyURLopener(cert_file=proxyFile, context=context)
   if os.path.basename(urlBase) == '':
