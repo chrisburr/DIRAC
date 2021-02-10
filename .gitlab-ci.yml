@@ -184,10 +184,14 @@ integration_tests:
     # Login to GitLab
     - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
     # Add some dependencies
-    - apk add jq python3
+    - apk add jq python2 python3
     - pip3 install diraccfg
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - LHCBDIRAC_RELEASE=$(python3 -c "from LHCbDIRAC import version; print(version)")
+    # Needs to use Python 2 as it hasn't been installed so setuptools_scm doesn't find a version
+    - curl -O -L https://diracos.web.cern.ch/diracos/bootstrap/get-pip.py
+    - python2 get-pip.py pip==20.2.4
+    - python2 -m pip install six
+    - LHCBDIRAC_RELEASE=$(python2 -c "from LHCbDIRAC import version; print(version)")
     - export LHCBDIRAC_RELEASE
     - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
