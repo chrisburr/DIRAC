@@ -104,7 +104,7 @@ run_pytest:
   coverage: '/\d+\%\s*$/'
   artifacts:
     paths:
-      - LHCbDIRAC/htmlcov/
+      - src/LHCbDIRAC/htmlcov/
 
 run_pytest_py3:
   extends: .test_setup_py3
@@ -272,7 +272,7 @@ pages:
     - TARGET_DIR="public/${CI_COMMIT_REF_NAME}"
     - if [ ! -d "$TARGET_DIR" ]; then mkdir -p $TARGET_DIR; fi
     - echo "Copying into $TARGET_DIR"
-    - mv LHCbDIRAC/htmlcov/* $TARGET_DIR
+    - mv src/LHCbDIRAC/htmlcov/* $TARGET_DIR
   artifacts:
     paths:
       - public
