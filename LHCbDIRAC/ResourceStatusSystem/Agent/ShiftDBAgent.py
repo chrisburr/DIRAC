@@ -155,9 +155,8 @@ class ShiftDBAgent(AgentModule):
     for line in web.readlines():
       for item in json.loads(line):
           if role in item['role']:
-
-        # There are three shifts per day, so we take into account what time is it
-        # before sending the email.
+            # There are three shifts per day, so we take into account what time is it
+            # before sending the email.
             emailperson = item['email']
             self.log.info(emailperson)
             return S_OK(emailperson)
