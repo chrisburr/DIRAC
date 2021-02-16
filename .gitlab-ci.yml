@@ -100,7 +100,7 @@ run_pytest:
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
-    - pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
+    - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
   coverage: '/\d+\%\s*$/'
   artifacts:
     paths:
