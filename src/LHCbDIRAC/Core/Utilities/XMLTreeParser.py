@@ -16,7 +16,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
 import xml.dom.minidom
 
 __RCSID__ = "$Id$"
@@ -185,5 +184,3 @@ def addChildNode(parentNode, tag, returnChildren, args):
   if returnChildren:
     return (parentNode, childNode)
   return parentNode
-
-################################################################################

@@ -60,5 +60,3 @@ class RAWIntegrityClient(FileCatalogClientBase):
     resDict = {'Failed': failed,
                'Successful': successful}
     return S_OK(resDict)
-
-################################################################################

@@ -23,7 +23,7 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script, printDMResult
+  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
   dmScript = DMScript()
   dmScript.registerFileSwitches()

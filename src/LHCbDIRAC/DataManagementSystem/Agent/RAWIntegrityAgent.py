@@ -8,12 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-########################################################################
-# File: RAWIntegrityAgent.py
-########################################################################
 """
 :mod: RAWIntegrityAgent
 
@@ -21,6 +15,10 @@ from __future__ import print_function
 
 :synopsis: RAWIntegrityAgent determines whether RAW files in CASTOR were migrated correctly.
 """
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # # imports
 import datetime
 # # from DIRAC

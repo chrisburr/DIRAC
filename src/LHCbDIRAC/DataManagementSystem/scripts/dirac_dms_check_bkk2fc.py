@@ -49,7 +49,6 @@ def main():
 
   fixIt = False
   checkAll = False
-  production = 0
   for opt, val in Script.getUnprocessedSwitches():
     if opt == 'FixIt':
       fixIt = True

@@ -12,12 +12,13 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-__RCSID__ = "$Id$"
-from DIRAC import S_OK, S_ERROR, gLogger
-import sys
+
 import os
 import six
+from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
+
+__RCSID__ = "$Id$"
 
 
 def chown(directories, user=None, group=None, mode=None, recursive=False, ndirs=None, fcClient=None):

@@ -924,7 +924,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
       return directories
     try:
       bkQuery = self.__getBKQuery()
-    except ValueError as _e:
+    except ValueError:
       bkQuery = None
     if bkQuery and set(bkQuery.getQueryDict()) - {'Visible', 'Production', 'FileType'}:
       return bkQuery.getDirs()

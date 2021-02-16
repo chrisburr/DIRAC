@@ -119,5 +119,3 @@ def getDestinationSEList(outputSE, site, outputmode='Any', run=None):
   orderedSEs = _setLocalFirst(groupSEs, localSEs)
   gLogger.info('Found SEs, local first: %s' % orderedSEs)
   return orderedSEs
-
-# EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#
