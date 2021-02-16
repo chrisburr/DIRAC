@@ -18,7 +18,7 @@ RUN chmod 755 /opt/dirac/dockerEntrypoint.sh
 ENTRYPOINT [ "/opt/dirac/dockerEntrypoint.sh" ]
 
 # Specify the version
-ENV LHCB_DIRAC_VERSION v10r1p3
+ENV LHCB_DIRAC_VERSION v10r1p4
 
 RUN \
     curl -L -o dirac-install https://raw.githubusercontent.com/DIRACGrid/DIRAC/integration/Core/scripts/dirac-install.py && \
