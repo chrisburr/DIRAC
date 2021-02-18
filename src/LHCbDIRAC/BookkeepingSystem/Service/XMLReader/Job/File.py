@@ -81,7 +81,7 @@ class File:
     """checks a given parameter."""
     ok = False
     for i in self.params_:
-      if i.getParamName() == fileParam:  # pylint: disable=no-member
+      if i.getParamName() == fileParam:
         ok = True
     return ok
 
@@ -90,7 +90,7 @@ class File:
     """returns the file parameters."""
     param = None
     for i in self.params_:
-      if i.getParamName() == fileParam:  # pylint: disable=no-member
+      if i.getParamName() == fileParam:
         param = i
     return param
 
@@ -154,10 +154,10 @@ class File:
                                                                               )
 
     for replica in self.getReplicas():
-      string += replica.writeToXML()  # pylint: disable=no-member
+      string += replica.writeToXML()
 
     for param in self.getFileParams():
-      string += param.writeToXML()  # pylint: disable=no-member
+      string += param.writeToXML()
 
 #    for param in self.getQualities():
 #      string += param.writeToXML()
