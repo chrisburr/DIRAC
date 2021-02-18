@@ -8,12 +8,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-########################################################################
-# File: RAWIntegrityHandler.py
-########################################################################
 """
 :mod: RAWIntegrityHandler
 
@@ -21,6 +15,10 @@ from __future__ import print_function
 
 :synopsis: DISET interface to the RAWIntegrityDB.
 """
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # imports
 import six
 # from DIRAC

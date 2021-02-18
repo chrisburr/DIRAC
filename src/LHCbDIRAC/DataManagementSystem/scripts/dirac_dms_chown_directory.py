@@ -23,7 +23,7 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 @DIRACScript()
 def main():
   from DIRAC.Core.Base import Script
-  from DIRAC import exit, gLogger, S_OK
+  from DIRAC import exit, gLogger
 
   Script.registerSwitch('', 'User=', '  User name')
   Script.registerSwitch('', 'Recursive', '  Set ownership recursively')

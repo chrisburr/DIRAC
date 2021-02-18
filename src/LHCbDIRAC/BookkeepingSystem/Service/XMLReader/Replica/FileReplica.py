@@ -27,6 +27,6 @@ class FileReplica(Replica):
     gLogger.debug("Job Replica XML writing!!!")
     result = ''
     for param in self.getaprams():
-      result += param.writeToXML()
+      result += param.writeToXML()  # pylint: disable=no-member
 
     return result

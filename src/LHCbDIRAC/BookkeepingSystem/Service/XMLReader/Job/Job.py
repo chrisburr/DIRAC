@@ -73,7 +73,7 @@ class Job:
     """checks a given job parameter."""
     ok = False
     for i in self.jobParameters_:
-      if i.getName() == jobParam:
+      if i.getName() == jobParam:  # pylint: disable=no-member
         ok = True
     return ok
 
@@ -82,7 +82,7 @@ class Job:
     """returns a job parameter."""
     param = None
     for i in self.jobParameters_:
-      if i.getName() == jobParam:
+      if i.getName() == jobParam:  # pylint: disable=no-member
         param = i
     return param
 
@@ -90,7 +90,7 @@ class Job:
   def removeParam(self, jobParam):
     """removes a job parameter."""
     for i in self.jobParameters_:
-      if i.getName() == jobParam:
+      if i.getName() == jobParam:  # pylint: disable=no-member
         self.jobParameters_.remove(i)
 
   #############################################################################
@@ -117,7 +117,7 @@ class Job:
   def getOutputFileParam(self, paramName):
     """returns the parameters of a output file."""
     for i in self.jobOutputfiles_:
-      param = i.getParam(paramName)
+      param = i.getParam(paramName)  # pylint: disable=no-member
       if param is not None:
         return param
     return None
@@ -200,23 +200,22 @@ class Job:
 
     string = "%s%s" % (string, self.getJobConfiguration().writeToXML())
     for param in self.jobParameters_:
-      string = "%s%s" % (string, param.writeToXML())
+      string = "%s%s" % (string, param.writeToXML())  # pylint: disable=no-member
 
     for inputFile in self.jobInputFiles_:
-      string = "%s%s" % (string, inputFile.writeToXML())
+      string = "%s%s" % (string, inputFile.writeToXML())  # pylint: disable=no-member
 
     for output in self.jobOutputfiles_:
-      string = "%s%s" % (string, output.writeToXML())
+      string = "%s%s" % (string, output.writeToXML())  # pylint: disable=no-member
 
     sim = self.getSimulationCond()
     if sim is not None:
-      string = "%s%s" % (string, sim.writeToXML())
+      string = "%s%s" % (string, sim.writeToXML())  # pylint: disable=no-member
 
     daq = self.getDataTakingCond()
     if daq is not None:
-      string = "%s%s" % (string, daq.writeToXML())
+      string = "%s%s" % (string, daq.writeToXML())  # pylint: disable=no-member
 
     string += '</Job>'
 
     return string
-#############################################################################
