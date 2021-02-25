@@ -524,7 +524,7 @@ make_tag:
     - rm -rf LHCbDIRAC
     # checkout the repo
     - git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbDIRAC.git LHCbDIRAC
-    - cd src/LHCbDIRAC
+    - cd LHCbDIRAC
     # checkout the correct branch we can only be on master or devel
     - git checkout ${CI_COMMIT_REF_NAME}
     # get the last releases.cfg
