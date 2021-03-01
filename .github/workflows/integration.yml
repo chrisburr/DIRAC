@@ -27,7 +27,7 @@ jobs:
           - TEST_NAME: "MySQL 5.7"
             MYSQL_VER: 5.7
           # IMPLICIT: - MYSQL_VER: 8.0
-          ###### ES versions
+          # ###### ES versions
           - TEST_NAME: "Elasticsearch 6.6.0"
             ES_VER: 6.6.0
           # IMPLICIT: - ES_VER: 7.9.1
@@ -50,7 +50,15 @@ jobs:
           #             CLIENT_USE_PYTHON3: No
           - TEST_NAME: "Python 3 client"
             CLIENT_USE_PYTHON3: Yes
-            CLIENT_DIRACOSVER: latest
+            CLIENT_DIRACOSVER: master
+          - TEST_NAME: "Python 3 server"
+            SERVER_USE_PYTHON3: Yes
+            SERVER_DIRACOSVER: master
+            MYSQL_VER: 5.7
+          - TEST_NAME: "Python 3 server"
+            SERVER_USE_PYTHON3: Yes
+            SERVER_DIRACOSVER: master
+            MYSQL_VER: 8.0
 
     steps:
     - uses: actions/checkout@v2
