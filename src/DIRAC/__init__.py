@@ -123,7 +123,7 @@ alarmMail = "dirac.alarms@gmail.com"
 
 # Set rootPath of DIRAC installation
 if six.PY3:
-  rootPath = sys.base_prefix
+  rootPath = sys.base_prefix  # pylint: disable=no-member
 else:
   pythonPath = os.path.realpath(__path__[0])
   rootPath = os.path.dirname(pythonPath)

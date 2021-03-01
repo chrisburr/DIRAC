@@ -989,8 +989,8 @@ class ComponentInstaller(object):
     for extension in extensions:
       if six.PY3:
         from fnmatch import filter
-        import importlib.resources
-        systems += filter(importlib.resources.contents(extension), "*System")
+        import importlib.resources  # pylint: disable=import-error,no-name-in-module
+        systems += filter(importlib.resources.contents(extension), "*System")  # pylint: disable=no-member
       else:
         extensionPath = os.path.join(DIRAC.rootPath, extension, '*System')
         for system in [os.path.basename(k).split('System')[0] for k in glob.glob(extensionPath)]:
@@ -2216,7 +2216,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     dbDict = {}
     for extension in extensions + ['']:
       if six.PY3:
-        import importlib_resources
+        import importlib_resources  # pylint: disable=import-error
         databases = list(
             importlib_resources.files(('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'))
             .glob('*/DB/*.sql')
@@ -2259,7 +2259,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
 
       # Find *DB.py definitions
       if six.PY3:
-        import importlib_resources
+        import importlib_resources  # pylint: disable=import-error
         pyDBs = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/*DB.py'))
       else:
         pyDBs = glob.glob(os.path.join(
@@ -2271,7 +2271,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
 
       # Find sql files
       if six.PY3:
-        import importlib_resources
+        import importlib_resources  # pylint: disable=import-error
         sqlDBs = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/*.sql'))
       else:
         sqlDBs = glob.glob(os.path.join(
@@ -2338,7 +2338,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     # is there by chance an extension of it?
     for extension in CSGlobals.getCSExtensions() + [""]:
       if six.PY3:
-        import importlib_resources
+        import importlib_resources  # pylint: disable=import-error
         dbFile = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/%s.sql' % dbName))
       else:
         dbFile = glob.glob(os.path.join(
