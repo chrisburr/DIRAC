@@ -124,15 +124,20 @@ installSite() {
     else
       DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-x86_64.sh"
     fi
+    cd "$SERVERINSTALLDIR"
     curl -L "${DIRACOS2_URL}" > "installer.sh"
     bash "installer.sh"
     rm "installer.sh"
-    # TODO: Remove
+    # TODO: Remove these two lines
     echo "source \"$PWD/diracos/diracosrc\"" > "$PWD/bashrc"
+    mv "${SERVERINSTALLDIR}/etc/grid-security/"* "${SERVERINSTALLDIR}/diracos/etc/grid-security/"
+    rm -rf "${SERVERINSTALLDIR}/etc"
+    ln -s "${SERVERINSTALLDIR}/diracos/etc" "${SERVERINSTALLDIR}/etc"
     source diracos/diracosrc
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       pip install "${module_path}[server]"
     done
+    cd -
   else
     if [[ -n "${DEBUG+x}" ]]; then
       INSTALLOPTIONS+=("${DEBUG}")

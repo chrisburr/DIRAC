@@ -39,8 +39,13 @@ class Extensions(object):
 
   def getCSExtensions(self):
     if not self.__csExt:
-      from DIRAC.ConfigurationSystem.Client.Config import gConfig
-      exts = gConfig.getValue('/DIRAC/Extensions', [])
+      if six.PY3:
+        from DIRAC.Core.Utilities.DIRACScript import _extensionsByPriority
+        exts = _extensionsByPriority()
+      else:
+        from DIRAC.ConfigurationSystem.Client.Config import gConfig
+        exts = gConfig.getValue('/DIRAC/Extensions', [])
+
       for iP in range(len(exts)):
         ext = exts[iP]
         if ext.endswith("DIRAC"):

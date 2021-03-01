@@ -72,6 +72,7 @@ import inspect
 import importlib
 
 from diraccfg import CFG
+import six
 
 import DIRAC
 from DIRAC import rootPath
@@ -282,8 +283,13 @@ class ComponentInstaller(object):
     """
     Get the list of installed extensions
     """
-    initList = glob.glob(os.path.join(rootPath, '*DIRAC', '__init__.py'))
-    extensions = [os.path.basename(os.path.dirname(k)) for k in initList]
+    if six.PY3:
+      from DIRAC.Core.Utilities.DIRACScript import _extensionsByPriority
+      extensions = _extensionsByPriority()
+    else:
+      initList = glob.glob(os.path.join(rootPath, '*DIRAC', '__init__.py'))
+      extensions = [os.path.basename(os.path.dirname(k)) for k in initList]
+
     try:
       extensions.remove('DIRAC')
     except Exception:
@@ -788,7 +794,11 @@ class ComponentInstaller(object):
     if addDefaultOptions:
       extensionsDIRAC = [x + 'DIRAC' for x in extensions] + extensions
       for ext in extensionsDIRAC + ['DIRAC']:
-        cfgTemplatePath = os.path.join(rootPath, ext, '%sSystem' % system, 'ConfigTemplate.cfg')
+        if six.PY3:
+          import pkg_resources
+          cfgTemplatePath = pkg_resources.resource_filename(ext, "%sSystem/ConfigTemplate.cfg" % system)
+        else:
+          cfgTemplatePath = os.path.join(rootPath, ext, '%sSystem' % system, 'ConfigTemplate.cfg')
         if os.path.exists(cfgTemplatePath):
           gLogger.notice('Loading configuration template', cfgTemplatePath)
           # Look up the component in this template
@@ -976,14 +986,17 @@ class ComponentInstaller(object):
     Get the list of all systems (in all given extensions) locally available
     """
     systems = []
-
     for extension in extensions:
-      extensionPath = os.path.join(DIRAC.rootPath, extension, '*System')
-      for system in [os.path.basename(k).split('System')[0] for k in glob.glob(extensionPath)]:
-        if system not in systems:
-          systems.append(system)
-
-    return systems
+      if six.PY3:
+        from fnmatch import filter
+        import importlib.resources
+        systems += filter(importlib.resources.contents(extension), "*System")
+      else:
+        extensionPath = os.path.join(DIRAC.rootPath, extension, '*System')
+        for system in [os.path.basename(k).split('System')[0] for k in glob.glob(extensionPath)]:
+          if system not in systems:
+            systems.append(system)
+    return list(set(systems))
 
   def getSoftwareComponents(self, extensions):
     """
@@ -1917,8 +1930,7 @@ exec 2>&1
 [[ "%(componentType)s" = "agent" ]] && renice 20 -p $$
 #%(bashVariables)s
 #
-exec python $DIRAC/DIRAC/Core/scripts/dirac_%(componentType)s.py \
-  %(system)s/%(component)s --cfg %(componentCfg)s < /dev/null
+exec dirac-%(componentType)s %(system)s/%(component)s --cfg %(componentCfg)s < /dev/null
     """ % {'bashrc': os.path.join(self.instancePath, 'bashrc'),
                 'bashVariables': bashVars,
                 'componentType': componentType.replace("-", "_"),
@@ -2203,15 +2215,24 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     """
     dbDict = {}
     for extension in extensions + ['']:
-      databases = glob.glob(os.path.join(rootPath,
-                                         ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'),
-                                         '*', 'DB', '*.sql'))
+      if six.PY3:
+        import importlib_resources
+        databases = list(
+            importlib_resources.files(('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'))
+            .glob('*/DB/*.sql')
+        )
+      else:
+        databases = glob.glob(os.path.join(
+            rootPath,
+            ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'),
+            '*', 'DB', '*.sql'
+        ))
       for dbPath in databases:
         dbName = os.path.basename(dbPath).replace('.sql', '')
         dbDict[dbName] = {}
         dbDict[dbName]['Type'] = 'MySQL'
         dbDict[dbName]['Extension'] = extension
-        dbDict[dbName]['System'] = dbPath.split('/')[-3].replace('System', '')
+        dbDict[dbName]['System'] = str(dbPath).split('/')[-3].replace('System', '')
 
     return S_OK(dbDict)
 
@@ -2237,16 +2258,28 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     for extension in extensions + ['']:
 
       # Find *DB.py definitions
-      pyDBs = glob.glob(os.path.join(rootPath,
-                                     ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'),
-                                     '*', 'DB', '*DB.py'))
-      pyDBs = [x.replace('.py', '') for x in pyDBs if '__init__' not in x]
+      if six.PY3:
+        import importlib_resources
+        pyDBs = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/*DB.py'))
+      else:
+        pyDBs = glob.glob(os.path.join(
+            rootPath,
+            ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'),
+            '*', 'DB', '*DB.py'
+        ))
+      pyDBs = [str(x).replace('.py', '') for x in pyDBs if '__init__' not in str(x)]
 
       # Find sql files
-      sqlDBs = glob.glob(os.path.join(rootPath,
-                                      ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'),
-                                      '*', 'DB', '*.sql'))
-      sqlDBs = [x.replace('.sql', '') for x in sqlDBs]
+      if six.PY3:
+        import importlib_resources
+        sqlDBs = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/*.sql'))
+      else:
+        sqlDBs = glob.glob(os.path.join(
+            rootPath,
+            ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'),
+            '*', 'DB', '*.sql'
+        ))
+      sqlDBs = [str(x).replace('.sql', '') for x in str(sqlDBs)]
 
       # Find *DB.py files that do not have a sql part
       possible = set(pyDBs) - set(sqlDBs)
@@ -2267,7 +2300,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
         dbDict[dbName] = {}
         dbDict[dbName]['Type'] = 'ES'
         dbDict[dbName]['Extension'] = extension
-        dbDict[dbName]['System'] = dbPath.split('/')[-3].replace('System', '')
+        dbDict[dbName]['System'] = str(dbPath).split('/')[-3].replace('System', '')
 
     return S_OK(dbDict)
 
@@ -2302,26 +2335,25 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
 
     gLogger.notice('Installing', dbName)
 
-    dbFile = glob.glob(os.path.join(rootPath, 'DIRAC', '*', 'DB', '%s.sql' % dbName))
     # is there by chance an extension of it?
-    for extension in CSGlobals.getCSExtensions():
-      dbFileInExtension = glob.glob(os.path.join(rootPath,
-                                                 '%sDIRAC' % extension,
-                                                 '*',
-                                                 'DB',
-                                                 '%s.sql' % dbName))
-      if dbFileInExtension:
-        dbFile = dbFileInExtension
+    for extension in CSGlobals.getCSExtensions() + [""]:
+      if six.PY3:
+        import importlib_resources
+        dbFile = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/%s.sql' % dbName))
+      else:
+        dbFile = glob.glob(os.path.join(
+            rootPath, '%sDIRAC' % extension, '*', 'DB', '%s.sql' % dbName
+        ))
+      if dbFile:
         break
-
-    if not dbFile:
+    else:
       error = 'Database %s not found' % dbName
       gLogger.error(error)
       if self.exitOnError:
         DIRAC.exit(-1)
       return S_ERROR(error)
 
-    dbFile = dbFile[0]
+    dbFile = str(dbFile[0])
     gLogger.debug("Installing %s" % dbFile)
 
     # just check
@@ -2544,7 +2576,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
   exec 2>&1
   #
   #
-  exec python $DIRAC/DIRAC/Core/Tornado/scripts/tornado_start_all.py -ddd
+  exec tornado-start-all -ddd
   """ % {'bashrc': os.path.join(self.instancePath, 'bashrc')})
 
       os.chmod(runFile, self.gDefaultPerms)
