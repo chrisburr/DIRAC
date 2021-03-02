@@ -118,6 +118,3 @@ else:
   lineReplace("src/LHCbDIRAC/__init__.py", 44, "  minorVersion = %s" % version[1])
   lineReplace("src/LHCbDIRAC/__init__.py", 45, "  patchLevel = %s" % 0)
   lineReplace("src/LHCbDIRAC/__init__.py", 46, "  preVersion = %s" % version[3])
-
-# Update the dockerfile
-lineReplace("container/lhcbdirac/Dockerfile", 20, "ENV LHCB_DIRAC_VERSION %s" % versionString)
