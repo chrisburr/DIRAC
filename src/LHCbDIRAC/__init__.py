@@ -62,4 +62,9 @@ else:
 def extension_metadata():
   return {
       "priority": 100,
+      "setups": {
+          "LHCb-Production": "dips://lhcb-conf-dirac.cern.ch:9135/Configuration/Server",
+          "LHCb-Certification": "dips://lhcb-cert-dirac.cern.ch:9135/Configuration/Server",
+      },
+      "default_setup": "LHCb-Production",
   }
