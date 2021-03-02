@@ -18,7 +18,7 @@ RUN groupadd -r dirac \
 
 # Run as dirac
 USER dirac
-ENV LHCB_DIRAC_VERSION v10r1p6
+
 # Copy the self pinging and entry point script
 COPY --chown=dirac:dirac dockerEntrypoint.sh dirac_self_ping.py /opt/dirac/
 
