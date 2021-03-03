@@ -66,7 +66,7 @@ class Replica:
 <Replicas>
 """
     for param in self.getaprams():
-      result += param.writeToXML(False)  # pylint: disable=no-member
+      result += param.writeToXML(False)
 
     result += '</Replicas>'
     return result
