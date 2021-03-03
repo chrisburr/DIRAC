@@ -25,15 +25,18 @@ else
   echo '==> Running in non-DEBUG mode'
 fi
 
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+echo -e "THIS_DIR=${THIS_DIR}" |& tee -a clientTestOutputs.txt
+
 # Creating the XML job description files
-python $DIRAC/LHCbDIRAC/tests/Integration/WorkloadManagementSystem/createJobXMLDescriptionsLHCb.py $DEBUG
+python "${THIS_DIR}/createJobXMLDescriptionsLHCb.py" $DEBUG
 
 ###############################################################################
 # Running the real tests
 
 # OK
 echo -e "\n==> jobDescriptionLHCb-OK.xml"
-$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-OK.xml --cfg $DIRAC/DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg $DEBUG
+$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-OK.xml --cfg "${THIS_DIR}/../../../../DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg" $DEBUG
 ret_code=$?
 if [ $ret_code -eq 0 ]
 then
@@ -47,7 +50,7 @@ fi
 
 # OK2
 echo -e "\n==> jobDescriptionLHCb-multiSteps-OK.xml"
-$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-multiSteps-OK.xml --cfg $DIRAC/DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg $DEBUG
+$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-multiSteps-OK.xml --cfg "${THIS_DIR}/../../../../DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg" $DEBUG
 ret_code=$?
 if [ $ret_code -eq 0 ]
 then
@@ -62,7 +65,7 @@ fi
 
 # # FAIL
 echo -e "\n==> jobDescriptionLHCb-FAIL.xml"
-$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-FAIL.xml --cfg $DIRAC/DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg $DEBUG
+$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-FAIL.xml --cfg "${THIS_DIR}/../../../../DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg" $DEBUG
 ret_code=$?
 # for lb-run specific errors (e.g. 111 like here) we reschedule even for user jobs (LHCbScript)
 # (exit code 1502 becomes 222 --- 1502 & 255 (0xDE))
@@ -78,7 +81,7 @@ fi
 
 # # FAIL2
 echo -e "\n==> jobDescriptionLHCb-multiSteps-FAIL.xml"
-$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-multiSteps-FAIL.xml --cfg $DIRAC/DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg $DEBUG
+$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-multiSteps-FAIL.xml --cfg "${THIS_DIR}/../../../../DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg" $DEBUG
 ret_code=$?
 # for lb-run specific errors (e.g. 111 like here) we reschedule even for user jobs (LHCbScript)
 if [ $ret_code -eq 222 ]
@@ -94,7 +97,7 @@ fi
 
 # FAIL with exit code > 255
 echo -e "\n==> jobDescriptionLHCb-FAIL1502.xml"
-$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-FAIL1502.xml --cfg $DIRAC/DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg $DEBUG
+$DIRACSCRIPTS/dirac-jobexec jobDescriptionLHCb-FAIL1502.xml --cfg "${THIS_DIR}/../../../../DIRAC/tests/Integration/WorkloadManagementSystem/pilot.cfg" $DEBUG
 ret_code=$?
 if [ $ret_code -eq 222 ] # This is 1502 & 255 (0xDE)
 then

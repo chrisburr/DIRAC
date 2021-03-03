@@ -12,23 +12,24 @@
 
 #-------------------------------------------------------------------------------
 # A convenient way to run all the LHCbDIRAC integration tests for client -> server interaction
-#
-# It supposes that LHCbDIRAC is installed in $CLIENTINSTALLDIR
 #-------------------------------------------------------------------------------
 set -x
 
 echo -e '****************************************'
 echo -e '******' "LHCb client -> server tests" '******\n'
 
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+echo -e "THIS_DIR=${THIS_DIR}" |& tee -a clientTestOutputs.txt
+
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
-pytest "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ProductionRequest.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/ProductionManagementSystem/Test_Client_MCStatsElasticDB.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+python "${THIS_DIR}/ProductionManagementSystem/Test_ProductionRequest.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb TS TESTS ****\n"
-python "$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/TransformationSystem/Test_ClientTransformation.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+python "${THIS_DIR}/TransformationSystem/Test_ClientTransformation.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb WMS TESTS ****\n"
-"$CLIENTINSTALLDIR/LHCbDIRAC/tests/Integration/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+"${THIS_DIR}/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))

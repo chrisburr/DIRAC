@@ -12,33 +12,34 @@
 
 #-------------------------------------------------------------------------------
 # A convenient way to run all the LHCbDIRAC integration tests for servers
-#
-# It supposes that LHCbDIRAC is installed in $SERVERINSTALLDIR
 #-------------------------------------------------------------------------------
 
 
 echo -e '****************************************'
 echo -e '********** LHCb server tests ***********\n'
 
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+echo -e "THIS_DIR=${THIS_DIR}" |& tee -a "${SERVER_TEST_OUTPUT}"
+
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
-pytest --ignore=. "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_Files.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
-pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/BookkeepingSystem/Test_Bookkeeping_MCProds.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+pytest --ignore=. "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_Files.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_MCProds.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Accounting TESTS ****\n"
-python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/AccountingSystem/Test_Plotter.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+python "${THIS_DIR}/AccountingSystem/Test_Plotter.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb DMS TESTS ****\n"
-python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/DataManagementSystem/Test_RAWIntegrity.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+python "${THIS_DIR}/DataManagementSystem/Test_RAWIntegrity.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"
-# pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticApplicationSummaryDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-# pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticGeneratorLogDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticMCBooleLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticMCGaussLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-pytest "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionManagementSystem/Test_ElasticPrMonDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
-TEST_CODE_LOC=$TESTCODE python "$SERVERINSTALLDIR/LHCbDIRAC/tests/Integration/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+# pytest "${THIS_DIR}/ProductionManagementSystem/Test_ElasticApplicationSummaryDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+# pytest "${THIS_DIR}/ProductionManagementSystem/Test_ElasticGeneratorLogDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/ProductionManagementSystem/Test_ElasticMCBooleLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/ProductionManagementSystem/Test_ElasticMCGaussLogErrorsDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/ProductionManagementSystem/Test_ElasticPrMonDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+TEST_CODE_LOC=$TESTCODE python "${THIS_DIR}/ProductionXMLLogAnalysis/Test_XMLSummaryAnalysis.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
