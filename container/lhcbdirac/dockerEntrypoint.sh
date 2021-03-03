@@ -54,4 +54,4 @@ else
 fi
 
 
-exec "$@"
+exec dirac-service -ddd $DIRAC_COMPONENT
