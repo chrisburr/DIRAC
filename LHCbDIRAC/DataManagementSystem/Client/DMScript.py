@@ -56,7 +56,11 @@ def __printDictionary(dictionary, offset=0, shift=0, empty="Empty directory", de
         for val in sorted(value):
           gLogger.notice('%s%s' % (newOffset * ' ', val))
     elif not isinstance(value, dict):
-      gLogger.notice('%s : %s' % (str(key).rjust(center), str(value)))
+      # In case value contains \n, indent the lines
+      toPrint = str(value).split('\n')
+      gLogger.notice('%s : %s' % (str(key).rjust(center), toPrint.pop(0)))
+      for line in toPrint:
+        gLogger.notice((center + 3) * ' ' + line)
 
 
 def printDMResult(result, shift=4, empty="Empty directory", script=None, depth=999, offset=0):
