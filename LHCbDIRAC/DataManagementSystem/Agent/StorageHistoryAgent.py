@@ -23,7 +23,7 @@ import datetime
 from collections import defaultdict
 
 from DIRAC import S_OK, S_ERROR
-from DIRAC.Core.Utilities.File import mkDir
+from DIRAC.Core.Utilities.File import mkDir, convertSizeUnits
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.AccountingSystem.Client.DataStoreClient import gDataStoreClient
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
@@ -37,8 +37,6 @@ from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsag
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 __RCSID__ = "$Id$"
-
-byteToTB = 1.0e12
 
 
 def _standardDirectory(dirPath):
@@ -181,7 +179,7 @@ class StorageHistoryAgent(AgentModule):
           topDirLogicalUsage[topDir]['Files'] += logicalUsage[row]['Files']
           topDirLogicalUsage[topDir]['Size'] += logicalUsage[row]['Size']
       self.log.verbose("After scan of %s, total of %s: " % (directory, topDir),
-                       "size: %.4f TB  files: %d" % (topDirLogicalUsage[topDir]['Size'] / byteToTB,
+                       "size: %.4f TB  files: %d" % (convertSizeUnits(topDirLogicalUsage[topDir]['Size'], 'B', 'TB'),
                                                      topDirLogicalUsage[topDir]['Files']))
     return S_OK()
 
@@ -202,9 +200,10 @@ class StorageHistoryAgent(AgentModule):
       return res
     self.log.notice("Summary on logical usage of top directories: ")
     for topDir in topDirLogicalUsage:
-      self.log.notice("dir: %s size: %.4f TB  files: %d" % (topDir,
-                                                            topDirLogicalUsage[topDir]['Size'] / byteToTB,
-                                                            topDirLogicalUsage[topDir]['Files']))
+      self.log.notice("dir: %s size: %.4f TB  files: %d" %
+                      (topDir,
+                       convertSizeUnits(topDirLogicalUsage[topDir]['Size'], 'B', 'TB'),
+                       topDirLogicalUsage[topDir]['Files']))
 
     # loop on top level directories (/lhcb/data/, /lhcb/user/, /lhcb/MC/, etc..)
     # to get the summary in terms of PHYSICAL usage grouped by SE:
