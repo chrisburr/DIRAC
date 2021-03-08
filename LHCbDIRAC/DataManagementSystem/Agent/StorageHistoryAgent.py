@@ -18,15 +18,16 @@ inserted in a new DB table and made visible via the web portal.
 import os
 import time
 import copy
-import six
 import datetime
 from collections import defaultdict
+import six
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Utilities.File import mkDir, convertSizeUnits
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.AccountingSystem.Client.DataStoreClient import gDataStoreClient
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
+from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 from LHCbDIRAC.AccountingSystem.Client.Types.UserStorage import UserStorage
 from LHCbDIRAC.AccountingSystem.Client.Types.Storage import Storage
@@ -34,7 +35,6 @@ from LHCbDIRAC.AccountingSystem.Client.Types.DataStorage import DataStorage
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.DataManagementSystem.Client.DataUsageClient import DataUsageClient
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
-from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 __RCSID__ = "$Id$"
 
