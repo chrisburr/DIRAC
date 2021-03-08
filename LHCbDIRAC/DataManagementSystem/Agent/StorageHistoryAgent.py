@@ -245,10 +245,10 @@ class StorageHistoryAgent(AgentModule):
         storageRecord.setValueByKey("PhysicalSize", physicalSize)
         gDataStoreClient.addRegister(storageRecord)
         numRows += 1
-        self.log.debug("Directory: %s SE: %s  physical size: %.4f TB (%d files)" % (directory,
-                                                                                    se,
-                                                                                    physicalSize / byteToTB,
-                                                                                    physicalFiles))
+        self.log.debug("Directory: %s SE: %s  physical size: %.4f TB (%d files)" %
+                       (directory, se,
+                        convertSizeUnits(physicalSize, 'B', 'TB'),
+                        physicalFiles))
 
     self.log.notice("Sending %s records to accounting for top level directories storage" % numRows)
     res = gDataStoreClient.commit()
