@@ -233,12 +233,12 @@ class StorageHistoryAgent(AgentModule):
         storageRecord.setValueByKey("LogicalSize", topDirLogicalUsage[directory]['Size'])
         try:
           physicalFiles = seData[directory][se]['Files']
-        except BaseException:
+        except Exception:
           self.log.error("WARNING! no files replicas for directory %s on SE %s" % (directory, se))
           physicalFiles = 0
         try:
           physicalSize = seData[directory][se]['Size']
-        except BaseException:
+        except Exception:
           self.log.error("WARNING! no size for replicas for directory %s on SE %s" % (directory, se))
           physicalSize = 0
         storageRecord.setValueByKey("PhysicalFiles", physicalFiles)
@@ -542,7 +542,7 @@ class StorageHistoryAgent(AgentModule):
         if directory not in self.dirDict:
           self.dirDict[directory] = fullDirectory
         self.log.verbose("Directory contains production files: %s " % directory)
-      except BaseException:
+      except Exception:
         self.log.warn("The directory has unexpected format: %s " % splitDir)
 
     self.lfnUsage = defaultdict(dict)
@@ -590,7 +590,7 @@ class StorageHistoryAgent(AgentModule):
     # convert eventType to string:
     try:
       eventType = int(eventType)
-    except BaseException:
+    except Exception:
       pass
     # check that the event type description is in the cached dictionary, and otherwise query the Bkk
     if eventType not in self.eventTypeDescription:
