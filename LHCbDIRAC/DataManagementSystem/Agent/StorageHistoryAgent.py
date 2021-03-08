@@ -353,10 +353,10 @@ class StorageHistoryAgent(AgentModule):
     self.log.notice("Directories not found in Bookkeeping: %d " % (len(self.directoriesNotInBkk)))
     fileName = os.path.join(self.__workDirectory, "directoriesNotInBkk.txt")
     self.log.notice("written to file: %s " % fileName)
-    f = open(fileName, "w")
-    for d in self.directoriesNotInBkk:
-      f.write("%s\n" % d)
-    f.close()
+    fd = open(fileName, "w")
+    for dd in self.directoriesNotInBkk:
+      fd.write("%s\n" % dd)
+    fd.close()
     # for DEBUG only
     self.log.info("Summary of StorageUsage: files size ")
     for se in sorted(self.debug_seUsage):
