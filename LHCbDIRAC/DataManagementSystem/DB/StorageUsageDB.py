@@ -25,7 +25,7 @@ __RCSID__ = "$Id$"
 
 
 def _standardDirectory(dirPath):
-  """ This adds a / at the end of hte path if not there """
+  """ This adds a / at the end of the path if not there """
   return os.path.join(dirPath, '')
 
 #############################################################################
