@@ -25,6 +25,7 @@ __RCSID__ = "$Id$"
 
 
 def _standardDirectory(dirPath):
+  """ This adds a / at the end of hte path if not there """
   return os.path.join(dirPath, '')
 
 #############################################################################
@@ -147,8 +148,7 @@ class StorageUsageDB(DB):
 
   def __stripDirectory(self, dirPath):
     """Remove trailing / in directory names."""
-    dirPath = self._escapeString(dirPath)['Value'][1:-1]
-    return os.path.realpath(dirPath)
+    return self._escapeString(os.path.realpath(dirPath))['Value'][1:-1]
 
   ################
   # Bulk insertion
