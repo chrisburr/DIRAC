@@ -34,9 +34,14 @@ from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 
 def reduceArgs(arguments, maxList=20):
-  """If the arguments look like BK paths (start with /LHCb or /MC), try to
+  """
+  If the arguments look like BK paths (start with /LHCb or /MC), try to
   reduce the list of BK paths by merging event types or file types into a
-  list."""
+  list.
+
+  :param arguments: list of arguments
+  :param maxList: maximum number of event/file types to put in a resulting merged argument
+  """
   if noMerge:
     return arguments
   others = []
