@@ -39,8 +39,8 @@ def reduceArgs(arguments, maxList=20):
   reduce the list of BK paths by merging event types or file types into a
   list.
 
-  :param arguments: list of arguments
-  :param maxList: maximum number of event/file types to put in a resulting merged argument
+  :param list arguments: list of arguments
+  :param int maxList: maximum number of event/file types to put in a resulting merged argument
   """
   if noMerge:
     return arguments
