@@ -11,8 +11,6 @@
 """The Storage History Agent will create a summary of the storage usage DB
 grouped by processing pass or other interesting parameters.
 
-Initially this will dump the information to a file but eventually can be
-inserted in a new DB table and made visible via the web portal.
 """
 
 import os
@@ -269,10 +267,10 @@ class StorageHistoryAgent(AgentModule):
     # counter for DataStorage records, commit to the accounting in bunches of self.limitForCommit records
     self.totalRecords = 0
     self.recordsToCommit = 0
-    self.log.notice(" Call the function to create the StorageUsageDB dump..")
+    self.log.notice(" Call the function to extract information from the StorageUsageDB..")
     res = self.generateStorageUsagePerDir()
     if not res['OK']:
-      self.log.error("ERROR generating the StorageUsageDB dump per directory")
+      self.log.error("ERROR querying the StorageUsageDB per directory")
       return S_ERROR()
 
     # Keep a list of all directories in FC that are not found in the Bkk
@@ -480,8 +478,10 @@ class StorageHistoryAgent(AgentModule):
         self.log.notice("commit for DataStorage returned: %s" % res)
 
   def generateStorageUsagePerDir(self):
-    """Generate a dump of the StorageUsageDB and keep it in memory in a
-    dictionary (new version of Apr 2012)"""
+    """
+    Extract storage info from the StorageUsageDB and keep it in memory in
+    dictionaries self.lfnUsage and self.pfnUsage
+    """
 
     start = time.time()
     self.log.notice('Starting from path: /lhcb/')
@@ -512,66 +512,72 @@ class StorageHistoryAgent(AgentModule):
         self.log.verbose("Directory to be ignored, skipped: %s " % dirItem)
         ignoredDirectories[secDir] += 1
         continue
-      # for each type of directory (MC, reconstructed data and runs) check the format, in order not to count more than
-      # once the productions with more than one sub-directory
+      # for each type of directory (MC, reconstructed data and raw data) check the format,
+      # in order not to count more than once the productions with more than one sub-directory
       # for MC directories:
       # example: '/lhcb/MC/MC10/ALLSTREAMS.DST/00010908/0000/',
       # or        /lhcb/MC/2011/DST/00010870/0000
       # one directory for each file type
+      # for histograms, there is no numeric "suffix" like /0000/
+      # example: /lhcb/LHCb/Ionproton13/HIST/136973/
       # for data
-      # /lhcb/LHCb/Collision11/SWIMSTRIPPINGD02KSPIPI.MDST/00019088/0000/
+      # production: /lhcb/LHCb/Collision11/SWIMSTRIPPINGD02KSPIPI.MDST/00019088/0000/
       # for raw data: /lhcb/data/2012/RAW/FULL/LHCb/COLLISION12/133784/
       try:
-        dataType = splitDir[-6]
-        if dataType == "RAW":
+        # RAW data directories have a special format, see above
+        if splitDir[-6] == "RAW":
           self.log.verbose("RAW DATA directory: %s" % splitDir)
-          directory = os.path.join(os.path.sep, *splitDir[:-1])
+          directory = dirItem
           fullDirectory = directory
         else:
-          suffix = splitDir[-2]  # is the sub-directory suffix 0000, 0001, etc...
+          # These are production directories, see above for the format
           self.log.verbose("MC or reconstructed data directory: %s" % splitDir)
+          # HIST directories do not have a "suffix" (i.e. all in the same directory)!
           if splitDir[-3] == 'HIST':
-            directory = os.path.join(os.path.sep, *splitDir[:-1])
+            directory = dirItem
             fullDirectory = directory
-            self.log.verbose("histo dir: %s " % directory)
           else:
-            directory = os.path.join(os.path.sep, *splitDir[:-2])
-            fullDirectory = os.path.join(directory, suffix)
-        directory = _standardDirectory(directory)
-        fullDirectory = _standardDirectory(fullDirectory)
-        if directory not in self.dirDict:
-          self.dirDict[directory] = fullDirectory
+            # Ignore the suffix for the accounting as this is only an artifact
+            directory = _standardDirectory(os.path.dirname(os.path.dirname(dirItem)))
+            fullDirectory = dirItem
+        # Keep the link between the accounting directory and the full directory name
+        self.dirDict.setdefault(directory, fullDirectory)
         self.log.verbose("Directory contains production files: %s " % directory)
       except Exception:
-        self.log.warn("The directory has unexpected format: %s " % splitDir)
+        self.log.warn("The directory has unexpected format: %s " % dirItem)
 
     self.lfnUsage = defaultdict(lambda: {'LfnSize': 0, 'LfnFiles': 0})
     self.pfnUsage = {}
+
     totalDiscardedDirs = 0
     self.log.info("Directories that have been discarded:")
     for dd in ignoredDirectories:
       self.log.info("/lhcb/%s - %d " % (dd, ignoredDirectories[dd]))
       totalDiscardedDirs += ignoredDirectories[dd]
     self.log.info("Total discarded directories: %d " % totalDiscardedDirs)
+
     self.log.info("Retrieved %d dirs from StorageUsageDB containing prod files" % len(self.dirDict))
     self.log.info("Getting the number of files and size from StorageUsage service")
+
     for directory in self.dirDict:
       self.log.verbose("Get storage usage for directory %s " % directory)
       res = self.__stDB.getDirectorySummaryPerSE(directory)
       self.callsToDirectorySummary += 1
       if not res['OK']:
-        self.log.error("Cannot retrieve PFN usage %s" % res['Message'])
+        self.log.error("Cannot retrieve PFN usage", res['Message'])
         continue
-      # Set it if not already done
+      # save the PFN usage per SE in a dictionary
       self.pfnUsage.setdefault(directory, res['Value'])
+
       self.log.verbose("Get logical usage for directory %s " % directory)
+      # This returns the number of files and size for the directory and all its subdirectories
       res = self.__stDB.getSummary(directory)
       self.callsToGetSummary += 1
       if not res['OK']:
-        self.log.error("Cannot retrieve LFN usage %s" % res['Message'])
+        self.log.error("Cannot retrieve LFN usage", res['Message'])
         continue
       if not res['Value']:
-        self.log.error("For directory %s getSummary returned an empty value: %s " % (directory, str(res)))
+        self.log.error("getSummary returned empty value", "for %d: %s" % (directory, str(res)))
         continue
       # Sum up all subdirectories
       for dirInfo in res['Value'].values():  # can be an iterator
@@ -582,7 +588,7 @@ class StorageHistoryAgent(AgentModule):
 
     end = time.time()
     self.genTotalTime = end - start
-    self.log.info("StorageUsageDB dump completed in %d s" % self.genTotalTime)
+    self.log.info("StorageUsageDB extraction completed in %d s" % self.genTotalTime)
 
     return S_OK()
 
@@ -598,7 +604,7 @@ class StorageHistoryAgent(AgentModule):
       res = self.__bkClient.getAvailableEventTypes()
       self.callsToBkkGetEvtType += 1
       if not res['OK']:
-        self.log.error("Error querying the Bkk: %s" % res['Message'])
+        self.log.error("Error querying the Bkk:", res['Message'])
       else:
         self.eventTypeDescription.update(dict(res['Value']))
       self.log.verbose("Updated  self.eventTypeDescription dict: %s " % str(self.eventTypeDescription))
