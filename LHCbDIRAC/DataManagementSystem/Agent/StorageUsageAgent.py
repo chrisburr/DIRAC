@@ -340,7 +340,8 @@ class StorageUsageAgent(AgentModule):
 
   def __processDirDFC(self, dirPath, metadata, subDirectories):
     """gets the list of subdirs that the DFC doesn't return, set the metadata
-    like the FC and then call the same method as for the FC."""
+    like the FC and then call the same method as for the FC.
+    """
     if 'SubDirs' not in subDirectories:
       self.log.error('No subdirectory item for directory', dirPath)
       return
@@ -366,6 +367,7 @@ class StorageUsageAgent(AgentModule):
         result = self.catalog.getDirectorySize(*args)
         if not result['OK']:
           errorReason.setdefault(str(result['Message']), []).append(subDir)
+          continue
         else:
           metadata = result['Value']['Successful'].get(subDir)
           if metadata:
@@ -373,6 +375,7 @@ class StorageUsageAgent(AgentModule):
             dirMetadata['TotalSize'] -= metadata['LogicalSize']
           else:
             errorReason.setdefault(str(result['Value']['Failed'][subDir], [])).append(subDir)
+            continue
         if 'PhysicalSize' in metadata and dirUsage:
           seUsage = metadata['PhysicalSize']
           seUsage.pop('TotalFiles', None)

@@ -16,6 +16,7 @@
 :synopsis: StorageUsageDB class is a front-end to the Storage Usage Database.
 """
 
+import os
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
@@ -24,7 +25,8 @@ __RCSID__ = "$Id$"
 
 
 def _standardDirectory(dirPath):
-  return dirPath if dirPath[-1] == '/' else dirPath + '/'
+  """ This adds a / at the end of the path if not there """
+  return os.path.join(dirPath, '')
 
 #############################################################################
 
@@ -146,10 +148,7 @@ class StorageUsageDB(DB):
 
   def __stripDirectory(self, dirPath):
     """Remove trailing / in directory names."""
-    dirPath = self._escapeString(dirPath)['Value'][1:-1]
-    while dirPath and dirPath[-1] == '/':
-      dirPath = dirPath[:-1]
-    return dirPath
+    return self._escapeString(os.path.realpath(dirPath))['Value'][1:-1]
 
   ################
   # Bulk insertion
