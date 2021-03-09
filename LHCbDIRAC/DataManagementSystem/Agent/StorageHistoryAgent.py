@@ -545,7 +545,7 @@ class StorageHistoryAgent(AgentModule):
       except Exception:
         self.log.warn("The directory has unexpected format: %s " % splitDir)
 
-    self.lfnUsage = defaultdict(dict)
+    self.lfnUsage = defaultdict(lambda: {'LfnSize': 0, 'LfnFiles': 0})
     self.pfnUsage = {}
     totalDiscardedDirs = 0
     self.log.info("Directories that have been discarded:")
@@ -573,10 +573,10 @@ class StorageHistoryAgent(AgentModule):
       if not res['Value']:
         self.log.error("For directory %s getSummary returned an empty value: %s " % (directory, str(res)))
         continue
-      for retDir, dirInfo in res['Value'].items():  # can be an iterator
-        if directory in retDir:
-          self.lfnUsage[directory]['LfnSize'] = dirInfo['Size']
-          self.lfnUsage[directory]['LfnFiles'] = dirInfo['Files']
+      # Sum up all subdirectories
+      for dirInfo in res['Value'].values():  # can be an iterator
+        self.lfnUsage[directory]['LfnSize'] += dirInfo['Size']
+        self.lfnUsage[directory]['LfnFiles'] += dirInfo['Files']
       self.log.verbose("PFN usage: %s" % self.pfnUsage[directory])
       self.log.verbose("LFN usage: %s" % self.lfnUsage[directory])
 
