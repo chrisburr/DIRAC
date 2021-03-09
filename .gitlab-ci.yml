@@ -558,7 +558,7 @@ make_tag:
     # Only push this changes to devel if master was tagged. Don't push if you tagged devel
     - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then git commit -av -m "Add release ${VERSION} to releases.cfg and CHANGELOG"  ; fi
     - if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then git push origin devel ; fi
-    - cd ../..
+    - cd ..
     # Create release in gitlab
     - echo "GITLABTOKEN = \"$GITLABTOKEN\"" >& GitTokens.py
     - python3 dirac-docs-get-release-notes.py -g -i 3588 --tagName ${VERSION} --releaseNotes notes.txt --deployRelease
