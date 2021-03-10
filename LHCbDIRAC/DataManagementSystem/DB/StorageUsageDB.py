@@ -110,7 +110,7 @@ class StorageUsageDB(DB):
     self.__tablesDesc['DirMetadata'] = {'Fields': {'DID': 'INTEGER UNSIGNED NOT NULL',
                                                    'ConfigName': 'VARCHAR(64) NOT NULL',
                                                    'ConfigVersion': 'VARCHAR(64) NOT NULL',
-                                                   'Conditions': 'VARCHAR(64) NOT NULL',
+                                                   'Conditions': 'VARCHAR(128) NOT NULL',
                                                    'ProcessingPass': 'VARCHAR(255) NOT NULL',
                                                    'EventType': 'VARCHAR(255) NOT NULL',
                                                    'FileType': 'VARCHAR(64) NOT NULL',
