@@ -37,6 +37,7 @@ from collections import defaultdict
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
+
 def reduceArgs(noMerge, arguments, maxList=20):
   """
   If the arguments look like BK paths (start with /LHCb or /MC), try to
