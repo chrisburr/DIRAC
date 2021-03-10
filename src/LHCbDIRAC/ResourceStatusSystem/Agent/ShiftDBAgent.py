@@ -152,7 +152,6 @@ class ShiftDBAgent(AgentModule):
     except URLError as e:
       return S_ERROR('Cannot open URL: %s, erorr %s' % (self.lbshiftdburl, e))
 
-    emaillist = []
     emailperson = []
 
     for line in web.readlines():

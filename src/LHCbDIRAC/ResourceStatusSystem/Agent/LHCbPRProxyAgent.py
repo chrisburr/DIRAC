@@ -35,14 +35,7 @@ class LHCbPRProxyAgent(AgentModule):
   This is used by the LHCbPR framework, to get a new proxy every day,
   without having to use any hardcoded password ( which means, this agent will
   run on the same machine as LHCbPR ).
-
-  The agent overwrites the parent methods:
-
-  - initialize
-  - execute
   """
-
-################################################################################
 
   def initialize(self):
     """Method executed when the agent is launched. It sets the proxy as LHCbPR,
@@ -60,8 +53,6 @@ class LHCbPRProxyAgent(AgentModule):
       errorStr = "LHCbPRProxyAgent initialization"
       self.log.exception(errorStr)
       return S_ERROR(errorStr)
-
-################################################################################
 
   def execute(self):
     """At every execution this method will try to print the environment
@@ -88,7 +79,3 @@ class LHCbPRProxyAgent(AgentModule):
     except KeyError as x:
       self.log.exception(x)
       return S_ERROR(x)
-
-
-# ...............................................................................
-# EOF
