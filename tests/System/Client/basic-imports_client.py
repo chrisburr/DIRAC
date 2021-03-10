@@ -17,7 +17,6 @@ from __future__ import print_function
 # pylint: disable=unused-import,import-error
 
 import pyparsing
-import GSI
 import XRootD
 import gfal2
 import stomp
@@ -27,11 +26,17 @@ import certifi
 import fts3
 import LbPlatformUtils
 import LbEnv
-
+import six
 
 from distutils.spawn import find_executable
 
-for cmd in ['voms-proxy-init2', 'voms-proxy-info2', ]:
+
+if six.PY3:
+  cmds = ['voms-proxy-init', 'voms-proxy-info']
+else:
+  cmds = ['voms-proxy-init2', 'voms-proxy-info2']
+
+for cmd in cmds:
   res = find_executable(cmd)
   if not res:
     raise RuntimeError()
