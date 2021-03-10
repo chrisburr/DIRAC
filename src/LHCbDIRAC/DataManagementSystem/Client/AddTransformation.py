@@ -260,8 +260,8 @@ def executeAddTransformation(pluginScript):
 
     if requestID:
       transName += '-Request%s' % (requestID)
-    # If a name is given in the options, use it if LFNs are given or forced
-    if nameOption and (requestedLFNs or force):
+    # If a name is given in the options, use it
+    if nameOption:
       transName = nameOption
       longName = transGroup + ' - ' + transName
     if not transName:

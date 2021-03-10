@@ -11,8 +11,6 @@
 """The Storage History Agent will create a summary of the storage usage DB
 grouped by processing pass or other interesting parameters.
 
-Initially this will dump the information to a file but eventually can be
-inserted in a new DB table and made visible via the web portal.
 """
 from __future__ import absolute_import
 from __future__ import division
@@ -21,13 +19,16 @@ from __future__ import print_function
 import os
 import time
 import copy
+import datetime
+from collections import defaultdict
 import six
 
 from DIRAC import S_OK, S_ERROR
-from DIRAC.Core.Utilities import Time
-from DIRAC.Core.Utilities.File import mkDir
+from DIRAC.Core.Utilities.File import mkDir, convertSizeUnits
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.AccountingSystem.Client.DataStoreClient import gDataStoreClient
+from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
+from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 from LHCbDIRAC.AccountingSystem.Client.Types.UserStorage import UserStorage
 from LHCbDIRAC.AccountingSystem.Client.Types.Storage import Storage
@@ -35,19 +36,13 @@ from LHCbDIRAC.AccountingSystem.Client.Types.DataStorage import DataStorage
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.DataManagementSystem.Client.DataUsageClient import DataUsageClient
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
-from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 __RCSID__ = "$Id$"
 
-byteToGB = 1.0e9
-
 
 def _standardDirectory(dirPath):
-  return dirPath if dirPath[-1] == '/' else dirPath + '/'
-
-
-def _standardDirList(dirList):
-  return [_standardDirectory(dirPath) for dirPath in dirList]
+  """ Add a "/" at the end of the directory name if not present """
+  return os.path.join(dirPath, '')
 
 
 def _fillMetadata(dictToFill, metadataValue):
@@ -88,6 +83,7 @@ class StorageHistoryAgent(AgentModule):
 
     self.__bkClient = BookkeepingClient()
     self.__dataUsageClient = DataUsageClient()
+    self.__fileCatalog = FileCatalog()
     self.cachedMetadata = {}
     # build a dictionary with Event Type descriptions (to be send to accounting, instead of number Event Type ID)
     self.eventTypeDescription = {'na': 'na',
@@ -120,7 +116,7 @@ class StorageHistoryAgent(AgentModule):
     userSEData = result['Value']
     self.log.notice("Got SE summary for %s users" % (len(userSEData)))
 
-    now = Time.dateTime()
+    now = datetime.datetime.utcnow()
     numRows = 0
     for user in sorted(userSEData):
       if user not in userCatalogData:
@@ -153,33 +149,64 @@ class StorageHistoryAgent(AgentModule):
     else:
       self.log.notice("%s records for UserStorage type successfully committed" % numRows)
 
+  def __getTopDirUsage(self, dirToScan, topDirLogicalUsage):
+    """
+    Get logical storage information from su_Directory table
+    """
+    res = self.__fileCatalog.listDirectory(dirToScan)
+    if not res['OK']:
+      return res
+    subDirs = res['Value']['Successful'][dirToScan]['SubDirs']
+    doneDirs = set()
+    # Get summary for each next level directory in order to reduce the size
+    for directory in subDirs:
+      # For  top directories, go one level below to reduce the size of information
+      if len(directory.split(os.path.sep)) == 3:
+        self.__getTopDirUsage(directory, topDirLogicalUsage)
+        topDir = _standardDirectory(directory)
+      elif directory.lower() not in doneDirs:
+        # The StorageUsage DB is case insensitive, hence go only once over the same directory
+        doneDirs.add(directory.lower())
+        directory = _standardDirectory(directory)
+        # get info from the DB about the LOGICAL STORAGE USAGE (from the su_Directory table):
+        result = self.__stDB.getSummary(directory)
+        if not result['OK']:
+          return result
+        logicalUsage = result['Value']
+        # Store logical usage for top level directory onl
+        topDir = _standardDirectory(os.path.join(os.path.sep, *directory.split(os.path.sep)[:3]))
+        for row in logicalUsage:
+          # d, size, files = row
+          topDirLogicalUsage[topDir]['Files'] += logicalUsage[row]['Files']
+          topDirLogicalUsage[topDir]['Size'] += logicalUsage[row]['Size']
+      self.log.verbose("After scan of %s, total of %s: " % (directory, topDir),
+                       "size: %.4f TB  files: %d" % (convertSizeUnits(topDirLogicalUsage[topDir]['Size'], 'B', 'TB'),
+                                                     topDirLogicalUsage[topDir]['Files']))
+    return S_OK()
+
   def topDirectoryAccounting(self):
+    """
+    Get statistics for top level 2 directories, e.g. /lhcb/data/, /lhcb/user/ etc...
+    """
     self.log.notice("-------------------------------------------------------------------------------------\n")
     self.log.notice("Generate accounting records for top directories ")
     self.log.notice("-------------------------------------------------------------------------------------\n")
 
-    ftb = 1.0e12
+    # Get second level top directories
+    topDirLogicalUsage = defaultdict(lambda: {'Files': 0, 'Size': 0})  # build the list of first level directories
 
-    # get info from the DB about the LOGICAL STORAGE USAGE (from the su_Directory table):
-    result = self.__stDB.getSummary('/lhcb/')
-    if not result['OK']:
-      return result
-    logicalUsage = result['Value']
-    topDirLogicalUsage = {}  # build the list of first level directories
-    for row in logicalUsage:
-      # d, size, files = row
-      splitDir = row.split("/")
-      if len(splitDir) > 3:  # skip the root directory "/lhcb/"
-        firstLevelDir = '/' + splitDir[1] + '/' + splitDir[2] + '/'
-        topDirLogicalUsage.setdefault(firstLevelDir, {'Files': 0, 'Size': 0})
-        topDirLogicalUsage[firstLevelDir]['Files'] += logicalUsage[row]['Files']
-        topDirLogicalUsage[firstLevelDir]['Size'] += logicalUsage[row]['Size']
+    res = self.__getTopDirUsage('/lhcb', topDirLogicalUsage)
+    if not res['OK']:
+      self.log.error("Error getting top directory logical usage", res['Message'])
+      return res
     self.log.notice("Summary on logical usage of top directories: ")
-    for row in topDirLogicalUsage:
-      self.log.notice("dir: %s size: %.4f TB  files: %d" % (row, topDirLogicalUsage[row]['Size'] / ftb,
-                                                            topDirLogicalUsage[row]['Files']))
+    for topDir in topDirLogicalUsage:
+      self.log.notice("dir: %s size: %.4f TB  files: %d" %
+                      (topDir,
+                       convertSizeUnits(topDirLogicalUsage[topDir]['Size'], 'B', 'TB'),
+                       topDirLogicalUsage[topDir]['Files']))
 
-    # loop on top level directories (/lhcb/data, /lhcb/user/, /lhcb/MC/, etc..)
+    # loop on top level directories (/lhcb/data/, /lhcb/user/, /lhcb/MC/, etc..)
     # to get the summary in terms of PHYSICAL usage grouped by SE:
     seData = {}
     for directory in topDirLogicalUsage:
@@ -191,7 +218,7 @@ class StorageHistoryAgent(AgentModule):
       self.log.debug("SEData: %s" % seData)
     # loop on top level directories to send the accounting records
     numRows = 0
-    now = Time.dateTime()
+    now = datetime.datetime.utcnow()
     for directory in seData:
       self.log.debug("dir: %s SEData: %s " % (directory, seData[directory]))
       if directory not in topDirLogicalUsage:
@@ -207,22 +234,22 @@ class StorageHistoryAgent(AgentModule):
         storageRecord.setValueByKey("LogicalSize", topDirLogicalUsage[directory]['Size'])
         try:
           physicalFiles = seData[directory][se]['Files']
-        except BaseException:
+        except Exception:
           self.log.error("WARNING! no files replicas for directory %s on SE %s" % (directory, se))
           physicalFiles = 0
         try:
           physicalSize = seData[directory][se]['Size']
-        except BaseException:
+        except Exception:
           self.log.error("WARNING! no size for replicas for directory %s on SE %s" % (directory, se))
           physicalSize = 0
         storageRecord.setValueByKey("PhysicalFiles", physicalFiles)
         storageRecord.setValueByKey("PhysicalSize", physicalSize)
         gDataStoreClient.addRegister(storageRecord)
         numRows += 1
-        self.log.debug("Directory: %s SE: %s  physical size: %.4f TB (%d files)" % (directory,
-                                                                                    se,
-                                                                                    physicalSize / ftb,
-                                                                                    physicalFiles))
+        self.log.debug("Directory: %s SE: %s  physical size: %.4f TB (%d files)" %
+                       (directory, se,
+                        convertSizeUnits(physicalSize, 'B', 'TB'),
+                        physicalFiles))
 
     self.log.notice("Sending %s records to accounting for top level directories storage" % numRows)
     res = gDataStoreClient.commit()
@@ -233,6 +260,9 @@ class StorageHistoryAgent(AgentModule):
       self.log.notice("%s records for Storage type successfully committed" % numRows)
 
   def bkPathAccounting(self):
+    """
+    Generate accounting for all directories, grouped by BK path metadata
+    """
     self.log.notice("-------------------------------------------------------------------------------------\n")
     self.log.notice("Generate accounting records for DataStorage type ")
     self.log.notice("-------------------------------------------------------------------------------------\n")
@@ -240,20 +270,20 @@ class StorageHistoryAgent(AgentModule):
     # counter for DataStorage records, commit to the accounting in bunches of self.limitForCommit records
     self.totalRecords = 0
     self.recordsToCommit = 0
-    self.log.notice(" Call the function to create the StorageUsageDB dump..")
+    self.log.notice(" Call the function to extract information from the StorageUsageDB..")
     res = self.generateStorageUsagePerDir()
     if not res['OK']:
-      self.log.error("ERROR generating the StorageUsageDB dump per directory")
+      self.log.error("ERROR querying the StorageUsageDB per directory")
       return S_ERROR()
 
     # Keep a list of all directories in FC that are not found in the Bkk
     self.directoriesNotInBkk = []
     # for debugging purposes build dictionaries with storage usage to compare with the accounting plots
-    self.debug_seUsage = {}
-    self.debug_seUsage_acc = {}
+    self.debug_seUsage = defaultdict(lambda: {'Files': 0, 'Size': 0})
+    self.debug_seUsage_acc = defaultdict(lambda: {'Files': 0, 'Size': 0})
 
     # set the time for the accounting records (same time for all records)
-    now = Time.dateTime()
+    now = datetime.datetime.utcnow()
     # Get the directory metadata in a bulk query
     metaForList = self.__getMetadataForAcc(self.dirDict.values())
 
@@ -262,7 +292,7 @@ class StorageHistoryAgent(AgentModule):
       if dirLfn not in fullDirectory:
         self.log.error("ERROR: fullDirectory should include the dirname: %s %s " % (fullDirectory, dirLfn))
         continue
-      self.log.info("Processing directory %s " % dirLfn)
+      self.log.verbose("Processing directory %s " % dirLfn)
       if dirLfn not in self.pfnUsage:
         self.log.error("ERROR: directory does not have PFN usage %s " % dirLfn)
         continue
@@ -274,7 +304,6 @@ class StorageHistoryAgent(AgentModule):
 
       # for DEBUGGING:
       for se in self.pfnUsage[dirLfn]:
-        self.debug_seUsage.setdefault(se, {'Files': 0, 'Size': 0})
         self.debug_seUsage[se]['Files'] += self.pfnUsage[dirLfn][se]['Files']
         self.debug_seUsage[se]['Size'] += self.pfnUsage[dirLfn][se]['Size']
       # end of DEBUGGING
@@ -291,7 +320,6 @@ class StorageHistoryAgent(AgentModule):
       if not res['OK']:
         return res
       for se in self.pfnUsage[dirLfn]:
-        self.debug_seUsage_acc.setdefault(se, {'Files': 0, 'Size': 0})
         self.debug_seUsage_acc[se]['Files'] += self.pfnUsage[dirLfn][se]['Files']
         self.debug_seUsage_acc[se]['Size'] += self.pfnUsage[dirLfn][se]['Size']
 
@@ -326,10 +354,10 @@ class StorageHistoryAgent(AgentModule):
     self.log.notice("Directories not found in Bookkeeping: %d " % (len(self.directoriesNotInBkk)))
     fileName = os.path.join(self.__workDirectory, "directoriesNotInBkk.txt")
     self.log.notice("written to file: %s " % fileName)
-    f = open(fileName, "w")
-    for d in self.directoriesNotInBkk:
-      f.write("%s\n" % d)
-    f.close()
+    fd = open(fileName, "w")
+    for dd in self.directoriesNotInBkk:
+      fd.write("%s\n" % dd)
+    fd.close()
     # for DEBUG only
     self.log.info("Summary of StorageUsage: files size ")
     for se in sorted(self.debug_seUsage):
@@ -413,7 +441,7 @@ class StorageHistoryAgent(AgentModule):
                 self.log.verbose("Cache entry %s in DirMetadata table.." % dirName)
                 resInsert = self.__dataUsageClient.insertToDirMetadata({dirName: metadata})
                 if not resInsert['OK']:
-                  self.log.error("Failed to cache metadata in DirMetadata table! %s " % resInsert['Message'])
+                  self.log.error("Failed to cache metadata:", "%s for dir %s" % (resInsert['Message'], dirName))
                 else:
                   cachedFromBK.append(dirName)
                   self.log.verbose("Successfully cached metadata for %s : %s" % (dirName, str(metadata)))
@@ -453,8 +481,10 @@ class StorageHistoryAgent(AgentModule):
         self.log.notice("commit for DataStorage returned: %s" % res)
 
   def generateStorageUsagePerDir(self):
-    """Generate a dump of the StorageUsageDB and keep it in memory in a
-    dictionary (new version of Apr 2012)"""
+    """
+    Extract storage info from the StorageUsageDB and keep it in memory in
+    dictionaries self.lfnUsage and self.pfnUsage
+    """
 
     start = time.time()
     self.log.notice('Starting from path: /lhcb/')
@@ -476,7 +506,7 @@ class StorageHistoryAgent(AgentModule):
     for dirItem in totalDirList:
       # make sure that last character is a '/'
       dirItem = _standardDirectory(dirItem)
-      splitDir = dirItem.split('/')
+      splitDir = dirItem.split(os.path.sep)
       if len(splitDir) < 4:  # avoid picking up intermediate directories which don't contain files, like /lhcb/
         self.log.warn("Directory %s skipped, as top directory" % dirItem)
         continue
@@ -485,78 +515,83 @@ class StorageHistoryAgent(AgentModule):
         self.log.verbose("Directory to be ignored, skipped: %s " % dirItem)
         ignoredDirectories[secDir] += 1
         continue
-      # for each type of directory (MC, reconstructed data and runs) check the format, in order not to count more than
-      # once the productions with more than one sub-directory
+      # for each type of directory (MC, reconstructed data and raw data) check the format,
+      # in order not to count more than once the productions with more than one sub-directory
       # for MC directories:
       # example: '/lhcb/MC/MC10/ALLSTREAMS.DST/00010908/0000/',
       # or        /lhcb/MC/2011/DST/00010870/0000
       # one directory for each file type
+      # for histograms, there is no numeric "suffix" like /0000/
+      # example: /lhcb/LHCb/Ionproton13/HIST/136973/
       # for data
-      # /lhcb/LHCb/Collision11/SWIMSTRIPPINGD02KSPIPI.MDST/00019088/0000/
+      # production: /lhcb/LHCb/Collision11/SWIMSTRIPPINGD02KSPIPI.MDST/00019088/0000/
       # for raw data: /lhcb/data/2012/RAW/FULL/LHCb/COLLISION12/133784/
       try:
-        dataType = splitDir[-6]
-        if dataType == "RAW":
+        # RAW data directories have a special format, see above
+        if splitDir[-6] == "RAW":
           self.log.verbose("RAW DATA directory: %s" % splitDir)
-          directory = '/'.join(splitDir[:-1])
+          directory = dirItem
           fullDirectory = directory
         else:
-          suffix = splitDir[-2]  # is the sub-directory suffix 0000, 0001, etc...
+          # These are production directories, see above for the format
           self.log.verbose("MC or reconstructed data directory: %s" % splitDir)
+          # HIST directories do not have a "suffix" (i.e. all in the same directory)!
           if splitDir[-3] == 'HIST':
-            directory = '/'.join(splitDir[:-1])
+            directory = dirItem
             fullDirectory = directory
-            self.log.verbose("histo dir: %s " % directory)
           else:
-            directory = '/'.join(splitDir[:-2])
-            fullDirectory = os.path.join(directory, suffix)
-        directory = _standardDirectory(directory)
-        fullDirectory = _standardDirectory(fullDirectory)
-        if directory not in self.dirDict:
-          self.dirDict[directory] = fullDirectory
+            # Ignore the suffix for the accounting as this is only an artifact
+            directory = _standardDirectory(os.path.dirname(os.path.dirname(dirItem)))
+            fullDirectory = dirItem
+        # Keep the link between the accounting directory and the full directory name
+        self.dirDict.setdefault(directory, fullDirectory)
         self.log.verbose("Directory contains production files: %s " % directory)
-      except BaseException:
-        self.log.warn("The directory has unexpected format: %s " % splitDir)
+      except Exception:
+        self.log.warn("The directory has unexpected format: %s " % dirItem)
 
-    self.lfnUsage = {}
+    self.lfnUsage = defaultdict(lambda: {'LfnSize': 0, 'LfnFiles': 0})
     self.pfnUsage = {}
+
     totalDiscardedDirs = 0
     self.log.info("Directories that have been discarded:")
     for dd in ignoredDirectories:
       self.log.info("/lhcb/%s - %d " % (dd, ignoredDirectories[dd]))
       totalDiscardedDirs += ignoredDirectories[dd]
     self.log.info("Total discarded directories: %d " % totalDiscardedDirs)
+
     self.log.info("Retrieved %d dirs from StorageUsageDB containing prod files" % len(self.dirDict))
     self.log.info("Getting the number of files and size from StorageUsage service")
-    for d in self.dirDict:
-      self.log.verbose("Get storage usage for directory %s " % d)
-      res = self.__stDB.getDirectorySummaryPerSE(d)
+
+    for directory in self.dirDict:
+      self.log.verbose("Get storage usage for directory %s " % directory)
+      res = self.__stDB.getDirectorySummaryPerSE(directory)
       self.callsToDirectorySummary += 1
       if not res['OK']:
-        self.log.error("Cannot retrieve PFN usage %s" % res['Message'])
+        self.log.error("Cannot retrieve PFN usage", res['Message'])
         continue
-      if d not in self.pfnUsage:
-        self.pfnUsage[d] = res['Value']
-      self.log.verbose("Get logical usage for directory %s " % d)
-      res = self.__stDB.getSummary(d)
+      # save the PFN usage per SE in a dictionary
+      self.pfnUsage.setdefault(directory, res['Value'])
+
+      self.log.verbose("Get logical usage for directory %s " % directory)
+      # This returns the number of files and size for the directory and all its subdirectories
+      res = self.__stDB.getSummary(directory)
       self.callsToGetSummary += 1
       if not res['OK']:
-        self.log.error("Cannot retrieve LFN usage %s" % res['Message'])
+        self.log.error("Cannot retrieve LFN usage", res['Message'])
         continue
       if not res['Value']:
-        self.log.error("For dir %s getSummary returned an empty value: %s " % (d, str(res)))
+        self.log.error("getSummary returned empty value", "for %d: %s" % (directory, str(res)))
         continue
-      self.lfnUsage.setdefault(d, {})
-      for retDir, dirInfo in res['Value'].items():  # can be an iterator
-        if d in retDir:
-          self.lfnUsage[d]['LfnSize'] = dirInfo['Size']
-          self.lfnUsage[d]['LfnFiles'] = dirInfo['Files']
-      self.log.verbose("PFN usage: %s" % self.pfnUsage[d])
-      self.log.verbose("LFN usage: %s" % self.lfnUsage[d])
+      # Sum up all subdirectories
+      for dirInfo in res['Value'].values():  # can be an iterator
+        self.lfnUsage[directory]['LfnSize'] += dirInfo['Size']
+        self.lfnUsage[directory]['LfnFiles'] += dirInfo['Files']
+      self.log.verbose("PFN usage: %s" % self.pfnUsage[directory])
+      self.log.verbose("LFN usage: %s" % self.lfnUsage[directory])
 
     end = time.time()
     self.genTotalTime = end - start
-    self.log.info("StorageUsageDB dump completed in %d s" % self.genTotalTime)
+    self.log.info("StorageUsageDB extraction completed in %d s" % self.genTotalTime)
 
     return S_OK()
 
@@ -564,7 +599,7 @@ class StorageHistoryAgent(AgentModule):
     # convert eventType to string:
     try:
       eventType = int(eventType)
-    except BaseException:
+    except Exception:
       pass
     # check that the event type description is in the cached dictionary, and otherwise query the Bkk
     if eventType not in self.eventTypeDescription:
@@ -572,7 +607,7 @@ class StorageHistoryAgent(AgentModule):
       res = self.__bkClient.getAvailableEventTypes()
       self.callsToBkkGetEvtType += 1
       if not res['OK']:
-        self.log.error("Error querying the Bkk: %s" % res['Message'])
+        self.log.error("Error querying the Bkk:", res['Message'])
       else:
         self.eventTypeDescription.update(dict(res['Value']))
       self.log.verbose("Updated  self.eventTypeDescription dict: %s " % str(self.eventTypeDescription))

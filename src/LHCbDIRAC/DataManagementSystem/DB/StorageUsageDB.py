@@ -20,6 +20,7 @@ from __future__ import division
 from __future__ import print_function
 import six
 
+import os
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
@@ -28,7 +29,8 @@ __RCSID__ = "$Id$"
 
 
 def _standardDirectory(dirPath):
-  return dirPath if dirPath[-1] == '/' else dirPath + '/'
+  """ This adds a / at the end of the path if not there """
+  return os.path.join(dirPath, '')
 
 #############################################################################
 
@@ -112,7 +114,7 @@ class StorageUsageDB(DB):
     self.__tablesDesc['DirMetadata'] = {'Fields': {'DID': 'INTEGER UNSIGNED NOT NULL',
                                                    'ConfigName': 'VARCHAR(64) NOT NULL',
                                                    'ConfigVersion': 'VARCHAR(64) NOT NULL',
-                                                   'Conditions': 'VARCHAR(64) NOT NULL',
+                                                   'Conditions': 'VARCHAR(128) NOT NULL',
                                                    'ProcessingPass': 'VARCHAR(255) NOT NULL',
                                                    'EventType': 'VARCHAR(255) NOT NULL',
                                                    'FileType': 'VARCHAR(64) NOT NULL',
@@ -150,10 +152,7 @@ class StorageUsageDB(DB):
 
   def __stripDirectory(self, dirPath):
     """Remove trailing / in directory names."""
-    dirPath = self._escapeString(dirPath)['Value'][1:-1]
-    while dirPath and dirPath[-1] == '/':
-      dirPath = dirPath[:-1]
-    return dirPath
+    return self._escapeString(os.path.realpath(dirPath))['Value'][1:-1]
 
   ################
   # Bulk insertion

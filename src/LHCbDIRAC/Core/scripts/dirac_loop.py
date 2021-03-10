@@ -31,20 +31,27 @@ from __future__ import print_function
 
 import os
 import subprocess
+from collections import defaultdict
+
 
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-
-def reduceArgs(noMerge, arguments):
-  """If the arguments look like BK paths (start with /LHCb or /MC), try to
+def reduceArgs(noMerge, arguments, maxList=20):
+  """
+  If the arguments look like BK paths (start with /LHCb or /MC), try to
   reduce the list of BK paths by merging event types or file types into a
-  list."""
+  list.
+
+  :param list arguments: list of arguments
+  :param int maxList: maximum number of event/file types to put in a resulting merged argument
+  """
   if noMerge:
     return arguments
   others = []
   placeHolder = '@@'
   for item in [-1, -2]:
-    reducedDict = {}
+    reducedDict = defaultdict(set)
     for path in arguments:
       path = path.strip()
       if path.startswith('/LHCb') or path.startswith('/MC'):
@@ -52,11 +59,14 @@ def reduceArgs(noMerge, arguments):
         val = parsed[item]
         parsed[item] = placeHolder
         holderPath = '/'.join(parsed)
-        reducedDict.setdefault(holderPath, set()).add(val)
+        reducedDict[holderPath].add(val)
       else:
         others.append(path)
-    arguments = [holderPath.replace(placeHolder, ','.join(sorted(values)))
-                 for holderPath, values in reducedDict.items()]
+    # Don't allow list of event or file types too long
+    arguments = []
+    for holderPath, values in reducedDict.items():
+      for chunk in breakListIntoChunks(sorted(values), maxList):
+        arguments.append(holderPath.replace(placeHolder, ','.join(chunk)))
   # Now sort out the conditions
   conditions = {}
   finalArgs = [arg for arg in arguments if not arg.startswith('/LHCb')]
