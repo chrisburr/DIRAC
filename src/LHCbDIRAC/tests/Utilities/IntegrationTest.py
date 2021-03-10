@@ -18,10 +18,7 @@ import unittest
 from DIRAC import gLogger
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-try:
-  from LHCbDIRAC.tests.Utilities.utils import cleanTestDir
-except ImportError:
-  from tests.Utilities.utils import cleanTestDir
+from LHCbDIRAC.tests.Utilities.utils import cleanTestDir
 
 
 class IntegrationTest(unittest.TestCase):

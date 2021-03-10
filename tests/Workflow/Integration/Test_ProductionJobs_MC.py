@@ -26,7 +26,7 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from tests.Utilities.IntegrationTest import IntegrationTest
+from LHCbDIRAC.tests.Utilities.IntegrationTest import IntegrationTest
 
 from LHCbDIRAC import rootPath
 from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction

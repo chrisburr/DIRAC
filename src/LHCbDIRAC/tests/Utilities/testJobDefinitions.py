@@ -23,10 +23,7 @@ from DIRAC.tests.Utilities.testJobDefinitions import baseToAllJobs, endOfAllJobs
 from DIRAC.Core.Utilities.Proxy import executeWithUserProxy
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-try:
-  from LHCbDIRAC.tests.Workflow.Integration.Test_UserJobs import createJob
-except ImportError:
-  from tests.Workflow.Integration.Test_UserJobs import createJob
+from LHCbDIRAC.tests.Workflow import createJob
 
 from LHCbDIRAC import rootPath
 
