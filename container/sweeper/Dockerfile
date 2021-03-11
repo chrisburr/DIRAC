@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.9-slim
 LABEL MAINTAINER Marko Petric <marko.petric@cern.ch>
 
 RUN apt-get update && \
