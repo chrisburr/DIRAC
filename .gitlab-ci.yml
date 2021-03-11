@@ -22,6 +22,8 @@ stages:
   - release
    # Run all the tests
   - test
+  #  build images
+  - images
   # deploy the coverage results
   - coverage
   - coverageDfs
@@ -341,29 +343,21 @@ build_docker_image:
         --build-arg LHCB_DIRAC_VERSION=${CI_COMMIT_TAG}
 
 
-# This instead creates a docker image to be used as LHCbDIRAC client
-build_client_docker_image:
-  stage: deploy_release
-  allow_failure: true
+# Image for propagation of gitlab MRs from master to devel
+build_sweeper_image:
+  stage: images
   only:
-    - tags
-  image:
-    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
-    entrypoint: [""]
-  script:
-    # Replacements
-    - sed -i "s %%LHCB_DIRAC_VERSION%% $CI_COMMIT_TAG g" ./container/client/Dockerfile
-    - SETUP=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "LHCb-Certification"; else echo "LHCb-Production"; fi)
-    - sed -i "s %%LHCB_DIRAC_SETUP%% $SETUP g" ./container/client/Dockerfile
-    - CS=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server"; else echo "dips://lbvobox100.cern.ch:9135/Configuration/Server,dips://lbvobox102.cern.ch:9135/Configuration/Server,dips://lbvobox103.cern.ch:9135/Configuration/Server,dips://lbvobox104.cern.ch:9135/Configuration/Server"; fi)
-    - sed -i "s %%LHCB_DIRAC_CS%% $CS g" ./container/client/Dockerfile
-    # Now build and upload to GitLab registry
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR/container/client --dockerfile $CI_PROJECT_DIR/container/client/Dockerfile --destination $CI_REGISTRY_IMAGE:client-${CI_COMMIT_TAG}
-    # Upload to Docker Hub - with no kaniko
-    # FIXME: this fails as there's no docker installed...
-    # - echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
-    # - docker push diracgrid/lhcbdirac:${CI_COMMIT_TAG}
+    refs:
+      - master@lhcb-dirac/LHCbDIRAC
+      - devel@lhcb-dirac/LHCbDIRAC
+  tags:
+    - docker-image-build
+  script: "echo 'Building docker image..." # unused but this line is required by GitLab CI
+  variables:
+    FROM: python:3.7-slim  # Override the image specified in the Dockerfile
+    TO: $CI_REGISTRY_IMAGE:sweeper # $CI_REGISTRY_IMAGE is the registry space for this particular repository
+    DOCKER_FILE: $CI_PROJECT_DIR/container/sweeper/Dockerfile
+
 
 # Template job used by deploy_on_cvmfs and set_cvmfs_prod_link
 .cvmfs_task:
