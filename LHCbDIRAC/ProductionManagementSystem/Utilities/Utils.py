@@ -100,7 +100,7 @@ def informPeople(rec, oldstate, state, author, inform):
   footer += "DIRAC Web portal: https://lhcb-portal-dirac.cern.ch/DIRAC/s:%s/g:" % \
       PathFinder.getDIRACSetup()
 
-  ppath = .join(['/?view=tabs&theme=Crisp&url_state=1|*LHCbDIRAC.ProductionRequestManager',
+  ppath = '\n'.join(['/?view=tabs&theme=Crisp&url_state=1|*LHCbDIRAC.ProductionRequestManager',
                  '.classes.ProductionRequestManager: \n\n'])
 
   ppath += 'The request details:\n'
