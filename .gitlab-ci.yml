@@ -343,7 +343,7 @@ build_docker_image:
         --build-arg LHCB_DIRAC_VERSION=${CI_COMMIT_TAG}
 
 
-# Image for propagation of gitlab MRs from mater to devel
+# Image for propagation of gitlab MRs from master to devel
 build_sweeper_image:
   stage: images
   only:
