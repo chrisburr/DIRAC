@@ -112,7 +112,7 @@ class NotifyAgent(AgentModule):
         "SELECT DISTINCT thegroup, reqName, reqWG, reqInform, reqType from ProductionManagementCache;")
     for thegroup, reqName, reqWG, reqInform, reqType in result:
       link = "https://lhcb-portal-dirac.cern.ch/DIRAC/s:" + PathFinder.getDIRACSetup() + "/g:" + thegroup + \
-             "/?view=tabs&theme=Grey&url_state=1|*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:"
+             "/?view=tabs&theme=Crisp&url_state=1|*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:"
 
       aggregated_body = ""
       html_elements = ""
