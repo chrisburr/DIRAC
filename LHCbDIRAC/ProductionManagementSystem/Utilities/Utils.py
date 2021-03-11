@@ -101,7 +101,7 @@ def informPeople(rec, oldstate, state, author, inform):
       PathFinder.getDIRACSetup()
 
   ppath = '\n'.join(['/?view=tabs&theme=Crisp&url_state=1|*LHCbDIRAC.ProductionRequestManager',
-                 '.classes.ProductionRequestManager: \n\n'])
+                     '.classes.ProductionRequestManager: \n\n'])
 
   ppath += 'The request details:\n'
   ppath += '  Type: %s' % str(rec['RequestType'])
