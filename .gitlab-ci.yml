@@ -353,7 +353,7 @@ build_sweeper_image:
     refs:
       - master@lhcb-dirac/LHCbDIRAC
       - devel@lhcb-dirac/LHCbDIRAC
-  script: "echo 'Building docker image..." # unused but this line is required by GitLab CI
+  script: "echo 'Building docker image...'" # unused but this line is required by GitLab CI
   variables:
     FROM: python:3.9-slim  # Override the image specified in the Dockerfile
     TO: $CI_REGISTRY_IMAGE:sweeper # $CI_REGISTRY_IMAGE is the registry space for this particular repository
