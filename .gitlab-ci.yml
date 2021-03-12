@@ -346,6 +346,8 @@ build_docker_image:
 # Image for propagation of gitlab MRs from master to devel
 build_sweeper_image:
   stage: images
+  image:
+    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
   only:
     refs:
       - master@lhcb-dirac/LHCbDIRAC
