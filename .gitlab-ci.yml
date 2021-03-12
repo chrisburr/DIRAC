@@ -356,7 +356,7 @@ build_sweeper_image:
     - docker-image-build
   script: "echo 'Building docker image..." # unused but this line is required by GitLab CI
   variables:
-    FROM: python:3.7-slim  # Override the image specified in the Dockerfile
+    FROM: python:3.9-slim  # Override the image specified in the Dockerfile
     TO: $CI_REGISTRY_IMAGE:sweeper # $CI_REGISTRY_IMAGE is the registry space for this particular repository
     DOCKER_FILE: $CI_PROJECT_DIR/container/sweeper/Dockerfile
 
