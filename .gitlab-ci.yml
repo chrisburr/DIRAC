@@ -348,12 +348,11 @@ build_sweeper_image:
   stage: images
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+    entrypoint: [""]
   only:
     refs:
       - master@lhcb-dirac/LHCbDIRAC
       - devel@lhcb-dirac/LHCbDIRAC
-  tags:
-    - docker-image-build
   script: "echo 'Building docker image..." # unused but this line is required by GitLab CI
   variables:
     FROM: python:3.9-slim  # Override the image specified in the Dockerfile
