@@ -1,3 +1,17 @@
+v10r1p8
+Based on DIRAC v7r1p32
+LHCbWebDIRAC v5r2p1
+LHCbDIRACOS v1r16
+*docs
+
+FIX: (!939) switching docs requirements to master to rel-v7r1, integration is on conda
+
+*container
+
+NEW: (!935) Add base image for automatic propagation of MRs from devel to master
+
+
+
 v10r1p7
 Based on DIRAC v7r1p31
 LHCbWebDIRAC v5r2p1
