@@ -94,17 +94,17 @@ def informPeople(rec, oldstate, state, author, inform):
     return
   sendNotifications = gConfig.getValue('%s/sendNotifications' % csS, 'Yes')
   if sendNotifications != 'Yes':
-    gLogger.info('No notifications will be send')
+    gLogger.info('No notifications will be sent')
     return
 
-  footer = "\n\nNOTE: it is an automated notification."
-  footer += " Don't reply please.\n"
+  footer = "\n\nNOTE: This is an automated notification."
+  footer += " Please do not reply.\n"
 
   footer += "DIRAC Web portal: https://lhcb-portal-dirac.cern.ch/DIRAC/s:%s/g:" % \
       PathFinder.getDIRACSetup()
 
-  ppath = "/?view=tabs&theme=Grey&url_state=1|"
-  ppath = "*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:,\n\n"
+  ppath = '\n'.join(['/?view=tabs&theme=Crisp&url_state=1|*LHCbDIRAC.ProductionRequestManager',
+                     '.classes.ProductionRequestManager: \n\n'])
 
   ppath += 'The request details:\n'
   ppath += '  Type: %s' % str(rec['RequestType'])
@@ -119,13 +119,13 @@ def informPeople(rec, oldstate, state, author, inform):
     if state not in ['BK Check', 'Submitted']:
       if state == 'BK OK':
         subj = 'DIRAC: please resign your Production Request %s' % reqId
-        body = '\n'.join(['Customized Simulation Conditions in your request was registered.',
-                          'Since Bookkeeping expert could make changes in your request,',
+        body = '\n'.join(['Customized Simulation Conditions in your request was registered. ',
+                          'Since the Bookkeeping expert could make changes in your request, ',
                           'you are asked to confirm it.'])
       else:
         subj = "DIRAC: the state of Production Request %s is changed to '%s'; %s;%s" % (
             reqId, state, rec.get('RequestWG', ''), rec.get('RequestName', ''))
-        body = '\n'.join(['The state of your request is changed.',
+        body = '\n'.join(['The state of your request is changed. ',
                           'This mail is for information only.'])
       notification = NotificationClient()
       res = notification.sendMail(authorMail, subj,
@@ -137,7 +137,7 @@ def informPeople(rec, oldstate, state, author, inform):
   if inform:
     subj = "DIRAC: the state of %s Production Request %s is changed to '%s'; %s;%s" % (
         rec['RequestType'], reqId, state, rec.get('RequestWG', ''), rec.get('RequestName', ''))
-    body = '\n'.join(['You have received this mail because you are'
+    body = '\n'.join(['You have received this mail because you are '
                       'in the subscription list for this request'])
     for x in inform.replace(" ", ",").split(","):
       if x:
@@ -156,7 +156,7 @@ def informPeople(rec, oldstate, state, author, inform):
   if state == 'Accepted':
     subj = "DIRAC: the Production Request %s is accepted; %s;%s" % (
         reqId, rec.get('RequestWG', ''), rec.get('RequestName', ''))
-    body = '\n'.join(["The Production Request is signed and ready to process",
+    body = '\n'.join(["The Production Request is signed and ready to process. ",
                       "You are informed as member of %s group"])
     groups = ['lhcb_prmgr']
 
@@ -172,10 +172,10 @@ def informPeople(rec, oldstate, state, author, inform):
   elif state == 'PPG OK' and oldstate == 'Accepted':
     subj = "DIRAC: returned Production Request %s; %s;%s" % (
         reqId, rec.get('RequestWG', ''), rec.get('RequestName', ''))
-    body = '\n'.join(["Production Request is returned by Production Manager.",
-                      "As member of %s group, your are asked to correct and sign",
+    body = '\n'.join(["Production Request is returned by Production Manager. ",
+                      "As member of %s group, you are asked to correct and sign ",
                       "or to reject it.", "",
-                      "In case some other member of the group has already",
+                      "In case some other member of the group has already ",
                       "done that, please ignore this mail."])
     groups = ['lhcb_tech']
 

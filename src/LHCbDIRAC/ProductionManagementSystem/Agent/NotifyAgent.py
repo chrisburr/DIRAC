@@ -115,7 +115,7 @@ class NotifyAgent(AgentModule):
         "SELECT DISTINCT thegroup, reqName, reqWG, reqInform, reqType from ProductionManagementCache;")
     for thegroup, reqName, reqWG, reqInform, reqType in result:
       link = "https://lhcb-portal-dirac.cern.ch/DIRAC/s:" + PathFinder.getDIRACSetup() + "/g:" + thegroup + \
-             "/?view=tabs&theme=Grey&url_state=1|*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:"
+             "/?view=tabs&theme=Crisp&url_state=1|*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:"
 
       aggregated_body = ""
       html_elements = ""
@@ -129,13 +129,13 @@ class NotifyAgent(AgentModule):
 
       if thegroup == 'lhcb_bk':
         header = "New Productions are requested and they have customized Simulation Conditions. " \
-                 "As member of <span style='color:green'>" + thegroup + "</span> group, your are asked either to " \
+                 "As member of <span style='color:green'>" + thegroup + "</span> group, you are asked either to " \
                  "register new Simulation conditions or to reject the requests. In case some other member of the " \
                  "group has already done that, please ignore this mail.\n"
 
       elif thegroup == 'lhcb_ppg':
         header = "New Productions are requested. As member of <span style='color:green'>" + thegroup + "</span> " \
-                 "group, your are asked either to sign or to reject it. In case some other member of the group has " \
+                 "group, you are asked either to sign or to reject it. In case some other member of the group has " \
                  "already done that, please ignore this mail.\n"
       else:
         header = "As member of <span style='color:green'>" + \
