@@ -326,7 +326,7 @@ create_tarball:
   stage: release
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
   variables:
@@ -392,7 +392,7 @@ build_sweeper_image:
 .cvmfs_task:
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
       - ($CI_COMMIT_TAG =~ /v\d+r.+/ && $SWEEP != "true")
@@ -421,7 +421,7 @@ deploy_on_cvmfs:
     - cvmfs
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
@@ -471,7 +471,7 @@ add_devel_tag:
   - 'Adding tag...'
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
       - ($CI_COMMIT_TAG =~ /.*-pre.*/ && $SWEEP != "true")
@@ -507,7 +507,7 @@ make_tag:
     variables:
       - $SWEEP != "true"
   except:
-    - tags
+    - tags@lhcb-dirac/LHCbDIRAC
   before_script:
     # Remeind the user if he set the variables for versions
     - if [ -z ${DIRAC+x} ]; then echo "variable DIRAC is unset, using the same version as previous release"; else echo "You are targeting DIRAC version ${DIRAC}"; fi
