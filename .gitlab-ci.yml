@@ -22,6 +22,8 @@ stages:
   - release
    # Run all the tests
   - test
+  #  build images
+  - images
   # deploy the coverage results
   - coverage
   - coverageDfs
@@ -31,6 +33,7 @@ stages:
   # Left over tasks like tagging the devel container and setting the prod symlink
   - finish_up
   - tag
+  - sweep
 
 
 ### test stage ###
@@ -65,7 +68,10 @@ stages:
 
   stage: test
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - $SWEEP != "true"
 
 .test_setup_py3:
   stage: test
@@ -147,6 +153,11 @@ check_docs:
         echo "********************************************************************************"
         exit 1
       fi
+  only:
+    refs:
+      - branches
+    variables:
+      - $SWEEP != "true"
 
 # This ensures the license text is present
 # Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
@@ -159,6 +170,11 @@ check-copyright:
   script:
     - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - python lb-check-copyright upstream/master --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
+  only:
+    refs:
+      - branches
+    variables:
+      - $SWEEP != "true"
 
 # Integration tests
 integration_tests:
@@ -178,9 +194,9 @@ integration_tests:
   rules:
     # Using rules causes "Pipelines for Merge Requests" to be triggered, so disable them explicitly
     # https://docs.gitlab.com/ee/ci/merge_request_pipelines/
-    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == null && $CI_MERGE_REQUEST_ID == null'
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD == null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: true
-    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null'
+    - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: false
   before_script:
     - |
@@ -278,8 +294,11 @@ pages:
       - public
     expire_in: 30 days
   only:
-    - master@lhcb-dirac/LHCbDIRAC
-    - devel@lhcb-dirac/LHCbDIRAC
+    refs:
+      - master@lhcb-dirac/LHCbDIRAC
+      - devel@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
 
 # Deploy the pages generated to DFS
 dfsdeploy:
@@ -287,8 +306,11 @@ dfsdeploy:
   stage: coverageDfs
   # # Only when the master branch is pushed
   only:
-    - master
-    - devel
+    refs:
+      - master@lhcb-dirac/LHCbDIRAC
+      - devel@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
   # Custom docker image providing the needed tools to deploy in DFS
   image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
   script:
@@ -313,7 +335,10 @@ create_tarball:
     - apt-get install -y curl
   stage: release
   only:
-    - tags@lhcb-dirac/LHCbDIRAC
+    refs:
+      - tags@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
   variables:
     GIT_STRATEGY: none
   script:
@@ -337,7 +362,10 @@ create_tarball:
 build_docker_image:
   stage: deploy_release
   only:
-    - tags
+    refs:
+      - tags
+    variables:
+      - $SWEEP != "true"
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
@@ -351,37 +379,34 @@ build_docker_image:
         --build-arg LHCB_DIRAC_VERSION=${CI_COMMIT_TAG}
 
 
-# This instead creates a docker image to be used as LHCbDIRAC client
-build_client_docker_image:
-  stage: deploy_release
-  allow_failure: true
+# Image for propagation of gitlab MRs from master to devel
+build_sweeper_image:
+  stage: images
   only:
-    - tags
+    refs:
+      - master@lhcb-dirac/LHCbDIRAC
+      - devel@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
   script:
-    # Replacements
-    - sed -i "s %%LHCB_DIRAC_VERSION%% $CI_COMMIT_TAG g" ./container/client/Dockerfile
-    - SETUP=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "LHCb-Certification"; else echo "LHCb-Production"; fi)
-    - sed -i "s %%LHCB_DIRAC_SETUP%% $SETUP g" ./container/client/Dockerfile
-    - CS=$(echo $CI_COMMIT_TAG | grep -qE '(pre|^v0r)'; if [ $? -eq 0 ]; then echo "dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server"; else echo "dips://lbvobox100.cern.ch:9135/Configuration/Server,dips://lbvobox102.cern.ch:9135/Configuration/Server,dips://lbvobox103.cern.ch:9135/Configuration/Server,dips://lbvobox104.cern.ch:9135/Configuration/Server"; fi)
-    - sed -i "s %%LHCB_DIRAC_CS%% $CS g" ./container/client/Dockerfile
-    # Now build and upload to GitLab registry
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR/container/client --dockerfile $CI_PROJECT_DIR/container/client/Dockerfile --destination $CI_REGISTRY_IMAGE:client-${CI_COMMIT_TAG}
-    # Upload to Docker Hub - with no kaniko
-    # FIXME: this fails as there's no docker installed...
-    # - echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
-    # - docker push diracgrid/lhcbdirac:${CI_COMMIT_TAG}
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR/container/sweeper \
+        --dockerfile $CI_PROJECT_DIR/container/sweeper/Dockerfile \
+        --destination $CI_REGISTRY_IMAGE:sweeper
 
 # Template job used by deploy_on_cvmfs and set_cvmfs_prod_link
 .cvmfs_task:
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
-      - $CI_COMMIT_TAG =~ /v\d+r.+/
+      - $SWEEP != "true"
+      - ($CI_COMMIT_TAG =~ /v\d+r.+/ && $SWEEP != "true")
   before_script:
     - |
       if [[ "${CI_COMMIT_TAG}" == *"-pre"* ]]; then
@@ -406,7 +431,10 @@ deploy_on_cvmfs:
     - docker
     - cvmfs
   only:
-    - tags@lhcb-dirac/LHCbDIRAC
+    refs:
+      - tags@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   before_script:
     - mkdir -p ~/.globus
@@ -454,9 +482,10 @@ add_devel_tag:
   - 'Adding tag...'
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
-      - $CI_COMMIT_TAG =~ /.*-pre.*/
+      - $SWEEP != "true"
+      - ($CI_COMMIT_TAG =~ /.*-pre.*/ && $SWEEP != "true")
   variables:
     DOCKER_IMAGE_PATH: $CI_REGISTRY_IMAGE
     OLDTAG: ${CI_COMMIT_TAG}
@@ -486,8 +515,10 @@ make_tag:
     refs:
       - master@lhcb-dirac/LHCbDIRAC
       - devel@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
   except:
-    - tags
+    - tags@lhcb-dirac/LHCbDIRAC
   before_script:
     # Remeind the user if he set the variables for versions
     - if [ -z ${DIRAC+x} ]; then echo "variable DIRAC is unset, using the same version as previous release"; else echo "You are targeting DIRAC version ${DIRAC}"; fi
@@ -562,3 +593,19 @@ make_tag:
     # Create release in gitlab
     - echo "GITLABTOKEN = \"$GITLABTOKEN\"" >& GitTokens.py
     - python3 dirac-docs-get-release-notes.py -g -i 3588 --tagName ${VERSION} --releaseNotes notes.txt --deployRelease
+
+MR_SWEEP:
+  stage: sweep
+  image: gitlab-registry.cern.ch/lhcb-dirac/lhcbdirac:sweeper
+  tags:
+    - docker
+  needs: []
+  variables:
+    SWEEP_SINCE: "1 month ago"
+    SWEEP_UNTIL: "now"
+  rules:
+    - if: '$SWEEP == "true"'
+  before_script: []
+  after_script: []
+  script:
+    - python /sweep_MR.py -p ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} -b origin/${CI_COMMIT_REF_NAME} -t ${SWEEP_TOKEN} -s "${SWEEP_SINCE}" -u "${SWEEP_UNTIL}" --repository-root ${PWD}
