@@ -280,7 +280,7 @@ class XMLFilesReaderManager(object):
                 message = (
                     "The rundataquality table does not contain run=%d proc_id=%s. Consequently, "
                     "the Dq flag is inherited from the ancestor file!"
-                ) % (long(runnumber), proc)
+                ) % (runnumber, proc)
                 self.log.warn(message)
             else:
               dqvalue = None
