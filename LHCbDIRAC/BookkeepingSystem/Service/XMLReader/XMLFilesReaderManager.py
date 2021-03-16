@@ -274,8 +274,10 @@ class XMLFilesReaderManager(object):
                 dqvalue = retVal['Value']
               else:
                 dqvalue = None
-                message = "The rundataquality table does not contains %d %s. Consequently, \
-                the Dq flag is inherited from the ancestor file!" % (long(runnumber), proc)
+                message = (
+                    "The rundataquality table does not contain run=%d proc_id=%s. Consequently, "
+                    "the Dq flag is inherited from the ancestor file!"
+                ) % (long(runnumber), proc)
                 self.log.warn(message)
             else:
               dqvalue = None
