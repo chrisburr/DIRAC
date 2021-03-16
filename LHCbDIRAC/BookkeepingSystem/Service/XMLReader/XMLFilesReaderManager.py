@@ -204,7 +204,6 @@ class XMLFilesReaderManager(object):
 
       infiles = job.getJobInputFiles()
       if not job.exists('RunNumber') and infiles:
-        runnumber = -1
         tck = -2
         runnumbers = []
         tcks = []
@@ -225,7 +224,7 @@ class XMLFilesReaderManager(object):
 
           if len(runnumbers) > 1:
             self.log.warn('Different runs are reconstructed:', '%s' % runnumbers)
-            runnumber = -1
+            runnumber = None
           else:
             runnumber = runnumbers[0]
 
