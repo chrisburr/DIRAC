@@ -186,7 +186,6 @@ integration_tests:
       allow_failure: true
     - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: false
-    - if: '$SWEEP != "true"'
   before_script:
     - |
       if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD:-}" ]]; then
