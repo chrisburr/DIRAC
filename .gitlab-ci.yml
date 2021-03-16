@@ -371,21 +371,22 @@ build_docker_image:
 # Image for propagation of gitlab MRs from master to devel
 build_sweeper_image:
   stage: images
-  image:
-    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
-    entrypoint: [""]
   only:
     refs:
       - master@lhcb-dirac/LHCbDIRAC
       - devel@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
-  script: "echo 'Building docker image...'" # unused but this line is required by GitLab CI
-  variables:
-    FROM: python:3.9-slim  # Override the image specified in the Dockerfile
-    TO: $CI_REGISTRY_IMAGE:sweeper # $CI_REGISTRY_IMAGE is the registry space for this particular repository
-    DOCKER_FILE: $CI_PROJECT_DIR/container/sweeper/Dockerfile
-
+  image:
+    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR/container/sweeper \
+        --dockerfile $CI_PROJECT_DIR/container/sweeper/Dockerfile \
+        --destination $CI_REGISTRY_IMAGE:sweeper
 
 # Template job used by deploy_on_cvmfs and set_cvmfs_prod_link
 .cvmfs_task:
