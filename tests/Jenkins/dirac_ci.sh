@@ -119,7 +119,7 @@ installSite() {
   echo "==> Started installing"
 
   if [[ "${SERVER_USE_PYTHON3:-}" == "Yes" ]]; then
-    if [[ -n "${DIRACOSVER+x}" ]]; then
+    if [[ -n "${DIRACOSVER:-}" ]] && [[ "${DIRACOSVER}" != "master" ]]; then
       DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/download/${DIRACOSVER}/DIRACOS-Linux-x86_64.sh"
     else
       DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-x86_64.sh"

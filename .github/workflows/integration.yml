@@ -50,14 +50,11 @@ jobs:
           #             CLIENT_USE_PYTHON3: No
           - TEST_NAME: "Python 3 client"
             CLIENT_USE_PYTHON3: Yes
-            CLIENT_DIRACOSVER: master
           - TEST_NAME: "Python 3 server"
             SERVER_USE_PYTHON3: Yes
-            SERVER_DIRACOSVER: master
-            MYSQL_VER: 5.7
-          - TEST_NAME: "Python 3 server"
+          - TEST_NAME: "Python 3 server and client"
+            CLIENT_USE_PYTHON3: Yes
             SERVER_USE_PYTHON3: Yes
-            SERVER_DIRACOSVER: master
             MYSQL_VER: 8.0
 
     steps:
