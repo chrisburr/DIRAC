@@ -18,6 +18,8 @@ variables:
 image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
 
 stages:
+  # sweep immediately after merger
+  - sweep
   # If there's a new tag, create its tarball, and upload it.
   - release
    # Run all the tests
@@ -33,7 +35,6 @@ stages:
   # Left over tasks like tagging the devel container and setting the prod symlink
   - finish_up
   - tag
-  - sweep
 
 
 ### test stage ###
@@ -603,8 +604,9 @@ MR_SWEEP:
   variables:
     SWEEP_SINCE: "1 month ago"
     SWEEP_UNTIL: "now"
-  rules:
-    - if: '$SWEEP == "true"'
+  only:
+    refs:
+      - master@lhcb-dirac/LHCbDIRAC
   before_script: []
   after_script: []
   script:
