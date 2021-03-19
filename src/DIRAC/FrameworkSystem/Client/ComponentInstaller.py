@@ -796,15 +796,19 @@ class ComponentInstaller(object):
       for ext in extensionsDIRAC + ['DIRAC']:
         if six.PY3:
           import pkg_resources
-          cfgTemplatePath = pkg_resources.resource_filename(ext, "%sSystem/ConfigTemplate.cfg" % system)
+          try:
+            cfgTemplatePath = pkg_resources.resource_filename(ext, "%sSystem/ConfigTemplate.cfg" % system)
+          except ModuleNotFoundError:
+            continue
         else:
           cfgTemplatePath = os.path.join(rootPath, ext, '%sSystem' % system, 'ConfigTemplate.cfg')
-        if os.path.exists(cfgTemplatePath):
-          gLogger.notice('Loading configuration template', cfgTemplatePath)
-          # Look up the component in this template
-          loadCfg = CFG()
-          loadCfg.loadFromFile(cfgTemplatePath)
-          compCfg = loadCfg.mergeWith(compCfg)
+          if not os.path.exists(cfgTemplatePath):
+            continue
+        gLogger.notice('Loading configuration template', cfgTemplatePath)
+        # Look up the component in this template
+        loadCfg = CFG()
+        loadCfg.loadFromFile(cfgTemplatePath)
+        compCfg = loadCfg.mergeWith(compCfg)
 
       compPath = cfgPath(sectionName, componentModule)
       if not compCfg.isSection(compPath):
@@ -1023,14 +1027,18 @@ class ComponentInstaller(object):
       remainders[cType] = {}
 
     for extension in ['DIRAC'] + [x + 'DIRAC' for x in extensions]:
-      if not os.path.exists(os.path.join(rootPath, extension)):
+      import importlib
+      try:
+        extensionModule = importlib.import_module(extension)
+      except ImportError:
         # Not all the extensions are necessarily installed in this self.instance
         continue
-      systemList = os.listdir(os.path.join(rootPath, extension))
+      extensionDir = os.path.dirname(extensionModule.__file__)
+      systemList = os.listdir(extensionDir)
       for sys in systemList:
         system = sys.replace('System', '')
         try:
-          agentDir = os.path.join(rootPath, extension, sys, 'Agent')
+          agentDir = os.path.join(extensionDir, sys, 'Agent')
           agentList = os.listdir(agentDir)
           for agent in agentList:
             if os.path.splitext(agent)[1] == ".py":
@@ -1044,7 +1052,7 @@ class ComponentInstaller(object):
         except OSError:
           pass
         try:
-          serviceDir = os.path.join(rootPath, extension, sys, 'Service')
+          serviceDir = os.path.join(extensionDir, sys, 'Service')
           serviceList = os.listdir(serviceDir)
           for service in serviceList:
             if service.find('Handler') != -1 and os.path.splitext(service)[1] == '.py':
@@ -1056,7 +1064,7 @@ class ComponentInstaller(object):
         except OSError:
           pass
         try:
-          executorDir = os.path.join(rootPath, extension, sys, 'Executor')
+          executorDir = os.path.join(extensionDir, sys, 'Executor')
           executorList = os.listdir(executorDir)
           for executor in executorList:
             if os.path.splitext(executor)[1] == ".py":
@@ -1073,7 +1081,7 @@ class ComponentInstaller(object):
         # Rest of component types
         for cType in remainingTypes:
           try:
-            remainDir = os.path.join(rootPath, extension, sys, cType.title())
+            remainDir = os.path.join(extensionDir, sys, cType.title())
             remainList = os.listdir(remainDir)
             for remainder in remainList:
               if os.path.splitext(remainder)[1] == ".py":

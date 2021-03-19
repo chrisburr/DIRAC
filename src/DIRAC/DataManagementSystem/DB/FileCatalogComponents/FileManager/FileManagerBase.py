@@ -586,7 +586,7 @@ class FileManagerBase(object):
       return res
     successful = res['Value']['Successful']
     failed = res['Value']['Failed']
-    for lfn, error in res['Value']['Failed'].items():
+    for lfn, error in list(failed.items()):
       if error == 'No such file or directory':
         failed.pop(lfn)
     return S_OK((successful, failed))

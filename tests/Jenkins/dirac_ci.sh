@@ -134,6 +134,7 @@ installSite() {
     rm -rf "${SERVERINSTALLDIR}/etc"
     ln -s "${SERVERINSTALLDIR}/diracos/etc" "${SERVERINSTALLDIR}/etc"
     source diracos/diracosrc
+    pip install git+https://gitlab.cern.ch/chaen/fts-rest-flask.git@packaging
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       pip install "${module_path}[server]"
     done
