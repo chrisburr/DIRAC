@@ -101,12 +101,15 @@ class FailoverRequest(ModuleBase):
         if not result['OK']:
 	  self.log.warn("Could not generate Operation for file report with result:\n%s" % (result['Message']))
         else:
-          if result['Value'] is None:  # Means the FileReport managed to report, no need for a new operation
-            self.log.info("On second attempt, files correctly reported to TransformationDB")
-          else:
-	    self.log.error("On second attempt, SetFileStatus definitely failed, and a failover operation was created")
-	    self.log.info('Adding a SetFileStatus operation to the request')
-	    self.request.addOperation(result["Value"])
+	  if result['Value'] is None:  # Means the FileReport managed to report, no need for a new operation
+	    self.log.info("On second attempt, files correctly reported to TransformationDB")
+	  else:
+	    self.log.error("On second attempt, SetFileStatus definitely failed")
+	    if self.workflowStatus['OK'] and self.stepStatus['OK']:  # the job will be in "Completing"
+	      self.log.info("Adding a SetFileStatus operation to the request")
+	      self.request.addOperation(result["Value"])
+	    else:
+	      self.log.info("The job should fail: do not set requests, as the DRA will take care")
 
       # Must ensure that the local job report instance is used to report the final status
       # in case of failure and a subsequent failover operation
