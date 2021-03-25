@@ -46,16 +46,20 @@ from DIRAC.WorkloadManagementSystem.Client import JobStatus
 
 def compressJDL(jdl):
   """Return compressed JDL string."""
-  return zlib.compress(jdl, -1).encode('base64')
+  return base64.b64encode(zlib.compress(jdl.encode(), -1)).decode()
 
 
 def extractJDL(compressedJDL):
   """Return decompressed JDL string."""
   # the starting bracket is guaranteeed by JobManager.submitJob
   # we need the check to be backward compatible
-  if compressedJDL.startswith('['):
-    return compressedJDL
-  return zlib.decompress(compressedJDL.decode('base64'))
+  if isinstance(compressedJDL, bytes):
+    if compressedJDL.startswith(b'['):
+      return compressedJDL.decode()
+  else:
+    if compressedJDL.startswith('['):
+      return compressedJDL
+  return zlib.decompress(base64.b64decode(compressedJDL)).decode()
 
 
 #############################################################################

@@ -870,7 +870,7 @@ class FileManagerBase(object):
       # either {lfn : guid}
       # or P lfn : {PFN : .., GUID : ..} }
       if isinstance(lfns, dict):
-        val = lfns.values()
+        val = list(lfns.values())
 
       # We have values, take the first to identify the type
       if val:
@@ -881,7 +881,7 @@ class FileManagerBase(object):
         guidList = [lfns[lfn]['GUID'] for lfn in lfns]
       elif isinstance(val, six.string_types):
         # We hope that it is the GUID which is given
-        guidList = lfns.values()
+        guidList = list(lfns.values())
 
       if guidList:
         # A dict { guid: lfn to which it is supposed to be associated }
