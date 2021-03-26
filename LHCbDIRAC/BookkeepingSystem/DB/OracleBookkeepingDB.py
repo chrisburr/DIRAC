@@ -4080,7 +4080,8 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    command = "select fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen, evttypeid, \
+    # TODO: Distinct is being used here to work around https://its.cern.ch/jira/browse/LHCBDIRAC-895
+    command = "select distinct fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen, evttypeid, \
     jrun, jfill, ffull, dflag,   jevent, jtotal, flum, finst, jtck from \
               (select rownum r, fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen,\
                evttypeid, jrun, jfill, ffull, dflag,   jevent, jtotal, flum, finst, jtck from \
