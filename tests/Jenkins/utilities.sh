@@ -351,9 +351,7 @@ installDIRAC() {
       fi
     fi
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
-      # ALTERNATIVE_MODULES can be a list of URLs to pip-installable modules
-      # or something like git+https://github.com/fstagni/DIRAC.git@v7r2-fixes33#egg=DIRAC[pilot]
-      pip install "${module_path}"
+      pip install -e "${module_path}"
     done
   else
     echo -n > "${CLIENTINSTALLDIR}/dirac-ci-install.cfg"

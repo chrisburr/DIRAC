@@ -30,7 +30,7 @@ copyLocalSource() {
     docker exec "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/TestCode"
     for repo_path in "${TESTREPO[@]}"; do
       if [[ -n "${repo_path}" ]] && [[ -d "${repo_path}" ]]; then
-        docker cp "${repo_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/TestCode/$(basename "${repo_path}")"
+        # docker cp "${repo_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/TestCode/$(basename "${repo_path}")"
         sed -i "s@\(TESTREPO+=..\)$(dirname "${repo_path}")\(/$(basename "${repo_path}")..\)@\1${WORKSPACE}/LocalRepo/TestCode\2@" "$CONFIG_PATH"
       fi
     done
@@ -38,13 +38,13 @@ copyLocalSource() {
     docker exec "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES"
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       if [[ -n "${module_path}" ]] && [[ -d "${module_path}" ]]; then
-        docker cp "${module_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES/$(basename "${module_path}")"
+        # docker cp "${module_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES/$(basename "${module_path}")"
         sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
       fi
     done
   )
 }
-cd "$SCRIPT_DIR"
+# cd "$SCRIPT_DIR"
 
 prepareEnvironment() {
   if [[ -z "$TMP" ]]; then
@@ -186,7 +186,7 @@ prepareEnvironment() {
   echo "Generated client config file is:"
   cat "${CLIENTCONFIG}"
 
-  docker-compose -f ./docker-compose.yml up -d
+  docker-compose -f tests/CI/docker-compose.yml up -d
 
   echo -e "\n**** $(date -u) Creating user and copying scripts ****"
 
@@ -203,8 +203,8 @@ prepareEnvironment() {
     docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'mysql' IDENTIFIED BY '${DB_PASSWORD}';"
   )
 
-  docker cp ./install_server.sh server:"$WORKSPACE"
-  docker cp ./install_client.sh client:"$WORKSPACE"
+  docker cp tests/CI/install_server.sh server:"$WORKSPACE"
+  docker cp tests/CI/install_client.sh client:"$WORKSPACE"
 
   copyLocalSource server "${SERVERCONFIG}"
   copyLocalSource client "${CLIENTCONFIG}"
