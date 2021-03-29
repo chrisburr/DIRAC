@@ -139,8 +139,8 @@ findSystems() {
     echo "ERROR: cannot change to ${TESTCODE}" >&2
     exit 1
   fi
-  OUT_FN=$PWD/databases
-  cd diracos/lib/python3.8/site-packages/systems
+  OUT_FN=$PWD/systems
+  cd diracos/lib/python3.8/site-packages
   find ./*DIRAC/ -name "*System" | cut -d '/' -f 2 | sort -u  > "${OUT_FN}"
   cd -
 
