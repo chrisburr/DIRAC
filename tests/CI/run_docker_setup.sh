@@ -196,12 +196,12 @@ prepareEnvironment() {
 
   # Create database user
   # Run in a subshell so we can safely source ${SERVERCONFIG}
-  (
+  if ! (
     source "${SERVERCONFIG}"
-    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';"
-    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';"
+    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';" && \
+    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';" && \
     docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'mysql' IDENTIFIED BY '${DB_PASSWORD}';"
-  )
+  ); then return 1; fi
 
   docker cp tests/CI/install_server.sh server:"$WORKSPACE"
   docker cp tests/CI/install_client.sh client:"$WORKSPACE"
@@ -224,7 +224,10 @@ prepareEnvironment() {
 }
 
 installServer() {
-  docker exec -e TERM=xterm-color -u "$DOCKER_USER" -w "$WORKSPACE" server bash ./install_server.sh |& tee "${BUILD_DIR}/log_server_install.txt"
+  if ! docker exec -e TERM=xterm-color -u "$DOCKER_USER" -w "$WORKSPACE" server bash ./install_server.sh |& tee "${BUILD_DIR}/log_server_install.txt"; then
+    echo "ERROR: ./install_server.sh failed"
+    return
+  fi
 
   echo -e "\n**** $(date -u) Copying credentials and certificates ****"
   docker exec client bash -c "mkdir -p $WORKSPACE/ServerInstallDIR/user $WORKSPACE/ClientInstallDIR/etc /home/dirac/.globus"

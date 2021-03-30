@@ -130,6 +130,7 @@ installSite() {
     rm "installer.sh"
     # TODO: Remove these two lines
     echo "source \"$PWD/diracos/diracosrc\"" > "$PWD/bashrc"
+    echo "export X509_CERT_DIR=\"$PWD/diracos/etc/grid-security/certificates\"" >> "$PWD/bashrc"
     mv "${SERVERINSTALLDIR}/etc/grid-security/"* "${SERVERINSTALLDIR}/diracos/etc/grid-security/"
     rm -rf "${SERVERINSTALLDIR}/etc"
     ln -s "${SERVERINSTALLDIR}/diracos/etc" "${SERVERINSTALLDIR}/etc"

@@ -140,8 +140,9 @@ findSystems() {
     exit 1
   fi
   OUT_FN=$PWD/systems
-  cd diracos/lib/python3.8/site-packages
-  find ./*DIRAC/ -name "*System" | cut -d '/' -f 2 | sort -u  > "${OUT_FN}"
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  find ./ -name "*System" | cut -d '/' -f 2 | sort -u  > "${OUT_FN}"
   cd -
 
   echo "found $(wc -l systems)"
@@ -184,11 +185,12 @@ findDatabases() {
   # We also ignore all the DBs in tests directory
   #
   OUT_FN=$PWD/databases
-  cd diracos/lib/python3.8/site-packages
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${DBstoExclude}" ]]; then
-    find ./*DIRAC/ -path "*/tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $3,$5}' | grep -v "${DBstoExclude}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
+    find ./ -path "tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $2,$4}' | grep -v "${DBstoExclude}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
   else
-    find ./*DIRAC/ -path "*/tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $3,$5}' | grep "${DBstoSearch}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
+    find ./ -path "tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $2,$4}' | grep "${DBstoSearch}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
   fi
   cd -
 
@@ -224,11 +226,12 @@ findServices(){
     exit 1
   fi
   OUT_FN=$PWD/services
-  cd diracos/lib/python3.8/site-packages
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${ServicestoExclude}" ]]; then
-    find ./*DIRAC/*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep -v "${ServicestoExclude}" | sort -u  > "${OUT_FN}"
+    find ./*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep -v "${ServicestoExclude}" | sort -u  > "${OUT_FN}"
   else
-    find ./*DIRAC/*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep "${ServicestoSearch}" | sort -u > "${OUT_FN}"
+    find ./*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep "${ServicestoSearch}" | sort -u > "${OUT_FN}"
   fi
   cd -
 
@@ -254,11 +257,12 @@ findAgents(){
     exit 1
   fi
   OUT_FN=$PWD/agents
-  cd diracos/lib/python3.8/site-packages
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${AgentstoExclude}" ]]; then
-    find ./*DIRAC/*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep -v "${AgentstoExclude}" | sort -u > "${OUT_FN}"
+    find ./*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep -v "${AgentstoExclude}" | sort -u > "${OUT_FN}"
   else
-    find ./*DIRAC/*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep "${AgentstoSearch}" | sort -u > "${OUT_FN}"
+    find ./*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep "${AgentstoSearch}" | sort -u > "${OUT_FN}"
   fi
   cd -
 
@@ -278,8 +282,9 @@ findExecutors(){
   echo '==> [findExecutors]'
 
   OUT_FN=$PWD/executors
-  cd diracos/lib/python3.8/site-packages
-  find ./*DIRAC/*/Executor/ -name "*.py" | awk -F "/" '{print $3,$5}' | sort -u  > "${OUT_FN}"
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  find ./*/Executor/ -name "*.py" | awk -F "/" '{print $2,$4}' | sort -u  > "${OUT_FN}"
   cd -
 
   echo "found $(wc -l executors)"
@@ -344,6 +349,7 @@ installDIRAC() {
     rm "installer.sh"
     # TODO: Remove
     echo "source \"$PWD/diracos/diracosrc\"" > "$PWD/bashrc"
+    echo "export X509_CERT_DIR=\"$PWD/diracos/etc/grid-security/certificates\"" >> "$PWD/bashrc"
     source diracos/diracosrc
     if [[ -n "${DIRAC_RELEASE+x}" ]]; then
       if [[ -z "${ALTERNATIVE_MODULES}" ]]; then
@@ -936,17 +942,19 @@ diracDFCDB(){
   echo '==> [diracDFCDB]'
 
   mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" -e "DROP DATABASE IF EXISTS FileCatalogDB;"
-  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SERVERINSTALLDIR}/diracos/lib/python3.8/site-packages/DIRAC/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql"
+  SRC_ROOT="$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SRC_ROOT}/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql"
 }
 
 # Drop, then manually install the DFC for MultiVOFileCatalog
 diracMVDFCDB(){
   echo '==> [diracMVDFCDB]'
 
-  cp "${SERVERINSTALLDIR}/diracos/lib/python3.8/site-packages/DIRAC/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql" "${SERVERINSTALLDIR}/diracos/lib/python3.8/site-packages/DIRAC/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
-  sed -i 's/FileCatalogDB/MultiVOFileCatalogDB/g' "${SERVERINSTALLDIR}/diracos/lib/python3.8/site-packages/DIRAC/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
+  SRC_ROOT="$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  cp "${SRC_ROOT}/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql" "${SRC_ROOT}/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
+  sed -i 's/FileCatalogDB/MultiVOFileCatalogDB/g' "${SRC_ROOT}/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
   mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" -e "DROP DATABASE IF EXISTS MultiVOFileCatalogDB;"
-  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SERVERINSTALLDIR}/diracos/lib/python3.8/site-packages/DIRAC/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
+  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SRC_ROOT}/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
 }
 
 dropDBs(){
