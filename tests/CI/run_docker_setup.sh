@@ -138,6 +138,11 @@ prepareEnvironment() {
     } >> "${SERVERCONFIG}"
   fi
 
+  # TODO: Remove
+  {
+    echo "export DIRAC_RELEASE=integration"
+  } >> "${SERVERCONFIG}"
+
   if [[ -n "${EXTRA_ENVIRONMENT_CONFIG+x}" ]]; then
     for line in "${EXTRA_ENVIRONMENT_CONFIG[@]}"; do
       echo "${line}" >> "${SERVERCONFIG}"
