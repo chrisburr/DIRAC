@@ -713,7 +713,7 @@ class FileManagerBase(object):
       return res
     failed = res['Value']['Failed']
     successful = {}
-    for lfn in res['Value']['Successful'].keys():
+    for lfn in res['Value']['Successful']:
       status = lfns[lfn]
       if isinstance(status, six.string_types):
         if status not in self.db.validFileStatus:
@@ -918,7 +918,7 @@ class FileManagerBase(object):
       return res
 
     totalSize = 0
-    for lfn in res['Value']['Successful'].keys():
+    for lfn in res['Value']['Successful']:
       size = res['Value']['Successful'][lfn]['Size']
       res['Value']['Successful'][lfn] = size
       totalSize += size
@@ -1202,7 +1202,7 @@ class FileManagerBase(object):
       return res
     failed = res['Value']['Failed']
     successful = {}
-    for lfn in res['Value']['Successful'].keys():
+    for lfn in res['Value']['Successful']:
       group = lfns[lfn]
       if isinstance(group, six.string_types):
         groupRes = self.db.ugManager.findGroup(group)
@@ -1232,7 +1232,7 @@ class FileManagerBase(object):
       return res
     failed = res['Value']['Failed']
     successful = {}
-    for lfn in res['Value']['Successful'].keys():
+    for lfn in res['Value']['Successful']:
       owner = lfns[lfn]
       if isinstance(owner, six.string_types):
         userRes = self.db.ugManager.findUser(owner)
@@ -1262,7 +1262,7 @@ class FileManagerBase(object):
       return res
     failed = res['Value']['Failed']
     successful = {}
-    for lfn in res['Value']['Successful'].keys():
+    for lfn in res['Value']['Successful']:
       mode = lfns[lfn]
       currentMode = res['Value']['Successful'][lfn]['Mode']
       if int(currentMode) == int(mode):

@@ -459,6 +459,8 @@ class MySQL(object):
       return retDict
     connection = retDict['Value']
 
+    if six.PY3 and isinstance(myString, bytes):
+      myString = myString.decode()
     try:
       myString = str(myString)
     except ValueError:
@@ -552,6 +554,8 @@ class MySQL(object):
       elif isinstance(value, bool):
         inEscapeValues = [str(value)]
       else:
+        if six.PY3 and isinstance(value, bytes):
+          value = value.decode()
         retDict = self.__escapeString(str(value))
         if not retDict['OK']:
           return retDict

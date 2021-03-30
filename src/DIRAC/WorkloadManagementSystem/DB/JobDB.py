@@ -1892,7 +1892,10 @@ class JobDB(DB):
     result = []
     values = res['Value']
     for row in values:
-      result.append((str(row[0]), '%.01f' % (float(row[1].replace('"', ''))), str(row[2])))
+      name, value, heartbeattime = row
+      if six.PY3 and isinstance(value, bytes):
+        value = value.decode()
+      result.append((str(name), '%.01f' % (float(value.replace('"', ''))), str(heartbeattime)))
 
     return S_OK(result)
 
