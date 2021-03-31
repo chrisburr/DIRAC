@@ -59,6 +59,8 @@ dependencies:
   - pytest-mock
   - setuptools-scm
   - shellcheck
+  - typer
+  - typer-cli
   - flaky
   # docs
   - pygments >=1.5

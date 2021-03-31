@@ -53,10 +53,8 @@ findRelease() {
 
 
   if [[ -n "${DIRAC_RELEASE}" ]]; then
-    echo '==> Specified release'
-    echo "${DIRAC_RELEASE}"
+    echo "==> Specified release ${DIRAC_RELEASE}"
     projectVersion=$DIRAC_RELEASE
-    echo DIRAC:"${projectVersion}" && echo "${projectVersion}" > "${SERVERINSTALLDIR}/dirac.version"
   else
     # get the releases.cfg file from integration
     (cd "${TESTCODE}/DIRAC/" || (echo 'ERROR: cannot change to ' "${TESTCODE}/DIRAC" && exit 42);
@@ -117,10 +115,8 @@ findRelease() {
     # # end   := line number after "}"
     # end=$(( start+2 ))
     # versions=$(sed -n "$start,$end p" "${TESTCODE}/DIRAC/releases.cfg")
-
-    # PrintOuts
-    echo "DIRAC:${projectVersion}" && echo "${projectVersion}" > "${SERVERINSTALLDIR}/dirac.version"
   fi
+  echo "DIRAC:${projectVersion}"
 }
 
 
@@ -338,7 +334,7 @@ installDIRAC() {
     exit 1
   fi
 
-  if [[ "${CLIENT_USE_PYTHON3:-}" == "Yes" ]]; then
+  if [[ "${USE_PYTHON3:-}" == "Yes" ]]; then
     if [[ -n "${DIRACOSVER:-}" ]] && [[ "${DIRACOSVER}" != "master" ]]; then
       DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/download/${DIRACOSVER}/DIRACOS-Linux-x86_64.sh"
     else
