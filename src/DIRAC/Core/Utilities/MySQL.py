@@ -484,7 +484,10 @@ class MySQL(object):
           # self.log.debug('__escape_string: Could not escape string', '"%s"' % myString)
           return S_ERROR(DErrno.EMYSQL, '__escape_string: Could not escape string')
 
-      escape_string = connection.escape_string(myString.encode()).decode()
+      if six.PY3:
+        escape_string = connection.escape_string(myString.encode()).decode()
+      else:
+        escape_string = connection.escape_string(myString)
       # self.log.debug('__escape_string: returns', '"%s"' % escape_string)
       return S_OK('"%s"' % escape_string)
     except Exception as x:
