@@ -135,7 +135,11 @@ findSystems() {
     echo "ERROR: cannot change to ${TESTCODE}" >&2
     exit 1
   fi
-  find ./*DIRAC/ -name "*System" | cut -d '/' -f 2 | sort -u  > systems
+  OUT_FN=$PWD/systems
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  find ./ -name "*System" | cut -d '/' -f 2 | sort -u  > "${OUT_FN}"
+  cd -
 
   echo "found $(wc -l systems)"
 }
@@ -176,11 +180,15 @@ findDatabases() {
   #  and InstalledComponentsDB which is installed at the beginning
   # We also ignore all the DBs in tests directory
   #
+  OUT_FN=$PWD/databases
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${DBstoExclude}" ]]; then
-    find ./*DIRAC/ -path "*/tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $3,$5}' | grep -v "${DBstoExclude}" | grep -v 'DIRAC' | sort | uniq > databases
+    find ./ -path "tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $2,$4}' | grep -v "${DBstoExclude}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
   else
-    find ./*DIRAC/ -path "*/tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $3,$5}' | grep "${DBstoSearch}" | grep -v 'DIRAC' | sort | uniq > databases
+    find ./ -path "tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $2,$4}' | grep "${DBstoSearch}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
   fi
+  cd -
 
   echo "found $(wc -l databases)"
 }
@@ -213,11 +221,15 @@ findServices(){
     echo 'ERROR: cannot change to ' "${SERVERINSTALLDIR}" >&2
     exit 1
   fi
+  OUT_FN=$PWD/services
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${ServicestoExclude}" ]]; then
-    find ./*DIRAC/*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep -v "${ServicestoExclude}" | sort -u  > services
+    find ./*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep -v "${ServicestoExclude}" | sort -u  > "${OUT_FN}"
   else
-    find ./*DIRAC/*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep "${ServicestoSearch}" | sort -u > services
+    find ./*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep "${ServicestoSearch}" | sort -u > "${OUT_FN}"
   fi
+  cd -
 
   echo "found $(wc -l services)"
 }
@@ -240,11 +252,15 @@ findAgents(){
     echo 'ERROR: cannot change to ' "${SERVERINSTALLDIR}" >&2
     exit 1
   fi
+  OUT_FN=$PWD/agents
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${AgentstoExclude}" ]]; then
-    find ./*DIRAC/*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep -v "${AgentstoExclude}" | sort -u > agents
+    find ./*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep -v "${AgentstoExclude}" | sort -u > "${OUT_FN}"
   else
-    find ./*DIRAC/*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $3,$5}' | grep "${AgentstoSearch}" | sort -u > agents
+    find ./*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep "${AgentstoSearch}" | sort -u > "${OUT_FN}"
   fi
+  cd -
 
   echo "found $(wc -l agents)"
 }
@@ -261,7 +277,11 @@ findAgents(){
 findExecutors(){
   echo '==> [findExecutors]'
 
-  find ./*DIRAC/*/Executor/ -name "*.py" | awk -F "/" '{print $3,$5}' | sort -u  > executors
+  OUT_FN=$PWD/executors
+  # TODO: Support extensions again
+  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  find ./*/Executor/ -name "*.py" | awk -F "/" '{print $2,$4}' | sort -u  > "${OUT_FN}"
+  cd -
 
   echo "found $(wc -l executors)"
 }
@@ -315,12 +335,8 @@ installDIRAC() {
   fi
 
   if [[ "${CLIENT_USE_PYTHON3:-}" == "Yes" ]]; then
-    if [[ -n "${DIRACOSVER+x}" ]]; then
-      if [[ "${DIRACOSVER:-}" == "latest" ]]; then
-        DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-x86_64.sh"
-      else
-        DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/download/${DIRACOSVER}/DIRACOS-Linux-x86_64.sh"
-      fi
+    if [[ -n "${DIRACOSVER:-}" ]] && [[ "${DIRACOSVER}" != "master" ]]; then
+      DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/download/${DIRACOSVER}/DIRACOS-Linux-x86_64.sh"
     else
       DIRACOS2_URL="https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-x86_64.sh"
     fi
@@ -329,6 +345,7 @@ installDIRAC() {
     rm "installer.sh"
     # TODO: Remove
     echo "source \"$PWD/diracos/diracosrc\"" > "$PWD/bashrc"
+    echo "export X509_CERT_DIR=\"$PWD/diracos/etc/grid-security/certificates\"" >> "$PWD/bashrc"
     source diracos/diracosrc
     if [[ -n "${DIRAC_RELEASE+x}" ]]; then
       if [[ -z "${ALTERNATIVE_MODULES}" ]]; then
@@ -336,9 +353,7 @@ installDIRAC() {
       fi
     fi
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
-      # ALTERNATIVE_MODULES can be a list of URLs to pip-installable modules
-      # or something like git+https://github.com/fstagni/DIRAC.git@v7r2-fixes33#egg=DIRAC[pilot]
-      pip install "${module_path}"
+      pip install -e "${module_path}"
     done
   else
     echo -n > "${CLIENTINSTALLDIR}/dirac-ci-install.cfg"
@@ -923,17 +938,19 @@ diracDFCDB(){
   echo '==> [diracDFCDB]'
 
   mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" -e "DROP DATABASE IF EXISTS FileCatalogDB;"
-  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SERVERINSTALLDIR}/DIRAC/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql"
+  SRC_ROOT="$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SRC_ROOT}/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql"
 }
 
 # Drop, then manually install the DFC for MultiVOFileCatalog
 diracMVDFCDB(){
   echo '==> [diracMVDFCDB]'
 
-  cp "${SERVERINSTALLDIR}/DIRAC/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql" "${SERVERINSTALLDIR}/DIRAC/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
-  sed -i 's/FileCatalogDB/MultiVOFileCatalogDB/g' "${SERVERINSTALLDIR}/DIRAC/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
+  SRC_ROOT="$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
+  cp "${SRC_ROOT}/DataManagementSystem/DB/FileCatalogWithFkAndPsDB.sql" "${SRC_ROOT}/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
+  sed -i 's/FileCatalogDB/MultiVOFileCatalogDB/g' "${SRC_ROOT}/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
   mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" -e "DROP DATABASE IF EXISTS MultiVOFileCatalogDB;"
-  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SERVERINSTALLDIR}/DIRAC/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
+  mysql -u"$DB_ROOTUSER" -p"$DB_ROOTPWD" -h"$DB_HOST" -P"$DB_PORT" < "${SRC_ROOT}/DataManagementSystem/DB/MultiVOFileCatalogWithFkAndPsDB.sql"
 }
 
 dropDBs(){
