@@ -27,7 +27,7 @@ copyLocalSource() {
   (
     source "$CONFIG_PATH"
 
-    docker exec "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/TestCode"
+    docker exec -u "${DOCKER_USER}" "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/TestCode"
     for repo_path in "${TESTREPO[@]}"; do
       if [[ -n "${repo_path}" ]] && [[ -d "${repo_path}" ]]; then
         docker cp "${repo_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/TestCode/$(basename "${repo_path}")"
@@ -35,11 +35,15 @@ copyLocalSource() {
       fi
     done
 
-    docker exec "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES"
+    docker exec -u "${DOCKER_USER}" "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES"
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       if [[ -n "${module_path}" ]] && [[ -d "${module_path}" ]]; then
-        docker cp "${module_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES/$(basename "${module_path}")"
-        sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        if echo "${module_path}" | grep -E '([^/]+)/src/\1/?$'; then
+          module_path_root=$(dirname $(dirname $(dirname "${module_path}")))
+          sed -i "s@\(ALTERNATIVE_MODULES+=..\)${module_path_root}\(/$(basename "${module_path}")/src/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        else
+          sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        fi
       fi
     done
   )
@@ -186,13 +190,22 @@ prepareEnvironment() {
   echo "Generated client config file is:"
   cat "${CLIENTCONFIG}"
 
+<<<<<<< HEAD
   docker-compose -f ./docker-compose.yml up -d
+=======
+  export DIRAC_UID=$(id -u)
+  export DIRAC_GID=$(id -g)
+  docker-compose -f tests/CI/docker-compose.yml up -d
+>>>>>>> 19ed6ee1f (Various minor Python 3 compatibility fixes)
 
   echo -e "\n**** $(date -u) Creating user and copying scripts ****"
 
   # DIRAC server user and scripts
-  docker exec server adduser -s /bin/bash -d "$USER_HOME" "$DOCKER_USER"
-  docker exec client adduser -s /bin/bash -d "$USER_HOME" "$DOCKER_USER"
+  for container_name in server client; do
+    docker exec -u root "${container_name}" groupadd --gid "${DIRAC_GID}" "${DOCKER_USER}"
+    docker exec -u root "${container_name}" useradd --uid "${DIRAC_UID}" --gid "${DIRAC_GID}" -s /bin/bash -d "${USER_HOME}" "${DOCKER_USER}"
+    docker exec -u root "${container_name}" chown "${DOCKER_USER}" "${USER_HOME}"
+  done
 
   # Create database user
   # Run in a subshell so we can safely source ${SERVERCONFIG}
@@ -217,10 +230,13 @@ prepareEnvironment() {
     docker cp "${DIRACOS_TARBALL_PATH}" server:"${DIRACOS_TARBALL_PATH}"
     docker cp "${DIRACOS_TARBALL_PATH}" client:"${DIRACOS_TARBALL_PATH}"
   fi
+<<<<<<< HEAD
 
   # Open permissions for the dirac user after the above operations
   docker exec server bash -c "chown -R dirac:dirac /home/dirac"
   docker exec client bash -c "chown -R dirac:dirac /home/dirac"
+=======
+>>>>>>> 19ed6ee1f (Various minor Python 3 compatibility fixes)
 }
 
 installServer() {
@@ -232,11 +248,16 @@ installServer() {
   docker cp server:"$WORKSPACE/ServerInstallDIR/user/client.pem" - | docker cp - client:"$WORKSPACE/ServerInstallDIR/user/"
   docker cp server:"$WORKSPACE/ServerInstallDIR/user/client.key" - | docker cp - client:"$WORKSPACE/ServerInstallDIR/user/"
   docker exec client bash -c "cp $WORKSPACE/ServerInstallDIR/user/client.* $USER_HOME/.globus/"
-  server_uid=$(docker exec -u dirac server bash -c 'echo $UID')
-  client_uid=$(docker exec -u dirac client bash -c 'echo $UID')
+  server_uid=$(docker exec -u "${DOCKER_USER}" server bash -c 'echo $UID')
+  client_uid=$(docker exec -u "${DOCKER_USER}" client bash -c 'echo $UID')
   docker cp server:"/tmp/x509up_u${server_uid}" - | docker cp - client:/tmp/
+<<<<<<< HEAD
   docker exec client bash -c "chown -R dirac:dirac /home/dirac"
   docker exec client bash -c "chown -R dirac:dirac /tmp/x509up_u${client_uid}"
+=======
+  # docker exec client bash -c "chown -R dirac:dirac $WORKSPACE/ServerInstallDIR/user /home/dirac/.globus"
+  # docker exec client bash -c "chown -R dirac:dirac /tmp/x509up_u${client_uid}"
+>>>>>>> 19ed6ee1f (Various minor Python 3 compatibility fixes)
 }
 
 installClient() {
