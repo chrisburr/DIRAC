@@ -30,7 +30,6 @@ copyLocalSource() {
     docker exec "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/TestCode"
     for repo_path in "${TESTREPO[@]}"; do
       if [[ -n "${repo_path}" ]] && [[ -d "${repo_path}" ]]; then
-        docker cp "${repo_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/TestCode/$(basename "${repo_path}")"
         sed -i "s@\(TESTREPO+=..\)$(dirname "${repo_path}")\(/$(basename "${repo_path}")..\)@\1${WORKSPACE}/LocalRepo/TestCode\2@" "$CONFIG_PATH"
       fi
     done
@@ -38,13 +37,15 @@ copyLocalSource() {
     docker exec "${CONTAINER_NAME}" mkdir -p "$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES"
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       if [[ -n "${module_path}" ]] && [[ -d "${module_path}" ]]; then
-        docker cp "${module_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES/$(basename "${module_path}")"
-        sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        if echo "${module_path}" | grep -E '([^/]+)/src/\1/?$'; then
+          sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")/src/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        else
+          sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        fi
       fi
     done
   )
 }
-cd "$SCRIPT_DIR"
 
 prepareEnvironment() {
   if [[ -z "$TMP" ]]; then
@@ -186,7 +187,7 @@ prepareEnvironment() {
   echo "Generated client config file is:"
   cat "${CLIENTCONFIG}"
 
-  docker-compose -f ./docker-compose.yml up -d
+  docker-compose -f tests/CI/docker-compose.yml up -d
 
   echo -e "\n**** $(date -u) Creating user and copying scripts ****"
 
@@ -196,15 +197,15 @@ prepareEnvironment() {
 
   # Create database user
   # Run in a subshell so we can safely source ${SERVERCONFIG}
-  (
+  if ! (
     source "${SERVERCONFIG}"
-    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';"
-    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';"
+    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';" && \
+    docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';" && \
     docker exec mysql mysql --password=password -e "CREATE USER '${DB_USER}'@'mysql' IDENTIFIED BY '${DB_PASSWORD}';"
-  )
+  ); then return 1; fi
 
-  docker cp ./install_server.sh server:"$WORKSPACE"
-  docker cp ./install_client.sh client:"$WORKSPACE"
+  docker cp tests/CI/install_server.sh server:"$WORKSPACE"
+  docker cp tests/CI/install_client.sh client:"$WORKSPACE"
 
   copyLocalSource server "${SERVERCONFIG}"
   copyLocalSource client "${CLIENTCONFIG}"
@@ -219,12 +220,17 @@ prepareEnvironment() {
   fi
 
   # Open permissions for the dirac user after the above operations
-  docker exec server bash -c "chown -R dirac:dirac /home/dirac"
-  docker exec client bash -c "chown -R dirac:dirac /home/dirac"
+  docker exec server bash -c "chmod -R a=u /home/dirac"
+  docker exec client bash -c "chmod -R a=u /home/dirac"
+  # docker exec server bash -c "chown -R dirac:dirac /home/dirac"
+  # docker exec client bash -c "chown -R dirac:dirac /home/dirac"
 }
 
 installServer() {
-  docker exec -e TERM=xterm-color -u "$DOCKER_USER" -w "$WORKSPACE" server bash ./install_server.sh |& tee "${BUILD_DIR}/log_server_install.txt"
+  if ! docker exec -e TERM=xterm-color -u "$DOCKER_USER" -w "$WORKSPACE" server bash ./install_server.sh |& tee "${BUILD_DIR}/log_server_install.txt"; then
+    echo "ERROR: ./install_server.sh failed"
+    return 1
+  fi
 
   echo -e "\n**** $(date -u) Copying credentials and certificates ****"
   docker exec client bash -c "mkdir -p $WORKSPACE/ServerInstallDIR/user $WORKSPACE/ClientInstallDIR/etc /home/dirac/.globus"
@@ -235,7 +241,7 @@ installServer() {
   server_uid=$(docker exec -u dirac server bash -c 'echo $UID')
   client_uid=$(docker exec -u dirac client bash -c 'echo $UID')
   docker cp server:"/tmp/x509up_u${server_uid}" - | docker cp - client:/tmp/
-  docker exec client bash -c "chown -R dirac:dirac /home/dirac"
+  docker exec client bash -c "chown -R dirac:dirac $WORKSPACE/ServerInstallDIR/user /home/dirac/.globus"
   docker exec client bash -c "chown -R dirac:dirac /tmp/x509up_u${client_uid}"
 }
 
