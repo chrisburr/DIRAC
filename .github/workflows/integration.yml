@@ -91,16 +91,40 @@ jobs:
         cat run_in_container
     - name: Prepare environment
       run: |
-        bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && prepareEnvironment'
+        ls -ltrah
+        whoami
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        prepareEnvironment
     - name: Install server
-      run: bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && installServer'
+      run: |
+        ls -ltrah
+        whoami
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        installServer
     - name: Install client
-      run: bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && installClient'
+      run: |
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        installClient
     - name: Server tests
-      run: bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && testServer'
+      run: |
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        testServer
     - name: Client tests
-      run: bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && testClient'
+      run: |
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        testClient
     - name: Elasticsearch logs
-      run: bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && docker logs elasticsearch'
+      run: |
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        docker logs elasticsearch
     - name: Check test status
-      run: bash -c 'source run_in_container && source tests/CI/run_docker_setup.sh && checkErrors'
+      run: |
+        source run_in_container
+        source tests/CI/run_docker_setup.sh
+        checkErrors

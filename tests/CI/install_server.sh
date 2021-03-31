@@ -100,3 +100,4 @@ then
 
   echo -e "*** $(date -u) **** DONE Installing Tornado services"
 fi
+exit 0

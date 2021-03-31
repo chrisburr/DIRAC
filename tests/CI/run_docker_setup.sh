@@ -6,6 +6,7 @@ set -x
 
 BUILD_DIR=$PWD/integration_test_results
 mkdir -p "${BUILD_DIR}"
+ls -ltrah "${BUILD_DIR}"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 DIRAC_BASE_DIR=$(realpath "${SCRIPT_DIR}/../..")
 
@@ -39,7 +40,7 @@ copyLocalSource() {
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       if [[ -n "${module_path}" ]] && [[ -d "${module_path}" ]]; then
         # docker cp "${module_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES/$(basename "${module_path}")"
-        if echo "${module_path}" | grep -E '([^/]+)/src/\1/?$'
+        if echo "${module_path}" | grep -E '([^/]+)/src/\1/?$'; then
           sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")/src/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
         else
           sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
@@ -228,14 +229,16 @@ prepareEnvironment() {
   fi
 
   # Open permissions for the dirac user after the above operations
-  docker exec server bash -c "chown -R dirac:dirac /home/dirac"
-  docker exec client bash -c "chown -R dirac:dirac /home/dirac"
+  docker exec server bash -c "chmod -R a=u /home/dirac"
+  docker exec client bash -c "chmod -R a=u /home/dirac"
+  # docker exec server bash -c "chown -R dirac:dirac /home/dirac"
+  # docker exec client bash -c "chown -R dirac:dirac /home/dirac"
 }
 
 installServer() {
   if ! docker exec -e TERM=xterm-color -u "$DOCKER_USER" -w "$WORKSPACE" server bash ./install_server.sh |& tee "${BUILD_DIR}/log_server_install.txt"; then
     echo "ERROR: ./install_server.sh failed"
-    return
+    return 1
   fi
 
   echo -e "\n**** $(date -u) Copying credentials and certificates ****"
@@ -247,7 +250,7 @@ installServer() {
   server_uid=$(docker exec -u dirac server bash -c 'echo $UID')
   client_uid=$(docker exec -u dirac client bash -c 'echo $UID')
   docker cp server:"/tmp/x509up_u${server_uid}" - | docker cp - client:/tmp/
-  docker exec client bash -c "chown -R dirac:dirac /home/dirac"
+  docker exec client bash -c "chown -R dirac:dirac $WORKSPACE/ServerInstallDIR/user /home/dirac/.globus"
   docker exec client bash -c "chown -R dirac:dirac /tmp/x509up_u${client_uid}"
 }
 

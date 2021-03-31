@@ -136,6 +136,7 @@ installSite() {
     ln -s "${SERVERINSTALLDIR}/diracos/etc" "${SERVERINSTALLDIR}/etc"
     source diracos/diracosrc
     pip install git+https://gitlab.cern.ch/chaen/fts-rest-flask.git@packaging
+    pip install 'sqlalchemy<1.4'
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       pip install -e "${module_path}[server]"
     done
