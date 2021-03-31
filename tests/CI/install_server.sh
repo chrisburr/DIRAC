@@ -10,6 +10,7 @@ set -eo pipefail
 # IFS=$'\n\t'
 set -x
 
+cat CONFIG
 source CONFIG
 
 echo -e "*** $(date -u) **** Getting the tests ****\n"

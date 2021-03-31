@@ -39,7 +39,11 @@ copyLocalSource() {
     for module_path in "${ALTERNATIVE_MODULES[@]}"; do
       if [[ -n "${module_path}" ]] && [[ -d "${module_path}" ]]; then
         # docker cp "${module_path}" "${CONTAINER_NAME}:$WORKSPACE/LocalRepo/ALTERNATIVE_MODULES/$(basename "${module_path}")"
-        sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        if echo "${module_path}" | grep -E '([^/]+)/src/\1/?$'
+          sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")/src/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        else
+          sed -i "s@\(ALTERNATIVE_MODULES+=..\)$(dirname "${module_path}")\(/$(basename "${module_path}")..\)@\1${WORKSPACE}/LocalRepo/ALTERNATIVE_MODULES\2@" "$CONFIG_PATH"
+        fi
       fi
     done
   )
