@@ -225,7 +225,8 @@ integration_tests:
     - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
     - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
     # Get DIRAC
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracRef"
+    # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracRef"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b rel-v7r2
     # Environment
     - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
     - export DIRACOSVER=LHCb:master
