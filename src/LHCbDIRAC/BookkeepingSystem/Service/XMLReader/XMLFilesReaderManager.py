@@ -227,7 +227,7 @@ class XMLFilesReaderManager(object):
 
           if len(runnumbers) > 1:
             self.log.warn('Different runs are reconstructed:', '%s' % runnumbers)
-            runnumber = 0 
+            runnumber = 0
           else:
             runnumber = runnumbers[0]
 
