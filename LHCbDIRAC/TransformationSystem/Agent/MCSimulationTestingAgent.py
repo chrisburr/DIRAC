@@ -219,8 +219,7 @@ class MCSimulationTestingAgent (AgentModule):
         report['subject'],
         body,
         self.email,
-        localAttempt=False,
-        avoidSpam=True)
+        localAttempt=False)
     if not res['OK']:
       self.log.error("sendMail failed", res['Message'])
     else:
