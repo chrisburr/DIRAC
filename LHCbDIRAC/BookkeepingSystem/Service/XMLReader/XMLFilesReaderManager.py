@@ -224,7 +224,7 @@ class XMLFilesReaderManager(object):
 
           if len(runnumbers) > 1:
             self.log.warn('Different runs are reconstructed:', '%s' % runnumbers)
-            runnumber = None
+            runnumber = 0 
           else:
             runnumber = runnumbers[0]
 
@@ -243,7 +243,7 @@ class XMLFilesReaderManager(object):
             newJobParams.setValue(tck)
             job.addJobParams(newJobParams)
 
-          if runnumber is not None:
+          if not runnumber:
             prod = None
             newJobParams = JobParameters()
             newJobParams.setName('RunNumber')
