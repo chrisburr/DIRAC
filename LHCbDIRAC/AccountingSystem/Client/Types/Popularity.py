@@ -24,7 +24,7 @@ class Popularity(BaseAccountingType):
 
     self.definitionKeyFields = [('DataType', "VARCHAR(64)"),
                                 ('Activity', "VARCHAR(64)"),
-                                ('FileType', "VARCHAR(32)"),
+                                ('FileType', "VARCHAR(64)"),
                                 ('Production', "VARCHAR(32)"),
                                 ('ProcessingPass', "VARCHAR(256)"),
                                 ('Conditions', "VARCHAR(64)"),
