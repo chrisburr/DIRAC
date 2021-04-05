@@ -12,6 +12,7 @@ import unittest
 import sys
 import datetime
 import time
+import os
 
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.ElasticSearchDB import ElasticSearchDB

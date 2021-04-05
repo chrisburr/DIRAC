@@ -7,16 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     # if: github.event_name != 'push' || github.repository == 'DIRACGrid/DIRAC'
     timeout-minutes: 45
-
-    env:
-      MATRIX_DEFAULT_MYSQL_VER: 8.0
-      MATRIX_DEFAULT_HOST_OS: cc7
-      MATRIX_DEFAULT_ES_VER: 7.9.1
-      MATRIX_DEFAULT_USE_NEWTHREADPOOL: default
-      MATRIX_DEFAULT_DIRACOSVER: default
-      MATRIX_DEFAULT_TEST_HTTPS: No
-      MATRIX_DEFAULT_SERVER_USE_PYTHON3: No
-      MATRIX_DEFAULT_CLIENT_USE_PYTHON3: No
+    defaults:
+      run:
+        shell: bash -l {0}
 
     strategy:
       fail-fast: False
@@ -25,94 +18,50 @@ jobs:
         include:
           ###### MySQL versions
           - TEST_NAME: "MySQL 5.7"
-            MYSQL_VER: 5.7
-          # IMPLICIT: - MYSQL_VER: 8.0
+            ARGS: MYSQL_VER=5.7
           # ###### ES versions
           - TEST_NAME: "Elasticsearch 6.6.0"
-            ES_VER: 6.6.0
-          # IMPLICIT: - ES_VER: 7.9.1
-          ###### Host OS
-          # - TEST_NAME: "SLC 6"
-          #   HOST_OS: slc6
-          # IMPLICIT: - HOST_OS: cc7
+            ARGS: ES_VER=6.6.0
           ###### Thread pool
-          # IMPLICIT: - USE_NEWTHREADPOOL: default
           - TEST_NAME: "New thread pool"
-            USE_NEWTHREADPOOL: No
+            ARGS: DIRAC_USE_NEWTHREADPOOL=No
           ###### HTTPS tests
-          # IMPLICIT: - DIRACOSVER: default
-          #             TEST_HTTPS: No
           - TEST_NAME: "HTTPS"
-            TEST_HTTPS: Yes
-            DIRACOSVER: https
+            ARGS: TEST_HTTPS=Yes DIRACOSVER=https
           ###### Python 3
-          # IMPLICIT: - SERVER_USE_PYTHON3: No
-          #             CLIENT_USE_PYTHON3: No
           - TEST_NAME: "Python 3 client"
-            CLIENT_USE_PYTHON3: Yes
+            ARGS: CLIENT_USE_PYTHON3=Yes
           - TEST_NAME: "Python 3 server"
-            SERVER_USE_PYTHON3: Yes
+            ARGS: SERVER_USE_PYTHON3=Yes
           - TEST_NAME: "Python 3 server and client"
-            CLIENT_USE_PYTHON3: Yes
-            SERVER_USE_PYTHON3: Yes
-            MYSQL_VER: 8.0
+            ARGS: CLIENT_USE_PYTHON3=Yes SERVER_USE_PYTHON3=Yes MYSQL_VER=8.0
 
     steps:
     - uses: actions/checkout@v2
     - name: Fail-fast for outdated pipelines
       run: .github/workflows/fail-fast.sh
-    - name: Clean up GitHub actions environment
-      run: |
-        # Set environment variables
-        echo -n "export HOST_OS=${{ matrix.HOST_OS || env.MATRIX_DEFAULT_HOST_OS }} " >> setup_env
-        echo -n "export CI_PROJECT_DIR=/repo " >> setup_env
-        echo -n "export CI_COMMIT_REF_NAME=$GITHUB_REF " >> setup_env
-        echo -n "export CI_MERGE_REQUEST_TARGET_BRANCH_NAME=$GITHUB_BASE_REF " >> setup_env
-        echo -n "export CI_REGISTRY_IMAGE=diracgrid " >> setup_env
-        echo -n "export MYSQL_VER=${{ matrix.MYSQL_VER || env.MATRIX_DEFAULT_MYSQL_VER }} " >> setup_env
-        echo -n "export ES_VER=${{ matrix.ES_VER || env.MATRIX_DEFAULT_ES_VER }} " >> setup_env
-        if [[ "${{ matrix.USE_NEWTHREADPOOL || env.MATRIX_DEFAULT_USE_NEWTHREADPOOL }}" != "default" ]]; then echo -n "export DIRAC_USE_NEWTHREADPOOL=${{ matrix.USE_NEWTHREADPOOL || env.MATRIX_DEFAULT_USE_NEWTHREADPOOL }} " >> setup_env; fi
-        if [[ "${{ matrix.DIRACOSVER || env.MATRIX_DEFAULT_DIRACOSVER }}" != "default" ]]; then echo -n "export DIRACOSVER=${{ matrix.DIRACOSVER || env.MATRIX_DEFAULT_DIRACOSVER }} " >> setup_env; fi
-        echo -n "export TEST_HTTPS=${{ matrix.TEST_HTTPS || env.MATRIX_DEFAULT_TEST_HTTPS }} " >> setup_env
-        echo -n "export SERVER_USE_PYTHON3=${{ matrix.SERVER_USE_PYTHON3 || env.MATRIX_DEFAULT_SERVER_USE_PYTHON3 }} " >> setup_env
-        if [[ "${{ matrix.SERVER_DIRACOSVER || env.MATRIX_DEFAULT_SERVER_DIRACOSVER }}" != "default" ]]; then echo -n "export SERVER_DIRACOSVER=${{ matrix.SERVER_DIRACOSVER || env.MATRIX_DEFAULT_SERVER_DIRACOSVER }} " >> setup_env; fi
-        echo -n "export CLIENT_USE_PYTHON3=${{ matrix.CLIENT_USE_PYTHON3 || env.MATRIX_DEFAULT_CLIENT_USE_PYTHON3 }} " >> setup_env
-        if [[ "${{ matrix.CLIENT_DIRACOSVER || env.MATRIX_DEFAULT_CLIENT_DIRACOSVER }}" != "default" ]]; then echo -n "export CLIENT_DIRACOSVER=${{ matrix.CLIENT_DIRACOSVER || env.MATRIX_DEFAULT_CLIENT_DIRACOSVER }} " >> setup_env; fi
-
-        echo "Run in container script is"
-        cat setup_env
+    - run: |
+        git fetch --prune --unshallow
+    - uses: conda-incubator/setup-miniconda@master
+      with:
+        environment-file: environment-py3.yml
+        miniforge-variant: Mambaforge
+        use-mamba: true
     - name: Prepare environment
-      run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        prepareEnvironment
+      run: ./integration_tests.py prepare-environment ${{ matrix.ARGS }}
     - name: Install server
-      run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        installServer
+      run: ./integration_tests.py install-server
     - name: Install client
-      run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        installClient
+      run: ./integration_tests.py install-client
     - name: Server tests
-      run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        testServer
+      run: ./integration_tests.py test-server || touch server-tests-failed
     - name: Client tests
-      run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        testClient
+      run: ./integration_tests.py test-client || touch client-tests-failed
     - name: Elasticsearch logs
-      run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        docker logs elasticsearch
+      run: docker logs elasticsearch
     - name: Check test status
       run: |
-        source setup_env
-        source tests/CI/run_docker_setup.sh
-        checkErrors
+        has_error=0
+        if [ -f server-tests-failed ]; then has_error=1; echo "Server tests failed"; fi
+        if [ -f client-tests-failed ]; then has_error=1; echo "Client tests failed"; fi
+        if [ ${has_error} = 1 ]; then exit 1; fi
