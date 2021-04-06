@@ -1,3 +1,35 @@
+v10r1p9
+Based on DIRAC v7r1p36
+LHCbWebDIRAC v5r2p1
+LHCbDIRACOS v1r16
+*TransformationSystem
+
+FIX: (!959) remove deprecated avoidSpam parameter in NotificationClient
+
+*Accounting
+
+CHANGE: (!957) Popularity FileType is VARCHAR(64) instead of 32
+
+*Bookkeeping
+
+FIX: (!955) Remove duplicates from the result of OracleBookkeepingDB.getLimitedFiles
+FIX: (!945) Trivial error message fix
+FIX: (!944) Running XMLFilesReaderManager for files created from multiple run numbers
+
+*Workflow
+
+FIX: (!952) FailoverRequest Workflow Module: adding a SetFileStatus failover operation if everything else fails
+
+*CI
+
+NEW: (!949) Sweep immediately after merge and also on demand
+
+*DataManagementSystem
+
+FIX: (!948) ScriptExecutor: printReplicaStats reports SE even if not associated to a site
+
+
+
 v10r1p8
 Based on DIRAC v7r1p32
 LHCbWebDIRAC v5r2p1
