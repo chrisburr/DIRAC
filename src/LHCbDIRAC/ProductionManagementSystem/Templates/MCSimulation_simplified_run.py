@@ -171,7 +171,7 @@ elif w2:
   pr.prodsTypeList = [MCSimulationType, 'MCReconstruction']
   pr.outputSEs = ['Tier1-Buffer', 'Tier1_MC-DST']
 
-  pr.stepsInProds = [[1, ], range(2, len(pr.stepsList) + 1)]
+  pr.stepsInProds = [[1, ], list(range(2, len(pr.stepsList) + 1))]
   pr.outputFileSteps = [str(len(pr.stepsInProds[0])),
                         str(len(pr.stepsInProds[1]))]
 
@@ -191,7 +191,7 @@ elif w3:
   pr.prodsTypeList = [MCSimulationType, 'MCReconstruction', 'MCMerge']
   pr.outputSEs = ['Tier1-Buffer', 'Tier1-Buffer', 'Tier1_MC-DST']
 
-  pr.stepsInProds = [[1, ], range(2, len(pr.stepsList)), [len(pr.stepsList)]]
+  pr.stepsInProds = [[1, ], list(range(2, len(pr.stepsList))), [len(pr.stepsList)]]
   pr.outputFileSteps = ['1', str(len(pr.stepsInProds[1])), '1']
 
   pr.removeInputsFlags = [False, removeInputSelection, removeInputMerge]

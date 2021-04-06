@@ -1484,7 +1484,7 @@ def _getJobsEISFromAncestors(lfnList):
     job = _jobFromLfn(lfn)
     if job not in jobEventInputStat:
       jobDict.setdefault(job, lfn)
-  lfnList = jobDict.values()
+  lfnList = list(jobDict.values())
   # Get ancestors of these files
   gLogger.verbose("\nGet EIS for %d jobs like %s" % (len(jobDict), str(list(jobDict.items())[0])))
   gLogger.verbose("\t%d unique files" % len(set(lfnList)))
