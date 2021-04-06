@@ -62,7 +62,7 @@ def main():
         for run in runs:
           runRange = run.split(':')
           if len(runRange) == 2:
-            runsList += range(int(runRange[0]), int(runRange[1]) + 1)
+            runsList += list(range(int(runRange[0]), int(runRange[1]) + 1))
           else:
             runsList.append(int(run))
       except Exception as e:

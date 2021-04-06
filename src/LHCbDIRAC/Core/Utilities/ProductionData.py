@@ -234,7 +234,7 @@ def constructUserLFNs(jobID, owner, outputFiles, outputPath='', prependString=''
                                   str(int(jobID / 1000)), str(jobID)) + os.sep + os.path.basename(outputFile)
       outputLFNs[outputFile] = lfn
 
-  outputData = outputLFNs.values()
+  outputData = list(outputLFNs.values())
   if outputData:
     gLogger.info('Created the following output data LFN(s):\n%s' % ('\n'.join(outputData)))
   else:

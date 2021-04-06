@@ -1003,12 +1003,12 @@ def executeReplicaStats(dmScript):
       prNoReplicas = True
     elif switch[0] == 'DumpWithArchives':
       if switch[1].lower() == 'any':
-        prWithArchives = range(1, 10)
+        prWithArchives = list(range(1, 10))
       else:
         prWithArchives = [int(xx) for xx in switch[1].split(',')]
     elif switch[0] == 'DumpWithReplicas':
       if switch[1].lower() == 'any':
-        prWithReplicas = range(1, 100)
+        prWithReplicas = list(range(1, 100))
       else:
         prWithReplicas = [int(xx) for xx in switch[1].split(',')]
     elif switch[0] == 'DumpFailover':
