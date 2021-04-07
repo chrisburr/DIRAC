@@ -42,31 +42,31 @@ class ReplicaReader:
 
       outputfile = node.getAttributeNode('File')
       if outputfile is not None:
-        param.setFile(outputfile.value.encode('ascii'))
+        param.setFile(outputfile.value)
       else:
         gLogger.warn("Missing the <file> tag in replica xml file!")
 
       name = node.getAttributeNode('Name')
       if name is not None:
-        param.setName(name.value.encode('ascii'))
+        param.setName(name.value)
       else:
         gLogger.warn("Missing the <name> tag in replica xml file!")
 
       location = node.getAttributeNode('Location')
       if location is not None:
-        param.setLocation(location.value.encode('ascii'))
+        param.setLocation(location.value)
       else:
         gLogger.warn("Missing the <location> tag in replica xml file!")
 
       se = node.getAttributeNode('SE')
       if se is not None:
-        param.setSE(se.value.encode('ascii'))
+        param.setSE(se.value)
       else:
         gLogger.warn("Missing the <SE> tag in replica xml file!")
 
       action = node.getAttributeNode('Action')
       if action is not None:
-        param.setAction(action.value.encode('ascii'))
+        param.setAction(action.value)
       else:
         gLogger.warn("Missing the <Action> tag in replica xml file!")
 
