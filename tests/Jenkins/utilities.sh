@@ -135,11 +135,7 @@ findSystems() {
     echo "ERROR: cannot change to ${TESTCODE}" >&2
     exit 1
   fi
-  OUT_FN=$PWD/systems
-  # TODO: Support extensions again
-  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
-  find ./ -name "*System" | cut -d '/' -f 2 | sort -u  > "${OUT_FN}"
-  cd -
+  python -m DIRAC.Core.Utilities.Extensions findSystems > systems
 
   echo "found $(wc -l systems)"
 }
@@ -178,17 +174,12 @@ findDatabases() {
   #
   # We are avoiding, FileCatalogDB FileCatalogWithFkAndPsDB that is installed in other ways
   #  and InstalledComponentsDB which is installed at the beginning
-  # We also ignore all the DBs in tests directory
   #
-  OUT_FN=$PWD/databases
-  # TODO: Support extensions again
-  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${DBstoExclude}" ]]; then
-    find ./ -path "tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $2,$4}' | grep -v "${DBstoExclude}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
+    python -m DIRAC.Core.Utilities.Extensions findDatabases | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | grep -v "${DBstoExclude}" > databases
   else
-    find ./ -path "tests/*" -prune -o -name "*DB.sql" -print  | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | awk -F "/" '{print $2,$4}' | grep "${DBstoSearch}" | grep -v 'DIRAC' | sort | uniq > "$OUT_FN"
+    python -m DIRAC.Core.Utilities.Extensions findDatabases | grep -vE '(FileCatalogDB|FileCatalogWithFkAndPsDB|InstalledComponentsDB)' | grep "${DBstoSearch}" > databases
   fi
-  cd -
 
   echo "found $(wc -l databases)"
 }
@@ -221,15 +212,11 @@ findServices(){
     echo 'ERROR: cannot change to ' "${SERVERINSTALLDIR}" >&2
     exit 1
   fi
-  OUT_FN=$PWD/services
-  # TODO: Support extensions again
-  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${ServicestoExclude}" ]]; then
-    find ./*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep -v "${ServicestoExclude}" | sort -u  > "${OUT_FN}"
+    python -m DIRAC.Core.Utilities.Extensions findServices | grep -v "${ServicestoExclude}" > services
   else
-    find ./*/Service/ -name "*Handler.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep "${ServicestoSearch}" | sort -u > "${OUT_FN}"
+    python -m DIRAC.Core.Utilities.Extensions findServices | grep "${ServicestoSearch}"> services
   fi
-  cd -
 
   echo "found $(wc -l services)"
 }
@@ -252,15 +239,11 @@ findAgents(){
     echo 'ERROR: cannot change to ' "${SERVERINSTALLDIR}" >&2
     exit 1
   fi
-  OUT_FN=$PWD/agents
-  # TODO: Support extensions again
-  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
   if [[ -n "${AgentstoExclude}" ]]; then
-    find ./*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep -v "${AgentstoExclude}" | sort -u > "${OUT_FN}"
+    python -m DIRAC.Core.Utilities.Extensions findAgents | grep -v "${AgentstoExclude}" > agents
   else
-    find ./*/Agent/ -name "*Agent.py" | grep -v test | awk -F "/" '{print $2,$4}' | grep "${AgentstoSearch}" | sort -u > "${OUT_FN}"
+    python -m DIRAC.Core.Utilities.Extensions findAgents | grep "${AgentstoSearch}" > agents
   fi
-  cd -
 
   echo "found $(wc -l agents)"
 }
@@ -277,11 +260,7 @@ findAgents(){
 findExecutors(){
   echo '==> [findExecutors]'
 
-  OUT_FN=$PWD/executors
-  # TODO: Support extensions again
-  cd "$(python -c 'import os; import DIRAC; print(os.path.dirname(DIRAC.__file__))')"
-  find ./*/Executor/ -name "*.py" | awk -F "/" '{print $2,$4}' | sort -u  > "${OUT_FN}"
-  cd -
+  python -m DIRAC.Core.Utilities.Extensions findExecutors > executors
 
   echo "found $(wc -l executors)"
 }
