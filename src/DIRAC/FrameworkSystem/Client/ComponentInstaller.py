@@ -70,6 +70,7 @@ import subprocess32 as subprocess
 import shutil
 import inspect
 import importlib
+import importlib_resources
 
 from diraccfg import CFG
 import six
@@ -2224,7 +2225,6 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     dbDict = {}
     for extension in extensions + ['']:
       if six.PY3:
-        import importlib_resources  # pylint: disable=import-error
         databases = list(
             importlib_resources.files(('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'))
             .glob('*/DB/*.sql')
@@ -2267,7 +2267,6 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
 
       # Find *DB.py definitions
       if six.PY3:
-        import importlib_resources  # pylint: disable=import-error
         pyDBs = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/*DB.py'))
       else:
         pyDBs = glob.glob(os.path.join(
@@ -2279,7 +2278,6 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
 
       # Find sql files
       if six.PY3:
-        import importlib_resources  # pylint: disable=import-error
         sqlDBs = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/*.sql'))
       else:
         sqlDBs = glob.glob(os.path.join(
@@ -2346,7 +2344,6 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     # is there by chance an extension of it?
     for extension in CSGlobals.getCSExtensions() + [""]:
       if six.PY3:
-        import importlib_resources  # pylint: disable=import-error
         dbFile = list(importlib_resources.files('%sDIRAC' % extension).glob('*/DB/%s.sql' % dbName))
       else:
         dbFile = glob.glob(os.path.join(
@@ -2459,10 +2456,9 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
       if line.lower().startswith('source'):
         sourcedDBbFileName = line.split(' ')[1].replace('\n', '')
         gLogger.info("Found file to source: %s" % sourcedDBbFileName)
-        sourcedDBbFile = os.path.join(rootPath, sourcedDBbFileName)
-        with io.open(sourcedDBbFile, 'rt') as fdSourced:
-          dbLinesSourced = fdSourced.readlines()
-        for lineSourced in dbLinesSourced:
+        module, filename = sourcedDBbFileName.rsplit("/", 1)
+        dbSourced = importlib_resources.read_text(module.replace("/", "."), filename)
+        for lineSourced in dbSourced.split("\n"):
           if lineSourced.strip():
             cmdLines.append(lineSourced.strip())
 
