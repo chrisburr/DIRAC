@@ -40,8 +40,8 @@ class Extensions(object):
   def getCSExtensions(self):
     if not self.__csExt:
       if six.PY3:
-        from DIRAC.Core.Utilities.DIRACScript import _extensionsByPriority
-        exts = _extensionsByPriority()
+        from DIRAC.Core.Utilities.Extensions import extensionsByPriority
+        exts = extensionsByPriority()
       else:
         from DIRAC.ConfigurationSystem.Client.Config import gConfig
         exts = gConfig.getValue('/DIRAC/Extensions', [])

@@ -284,8 +284,8 @@ class ComponentInstaller(object):
     Get the list of installed extensions
     """
     if six.PY3:
-      from DIRAC.Core.Utilities.DIRACScript import _extensionsByPriority
-      extensions = _extensionsByPriority()
+      from DIRAC.Core.Utilities.Extensions import extensionsByPriority
+      extensions = extensionsByPriority()
     else:
       initList = glob.glob(os.path.join(rootPath, '*DIRAC', '__init__.py'))
       extensions = [os.path.basename(os.path.dirname(k)) for k in initList]
@@ -802,8 +802,8 @@ class ComponentInstaller(object):
             continue
         else:
           cfgTemplatePath = os.path.join(rootPath, ext, '%sSystem' % system, 'ConfigTemplate.cfg')
-          if not os.path.exists(cfgTemplatePath):
-            continue
+        if not os.path.exists(cfgTemplatePath):
+          continue
         gLogger.notice('Loading configuration template', cfgTemplatePath)
         # Look up the component in this template
         loadCfg = CFG()
