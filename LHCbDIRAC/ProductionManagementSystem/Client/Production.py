@@ -163,7 +163,7 @@ class Production(object):
 
   #############################################################################
 
-  def addApplicationStep(self, stepDict, inputData=None, modulesList=None):
+  def addApplicationStep(self, stepDict, inputData=None, modulesList=None, extraModulesList=None):
     """Adds an application step to the workflow.
 
     stepDict contains everything that is in the step, for this production, e.g.::
@@ -254,6 +254,8 @@ class Production(object):
         gaudiPath = 'Productions/GaudiStep_Modules'
         modulesList = self.opsHelper.getValue(gaudiPath, ['GaudiApplication', 'AnalyseXMLSummary',
                                                           'ErrorLogging', 'BookkeepingReport', 'StepAccounting'])
+      if extraModulesList:
+        modulesList += extraModulesList
 
       # pName, pType, pValue, pDesc
       parametersList = [['inputData', 'string', '', 'StepInputData'],
