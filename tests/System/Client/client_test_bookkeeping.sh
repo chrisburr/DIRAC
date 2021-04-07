@@ -20,7 +20,7 @@ declare -a commands=(
 'test $( dirac-bookkeeping-get-file-ancestors /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All | grep /lhcb/certification/test/SIM/00001446/0000/00001446 | wc -l ) = 5'
 'dirac-bookkeeping-get-file-descendants /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All'
 'test $( dirac-bookkeeping-get-file-sisters /lhcb/certification/test/XDIGI/00001447/0000/00001447_00000001_1.xdigi --All | grep NoSister | wc -l ) = 1'
-'test $( dirac-bookkeeping-get-stats --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/Digi14b/24142001/XDIGI | grep "Nb of Files" | cut -d ":" -f 2 ) = 130'
+'test $( dirac-bookkeeping-get-stats --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/Digi14b/24142001/XDIGI | grep "Nb of Files" | cut -d ":" -f 2 ) > 10'
 'dirac-bookkeeping-get-processing-passes --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/'
 'dirac-bookkeeping-get-run-ranges --Activity=Collision12 --Fast'
 'test $( dirac-bookkeeping-get-runsWithAGivenDate 2012-04-01 2012-05-01 | wc -w ) = 283'
@@ -33,11 +33,11 @@ declare -a commands=(
 'test $( dirac-bookkeeping-production-files 1446 ALL | grep "lhcb/certification/test/" | wc -l ) = 48'
 'test $( dirac-bookkeeping-production-information 1447 | grep CONDDB | cut -d : -f 2 | sed "s/ //g" ) = "sim-20161124-2015at5TeV-vc-md100"'
 'dirac-bookkeeping-production-jobs 1446 | grep LCG.CERN.cern'
-'test $( dirac-bookkeeping-productions-summary --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/ | grep Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia81099 | wc -l ) = 5'
+'test $( dirac-bookkeeping-productions-summary --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/ | grep Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia81099 | grep -c GAUSSHIST ) > 3'
 'dirac-bookkeeping-rejection-stats --BKQuery=/certification/test/Beam2510GeV-2015-MagDown-Nu1.5-25ns-Pythia8/Sim09c/24142001/'
 'test $( dirac-bookkeeping-run-files 81789 | grep .raw | wc -l ) = 73'
 'test $( dirac-bookkeeping-run-information 81789 | grep Beam3500GeV-VeloClosed-MagDown-Excl-R1-R2 | wc -l ) = 1'
-'test $( dirac-bookkeeping-simulationconditions-list | grep SimId | wc -l ) = 107'
+'test $( dirac-bookkeeping-simulationconditions-list | grep -c SimId ) > 100'
 )
 
 for command in "${commands[@]}"
