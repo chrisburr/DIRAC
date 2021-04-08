@@ -2284,7 +2284,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
         DIRAC.exit(-1)
       return S_ERROR(error)
     systemName = databases[filename]
-    moduleName = ".".join([ext, systemName, "DB"])
+    moduleName = ".".join([extension, systemName, "DB"])
     gLogger.debug("Installing %s from %s" % (filename, moduleName))
     dbSql = importlib_resources.read_text(moduleName, filename)
 
@@ -2351,7 +2351,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
         DIRAC.exit(-1)
       return S_ERROR(error)
 
-    return S_OK(extension, systemName)
+    return S_OK([extension, systemName])
 
   def uninstallDatabase(self, gConfig_o, dbName):
     """

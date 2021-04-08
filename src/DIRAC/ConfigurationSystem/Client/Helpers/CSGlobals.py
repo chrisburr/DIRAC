@@ -12,6 +12,7 @@ __RCSID__ = "$Id$"
 
 import imp
 import six
+from DIRAC.Core.Utilities.Decorators import deprecated
 from DIRAC.Core.Utilities.DIRACSingleton import DIRACSingleton
 from DIRAC.Core.Utilities.Extensions import extensionsByPriority
 
@@ -53,9 +54,9 @@ class Extensions(object):
           self.__csExt.append(ext)
     return self.__csExt
 
+  @deprecated("Use DIRAC.Core.Utilities.Extensions.extensionsByPriority instead")
   def getInstalledExtensions(self):
-    self.__load()
-    return list(self.__orderedExtNames)
+    return extensionsByPriority()
 
   def getExtensionPath(self, extName):
     self.__load()
@@ -87,11 +88,12 @@ def getCSExtensions():
   return Extensions().getCSExtensions()
 
 
+@deprecated("Use DIRAC.Core.Utilities.Extensions.extensionsByPriority instead")
 def getInstalledExtensions():
   """
     Return list of extensions registered in the CS and available in local installation
   """
-  return Extensions().getInstalledExtensions()
+  return extensionsByPriority()
 
 
 def skipCACheck():
