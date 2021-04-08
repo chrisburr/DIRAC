@@ -785,8 +785,7 @@ class ComponentInstaller(object):
     compCfg = CFG()
 
     if addDefaultOptions:
-      extensionsDIRAC = [x + 'DIRAC' for x in extensions] + extensions
-      for ext in extensionsDIRAC + ['DIRAC']:
+      for ext in extensions:
         cfgTemplateModule = "%s.%sSystem" % (ext, system)
         try:
           cfgTemplate = importlib_resources.read_text(cfgTemplateModule, "ConfigTemplate.cfg")
@@ -1001,8 +1000,8 @@ class ComponentInstaller(object):
       resultDict[resultIndexes[cType]] = {}
       remainders[cType] = {}
 
-    for extension in ['DIRAC'] + [x + 'DIRAC' for x in extensions]:
-      import importlib
+    for extension in extensions:
+      # TODO: In Python 3 installs these are all installed by definition
       try:
         extensionModule = importlib.import_module(extension)
       except ImportError:
@@ -1559,10 +1558,7 @@ class ComponentInstaller(object):
         setupSystems.append(executorSysInstance)
 
     # And to find out the available extensions
-    result = self.getExtensions()
-    if not result['OK']:
-      return result
-    extensions = [k.replace('DIRAC', '') for k in result['Value']]
+    extensions = [k for k in extensionsByPriority()]
 
     # Make sure the necessary directories are there
     if self.basePath != self.instancePath:
@@ -1722,7 +1718,7 @@ class ComponentInstaller(object):
           DIRAC.exit(-1)
         return result
       installedDatabases = result['Value']
-      result = self.getAvailableDatabases(CSGlobals.getCSExtensions())
+      result = self.getAvailableDatabases()
       gLogger.debug("Available databases", result)
       if not result['OK']:
         return result
@@ -2162,11 +2158,10 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     resDict['QueriesPerSecond'] = nqpersec.strip().split()[0]
     return S_OK(resDict)
 
-  def getAvailableDatabases(self, extensions=[]):
-    """ Find all databases defined
-    """
+  def getAvailableDatabases(self, extensions=None):
+    """Find all databases defined"""
     if not extensions:
-      extensions = CSGlobals.getCSExtensions()
+      extensions = extensionsByPriority()
 
     res = self.getAvailableSQLDatabases(extensions)
     gLogger.debug("Available SQL databases", res)
@@ -2193,13 +2188,14 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     :return: dict of MySQL DBs
     """
     dbDict = {}
-    for extension in reversed(extensions + ['']):
-      databases = findDatabases(('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC'))
+    for extension in extensions:
+      databases = findDatabases(extensions)
       for systemName, dbSql in databases:
         dbName = dbSql.replace('.sql', '')
         dbDict[dbName] = {}
         dbDict[dbName]['Type'] = 'MySQL'
-        dbDict[dbName]['Extension'] = extension
+        # TODO: Does this need to be replaced
+        dbDict[dbName]['Extension'] = extension.replace("DIRAC", "")
         dbDict[dbName]['System'] = systemName.replace('System', '')
     return S_OK(dbDict)
 
@@ -2222,16 +2218,15 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     :return: dict of ES DBs
     """
     dbDict = {}
-    for extension in reversed(extensions + ['']):
-      ext = ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC')
-      sqlDatabases = findDatabases(ext)
-      for systemName, dbName in findModules(ext, "DB", "*DB"):
+    for extension in extensions:
+      sqlDatabases = findDatabases(extension)
+      for systemName, dbName in findModules(extension, "DB", "*DB"):
         if (systemName, dbName + ".sql") in sqlDatabases:
           continue
 
         # Introspect all possible ones for a ElasticDB attribute
         try:
-          module = importlib.import_module(".".join([ext, systemName, "DB", dbName]))
+          module = importlib.import_module(".".join([extension, systemName, "DB", dbName]))
           dbClass = getattr(module, dbName)
         except (AttributeError, ImportError):
           continue
@@ -2240,7 +2235,8 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
 
         dbDict[dbName] = {}
         dbDict[dbName]['Type'] = 'ES'
-        dbDict[dbName]['Extension'] = extension
+        # TODO: Does this need to be replaced
+        dbDict[dbName]['Extension'] = extension.replace("DIRAC", "")
         dbDict[dbName]['System'] = systemName
 
     return S_OK(dbDict)
@@ -2276,9 +2272,8 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     gLogger.notice('Installing', dbName)
 
     # is there by chance an extension of it?
-    for extension in CSGlobals.getCSExtensions() + [""]:
-      ext = ('%sDIRAC' % extension).replace('DIRACDIRAC', 'DIRAC')
-      databases = {k: v for v, k in findDatabases(ext)}
+    for extension in extensionsByPriority():
+      databases = {k: v for v, k in findDatabases(extension)}
       filename = dbName + ".sql"
       if filename in databases:
         break
@@ -2362,7 +2357,7 @@ exec python %(DIRAC)s/WebAppDIRAC/scripts/dirac-webapp-run.py -p < /dev/null
     """
     Remove a database from DIRAC
     """
-    result = self.getAvailableDatabases(CSGlobals.getCSExtensions())
+    result = self.getAvailableDatabases()
     if not result['OK']:
       return result
 

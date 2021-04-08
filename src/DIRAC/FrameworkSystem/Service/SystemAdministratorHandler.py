@@ -239,7 +239,7 @@ class SystemAdministratorHandler(RequestHandler):
   def export_getAvailableDatabases(self):
     """ Get the list of databases which software is installed in the system
     """
-    return gComponentInstaller.getAvailableDatabases(getCSExtensions())
+    return gComponentInstaller.getAvailableDatabases()
 
   types_installDatabase = [six.string_types]
 

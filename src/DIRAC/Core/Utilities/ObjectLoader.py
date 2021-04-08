@@ -13,7 +13,7 @@ import collections
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities import DErrno
-from DIRAC.Core.Utilities import List, DIRACSingleton
+from DIRAC.Core.Utilities import DIRACSingleton
 from DIRAC.Core.Utilities.Extensions import recurseImport
 from DIRAC.ConfigurationSystem.Client.Helpers import CSGlobals
 
