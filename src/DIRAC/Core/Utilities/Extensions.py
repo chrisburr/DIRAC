@@ -7,13 +7,15 @@ import argparse
 from collections import defaultdict
 import fnmatch
 import functools
+import glob
 import importlib
-import importlib_resources
 import os
 import pkgutil
 import sys
 
+import importlib_resources
 import six
+import DIRAC
 
 try:
   from importlib.machinery import PathFinder
@@ -41,10 +43,15 @@ except ImportError:
 
 def iterateThenSort(func):
   @functools.wraps(func)
-  def newFunc(modules):
+  def newFunc(modules, *args, **kwargs):
+    if not isinstance(modules, (list, tuple)):
+      modules = [modules]
+
     results = set()
     for module in modules:
-      results |= func(module)
+      if isinstance(module, six.string_types):
+        module = importlib.import_module(module)
+      results |= set(func(module, *args, **kwargs))
     return sorted(results)
   return newFunc
 
@@ -55,29 +62,41 @@ def findSystems(module):
   return {x.name for x in _findSystems(module)}
 
 
-@iterateThenSort
-def findAgents(module):
+def findAgents(modules):
   """TODO"""
-  return {(system.name, obj_name) for system, obj_name in _findObject(module, "Agent", "Agent")}
+  return findModules(modules, "Agent", "*Agent")
 
 
-@iterateThenSort
-def findExecutors(module):
+def findExecutors(modules):
   """TODO"""
-  return {(system.name, obj_name) for system, obj_name in _findObject(module, "Executor")}
+  return findModules(modules, "Executor")
 
 
-@iterateThenSort
-def findServices(module):
+def findServices(modules):
   """TODO"""
-  return {(system.name, obj_name) for system, obj_name in _findObject(module, "Service", "Handler")}
+  return findModules(modules, "Service", "*Handler")
 
 
 @iterateThenSort
 def findDatabases(module):
   """TODO"""
   # This can be "fn.name" when DIRAC is Python 3 only
-  return {(system.name, os.path.basename(str(fn))) for system, fn in _findFile(module, "DB", "*DB.sql")}
+  return {
+      (system.name, os.path.basename(str(fn)))
+      for system, fn in _findFile(module, "DB", "*DB.sql")
+  }
+
+
+@iterateThenSort
+def findModules(module, submoduleName, pattern="*"):
+  """TODO"""
+  for system in _findSystems(module):
+    agentModule = PathFinder.find_spec(submoduleName, path=system.submodule_search_locations)
+    if not agentModule:
+      continue
+    for _, name, _ in pkgutil.iter_modules(agentModule.submodule_search_locations):
+      if fnmatch.fnmatch(name, pattern):
+        yield system.name, name
 
 
 def entrypointToExtension(entrypoint):
@@ -89,10 +108,25 @@ def entrypointToExtension(entrypoint):
 
 
 def extensionsByPriority():
-  """Discover extensions using the setuptools metadata
-
-  TODO: This should move into a function which can also be called to fill the CS
   """
+  Get the list of installed extensions
+  """
+  if six.PY3:
+    return _extensionsByPriorityPy3()
+  else:
+    return _extensionsByPriorityPy2()
+
+
+def _extensionsByPriorityPy2():
+  initList = glob.glob(os.path.join(DIRAC.rootPath, '*DIRAC', '__init__.py'))
+  extensions = [os.path.basename(os.path.dirname(k)) for k in initList]
+  # Return the extensions, sorting such that vanilla DIRAC is always last
+  # It's not correct but it's less incorrect than ComponentInstaller.getExtensions
+  return sorted(extensions, key=lambda x: (x == "DIRAC", x))
+
+
+def _extensionsByPriorityPy3():
+  """Discover extensions using the setuptools metadata"""
   # This is Python 3 only, Python 2 installations should never try to use this
   from importlib import metadata
 
@@ -148,22 +182,11 @@ def _findSystems(module):
       yield PathFinder.find_spec(name, path=module.__path__)
 
 
-def _findObject(module, submoduleName, objectSuffix=""):
-  """TODO"""
-  for system in _findSystems(module):
-    agentModule = PathFinder.find_spec(submoduleName, path=system.submodule_search_locations)
-    if not agentModule:
-      continue
-    for _, name, _ in pkgutil.iter_modules(agentModule.submodule_search_locations):
-      if name.endswith(objectSuffix):
-        yield system, name
-
-
 def _findFile(module, submoduleName, pattern="*"):
   """TODO"""
   for system in _findSystems(module):
     try:
-      dbModule = importlib_resources.files(".".join([module.__name__, system.name, "DB"]))
+      dbModule = importlib_resources.files(".".join([module.__name__, system.name, submoduleName]))
     except ImportError:
       continue
     for file in dbModule.iterdir():
@@ -177,10 +200,7 @@ def parseArgs():
     subparsers = parser.add_subparsers(required=True, dest='function')
   else:
     subparsers = parser.add_subparsers()
-  if six.PY3:
-    defaultExtensions = extensionsByPriority()
-  else:
-    defaultExtensions = ["LHCbDIRAC", "DIRAC"]
+  defaultExtensions = extensionsByPriority()
   for func in [findSystems, findAgents, findExecutors, findServices, findDatabases]:
     subparser = subparsers.add_parser(func.__name__)
     subparser.add_argument("--extensions", nargs="+", default=defaultExtensions)
