@@ -103,8 +103,7 @@ def entrypointToExtension(entrypoint):
   """"Get the extension name from an EntryPoint object"""
   # In Python 3.9 this can be "entrypoint.module"
   module = entrypoint.pattern.match(entrypoint.value).groupdict()["module"]
-  extensionName = module.split(".")[0]
-  return extensionName
+  return module.split(".")[0]
 
 
 def extensionsByPriority():
@@ -128,7 +127,7 @@ def _extensionsByPriorityPy2():
 def _extensionsByPriorityPy3():
   """Discover extensions using the setuptools metadata"""
   # This is Python 3 only, Python 2 installations should never try to use this
-  from importlib import metadata
+  from importlib import metadata  # pylint: disable=no-name-in-module
 
   priorties = defaultdict(list)
   for entrypoint in set(metadata.entry_points()['dirac']):
@@ -152,7 +151,7 @@ def _extensionsByPriorityPy3():
 def getExtensionMetadata(extensionName):
   """Get the metadata for a given extension name"""
   # This is Python 3 only, Python 2 installations should never try to use this
-  from importlib import metadata
+  from importlib import metadata  # pylint: disable=no-name-in-module
 
   for entrypoint in metadata.entry_points()['dirac']:
     if extensionName == entrypointToExtension(entrypoint):

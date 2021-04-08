@@ -1,0 +1,2 @@
+config:
+  DIRAC_CI_SETUP_SCRIPT: DIRAC/tests/Jenkins/dirac_ci.sh

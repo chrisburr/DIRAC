@@ -55,9 +55,6 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-    volumes:
-      - ../../:/home/dirac/LocalRepo/TestCode/DIRAC
-      - ../../:/home/dirac/LocalRepo/ALTERNATIVE_MODULES/DIRAC
 
   dirac-client:
     image: ${CI_REGISTRY_IMAGE}/${HOST_OS}-dirac
@@ -66,6 +63,3 @@ services:
     user: "${DIRAC_UID}:${DIRAC_GID}"
     depends_on:
       - dirac-server
-    volumes:
-      - ../../:/home/dirac/LocalRepo/TestCode/DIRAC
-      - ../../:/home/dirac/LocalRepo/ALTERNATIVE_MODULES/DIRAC

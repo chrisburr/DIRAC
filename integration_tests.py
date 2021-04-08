@@ -2,17 +2,20 @@
 import fnmatch
 import io
 import os
-import pathlib
+from pathlib import Path
 import re
 import shlex
 import subprocess
 import sys
 import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 from typing import Optional
 
 import git
 import typer
+import yaml
 from packaging.version import Version
 from typer import colors as c
 
@@ -27,6 +30,9 @@ FEATURE_VARIABLES = {
     "DIRAC_USE_NEWTHREADPOOL": None,
     "USE_PYTHON3": None,
 }
+DEFAULT_MODULES = {
+    "DIRAC": Path(__file__).parent.absolute(),
+}
 
 # Static configuration
 DB_USER = "Dirac"
@@ -35,7 +41,6 @@ DB_ROOTUSER = "root"
 DB_ROOTPWD = "password"
 DB_HOST = "mysql"
 DB_PORT = "3306"
-DOCKER_COMPOSE_FILE = pathlib.Path(__file__).parent / "tests/CI/docker-compose.yml"
 
 # Implementation details
 LOG_LEVEL_MAP = {
@@ -94,11 +99,14 @@ After restarting your terminal you command completion is available using:
 @app.command()
 def create(
     flags: Optional[list[str]] = typer.Argument(None),
+    editable: Optional[bool] = None,
+    extra_modules: Optional[list[str]] = None,
+    release_var: Optional[str] = None,
     run_server_tests: bool = True,
     run_client_tests: bool = True,
 ):
     """Start a local instance of the integration tests"""
-    prepare_environment(flags)
+    prepare_environment(flags, editable, extra_modules, release_var)
     install_server()
     install_client()
     if run_server_tests:
@@ -111,28 +119,33 @@ def create(
 def destroy():
     """Destroy a local instance of the integration tests"""
     typer.secho("Shutting down and removing containers", err=True, fg=c.GREEN)
-    os.execvpe(
-        "docker-compose",
-        ["docker-compose", "-f", DOCKER_COMPOSE_FILE, "down", "-t", "0"],
-        _make_env({}),
-    )
+    with _gen_docker_compose(DEFAULT_MODULES) as docker_compose_fn:
+        os.execvpe(
+            "docker-compose",
+            ["docker-compose", "-f", docker_compose_fn, "down", "-t", "0"],
+            _make_env({}),
+        )
 
 
 @app.command()
 def prepare_environment(
     flags: Optional[list[str]] = typer.Argument(None),
     editable: Optional[bool] = None,
+    extra_modules: Optional[list[str]] = None,
+    release_var: Optional[str] = None,
 ):
     _check_containers_running(is_up=False)
-
     if editable is None:
         editable = sys.stdout.isatty()
         typer.secho(
             f"No value passed for --[no-]editable, automatically detected: {editable}",
             fg=c.YELLOW,
         )
-
     typer.echo(f"Preparing environment")
+
+    modules = DEFAULT_MODULES | dict(f.split("=", 1) for f in extra_modules)
+    modules = {k: Path(v).absolute() for k, v in modules.items()}
+
     flags = dict(f.split("=", 1) for f in flags)
     docker_compose_env = _make_env(flags)
     server_flags = {}
@@ -145,19 +158,20 @@ def prepare_environment(
         else:
             server_flags[key] = value
             client_flags[key] = value
-    server_config = _make_config(server_flags, editable)
-    client_config = _make_config(client_flags, editable)
+    server_config = _make_config(modules, server_flags, release_var, editable)
+    client_config = _make_config(modules, client_flags, release_var, editable)
     typer.secho("## Server config is:", fg=c.BRIGHT_WHITE, bg=c.BLACK)
     typer.secho(server_config)
     typer.secho("## Client config is:", fg=c.BRIGHT_WHITE, bg=c.BLACK)
     typer.secho(client_config)
 
     typer.secho("Running docker-compose to create contianers", fg=c.GREEN)
-    subprocess.run(
-        ["docker-compose", "-f", DOCKER_COMPOSE_FILE, "up", "-d"],
-        check=True,
-        env=docker_compose_env,
-    )
+    with _gen_docker_compose(modules) as docker_compose_fn:
+        subprocess.run(
+            ["docker-compose", "-f", docker_compose_fn, "up", "-d"],
+            check=True,
+            env=docker_compose_env,
+        )
 
     typer.secho("Creating users in server and client containers", fg=c.GREEN)
     for container_name in ["server", "client"]:
@@ -185,10 +199,18 @@ def prepare_environment(
 
     typer.secho("Creating MySQL user", fg=c.GREEN)
     cmd = ["docker", "exec", "mysql", "mysql", f"--password={DB_ROOTPWD}", "-e"]
-    subprocess.run(
-        cmd + [f"CREATE USER '{DB_USER}'@'%' IDENTIFIED BY '{DB_PASSWORD}';"],
-        check=True,
-    )
+    # It sometimes takes a while for MySQL to be ready so wait for a while if needed
+    for _ in range(10):
+        ret = subprocess.run(
+            cmd + [f"CREATE USER '{DB_USER}'@'%' IDENTIFIED BY '{DB_PASSWORD}';"],
+            check=False,
+        )
+        if ret.returncode != 0:
+            typer.secho("Failed to connect to MySQL, will retry in 10 seconds", fg=c.YELLOW)
+            time.sleep(10)
+        break
+    else:
+        raise Exception(ret)
     subprocess.run(
         cmd + [f"CREATE USER '{DB_USER}'@'localhost' IDENTIFIED BY '{DB_PASSWORD}';"],
         check=True,
@@ -201,7 +223,7 @@ def prepare_environment(
     typer.secho("Copying files to containers", fg=c.GREEN)
     for name, config in [("server", server_config), ("client", client_config)]:
         with tempfile.TemporaryDirectory() as tmpdir:
-            path = pathlib.Path(tmpdir) / "CONFIG"
+            path = Path(tmpdir) / "CONFIG"
             path.write_text(config)
             subprocess.run(
                 ["docker", "cp", str(path), f"{name}:/home/dirac"],
@@ -385,17 +407,42 @@ def logs(pattern: str = "*", lines: int = 10, follow: bool = True):
             pool.submit(_log_popen_stdout, p)
 
 
+@contextmanager
+def _gen_docker_compose(modules):
+    input_fn = Path(__file__).parent / "tests/CI/docker-compose.yml"
+    docker_compose = yaml.safe_load(input_fn.read_text())
+    volumes = [
+        f"{path}:/home/dirac/LocalRepo/ALTERNATIVE_MODULES/{name}"
+        for name, path in modules.items()
+    ]
+    volumes += [
+        f"{path}:/home/dirac/LocalRepo/TestCode/{name}"
+        for name, path in modules.items()
+    ]
+    # Copies are needed
+    docker_compose["services"]["dirac-server"]["volumes"] = volumes[:]
+    docker_compose["services"]["dirac-client"]["volumes"] = volumes[:]
+    with tempfile.TemporaryDirectory() as tmpdir:
+        prefix = "ci"
+        output_fn = Path(tmpdir) / prefix / "docker-compose.yml"
+        output_fn.parent.mkdir()
+        output_fn.write_text(yaml.safe_dump(docker_compose, sort_keys=False))
+        yield output_fn
+
+
 def _check_containers_running(*, is_up=True):
-    running_containers = subprocess.run(
-        ["docker-compose", "-f", DOCKER_COMPOSE_FILE, "ps", "-q", "-a"],
-        stdout=subprocess.PIPE,
-        check=True,
-        text=True,
-    ).stdout.split("\n")
+    with _gen_docker_compose(DEFAULT_MODULES) as docker_compose_fn:
+        running_containers = subprocess.run(
+            ["docker-compose", "-f", docker_compose_fn, "ps", "-q", "-a"],
+            stdout=subprocess.PIPE,
+            check=True,
+            text=True,
+        ).stdout.split("\n")
     if is_up:
         if not any(running_containers):
             typer.secho(
                 f"No running containers found, environment must be prepared first!",
+                err=True,
                 fg=c.RED,
             )
             raise typer.Exit(code=1)
@@ -403,6 +450,7 @@ def _check_containers_running(*, is_up=True):
         if any(running_containers):
             typer.secho(
                 f"Running instance already found, it must be destroyed first!",
+                err=True,
                 fg=c.RED,
             )
             raise typer.Exit(code=1)
@@ -424,14 +472,14 @@ def _find_dirac_release_and_branch():
     try:
         upstream = repo.remote("upstream")
     except ValueError:
-        typer.secho("No upstream remote found, adding", fg=c.YELLOW)
+        typer.secho("No upstream remote found, adding", err=True, fg=c.YELLOW )
         upstream = repo.create_remote(
             "upstream", "https://github.com/DIRACGrid/DIRAC.git"
         )
     try:
         upstream.fetch()
     except Exception:
-        typer.secho("Failed to fetch from remote 'upstream'", fg=c.YELLOW)
+        typer.secho("Failed to fetch from remote 'upstream'", err=True, fg=c.YELLOW)
     # Find the most recent tag on the current branch
     version = Version(
         repo.git.describe(
@@ -449,6 +497,7 @@ def _find_dirac_release_and_branch():
     except IndexError:
         typer.secho(
             f"Failed to find branch for {version_branch}, defaulting to integration",
+            err=True,
             fg=c.YELLOW,
         )
         return "integration", ""
@@ -484,7 +533,7 @@ def _dict_to_shell(variables):
     return "\n".join(lines)
 
 
-def _make_config(flags, editable):
+def _make_config(modules, flags, release_var, editable):
     config = {
         "DEBUG": "True",
         # MYSQL Settings
@@ -500,32 +549,43 @@ def _make_config(flags, editable):
         # Hostnames
         "SERVER_HOST": "server",
         "CLIENT_HOST": "client",
-        # repository to get tests and install scripts from
-        "TESTBRANCH": "ci",
-        "DIRAC_CI_SETUP_SCRIPT": "/home/dirac/LocalRepo/TestCode/DIRAC/tests/Jenkins/dirac_ci.sh",
         # Test specific variables
         "WORKSPACE": "/home/dirac",
     }
-    config["DIRAC_RELEASE"], config["DIRACBRANCH"] = _find_dirac_release_and_branch()
+
     if editable:
         config["PIP_INSTALL_EXTRA_ARGS"] = "-e"
 
+    for module_name, module_path in modules.items():
+        module_ci_config_path = module_path / "tests/.dirac-ci-config.yaml"
+        if not module_ci_config_path.exists():
+            continue
+        module_ci_config = yaml.safe_load(module_ci_config_path.read_text())
+        config |= module_ci_config["config"]
+    config["DIRAC_CI_SETUP_SCRIPT"] = "/home/dirac/LocalRepo/TestCode/" + config["DIRAC_CI_SETUP_SCRIPT"]
+
+    # This can likely be removed after the Python 3 migration
+    if release_var:
+        config |= dict([release_var.split("=", 1)])
+    else:
+        config["DIRAC_RELEASE"], config["DIRACBRANCH"] = _find_dirac_release_and_branch()
+
     for key, default_value in FEATURE_VARIABLES.items():
         config[key] = flags.pop(key, default_value)
-    config["TESTREPO"] = ["/home/dirac/LocalRepo/TestCode/DIRAC"]
-    config["INSTALLOPTIONS"] = []
-    if config["USE_PYTHON3"]:
+    config["TESTREPO"] = [
+        f"/home/dirac/LocalRepo/TestCode/{name}" for name in modules
+    ]
+    config["ALTERNATIVE_MODULES"] = [
+        f"/home/dirac/LocalRepo/ALTERNATIVE_MODULES/{name}" for name in modules
+    ]
+    if not config["USE_PYTHON3"]:
         config["ALTERNATIVE_MODULES"] = [
-            "/home/dirac/LocalRepo/ALTERNATIVE_MODULES/DIRAC"
-        ]
-    else:
-        config["ALTERNATIVE_MODULES"] = [
-            "/home/dirac/LocalRepo/ALTERNATIVE_MODULES/DIRAC/src/DIRAC"
+            f"{x}/src/{Path(x).name}" for x in config["ALTERNATIVE_MODULES"]
         ]
 
     # Exit with an error if there are unused feature flags remaining
     if flags:
-        typer.secho(f"Unrecognised feature flags {flags!r}", fg=c.RED)
+        typer.secho(f"Unrecognised feature flags {flags!r}", err=True, fg=c.RED)
         raise typer.Exit(code=1)
 
     return _dict_to_shell(config)
@@ -558,9 +618,14 @@ def _list_services():
     cmd += [
         "bash",
         "-c",
-        'cd ServerInstallDIR/diracos/runit/; for fn in */*/log/current; do echo "$(dirname "$(dirname "$fn")")"; done',
+        'cd ServerInstallDIR/diracos/runit/ && for fn in */*/log/current; do echo "$(dirname "$(dirname "$fn")")"; done',
     ]
-    ret = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, text=True)
+    ret = subprocess.run(cmd, check=False, stdout=subprocess.PIPE, text=True)
+    if ret.returncode:
+        typer.secho("Failed to find list of available services", err=True, fg=c.RED)
+        typer.secho(f"stdout was: {ret.stdout!r}", err=True)
+        typer.secho(f"stderr was: {ret.stderr!r}", err=True)
+        raise typer.Exit(1)
     return ret.stdout.split()
 
 
