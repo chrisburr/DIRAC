@@ -153,6 +153,7 @@ installSite() {
 
   echo "==> Done installing, now configuring"
   source "${SERVERINSTALLDIR}/bashrc"
+  pip install importlib_resources
   if ! dirac-configure --cfg "${SERVERINSTALLDIR}/install.cfg" "${DEBUG}"; then
     echo "ERROR: dirac-configure failed" >&2
     exit 1
