@@ -183,18 +183,14 @@ check-copyright:
 # Integration tests
 integration_tests:
   stage: test
+  image: registry.cern.ch/docker.io/library/alpine:edge
   tags:
     - docker-privileged-xl
-  image: diracgrid/docker-compose-dirac:latest
   services:
     - docker:19.03.1-dind
   variables:
-    # As of GitLab 12.5, privileged runners at CERN mount a /certs/client docker volume that enables use of TLS to
-    # communicate with the docker daemon. This avoids a warning about the docker service possibly not starting
-    # successfully.
-    # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
-    DOCKER_TLS_CERTDIR: "/certs"
-    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375/
   rules:
     # Using rules causes "Pipelines for Merge Requests" to be triggered, so disable them explicitly
     # https://docs.gitlab.com/ee/ci/merge_request_pipelines/
@@ -203,6 +199,19 @@ integration_tests:
     - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: false
   before_script:
+    # Install dependencies
+    - apk add docker py3-pip python3 bash git docker-compose jq
+    - pip3 install typer pyyaml gitpython diraccfg
+    # Clone DIRAC
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
+    - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
+    - echo "lhcbdiracTag=${lhcbdiracTag}"
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    - diracTAG=rel-$(echo ${diracTAG} | cut -d 'p' -f 1)
+    - echo "diracTAG=${diracTAG}"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
+    - cd ../DIRAC
+    # Login to the GitLab container registry for access to Oracle
     - |
       if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD:-}" ]]; then
         echo -e '\033[1m\033[31mError LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD variable is not defined!!!\033[0m';
@@ -212,73 +221,9 @@ integration_tests:
         echo -e ' > https://docs.gitlab.com/ee/ci/variables/#via-the-ui';
         exit 67;
       fi
-    # Login to GitLab
-    - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
-    # Add some dependencies
-    - apk add jq python2 python3
-    - pip3 install diraccfg
-    # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    # Needs to use Python 2 as it hasn't been installed so setuptools_scm doesn't find a version
-    - curl -O -L https://diracos.web.cern.ch/diracos/bootstrap/get-pip.py
-    - python2 get-pip.py pip==20.2.4
-    - python2 -m pip install six
-    - LHCBDIRAC_RELEASE=$(cd src && python2 -c "from LHCbDIRAC import version; print(version)")
-    - export LHCBDIRAC_RELEASE
-    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
-    - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
-    - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
-    # Get DIRAC
-    # - git clone https://github.com/DIRACGrid/DIRAC.git -b "$diracRef"
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b rel-v7r2
-    # Environment
-    - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
-    - export DIRACOSVER=LHCb:master
-    - export DIRACBRANCH=${LHCBDIRAC_RELEASE}
-    - export CI_REGISTRY_IMAGE=diracgrid
-    # ALTERNATIVE_MODULES
-    - declare -a ALTERNATIVE_MODULES
-    - ALTERNATIVE_MODULES+=("$PWD/LHCbDIRAC/src/LHCbDIRAC")
-    - ALTERNATIVE_MODULES+=("$PWD/DIRAC/src/DIRAC")
-    # TESTREPO
-    - declare -a TESTREPO
-    - TESTREPO+=("$PWD/LHCbDIRAC")
-    - TESTREPO+=("$PWD/DIRAC")
-    # EXTRA_ENVIRONMENT_CONFIG
-    - declare -a EXTRA_ENVIRONMENT_CONFIG
-    - EXTRA_ENVIRONMENT_CONFIG+=("export LHCBDIRAC_RELEASE=${LHCBDIRAC_RELEASE}")
-    # INSTALLOPTIONS
-    - declare -a INSTALLOPTIONS
-    - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
-    # Start the bookkeeping database container
-    - |
-      docker run --rm --detach --name bkdb \
-        -p 1521:1521 \
-        -e ORACLE_SID=bkdbsid \
-        -e ORACLE_PDB=bkdbpdb \
-        -e ORACLE_PWD=bkdbpass \
-        -e ORACLE_CHARACTERSET=AL32UTF8 \
-        -v $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME:/repo \
-        gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database-snapshots:19.3.0-ee
+    - echo "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}" | docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch
   script:
-    - source DIRAC/tests/CI/run_docker_setup.sh
-    - prepareEnvironment
-    # Install oracle client (will only work inside the CERN network!)
-    - docker exec -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
-    - docker exec -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
-    # Finish configuring the bokkeeping database
-    - docker network connect ci_default bkdb
-    - |
-      while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do
-        echo "Waiting for bookkeeping database to be ready... $(docker logs bkdb | grep 'complete' | tail -n 1)";
-        sleep 15;
-      done
-    - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh
-    # Carry on with the CI as normal
-    - installServer
-    - installClient
-    - testServer
-    - testClient
-    - checkErrors
+    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
 
 ### coverage stage ###
 
