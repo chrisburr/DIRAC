@@ -12,11 +12,12 @@ import unittest
 import sys
 import datetime
 import time
+import os
 
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.ElasticSearchDB import ElasticSearchDB
 
-elHost = 'localhost'
+elHost = os.environ.get("NoSQLDB_HOST", 'localhost')
 elPort = 9200
 
 
@@ -182,9 +183,9 @@ class ElasticTestChain(ElasticTestCase):
     result = self.elasticSearchDB.getDocTypes(self.index_name)
     self.assertTrue(result)
     if '_doc' in result['Value']:
-      self.assertEqual(list(result['Value']['_doc']['properties']), [u'Color', u'timestamp', u'Product', u'quantity'])
+      self.assertEqual(set(result['Value']['_doc']['properties']), {u'Color', u'timestamp', u'Product', u'quantity'})
     else:
-      self.assertEqual(list(result['Value']['properties']), [u'Color', u'timestamp', u'Product', u'quantity'])
+      self.assertEqual(set(result['Value']['properties']), {u'Color', u'timestamp', u'Product', u'quantity'})
 
   def test_existingIndex(self):
     result = self.elasticSearchDB.existingIndex(self.index_name)
