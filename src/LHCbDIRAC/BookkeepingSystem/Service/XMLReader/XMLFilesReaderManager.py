@@ -66,7 +66,7 @@ class XMLFilesReaderManager(object):
         doc = parse(stream)
 
       docType = doc.doctype  # job or replica
-      xmltype = docType.name.encode('ascii')  # pylint: disable=no-member
+      xmltype = docType.name
     except NameError as ex:
       gLogger.error("XML reading error", filename)
       return S_ERROR(ex)
@@ -80,7 +80,7 @@ class XMLFilesReaderManager(object):
       doc = parseString(xmlString)
 
       docType = doc.doctype  # job or replica
-      xmltype = docType.name.encode('ascii')  # pylint: disable=no-member
+      xmltype = docType.name
 
       if xmltype == 'Replicas':
         replica = self.replicaReader_.readReplica(doc, "IN Memory")

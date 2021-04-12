@@ -1349,7 +1349,6 @@ class LHCbBookkeepingManager(BaseESManager):
 
     If invalid path returns null
     """
-    path = path.encode('ascii')
     path = path.strip(INTERNAL_PATH_SEPARATOR + " ")
     paths = path.split(self.getPathSeparator())
     return paths
