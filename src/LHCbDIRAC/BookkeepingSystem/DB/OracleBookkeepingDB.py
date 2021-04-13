@@ -4237,13 +4237,9 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = "select id from processing where name='%s'" % (name)
     retVal = self.dbR_.query(command)
-    if retVal['OK']:
-      result = []
-      for i in retVal['Value']:
-        result += [i[0]]
-      return S_OK(result)
-    else:
+    if not retVal['OK']:
       return retVal
+    return S_OK([i[0] for i in retVal['Value']])
 
   #############################################################################
   def __getprocessingid(self, processingpassid):
@@ -4341,22 +4337,21 @@ and files.qualityid= dataquality.qualityid" % lfn
     stepids = []
     if not retVal['OK']:
       return retVal
+
+    ids = retVal['Value']
+    if len(ids) == 0:
+      newpath = list(path)
+      self.__insertprocessing(newpath, None, stepids)
+      return S_OK(stepids[-1:])
     else:
-      ids = retVal['Value']
-      if len(ids) == 0:
-        newpath = list(path)
-        self.__insertprocessing(newpath, None, stepids)
-        return S_OK(stepids[-1:])
-      else:
-        for i in ids:
-          procs = self.__getprocessingid(i)
-          if len(procs) > 0:
-            if self.__checkprocessingpass(path, procs):
-              return S_OK()
-        newpath = list(path)
-        self.__insertprocessing(newpath, None, stepids)
-        return S_OK(stepids[-1:])
-    return S_ERROR()
+      for i in ids:
+	procs = self.__getprocessingid(i)
+	if len(procs) > 0:
+	  if self.__checkprocessingpass(path, procs):
+	    return S_OK()
+      newpath = list(path)
+      self.__insertprocessing(newpath, None, stepids)
+      return S_OK(stepids[-1:])
 
   #############################################################################
   def insertproductionscontainer(self, prod, processingid, simid, daqperiodid, configName, configVersion):
@@ -4396,8 +4391,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param int production: production number
     """
     command = ' select count(*) from productionscontainer where production=' + str(production)
-    res = self.dbR_.query(command)
-    return res
+    return self.dbR_.query(command)
 
   #############################################################################
   def addProduction(self, production, simcond=None, daq=None, steps=default,
@@ -4540,15 +4534,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     command = ' select e.eventtypeid, e.description \
     from  %s where %s group by e.eventtypeid, e.description' % (tables, condition)
     retVal = self.dbR_.query(command)
-    records = []
-    if retVal['OK']:
-      parameters = ['EventType', 'Description']
-      for record in retVal['Value']:
-        records += [list(record)]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['EventType', 'Description'], 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   def getProcessingPassSteps(self, procpass=default, cond=default, stepname=default):
@@ -4726,16 +4716,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param list lfns: list of lfns
     :return: the format of an lfn
     """
-    result = None
     retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.bulkgetTypeVesrsion', [], True, lfns)
-    if retVal['OK']:
-      values = {}
-      for i in retVal['Value']:
-        values[i[0]] = i[1]
-      result = S_OK(values)
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+    values = {}
+    for i in retVal['Value']:
+      values[i[0]] = i[1]
+    return S_OK(values)
 
   #############################################################################
   def insertRuntimeProject(self, projectid, runtimeprojectid):
@@ -4744,9 +4731,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long projectid: run time project stepid
     :param long runtimeprojectid: reference to other step
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRuntimeProject',
-                                              [projectid, runtimeprojectid], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRuntimeProject',
+					    [projectid, runtimeprojectid], False)
 
   #############################################################################
   def updateRuntimeProject(self, projectid, runtimeprojectid):
@@ -4755,17 +4741,15 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long projectid: run time project stepid
     :param long runtimeprojectid: new run time project stepid (new reference to a stepid)
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateRuntimeProject',
-                                              [projectid, runtimeprojectid], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateRuntimeProject',
+					    [projectid, runtimeprojectid], False)
 
   def removeRuntimeProject(self, stepid):
     """removes the runtime project.
 
     :param long stepid: step id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.removeRuntimeProject', [stepid], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.removeRuntimeProject', [stepid], False)
 
   #############################################################################
   def getTCKs(self, configName, configVersion,
@@ -5022,13 +5006,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str guid: file GUID
     :return: the file for a given GUID
     """
-    result = S_ERROR()
-    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', str, [guid])
-    if retVal['OK']:
-      result = S_OK(retVal['Value'])
-    else:
-      result = retVal
-    return result
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', str, [guid])
 
   #############################################################################
   def getRunsGroupedByDataTaking(self):

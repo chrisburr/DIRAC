@@ -2074,9 +2074,7 @@ class BookkeepingManagerHandler(RequestHandler):
                                quality,
                                runnb)
     if retVal['OK']:
-      records = []
-      for record in retVal['Value']:
-        records += [record[0]]
+      records = [record[0] for record in retVal['Value']]
       result = S_OK(records)
     else:
       result = retVal
