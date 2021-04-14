@@ -87,7 +87,7 @@ class BookkeepingReport(ModuleBase):
 
       if saveOnFile:
         bfilename = 'bookkeeping_' + self.step_id + '.xml'
-        with open(bfilename, 'w') as bfile:
+        with open(bfilename, 'wb') as bfile:
           bfile.write(doc)
       else:
         print(doc)
