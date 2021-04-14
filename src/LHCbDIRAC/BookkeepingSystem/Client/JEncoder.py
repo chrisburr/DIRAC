@@ -61,4 +61,4 @@ def loads(obj):
 
 
 def load(fd):
-  return json.load(fd, cls=JSONDateTimeDecoder, encoding='utf-8')
+  return json.load(fd, cls=JSONDateTimeDecoder)
