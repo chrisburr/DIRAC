@@ -41,6 +41,7 @@ pip-log.txt
 
 #VSCode
 .vscode
+.env
 
 # Vim
 .*.sw[a-z]
