@@ -547,7 +547,7 @@ def executeAccessURL(dmScript):
         # so prettify it
         metalinkEltStr = ET.tostring(metalinkElement, 'utf-8')
         prettyXML = minidom.parseString(metalinkEltStr).toprettyxml(indent="  ", encoding='UTF-8')
-        with open(fileName + '.meta4', 'wt') as f:
+        with open(fileName + '.meta4', 'wb') as f:
           f.write(prettyXML)
 
     return printDMResult(results, empty="File not at SE", script="dirac-dms-lfn-accessURL")
