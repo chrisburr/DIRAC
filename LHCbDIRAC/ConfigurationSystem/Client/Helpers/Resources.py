@@ -12,7 +12,6 @@
 import json
 
 import LbPlatformUtils
-from six.moves import xmlrpc_client
 
 from DIRAC import S_OK, S_ERROR, gLogger
 import DIRAC.ConfigurationSystem.Client.Helpers.Resources
@@ -22,12 +21,16 @@ try:
 except NameError:
   FileNotFoundError = IOError
 
+try:
+  from json import JSONDecodeError
+except ImportError:
+  JSONDecodeError = ValueError
+
 getQueues = DIRAC.ConfigurationSystem.Client.Helpers.Resources.getQueues
 getDIRACPlatforms = DIRAC.ConfigurationSystem.Client.Helpers.Resources.getDIRACPlatforms
 getCompatiblePlatforms = DIRAC.ConfigurationSystem.Client.Helpers.Resources.getCompatiblePlatforms
 
-DEFAULT_XMLRPCURL = "https://lbsoftdb.cern.ch/read/"
-DEFAULT_FALLBACKCACHEPATH = '/cvmfs/lhcb.cern.ch/lib/var/lib/softmetadata/project-platforms.json'
+DEFAULT_CACHEPATH = '/cvmfs/lhcb.cern.ch/lib/var/lib/softmetadata/project-platforms.json'
 
 
 def getDIRACPlatform(platform):
@@ -113,7 +116,7 @@ def _findBinaryTags(wf):
       continue
 
     platforms = _listPlatforms(applicationName.value, applicationVersion.value,
-                               DEFAULT_XMLRPCURL, DEFAULT_FALLBACKCACHEPATH)
+                               DEFAULT_CACHEPATH)
 
     if platforms:
       binaryTags.add(frozenset(platforms))
@@ -121,7 +124,7 @@ def _findBinaryTags(wf):
   return binaryTags
 
 
-def _listPlatforms(applicationName, applicationVersion, xmlrpcUrl, fallbackPath):
+def _listPlatforms(applicationName, applicationVersion, cachePath):
   """ developer function
       :returns: set of binary tags found for a given application and version
   """
@@ -129,27 +132,16 @@ def _listPlatforms(applicationName, applicationVersion, xmlrpcUrl, fallbackPath)
   applicationVersion = applicationVersion.lower()
   platforms = None
 
-  proxy = xmlrpc_client.ServerProxy(xmlrpcUrl, allow_none=True)
   try:
-    platforms = proxy.listPlatforms(applicationName, applicationVersion)
-  except xmlrpc_client.Fault as e:
-    gLogger.error("Failed to find platform in SoftConfDB for", "%s/%s %s" %
-                  (applicationName, applicationVersion, e))
-  except Exception as e:
-    gLogger.error("Unknown exception when querying SoftConfDB", repr(e))
-
-  # If the XML RPC endpoint is down, try to use the cache on CVMFS
-  if platforms is None:
+    with open(cachePath, 'rt') as fp:
+      projectsMetadata = json.load(fp)
+  except (FileNotFoundError, JSONDecodeError):
+    gLogger.error("SoftConfDB JSON cache not found in", cachePath)
+  else:
     try:
-      with open(fallbackPath, 'rt') as fp:
-        fallbackCache = json.load(fp)
-    except FileNotFoundError:
-      gLogger.error("SoftConfDB JSON cache not found in", fallbackPath)
-    else:
-      try:
-        platforms = fallbackCache[applicationName][applicationVersion]
-      except KeyError as e:
-        gLogger.error("Failed to find platform in cache for", "%s/%s in %s (%s)" %
-                      (applicationName, applicationVersion, fallbackPath, e))
+      platforms = projectsMetadata[applicationName][applicationVersion]
+    except KeyError as e:
+      gLogger.error("Failed to find platform in cache for", "%s/%s in %s (%s)" %
+                    (applicationName, applicationVersion, cachePath, e))
 
   return platforms
