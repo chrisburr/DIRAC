@@ -16,6 +16,7 @@ import re
 import six
 
 from DIRAC import S_OK, gLogger
+from DIRAC.Core.Utilities.Adler import compareAdler
 from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Resources.Storage.StorageElement import StorageElement
@@ -287,8 +288,8 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
         if lfn in catalogMetadata:
           if (metadata['Size'] != catalogMetadata[lfn]['Size']) and (metadata['Size'] != 0):
             sizeMismatch.append((lfn, 'deprecatedUrl', se, 'CatalogPFNSizeMismatch'))
-          if metadata['Checksum'] != catalogMetadata[lfn]['Checksum']:
-            if metadata['Checksum'].replace('x', '0') == catalogMetadata[lfn]['Checksum'].replace('x', '0'):
+          if not compareAdler(metadata['Checksum'], catalogMetadata[lfn]['Checksum']):
+            if compareAdler(metadata['Checksum'].replace('x', '0'), catalogMetadata[lfn]['Checksum'].replace('x', '0')):
               checksumBadInFC.append(
                   (lfn, 'deprecatedUrl', se, "%s %s" %
                    (metadata['Checksum'], catalogMetadata[lfn]['Checksum'])))
