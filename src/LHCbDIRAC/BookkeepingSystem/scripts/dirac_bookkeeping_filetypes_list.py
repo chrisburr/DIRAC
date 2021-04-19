@@ -33,7 +33,6 @@ def main():
   bk = BookkeepingClient()
   exitCode = 0
 
-  mfiletypes = []
   res = bk.getAvailableFileTypes()
 
   if res['OK']:

@@ -31,9 +31,6 @@ def main():
       'Usage:',
       '  %s [option|cfgfile] ...' % Script.scriptName]))
   Script.parseCommandLine(ignoreErrors=True)
-  args = Script.getPositionalArgs()
-
-  exitCode = 0
 
   from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
   bk = BookkeepingClient()
