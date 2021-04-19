@@ -95,7 +95,6 @@ class OracleBookkeepingDB(object):
         condition += " and s.isMulticore='%s'" % (isMulticore)
       else:
         return S_ERROR('isMulticore is not Y or N!')
-    result = S_ERROR()
     if in_dict:
       infiletypes = in_dict.get('InputFileTypes', default)
       outfiletypes = in_dict.get('OutputFileTypes', default)
@@ -138,7 +137,7 @@ class OracleBookkeepingDB(object):
         if isinstance(stepId, (six.string_types + six.integer_types)):
           condition += ' and s.stepid= %s' % (str(stepId))
         elif isinstance(stepId, (list, tuple)):
-          condition += 'and s.stepid in (%s)' % ",".join([str(sid) for sid in stepId])
+	  condition += 'and s.stepid in (%s)' % ",".join(str(sid) for sid in stepId)
         else:
           return S_ERROR("Wrong StepId")
 
@@ -295,7 +294,7 @@ class OracleBookkeepingDB(object):
         elif isinstance(items, six.string_types):
           condition += ' s.%s %s' % (items, order)
         else:
-          result = S_ERROR('SortItems is not properly defined!')
+	  return S_ERROR('SortItems is not properly defined!')
       else:
         condition += ' order by s.inserttimestamps desc'
       if fileTypefilter:
@@ -365,39 +364,38 @@ class OracleBookkeepingDB(object):
       from %s where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid ' % (tables)
       retVal = self.dbR_.query(command)
 
-    if retVal['OK']:
-      parameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles', 'DDDB',
-                    'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag', 'OptionsFormat',
-                    'isMulticore', 'SystemConfig', 'mcTCK', 'RuntimeProjects']
-      rParameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles',
-                     'DDDB', 'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag',
-                     'OptionsFormat', 'isMulticore', 'SystemConfig', 'mcTCK']
-      records = []
-      for record in retVal['Value']:
-        step = list(record[0:16])
-        runtimeProject = []
-        runtimeProject = [rec for rec in list(record[16:]) if rec is not None]
-        if runtimeProject:
-          runtimeProject = [runtimeProject]
-        step += [{'ParameterNames': rParameters, 'Records': runtimeProject, 'TotalRecords': len(runtimeProject) + 1}]
-        records += [step]
-      if paging:
-        if fileTypefilter:
-          command = "select count(*) from %s where s.stepid>0 %s " % (fileTypefilter, condition)
-        else:
-          command = "select count(*) from steps s where s.stepid>0 %s " % (condition)
+    if not retVal['OK']:
+      return retVal
 
-        retVal = self.dbR_.query(command)
-        if retVal['OK']:
-          totrec = retVal['Value'][0][0]
-          result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': totrec})
-        else:
-          result = retVal
-      else:
-        result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+    parameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles', 'DDDB',
+		  'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag', 'OptionsFormat',
+		  'isMulticore', 'SystemConfig', 'mcTCK', 'RuntimeProjects']
+    rParameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles',
+		   'DDDB', 'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag',
+		   'OptionsFormat', 'isMulticore', 'SystemConfig', 'mcTCK']
+    records = []
+    for record in retVal['Value']:
+      step = list(record[0:16])
+      runtimeProject = []
+      runtimeProject = [rec for rec in list(record[16:]) if rec is not None]
+      if runtimeProject:
+	runtimeProject = [runtimeProject]
+      step += [{'ParameterNames': rParameters, 'Records': runtimeProject, 'TotalRecords': len(runtimeProject) + 1}]
+      records += [step]
+
+    if not paging:
+      return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+
+    if fileTypefilter:
+      command = "select count(*) from %s where s.stepid>0 %s " % (fileTypefilter, condition)
     else:
-      result = S_ERROR(retVal['Message'])
-    return result
+      command = "select count(*) from steps s where s.stepid>0 %s " % (condition)
+
+    retVal = self.dbR_.query(command)
+    if not retVal['OK']:
+      return retVal
+    totrec = retVal['Value'][0][0]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': totrec})
 
   #############################################################################
   def getRuntimeProjects(self, in_dict):
@@ -663,10 +661,6 @@ class OracleBookkeepingDB(object):
 
   #############################################################################
 
-  @deprecated("Use deleteStepContainer")
-  def deleteSetpContiner(self, prod):
-    return self.deleteStepContainer(prod)
-
   def deleteStepContainer(self, prod):
     """delete a production from the step container.
 
@@ -676,10 +670,6 @@ class OracleBookkeepingDB(object):
     return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteStepContainer', [prod], False)
 
   #############################################################################
-
-  @deprecated("Use deleteProductionsContainer")
-  def deleteProductionsContiner(self, prod):
-    return self.deleteProductionsContainer(prod)
 
   def deleteProductionsContainer(self, prod):
     """delete a production from the productions container.

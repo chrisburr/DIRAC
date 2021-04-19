@@ -32,7 +32,6 @@ import six
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.DISET.TransferClient import TransferClient
-from DIRAC.Core.Utilities.Decorators import deprecated
 
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
@@ -270,16 +269,6 @@ class BookkeepingClient(Client):
     return self._getRPC().setFilesVisible(lfns)
 
   #############################################################################
-  @deprecated("Use getFiles")
-  def getFilesWithGivenDataSets(self, in_dict):
-    """For retrieving list of files.
-
-    :param dict in_dict: contains a given conditions
-    :return: list of files
-    """
-    return self.getFiles(in_dict)
-
-  #############################################################################
   def getFileTypeVersion(self, lfns):
     """For retrieving the file type version.
 
@@ -405,10 +394,6 @@ class BookkeepingClient(Client):
     if lfns is None:
       lfns = []
     return self._getRPC().getProductionFilesStatus(productionid, lfns)
-
-  @deprecated("use getProductionInformation")
-  def getProductionInformations(self, prodID):
-    return self.getProductionInformation(prodID)
 
   def getProductionInformation(self, prodID):
     """ Get the production information.

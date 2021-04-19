@@ -20,7 +20,6 @@ from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceSection
 from DIRAC.ConfigurationSystem.Client.Helpers import cfgPath
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
-from DIRAC.Core.Utilities.Decorators import deprecated
 
 from LHCbDIRAC.BookkeepingSystem.DB.BookkeepingDatabaseClient import BookkeepingDatabaseClient
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
@@ -78,13 +77,6 @@ class BookkeepingManagerHandler(RequestHandler):
       cls.forceExecution = gConfig.getValue(cfgPath(bkkSection, 'ForceExecution'), False)
     gLogger.info("Email used to track queries: %s forceExecution" % cls.email, cls.forceExecution)
     return S_OK()
-  ###########################################################################
-  types_sendBookkeeping = [six.string_types, six.string_types]
-
-  @deprecated("Use sendXMLBookkeepingReport")
-  def export_sendBookkeeping(self, name, xml):
-    """more info in the BookkeepingClient.py."""
-    return self.export_sendXMLBookkeepingReport(xml)
 
   #############################################################################
   types_sendXMLBookkeepingReport = [six.string_types]
@@ -384,14 +376,6 @@ class BookkeepingManagerHandler(RequestHandler):
     evt = in_dict.get('EventType', in_dict.get('EventTypeId', default))
     return dataMGMT_.getProcessingPass(configName, configVersion, conddescription, runnb, prod, evt, path)
 
-  ############################################################################
-  types_getStandardProcessingPass = [dict, six.string_types]
-
-  @deprecated("use getProcessingPass")
-  def export_getStandardProcessingPass(self, in_dict, path):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProcessingPass(in_dict, path)
-
   #############################################################################
   types_getProductions = [dict]
 
@@ -466,14 +450,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return result
 
   #############################################################################
-  types_getStandardEventTypes = [dict]
-
-  @deprecated("Use getEventTypes")
-  def export_getStandardEventTypes(self, in_dict):
-    """more info in the BookkeepingClient.py."""
-    self.export_getEventTypes(in_dict)
-
-  #############################################################################
   def transfer_toClient(self, parameters, token, fileHelper):
     """This method used to transfer data using a file.
 
@@ -484,7 +460,7 @@ class BookkeepingManagerHandler(RequestHandler):
     iscPickleFormat = False
     try:
       in_dict = JEncoder.loads(parameters)
-    except Exception as _:
+    except Exception:
       iscPickleFormat = True
       self.log.exception("Failed to serialise data with JSON", parameters)
       in_dict = pickleOrJsonLoads(parameters)
@@ -938,14 +914,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK({'Successfull': successfull, 'Faild': faild})
 
   #############################################################################
-  types_setQuality = [list, six.string_types]
-
-  @deprecated("use setFileDataQuality")
-  def export_setQuality(self, lfns, flag):
-    """more info in the BookkeepingClient.py."""
-    return self.export_setFileDataQuality(lfns, flag)
-
-  #############################################################################
   types_setFileDataQuality = [list, six.string_types]
 
   @staticmethod
@@ -966,14 +934,6 @@ class BookkeepingManagerHandler(RequestHandler):
     processed by a given processing pass.
     """
     return dataMGMT_.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
-
-  #############################################################################
-  types_setRunQualityWithProcessing = [six.integer_types, six.string_types, six.string_types]
-
-  @deprecated("use setRunAndProcessingPassDataQuality")
-  def export_setRunQualityWithProcessing(self, runNB, procpass, flag):
-    """more info in the BookkeepingClient.py."""
-    return self.export_setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
   #############################################################################
   types_setRunDataQuality = [int, six.string_types]
@@ -1001,21 +961,6 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_setProductionDataQuality(prod, flag):
     """It sets the data quality for a given production!"""
     return dataMGMT_.setProductionDataQuality(prod, flag)
-
-  #############################################################################
-  types_setQualityProduction = [int, six.string_types]
-
-  @deprecated("Use setProductionDataQuality")
-  def export_setQualityProduction(self, prod, flag):
-    """more info in the BookkeepingClient.py."""
-    return self.export_setProductionDataQuality(prod, flag)
-
-  types_getLFNsByProduction = [int]
-
-  @deprecated("Use getProductionFiles")
-  def export_getLFNsByProduction(self, prod):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProductionFiles(prod, 'ALL', 'ALL')
 
   #############################################################################
   types_getFileAncestors = [list, int, bool]
@@ -1325,13 +1270,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
 
   #############################################################################
-  types_getProductionInformations = [six.integer_types]
-
-  @deprecated("Use getProductionInformation")
-  def export_getProductionInformations(self, prodid):
-    return self.export_getProductionInformation(prodid)
-
-  #############################################################################
   types_getProductionInformation = [six.integer_types]
 
   def export_getProductionInformation(self, prodid):
@@ -1539,14 +1477,6 @@ class BookkeepingManagerHandler(RequestHandler):
     return dataMGMT_.getRunsForAGivenPeriod(in_dict)
 
   #############################################################################
-  types_getProductiosWithAGivenRunAndProcessing = [dict]
-
-  @deprecated("Use getProductionsFromView")
-  def export_getProductiosWithAGivenRunAndProcessing(self, in_dict):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProductionsFromView(in_dict)
-
-  #############################################################################
   types_getProductionsFromView = [dict]
 
   @staticmethod
@@ -1558,14 +1488,6 @@ class BookkeepingManagerHandler(RequestHandler):
     """
     # FIXME: might be a useless method
     return dataMGMT_.getProductionsFromView(in_dict)
-
-  #############################################################################
-  types_getDataQualityForRuns = [list]
-
-  @deprecated("Use getRunFilesDataQuality")
-  def export_getDataQualityForRuns(self, runs):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getRunFilesDataQuality(runs)
 
   #############################################################################
   types_getRunFilesDataQuality = [list]
@@ -1590,14 +1512,6 @@ class BookkeepingManagerHandler(RequestHandler):
   def export_setFilesVisible(lfns):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.setFilesVisible(lfns)
-
-  #############################################################################
-  types_getRunFlag = [six.integer_types, six.integer_types]
-
-  @deprecated("Use getRunAndProcessingPassDataQuality")
-  def export_getRunFlag(self, runnb, processing):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getRunAndProcessingPassDataQuality(runnb, processing)
 
   #############################################################################
   types_getRunAndProcessingPassDataQuality = [six.integer_types, six.integer_types]
@@ -1633,15 +1547,6 @@ class BookkeepingManagerHandler(RequestHandler):
     if not lfns:
       lfns = []
     return dataMGMT_.getProductionFilesStatus(productionid, lfns)
-
-  #############################################################################
-  types_getFilesWithGivenDataSets = [dict]
-
-  @deprecated("Use getFiles")
-  def export_getFilesWithGivenDataSets(self, values):
-    """more info in the BookkeepingClient.py."""
-    gLogger.debug('getFiles dataset:', "%s" % values)
-    return self.export_getFiles(values)
 
   #############################################################################
   types_getFiles = [dict]
