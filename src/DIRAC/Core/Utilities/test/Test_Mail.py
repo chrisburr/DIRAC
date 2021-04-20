@@ -48,10 +48,10 @@ class MailEQ(MailTestCase):
   def test_compareEmails(self):
     """ test comparing of Email objects (also for insertion in sets)
     """
-    m1 = Mail()
-    m2 = Mail()
-    self.assertEqual(m1, m2, repr(m1.__dict__) + "\n" + repr(m2.__dict__))
-    # raise Exception(repr(m1.__dict__) + "\n" + repr(m2.__dict__))
+    for i in range(10_000_000):
+      m1 = Mail()
+      m2 = Mail()
+      self.assertEqual(m1, m2, repr(m1.__dict__) + "\n" + repr(m2.__dict__) + "\n" + str(i))
 
     m1 = Mail()
     m1._subject = 'subject'
