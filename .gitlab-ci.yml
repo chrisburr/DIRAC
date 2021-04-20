@@ -63,7 +63,7 @@ stages:
     - source DIRAC_VENV/bin/activate
      # last version supporting python 2
     - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
+    - pip install --upgrade 'pip<21' 'setuptools_scm<6'
     - pip install -r DIRAC/requirements.txt
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
