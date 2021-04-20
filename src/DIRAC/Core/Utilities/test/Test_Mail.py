@@ -7,7 +7,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from  DIRAC.Core.Utilities.Mail import Mail
+from DIRAC.Core.Utilities.Mail import Mail
 
 __RCSID__ = "$Id $"
 
@@ -33,13 +33,10 @@ def test_createEmail():
 
 
 def test_compareEmails(monkeypatch):
-  # The hostname on GitHub actions can change randomly so mock it
-  monkeypatch.setattr("socket.getfqdn", lambda: "localhost.example")
-
   for i in range(10_000_000):
     m1 = Mail()
     m2 = Mail()
-    assert m1 != m2, repr(m1.__dict__) + "\n" + repr(m2.__dict__) + "\n" + str(i)
+    assert m1 == m2, (m1.__dict__, m2.__dict__, i)
 
   m1 = Mail()
   m1._subject = 'subject'
