@@ -24,8 +24,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Fail-fast for outdated pipelines
-      run: .github/workflows/fail-fast.sh
+    # - name: Fail-fast for outdated pipelines
+    #   run: .github/workflows/fail-fast.sh
     - uses: conda-incubator/setup-miniconda@master
       with:
         environment-file: environment-py3.yml

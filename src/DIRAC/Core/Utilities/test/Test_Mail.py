@@ -51,7 +51,7 @@ class MailEQ(MailTestCase):
     m1 = Mail()
     m2 = Mail()
     self.assertEqual(m1, m2, repr(m1.__dict__) + "\n" + repr(m2.__dict__))
-    raise Exception(repr(m1.__dict__) + "\n" + repr(m2.__dict__))
+    # raise Exception(repr(m1.__dict__) + "\n" + repr(m2.__dict__))
 
     m1 = Mail()
     m1._subject = 'subject'
