@@ -53,5 +53,19 @@ else
   ln -s /opt/dirac/LHCbDIRAC_alt/LHCbDIRAC /opt/dirac/LHCbDIRAC
 fi
 
+# Lookup in the environment for variables starting with
+# DIRAC_CFG, sort them alphabeticaly, and add them to the
+# command line
+# Note 1: because ``sort``` works on line, we need the ``tr`` command
+# Note 2: using ``IFS``` instead of ``tr`` only work from bash 5
+# Note 3: the ``-V`` is to have a version sort (e.g. DIRAC_CFG_3 < DIRAC_CFG_10)
 
-exec dirac-service -ddd $DIRAC_COMPONENT
+ALL_CFG_FILES=""
+for cfgFile in $(sort -V <( tr -s ' ' '\n' <<< "${!DIRAC_CFG_@}" ));
+do
+  echo "Found configuration file $cfgFile : ${!cfgFile}";
+  ALL_CFG_FILES+="--cfg ${!cfgFile} ";
+done
+
+
+exec dirac-service ${ALL_CFG_FILES} -ddd $DIRAC_COMPONENT
