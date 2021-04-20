@@ -34,7 +34,7 @@ def test_createEmail():
 
 def test_compareEmails(monkeypatch):
   # The hostname on GitHub actions can change randomly so mock it
-  # monkeypatch.setattr("socket.getfqdn", lambda: "localhost.example")
+  monkeypatch.setattr("socket.getfqdn", lambda: "localhost.example")
 
   for i in range(10_000_000):
     m1 = Mail()
