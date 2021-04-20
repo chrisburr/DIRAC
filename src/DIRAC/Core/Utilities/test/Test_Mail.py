@@ -33,6 +33,8 @@ def test_createEmail():
 
 
 def test_compareEmails(monkeypatch):
+  monkeypatch.setattr("socket.getfqdn", lambda: "localhost.example")
+
   for i in range(10_000_000):
     m1 = Mail()
     m2 = Mail()
