@@ -121,42 +121,14 @@ def test_listPlatforms(applicationName, applicationVersion, expected):
   if not os.path.isdir('/cvmfs/lhcb.cern.ch'):
     pytest.skip('CVMFS is required')
 
-  from six.moves import xmlrpc_client
-  import ssl
-  context = ssl.create_default_context(capath=getCAsLocation())
-  try:
-    xmlrpc_client.ServerProxy(
-        'https://lbsoftdb.cern.ch/read/',
-        allow_none=True,
-        context=context,
-    ).listApplications()
-  except ssl.SSLError:
-    pytest.skip('CERN certificate authority must be trusted')
-
-  # Good RPC and good fallback
+  # Good cache path
   result = moduleTested._listPlatforms(
       applicationName, applicationVersion,
-      moduleTested.DEFAULT_XMLRPCURL,
-      moduleTested.DEFAULT_FALLBACKCACHEPATH)
+      moduleTested.DEFAULT_CACHEPATH)
   assert result is None is expected or set(result) == set(expected)
 
-  # Bad RPC and good fallback
+  # Invalid cache path
   result = moduleTested._listPlatforms(
       applicationName, applicationVersion,
-      'https://lbsoftdb.cern.invalid/read/',
-      moduleTested.DEFAULT_FALLBACKCACHEPATH)
-  assert result is None is expected or set(result) == set(expected)
-
-  # Good RPC and bad fallback
-  result = moduleTested._listPlatforms(
-      applicationName, applicationVersion,
-      moduleTested.DEFAULT_XMLRPCURL,
-      '/cvmfs/lhcb.cern.invalid/lib/var/lib/softmetadata/project-platforms.json')
-  assert result is None is expected or set(result) == set(expected)
-
-  # Bad RPC and bad fallback
-  result = moduleTested._listPlatforms(
-      applicationName, applicationVersion,
-      'https://lbsoftdb.cern.invalid/read/',
       '/cvmfs/lhcb.cern.invalid/lib/var/lib/softmetadata/project-platforms.json')
   assert result is None
