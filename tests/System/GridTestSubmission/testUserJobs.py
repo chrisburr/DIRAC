@@ -14,7 +14,7 @@ from __future__ import print_function
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-import os.path
+from os.path import basename, dirname, realpath
 import tempfile
 import time
 
@@ -22,23 +22,18 @@ from DIRAC import gLogger
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from LHCbDIRAC import rootPath
-
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
-try:
-  from LHCbDIRAC.tests.Workflow.Integration.Test_UserJobs import createJob
-except ImportError:
-  from tests.Workflow.Integration.Test_UserJobs import createJob
+from LHCbDIRAC.tests.Workflow import createJob
 
 gLogger.setLevel('DEBUG')
 
-cwd = os.path.realpath('.')
+cwd = realpath('.')
 
 
 def pad_test_file(in_name, out_fn):
-  test_fn = find_all(in_name, rootPath, '/tests/System/GridTestSubmission')[0]
+  test_fn = find_all(in_name, dirname(__file__), ".")[0]
   with open(test_fn, 'rt') as fp:
     test_data = fp.read()
   test_data += str(time.time())
@@ -54,7 +49,7 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-T2s")
-helloJ.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
 
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
@@ -77,7 +72,7 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-CERN")
-helloJ.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
@@ -93,7 +88,7 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-centos7")
-helloJ.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
@@ -109,7 +104,7 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-slc6")
-helloJ.setInputSandbox([find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0]])
+helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
@@ -129,14 +124,14 @@ with tempfile.NamedTemporaryFile() as tmp_file:
 
   helloJ.setName("upload-Output-test")
   helloJ.setInputSandbox([
-      find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
+      find_all('exe-script.py', dirname(__file__), ".")[0],
       tmp_file.name,
   ])
   helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
   helloJ.setCPUTime(17800)
 
-  helloJ.setOutputData([os.path.basename(tmp_file.name)])
+  helloJ.setOutputData([basename(tmp_file.name)])
 
   result = dirac.submitJob(helloJ)
 gLogger.info("Hello world with output: ", result)
@@ -153,14 +148,14 @@ with tempfile.NamedTemporaryFile() as tmp_file:
 
   helloJ.setName("upload-Output-test-with-replication")
   helloJ.setInputSandbox([
-      find_all('exe-script.py', rootPath, '/tests/System/GridTestSubmission')[0],
+      find_all('exe-script.py', dirname(__file__), ".")[0],
       tmp_file.name,
   ])
   helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
   helloJ.setCPUTime(17800)
 
-  helloJ.setOutputData([os.path.basename(tmp_file.name)], replicate='True')
+  helloJ.setOutputData([basename(tmp_file.name)], replicate='True')
 
   result = dirac.submitJob(helloJ)
 gLogger.info("Hello world with output and replication: ", result)
