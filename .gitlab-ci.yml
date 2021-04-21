@@ -63,7 +63,7 @@ stages:
     - source DIRAC_VENV/bin/activate
      # last version supporting python 2
     - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
+    - pip install --upgrade 'pip<21' 'setuptools_scm<6'
     - pip install -r DIRAC/requirements.txt
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
@@ -80,9 +80,12 @@ stages:
   before_script:
     - eval "$(python -m conda shell.bash hook)"
     - conda install --yes mamba diraccfg git jq
-    - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
+    - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
+    - echo "lhcbdiracTag=${lhcbdiracTag}"
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b integration ../DIRAC
+    - echo "diracTAG=${diracTAG}"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
     - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
     - conda activate test-env
     - pip install ../DIRAC[server]
