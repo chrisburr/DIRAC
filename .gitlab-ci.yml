@@ -527,7 +527,7 @@ make_tag:
     # get the last releases.cfg
     - mv ../releases.cfg releases.cfg
     # Call the python script that generated all the artifacts for the release
-    - python3 tests/Utilities/createReleaseFiles.py
+    - python3 src/LHCbDIRAC/tests/Utilities/createReleaseFiles.py
     - mv releases.cfg src/LHCbDIRAC/releases.cfg
     - export SERIES=`cat series.txt`
     - export VERSION=`cat version.txt`
