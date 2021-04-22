@@ -1,3 +1,18 @@
+v10r2-pre7
+Based on DIRAC v7r2p4
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r17
+Thank you for writing the text to appear in the release notes. It will show up
+exactly as it appears between the two bold lines
+Please follow the template:
+
+*Subsystem
+
+NEW/CHANGE/FIX: (!969) explanation
+For examples look into release.notes
+
+
+
 v10r2-pre6
 Based on DIRAC v7r2p2
 LHCbWebDIRAC v5r2p1
