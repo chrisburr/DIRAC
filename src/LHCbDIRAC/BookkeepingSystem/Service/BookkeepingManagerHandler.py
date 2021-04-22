@@ -1342,8 +1342,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getJobsNb = [six.integer_types]
 
-  @deprecated("Use getProductionNbOfJobs")
   @staticmethod
+  @deprecated("Use getProductionNbOfJobs")
   def export_getJobsNb(prodid):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.getProductionNbOfJobs(prodid)
@@ -1359,8 +1359,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getNumberOfEvents = [six.integer_types]
 
-  @deprecated("Use getProductionNbOfEvents")
   @staticmethod
+  @deprecated("Use getProductionNbOfEvents")
   def export_getNumberOfEvents(prodid):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.getProductionNbOfEvents(prodid)
@@ -1376,8 +1376,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getSizeOfFiles = [six.integer_types]
 
-  @deprecated("Use getProductionSizeOfFiles")
   @staticmethod
+  @deprecated("Use getProductionSizeOfFiles")
   def export_getSizeOfFiles(prodid):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.getProductionSizeOfFiles(prodid)
@@ -1393,8 +1393,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getNbOfFiles = [six.integer_types]
 
-  @deprecated("Use getProductionNbOfFiles")
   @staticmethod
+  @deprecated("Use getProductionNbOfFiles")
   def export_getNbOfFiles(prodid):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.getProductionNbOfFiles(prodid)
@@ -1427,8 +1427,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getProcessedEvents = [six.integer_types]
 
-  @deprecated("Use getProductionProcessedEvents")
   @staticmethod
+  @deprecated("Use getProductionProcessedEvents")
   def export_getProcessedEvents(prodid):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.getProductionProcessedEvents(prodid)
@@ -1460,8 +1460,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getProductionsFromView = [dict]
 
-  @deprecated("Useless?")
   @staticmethod
+  @deprecated("Useless?")
   def export_getProductionsFromView(in_dict):
     """It returns the productions from the bookkeeping view for a given
     processing pass and run number.
@@ -2002,8 +2002,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getDirectoryMetadata_new = [list]
 
-  @deprecated("Use getDirectoryMetadata")
   @staticmethod
+  @deprecated("Use getDirectoryMetadata")
   def export_getDirectoryMetadata_new(lfn):
     """more info in the BookkeepingClient.py."""
     return dataMGMT_.getDirectoryMetadata(lfn)
