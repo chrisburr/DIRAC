@@ -44,7 +44,7 @@ def main():
       'dirac-production-set-run.py 92 --List                        (show the list of runs for transformation 92)\n',
       'dirac-production-set-run.py 92 --AddRuns 98200,98201             (add some discrete run to transformation 92)\n',
       'dirac-production-set-run.py 92 --AddRuns 98200,98201,99000:99100 (add some discrete run and\
-        a range of runs to transformation 92)\n',
+         a range of runs to transformation 92)\n',
       'dirac-production-set-run.py 92 --StartRun 98200                 (change the start run for transformation 92)\n',
       'dirac-production-set-run.py 92 --EndRun   98200                 (change the end run  for transformation 92)\n'
   ]))
@@ -56,12 +56,9 @@ def main():
 
   Script.parseCommandLine(ignoreErrors=True)
 
-  args = Script.getPositionalArgs()
-  try:
-    prodId = int(args[0])
-  except TypeError:
-    gLogger.error('Invalid transformation number')
-    DIRAC.exit(1)
+  from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
+
+  transList = getTransformations(Script.getPositionalArgs())
 
   settings = {}
   for opt, val in Script.getUnprocessedSwitches():
@@ -85,72 +82,74 @@ def main():
 
   from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
   client = TransformationClient()
-  res = client.getBookkeepingQuery(prodId)
-  if not res['OK']:
-    gLogger.error("Error retrieving BKQuery for transformation %s" % prodId, res['Message'])
-    DIRAC.exit(2)
-  bkDict = res['Value']
-  startRun = bkDict.get('StartRun', 0)
-  endRun = bkDict.get('EndRun', 0)
-  runNumbers = bkDict.get('RunNumbers', 'All')
 
-  if ('StartRun' in settings or 'EndRun' in settings) and runNumbers and runNumbers != 'All':
-    gLogger.notice("Transformation %d has RunNumbers key" % prodId)
-    settings = {'List': True}
+  for prodId in transList:
+    res = client.getBookkeepingQuery(prodId)
+    if not res['OK']:
+      gLogger.error("Error retrieving BKQuery for transformation %s" % prodId, res['Message'])
+      DIRAC.exit(2)
+    bkDict = res['Value']
+    startRun = bkDict.get('StartRun', 0)
+    endRun = bkDict.get('EndRun', 0)
+    runNumbers = bkDict.get('RunNumbers', 'All')
 
-  if 'AddRuns' in settings and (startRun or endRun):
-    gLogger.notice("Transformation %d has start run or end run: %s:%s" % (prodId, str(startRun), str(endRun)))
-    settings = {'List': True}
+    if ('StartRun' in settings or 'EndRun' in settings) and runNumbers and runNumbers != 'All':
+      gLogger.notice("Transformation %d has RunNumbers key" % prodId)
+      settings = {'List': True}
 
-  if 'AddRuns' in settings and (not runNumbers or runNumbers == 'All'):
-    gLogger.notice("Transformation %d doesn't have RunNumbers key or set to All" % prodId)
-    settings = {'List': True}
+    if 'AddRuns' in settings and (startRun or endRun):
+      gLogger.notice("Transformation %d has start run or end run: %s:%s" % (prodId, str(startRun), str(endRun)))
+      settings = {'List': True}
 
-  changed = False
-  if 'StartRun' in settings:
-    changed = True
-    runId = settings['StartRun']
-    res = client.setBookkeepingQueryStartRun(prodId, runId)
-    if res['OK']:
-      gLogger.notice("Start run of transformation %d is now %d" % (prodId, runId))
-      startRun = runId
-    else:
-      gLogger.error("Error setting start run", res['Message'])
+    if 'AddRuns' in settings and (not runNumbers or runNumbers == 'All'):
+      gLogger.notice("Transformation %d doesn't have RunNumbers key or set to All" % prodId)
+      settings = {'List': True}
 
-  if 'EndRun' in settings:
-    changed = True
-    runId = settings['EndRun']
-    res = client.setBookkeepingQueryEndRun(prodId, runId)
-    if res['OK']:
-      gLogger.notice("End run of transformation %d is now %d" % (prodId, runId))
-      endRun = runId
-    else:
-      gLogger.error("Error setting end run", res['Message'])
-
-  if 'AddRuns' in settings:
-    changed = True
-    runList = [int(run) for run in settings['AddRuns'] if run not in runNumbers]
-    res = client.addBookkeepingQueryRunList(prodId, runList)
-    if res['OK']:
-      gLogger.notice("Run list modified for transformation %d" % prodId)
-      runNumbers += runList
-    else:
-      gLogger.error("Error modifying run list:", res['Message'])
-
-  if 'List' in settings:
-    gLogger.notice('%sRun selection settings for transformation %d:' % ('\n' if changed else '', prodId))
-    if runNumbers:
-      gLogger.notice("List of runs for: %s" %
-                     ','.join([str(run) for run in sorted(runNumbers)]))
-    else:
-      if startRun:
-        gLogger.notice("Start run is %s" % startRun)
+    changed = False
+    if 'StartRun' in settings:
+      changed = True
+      runId = settings['StartRun']
+      res = client.setBookkeepingQueryStartRun(prodId, runId)
+      if res['OK']:
+        gLogger.notice("Start run of transformation %d is now %d" % (prodId, runId))
+        startRun = runId
       else:
-        gLogger.notice("No start run defined ")
-      if endRun:
-        gLogger.notice("End run is %s" % endRun)
+        gLogger.error("Error setting start run", res['Message'])
+
+    if 'EndRun' in settings:
+      changed = True
+      runId = settings['EndRun']
+      res = client.setBookkeepingQueryEndRun(prodId, runId)
+      if res['OK']:
+        gLogger.notice("End run of transformation %d is now %d" % (prodId, runId))
+        endRun = runId
       else:
-        gLogger.notice("No end run defined ")
+        gLogger.error("Error setting end run", res['Message'])
+
+    if 'AddRuns' in settings:
+      changed = True
+      runList = [int(run) for run in settings['AddRuns'] if run not in runNumbers]
+      res = client.addBookkeepingQueryRunList(prodId, runList)
+      if res['OK']:
+        gLogger.notice("Run list modified for transformation %d" % prodId)
+        runNumbers += runList
+      else:
+        gLogger.error("Error modifying run list:", res['Message'])
+
+    if 'List' in settings:
+      gLogger.notice('%sRun selection settings for transformation %d:' % ('\n' if changed else '', prodId))
+      if runNumbers:
+        gLogger.notice("List of runs for: %s" %
+                       ','.join([str(run) for run in sorted(runNumbers)]))
+      else:
+        if startRun:
+          gLogger.notice("Start run is %s" % startRun)
+        else:
+          gLogger.notice("No start run defined ")
+        if endRun:
+          gLogger.notice("End run is %s" % endRun)
+        else:
+          gLogger.notice("No end run defined ")
 
 
 if __name__ == "__main__":
