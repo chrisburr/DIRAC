@@ -449,6 +449,24 @@ set_cvmfs_prod_link:
   script:
     - ./.ci/trigger_cvmfs_deployment.sh set-prod "${LHCB_DIRAC_SETUP}" "${CI_COMMIT_TAG}"
 
+
+# Update the Helm configuration
+# by setting LHCB_DIRAC_VERSION
+# and triggering chaen/diracchart pipeline
+deploy_k8:
+  stage: finish_up
+  allow_failure: true
+  variables:
+    LHCB_DIRAC_VERSION: ${CI_COMMIT_TAG}
+  only:
+    refs:
+      - tags@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
+  trigger:
+    project: chaen/diracchart
+    strategy: depend
+
 # Job for starting the tag procedure
 make_tag:
   stage: tag
