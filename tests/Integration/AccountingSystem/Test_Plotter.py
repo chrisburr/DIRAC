@@ -321,6 +321,6 @@ class StoragePlotterUnitTest(PlotterTestCase):
 if __name__ == '__main__':
   suite = unittest.defaultTestLoader.loadTestsFromTestCase(PlotterTestCase)
   suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(DataStoragePlotterUnitTest))
-  # suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(StoragePlotterUnitTest))
+  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(StoragePlotterUnitTest))
   testResult = unittest.TextTestRunner(verbosity=2).run(suite)
   sys.exit(not testResult.wasSuccessful())
