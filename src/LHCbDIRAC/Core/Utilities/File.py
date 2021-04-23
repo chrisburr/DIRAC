@@ -45,8 +45,8 @@ def getRootFileGUID(fileName):
       if item.startswith('FID='):
         return S_OK(item.split('=')[1])
     return S_ERROR('GUID not found')
-  except Exception:
-    errorMsg = 'Error extracting GUID'
+  except Exception as e:
+    errorMsg = 'Error extracting GUID: %s' % e
     return S_ERROR(errorMsg)
 
 
