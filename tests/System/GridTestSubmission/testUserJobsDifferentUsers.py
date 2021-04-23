@@ -31,11 +31,8 @@ from DIRAC import gLogger
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 from DIRAC.ResourceStatusSystem.Client.ResourceStatus import ResourceStatus
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
-from DIRAC.tests.System.unitTestUserJobs import GridSubmissionTestCase as DIRACGridSubmissionTestCase
 
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-
-# from DIRAC.tests.Utilities.utils import find_all
 
 from LHCbDIRAC.tests.Utilities.testJobDefinitions import *
 
@@ -80,7 +77,7 @@ class GridSubmissionTestCase(unittest.TestCase):
     pass
 
 
-class LHCbsubmitSuccess(GridSubmissionTestCase, DIRACGridSubmissionTestCase):
+class LHCbsubmitSuccess(GridSubmissionTestCase):
 
   def test_LHCbsubmit(self):
 

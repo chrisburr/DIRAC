@@ -167,8 +167,7 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only)")
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
-                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', dirname(__file__), ".")[0]])
 gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
 
 optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
@@ -198,8 +197,7 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use TAG to run
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test-TAG-multicore")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
-                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', dirname(__file__), ".")[0]])
 gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
 
 optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
@@ -229,8 +227,7 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 2 to 4 pro
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test-multicore-2to4")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
-                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', dirname(__file__), ".")[0]])
 gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
 
 optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
@@ -260,8 +257,7 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 8 processo
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test-multicore-8")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py', rootPath,
-                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py', dirname(__file__), ".")[0]])
 gaudirunJob.setOutputSandbox('00012345_00067899_1.sim')
 
 # lb-run --unset LD_LIBRARY_PATH --unset PYTHONPATH --unset XrdSecPROTOCOL
@@ -309,8 +305,7 @@ gLogger.info("\n Submitting gaudiRun job (Boole only)")
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Boole-test")
-gaudirunJob.setInputSandbox([find_all('prodConf_Boole_00012345_00067890_1.py', rootPath,
-                                      '/tests/System/GridTestSubmission')[0]])
+gaudirunJob.setInputSandbox([find_all('prodConf_Boole_00012345_00067890_1.py', dirname(__file__), ".")[0]])
 gaudirunJob.setOutputSandbox('00012345_00067890_1.digi')
 
 opts = "$APPCONFIGOPTS/Boole/Default.py;"
@@ -337,6 +332,6 @@ gLogger.info('Submission Result: ', result)
 gLogger.info("\n Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info")
 gLogger.info("This will generate a job that should become Completed, use the failover, and only later it will be Done")
 
-gaudirunJob = createJob()
+gaudirunJob = createJob(workspace=dirname(__file__))
 result = dirac.submitJob(gaudirunJob)
 gLogger.info('Submission Result: ', result)
