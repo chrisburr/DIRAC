@@ -36,7 +36,7 @@ try:
   tier1s = DMSHelpers().getTiers(tier=(0, 1))
 except AttributeError:
   tier1s = ['LCG.CERN.cern', 'LCG.CNAF.it', 'LCG.GRIDKA.de', 'LCG.IN2P3.fr',
-	    'LCG.NIKHEF.nl', 'LCG.PIC.es', 'LCG.RAL.uk', 'LCG.RRCKI.ru', 'LCG.SARA.nl']
+            'LCG.NIKHEF.nl', 'LCG.PIC.es', 'LCG.RAL.uk', 'LCG.RRCKI.ru', 'LCG.SARA.nl']
 
 # List of jobs
 wdir = os.getcwd()
@@ -402,8 +402,8 @@ def gaussJob():
   optPConf = "prodConf_Gauss_00012345_00067890_1.py"
   options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
   job.setApplication('Gauss', 'v45r5', options,  # pylint: disable=no-member
-		     extraPackages='AppConfig.v3r179;Gen/DecFiles.v27r14p1;ProdConf.v1r9',
-		     systemConfig='x86_64-slc5-gcc43-opt')
+                     extraPackages='AppConfig.v3r179;Gen/DecFiles.v27r14p1;ProdConf.v1r9',
+                     systemConfig='x86_64-slc5-gcc43-opt')
   job.setDIRACPlatform()  # pylint: disable=no-member
   job.setCPUTime(172800)
   res = endOfAllJobs(job)
@@ -426,9 +426,9 @@ def booleJob():
   options = opts + optDT + optTCK + optComp + optPConf
 
   job.setApplication('Boole', 'v26r3', options,  # pylint: disable=no-member
-		     inputData='/lhcb/user/f/fstagni/test/12345/12345678/00012345_00067890_1.sim',
-		     extraPackages='AppConfig.v3r171;ProdConf.v1r9',
-		     systemConfig='x86_64-slc5-gcc43-opt')
+                     inputData='/lhcb/user/f/fstagni/test/12345/12345678/00012345_00067890_1.sim',
+                     extraPackages='AppConfig.v3r171;ProdConf.v1r9',
+                     systemConfig='x86_64-slc5-gcc43-opt')
 
   job.setDIRACPlatform()  # pylint: disable=no-member
   job.setCPUTime(172800)
@@ -441,8 +441,8 @@ def booleJobWithConf():
 
   job = baseToAllJobs('booleJobWithConf', jobClass)
   job.setInputSandbox([find_all('prodConf_Boole_00012345_00067890_1.py', rootPath,
-				'/tests/System/GridTestSubmission')[0],
-		       find_all('rootConfig.cfg', rootPath, '/tests/System/GridTestSubmission')[0]])
+                                '/tests/System/GridTestSubmission')[0],
+                       find_all('rootConfig.cfg', rootPath, '/tests/System/GridTestSubmission')[0]])
   job.setOutputSandbox('00012345_00067890_1.digi')
 
   opts = "$APPCONFIGOPTS/Boole/Default.py;"
@@ -453,9 +453,9 @@ def booleJobWithConf():
   options = opts + optDT + optTCK + optComp + optPConf
 
   job.setApplication('Boole', 'v26r3', options,  # pylint: disable=no-member
-		     inputData='/lhcb/user/f/fstagni/test/12345/12345678/00012345_00067890_1.sim',
-		     extraPackages='AppConfig.v3r171;ProdConf.v1r9',
-		     systemConfig='x86_64-slc5-gcc43-opt')
+                     inputData='/lhcb/user/f/fstagni/test/12345/12345678/00012345_00067890_1.sim',
+                     extraPackages='AppConfig.v3r171;ProdConf.v1r9',
+                     systemConfig='x86_64-slc5-gcc43-opt')
 
   job.setDIRACPlatform()  # pylint: disable=no-member
   job.setConfigArgs('rootConfig.cfg')
@@ -473,11 +473,11 @@ def gaudiApplicationScriptJob():
   inp3 = [find_all('script_wrapper.py', wdir, 'tests/System/GridTestSubmission')[0]]
   job.setInputSandbox(inp1 + inp2 + inp3)
   executable = find_all('script_wrapper.py',
-			wdir,
-			'tests/System/GridTestSubmission/script_wrapper.py')[0]  # pylint: disable=no-member
+                        wdir,
+                        'tests/System/GridTestSubmission/script_wrapper.py')[0]  # pylint: disable=no-member
   job.setApplicationScript('root', '6.06.02',
-			   executable,
-			   systemConfig='x86_64-slc6-gcc49-opt')
+                           executable,
+                           systemConfig='x86_64-slc6-gcc49-opt')
   job.setOutputSandbox('FitResultsToyData*.root')
   # job.setDIRACPlatform()  # pylint: disable=no-member
   job.setCPUTime(172800)
@@ -514,8 +514,8 @@ def gaussMPJob():
   options += "$LBPYTHIA8ROOT/options/Pythia8.py"
   options += "$APPCONFIGOPTS/Gauss/G4PL_FTFP_BERT_EmNoCuts.py"
   job.setApplication('Gauss', 'v49r14', options,  # pylint: disable=no-member
-		     extraPackages='AppConfig.v3r383;Gen/DecFiles.v30r32;ProdConf.v2r8',
-		     systemConfig='x86_64-slc6-gcc48-opt')
+                     extraPackages='AppConfig.v3r383;Gen/DecFiles.v30r32;ProdConf.v2r8',
+                     systemConfig='x86_64-slc6-gcc48-opt')
   job.setDIRACPlatform()  # pylint: disable=no-member
   job.setCPUTime(172800)
   job.setNumberOfProcessors(4)

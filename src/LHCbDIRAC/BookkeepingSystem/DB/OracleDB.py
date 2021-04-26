@@ -199,10 +199,10 @@ class OracleDB(object):
 
       # Log the result limiting it to just 10 records
       if len(res) < 10:
-	self.logger.debug('query:', res)
+        self.logger.debug('query:', res)
       else:
-	self.logger.debug('query: Total %d records returned' % len(res))
-	self.logger.debug('query: %s ...' % str(res[:10]))
+        self.logger.debug('query: Total %d records returned' % len(res))
+        self.logger.debug('query: %s ...' % str(res[:10]))
 
       retDict = S_OK(res)
     except Exception as x:
@@ -364,7 +364,7 @@ class OracleDB(object):
       self.logger.debug('__getConnection: Got a connection from Queue')
       if connection:
         try:
-	  # This will try to reconnect if the connection has timeout
+          # This will try to reconnect if the connection has timeout
           connection.commit()
         except BaseException:
           # if the ping fails try with a new connection from the Queue

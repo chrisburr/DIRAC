@@ -352,8 +352,8 @@ class BKQuery():
     # There are two items in the dictionary: ConditionDescription and Simulation/DataTaking-Conditions
     eventType = self.__bkQueryDict.get('EventType', 'ALL')
     if self.__bkQueryDict.get('ConfigName') == 'MC' or \
-	(isinstance(eventType, six.string_types) and eventType.upper() != 'ALL'
-	 and eventType[0] != '9'):
+        (isinstance(eventType, six.string_types) and eventType.upper() != 'ALL'
+         and eventType[0] != '9'):
       conditionsKey = 'SimulationConditions'
     else:
       conditionsKey = 'DataTakingConditions'
@@ -648,9 +648,9 @@ class BKQuery():
             size += res['Records'][0][ind1]
             # print 'Visible',query.isVisible(),ft, 'Files:',
             # res['Records'][0][ind], 'Size:', res['Records'][0][ind1]
-	else:
-	  gLogger.error("Error getting files summary", res['Message'])
-	  break
+        else:
+          gLogger.error("Error getting files summary", res['Message'])
+          break
     return {'NumberOfLFNs': nbFiles, 'LFNSize': size}
 
   def getLFNs(self, printSEUsage=False, printOutput=True, visible=None):

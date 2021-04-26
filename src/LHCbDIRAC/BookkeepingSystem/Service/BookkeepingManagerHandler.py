@@ -572,20 +572,20 @@ class BookkeepingManagerHandler(RequestHandler):
       return retVal
     records = []
     parameters = ['FileName', 'EventStat', 'FileSize',
-		  'CreationDate', 'JobStart', 'JobEnd',
-		  'WorkerNode', 'FileType', 'RunNumber',
-		  'FillNumber', 'FullStat', 'DataqualityFlag',
-		  'EventInputStat', 'TotalLuminosity', 'Luminosity',
-		  'InstLuminosity', 'TCK', 'GUID', 'ADLER32', 'EventType', 'MD5SUM',
-		  'VisibilityFlag', 'JobId', 'GotReplica', 'InsertTimeStamp']
+                  'CreationDate', 'JobStart', 'JobEnd',
+                  'WorkerNode', 'FileType', 'RunNumber',
+                  'FillNumber', 'FullStat', 'DataqualityFlag',
+                  'EventInputStat', 'TotalLuminosity', 'Luminosity',
+                  'InstLuminosity', 'TCK', 'GUID', 'ADLER32', 'EventType', 'MD5SUM',
+                  'VisibilityFlag', 'JobId', 'GotReplica', 'InsertTimeStamp']
     for record in retVal['Value']:
       records += [[record[0], record[1], record[2],
-		   record[3], record[4], record[5],
-		   record[6], record[7], record[8],
-		   record[9], record[10], record[11],
-		   record[12], record[13], record[14],
-		   record[15], record[16], record[17], record[18], record[19],
-		   record[20], record[21], record[22], record[23], record[24]]]
+                   record[3], record[4], record[5],
+                   record[6], record[7], record[8],
+                   record[9], record[10], record[11],
+                   record[12], record[13], record[14],
+                   record[15], record[16], record[17], record[18], record[19],
+                   record[20], record[21], record[22], record[23], record[24]]]
     return {'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)}
 
   #############################################################################
@@ -627,23 +627,23 @@ class BookkeepingManagerHandler(RequestHandler):
       gLogger.verbose('The Quality has to be replaced by DataQuality!')
 
     retVal = self.bkkDB.getFilesSummary(configName=configName,
-					configVersion=configVersion,
-					conditionDescription=condDescription,
-					processingPass=processingPass,
-					eventType=eventType,
-					production=production,
-					fileType=fileType,
-					dataQuality=dataQuality,
-					startRun=startRun,
-					endRun=endRun,
-					visible=visible,
-					startDate=startDate,
-					endDate=endDate,
-					runNumbers=runNumbers,
-					replicaFlag=replicaFlag,
-					tcks=tcks,
-					jobStart=jobStart,
-					jobEnd=jobEnd)
+                                        configVersion=configVersion,
+                                        conditionDescription=condDescription,
+                                        processingPass=processingPass,
+                                        eventType=eventType,
+                                        production=production,
+                                        fileType=fileType,
+                                        dataQuality=dataQuality,
+                                        startRun=startRun,
+                                        endRun=endRun,
+                                        visible=visible,
+                                        startDate=startDate,
+                                        endDate=endDate,
+                                        runNumbers=runNumbers,
+                                        replicaFlag=replicaFlag,
+                                        tcks=tcks,
+                                        jobStart=jobStart,
+                                        jobEnd=jobEnd)
     if not retVal['OK']:
       return retVal
     records = []
@@ -694,21 +694,21 @@ class BookkeepingManagerHandler(RequestHandler):
       return retVal
     records = []
     parameters = ['Name', 'EventStat', 'FileSize',
-		  'CreationDate', 'JobStart', 'JobEnd',
-		  'WorkerNode', 'FileType', 'EventType',
-		  'RunNumber', 'FillNumber', 'FullStat',
-		  'DataqualityFlag', 'EventInputStat',
-		  'TotalLuminosity', 'Luminosity',
-		  'InstLuminosity', 'TCK', 'WNMJFHS06', 'HLT2TCK',
-		  'NumberOfProcessors']
+                  'CreationDate', 'JobStart', 'JobEnd',
+                  'WorkerNode', 'FileType', 'EventType',
+                  'RunNumber', 'FillNumber', 'FullStat',
+                  'DataqualityFlag', 'EventInputStat',
+                  'TotalLuminosity', 'Luminosity',
+                  'InstLuminosity', 'TCK', 'WNMJFHS06', 'HLT2TCK',
+                  'NumberOfProcessors']
     for record in retVal['Value']:
       records += [[record[0], record[1], record[2],
-		   str(record[3]), str(record[4]),
-		   str(record[5]), record[6], record[7],
-		   record[8], record[9], record[10],
-		   record[11], record[12], record[13],
-		   record[14], record[15], record[16],
-		   record[17]]]
+                   str(record[3]), str(record[4]),
+                   str(record[5]), record[6], record[7],
+                   record[8], record[9], record[10],
+                   record[11], record[12], record[13],
+                   record[14], record[15], record[16],
+                   record[17]]]
     return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
@@ -871,9 +871,9 @@ class BookkeepingManagerHandler(RequestHandler):
     for i in values:
       tags = values[i]
       for tag in tags:
-	retVal = cls.bkkDB.existsTag(i, tag)
+        retVal = cls.bkkDB.existsTag(i, tag)
         if retVal['OK'] and not retVal['Value']:
-	  retVal = cls.bkkDB.insertTag(i, tag)
+          retVal = cls.bkkDB.insertTag(i, tag)
           if not retVal['OK']:
             faild[tag] = i
           else:
@@ -1729,13 +1729,13 @@ class BookkeepingManagerHandler(RequestHandler):
     configVersion = infos.get("ConfigVersion")
     eventType = infos.get("EventType")
     return cls.bkkDB.addProduction(production=production,
-				   simcond=simcond,
-				   daq=daqdesc,
-				   steps=steps,
-				   inputproc=inputProdTotalProcessingPass,
-				   configName=configName,
-				   configVersion=configVersion,
-				   eventType=eventType)
+                                   simcond=simcond,
+                                   daq=daqdesc,
+                                   steps=steps,
+                                   inputproc=inputProdTotalProcessingPass,
+                                   configName=configName,
+                                   configVersion=configVersion,
+                                   eventType=eventType)
 
   #############################################################################
   types_getEventTypes = [dict]

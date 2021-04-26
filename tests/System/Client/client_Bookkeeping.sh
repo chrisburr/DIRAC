@@ -140,12 +140,14 @@ bash random_files_creator.sh --Files=${numberOfFiles} --Name=${filesName} --Path
 # python $extra/dirac-add-bkk-ft.py BAR "just a desc for a test file type (BAR)" 1
 #touch LFNlist.txt
 files=$(ls ${temporaryPath})
-# Copy initXMLReport.xml template in tmpDir
-# cp $diracDir/tests/System/Client/BKReportsSamples/InitXMLReport.xml .
-#cp $diracDir/BKReportsSamples/InitXMLReport.xml
-# For each random_content_X files, create a BK report, then send it
-#for n in $(eval echo "{1..$numberOfFiles}")
 
+# Get initXMLReport.xml template
+curl -LO https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/tests/System/Client/BKReportsSamples/InitXMLReport.xml
+# get some needed scripts
+curl -LO https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/tests/System/Client/dirac-get-guid.py
+curl -LO https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/raw/devel/tests/System/Client/dirac-send-bk-report.py
+
+# For each random_content_X files, create a BK report, then send it
 version=$(echo $PYTHONPATH | tr ":" "\n" | grep \/DIRAC_v | sed 's/.*DIRAC_//') # dirac-version script broken
 tdate=$(date +"20%y-%m-%d")
 ttime=$(date +"%R")
@@ -163,7 +165,7 @@ for file in ${files}; do
   xmlName=bookkeeping_${file%.*}.xml
 
   # Create the specific BK report
-  cp $extra/BKReportsSamples/InitXMLReport.xml $extra/BKReportsSamples/$xmlName
+  cp InitXMLReport.xml $extra/BKReportsSamples/$xmlName
   chmod 777 $extra/BKReportsSamples/$xmlName
   # Getting the info
   size=$(stat --printf="%s" ${file})
@@ -188,6 +190,5 @@ for file in ${files}; do
 
   echo "/lhcb/Certification/Test/INIT/${version}/${tdate}/${stime}/${file} \
   ${temporaryPath}${file}" >> ${extra}/LFNlist.txt
-#  python $diracDir/tests/System/Client/dirac-send-bk-report.py $xmlName -ddd
   python ${extra}/dirac-send-bk-report.py ${bkpath}${xmlName} -ddd
 done

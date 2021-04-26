@@ -134,7 +134,7 @@ class OracleBookkeepingDB(object):
         if isinstance(stepId, (six.string_types + six.integer_types)):
           condition += ' and s.stepid= %s' % (str(stepId))
         elif isinstance(stepId, (list, tuple)):
-	  condition += 'and s.stepid in (%s)' % ",".join(str(sid) for sid in stepId)
+          condition += 'and s.stepid in (%s)' % ",".join(str(sid) for sid in stepId)
         else:
           return S_ERROR("Wrong StepId")
 
@@ -291,7 +291,7 @@ class OracleBookkeepingDB(object):
         elif isinstance(items, six.string_types):
           condition += ' s.%s %s' % (items, order)
         else:
-	  return S_ERROR('SortItems is not properly defined!')
+          return S_ERROR('SortItems is not properly defined!')
       else:
         condition += ' order by s.inserttimestamps desc'
       if fileTypefilter:
@@ -365,18 +365,18 @@ class OracleBookkeepingDB(object):
       return retVal
 
     parameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles', 'DDDB',
-		  'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag', 'OptionsFormat',
-		  'isMulticore', 'SystemConfig', 'mcTCK', 'RuntimeProjects']
+                  'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag', 'OptionsFormat',
+                  'isMulticore', 'SystemConfig', 'mcTCK', 'RuntimeProjects']
     rParameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles',
-		   'DDDB', 'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag',
-		   'OptionsFormat', 'isMulticore', 'SystemConfig', 'mcTCK']
+                   'DDDB', 'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag',
+                   'OptionsFormat', 'isMulticore', 'SystemConfig', 'mcTCK']
     records = []
     for record in retVal['Value']:
       step = list(record[0:16])
       runtimeProject = []
       runtimeProject = [rec for rec in list(record[16:]) if rec is not None]
       if runtimeProject:
-	runtimeProject = [runtimeProject]
+        runtimeProject = [runtimeProject]
       step += [{'ParameterNames': rParameters, 'Records': runtimeProject, 'TotalRecords': len(runtimeProject) + 1}]
       records += [step]
 
@@ -4057,9 +4057,9 @@ and files.qualityid= dataquality.qualityid" % lfn
     if not retVal['Value']:
       retVal = self.insertStep(dataset)
       if retVal['OK']:
-	return S_OK([retVal['Value'], 'Real Data'])
+        return S_OK([retVal['Value'], 'Real Data'])
       else:
-	return retVal
+        return retVal
     else:
       return S_OK([retVal['Value'][0][0], retVal['Value'][0][1]])
 
@@ -4180,10 +4180,10 @@ and files.qualityid= dataquality.qualityid" % lfn
       return S_OK(stepids[-1:])
     else:
       for i in ids:
-	procs = self.__getprocessingid(i)
-	if len(procs) > 0:
-	  if self.__checkprocessingpass(path, procs):
-	    return S_OK()
+        procs = self.__getprocessingid(i)
+        if len(procs) > 0:
+          if self.__checkprocessingpass(path, procs):
+            return S_OK()
       newpath = list(path)
       self.__insertprocessing(newpath, None, stepids)
       return S_OK(stepids[-1:])
@@ -4561,7 +4561,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long runtimeprojectid: reference to other step
     """
     return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRuntimeProject',
-					    [projectid, runtimeprojectid], False)
+                                            [projectid, runtimeprojectid], False)
 
   #############################################################################
   def updateRuntimeProject(self, projectid, runtimeprojectid):
@@ -4571,7 +4571,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long runtimeprojectid: new run time project stepid (new reference to a stepid)
     """
     return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateRuntimeProject',
-					    [projectid, runtimeprojectid], False)
+                                            [projectid, runtimeprojectid], False)
 
   def removeRuntimeProject(self, stepid):
     """removes the runtime project.
@@ -4805,23 +4805,23 @@ and files.qualityid= dataquality.qualityid" % lfn
     for i in retVal['Value']:
       fileName = i[0][:-1]
       if fileName in records:
-	records[fileName] += [dict(zip(('Production',
-					'ConfigName',
-					'ConfigVersion',
-					'EventType',
-					'FileType',
-					'ProcessingPass',
-					'ConditionDescription',
-					'VisibilityFlag'), i[1:]))]
+        records[fileName] += [dict(zip(('Production',
+                                        'ConfigName',
+                                        'ConfigVersion',
+                                        'EventType',
+                                        'FileType',
+                                        'ProcessingPass',
+                                        'ConditionDescription',
+                                        'VisibilityFlag'), i[1:]))]
       else:
-	records[fileName] = [dict(zip(('Production',
-				       'ConfigName',
-				       'ConfigVersion',
-				       'EventType',
-				       'FileType',
-				       'ProcessingPass',
-				       'ConditionDescription',
-				       'VisibilityFlag'), i[1:]))]
+        records[fileName] = [dict(zip(('Production',
+                                       'ConfigName',
+                                       'ConfigVersion',
+                                       'EventType',
+                                       'FileType',
+                                       'ProcessingPass',
+                                       'ConditionDescription',
+                                       'VisibilityFlag'), i[1:]))]
     failed = [i[:-1] for i in lfns if i[:-1] not in records]
     return S_OK({'Successful': records, 'Failed': failed})
 
@@ -4853,19 +4853,19 @@ and files.qualityid= dataquality.qualityid" % lfn
       desc = i[0]
       prod = i[2]
       if desc in values:
-	if rnb in values[desc]:
-	  if prod > 0:
-	    values[desc][rnb] += [prod]
+        if rnb in values[desc]:
+          if prod > 0:
+            values[desc][rnb] += [prod]
         else:
           if prod > 0:
-	    values[desc].update({rnb: [prod]})
+            values[desc].update({rnb: [prod]})
           else:
-	    values[desc].update({rnb: []})
+            values[desc].update({rnb: []})
       else:
-	if prod > 0:
-	  values[desc] = {rnb: [prod]}
-	else:
-	  values[desc] = {rnb: []}
+        if prod > 0:
+          values[desc] = {rnb: [prod]}
+        else:
+          values[desc] = {rnb: []}
     return S_OK(values)
 
   #############################################################################
@@ -5009,15 +5009,15 @@ and files.qualityid= dataquality.qualityid" % lfn
     command = "select count(*) from simulationconditions"
 
     parameterNames = ['SimId',
-		      'SimDescription',
-		      'BeamCond',
-		      'BeamEnergy',
-		      'Generator',
-		      'MagneticField',
-		      'DetectorCond',
-		      'Luminosity',
-		      'G4settings',
-		      'Visible']
+                      'SimDescription',
+                      'BeamCond',
+                      'BeamEnergy',
+                      'Generator',
+                      'MagneticField',
+                      'DetectorCond',
+                      'Luminosity',
+                      'G4settings',
+                      'Visible']
     records = [list(record) for record in retVal['Value']]
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
