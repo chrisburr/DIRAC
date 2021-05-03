@@ -591,8 +591,6 @@ MR_SWEEP:
 
 deploy-to-pypi:
   stage: deploy_release
-  # TODO: Remove after this is proven to work
-  allow_failure: true
   only:
     - tags@lhcb-dirac/LHCbDIRAC
   except:
