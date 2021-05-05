@@ -1207,36 +1207,18 @@ class ComponentInstaller(object):
       module = component
     return S_OK(module)
 
+  @convertReturnValue
   def getOverallStatus(self, extensions):
     """
     Get the list of all the components ( services and agents )
     set up for running with runsvdir in startup directory
     """
-    result = self.getSoftwareComponents(extensions)
-    if not result['OK']:
-      return result
-    softDict = result['Value']
-
-    result = self.getSetupComponents()
-    if not result['OK']:
-      return result
-    setupDict = result['Value']
-
-    result = self.getInstalledComponents()
-    if not result['OK']:
-      return result
-    installedDict = result['Value']
-
-    result = self.getStartupComponentStatus([])
-    if not result['OK']:
-      return result
-    runitDict = result['Value']
-
+    softDict = unwrap(self.getSoftwareComponents(extensions))
+    setupDict = unwrap(self.getSetupComponents())
+    installedDict = unwrap(self.getInstalledComponents())
+    runitDict = unwrap(self.getStartupComponentStatus([]))
     # Collect the info now
-    result = self.resultIndexes(self.componentTypes)
-    if not result["OK"]:
-      return result
-    resultIndexes = result["Value"]
+    resultIndexes = unwrap(self.resultIndexes(self.componentTypes))
 
     resultDict = defaultdict(lambda: defaultdict(list))
     for cType in resultIndexes.values():
@@ -1259,7 +1241,7 @@ class ComponentInstaller(object):
                 component, setupDict, installedDict, cType, system, runitDict
             )
 
-    return S_OK({k: dict(v) for k, v in resultDict.items()})
+    return {k: dict(v) for k, v in resultDict.items()}
 
   def checkComponentModule(self, componentType, system, module):
     """
