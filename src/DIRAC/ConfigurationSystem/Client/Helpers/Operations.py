@@ -78,8 +78,9 @@ import six
 from six.moves import _thread as thread
 import os
 from diraccfg import CFG
-from DIRAC import S_OK, S_ERROR, gConfig
+from DIRAC import gConfig
 from DIRAC.Core.Utilities import LockRing
+from DIRAC.Core.Utilities.ReturnValues import SErrorException, convertReturnValue, unwrap
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry, CSGlobals
 from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData
 from DIRAC.Core.Security.ProxyInfo import getVOfromProxyGroup
@@ -177,35 +178,26 @@ class Operations(object):
     cacheCFG = self.__getCache()
     section = cacheCFG.getRecursive(sectionPath)
     if not section:
-      return S_ERROR("%s in Operations does not exist" % sectionPath)
+      raise SErrorException("%s in Operations does not exist" % sectionPath)
     sectionCFG = section['value']
     if isinstance(sectionCFG, six.string_types):
-      return S_ERROR("%s in Operations is not a section" % sectionPath)
-    return S_OK(sectionCFG)
+      raise SErrorException("%s in Operations is not a section" % sectionPath)
+    return sectionCFG
 
+  @convertReturnValue
   def getSections(self, sectionPath, listOrdered=False):
-    result = self.__getCFG(sectionPath)
-    if not result['OK']:
-      return result
-    sectionCFG = result['Value']
-    return S_OK(sectionCFG.listSections(listOrdered))
+    sectionCFG = self.__getCFG(sectionPath)
+    return sectionCFG.listSections(listOrdered)
 
+  @convertReturnValue
   def getOptions(self, sectionPath, listOrdered=False):
-    result = self.__getCFG(sectionPath)
-    if not result['OK']:
-      return result
-    sectionCFG = result['Value']
-    return S_OK(sectionCFG.listOptions(listOrdered))
+    sectionCFG = self.__getCFG(sectionPath)
+    return sectionCFG.listOptions(listOrdered)
 
+  @convertReturnValue
   def getOptionsDict(self, sectionPath):
-    result = self.__getCFG(sectionPath)
-    if not result['OK']:
-      return result
-    sectionCFG = result['Value']
-    data = {}
-    for opName in sectionCFG.listOptions():
-      data[opName] = sectionCFG[opName]
-    return S_OK(data)
+    sectionCFG = self.__getCFG(sectionPath)
+    return {opName: sectionCFG[opName] for opName in sectionCFG.listOptions()}
 
   def getPath(self, option, vo=False, setup=False):
     """
