@@ -177,7 +177,10 @@ def unwrap(result):
   :raises: :exc:`SErrorException` if `result["OK"]` is falsey
   """
   if not result["OK"]:
-    raise SErrorException(result)
+    if "ExecInfo" in result:
+      six.reraise(*result["ExecInfo"])
+    else:
+      raise SErrorException(result)
   return result["Value"]
 
 
@@ -201,6 +204,7 @@ def convertReturnValue(func):
       retval = S_ERROR(repr(e))
       # Replace CallStack with the one from the exception
       exc_type, exc_value, exc_tb = sys.exc_info()
+      retval["ExecInfo"] = exc_type, exc_value, exc_tb
       retval["CallStack"] = traceback.format_tb(exc_tb)
       return retval
   return wrapped
