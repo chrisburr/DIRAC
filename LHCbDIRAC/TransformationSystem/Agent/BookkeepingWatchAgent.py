@@ -87,7 +87,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
     self.pickleFile = os.path.join(self.am_getWorkDirectory(), self.pickleFile)
     self.chunkSize = self.am_getOption('maxFilesPerChunk', self.chunkSize)
 
-    self.pluginsWithRunInfo = Operations().getValue('TransformationPlugins/pluginsWithRunInfo',
+    self.pluginsWithRunInfo = Operations().getValue('TransformationPlugins/PluginsWithRunInfo',
                                                     self.pluginsWithRunInfo)
 
     self._logInfo('Full Update Period: %d seconds' % self.fullUpdatePeriod)
