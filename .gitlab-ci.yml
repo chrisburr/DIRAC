@@ -287,6 +287,8 @@ create_tarball:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   variables:
     GIT_STRATEGY: none
   script:
@@ -355,6 +357,8 @@ build_sweeper_image:
     variables:
       - $SWEEP != "true"
       - ($CI_COMMIT_TAG =~ /v\d+r.+/ && $SWEEP != "true")
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   before_script:
     - |
       if [[ "${CI_COMMIT_TAG}" == *"-pre"* ]]; then
@@ -383,6 +387,8 @@ deploy_on_cvmfs:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   before_script:
     - mkdir -p ~/.globus
@@ -434,6 +440,8 @@ add_devel_tag:
     variables:
       - $SWEEP != "true"
       - ($CI_COMMIT_TAG =~ /.*-pre.*/ && $SWEEP != "true")
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   variables:
     DOCKER_IMAGE_PATH: $CI_REGISTRY_IMAGE
     OLDTAG: ${CI_COMMIT_TAG}
@@ -463,6 +471,8 @@ deploy_k8:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   trigger:
     project: chaen/diracchart
     strategy: depend
@@ -531,6 +541,7 @@ make_tag:
     - mv releases.cfg src/LHCbDIRAC/releases.cfg
     - export SERIES=`cat series.txt`
     - export VERSION=`cat version.txt`
+    - export VERSION_PY3=`cat versionPy3.txt`
     # insert new release notes into the changelog
     - cat ../notes.txt CHANGELOG/$SERIES > newNotes.txt
     - mv newNotes.txt CHANGELOG/$SERIES
@@ -543,6 +554,7 @@ make_tag:
     - git commit -av -m "Update versions and changelog for release of ${VERSION}"
     # tag current branch
     - git tag -a ${VERSION} -m ${VERSION}
+    - git tag -a ${VERSION_PY3} -m ${VERSION_PY3}
     # push commits and tag to main repo back
     - git push --tags origin ${CI_COMMIT_REF_NAME}
     # If we just tagged master we need to update also the releases.cfg and CHANGELOG in devel
@@ -576,3 +588,20 @@ MR_SWEEP:
   after_script: []
   script:
     - python /sweep_MR.py -p ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} -b origin/${CI_COMMIT_REF_NAME} -t ${SWEEP_TOKEN} -s "${SWEEP_SINCE}" -u "${SWEEP_UNTIL}" --repository-root ${PWD}
+
+deploy-to-pypi:
+  stage: deploy_release
+  # TODO: Remove after this is proven to work
+  allow_failure: true
+  only:
+    - tags@lhcb-dirac/LHCbDIRAC
+  except:
+    - /^v[0-9]+r[0-9]+.+$/
+  image: registry.cern.ch/docker.io/-/python:3.9
+  before_script:
+    - pip install twine wheel setuptools-scm[toml]
+  script:
+    - python setup.py sdist
+    - python setup.py bdist_wheel
+    - if [ -z "$TWINE_PASSWORD" ] ; then echo "Set TWINE_PASSWORD in CI variables" ; exit 1 ; fi
+    - twine upload -u __token__ dist/*

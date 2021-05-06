@@ -59,6 +59,7 @@ NEXT_RELEASE = os.environ.get('NEXT_RELEASE')
 # If the user did not specify a release increment the current version by 1
 version = None
 versionString = None
+versionStringPy3 = None
 preRelease = None
 if not NEXT_RELEASE:
   version = parseVersion(LATEST_RELEASE)
@@ -66,14 +67,16 @@ if not NEXT_RELEASE:
     # Increment patch version for 1
     version = (version[0], version[1], version[2] + 1, version[3])
     versionString = "v%sr%sp%s" % (version[0], version[1], version[2])
+    versionStringPy3 = "v%s.%s.%s" % (version[0], version[1], version[2])
     preRelease = False
-    print("Actomatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
+    print("Automatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
   else:
     # Increment pre version for 1
     version = (version[0], version[1], version[2], version[3] + 1)
     versionString = "v%sr%s-pre%s" % (version[0], version[1], version[3])
+    versionStringPy3 = "v%s.%s.0a%s" % (version[0], version[1], version[3])
     preRelease = True
-    print("Actomatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
+    print("Automatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
 else:
   # Use the version specified by NEXT_RELEASE
   version = parseVersion(NEXT_RELEASE)
@@ -103,6 +106,9 @@ linePrepend("../notes.txt", versionString)
 # store into artifact the version and series for later usage in tagging process
 with open('version.txt', 'a') as fver:
   fver.write(versionString)
+if versionStringPy3:
+  with open('versionPy3.txt', 'a') as fver:
+    fver.write(versionStringPy3)
 with open('series.txt', 'a') as fser:
   fser.write("v%sr%s" % (version[0], version[1]))
 
