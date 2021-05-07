@@ -81,7 +81,7 @@ class Transformation(DIRACTransformation):
     """get a BKK Query."""
     if self.paramValues['BkQuery']:
       return S_OK(self.paramValues['BkQuery'])
-    res = self.__executeOperation('getBookkeepingQuery', printOutput=printOutput)
+    res = self.__executeOperation('getBookkeepingQuery')
     if not res['OK']:
       return res
     self.item_called = 'BkQuery'
