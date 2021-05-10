@@ -36,33 +36,30 @@ cmd = ["sleep", "2"]
 
 
 def pyfunc(_name):
-  time.sleep(2)
+    time.sleep(2)
 
 
-@pytest.mark.parametrize("timeout, expected", [
-    (False, True),
-    (3, True),
-    (1, False)
-])
+@pytest.mark.parametrize("timeout, expected", [(False, True), (3, True), (1, False)])
 def test_calls(timeout, expected):
-  ret = systemCall(timeout, cmdSeq=cmd)
-  assert ret['OK'] == expected
+    ret = systemCall(timeout, cmdSeq=cmd)
+    assert ret["OK"] == expected
 
-  ret = shellCall(timeout, cmdSeq=" ".join(cmd))
-  assert ret['OK'] == expected
+    ret = shellCall(timeout, cmdSeq=" ".join(cmd))
+    assert ret["OK"] == expected
 
-  ret = pythonCall(timeout, pyfunc, 'something')
-  assert ret['OK'] == expected
+    ret = pythonCall(timeout, pyfunc, "something")
+    assert ret["OK"] == expected
 
 
 def test_getChildrenPIDs():
-  import os
-  os.system("echo $PWD")
-  mainProcess = Popen(['python', join(dirname(__file__), 'ProcessesCreator.py')])
-  time.sleep(1)
-  res = getChildrenPIDs(mainProcess.pid)
-  assert len(res) == 3
-  for p in res:
-    assert isinstance(p, int)
+    import os
 
-  mainProcess.wait()
+    os.system("echo $PWD")
+    mainProcess = Popen(["python", join(dirname(__file__), "ProcessesCreator.py")])
+    time.sleep(1)
+    res = getChildrenPIDs(mainProcess.pid)
+    assert len(res) == 3
+    for p in res:
+        assert isinstance(p, int)
+
+    mainProcess.wait()
