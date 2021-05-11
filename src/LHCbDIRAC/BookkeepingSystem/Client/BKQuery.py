@@ -198,7 +198,7 @@ class BKQuery():
       if len(url) == 1:
         bkPath = url[0]
       else:
-        if url[0] == 'evt':
+        if url[0] in ('evt', 'evt+std'):
           bkFields = ("ConfigName", "ConfigVersion",
                       "EventType", "ConditionDescription",
                       "ProcessingPass", "FileType")
