@@ -314,9 +314,11 @@ build_docker_image:
   stage: deploy_release
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
@@ -598,7 +600,7 @@ deploy-to-pypi:
     - tags@lhcb-dirac/LHCbDIRAC
   except:
     - /^v[0-9]+r[0-9]+.+$/
-  image: registry.cern.ch/docker.io/-/python:3.9
+  image: registry.cern.ch/docker.io/library/python:3.9
   before_script:
     - pip install twine wheel setuptools-scm[toml]
   script:
