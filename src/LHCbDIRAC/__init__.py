@@ -44,7 +44,7 @@ else:
   majorVersion = 10
   minorVersion = 2
   patchLevel = 0
-  preVersion = 9
+  preVersion = 10
 
   version = "v%sr%s" % (majorVersion, minorVersion)
   __version__ = "%s.%s" % (majorVersion, minorVersion)
