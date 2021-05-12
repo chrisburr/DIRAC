@@ -15,46 +15,22 @@ from DIRAC.tests.Utilities.utils import find_all
 
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
-rootPath = os.path.dirname(DIRAC.__file__)
 
-
-def createJob(local=True):
-
+def createJob(local=True, workspace=os.path.dirname(DIRAC.__file__)):
   gaudirunJob = LHCbJob()
-
   gaudirunJob.setName("gaudirun-Gauss-test-wrong-config-will-fail")
-  if local:
-    try:
-      gaudirunJob.setInputSandbox(
-          [
-              find_all(
-                  'prodConf_Gauss_00012345_00067890_1.py',
-                  os.environ['WORKSPACE'],
-                  '/tests/System/GridTestSubmission')[0],
-              find_all(
-                  'wrongConfig.cfg',
-                  os.environ['WORKSPACE'],
-                  '/tests/System/GridTestSubmission')[0],
-              find_all(
-                  'pilot.cfg',
-                  os.environ['WORKSPACE']
-                  + '/PilotInstallDIR')[0]])
-    except (IndexError, KeyError):
-      gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
-                                            '/tests/System/GridTestSubmission')[0],
-                                   find_all('wrongConfig.cfg', rootPath, '/tests/System/GridTestSubmission')[0],
-                                   find_all('pilot.cfg', rootPath)[0]])
-  else:
-    try:
-      gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', os.environ['WORKSPACE'],
-                                            '/tests/System/GridTestSubmission')[0],
-                                   find_all('wrongConfig.cfg', os.environ['WORKSPACE'],
-                                            '/tests/System/GridTestSubmission')[0]])
-    except (IndexError, KeyError):
-      gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', rootPath,
-                                            '/tests/System/GridTestSubmission')[0],
-                                   find_all('wrongConfig.cfg', rootPath,
-                                            '/tests/System/GridTestSubmission')[0]])
+
+  workspace = os.environ.get('WORKSPACE', workspace)
+  inputSandbox = [
+      find_all('prodConf_Gauss_00012345_00067890_1.py', workspace, '/tests/System/GridTestSubmission')[0],
+      find_all('wrongConfig.cfg', workspace, '/tests/System/GridTestSubmission')[0],
+  ]
+  if not local:
+    pilot_cfg = find_all('pilot.cfg', workspace + '/PilotInstallDIR')
+    if not pilot_cfg:
+      pilot_cfg = find_all('pilot.cfg', workspace)[0]
+    inputSandbox += [pilot_cfg]
+  gaudirunJob.setInputSandbox(inputSandbox)
 
   gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
 
