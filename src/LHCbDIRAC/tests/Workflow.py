@@ -22,8 +22,8 @@ def createJob(local=True, workspace=os.path.dirname(DIRAC.__file__)):
 
   workspace = os.environ.get('WORKSPACE', workspace)
   inputSandbox = [
-    find_all('prodConf_Gauss_00012345_00067890_1.py', workspace, '/tests/System/GridTestSubmission')[0],
-    find_all('wrongConfig.cfg', workspace, '/tests/System/GridTestSubmission')[0],
+      find_all('prodConf_Gauss_00012345_00067890_1.py', workspace, '/tests/System/GridTestSubmission')[0],
+      find_all('wrongConfig.cfg', workspace, '/tests/System/GridTestSubmission')[0],
   ]
   if not local:
     pilot_cfg = find_all('pilot.cfg', workspace + '/PilotInstallDIR')
