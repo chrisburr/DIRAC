@@ -139,6 +139,7 @@ pycodestyle_py3:
 # Check that the documentation does not generate any error/warning
 check_docs:
   extends: .test_setup_py3
+  allow_failure: true
   script:
     - pip install ../DIRAC/docs
     - cd docs
