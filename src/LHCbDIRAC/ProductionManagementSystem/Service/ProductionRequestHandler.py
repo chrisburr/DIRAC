@@ -10,6 +10,7 @@
 ###############################################################################
 """ProductionRequestHandler is the implementation of the Production Request
 service."""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -19,7 +20,6 @@ __RCSID__ = "$Id$"
 import os
 import re
 import tempfile
-import threading
 import six
 
 from DIRAC import gLogger, gConfig, S_OK, S_ERROR
@@ -30,24 +30,13 @@ from DIRAC.Core.Utilities.Subprocess import shellCall
 
 from LHCbDIRAC.ProductionManagementSystem.DB.ProductionRequestDB import ProductionRequestDB
 
-# This is a global instance of the ProductionRequestDB class
-productionRequestDB = False
-
-
-def initializeProductionRequestHandler(_serviceInfo):
-  global productionRequestDB
-  productionRequestDB = ProductionRequestDB()
-  return S_OK()
-
 
 class ProductionRequestHandler(RequestHandler):
 
-  def __init__(self, *args, **kargs):
-
-    RequestHandler.__init__(self, *args, **kargs)
-
-    self.database = productionRequestDB
-    self.lock = threading.Lock()
+  @classmethod
+  def initializeHandler(cls, serviceInfoDict):
+    cls.productionRequestDB = ProductionRequestDB()
+    return S_OK()
 
   def __clientCredentials(self):
     creds = self.getRemoteCredentials()
@@ -68,7 +57,7 @@ class ProductionRequestHandler(RequestHandler):
     creds = self.__clientCredentials()
     if 'MasterID' not in requestDict:
       requestDict['RequestAuthor'] = creds['User']
-    return self.database.createProductionRequest(requestDict, creds)
+    return self.productionRequestDB.createProductionRequest(requestDict, creds)
 
   types_getProductionRequest = [list]
 
@@ -78,7 +67,7 @@ class ProductionRequestHandler(RequestHandler):
     """
     if not requestIDList:
       return S_OK({})
-    result = self.database.getProductionRequest(requestIDList)
+    result = self.productionRequestDB.getProductionRequest(requestIDList)
     if not result['OK']:
       return result
     rows = {}
@@ -92,102 +81,102 @@ class ProductionRequestHandler(RequestHandler):
 
   def export_getProductionRequestList(self, subrequestFor, sortBy, sortOrder, offset, limit, rFilter):
     """Get production requests in list format (for portal grid)"""
-    return self.database.getProductionRequest([], subrequestFor, sortBy, sortOrder,
-                                              offset, limit, rFilter)
+    return self.productionRequestDB.getProductionRequest(
+        [], subrequestFor, sortBy, sortOrder, offset, limit, rFilter)
 
   types_updateProductionRequest = [six.integer_types, dict]
 
   def export_updateProductionRequest(self, requestID, requestDict):
     """Update production request specified by requestID."""
     creds = self.__clientCredentials()
-    return self.database.updateProductionRequest(requestID, requestDict, creds)
+    return self.productionRequestDB.updateProductionRequest(requestID, requestDict, creds)
 
   types_duplicateProductionRequest = [six.integer_types, bool]
 
   def export_duplicateProductionRequest(self, requestID, clearpp):
     """Duplicate production request with subrequests."""
     creds = self.__clientCredentials()
-    return self.database.duplicateProductionRequest(requestID, creds, clearpp)
+    return self.productionRequestDB.duplicateProductionRequest(requestID, creds, clearpp)
 
   types_deleteProductionRequest = [six.integer_types]
 
   def export_deleteProductionRequest(self, requestID):
     """Delete production request specified by requestID."""
     creds = self.__clientCredentials()
-    return self.database.deleteProductionRequest(requestID, creds)
+    return self.productionRequestDB.deleteProductionRequest(requestID, creds)
 
   types_splitProductionRequest = [six.integer_types, list]
 
   def export_splitProductionRequest(self, requestID, splitList):
     """split production request."""
     creds = self.__clientCredentials()
-    return self.database.splitProductionRequest(requestID, splitList, creds)
+    return self.productionRequestDB.splitProductionRequest(requestID, splitList, creds)
 
   types_getProductionProgressList = [six.integer_types]
 
   def export_getProductionProgressList(self, requestID):
     """Return the list of associated with requestID productions."""
-    return self.database.getProductionProgress(requestID)
+    return self.productionRequestDB.getProductionProgress(requestID)
 
   types_addProductionToRequest = [dict]
 
   def export_addProductionToRequest(self, pdict):
     """Associate production to request."""
-    return self.database.addProductionToRequest(pdict)
+    return self.productionRequestDB.addProductionToRequest(pdict)
 
   types_removeProductionFromRequest = [six.integer_types]
 
   def export_removeProductionFromRequest(self, productionID):
     """Deassociate production."""
-    return self.database.removeProductionFromRequest(productionID)
+    return self.productionRequestDB.removeProductionFromRequest(productionID)
 
   types_useProductionForRequest = [six.integer_types, bool]
 
   def export_useProductionForRequest(self, productionID, used):
     """Set Used flags for production."""
-    return self.database.useProductionForRequest(productionID, used)
+    return self.productionRequestDB.useProductionForRequest(productionID, used)
 
   types_getRequestHistory = [six.integer_types]
 
   def export_getRequestHistory(self, requestID):
     """Return the list of state changes for the request."""
-    return self.database.getRequestHistory(requestID)
+    return self.productionRequestDB.getRequestHistory(requestID)
 
   types_getTrackedProductions = []
 
   def export_getTrackedProductions(self):
     """Return the list of productions in active requests."""
-    return self.database.getTrackedProductions()
+    return self.productionRequestDB.getTrackedProductions()
 
   types_updateTrackedProductions = [list]
 
   def export_updateTrackedProductions(self, update):
     """Update tracked productions (used by Agent)"""
-    return self.database.updateTrackedProductions(update)
+    return self.productionRequestDB.updateTrackedProductions(update)
 
   types_getTrackedInput = []
 
   def export_getTrackedInput(self):
     """Return the list of requests with dynamic input data."""
-    return self.database.getTrackedInput()
+    return self.productionRequestDB.getTrackedInput()
 
   types_updateTrackedInput = [list]
 
   def export_updateTrackedInput(self, update):
     """Update real number of input events (used by Agent)"""
-    return self.database.updateTrackedInput(update)
+    return self.productionRequestDB.updateTrackedInput(update)
 
   types_getAllSubRequestSummary = []
 
   def export_getAllSubRequestSummary(self, status='', rType=''):
     """Return a summary for each subrequest."""
-    return self.database.getAllSubRequestSummary(status, rType)
+    return self.productionRequestDB.getAllSubRequestSummary(status, rType)
 
   types_getAllProductionProgress = []
 
   def export_getAllProductionProgress(self):
     """Return all the production progress."""
-    return self.database.getAllProductionProgress()
+    return self.productionRequestDB.getAllProductionProgress()
 
   @staticmethod
   def __getTplFolder(tt):
@@ -360,7 +349,7 @@ class ProductionRequestHandler(RequestHandler):
   def export_getProductionList(self, requestID):
     """Return the list of productions associated with request and its
     subrequests."""
-    return self.database.getProductionList(requestID)
+    return self.productionRequestDB.getProductionList(requestID)
 
   types_getProductionRequestSummary = [[six.string_types, list], [six.string_types, list]]
 
@@ -377,7 +366,7 @@ class ProductionRequestHandler(RequestHandler):
     elif isinstance(status, list):
       selectStatus = status
 
-    reqList = self.database.getProductionRequest([])
+    reqList = self.productionRequestDB.getProductionRequest([])
     if not reqList['OK']:
       return reqList
 
@@ -394,7 +383,7 @@ class ProductionRequestHandler(RequestHandler):
         continue
       if req['HasSubrequest']:
         gLogger.verbose('Simulation request %s is a parent, getting subrequests...' % iD)
-        subReq = self.database.getProductionRequest([], int(iD))
+        subReq = self.productionRequestDB.getProductionRequest([], int(iD))
         if not subReq['OK']:
           gLogger.error('Could not get production request for %s' % iD)
           return subReq
@@ -415,4 +404,4 @@ class ProductionRequestHandler(RequestHandler):
 
   def export_getFilterOptions(self):
     """Return the dictionary with possible values for filter."""
-    return self.database.getFilterOptions()
+    return self.productionRequestDB.getFilterOptions()

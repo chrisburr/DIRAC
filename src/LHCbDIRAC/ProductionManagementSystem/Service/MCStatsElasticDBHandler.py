@@ -27,51 +27,43 @@ from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCGaussLogErrorsDB import El
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticPrMonDB import ElasticPrMonDB
 
 
-def initializeMCStatsElasticDBHandler(_serviceinfo):
-  global elasticApplicationSummaryDB
-  elasticApplicationSummaryDB = ElasticApplicationSummaryDB()
-
-  global elasticMCBooleLogErrorsDB
-  elasticMCBooleLogErrorsDB = ElasticMCBooleLogErrorsDB()
-
-  global elasticMCGaussLogErrorsDB
-  elasticMCGaussLogErrorsDB = ElasticMCGaussLogErrorsDB()
-
-  global elasticPrMonDB
-  elasticPrMonDB = ElasticPrMonDB()
-
-  global db
-  db = {
-      'XMLSummary': elasticApplicationSummaryDB,
-      'booleErrors': elasticMCBooleLogErrorsDB,
-      'gaussErrors': elasticMCGaussLogErrorsDB,
-      'prMon': elasticPrMonDB
-  }
-
-  return S_OK()
-
-
 class MCStatsElasticDBHandler(RequestHandler):
   """Tiny service for setting/getting/removing data from ElasticSearch MCStats DBs
   """
+
+  @classmethod
+  def initializeHandler(cls, serviceInfoDict):
+    elasticApplicationSummaryDB = ElasticApplicationSummaryDB()
+    elasticMCBooleLogErrorsDB = ElasticMCBooleLogErrorsDB()
+    elasticMCGaussLogErrorsDB = ElasticMCGaussLogErrorsDB()
+    elasticPrMonDB = ElasticPrMonDB()
+
+    cls.db = {
+        'XMLSummary': elasticApplicationSummaryDB,
+        'booleErrors': elasticMCBooleLogErrorsDB,
+        'gaussErrors': elasticMCGaussLogErrorsDB,
+        'prMon': elasticPrMonDB
+    }
+
+    return S_OK()
 
   types_set = [six.string_types, dict]
 
   def export_set(self, typeName, data):
 
     self.log.debug('Called set() with typeName = %s, data = %s' % (typeName, str(data)))
-    return db[typeName].set(data)
+    return self.db[typeName].set(data)
 
   types_get = [six.string_types, int]
 
   def export_get(self, typeName, productionID):
 
     self.log.debug('Called get() with typeName = %s, productionID = %d' % (typeName, productionID))
-    return db[typeName].get(productionID)
+    return self.db[typeName].get(productionID)
 
   types_remove = [six.string_types, int]
 
   def export_remove(self, typeName, productionID):
 
     self.log.debug('Called remove() with typeName = %s, productionID = %d' % (typeName, productionID))
-    return db[typeName].remove(productionID)
+    return self.db[typeName].remove(productionID)
