@@ -17,12 +17,13 @@ import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
+from DIRAC.Core.Utilities.Decorators import deprecated
 from DIRAC.ConfigurationSystem.Client.PathFinder import getServiceSection
 from DIRAC.ConfigurationSystem.Client.Helpers import cfgPath
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
-from DIRAC.Core.Utilities.Decorators import deprecated
 
-from LHCbDIRAC.BookkeepingSystem.DB.BookkeepingDatabaseClient import BookkeepingDatabaseClient
+
+from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import checkEnoughBKArguments
@@ -33,28 +34,7 @@ __RCSID__ = "$Id$"
 # pylint: disable=invalid-name
 
 
-dataMGMT_ = None
-
-reader_ = None
-
-global default
 default = 'ALL'
-
-__eventTypeCache = None
-
-
-def initializeBookkeepingManagerHandler(serviceInfo):
-  """Put here necessary initializations needed at the service start."""
-  global dataMGMT_
-  dataMGMT_ = BookkeepingDatabaseClient()
-
-  global reader_
-  reader_ = XMLFilesReaderManager()
-
-  global __eventTypeCache
-  __eventTypeCache = {}
-
-  return S_OK()
 
 
 class BookkeepingManagerHandler(RequestHandler):
@@ -69,6 +49,10 @@ class BookkeepingManagerHandler(RequestHandler):
     """Initializes the variables used to identify queries, which are not
     containing enough conditions."""
 
+    cls.bkkDB = OracleBookkeepingDB()
+    cls.xmlReader = XMLFilesReaderManager()
+    cls.__eventTypeCache = {}
+
     bkkSection = getServiceSection("Bookkeeping/BookkeepingManager")
     if not bkkSection:
       cls.email = 'lhcb-bookkeeping@cern.ch'
@@ -78,13 +62,6 @@ class BookkeepingManagerHandler(RequestHandler):
       cls.forceExecution = gConfig.getValue(cfgPath(bkkSection, 'ForceExecution'), False)
     gLogger.info("Email used to track queries: %s forceExecution" % cls.email, cls.forceExecution)
     return S_OK()
-  ###########################################################################
-  types_sendBookkeeping = [six.string_types, six.string_types]
-
-  @deprecated("Use sendXMLBookkeepingReport")
-  def export_sendBookkeeping(self, name, xml):
-    """more info in the BookkeepingClient.py."""
-    return self.export_sendXMLBookkeepingReport(xml)
 
   #############################################################################
   types_sendXMLBookkeepingReport = [six.string_types]
@@ -98,7 +75,7 @@ class BookkeepingManagerHandler(RequestHandler):
     :param str xml: bookkeeping report
     """
     try:
-      retVal = reader_.readXMLfromString(xml)
+      retVal = self.xmlReader.readXMLfromString(xml)
       if not retVal['OK']:
         self.log.error("Issue reading XML", retVal['Message'])
         return retVal
@@ -113,8 +90,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getAvailableSteps = [dict]
 
-  @staticmethod
-  def export_getAvailableSteps(in_dict):
+  @classmethod
+  def export_getAvailableSteps(cls, in_dict):
     """It returns all the available steps which corresponds to a given
     conditions.
 
@@ -124,26 +101,26 @@ class BookkeepingManagerHandler(RequestHandler):
     Visible, ProcessingPass, Usable, RuntimeProjects, DQTag,
     OptionsFormat, StartItem, MaxItem
     """
-    return dataMGMT_.getAvailableSteps(in_dict)
+    return cls.bkkDB.getAvailableSteps(in_dict)
 
   #############################################################################
   types_getRuntimeProjects = [dict]
 
-  @staticmethod
-  def export_getRuntimeProjects(in_dict):
+  @classmethod
+  def export_getRuntimeProjects(cls, in_dict):
     """It returns a runtime project for a given step.
 
     The input parameter is a in_dictionary which has only one key StepId
     """
-    return dataMGMT_.getRuntimeProjects(in_dict)
+    return cls.bkkDB.getRuntimeProjects(in_dict)
 
   #############################################################################
   types_getStepInputFiles = [int]
 
-  @staticmethod
-  def export_getStepInputFiles(stepId):
+  @classmethod
+  def export_getStepInputFiles(cls, stepId):
     """It returns the input files for a given step."""
-    retVal = dataMGMT_.getStepInputFiles(stepId)
+    retVal = cls.bkkDB.getStepInputFiles(stepId)
     if not retVal['OK']:
       return retVal
 
@@ -155,26 +132,26 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_setStepInputFiles = [int, list]
 
-  @staticmethod
-  def export_setStepInputFiles(stepid, files):
+  @classmethod
+  def export_setStepInputFiles(cls, stepid, files):
     """It is used to set input file types to a Step."""
-    return dataMGMT_.setStepInputFiles(stepid, files)
+    return cls.bkkDB.setStepInputFiles(stepid, files)
 
   #############################################################################
   types_setStepOutputFiles = [int, list]
 
-  @staticmethod
-  def export_setStepOutputFiles(stepid, files):
+  @classmethod
+  def export_setStepOutputFiles(cls, stepid, files):
     """It is used to set output file types to a Step."""
-    return dataMGMT_.setStepOutputFiles(stepid, files)
+    return cls.bkkDB.setStepOutputFiles(stepid, files)
 
   #############################################################################
   types_getStepOutputFiles = [int]
 
-  @staticmethod
-  def export_getStepOutputFiles(stepId):
+  @classmethod
+  def export_getStepOutputFiles(cls, stepId):
     """It returns the output file types for a given Step."""
-    retVal = dataMGMT_.getStepOutputFiles(stepId)
+    retVal = cls.bkkDB.getStepOutputFiles(stepId)
     if not retVal['OK']:
       return retVal
 
@@ -187,16 +164,16 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getAvailableFileTypes = []
 
-  @staticmethod
-  def export_getAvailableFileTypes():
+  @classmethod
+  def export_getAvailableFileTypes(cls, ):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getAvailableFileTypes()
+    return cls.bkkDB.getAvailableFileTypes()
 
   #############################################################################
   types_insertFileTypes = [six.string_types, six.string_types, six.string_types]
 
-  @staticmethod
-  def export_insertFileTypes(ftype, desc, fileType):
+  @classmethod
+  def export_insertFileTypes(cls, ftype, desc, fileType):
     """It is used to register a file type. It has the following input
     parameters:
 
@@ -204,13 +181,13 @@ class BookkeepingManagerHandler(RequestHandler):
     :param str desc: a short description which describes the file content
     :paran str fileType: the file format such as ROOT, POOL_ROOT, etc.
     """
-    return dataMGMT_.insertFileTypes(ftype, desc, fileType)
+    return cls.bkkDB.insertFileTypes(ftype, desc, fileType)
 
   #############################################################################
   types_insertStep = [dict]
 
-  @staticmethod
-  def export_insertStep(in_dict):
+  @classmethod
+  def export_insertStep(cls, in_dict):
     """It used to insert a step to the Bookkeeping Metadata Catalogue. The
     imput parameter is a dictionary which contains the steps attributes. For
     example: Dictionary format:
@@ -224,39 +201,39 @@ class BookkeepingManagerHandler(RequestHandler):
     'OptionFiles': '', 'CONDDB': ''}, 'OutputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.MDST'}],
     'InputFileTypes': [{'Visible': 'Y', 'FileType': 'CHARM.DST'}],'RuntimeProjects':[{StepId:13878}]}
     """
-    return dataMGMT_.insertStep(in_dict)
+    return cls.bkkDB.insertStep(in_dict)
 
   #############################################################################
   types_deleteStep = [int]
 
-  @staticmethod
-  def export_deleteStep(stepid):
+  @classmethod
+  def export_deleteStep(cls, stepid):
     """It used to delete a given step."""
-    return dataMGMT_.deleteStep(stepid)
+    return cls.bkkDB.deleteStep(stepid)
 
   #############################################################################
   types_deleteStepContainer = [int]
 
-  @staticmethod
-  def export_deleteStepContainer(stepid):
+  @classmethod
+  def export_deleteStepContainer(cls, stepid):
     """It used to delete a given step."""
-    return dataMGMT_.deleteStepContainer(stepid)
+    return cls.bkkDB.deleteStepContainer(stepid)
 
   #############################################################################
   types_updateStep = [dict]
 
-  @staticmethod
-  def export_updateStep(in_dict):
+  @classmethod
+  def export_updateStep(cls, in_dict):
     """It is used to modify the step attributes."""
-    return dataMGMT_.updateStep(in_dict)
+    return cls.bkkDB.updateStep(in_dict)
 
   ##############################################################################
   types_getAvailableConfigNames = []
 
-  @staticmethod
-  def export_getAvailableConfigNames():
+  @classmethod
+  def export_getAvailableConfigNames(cls):
     """It returns all the available configuration names which are used."""
-    retVal = dataMGMT_.getAvailableConfigNames()
+    retVal = cls.bkkDB.getAvailableConfigNames()
     if not retVal['OK']:
       return retVal
 
@@ -268,32 +245,29 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getConfigVersions = [dict]
 
-  @staticmethod
-  def export_getConfigVersions(in_dict):
+  @classmethod
+  def export_getConfigVersions(cls, in_dict):
     """It returns all the available configuration version for a given
     condition.
 
     Input parameter is a dictionary which has the following key: 'ConfigName'
     For example: in_dict = {'ConfigName':'MC'}
     """
-    result = S_ERROR()
     configName = in_dict.get('ConfigName', default)
-    retVal = dataMGMT_.getConfigVersions(configName)
-    if retVal['OK']:
-      records = []
-      parameters = ['Configuration Version']
-      for record in retVal['Value']:
-        records += [list(record)]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    retVal = cls.bkkDB.getConfigVersions(configName)
+    if not retVal['OK']:
+      return retVal
+    records = []
+    parameters = ['Configuration Version']
+    for record in retVal['Value']:
+      records += [list(record)]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_getConditions = [dict]
 
-  @staticmethod
-  def export_getConditions(in_dict):
+  @classmethod
+  def export_getConditions(cls, in_dict):
     """It returns all the available conditions for a given conditions.
 
     Input parameter is a dictionary which has the following keys: 'ConfigName', 'ConfigVersion', 'EventType'
@@ -308,7 +282,7 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'EventTypeId' in in_dict:
       gLogger.verbose('EventTypeId will be not accepted! Please change it to EventType')
 
-    retVal = dataMGMT_.getConditions(configName, configVersion, evt)
+    retVal = cls.bkkDB.getConditions(configName, configVersion, evt)
     if retVal['OK']:
       values = retVal['Value']
       sim_parameters = ['SimId',
@@ -363,8 +337,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getProcessingPass = [dict, six.string_types]
 
-  @staticmethod
-  def export_getProcessingPass(in_dict, path=None):
+  @classmethod
+  def export_getProcessingPass(cls, in_dict, path=None):
     """It returns the processing pass for a given conditions.
 
     Input parameter is a dictionary and a path (string) which has the following keys:
@@ -382,28 +356,19 @@ class BookkeepingManagerHandler(RequestHandler):
     prod = in_dict.get('Production', default)
     runnb = in_dict.get('RunNumber', default)
     evt = in_dict.get('EventType', in_dict.get('EventTypeId', default))
-    return dataMGMT_.getProcessingPass(configName, configVersion, conddescription, runnb, prod, evt, path)
-
-  ############################################################################
-  types_getStandardProcessingPass = [dict, six.string_types]
-
-  @deprecated("use getProcessingPass")
-  def export_getStandardProcessingPass(self, in_dict, path):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProcessingPass(in_dict, path)
+    return cls.bkkDB.getProcessingPass(configName, configVersion, conddescription, runnb, prod, evt, path)
 
   #############################################################################
   types_getProductions = [dict]
 
-  @staticmethod
-  def export_getProductions(in_dict):
+  @classmethod
+  def export_getProductions(cls, in_dict):
     """It returns the productions for a given conditions.
 
     Input parameter is a dictionary which has the following keys:
     'ConfigName', 'ConfigVersion', 'ConditionDescription',
     'EventType','ProcessingPass'
     """
-    result = S_ERROR()
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
@@ -415,29 +380,26 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'EventTypeId' in in_dict:
       gLogger.verbose('The EventTypeId has to be replaced by EventType!')
 
-    retVal = dataMGMT_.getProductions(
+    retVal = cls.bkkDB.getProductions(
         configName, configVersion, conddescription, processing, evt, visible, ftype, replicaFlag)
-    if retVal['OK']:
-      records = []
-      parameters = ['Production/RunNumber']
-      for record in retVal['Value']:
-        records += [[record[0]]]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+    records = []
+    parameters = ['Production/RunNumber']
+    for record in retVal['Value']:
+      records += [[record[0]]]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_getFileTypes = [dict]
 
-  @staticmethod
-  def export_getFileTypes(in_dict):
+  @classmethod
+  def export_getFileTypes(cls, in_dict):
     """It returns the file types for a given conditions.
 
     Input parameter is a dictionary which has the following keys:
     'ConfigName', 'ConfigVersion', 'ConditionDescription', 'EventType','ProcessingPass','Production','RunNumber'
     """
-    result = S_ERROR()
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
@@ -451,27 +413,17 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'EventTypeId' in in_dict:
       gLogger.verbose('The EventTypeId has to be replaced by EventType!')
 
-    retVal = dataMGMT_.getFileTypes(configName, configVersion,
+    retVal = cls.bkkDB.getFileTypes(configName, configVersion,
                                     conddescription, processing,
                                     evt, runnb,
                                     production, visible, replicaflag)
-    if retVal['OK']:
-      records = []
-      parameters = ['FileTypes']
-      for record in retVal['Value']:
-        records += [[record[0]]]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
-
-  #############################################################################
-  types_getStandardEventTypes = [dict]
-
-  @deprecated("Use getEventTypes")
-  def export_getStandardEventTypes(self, in_dict):
-    """more info in the BookkeepingClient.py."""
-    self.export_getEventTypes(in_dict)
+    if not retVal['OK']:
+      return retVal
+    records = []
+    parameters = ['FileTypes']
+    for record in retVal['Value']:
+      records += [[record[0]]]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   def transfer_toClient(self, parameters, token, fileHelper):
@@ -484,7 +436,7 @@ class BookkeepingManagerHandler(RequestHandler):
     iscPickleFormat = False
     try:
       in_dict = JEncoder.loads(parameters)
-    except Exception as _:
+    except Exception:
       iscPickleFormat = True
       self.log.exception("Failed to serialise data with JSON", parameters)
       in_dict = pickleOrJsonLoads(parameters)
@@ -509,9 +461,9 @@ class BookkeepingManagerHandler(RequestHandler):
     return result
 
   #############################################################################
-  @staticmethod
+  @classmethod
   @checkEnoughBKArguments
-  def __getFiles(in_dict):
+  def __getFiles(cls, in_dict):
     """It returns a list of files."""
     simdesc = in_dict.get('SimulationConditions', default)
     datataking = in_dict.get('DataTakingConditions', default)
@@ -547,7 +499,7 @@ class BookkeepingManagerHandler(RequestHandler):
       gLogger.verbose('RunNumbers will be removed. It will changed to RunNumbers')
 
     result = []
-    retVal = dataMGMT_.getFiles(simdesc, datataking,
+    retVal = cls.bkkDB.getFiles(simdesc, datataking,
                                 procPass, ftype, evt,
                                 configname, configversion,
                                 prod, flag, startd, endd,
@@ -566,9 +518,9 @@ class BookkeepingManagerHandler(RequestHandler):
     return result
 
   #############################################################################
-  @staticmethod
+  @classmethod
   @checkEnoughBKArguments
-  def __getFilesWithMetadata(in_dict):
+  def __getFilesWithMetadata(cls, in_dict):
     """It returns the files with their metadata.
 
     This result will be transfered to the client using a pickle file
@@ -598,7 +550,7 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'Quality' in in_dict:
       gLogger.verbose('The Quality has to be replaced by DataQuality!')
 
-    retVal = dataMGMT_.getFilesWithMetadata(configName,
+    retVal = cls.bkkDB.getFilesWithMetadata(configName,
                                             configVersion,
                                             conddescription,
                                             processing,
@@ -616,25 +568,25 @@ class BookkeepingManagerHandler(RequestHandler):
                                             tcks,
                                             jobStart,
                                             jobEnd)
-    if retVal['OK']:
-      records = []
-      parameters = ['FileName', 'EventStat', 'FileSize',
-                    'CreationDate', 'JobStart', 'JobEnd',
-                    'WorkerNode', 'FileType', 'RunNumber',
-                    'FillNumber', 'FullStat', 'DataqualityFlag',
-                    'EventInputStat', 'TotalLuminosity', 'Luminosity',
-                    'InstLuminosity', 'TCK', 'GUID', 'ADLER32', 'EventType', 'MD5SUM',
-                    'VisibilityFlag', 'JobId', 'GotReplica', 'InsertTimeStamp']
-      for record in retVal['Value']:
-        records += [[record[0], record[1], record[2],
-                     record[3], record[4], record[5],
-                     record[6], record[7], record[8],
-                     record[9], record[10], record[11],
-                     record[12], record[13], record[14],
-                     record[15], record[16], record[17], record[18], record[19],
-                     record[20], record[21], record[22], record[23], record[24]]]
-      retVal = {'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)}
-    return retVal
+    if not retVal['OK']:
+      return retVal
+    records = []
+    parameters = ['FileName', 'EventStat', 'FileSize',
+                  'CreationDate', 'JobStart', 'JobEnd',
+                  'WorkerNode', 'FileType', 'RunNumber',
+                  'FillNumber', 'FullStat', 'DataqualityFlag',
+                  'EventInputStat', 'TotalLuminosity', 'Luminosity',
+                  'InstLuminosity', 'TCK', 'GUID', 'ADLER32', 'EventType', 'MD5SUM',
+                  'VisibilityFlag', 'JobId', 'GotReplica', 'InsertTimeStamp']
+    for record in retVal['Value']:
+      records += [[record[0], record[1], record[2],
+                   record[3], record[4], record[5],
+                   record[6], record[7], record[8],
+                   record[9], record[10], record[11],
+                   record[12], record[13], record[14],
+                   record[15], record[16], record[17], record[18], record[19],
+                   record[20], record[21], record[22], record[23], record[24]]]
+    return {'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)}
 
   #############################################################################
   types_getFilesSummary = [dict]
@@ -648,7 +600,6 @@ class BookkeepingManagerHandler(RequestHandler):
     'ProcessingPass','Production','RunNumber', 'FileType', DataQuality
     """
     gLogger.debug('Input:', "%s" % in_dict)
-    result = S_ERROR()
 
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
@@ -675,45 +626,41 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'Quality' in in_dict:
       gLogger.verbose('The Quality has to be replaced by DataQuality!')
 
-    retVal = dataMGMT_.getFilesSummary(configName=configName,
-                                       configVersion=configVersion,
-                                       conditionDescription=condDescription,
-                                       processingPass=processingPass,
-                                       eventType=eventType,
-                                       production=production,
-                                       fileType=fileType,
-                                       dataQuality=dataQuality,
-                                       startRun=startRun,
-                                       endRun=endRun,
-                                       visible=visible,
-                                       startDate=startDate,
-                                       endDate=endDate,
-                                       runNumbers=runNumbers,
-                                       replicaFlag=replicaFlag,
-                                       tcks=tcks,
-                                       jobStart=jobStart,
-                                       jobEnd=jobEnd)
-    if retVal['OK']:
-      records = []
-      parameters = ['NbofFiles', 'NumberOfEvents', 'FileSize', 'Luminosity', 'InstLuminosity']
-      for record in retVal['Value']:
-        records += [[record[0], record[1], record[2], record[3], record[4]]]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-
-    return result
+    retVal = self.bkkDB.getFilesSummary(configName=configName,
+                                        configVersion=configVersion,
+                                        conditionDescription=condDescription,
+                                        processingPass=processingPass,
+                                        eventType=eventType,
+                                        production=production,
+                                        fileType=fileType,
+                                        dataQuality=dataQuality,
+                                        startRun=startRun,
+                                        endRun=endRun,
+                                        visible=visible,
+                                        startDate=startDate,
+                                        endDate=endDate,
+                                        runNumbers=runNumbers,
+                                        replicaFlag=replicaFlag,
+                                        tcks=tcks,
+                                        jobStart=jobStart,
+                                        jobEnd=jobEnd)
+    if not retVal['OK']:
+      return retVal
+    records = []
+    parameters = ['NbofFiles', 'NumberOfEvents', 'FileSize', 'Luminosity', 'InstLuminosity']
+    for record in retVal['Value']:
+      records += [[record[0], record[1], record[2], record[3], record[4]]]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_getLimitedFiles = [dict]
 
-  @staticmethod
-  def export_getLimitedFiles(in_dict):
+  @classmethod
+  def export_getLimitedFiles(cls, in_dict):
     """It returns a chunk of files.
 
     This method is equivalent to the getFiles.
     """
-    result = S_ERROR()
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
@@ -732,7 +679,7 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'Quality' in in_dict:
       gLogger.verbose('The Quality has to be replaced by DataQuality!')
 
-    retVal = dataMGMT_.getLimitedFiles(configName,
+    retVal = cls.bkkDB.getLimitedFiles(configName,
                                        configVersion,
                                        conddescription,
                                        processing,
@@ -743,121 +690,119 @@ class BookkeepingManagerHandler(RequestHandler):
                                        runnb,
                                        start,
                                        maxValue)
-    if retVal['OK']:
-      records = []
-      parameters = ['Name', 'EventStat', 'FileSize',
-                    'CreationDate', 'JobStart', 'JobEnd',
-                    'WorkerNode', 'FileType', 'EventType',
-                    'RunNumber', 'FillNumber', 'FullStat',
-                    'DataqualityFlag', 'EventInputStat',
-                    'TotalLuminosity', 'Luminosity',
-                    'InstLuminosity', 'TCK', 'WNMJFHS06', 'HLT2TCK',
-                    'NumberOfProcessors']
-      for record in retVal['Value']:
-        records += [[record[0], record[1], record[2],
-                     str(record[3]), str(record[4]),
-                     str(record[5]), record[6], record[7],
-                     record[8], record[9], record[10],
-                     record[11], record[12], record[13],
-                     record[14], record[15], record[16],
-                     record[17]]]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+    records = []
+    parameters = ['Name', 'EventStat', 'FileSize',
+                  'CreationDate', 'JobStart', 'JobEnd',
+                  'WorkerNode', 'FileType', 'EventType',
+                  'RunNumber', 'FillNumber', 'FullStat',
+                  'DataqualityFlag', 'EventInputStat',
+                  'TotalLuminosity', 'Luminosity',
+                  'InstLuminosity', 'TCK', 'WNMJFHS06', 'HLT2TCK',
+                  'NumberOfProcessors']
+    for record in retVal['Value']:
+      records += [[record[0], record[1], record[2],
+                   str(record[3]), str(record[4]),
+                   str(record[5]), record[6], record[7],
+                   record[8], record[9], record[10],
+                   record[11], record[12], record[13],
+                   record[14], record[15], record[16],
+                   record[17]]]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   types_getAvailableDataQuality = []
 
-  @staticmethod
-  def export_getAvailableDataQuality():
+  @classmethod
+  def export_getAvailableDataQuality(cls):
     """it returns all the available data quality flags."""
-    return dataMGMT_.getAvailableDataQuality()
+    return cls.bkkDB.getAvailableDataQuality()
 
   #############################################################################
   types_getAvailableProductions = []
 
-  @staticmethod
-  def export_getAvailableProductions():
+  @classmethod
+  def export_getAvailableProductions(cls):
     """It returns all the available productions which have associated file with
     replica flag yes."""
-    return dataMGMT_.getAvailableProductions()
+    return cls.bkkDB.getAvailableProductions()
 
   #############################################################################
   types_getAvailableRuns = []
 
-  @staticmethod
-  def export_getAvailableRuns():
+  @classmethod
+  def export_getAvailableRuns(cls):
     """It returns all the available runs which have associated files with
     reploica flag yes."""
-    return dataMGMT_.getAvailableRuns()
+    return cls.bkkDB.getAvailableRuns()
 
   #############################################################################
   types_getAvailableEventTypes = []
 
-  @staticmethod
-  def export_getAvailableEventTypes():
+  @classmethod
+  def export_getAvailableEventTypes(cls):
     """It returns all the available event types."""
-    return dataMGMT_.getAvailableEventTypes()
+    return cls.bkkDB.getAvailableEventTypes()
 
   #############################################################################
   types_getMoreProductionInformations = [int]
 
-  @staticmethod
-  def export_getMoreProductionInformations(prodid):
+  @classmethod
+  def export_getMoreProductionInformations(cls, prodid):
     """It returns inforation about a production."""
-    return dataMGMT_.getMoreProductionInformations(prodid)
+    return cls.bkkDB.getMoreProductionInformations(prodid)
 
   #############################################################################
   types_getJobInfo = [six.string_types]
 
-  @staticmethod
-  def export_getJobInfo(lfn):
+  @classmethod
+  def export_getJobInfo(cls, lfn):
     """It returns the job metadata information for a given lfn produced by this
     job."""
-    return dataMGMT_.getJobInfo(lfn)
+    return cls.bkkDB.getJobInfo(lfn)
 
   #############################################################################
   types_bulkJobInfo = [dict]
 
-  @staticmethod
-  def export_bulkJobInfo(lfns):
+  @classmethod
+  def export_bulkJobInfo(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.bulkJobInfo(lfns)
+    return cls.bkkDB.bulkJobInfo(lfns)
 
   #############################################################################
   types_getJobInformation = [dict]
 
-  @staticmethod
-  def export_getJobInformation(in_dict):
+  @classmethod
+  def export_getJobInformation(cls, in_dict):
     """It returns the job metadata information for a given lfn produced by this
     job."""
-    return dataMGMT_.getJobInformation(in_dict)
+    return cls.bkkDB.getJobInformation(in_dict)
 
   #############################################################################
   types_getRunNumber = [six.string_types]
 
-  @staticmethod
-  def export_getRunNumber(lfn):
+  @classmethod
+  def export_getRunNumber(cls, lfn):
     """It returns the run number for a given lfn!"""
-    return dataMGMT_.getRunNumber(lfn)
+    return cls.bkkDB.getRunNumber(lfn)
 
   #############################################################################
   types_getRunNbAndTck = [six.string_types]
 
-  @staticmethod
-  def export_getRunNbAndTck(lfn):
+  @classmethod
+  def export_getRunNbAndTck(cls, lfn):
     """It returns the run number and tck for a given LFN."""
-    return dataMGMT_.getRunNbAndTck(lfn)
+    return cls.bkkDB.getRunNbAndTck(lfn)
 
   #############################################################################
   types_getProductionFiles = [six.integer_types, six.string_types]
 
-  @staticmethod
-  def export_getProductionFiles(prod, fileType, replica=default):
+  @classmethod
+  def export_getProductionFiles(cls, prod, fileType, replica=default):
     """It returns files and their metadata for a given production, file type
     and replica."""
-    return dataMGMT_.getProductionFiles(prod, fileType, replica)
+    return cls.bkkDB.getProductionFiles(prod, fileType, replica)
 
   #############################################################################
   types_getAvailableRunNumbers = []
@@ -869,53 +814,53 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getRunFiles = [int]
 
-  @staticmethod
-  def export_getRunFiles(runid):
+  @classmethod
+  def export_getRunFiles(cls, runid):
     """It returns all the files and their metadata for a given run number!"""
-    return dataMGMT_.getRunFiles(runid)
+    return cls.bkkDB.getRunFiles(runid)
 
   #############################################################################
   types_updateFileMetaData = [six.string_types, dict]
 
-  @staticmethod
-  def export_updateFileMetaData(filename, fileAttr):
+  @classmethod
+  def export_updateFileMetaData(cls, filename, fileAttr):
     """This method used to modify files metadata.
 
     Input parametes is a stirng (filename) and a dictionary (fileAttr)
     with the file attributes. {'GUID':34826386286382,'EventStat':222222}
     """
-    return dataMGMT_.updateFileMetaData(filename, fileAttr)
+    return cls.bkkDB.updateFileMetaData(filename, fileAttr)
 
   #############################################################################
   types_renameFile = [six.string_types, six.string_types]
 
-  @staticmethod
-  def export_renameFile(oldLFN, newLFN):
+  @classmethod
+  def export_renameFile(cls, oldLFN, newLFN):
     """It allows to change the name of a file which is in the Bookkeeping
     Metadata Catalogue."""
-    return dataMGMT_.renameFile(oldLFN, newLFN)
+    return cls.bkkDB.renameFile(oldLFN, newLFN)
 
   #############################################################################
   types_getProductionProcessingPassID = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionProcessingPassID(prodid):
+  @classmethod
+  def export_getProductionProcessingPassID(cls, prodid):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionProcessingPassID(prodid)
+    return cls.bkkDB.getProductionProcessingPassID(prodid)
 
   #############################################################################
   types_getProductionProcessingPass = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionProcessingPass(prodid):
+  @classmethod
+  def export_getProductionProcessingPass(cls, prodid):
     """It returns the processing pass for a given production."""
-    return dataMGMT_.getProductionProcessingPass(prodid)
+    return cls.bkkDB.getProductionProcessingPass(prodid)
 
   #############################################################################
   types_insertTag = [dict]
 
-  @staticmethod
-  def export_insertTag(values):
+  @classmethod
+  def export_insertTag(cls, values):
     """It used to register tags (CONDB, DDDB, etc) to the database.
 
     The input parameter is dictionary: {'TagName':'Value'}
@@ -926,9 +871,9 @@ class BookkeepingManagerHandler(RequestHandler):
     for i in values:
       tags = values[i]
       for tag in tags:
-        retVal = dataMGMT_.existsTag(i, tag)
+        retVal = cls.bkkDB.existsTag(i, tag)
         if retVal['OK'] and not retVal['Value']:
-          retVal = dataMGMT_.insertTag(i, tag)
+          retVal = cls.bkkDB.insertTag(i, tag)
           if not retVal['OK']:
             faild[tag] = i
           else:
@@ -938,26 +883,18 @@ class BookkeepingManagerHandler(RequestHandler):
     return S_OK({'Successfull': successfull, 'Faild': faild})
 
   #############################################################################
-  types_setQuality = [list, six.string_types]
-
-  @deprecated("use setFileDataQuality")
-  def export_setQuality(self, lfns, flag):
-    """more info in the BookkeepingClient.py."""
-    return self.export_setFileDataQuality(lfns, flag)
-
-  #############################################################################
   types_setFileDataQuality = [list, six.string_types]
 
-  @staticmethod
-  def export_setFileDataQuality(lfns, flag):
+  @classmethod
+  def export_setFileDataQuality(cls, lfns, flag):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.setFileDataQuality(lfns, flag)
+    return cls.bkkDB.setFileDataQuality(lfns, flag)
 
   #############################################################################
   types_setRunAndProcessingPassDataQuality = [six.integer_types, six.string_types, six.string_types]
 
-  @staticmethod
-  def export_setRunAndProcessingPassDataQuality(runNB, procpass, flag):
+  @classmethod
+  def export_setRunAndProcessingPassDataQuality(cls, runNB, procpass, flag):
     """It sets the data quality to a run which belong to a given processing
     pass.
 
@@ -965,116 +902,87 @@ class BookkeepingManagerHandler(RequestHandler):
     used to set the data quality flag to a given run files which
     processed by a given processing pass.
     """
-    return dataMGMT_.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
-
-  #############################################################################
-  types_setRunQualityWithProcessing = [six.integer_types, six.string_types, six.string_types]
-
-  @deprecated("use setRunAndProcessingPassDataQuality")
-  def export_setRunQualityWithProcessing(self, runNB, procpass, flag):
-    """more info in the BookkeepingClient.py."""
-    return self.export_setRunAndProcessingPassDataQuality(runNB, procpass, flag)
+    return cls.bkkDB.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
   #############################################################################
   types_setRunDataQuality = [int, six.string_types]
 
-  @staticmethod
-  def export_setRunDataQuality(runNb, flag):
+  @classmethod
+  def export_setRunDataQuality(cls, runNb, flag):
     """It sets the data quality for a given run!
 
     The input parameter is the run number and a data quality flag.
     """
-    return dataMGMT_.setRunDataQuality(runNb, flag)
+    return cls.bkkDB.setRunDataQuality(runNb, flag)
 
   #############################################################################
   types_setQualityRun = [int, six.string_types]
 
-  @staticmethod
-  def export_setQualityRun(runNb, flag):
+  @classmethod
+  def export_setQualityRun(cls, runNb, flag):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.setRunDataQuality(runNb, flag)
+    return cls.bkkDB.setRunDataQuality(runNb, flag)
 
   #############################################################################
   types_setProductionDataQuality = [int, six.string_types]
 
-  @staticmethod
-  def export_setProductionDataQuality(prod, flag):
+  @classmethod
+  def export_setProductionDataQuality(cls, prod, flag):
     """It sets the data quality for a given production!"""
-    return dataMGMT_.setProductionDataQuality(prod, flag)
-
-  #############################################################################
-  types_setQualityProduction = [int, six.string_types]
-
-  @deprecated("Use setProductionDataQuality")
-  def export_setQualityProduction(self, prod, flag):
-    """more info in the BookkeepingClient.py."""
-    return self.export_setProductionDataQuality(prod, flag)
-
-  types_getLFNsByProduction = [int]
-
-  @deprecated("Use getProductionFiles")
-  def export_getLFNsByProduction(self, prod):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProductionFiles(prod, 'ALL', 'ALL')
+    return cls.bkkDB.setProductionDataQuality(prod, flag)
 
   #############################################################################
   types_getFileAncestors = [list, int, bool]
 
-  @staticmethod
-  def export_getFileAncestors(lfns, depth=None, replica=None):
+  @classmethod
+  def export_getFileAncestors(cls, lfns, depth=None, replica=None):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileAncestors(lfns, depth, replica)
+    return cls.bkkDB.getFileAncestors(lfns, depth, replica)
 
   #############################################################################
   types_getAllAncestors = [list, int]
 
-  @staticmethod
-  def export_getAllAncestors(lfns, depth):
+  @classmethod
+  def export_getAllAncestors(cls, lfns, depth):
     """more info in the BookkeepingClient.py."""
-    result = S_ERROR()
-    retVal = dataMGMT_.getFileAncestors(lfns, depth, False)
-    if retVal['OK']:
-      values = retVal['Value']
-      for key, value in values['Successful'].items():
-        values['Successful'][key] = [i['FileName'] for i in value]
-      result = S_OK(values)
-    else:
-      result = retVal
-    return result
+    retVal = cls.bkkDB.getFileAncestors(lfns, depth, False)
+    if not retVal['OK']:
+      return retVal
+    values = retVal['Value']
+    for key, value in values['Successful'].items():
+      values['Successful'][key] = [i['FileName'] for i in value]
+    return S_OK(values)
 
   #############################################################################
   types_getAncestors = [list, int]
 
-  @staticmethod
-  def export_getAncestors(lfns, depth):
+  @classmethod
+  def export_getAncestors(cls, lfns, depth):
     """ Get the ancestors for a list of LFNs in input
     """
-    result = S_ERROR()
-    retVal = dataMGMT_.getFileAncestors(lfns, depth, True)
-    if retVal['OK']:
-      values = retVal['Value']
-      for key, value in values['Successful'].items():
-        values['Successful'][key] = [i['FileName'] for i in value]
-      result = S_OK(values)
-    else:
-      result = retVal
-    return result
+    retVal = cls.bkkDB.getFileAncestors(lfns, depth, True)
+    if not retVal['OK']:
+      return retVal
+    values = retVal['Value']
+    for key, value in values['Successful'].items():
+      values['Successful'][key] = [i['FileName'] for i in value]
+    return S_OK(values)
 
   #############################################################################
   types_getAllAncestorsWithFileMetaData = [list, int]
 
-  @staticmethod
-  def export_getAllAncestorsWithFileMetaData(lfns, depth):
+  @classmethod
+  def export_getAllAncestorsWithFileMetaData(cls, lfns, depth):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileAncestors(lfns, depth, False)
+    return cls.bkkDB.getFileAncestors(lfns, depth, False)
 
   #############################################################################
   types_getAllDescendents = [list, int, int, bool]
 
-  @staticmethod
-  def export_getAllDescendents(lfn, depth=0, production=0, checkreplica=False):
+  @classmethod
+  def export_getAllDescendents(cls, lfn, depth=0, production=0, checkreplica=False):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileDescendents(lfn, depth, production, checkreplica)
+    return cls.bkkDB.getFileDescendents(lfn, depth, production, checkreplica)
 
   #############################################################################
   types_getDescendents = [list, int]
@@ -1086,10 +994,10 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getFileDescendents = [list, int, int, bool]
 
-  @staticmethod
-  def export_getFileDescendents(lfn, depth, production=0, checkreplica=True):
+  @classmethod
+  def export_getFileDescendents(cls, lfn, depth, production=0, checkreplica=True):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileDescendents(lfn, depth, production, checkreplica)
+    return cls.bkkDB.getFileDescendents(lfn, depth, production, checkreplica)
 
   #############################################################################
   types_getFileDescendants = [list, int, int, bool]
@@ -1101,166 +1009,165 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_checkfile = [six.string_types]
 
-  @staticmethod
-  def export_checkfile(fileName):
+  @classmethod
+  def export_checkfile(cls, fileName):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.checkfile(fileName)
+    return cls.bkkDB.checkfile(fileName)
 
   #############################################################################
   types_checkFileTypeAndVersion = [six.string_types, six.string_types]
 
-  @staticmethod
-  def export_checkFileTypeAndVersion(ftype, version):
+  @classmethod
+  def export_checkFileTypeAndVersion(cls, ftype, version):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.checkFileTypeAndVersion(ftype, version)
+    return cls.bkkDB.checkFileTypeAndVersion(ftype, version)
 
   #############################################################################
   types_checkEventType = [six.integer_types]
 
-  @staticmethod
-  def export_checkEventType(eventTypeId):
+  @classmethod
+  def export_checkEventType(cls, eventTypeId):
     """more info in the BookkeepingClient.py."""
-    if eventTypeId not in __eventTypeCache:
-      retVal = dataMGMT_.checkEventType(eventTypeId)
+    if eventTypeId not in cls.__eventTypeCache:
+      retVal = cls.bkkDB.checkEventType(eventTypeId)
       if not retVal['OK']:
         return retVal
-      __eventTypeCache[eventTypeId] = retVal
+      cls.__eventTypeCache[eventTypeId] = retVal
 
-    return __eventTypeCache[eventTypeId]
+    return cls.__eventTypeCache[eventTypeId]
 
   #############################################################################
   types_insertSimConditions = [dict]
 
-  @staticmethod
-  def export_insertSimConditions(in_dict):
+  @classmethod
+  def export_insertSimConditions(cls, in_dict):
     """It inserts a simulation condition to the Bookkeeping Metadata
     catalogue."""
-    return dataMGMT_.insertSimConditions(in_dict)
+    return cls.bkkDB.insertSimConditions(in_dict)
 
   #############################################################################
   types_getSimConditions = []
 
-  @staticmethod
-  def export_getSimConditions():
+  @classmethod
+  def export_getSimConditions(cls):
     """It returns all the simulation conditions which are in the Bookkeeping
     Metadata catalogue."""
-    return dataMGMT_.getSimConditions()
+    return cls.bkkDB.getSimConditions()
 
   #############################################################################
   types_removeReplica = [six.string_types]
 
-  @staticmethod
-  def export_removeReplica(fileName):
+  @classmethod
+  def export_removeReplica(cls, fileName):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.removeReplica(fileName)
+    return cls.bkkDB.removeReplica(fileName)
 
   #############################################################################
   types_getFileMetadata = [list]
 
-  @staticmethod
-  def export_getFileMetadata(lfns):
+  @classmethod
+  def export_getFileMetadata(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileMetadata(lfns)
+    return cls.bkkDB.getFileMetadata(lfns)
 
   #############################################################################
   types_getFilesInformations = [list]
 
-  @staticmethod
-  def export_getFilesInformations(lfns):
+  @classmethod
+  def export_getFilesInformations(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileMetadata(lfns)
+    return cls.bkkDB.getFileMetadata(lfns)
 
   #############################################################################
   types_getFileMetaDataForUsers = [list]
 
-  @staticmethod
-  def export_getFileMetaDataForUsers(lfns):
+  @classmethod
+  def export_getFileMetaDataForUsers(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileMetaDataForWeb(lfns)
+    return cls.bkkDB.getFileMetaDataForWeb(lfns)
 
   #############################################################################
   types_getFileMetaDataForWeb = [list]
 
-  @staticmethod
-  def export_getFileMetaDataForWeb(lfns):
+  @classmethod
+  def export_getFileMetaDataForWeb(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileMetaDataForWeb(lfns)
+    return cls.bkkDB.getFileMetaDataForWeb(lfns)
 
   #############################################################################
   types_getProductionFilesForUsers = [int, dict, dict, six.integer_types, six.integer_types]
 
-  @staticmethod
-  def export_getProductionFilesForUsers(prod, ftype, sortDict, startItem, maxitems):
+  @classmethod
+  def export_getProductionFilesForUsers(cls, prod, ftype, sortDict, startItem, maxitems):
     """more info in the BookkeepingClient.py."""
-    res = dataMGMT_.getProductionFilesForWeb(prod, ftype, sortDict, startItem, maxitems)
-    return res
+    return cls.bkkDB.getProductionFilesForWeb(prod, ftype, sortDict, startItem, maxitems)
 
   #############################################################################
   types_getProductionFilesForWeb = [six.integer_types, dict, dict, six.integer_types, six.integer_types]
 
-  @staticmethod
-  def export_getProductionFilesWeb(prod, ftype, sortDict, startItem, maxitems):
+  @classmethod
+  def export_getProductionFilesWeb(cls, prod, ftype, sortDict, startItem, maxitems):
     """It returns files and their metadata information for a given
     production."""
-    return dataMGMT_.getProductionFilesForWeb(prod, ftype, sortDict, startItem, maxitems)
+    return cls.bkkDB.getProductionFilesForWeb(prod, ftype, sortDict, startItem, maxitems)
 
   #############################################################################
   types_exists = [list]
 
-  @staticmethod
-  def export_exists(lfns):
+  @classmethod
+  def export_exists(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.exists(lfns)
+    return cls.bkkDB.exists(lfns)
 
   #############################################################################
   types_addReplica = [list]
 
-  @staticmethod
-  def export_addReplica(fileName):
+  @classmethod
+  def export_addReplica(cls, fileName):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.addReplica(fileName)
+    return cls.bkkDB.addReplica(fileName)
 
   #############################################################################
   types_getRunInformations = [six.integer_types]
 
-  @staticmethod
-  def export_getRunInformations(runnb):
+  @classmethod
+  def export_getRunInformations(cls, runnb):
     """It returns run information and statistics."""
-    return dataMGMT_.getRunInformations(runnb)
+    return cls.bkkDB.getRunInformations(runnb)
 
   #############################################################################
   types_getRunInformation = [dict]
 
-  @staticmethod
-  def export_getRunInformation(runnb):
+  @classmethod
+  def export_getRunInformation(cls, runnb):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getRunInformation(runnb)
+    return cls.bkkDB.getRunInformation(runnb)
 
   #############################################################################
   types_getFileCreationLog = [six.string_types]
 
-  @staticmethod
-  def export_getFileCreationLog(lfn):
+  @classmethod
+  def export_getFileCreationLog(cls, lfn):
     """For a given file returns the log files of the job which created it."""
-    return dataMGMT_.getFileCreationLog(lfn)
+    return cls.bkkDB.getFileCreationLog(lfn)
 
   #############################################################################
   types_getLogfile = [six.string_types]
 
-  @staticmethod
-  def export_getLogfile(lfn):
+  @classmethod
+  def export_getLogfile(cls, lfn):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileCreationLog(lfn)
+    return cls.bkkDB.getFileCreationLog(lfn)
 
   #############################################################################
   types_insertEventType = [six.integer_types, six.string_types, six.string_types]
 
-  @staticmethod
-  def export_insertEventType(evid, desc, primary):
+  @classmethod
+  def export_insertEventType(cls, evid, desc, primary):
     """It inserts an event type to the Bookkeeping Metadata catalogue."""
-    retVal = dataMGMT_.checkEventType(evid)
+    retVal = cls.bkkDB.checkEventType(evid)
     if not retVal['OK']:  # meaning the event type is not already inserted
-      retVal = dataMGMT_.insertEventTypes(evid, desc, primary)
+      retVal = cls.bkkDB.insertEventTypes(evid, desc, primary)
       if not retVal['OK']:
         return retVal
       return S_OK(str(evid) + ' event type added successfully!')
@@ -1276,43 +1183,40 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_updateEventType = [six.integer_types, six.string_types, six.string_types]
 
-  @staticmethod
-  def export_updateEventType(evid, desc, primary):
+  @classmethod
+  def export_updateEventType(cls, evid, desc, primary):
     """It can used to modify an existing event type."""
-    result = S_ERROR()
 
-    retVal = dataMGMT_.checkEventType(evid)
+    retVal = cls.bkkDB.checkEventType(evid)
     if not retVal['OK']:
-      result = S_ERROR(str(evid) + ' event type is missing in the BKK database!')
-    else:
-      retVal = dataMGMT_.updateEventType(evid, desc, primary)
-      if retVal['OK']:
-        result = S_OK(str(evid) + ' event type updated successfully!')
-      else:
-        result = retVal
-    return result
+      return S_ERROR(str(evid) + ' event type is missing in the BKK database!')
+
+    retVal = cls.bkkDB.updateEventType(evid, desc, primary)
+    if not retVal['OK']:
+      return retVal
+    return S_OK(str(evid) + ' event type updated successfully!')
 
   #############################################################################
   types_addFiles = [list]
 
-  @staticmethod
-  def export_addFiles(lfns):
+  @classmethod
+  def export_addFiles(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.addReplica(lfns)
+    return cls.bkkDB.addReplica(lfns)
 
   #############################################################################
   types_removeFiles = [list]
 
-  @staticmethod
-  def export_removeFiles(lfns):
+  @classmethod
+  def export_removeFiles(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.removeReplica(lfns)
+    return cls.bkkDB.removeReplica(lfns)
 
   #############################################################################
   types_getProductionSummary = [dict]
 
-  @staticmethod
-  def export_getProductionSummary(in_dict):
+  @classmethod
+  def export_getProductionSummary(cls, in_dict):
     """It can used to count the number of events for a given dataset."""
 
     cName = in_dict.get('ConfigName', default)
@@ -1322,14 +1226,7 @@ class BookkeepingManagerHandler(RequestHandler):
     pgroup = in_dict.get('ProcessingPass', default)
     ftype = in_dict.get('FileType', default)
     evttype = in_dict.get('EventType', default)
-    return dataMGMT_.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
-
-  #############################################################################
-  types_getProductionInformations = [six.integer_types]
-
-  @deprecated("Use getProductionInformation")
-  def export_getProductionInformations(self, prodid):
-    return self.export_getProductionInformation(prodid)
+    return cls.bkkDB.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
 
   #############################################################################
   types_getProductionInformation = [six.integer_types]
@@ -1343,19 +1240,19 @@ class BookkeepingManagerHandler(RequestHandler):
     nbOfEvents = None
     prodinfos = None
 
-    value = dataMGMT_.getProductionNbOfJobs(prodid)
+    value = self.bkkDB.getProductionNbOfJobs(prodid)
     if value['OK']:
       nbjobs = value['Value']
 
-    value = dataMGMT_.getProductionNbOfFiles(prodid)
+    value = self.bkkDB.getProductionNbOfFiles(prodid)
     if value['OK']:
       nbOfFiles = value['Value']
 
-    value = dataMGMT_.getProductionNbOfEvents(prodid)
+    value = self.bkkDB.getProductionNbOfEvents(prodid)
     if value['OK']:
       nbOfEvents = value['Value']
 
-    value = dataMGMT_.getConfigsAndEvtType(prodid)
+    value = self.bkkDB.getConfigsAndEvtType(prodid)
     if value['OK']:
       prodinfos = value['Value']
 
@@ -1369,18 +1266,18 @@ class BookkeepingManagerHandler(RequestHandler):
     cversion = prodinfos[0][1]
     path += cname + '/' + cversion + '/'
 
-    res = dataMGMT_.getProductionSimulationCond(prodid)
+    res = self.bkkDB.getProductionSimulationCond(prodid)
     if not res['OK']:
       return res
     path += res['Value']
 
-    res = dataMGMT_.getProductionProcessingPass(prodid)
+    res = self.bkkDB.getProductionProcessingPass(prodid)
     if not res['OK']:
       return res
     path += res['Value']
     prefix = '\n' + path
 
-    # FIXME: I think this will crash due to iterating over None if dataMGMT_.getProductionNbOfEvents(prodid) fails.
+    # FIXME: I think this will crash due to iterating over None if cls.bkkDB.getProductionNbOfEvents(prodid) fails.
     # FIXME: I also have no idea what i is. At at glance I thought it was an integer but its being indexed?
     # FIXME: Why only index 0 and 2? The docstring of getProductionNbOfEvents should probably be fixed.
     for i in nbOfEvents:
@@ -1395,10 +1292,10 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getFileHistory = [six.string_types]
 
-  @staticmethod
-  def export_getFileHistory(lfn):
+  @classmethod
+  def export_getFileHistory(cls, lfn):
     """It returns all the information about a file."""
-    retVal = dataMGMT_.getFileHistory(lfn)
+    retVal = cls.bkkDB.getFileHistory(lfn)
     result = {}
     records = []
     if retVal['OK']:
@@ -1428,106 +1325,111 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getJobsNb = [six.integer_types]
 
-  @staticmethod
-  def export_getJobsNb(prodid):
+  @classmethod
+  @deprecated("Use getProductionNbOfJobs")
+  def export_getJobsNb(cls, prodid):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionNbOfJobs(prodid)
+    return cls.bkkDB.getProductionNbOfJobs(prodid)
 
   #############################################################################
   types_getProductionNbOfJobs = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionNbOfJobs(prodid):
+  @classmethod
+  def export_getProductionNbOfJobs(cls, prodid):
     """It returns the number of jobs for a given production."""
-    return dataMGMT_.getProductionNbOfJobs(prodid)
+    return cls.bkkDB.getProductionNbOfJobs(prodid)
 
   #############################################################################
   types_getNumberOfEvents = [six.integer_types]
 
-  @staticmethod
-  def export_getNumberOfEvents(prodid):
+  @classmethod
+  @deprecated("Use getProductionNbOfEvents")
+  def export_getNumberOfEvents(cls, prodid):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionNbOfEvents(prodid)
+    return cls.bkkDB.getProductionNbOfEvents(prodid)
 
   #############################################################################
   types_getProductionNbOfEvents = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionNbOfEvents(prodid):
+  @classmethod
+  def export_getProductionNbOfEvents(cls, prodid):
     """It returns the number of events for a given production."""
-    return dataMGMT_.getProductionNbOfEvents(prodid)
+    return cls.bkkDB.getProductionNbOfEvents(prodid)
 
   #############################################################################
   types_getSizeOfFiles = [six.integer_types]
 
-  @staticmethod
-  def export_getSizeOfFiles(prodid):
+  @classmethod
+  @deprecated("Use getProductionSizeOfFiles")
+  def export_getSizeOfFiles(cls, prodid):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionSizeOfFiles(prodid)
+    return cls.bkkDB.getProductionSizeOfFiles(prodid)
 
   #############################################################################
   types_getProductionSizeOfFiles = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionSizeOfFiles(prodid):
+  @classmethod
+  def export_getProductionSizeOfFiles(cls, prodid):
     """It returns the size of files for a given production."""
-    return dataMGMT_.getProductionSizeOfFiles(prodid)
+    return cls.bkkDB.getProductionSizeOfFiles(prodid)
 
   #############################################################################
   types_getNbOfFiles = [six.integer_types]
 
-  @staticmethod
-  def export_getNbOfFiles(prodid):
+  @classmethod
+  @deprecated("Use getProductionNbOfFiles")
+  def export_getNbOfFiles(cls, prodid):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionNbOfFiles(prodid)
+    return cls.bkkDB.getProductionNbOfFiles(prodid)
 
   #############################################################################
   types_getProductionNbOfFiles = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionNbOfFiles(prodid):
+  @classmethod
+  def export_getProductionNbOfFiles(cls, prodid):
     """It returns the number of files produced by a given production."""
-    return dataMGMT_.getProductionNbOfFiles(prodid)
+    return cls.bkkDB.getProductionNbOfFiles(prodid)
 
   #############################################################################
   types_getNbOfJobsBySites = [six.integer_types]
 
-  @staticmethod
-  def export_getNbOfJobsBySites(prodid):
+  @classmethod
+  def export_getNbOfJobsBySites(cls, prodid):
     """It returns the number of jobs executed at different sites for a given
     production."""
-    return dataMGMT_.getNbOfJobsBySites(prodid)
+    return cls.bkkDB.getNbOfJobsBySites(prodid)
 
   #############################################################################
   types_getAvailableTags = []
 
-  @staticmethod
-  def export_getAvailableTags():
+  @classmethod
+  def export_getAvailableTags(cls):
     """It returns the available database tags."""
-    return dataMGMT_.getAvailableTags()
+    return cls.bkkDB.getAvailableTags()
 
   #############################################################################
   types_getProcessedEvents = [six.integer_types]
 
-  @staticmethod
-  def export_getProcessedEvents(prodid):
+  @classmethod
+  @deprecated("Use getProductionProcessedEvents")
+  def export_getProcessedEvents(cls, prodid):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getProductionProcessedEvents(prodid)
+    return cls.bkkDB.getProductionProcessedEvents(prodid)
 
   #############################################################################
   types_getProductionProcessedEvents = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionProcessedEvents(prodid):
+  @classmethod
+  def export_getProductionProcessedEvents(cls, prodid):
     """it returns the number of events processed for a given production."""
     gLogger.debug('getProductionProcessedEvents->Production:', '%d ' % prodid)
-    return dataMGMT_.getProductionProcessedEvents(prodid)
+    return cls.bkkDB.getProductionProcessedEvents(prodid)
 
   #############################################################################
   types_getRunsForAGivenPeriod = [dict]
 
-  @staticmethod
-  def export_getRunsForAGivenPeriod(in_dict):
+  @classmethod
+  def export_getRunsForAGivenPeriod(cls, in_dict):
     """It returns the available runs between a period.
 
     Input parameters:
@@ -1536,118 +1438,86 @@ class BookkeepingManagerHandler(RequestHandler):
     EndDate: the run end period
     CheckRunStatus: if it is true, it check the run is processed or not processed.
     """
-    return dataMGMT_.getRunsForAGivenPeriod(in_dict)
-
-  #############################################################################
-  types_getProductiosWithAGivenRunAndProcessing = [dict]
-
-  @deprecated("Use getProductionsFromView")
-  def export_getProductiosWithAGivenRunAndProcessing(self, in_dict):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getProductionsFromView(in_dict)
+    return cls.bkkDB.getRunsForAGivenPeriod(in_dict)
 
   #############################################################################
   types_getProductionsFromView = [dict]
 
-  @staticmethod
-  def export_getProductionsFromView(in_dict):
+  @classmethod
+  @deprecated("Useless?")
+  def export_getProductionsFromView(cls, in_dict):
     """It returns the productions from the bookkeeping view for a given
     processing pass and run number.
 
     Input parameters: RunNumber ProcessingPass
     """
     # FIXME: might be a useless method
-    return dataMGMT_.getProductionsFromView(in_dict)
-
-  #############################################################################
-  types_getDataQualityForRuns = [list]
-
-  @deprecated("Use getRunFilesDataQuality")
-  def export_getDataQualityForRuns(self, runs):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getRunFilesDataQuality(runs)
+    return cls.bkkDB.getProductionsFromView(in_dict)
 
   #############################################################################
   types_getRunFilesDataQuality = [list]
 
-  @staticmethod
-  def export_getRunFilesDataQuality(runs):
+  @classmethod
+  def export_getRunFilesDataQuality(cls, runs):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getRunFilesDataQuality(runs)
+    return cls.bkkDB.getRunFilesDataQuality(runs)
 
   #############################################################################
   types_setFilesInvisible = [list]
 
-  @staticmethod
-  def export_setFilesInvisible(lfns):
+  @classmethod
+  def export_setFilesInvisible(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.setFilesInvisible(lfns)
+    return cls.bkkDB.setFilesInvisible(lfns)
 
   #############################################################################
   types_setFilesVisible = [list]
 
-  @staticmethod
-  def export_setFilesVisible(lfns):
+  @classmethod
+  def export_setFilesVisible(cls, lfns):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.setFilesVisible(lfns)
-
-  #############################################################################
-  types_getRunFlag = [six.integer_types, six.integer_types]
-
-  @deprecated("Use getRunAndProcessingPassDataQuality")
-  def export_getRunFlag(self, runnb, processing):
-    """more info in the BookkeepingClient.py."""
-    return self.export_getRunAndProcessingPassDataQuality(runnb, processing)
+    return cls.bkkDB.setFilesVisible(lfns)
 
   #############################################################################
   types_getRunAndProcessingPassDataQuality = [six.integer_types, six.integer_types]
 
-  @staticmethod
-  def export_getRunAndProcessingPassDataQuality(runnb, processing):
+  @classmethod
+  def export_getRunAndProcessingPassDataQuality(cls, runnb, processing):
     """It returns the data quality flag for a given run and processing pass."""
-    return dataMGMT_.getRunAndProcessingPassDataQuality(runnb, processing)
+    return cls.bkkDB.getRunAndProcessingPassDataQuality(runnb, processing)
 
   #############################################################################
   types_getAvailableConfigurations = []
 
-  @staticmethod
-  def export_getAvailableConfigurations():
+  @classmethod
+  def export_getAvailableConfigurations(cls):
     """It returns the available configurations."""
-    return dataMGMT_.getAvailableConfigurations()
+    return cls.bkkDB.getAvailableConfigurations()
 
   #############################################################################
   types_getRunProcessingPass = [six.integer_types]
 
-  @staticmethod
-  def export_getRunProcessingPass(runnumber):
+  @classmethod
+  def export_getRunProcessingPass(cls, runnumber):
     """it returns the run number for a given run."""
-    return dataMGMT_.getRunProcessingPass(runnumber)
+    return cls.bkkDB.getRunProcessingPass(runnumber)
 
   #############################################################################
   types_getProductionFilesStatus = [int, list]
 
-  @staticmethod
-  def export_getProductionFilesStatus(productionid=None, lfns=None):
+  @classmethod
+  def export_getProductionFilesStatus(cls, productionid=None, lfns=None):
     """It returns the file status in the bkk for a given production or a list
     of lfns."""
     if not lfns:
       lfns = []
-    return dataMGMT_.getProductionFilesStatus(productionid, lfns)
-
-  #############################################################################
-  types_getFilesWithGivenDataSets = [dict]
-
-  @deprecated("Use getFiles")
-  def export_getFilesWithGivenDataSets(self, values):
-    """more info in the BookkeepingClient.py."""
-    gLogger.debug('getFiles dataset:', "%s" % values)
-    return self.export_getFiles(values)
+    return cls.bkkDB.getProductionFilesStatus(productionid, lfns)
 
   #############################################################################
   types_getFiles = [dict]
 
-  @staticmethod
-  def export_getFiles(values):
+  @classmethod
+  def export_getFiles(cls, values):
     """more info in the BookkeepingClient.py."""
 
     simdesc = values.get('SimulationConditions', default)
@@ -1684,7 +1554,7 @@ class BookkeepingManagerHandler(RequestHandler):
       gLogger.verbose('RunNumbers will be removed. It will changed to RunNumbers')
 
     result = []
-    retVal = dataMGMT_.getFiles(simdesc, datataking,
+    retVal = cls.bkkDB.getFiles(simdesc, datataking,
                                 procPass, ftype, evt,
                                 configname, configversion,
                                 prod, flag, startd, endd,
@@ -1710,8 +1580,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getVisibleFilesWithMetadata = [dict]
 
-  @staticmethod
-  def export_getVisibleFilesWithMetadata(in_dict):
+  @classmethod
+  def export_getVisibleFilesWithMetadata(cls, in_dict):
     """It returns a list of files with metadata for a given condition."""
 
     conddescription = in_dict.get('SimulationConditions', in_dict.get('DataTakingConditions', default))
@@ -1747,7 +1617,7 @@ class BookkeepingManagerHandler(RequestHandler):
 
     gLogger.debug("getVisibleFilesWithMetadata->", "%s" % in_dict)
     result = {}
-    retVal = dataMGMT_.getFilesWithMetadata(configName=configname,
+    retVal = cls.bkkDB.getFilesWithMetadata(configName=configname,
                                             configVersion=configversion,
                                             conddescription=conddescription,
                                             processing=procPass,
@@ -1824,8 +1694,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_addProduction = [dict]
 
-  @staticmethod
-  def export_addProduction(infos):
+  @classmethod
+  def export_addProduction(cls, infos):
     """It is used to register a production in the bkk.
 
     Input parameters:
@@ -1837,44 +1707,41 @@ class BookkeepingManagerHandler(RequestHandler):
     """
 
     gLogger.debug("Registering:", infos)
-    result = S_OK()
     simcond = infos.get('SimulationConditions', None)
     daqdesc = infos.get('DataTakingConditions', None)
     production = None
 
     if simcond is None and daqdesc is None:
-      result = S_ERROR('SimulationConditions and DataTakingConditions are both missing!')
+      return S_ERROR('SimulationConditions and DataTakingConditions are both missing!')
 
     if 'Steps' not in infos:
-      result = S_ERROR("Missing Steps!")
+      return S_ERROR("Missing Steps!")
     if 'Production' not in infos:
-      result = S_ERROR('Production is missing!')
+      return S_ERROR('Production is missing!')
     if 'EventType' not in infos:
-      result = S_ERROR("EventType is missing!")
+      return S_ERROR("EventType is missing!")
 
-    if result['OK']:
-      steps = infos['Steps']
-      inputProdTotalProcessingPass = ''
-      production = infos['Production']
-      inputProdTotalProcessingPass = infos.get('InputProductionTotalProcessingPass', '')
-      configName = infos.get("ConfigName")
-      configVersion = infos.get("ConfigVersion")
-      eventType = infos.get("EventType")
-      result = dataMGMT_.addProduction(production=production,
-                                       simcond=simcond,
-                                       daq=daqdesc,
-                                       steps=steps,
-                                       inputproc=inputProdTotalProcessingPass,
-                                       configName=configName,
-                                       configVersion=configVersion,
-                                       eventType=eventType)
-    return result
+    steps = infos['Steps']
+    inputProdTotalProcessingPass = ''
+    production = infos['Production']
+    inputProdTotalProcessingPass = infos.get('InputProductionTotalProcessingPass', '')
+    configName = infos.get("ConfigName")
+    configVersion = infos.get("ConfigVersion")
+    eventType = infos.get("EventType")
+    return cls.bkkDB.addProduction(production=production,
+                                   simcond=simcond,
+                                   daq=daqdesc,
+                                   steps=steps,
+                                   inputproc=inputProdTotalProcessingPass,
+                                   configName=configName,
+                                   configVersion=configVersion,
+                                   eventType=eventType)
 
   #############################################################################
   types_getEventTypes = [dict]
 
-  @staticmethod
-  def export_getEventTypes(in_dict):
+  @classmethod
+  def export_getEventTypes(cls, in_dict):
     """It returns the available event types for a given configuration name and
     configuration version.
 
@@ -1884,35 +1751,36 @@ class BookkeepingManagerHandler(RequestHandler):
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     production = in_dict.get('Production', default)
-    return dataMGMT_.getEventTypes(configName, configVersion, production)
+    return cls.bkkDB.getEventTypes(configName, configVersion, production)
 
   #############################################################################
   types_getProcessingPassSteps = [dict]
 
-  @staticmethod
-  def export_getProcessingPassSteps(in_dict):
+  @classmethod
+  def export_getProcessingPassSteps(cls, in_dict):
     """It returns the steps for a given stepname, processing pass and
     production."""
     stepname = in_dict.get('StepName', default)
     cond = in_dict.get('ConditionDescription', default)
     procpass = in_dict.get('ProcessingPass', default)
 
-    return dataMGMT_.getProcessingPassSteps(procpass, cond, stepname)
+    return cls.bkkDB.getProcessingPassSteps(procpass, cond, stepname)
 
   #############################################################################
   types_getProductionProcessingPassSteps = [dict]
 
-  @staticmethod
-  def export_getProductionProcessingPassSteps(in_dict):
+  @classmethod
+  def export_getProductionProcessingPassSteps(cls, in_dict):
     """it returns the steps for a given production."""
 
     if 'Production' in in_dict:
-      return dataMGMT_.getProductionProcessingPassSteps(in_dict['Production'])
+      return cls.bkkDB.getProductionProcessingPassSteps(in_dict['Production'])
     return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
   types_getProductionOutputFiles = [dict]
 
+  @deprecated("Use getProductionOutputFileTypes")
   def export_getProductionOutputFiles(self, in_dict):
     """more info in the BookkeepingClient.py."""
 
@@ -1921,8 +1789,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getProductionOutputFileTypes = [dict]
 
-  @staticmethod
-  def export_getProductionOutputFileTypes(in_dict):
+  @classmethod
+  def export_getProductionOutputFileTypes(cls, in_dict):
     """It returns the output file types which produced by a given
     production."""
 
@@ -1930,12 +1798,13 @@ class BookkeepingManagerHandler(RequestHandler):
     stepid = in_dict.get('StepId', default)
 
     if production != default:
-      return dataMGMT_.getProductionOutputFileTypes(production, stepid)
+      return cls.bkkDB.getProductionOutputFileTypes(production, stepid)
     return S_ERROR('The Production dictionary key is missing!!!')
 
   #############################################################################
   types_getRunQuality = [six.string_types, six.string_types]
 
+  @deprecated("Use getRunWithProcessingPassAndDataQuality")
   def export_getRunQuality(self, procpass, flag=default):
     """more info in the BookkeepingClient.py."""
 
@@ -1944,17 +1813,17 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getRunWithProcessingPassAndDataQuality = [six.string_types, six.string_types]
 
-  @staticmethod
-  def export_getRunWithProcessingPassAndDataQuality(procpass, flag=default):
+  @classmethod
+  def export_getRunWithProcessingPassAndDataQuality(cls, procpass, flag=default):
     """It returns the run number for a given processing pass and a flag from
     the run quality table."""
-    return dataMGMT_.getRunWithProcessingPassAndDataQuality(procpass, flag)
+    return cls.bkkDB.getRunWithProcessingPassAndDataQuality(procpass, flag)
 
   #############################################################################
   types_getRuns = [dict]
 
-  @staticmethod
-  def export_getRuns(in_dict):
+  @classmethod
+  def export_getRuns(cls, in_dict):
     """It returns the runs for a given configuration name and version.
 
     Input parameters:
@@ -1962,7 +1831,7 @@ class BookkeepingManagerHandler(RequestHandler):
     cName = in_dict.get('ConfigName', default)
     cVersion = in_dict.get('ConfigVersion', default)
     if cName != default and cVersion != default:
-      return dataMGMT_.getRuns(cName, cVersion)
+      return cls.bkkDB.getRuns(cName, cVersion)
     return S_ERROR('The configuration name and version have to be defined!')
 
   #############################################################################
@@ -1975,28 +1844,29 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getRunAndProcessingPass = [dict]
 
-  @staticmethod
-  def export_getRunAndProcessingPass(in_dict):
+  @classmethod
+  def export_getRunAndProcessingPass(cls, in_dict):
     """It returns all the processing pass and run number for a given run."""
     run = in_dict.get('RunNumber', default)
     if run != default:
-      return dataMGMT_.getRunAndProcessingPass(run)
+      return cls.bkkDB.getRunAndProcessingPass(run)
     return S_ERROR('The run number has to be specified!')
 
   #############################################################################
   types_getProcessingPassId = [six.string_types]
 
-  @staticmethod
-  def export_getProcessingPassId(fullpath):
+  @classmethod
+  def export_getProcessingPassId(cls, fullpath):
     """It returns the ProcessingPassId for a given path.
 
     this method should not used!
     """
-    return dataMGMT_.getProcessingPassId(fullpath)
+    return cls.bkkDB.getProcessingPassId(fullpath)
 
   #############################################################################
   types_getRunNbFiles = [dict]
 
+  @deprecated("Use getNbOfRawFiles")
   def export_getRunNbFiles(self, in_dict):
     """more info in the BookkeepingClient.py."""
     return self.export_getNbOfRawFiles(in_dict)
@@ -2004,8 +1874,8 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getNbOfRawFiles = [dict]
 
-  @staticmethod
-  def export_getNbOfRawFiles(in_dict):
+  @classmethod
+  def export_getNbOfRawFiles(cls, in_dict):
     """It counts the raw files for a given run and (or) event type."""
 
     runnb = in_dict.get('RunNumber', default)
@@ -2016,16 +1886,12 @@ class BookkeepingManagerHandler(RequestHandler):
     replicaFlag = in_dict.get('ReplicaFlag', 'Yes')
     visible = in_dict.get('Visible', 'Y')
     isFinished = in_dict.get("Finished", 'ALL')
-    result = S_ERROR()
     if runnb == default and evt == default:
-      result = S_ERROR('Run number or event type must be given!')
-    else:
-      retVal = dataMGMT_.getNbOfRawFiles(runnb, evt, replicaFlag, visible, isFinished)
-      if retVal['OK']:
-        result = S_OK(retVal['Value'][0][0])
-      else:
-        result = retVal
-    return result
+      return S_ERROR('Run number or event type must be given!')
+    retVal = cls.bkkDB.getNbOfRawFiles(runnb, evt, replicaFlag, visible, isFinished)
+    if not retVal['OK']:
+      return retVal
+    return S_OK(retVal['Value'][0][0])
 
   #############################################################################
   types_getTypeVersion = [list]
@@ -2037,16 +1903,16 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getFileTypeVersion = [list]
 
-  @staticmethod
-  def export_getFileTypeVersion(lfn):
+  @classmethod
+  def export_getFileTypeVersion(cls, lfn):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getFileTypeVersion(lfn)
+    return cls.bkkDB.getFileTypeVersion(lfn)
 
   #############################################################################
   types_getTCKs = [dict]
 
-  @staticmethod
-  def export_getTCKs(in_dict):
+  @classmethod
+  def export_getTCKs(cls, in_dict):
     """It returns the tcks for a given data set."""
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
@@ -2057,14 +1923,13 @@ class BookkeepingManagerHandler(RequestHandler):
     filetype = in_dict.get('FileType', default)
     quality = in_dict.get('DataQuality', in_dict.get('Quality', default))
     runnb = in_dict.get('RunNumber', default)
-    result = S_ERROR()
     if 'Quality' in in_dict:
       gLogger.verbose('The Quality has to be replaced by DataQuality!')
 
     if 'EventTypeId' in in_dict:
       gLogger.verbose('The EventTypeId has to be replaced by EventType!')
 
-    retVal = dataMGMT_.getTCKs(configName,
+    retVal = cls.bkkDB.getTCKs(configName,
                                configVersion,
                                conddescription,
                                processing,
@@ -2073,14 +1938,9 @@ class BookkeepingManagerHandler(RequestHandler):
                                filetype,
                                quality,
                                runnb)
-    if retVal['OK']:
-      records = []
-      for record in retVal['Value']:
-        records += [record[0]]
-      result = S_OK(records)
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+    return S_OK([record[0] for record in retVal['Value']])
 
   #############################################################################
   types_getAvailableTcks = [dict]
@@ -2092,17 +1952,17 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getSteps = [six.integer_types]
 
-  @staticmethod
-  def export_getSteps(prodID):
+  @classmethod
+  def export_getSteps(cls, prodID):
     """ get list of steps used in a production
     """
-    return dataMGMT_.getSteps(prodID)
+    return cls.bkkDB.getSteps(prodID)
 
   #############################################################################
   types_getStepsMetadata = [dict]
 
-  @staticmethod
-  def export_getStepsMetadata(in_dict):
+  @classmethod
+  def export_getStepsMetadata(cls, in_dict):
     """It returns the step(s) which is produced  a given dataset."""
     gLogger.debug('getStepsMetadata', "%s" % in_dict)
     configName = in_dict.get('ConfigName', default)
@@ -2120,67 +1980,68 @@ class BookkeepingManagerHandler(RequestHandler):
     if 'Quality' in in_dict:
       gLogger.verbose('The Quality has to be replaced by DataQuality!')
 
-    return dataMGMT_.getStepsMetadata(configName, configVersion, cond, procpass, evt, production, filetype, runnb)
+    return cls.bkkDB.getStepsMetadata(configName, configVersion, cond, procpass, evt, production, filetype, runnb)
 
   #############################################################################
   types_getDirectoryMetadata_new = [list]
 
-  @staticmethod
-  def export_getDirectoryMetadata_new(lfn):
+  @classmethod
+  @deprecated("Use getDirectoryMetadata")
+  def export_getDirectoryMetadata_new(cls, lfn):
     """more info in the BookkeepingClient.py."""
-    gLogger.verbose("Getting the metadata for:", "%s" % lfn)
-    return dataMGMT_.getDirectoryMetadata(lfn)
+    return cls.bkkDB.getDirectoryMetadata(lfn)
 
     #############################################################################
   types_getDirectoryMetadata = [list]
 
-  @staticmethod
-  def export_getDirectoryMetadata(lfn):
+  @classmethod
+  def export_getDirectoryMetadata(cls, lfn):
     """more info in the BookkeepingClient.py."""
-    return dataMGMT_.getDirectoryMetadata(lfn)
+    gLogger.verbose("Getting the metadata for:", "%s" % lfn)
+    return cls.bkkDB.getDirectoryMetadata(lfn)
 
   #############################################################################
   types_getFilesForGUID = [six.string_types]
 
-  @staticmethod
-  def export_getFilesForGUID(guid):
+  @classmethod
+  def export_getFilesForGUID(cls, guid):
     """It returns a file for a given GUID."""
-    return dataMGMT_.getFilesForGUID(guid)
+    return cls.bkkDB.getFilesForGUID(guid)
 
   #############################################################################
   types_getRunsGroupedByDataTaking = []
 
-  @staticmethod
-  def export_getRunsGroupedByDataTaking():
+  @classmethod
+  def export_getRunsGroupedByDataTaking(cls):
     """It returns all the run numbers grouped by the data taking
     description."""
-    return dataMGMT_.getRunsGroupedByDataTaking()
+    return cls.bkkDB.getRunsGroupedByDataTaking()
 
   #############################################################################
   types_getListOfFills = [dict]
 
-  @staticmethod
-  def export_getListOfFills(in_dict):
+  @classmethod
+  def export_getListOfFills(cls, in_dict):
     """It returns a list of FILL numbers for a given Configuration name,
     Configuration version and data taking description."""
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
-    return dataMGMT_.getListOfFills(configName, configVersion, conddescription)
+    return cls.bkkDB.getListOfFills(configName, configVersion, conddescription)
 
   #############################################################################
   types_getRunsForFill = [six.integer_types]
 
-  @staticmethod
-  def export_getRunsForFill(fillid):
+  @classmethod
+  def export_getRunsForFill(cls, fillid):
     """It returns a list of runs for a given FILL."""
-    return dataMGMT_.getRunsForFill(fillid)
+    return cls.bkkDB.getRunsForFill(fillid)
 
   #############################################################################
   types_getListOfRuns = [dict]
 
-  @staticmethod
-  def export_getListOfRuns(in_dict):
+  @classmethod
+  def export_getListOfRuns(cls, in_dict):
     """It returns a list of runs for a given conditions.
 
     Input parameter is a dictionary which has the following keys:
@@ -2194,7 +2055,7 @@ class BookkeepingManagerHandler(RequestHandler):
     evt = in_dict.get('EventType', default)
     quality = in_dict.get('DataQuality', default)
 
-    retVal = dataMGMT_.getListOfRuns(configName, configVersion, conddescription, processing, evt, quality)
+    retVal = cls.bkkDB.getListOfRuns(configName, configVersion, conddescription, processing, evt, quality)
     if not retVal['OK']:
       return retVal
     return S_OK([i[0] for i in retVal['Value']])
@@ -2202,90 +2063,90 @@ class BookkeepingManagerHandler(RequestHandler):
   #############################################################################
   types_getSimulationConditions = [dict]
 
-  @staticmethod
-  def export_getSimulationConditions(in_dict):
+  @classmethod
+  def export_getSimulationConditions(cls, in_dict):
     """It returns a list of simulation conditions for a given conditions."""
-    return dataMGMT_.getSimulationConditions(in_dict)
+    return cls.bkkDB.getSimulationConditions(in_dict)
 
   #############################################################################
   types_updateSimulationConditions = [dict]
 
-  @staticmethod
-  def export_updateSimulationConditions(in_dict):
+  @classmethod
+  def export_updateSimulationConditions(cls, in_dict):
     """It updates a given simulation condition."""
-    return dataMGMT_.updateSimulationConditions(in_dict)
+    return cls.bkkDB.updateSimulationConditions(in_dict)
 
   #############################################################################
   types_deleteSimulationConditions = [six.integer_types]
 
-  @staticmethod
-  def export_deleteSimulationConditions(simid):
+  @classmethod
+  def export_deleteSimulationConditions(cls, simid):
     """deletes a given simulation conditions."""
-    return dataMGMT_.deleteSimulationConditions(simid)
+    return cls.bkkDB.deleteSimulationConditions(simid)
 
   #############################################################################
   types_getProductionSummaryFromView = [dict]
 
-  @staticmethod
-  def export_getProductionSummaryFromView(in_dict):
+  @classmethod
+  def export_getProductionSummaryFromView(cls, in_dict):
     """it returns a summary for a given condition."""
-    return dataMGMT_.getProductionSummaryFromView(in_dict)
+    return cls.bkkDB.getProductionSummaryFromView(in_dict)
 
   types_getJobInputOutputFiles = [list]
 
-  @staticmethod
-  def export_getJobInputOutputFiles(diracjobids):
+  @classmethod
+  def export_getJobInputOutputFiles(cls, diracjobids):
     """It returns the input and output files for a given DIRAC jobid."""
-    return dataMGMT_.getJobInputOutputFiles(diracjobids)
+    return cls.bkkDB.getJobInputOutputFiles(diracjobids)
 
   types_setRunOnlineFinished = [six.integer_types]
 
-  @staticmethod
-  def export_setRunOnlineFinished(runnumber):
+  @classmethod
+  def export_setRunOnlineFinished(cls, runnumber):
     """It is used to set the run finished..."""
-    return dataMGMT_.setRunStatusFinished(runnumber, 'Y')
+    return cls.bkkDB.setRunStatusFinished(runnumber, 'Y')
 
   types_setRunOnlineNotFinished = [six.integer_types]
 
-  @staticmethod
-  def export_setRunOnlineNotFinished(runnumber):
+  @classmethod
+  def export_setRunOnlineNotFinished(cls, runnumber):
     """You can set the runs not finished."""
-    return dataMGMT_.setRunStatusFinished(runnumber, 'N')
+    return cls.bkkDB.setRunStatusFinished(runnumber, 'N')
 
   types_getRunStatus = [list]
 
-  @staticmethod
-  def export_getRunStatus(runnumbers):
+  @classmethod
+  def export_getRunStatus(cls, runnumbers):
     """it returns the status of the runs."""
-    return dataMGMT_.getRunStatus(runnumbers)
+    return cls.bkkDB.getRunStatus(runnumbers)
 
   types_bulkupdateFileMetaData = [dict]
 
-  @staticmethod
-  def export_bulkupdateFileMetaData(lfnswithmeta):
+  @classmethod
+  def export_bulkupdateFileMetaData(cls, lfnswithmeta):
     """It updates the file metadata."""
-    return dataMGMT_.bulkupdateFileMetaData(lfnswithmeta)
+    return cls.bkkDB.bulkupdateFileMetaData(lfnswithmeta)
 
   types_fixRunLuminosity = [list]
 
-  @staticmethod
-  def export_fixRunLuminosity(runnumbers):
-    return dataMGMT_.fixRunLuminosity(runnumbers)
+  @classmethod
+  def export_fixRunLuminosity(cls, runnumbers):
+    return cls.bkkDB.fixRunLuminosity(runnumbers)
 
   #############################################################################
   types_getProductionProducedEvents = [six.integer_types]
 
-  @staticmethod
-  def export_getProductionProducedEvents(prodid):
+  @classmethod
+  def export_getProductionProducedEvents(cls, prodid):
     """it returns the number of events producced for a given production."""
     gLogger.debug("Retrieving the number of processed event for production", prodid)
-    return dataMGMT_.getProductionProducedEvents(prodid)
+    return cls.bkkDB.getProductionProducedEvents(prodid)
 
   #############################################################################
   types_bulkinsertEventType = [list]
 
-  @staticmethod
-  def export_bulkinsertEventType(eventtypes):
+  @classmethod
+  def export_bulkinsertEventType(cls, eventtypes):
     """It inserts a list of event types to the db.
 
     :param eventtypes: it is a list of event types. For example, the list elements are the following
@@ -2299,13 +2160,13 @@ class BookkeepingManagerHandler(RequestHandler):
 
     :return: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
-    return dataMGMT_.bulkinsertEventType(eventtypes)
+    return cls.bkkDB.bulkinsertEventType(eventtypes)
 
   #############################################################################
   types_bulkupdateEventType = [list]
 
-  @staticmethod
-  def export_bulkupdateEventType(eventtypes):
+  @classmethod
+  def export_bulkupdateEventType(cls, eventtypes):
     """It updates a list of event types which are exist in the db.
 
     :param list eventtypes: it is a list of event types. For example: the list elements are the following:
@@ -2318,37 +2179,37 @@ class BookkeepingManagerHandler(RequestHandler):
 
     :return: S_ERROR S_OK({'Failed':[],'Successful':[]})
     """
-    return dataMGMT_.bulkupdateEventType(eventtypes)
+    return cls.bkkDB.bulkupdateEventType(eventtypes)
 
   #############################################################################
   types_getRunConfigurationsAndDataTakingCondition = [six.integer_types]
 
-  @staticmethod
-  def export_getRunConfigurationsAndDataTakingCondition(runnumber):
+  @classmethod
+  def export_getRunConfigurationsAndDataTakingCondition(cls, runnumber):
     """It returns minimal information for a given run.
 
     :param: int runnumber
     :return: S_OK()/S_ERROR ConfigName, ConfigVersion and DataTakingDescription
     """
-    return dataMGMT_.getRunConfigurationsAndDataTakingCondition(runnumber)
+    return cls.bkkDB.getRunConfigurationsAndDataTakingCondition(runnumber)
 
   types_deleteCertificationData = []
 
-  @staticmethod
-  def export_deleteCertificationData():
+  @classmethod
+  def export_deleteCertificationData(cls):
     """It destroy the data used by the integration test."""
-    return dataMGMT_.deleteCertificationData()
+    return cls.bkkDB.deleteCertificationData()
 
   types_updateProductionOutputfiles = []
 
-  @staticmethod
-  def export_updateProductionOutputfiles():
+  @classmethod
+  def export_updateProductionOutputfiles(cls):
     """It is used to trigger an update of the productionoutputfiles table."""
-    return dataMGMT_.updateProductionOutputfiles()
+    return cls.bkkDB.updateProductionOutputfiles()
 
-  #############################################################################
   types_getAvailableTagsFromSteps = []
 
-  def export_getAvailableTagsFromSteps(self):
+  @classmethod
+  def export_getAvailableTagsFromSteps(cls):
     """It returns the all used datatbase tags: DDDB, CondDB, DQTag."""
-    return dataMGMT_.getAvailableTagsFromSteps()
+    return cls.bkkDB.getAvailableTagsFromSteps()

@@ -352,8 +352,8 @@ class BKQuery():
     # There are two items in the dictionary: ConditionDescription and Simulation/DataTaking-Conditions
     eventType = self.__bkQueryDict.get('EventType', 'ALL')
     if self.__bkQueryDict.get('ConfigName') == 'MC' or \
-        (isinstance(eventType, six.string_types) and eventType.upper() != 'ALL' and
-         eventType[0] != '9'):
+        (isinstance(eventType, six.string_types) and eventType.upper() != 'ALL'
+         and eventType[0] != '9'):
       conditionsKey = 'SimulationConditions'
     else:
       conditionsKey = 'DataTakingConditions'
@@ -634,6 +634,7 @@ class BKQuery():
     fileTypes = query.getFileTypeList()
     nbFiles = 0
     size = 0
+
     for ft in fileTypes:
       if ft:
         res = self.__bkClient.getFilesSummary(query.setFileType(ft))
@@ -647,6 +648,9 @@ class BKQuery():
             size += res['Records'][0][ind1]
             # print 'Visible',query.isVisible(),ft, 'Files:',
             # res['Records'][0][ind], 'Size:', res['Records'][0][ind1]
+        else:
+          gLogger.error("Error getting files summary", res['Message'])
+          break
     return {'NumberOfLFNs': nbFiles, 'LFNSize': size}
 
   def getLFNs(self, printSEUsage=False, printOutput=True, visible=None):
@@ -735,7 +739,7 @@ class BKQuery():
     """Returns the status of a given transformation."""
     res = TransformationClient().getTransformation(prod, extraParams=False)
     if not res['OK']:
-      gLogger.error("Couldn't get information on production %d" % prod)
+      gLogger.error("Could not get information", "on production %d" % prod)
       return None
     return res['Value']['Status']
 
@@ -818,7 +822,7 @@ class BKQuery():
       return eventType
     res = self.__bkClient.getEventTypes(self.__bkQueryDict)['Value']
     ind = res['ParameterNames'].index('EventType')
-    eventTypes = sorted([rec[ind] for rec in res['Records']])
+    eventTypes = sorted(rec[ind] for rec in res['Records'])
     return eventTypes
 
   def getBKFileTypes(self, bkDict=None):

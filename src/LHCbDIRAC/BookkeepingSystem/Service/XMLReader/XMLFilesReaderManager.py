@@ -17,7 +17,7 @@ from xml.parsers.expat import ExpatError
 from xml.dom.minidom import parse, parseString
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
-from LHCbDIRAC.BookkeepingSystem.DB.BookkeepingDatabaseClient import BookkeepingDatabaseClient
+from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.FileParam import FileParam
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobParameters import JobParameters
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.JobReader import JobReader
@@ -51,7 +51,7 @@ class XMLFilesReaderManager(object):
     self.jobReader_ = JobReader()
     self.replicaReader_ = ReplicaReader()
 
-    self.bkClient_ = BookkeepingDatabaseClient()
+    self.bkClient_ = OracleBookkeepingDB()
     self.dm_ = DataManager()
     self.fileTypeCache = {}
 

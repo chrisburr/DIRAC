@@ -30,7 +30,9 @@ def main():
   Script.registerSwitch('', 'Output=', '  Specify a file that will contain the list of files')
   Script.registerSwitch('', 'OptionsFile=', '   Create a Gaudi options file')
   maxFiles = 20
-  Script.registerSwitch('', 'MaxFiles=', '   Print only <MaxFiles> lines on stdout (%d if output, else All)' % maxFiles)
+  Script.registerSwitch(
+      '',
+      'MaxFiles=', '   Print only <MaxFiles> lines on stdout (%d if output, else All)' % maxFiles)
   Script.setUsageMessage(__doc__ + '\n'.join([
       'Usage:',
       '  %s [option|cfgfile] ... ' % Script.scriptName]))

@@ -42,7 +42,7 @@ Attemps connection to DB and sets the _connected flag to True upon success.
 Returns S_OK or S_ERROR.
 
 
-_query( cmd, [conn] )
+query( cmd, [conn] )
 
 Executes SQL command "cmd".
 Gets a connection from the Queue (or open a new one if none is available),
@@ -62,6 +62,9 @@ longer needed.
 
 __RCSID__ = "$Id$"
 
+
+# FIXME: use Connection Pooling
+# https://cx-oracle.readthedocs.io/en/latest/user_guide/connection_handling.html#connection-pooling
 
 from six.moves import queue as Queue
 import time
@@ -179,13 +182,7 @@ class OracleDB(object):
     as tuple it returns an empty tuple if no matching rows are found return
     S_ERROR upon error."""
 
-    return self._query(cmd, conn)
-
-  def _query(self, cmd, conn=False):
-    """execute Oracle query command return S_OK structure with fetchall result
-    as tuple it returns an empty tuple if no matching rows are found return
-    S_ERROR upon error."""
-    self.logger.debug('_query:', cmd)
+    self.logger.debug('query:', cmd)
 
     retDict = self.__getConnection(conn=conn)
     if not retDict['OK']:
@@ -202,16 +199,16 @@ class OracleDB(object):
 
       # Log the result limiting it to just 10 records
       if len(res) < 10:
-        self.logger.debug('_query:', res)
+        self.logger.debug('query:', res)
       else:
-        self.logger.debug('_query: Total %d records returned' % len(res))
-        self.logger.debug('_query: %s ...' % str(res[:10]))
+        self.logger.debug('query: Total %d records returned' % len(res))
+        self.logger.debug('query: %s ...' % str(res[:10]))
 
       retDict = S_OK(res)
     except Exception as x:
 
-      self.logger.debug('_query:', cmd)
-      retDict = self._except('_query', x, 'Execution failed.')
+      self.logger.debug('query:', cmd)
+      retDict = self._except('query', x, 'Execution failed.')
       self.logger.debug('Start Rollback transaction')
       connection.rollback()
       self.logger.debug('End Rollback transaction')
@@ -276,8 +273,8 @@ class OracleDB(object):
       retDict = S_OK(results)
     except Exception as x:
 
-      self.logger.debug('_query:', packageName + "(" + str(parameters) + ")")
-      retDict = self._except('_query', x, 'Execution failed.')
+      self.logger.debug('query:', packageName + "(" + str(parameters) + ")")
+      retDict = self._except('query', x, 'Execution failed.')
       connection.rollback()
 
     try:
@@ -319,7 +316,7 @@ class OracleDB(object):
     """Create a New connection and put it in the Queue."""
     self.logger.debug('__newConnection:')
 
-    connection = cx_Oracle.Connection(self.__userName, self.__passwd, self.__tnsName, threaded=True)
+    connection = cx_Oracle.connect(self.__userName, self.__passwd, self.__tnsName, threaded=True)
     self.__putConnection(connection)
 
   def __putConnection(self, connection):
@@ -331,7 +328,7 @@ class OracleDB(object):
     self.__connectionSemaphore.release()
     try:
       self.__connectionQueue.put_nowait(connection)
-    except Queue.Full as x:
+    except Queue.Full:
       self.logger.debug('__putConnection: Full Queue')
       try:
         connection.close()
@@ -350,8 +347,7 @@ class OracleDB(object):
     return retDict
 
   def __getConnection(self, conn=False, trial=0):
-    """Return a new connection to the DB, if conn is provided then just return
-    it.
+    """Return a new connection to the DB, if conn is provided then just return it.
 
     then try the Queue, if it is empty add a newConnection to the Queue
     and retry it will retry maxConnectRetry to open a new connection and
@@ -368,14 +364,14 @@ class OracleDB(object):
       self.logger.debug('__getConnection: Got a connection from Queue')
       if connection:
         try:
-          # This will try to reconect if the connection has timeout
+          # This will try to reconnect if the connection has timeout
           connection.commit()
         except BaseException:
           # if the ping fails try with a new connection from the Queue
           self.__connectionSemaphore.release()
           return self.__getConnection()
         return S_OK(connection)
-    except Queue.Empty as x:
+    except Queue.Empty:
       self.__connectionSemaphore.release()
       self.logger.debug('__getConnection: Empty Queue')
       try:

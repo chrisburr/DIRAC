@@ -38,7 +38,6 @@ def process_event(eventline):
   except ValueError:
     gLogger.error('\nthe file syntax is wrong!!!\n' + eventline + '\n\n')
     Script.showHelp()
-  parameters = eventline.split(',')
   result = {}
   ma = re.match(
       "^ *?((?P<id00>EVTTYPEID) *?= *?(?P<value00>[0-9]+)|(?P<id01>DESCRIPTION|PRIMARY) *?= *?\"(?P<value01>.*?)\") *?, *?((?P<id10>EVTTYPEID) *?= *?(?P<value10>[0-9]+)|(?P<id11>DESCRIPTION|PRIMARY) *?= *?\"(?P<value11>.*?)\") *?, *?((?P<id20>EVTTYPEID) *?= *?(?P<value20>[0-9]+)|(?P<id21>DESCRIPTION|PRIMARY) *?= *?\"(?P<value21>.*?)\") *?$",  # noqa # pylint: disable=line-too-long

@@ -826,6 +826,7 @@ def test_getJobInformation():
   retVal = bk.getJobInformation(
       {'LFN': ['/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_8.digi',
                '/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_7.digi']})
+  assert retVal['OK'] is True
   assert len(retVal['Value']) == 2
   params = [
       'WNMJFHS06',
@@ -968,6 +969,7 @@ def test_addFiles():
   lfns = ['/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim',
           '/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_2.digi']
   retVal = bk.addFiles(lfns)
+  assert retVal['OK'] is True
   assert retVal['Value']['Successful']
   assert retVal['Value']['Failed'] == []
   assert retVal['Value']['Successful'] == lfns

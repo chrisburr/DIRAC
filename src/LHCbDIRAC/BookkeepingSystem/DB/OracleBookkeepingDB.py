@@ -27,9 +27,6 @@ from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 
 __RCSID__ = "$Id$"
 
-global ALLOWED_ALL
-ALLOWED_ALL = 2
-
 global default
 default = 'ALL'
 
@@ -95,7 +92,6 @@ class OracleBookkeepingDB(object):
         condition += " and s.isMulticore='%s'" % (isMulticore)
       else:
         return S_ERROR('isMulticore is not Y or N!')
-    result = S_ERROR()
     if in_dict:
       infiletypes = in_dict.get('InputFileTypes', default)
       outfiletypes = in_dict.get('OutputFileTypes', default)
@@ -138,7 +134,7 @@ class OracleBookkeepingDB(object):
         if isinstance(stepId, (six.string_types + six.integer_types)):
           condition += ' and s.stepid= %s' % (str(stepId))
         elif isinstance(stepId, (list, tuple)):
-          condition += 'and s.stepid in (%s)' % ",".join([str(sid) for sid in stepId])
+          condition += 'and s.stepid in (%s)' % ",".join(str(sid) for sid in stepId)
         else:
           return S_ERROR("Wrong StepId")
 
@@ -295,7 +291,7 @@ class OracleBookkeepingDB(object):
         elif isinstance(items, six.string_types):
           condition += ' s.%s %s' % (items, order)
         else:
-          result = S_ERROR('SortItems is not properly defined!')
+          return S_ERROR('SortItems is not properly defined!')
       else:
         condition += ' order by s.inserttimestamps desc'
       if fileTypefilter:
@@ -365,39 +361,38 @@ class OracleBookkeepingDB(object):
       from %s where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid ' % (tables)
       retVal = self.dbR_.query(command)
 
-    if retVal['OK']:
-      parameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles', 'DDDB',
-                    'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag', 'OptionsFormat',
-                    'isMulticore', 'SystemConfig', 'mcTCK', 'RuntimeProjects']
-      rParameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles',
-                     'DDDB', 'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag',
-                     'OptionsFormat', 'isMulticore', 'SystemConfig', 'mcTCK']
-      records = []
-      for record in retVal['Value']:
-        step = list(record[0:16])
-        runtimeProject = []
-        runtimeProject = [rec for rec in list(record[16:]) if rec is not None]
-        if runtimeProject:
-          runtimeProject = [runtimeProject]
-        step += [{'ParameterNames': rParameters, 'Records': runtimeProject, 'TotalRecords': len(runtimeProject) + 1}]
-        records += [step]
-      if paging:
-        if fileTypefilter:
-          command = "select count(*) from %s where s.stepid>0 %s " % (fileTypefilter, condition)
-        else:
-          command = "select count(*) from steps s where s.stepid>0 %s " % (condition)
+    if not retVal['OK']:
+      return retVal
 
-        retVal = self.dbR_.query(command)
-        if retVal['OK']:
-          totrec = retVal['Value'][0][0]
-          result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': totrec})
-        else:
-          result = retVal
-      else:
-        result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+    parameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles', 'DDDB',
+                  'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag', 'OptionsFormat',
+                  'isMulticore', 'SystemConfig', 'mcTCK', 'RuntimeProjects']
+    rParameters = ['StepId', 'StepName', 'ApplicationName', 'ApplicationVersion', 'OptionFiles',
+                   'DDDB', 'CONDDB', 'ExtraPackages', 'Visible', 'ProcessingPass', 'Usable', 'DQTag',
+                   'OptionsFormat', 'isMulticore', 'SystemConfig', 'mcTCK']
+    records = []
+    for record in retVal['Value']:
+      step = list(record[0:16])
+      runtimeProject = []
+      runtimeProject = [rec for rec in list(record[16:]) if rec is not None]
+      if runtimeProject:
+        runtimeProject = [runtimeProject]
+      step += [{'ParameterNames': rParameters, 'Records': runtimeProject, 'TotalRecords': len(runtimeProject) + 1}]
+      records += [step]
+
+    if not paging:
+      return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
+
+    if fileTypefilter:
+      command = "select count(*) from %s where s.stepid>0 %s " % (fileTypefilter, condition)
     else:
-      result = S_ERROR(retVal['Message'])
-    return result
+      command = "select count(*) from steps s where s.stepid>0 %s " % (condition)
+
+    retVal = self.dbR_.query(command)
+    if not retVal['OK']:
+      return retVal
+    totrec = retVal['Value'][0][0]
+    return S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': totrec})
 
   #############################################################################
   def getRuntimeProjects(self, in_dict):
@@ -663,10 +658,6 @@ class OracleBookkeepingDB(object):
 
   #############################################################################
 
-  @deprecated("Use deleteStepContainer")
-  def deleteSetpContiner(self, prod):
-    return self.deleteStepContainer(prod)
-
   def deleteStepContainer(self, prod):
     """delete a production from the step container.
 
@@ -676,10 +667,6 @@ class OracleBookkeepingDB(object):
     return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.deleteStepContainer', [prod], False)
 
   #############################################################################
-
-  @deprecated("Use deleteProductionsContainer")
-  def deleteProductionsContiner(self, prod):
-    return self.deleteProductionsContainer(prod)
 
   def deleteProductionsContainer(self, prod):
     """delete a production from the productions container.
@@ -809,10 +796,7 @@ class OracleBookkeepingDB(object):
 
     condition = " and cont.production=prod.production %s " % self.__buildVisible(visible='Y', replicaFlag='Yes')
     tables = ' configurations c, productionscontainer cont, productionoutputfiles prod '
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
     if evt != default:
       condition += " and prod.eventtypeid=%s" % (str(evt))
@@ -856,10 +840,7 @@ class OracleBookkeepingDB(object):
 
     condition = " and cont.production=prod.production %s " % self.__buildVisible(visible='Y', replicaFlag='Yes')
     tables = ''
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
     if eventType != default:
       condition += " and prod.eventtypeid=%s" % (str(eventType))
@@ -1020,30 +1001,18 @@ class OracleBookkeepingDB(object):
     condition = " and cont.production=prod.production %s " % self.__buildVisible(visible=visible,
                                                                                  replicaFlag=replicaFlag)
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
     retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildEventType(evt, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
-    retVal = self.__buildFileTypes(fileType, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildFileTypes(fileType, condition, tables, useMainTables=False)
 
-    retVal = self.__buildProcessingPass(processing, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProcessingPass(processing, condition, tables, useMainTables=False)
 
     command = "select prod.production from %s where 1=1  %s group by prod.production" % (tables, condition)
 
@@ -1072,25 +1041,16 @@ class OracleBookkeepingDB(object):
     condition = " and cont.production=prod.production %s " % self.__buildVisible(visible=visible,
                                                                                  replicaFlag=replicaFlag)
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
     retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildEventType(evt, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
-    retVal = self.__buildProduction(production, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(production, condition, tables, useMainTables=False)
 
     retVal = self._buildRunnumbers(runnb, None, None, condition, tables, useMainTables=False)
     if not retVal['OK']:
@@ -1164,70 +1124,43 @@ class OracleBookkeepingDB(object):
     j.production=prod.production and j.stepid=prod.stepid  and \
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible=visible, replicaFlag=replicaflag)
 
-    retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildStartenddate(startDate, endDate, condition)
 
-    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    conddescription = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition)
 
     retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildTCKS(tcks, condition, tables)
+    retVal = self.__buildTCKS(tcks, condition)
     if not retVal['OK']:
       return retVal
-    condition, tables = retVal['Value']
+    condition = retVal['Value']
 
-    retVal = self.__buildVisibilityflag(visible, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildVisibilityflag(visible, condition, tables)
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
     retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildProduction(production, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(production, condition, tables, useMainTables=False)
 
-    retVal = self.__buildReplicaflag(replicaflag, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildReplicaflag(replicaflag, condition)
 
     retVal = self.__buildDataquality(quality, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildProcessingPass(processing, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProcessingPass(processing, condition, tables)
 
-    retVal = self.__buildEventType(evt, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
-    retVal = self.__buildFileTypes(filetype, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildFileTypes(filetype, condition, tables, useMainTables=False)
 
     command = "select %s from %s  where \
     j.jobid=f.jobid  and \
@@ -2914,30 +2847,15 @@ class OracleBookkeepingDB(object):
     condition = " cont.production=prod.production and\
     c.configurationid=cont.configurationid  %s " % self.__buildVisible(visible='Y', replicaFlag='Yes')
 
-    retVal = self.__buildConfiguration(cName, cVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(cName, cVersion, condition, tables)
 
-    retVal = self.__buildProduction(production, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(production, condition, tables, useMainTables=False)
 
-    retVal = self.__buildEventType(evttype, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evttype, condition, tables, useMainTables=False)
 
-    retVal = self.__buildProcessingPass(processing, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProcessingPass(processing, condition, tables)
 
-    retVal = self.__buildFileTypes(ftype, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildFileTypes(ftype, condition, tables, useMainTables=False)
 
     retVal = self._buildConditions(default, conddesc, condition, tables)
     if not retVal['OK']:
@@ -3109,22 +3027,19 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :return: the tags
     """
-    result = S_ERROR()
     command = 'select name, tag from tags order by inserttimestamp desc'
     retVal = self.dbR_.query(command)
-    if retVal['OK']:
-      parameters = ['TagName', 'TagValue']
-      dbResult = retVal['Value']
-      records = []
-      nbRecords = 0
-      for record in dbResult:
-        row = [record[0], record[1]]
-        records += [row]
-        nbRecords += 1
-      result = S_OK({'TotalRecords': nbRecords, 'ParameterNames': parameters, 'Records': records, 'Extras': {}})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+    parameters = ['TagName', 'TagValue']
+    dbResult = retVal['Value']
+    records = []
+    nbRecords = 0
+    for record in dbResult:
+      row = [record[0], record[1]]
+      records += [row]
+      nbRecords += 1
+    return S_OK({'TotalRecords': nbRecords, 'ParameterNames': parameters, 'Records': records, 'Extras': {}})
 
   #############################################################################
   def getProductionProcessedEvents(self, prodid):
@@ -3348,65 +3263,38 @@ and files.qualityid= dataquality.qualityid" % lfn
     condition = ''
     tables = ' files f,jobs j '
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
-    retVal = self.__buildProduction(production, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(production, condition, tables)
 
-    retVal = self.__buildTCKS(tcks, condition, tables)
+    retVal = self.__buildTCKS(tcks, condition)
     if not retVal['OK']:
       return retVal
-    condition, tables = retVal['Value']
+    condition = retVal['Value']
 
-    retVal = self.__buildProcessingPass(procPass, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProcessingPass(procPass, condition, tables)
 
-    retVal = self.__buildFileTypes(ftype, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildFileTypes(ftype, condition, tables)
 
     retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildEventType(evt, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evt, condition, tables)
 
-    retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildStartenddate(startDate, endDate, condition)
 
-    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition)
 
     retVal = self.__buildDataquality(flag, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildReplicaflag(replicaFlag, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildReplicaflag(replicaFlag, condition)
 
-    retVal = self.__buildVisibilityflag(visible, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildVisibilityflag(visible, condition, tables)
 
     retVal = self._buildConditions(simdesc, datataking, condition, tables)
     if not retVal['OK']:
@@ -3426,9 +3314,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     else:
       command = " select distinct f.filename \
       from %s where f.jobid= j.jobid %s " % (tables, condition)
-    res = self.dbR_.query(command)
-
-    return res
+    return self.dbR_.query(command)
 
   #############################################################################
   @staticmethod
@@ -3450,7 +3336,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       condition += " and c.configurationid=cont.configurationid  and c.configname='%s' " % (configName)
       condition += " and c.configversion='%s' " % (configVersion)
 
-    return S_OK((condition, tables))
+    return condition, tables
 
   def __buildVisible(self, condition=None, visible=default, replicaFlag=default):
     """It makes the condition for a given visibility flag and replica flag."""
@@ -3497,16 +3383,15 @@ and files.qualityid= dataquality.qualityid" % lfn
       elif isinstance(production, (six.string_types + six.integer_types)):
         condition += ' and %s.production=%s' % (table, str(production))
 
-    return S_OK((condition, tables))
+    return condition, tables
 
   #############################################################################
   @staticmethod
-  def __buildTCKS(tcks, condition, tables):
+  def __buildTCKS(tcks, condition):
     """it adds the tck to the jobs table.
 
     :param list tcks: list of run TCKs
     :param str condition: condition string
-    :param str tables: tables used by join
     :return: condition and tables
     """
 
@@ -3521,7 +3406,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       else:
         return S_ERROR('The TCK should be a list or a string')
 
-    return S_OK((condition, tables))
+    return S_OK(condition)
 
   #############################################################################
   def __buildProcessingPass(self, procPass, condition, tables, useMainTables=True):
@@ -3561,7 +3446,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
       if 'productionscontainer' not in tables.lower():
         tables += ',productionscontainer cont'
-    return S_OK((condition, tables))
+    return condition, tables
 
   #############################################################################
   @staticmethod
@@ -3597,12 +3482,12 @@ and files.qualityid= dataquality.qualityid" % lfn
       else:
         condition += ' and ft.filetypeid=prod.filetypeid'
 
-    if isinstance(ftype, six.string_types) and ftype == 'RAW' and 'jobs' in tables:
-      # we know the production of a run is lees than 0.
+    if isinstance(ftype, six.string_types) and ftype.upper() == 'RAW' and 'jobs' in tables:
+      # we know the production of a run is less than 0.
       # this is needed to speed up the queries when the file type is raw
       # (we reject all recostructed + stripped jobs/files. ).
       condition += " and j.production<0"
-    return S_OK((condition, tables))
+    return condition, tables
 
   #############################################################################
   @staticmethod
@@ -3698,17 +3583,16 @@ and files.qualityid= dataquality.qualityid" % lfn
           condition += cond
         elif isinstance(evt, (six.string_types + six.integer_types)):
           condition += ' and %s.eventtypeid=%s' % (table, str(evt))
-    return S_OK((condition, tables))
+    return condition, tables
 
   #############################################################################
   @staticmethod
-  def __buildStartenddate(startDate, endDate, condition, tables):
+  def __buildStartenddate(startDate, endDate, condition):
     """it adds the start and end date to the files table.
 
     :param datetime startDate:  file insert start date
     :param datetime endDate: file insert end date
     :param str condition: condition string
-    :param str tables: tables used by join
     :return: condition and tables
     """
     if startDate not in [None, default, []]:
@@ -3719,18 +3603,17 @@ and files.qualityid= dataquality.qualityid" % lfn
     elif startDate not in [None, default, []] and endDate in [None, default, []]:
       currentTimeStamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
       condition += " and f.inserttimestamp <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
-    return S_OK((condition, tables))
+    return condition
 
   #############################################################################
   @staticmethod
-  def __buildJobsStartJobEndDate(jobStartDate, jobEndDate, condition, tables):
+  def __buildJobsStartJobEndDate(jobStartDate, jobEndDate, condition):
     """it adds the start and end date to the files table.
 
     :param datetime startDate:  file insert start date
     :param datetime jobStartDate:  file insert start date
     :param datetime jobEndDate: file insert end date
     :param str condition: condition string
-    :param str tables: tables used by join
     :return: condition and tables
     """
     if jobStartDate not in [None, default, []]:
@@ -3741,7 +3624,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     elif jobStartDate not in [None, default, []] and jobEndDate in [None, default, []]:
       currentTimeStamp = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
       condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
-    return S_OK((condition, tables))
+    return condition
 
   #############################################################################
   def __buildDataquality(self, flag, condition, tables):
@@ -3783,18 +3666,16 @@ and files.qualityid= dataquality.qualityid" % lfn
 
   #############################################################################
   @staticmethod
-  def __buildReplicaflag(replicaFlag, condition, tables):
+  def __buildReplicaflag(replicaFlag, condition):
     """it adds the replica flag to the files table.
 
     :param str replicaFlag: file replica flag
     :param str condition: condition string
-    :param str tables: tables used by join
     :return: condition and tables
     """
     if replicaFlag in ['Yes', 'No']:
       condition += " and f.gotreplica='%s' " % replicaFlag
-
-    return S_OK((condition, tables))
+    return condition
 
   #############################################################################
   @staticmethod
@@ -3815,7 +3696,7 @@ and files.qualityid= dataquality.qualityid" % lfn
       tables += ' ,file f '
     if tables.upper().find('JOBS') < 0:
       tables += ' ,jobs j '
-    return S_OK((condition, tables))
+    return condition, tables
 
   #############################################################################
   def _buildConditions(self, simdesc, datataking, condition, tables):
@@ -3935,68 +3816,41 @@ and files.qualityid= dataquality.qualityid" % lfn
     j.production=prod.production and j.stepid=prod.stepid and\
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible=visible, replicaFlag=replicaFlag)
 
-    retVal = self.__buildStartenddate(startDate, endDate, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildStartenddate(startDate, endDate, condition)
 
-    retVal = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition)
 
     retVal = self._buildRunnumbers(runNumbers, startRun, endRun, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildTCKS(tcks, condition, tables)
+    retVal = self.__buildTCKS(tcks, condition)
     if not retVal['OK']:
       return retVal
-    condition, tables = retVal['Value']
+    condition = retVal['Value']
 
     retVal = self._buildConditions(default, conditionDescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildVisibilityflag(visible, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildVisibilityflag(visible, condition, tables)
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
-    retVal = self.__buildProduction(production, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(production, condition, tables, useMainTables=False)
 
-    retVal = self.__buildEventType(eventType, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(eventType, condition, tables, useMainTables=False)
 
     if production != default:
       condition += ' and j.production=' + str(production)
 
-    retVal = self.__buildFileTypes(fileType, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildFileTypes(fileType, condition, tables, useMainTables=False)
 
-    retVal = self.__buildReplicaflag(replicaFlag, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildReplicaflag(replicaFlag, condition)
 
-    retVal = self.__buildProcessingPass(processingPass, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProcessingPass(processingPass, condition, tables, useMainTables=False)
 
     retVal = self.__buildDataquality(dataQuality, condition, tables)
     if not retVal['OK']:
@@ -4037,45 +3891,27 @@ and files.qualityid= dataquality.qualityid" % lfn
     j.production=prod.production and j.stepid=prod.stepid and \
     prod.eventtypeid=f.eventtypeid %s " % self.__buildVisible(visible='Y', replicaFlag='Yes')
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
     retVal = self._buildConditions(default, conddescription, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildProduction(production, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(production, condition, tables, useMainTables=False)
 
-    retVal = self.__buildReplicaflag('Yes', condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition = self.__buildReplicaflag('Yes', condition)
 
     retVal = self.__buildDataquality(quality, condition, tables)
     if not retVal['OK']:
       return retVal
     condition, tables = retVal['Value']
 
-    retVal = self.__buildProcessingPass(processing, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProcessingPass(processing, condition, tables)
 
-    retVal = self.__buildEventType(evt, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
-    retVal = self.__buildFileTypes(filetype, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildFileTypes(filetype, condition, tables, useMainTables=False)
 
     retVal = self._buildRunnumbers(runnb, None, None, condition, tables)
     if not retVal['OK']:
@@ -4216,17 +4052,16 @@ and files.qualityid= dataquality.qualityid" % lfn
     command = "select stepid, stepname from steps where applicationname='%s' \
     and applicationversion='%s' %s " % (programName, programVersion, condition)
     retVal = self.dbR_.query(command)
-    if retVal['OK']:
-      if not retVal['Value']:
-        retVal = self.insertStep(dataset)
-        if retVal['OK']:
-          return S_OK([retVal['Value'], 'Real Data'])
-        else:
-          return retVal
-      else:
-        return S_OK([retVal['Value'][0][0], retVal['Value'][0][1]])
-    else:
+    if not retVal['OK']:
       return retVal
+    if not retVal['Value']:
+      retVal = self.insertStep(dataset)
+      if retVal['OK']:
+        return S_OK([retVal['Value'], 'Real Data'])
+      else:
+        return retVal
+    else:
+      return S_OK([retVal['Value'][0][0], retVal['Value'][0][1]])
 
   #############################################################################
   def __getPassIds(self, name):
@@ -4237,13 +4072,9 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
     command = "select id from processing where name='%s'" % (name)
     retVal = self.dbR_.query(command)
-    if retVal['OK']:
-      result = []
-      for i in retVal['Value']:
-        result += [i[0]]
-      return S_OK(result)
-    else:
+    if not retVal['OK']:
       return retVal
+    return S_OK([i[0] for i in retVal['Value']])
 
   #############################################################################
   def __getprocessingid(self, processingpassid):
@@ -4341,22 +4172,21 @@ and files.qualityid= dataquality.qualityid" % lfn
     stepids = []
     if not retVal['OK']:
       return retVal
+
+    ids = retVal['Value']
+    if len(ids) == 0:
+      newpath = list(path)
+      self.__insertprocessing(newpath, None, stepids)
+      return S_OK(stepids[-1:])
     else:
-      ids = retVal['Value']
-      if len(ids) == 0:
-        newpath = list(path)
-        self.__insertprocessing(newpath, None, stepids)
-        return S_OK(stepids[-1:])
-      else:
-        for i in ids:
-          procs = self.__getprocessingid(i)
-          if len(procs) > 0:
-            if self.__checkprocessingpass(path, procs):
-              return S_OK()
-        newpath = list(path)
-        self.__insertprocessing(newpath, None, stepids)
-        return S_OK(stepids[-1:])
-    return S_ERROR()
+      for i in ids:
+        procs = self.__getprocessingid(i)
+        if len(procs) > 0:
+          if self.__checkprocessingpass(path, procs):
+            return S_OK()
+      newpath = list(path)
+      self.__insertprocessing(newpath, None, stepids)
+      return S_OK(stepids[-1:])
 
   #############################################################################
   def insertproductionscontainer(self, prod, processingid, simid, daqperiodid, configName, configVersion):
@@ -4395,9 +4225,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :param int production: production number
     """
-    command = ' select count(*) from productionscontainer where production=' + str(production)
-    res = self.dbR_.query(command)
-    return res
+    return self.dbR_.query('select count(*) from productionscontainer where production=' + str(production))
 
   #############################################################################
   def addProduction(self, production, simcond=None, daq=None, steps=default,
@@ -4527,28 +4355,18 @@ and files.qualityid= dataquality.qualityid" % lfn
     condition = " cont.production=prod.production and \
     prod.eventtypeid=e.eventtypeid %s " % self.__buildVisible(visible='Y', replicaFlag='Yes')
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
-    retVal = self.__buildProduction(prod, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(prod, condition, tables, useMainTables=False)
 
     command = ' select e.eventtypeid, e.description \
     from  %s where %s group by e.eventtypeid, e.description' % (tables, condition)
     retVal = self.dbR_.query(command)
-    records = []
-    if retVal['OK']:
-      parameters = ['EventType', 'Description']
-      for record in retVal['Value']:
-        records += [list(record)]
-      result = S_OK({'ParameterNames': parameters, 'Records': records, 'TotalRecords': len(records)})
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+
+    records = [list(record) for record in retVal['Value']]
+    return S_OK({'ParameterNames': ['EventType', 'Description'], 'Records': records, 'TotalRecords': len(records)})
 
   #############################################################################
   def getProcessingPassSteps(self, procpass=default, cond=default, stepname=default):
@@ -4615,15 +4433,16 @@ and files.qualityid= dataquality.qualityid" % lfn
 
   #############################################################################
   def getProductionProcessingPassSteps(self, prod):
-    """For retrieving the processing pass of a fgiven production.
+    """For retrieving the processing pass of a given production.
 
     :param int prod: production number
     :return: the production processing pass
     """
     processing = {}
     retVal = self.getProductionProcessingPass(prod)
-    if retVal['OK']:
-      procpass = retVal['Value']
+    if not retVal['OK']:
+      return retVal
+    procpass = retVal['Value']
 
     condition = ''
 
@@ -4726,16 +4545,13 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param list lfns: list of lfns
     :return: the format of an lfn
     """
-    result = None
     retVal = self.dbR_.executeStoredProcedure('BOOKKEEPINGORACLEDB.bulkgetTypeVesrsion', [], True, lfns)
-    if retVal['OK']:
-      values = {}
-      for i in retVal['Value']:
-        values[i[0]] = i[1]
-      result = S_OK(values)
-    else:
-      result = retVal
-    return result
+    if not retVal['OK']:
+      return retVal
+    values = {}
+    for i in retVal['Value']:
+      values[i[0]] = i[1]
+    return S_OK(values)
 
   #############################################################################
   def insertRuntimeProject(self, projectid, runtimeprojectid):
@@ -4744,9 +4560,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long projectid: run time project stepid
     :param long runtimeprojectid: reference to other step
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRuntimeProject',
-                                              [projectid, runtimeprojectid], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.insertRuntimeProject',
+                                            [projectid, runtimeprojectid], False)
 
   #############################################################################
   def updateRuntimeProject(self, projectid, runtimeprojectid):
@@ -4755,17 +4570,15 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long projectid: run time project stepid
     :param long runtimeprojectid: new run time project stepid (new reference to a stepid)
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateRuntimeProject',
-                                              [projectid, runtimeprojectid], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.updateRuntimeProject',
+                                            [projectid, runtimeprojectid], False)
 
   def removeRuntimeProject(self, stepid):
     """removes the runtime project.
 
     :param long stepid: step id
     """
-    result = self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.removeRuntimeProject', [stepid], False)
-    return result
+    return self.dbW_.executeStoredProcedure('BOOKKEEPINGORACLEDB.removeRuntimeProject', [stepid], False)
 
   #############################################################################
   def getTCKs(self, configName, configVersion,
@@ -4979,41 +4792,38 @@ and files.qualityid= dataquality.qualityid" % lfn
     """
 
     self.log.verbose("Getting directory metadata:", "%s" % lfn)
-    result = S_ERROR()
     lfns = [i + '%' for i in lfn]
     retVal = self.dbR_.executeStoredProcedure(packageName='BOOKKEEPINGORACLEDB.getDirectoryMetadata_new',
                                               parameters=[],
                                               output=True,
                                               array=lfns)
+    if not retVal['OK']:
+      return retVal
 
     records = {}
     failed = []
-    if retVal['OK']:
-      for i in retVal['Value']:
-        fileName = i[0][:-1]
-        if fileName in records:
-          records[fileName] += [dict(zip(('Production',
-                                          'ConfigName',
-                                          'ConfigVersion',
-                                          'EventType',
-                                          'FileType',
-                                          'ProcessingPass',
-                                          'ConditionDescription',
-                                          'VisibilityFlag'), i[1:]))]
-        else:
-          records[fileName] = [dict(zip(('Production',
-                                         'ConfigName',
-                                         'ConfigVersion',
-                                         'EventType',
-                                         'FileType',
-                                         'ProcessingPass',
-                                         'ConditionDescription',
-                                         'VisibilityFlag'), i[1:]))]
-      failed = [i[:-1] for i in lfns if i[:-1] not in records]
-      result = S_OK({'Successful': records, 'Failed': failed})
-    else:
-      result = retVal
-    return result
+    for i in retVal['Value']:
+      fileName = i[0][:-1]
+      if fileName in records:
+        records[fileName] += [dict(zip(('Production',
+                                        'ConfigName',
+                                        'ConfigVersion',
+                                        'EventType',
+                                        'FileType',
+                                        'ProcessingPass',
+                                        'ConditionDescription',
+                                        'VisibilityFlag'), i[1:]))]
+      else:
+        records[fileName] = [dict(zip(('Production',
+                                       'ConfigName',
+                                       'ConfigVersion',
+                                       'EventType',
+                                       'FileType',
+                                       'ProcessingPass',
+                                       'ConditionDescription',
+                                       'VisibilityFlag'), i[1:]))]
+    failed = [i[:-1] for i in lfns if i[:-1] not in records]
+    return S_OK({'Successful': records, 'Failed': failed})
 
   #############################################################################
   def getFilesForGUID(self, guid):
@@ -5022,13 +4832,7 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str guid: file GUID
     :return: the file for a given GUID
     """
-    result = S_ERROR()
-    retVal = self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', str, [guid])
-    if retVal['OK']:
-      result = S_OK(retVal['Value'])
-    else:
-      result = retVal
-    return result
+    return self.dbW_.executeStoredFunctions('BOOKKEEPINGORACLEDB.getFilesForGUID', str, [guid])
 
   #############################################################################
   def getRunsGroupedByDataTaking(self):
@@ -5036,36 +4840,33 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :return: the runs data taking description and production
     """
-    result = S_ERROR()
     command = " select d.description, r.runnumber, r.production from \
     prodrunview r, productionoutputfiles p, data_taking_conditions d, productionscontainer cont where \
     d.daqperiodid=cont.daqperiodid and p.production=r.production and cont.production=p.production\
      group by d.description,  r.runnumber, r.production order by r.runnumber"
     retVal = self.dbR_.query(command)
+    if not retVal['OK']:
+      return retVal
     values = {}
-    if retVal['OK']:
-      for i in retVal['Value']:
-        rnb = i[1]
-        desc = i[0]
-        prod = i[2]
-        if desc in values:
-          if rnb in values[desc]:
-            if prod > 0:
-              values[desc][rnb] += [prod]
-          else:
-            if prod > 0:
-              values[desc].update({rnb: [prod]})
-            else:
-              values[desc].update({rnb: []})
+    for i in retVal['Value']:
+      rnb = i[1]
+      desc = i[0]
+      prod = i[2]
+      if desc in values:
+        if rnb in values[desc]:
+          if prod > 0:
+            values[desc][rnb] += [prod]
         else:
           if prod > 0:
-            values[desc] = {rnb: [prod]}
+            values[desc].update({rnb: [prod]})
           else:
-            values[desc] = {rnb: []}
-      result = S_OK(values)
-    else:
-      result = retVal
-    return result
+            values[desc].update({rnb: []})
+      else:
+        if prod > 0:
+          values[desc] = {rnb: [prod]}
+        else:
+          values[desc] = {rnb: []}
+    return S_OK(values)
 
   #############################################################################
   def getListOfFills(self, configName=default,
@@ -5078,7 +4879,6 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param str conddescription: data taking condition
     :return: run numbers
     """
-    result = None
     condition = ''
     if configName != default:
       condition += " and c.configname='%s' " % (configName)
@@ -5099,10 +4899,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     prod.production=j.production and j.production<0" % (condition)
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
-      result = retVal
-    else:
-      result = S_OK([i[0] for i in retVal['Value']])
-    return result
+      return retVal
+    return S_OK([i[0] for i in retVal['Value']])
 
   #############################################################################
   def getRunsForFill(self, fillid):
@@ -5112,14 +4910,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     :return: runs
     """
 
-    result = None
     command = "select distinct j.runnumber from jobs j where j.production<0 and j.fillnumber=%d" % (fillid)
     retVal = self.dbR_.query(command)
     if not retVal['OK']:
-      result = retVal
-    else:
-      result = S_OK([i[0] for i in retVal['Value']])
-    return result
+      return retVal
+    return S_OK([i[0] for i in retVal['Value']])
 
   #############################################################################
   def getListOfRuns(self, configName=default, configVersion=default,
@@ -5211,27 +5006,24 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     if not retVal['OK']:
       return retVal
-    else:
-      command = "select count(*) from simulationconditions"
+    command = "select count(*) from simulationconditions"
 
-      parameterNames = ['SimId',
-                        'SimDescription',
-                        'BeamCond',
-                        'BeamEnergy',
-                        'Generator',
-                        'MagneticField',
-                        'DetectorCond',
-                        'Luminosity',
-                        'G4settings',
-                        'Visible']
-      records = [list(record) for record in retVal['Value']]
-      retVal = self.dbR_.query(command)
-      if not retVal['OK']:
-        return retVal
-      totalRecords = retVal['Value'][0][0]
-      result = S_OK({'ParameterNames': parameterNames, 'Records': records, 'TotalRecords': totalRecords})
-
-    return result
+    parameterNames = ['SimId',
+                      'SimDescription',
+                      'BeamCond',
+                      'BeamEnergy',
+                      'Generator',
+                      'MagneticField',
+                      'DetectorCond',
+                      'Luminosity',
+                      'G4settings',
+                      'Visible']
+    records = [list(record) for record in retVal['Value']]
+    retVal = self.dbR_.query(command)
+    if not retVal['OK']:
+      return retVal
+    totalRecords = retVal['Value'][0][0]
+    return S_OK({'ParameterNames': parameterNames, 'Records': records, 'TotalRecords': totalRecords})
 
   #############################################################################
   def updateSimulationConditions(self, in_dict):
@@ -5239,7 +5031,6 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :param dict in_dict: dictionary which contains the simulation conditions attributes.
     """
-    result = None
     simid = in_dict.get('SimId', default)
     if simid != default:
       condition = ''
@@ -5248,11 +5039,9 @@ and files.qualityid= dataquality.qualityid" % lfn
           condition += "%s='%s'," % (cond, in_dict[cond])
       condition = condition[:-1]
       command = "update simulationconditions set %s where simid=%d" % (condition, int(simid))
-      result = self.dbW_.query(command)
+      return self.dbW_.query(command)
     else:
-      result = S_ERROR('SimId is missing!')
-
-    return result
+      return S_ERROR('SimId is missing!')
 
   #############################################################################
   def deleteSimulationConditions(self, simid):
@@ -5260,8 +5049,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     :param long simid: simulation condition id
     """
-    command = "delete simulationconditions where simid=%d" % simid
-    return self.dbW_.query(command)
+    return self.dbW_.query("delete simulationconditions where simid=%d" % simid)
 
   #############################################################################
   def getProductionSummaryFromView(self, in_dict):
@@ -5279,20 +5067,11 @@ and files.qualityid= dataquality.qualityid" % lfn
     condition = " cont.production=prod.production and\
     c.configurationid=cont.configurationid  %s " % self.__buildVisible(visible='Y', replicaFlag='Yes')
 
-    retVal = self.__buildConfiguration(configName, configVersion, condition, tables)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
-    retVal = self.__buildProduction(prod, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildProduction(prod, condition, tables, useMainTables=False)
 
-    retVal = self.__buildEventType(evt, condition, tables, useMainTables=False)
-    if not retVal['OK']:
-      return retVal
-    condition, tables = retVal['Value']
+    condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
     command = "select prod.production, prod.eventtypeid, c.configname, c.configversion, \
                       BOOKKEEPINGORACLEDB.getProductionProcessingPass(prod.production),\
@@ -5356,9 +5135,8 @@ and files.qualityid= dataquality.qualityid" % lfn
     :param long jobId: internal bookkeeping job id
     :param str isFinished: the run is not finished by default
     """
-    result = self.dbW_.executeStoredProcedure(
+    return self.dbW_.executeStoredProcedure(
         'BOOKKEEPINGORACLEDB.insertRunStatus', [runnumber, jobId, isFinished], False)
-    return result
 
   #############################################################################
   def setRunStatusFinished(self, runnumber, isFinished):
