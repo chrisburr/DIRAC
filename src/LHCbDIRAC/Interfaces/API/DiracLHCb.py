@@ -536,7 +536,7 @@ class DiracLHCb(Dirac):
             (', '.join(problematicFields), ', '.join(self._bkQueryTemplate))
       return S_ERROR(msg)
 
-    for name, value in bkQueryDict.items():
+    for name, value in list(bkQueryDict.items()):
       if name == "Production" or name == "EventType" or name == "StartRun" or name == "EndRun":
         if value == 0:
           del bkQueryDict[name]
