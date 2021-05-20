@@ -28,13 +28,13 @@ from __future__ import print_function
 # 'Done'
 # 'Cancelled'
 
+import json
 import time
 import threading
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 
-from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonDumps, pickleOrJsonLoads
 from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import informPeople
 
 __RCSID__ = "$Id$"
@@ -287,10 +287,10 @@ class ProductionRequestDB(DB):
   def __checkIOTypes(self, requestDict):
     """Check the input type of each step matches the output of a previous
     step."""
-    pickledProdDetail = requestDict.get('ProDetail')
-    if pickledProdDetail is not None:
+    prodDetail = requestDict.get('ProDetail')
+    if prodDetail is not None:
       try:
-        proDetail = pickleOrJsonLoads(pickledProdDetail)
+        proDetail = json.loads(prodDetail)
       except Exception:
         return S_ERROR('Content of ProDetail field cannot be loaded')
       for i in range(20):
@@ -718,8 +718,8 @@ class ProductionRequestDB(DB):
         if rec[x] == old[x]:
           continue
         try:
-          recx = pickleOrJsonLoads(rec[x])
-          oldx = pickleOrJsonLoads(old[x])
+          recx = json.loads(rec[x])
+          oldx = json.loads(old[x])
           if recx == oldx:
             continue
         except TypeError:
@@ -952,7 +952,7 @@ class ProductionRequestDB(DB):
     """clear processing pass section."""
     rec['ProID'] = None
     nd = {}
-    rec['ProDetail'] = pickleOrJsonDumps(nd)
+    rec['ProDetail'] = json.dumps(nd)
 
   def __duplicateDeep(self, requestID, masterID, parentID, creds, connection, clearpp):
     """recurcive duplication function.
@@ -1375,7 +1375,7 @@ class ProductionRequestDB(DB):
     for x in result['Value']:
       res = dict(zip(self.requestFields[:-7], x))
       if res['SimCondDetail']:
-        res.update(pickleOrJsonLoads(res['SimCondDetail']))
+        res.update(json.loads(res['SimCondDetail']))
       else:
         continue
       del res['SimCondDetail']
