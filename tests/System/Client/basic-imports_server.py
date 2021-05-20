@@ -42,10 +42,11 @@ for cmd in cmds:
   if not res:
     raise RuntimeError()
 
-for cmd in ['glite-ce-job-submit', 'glite-ce-job-status', 'glite-ce-delegate-proxy', 'glite-ce-job-cancel']:
-  res = find_executable(cmd)
-  if not res:
-    raise RuntimeError("No %s" % cmd)
+if six.PY2:
+  for cmd in ['glite-ce-job-submit', 'glite-ce-job-status', 'glite-ce-delegate-proxy', 'glite-ce-job-cancel']:
+    res = find_executable(cmd)
+    if not res:
+      raise RuntimeError("No %s" % cmd)
 
 for cmd in ['condor_submit', 'condor_history', 'condor_q', 'condor_rm', 'condor_transfer_data']:
   res = find_executable(cmd)
