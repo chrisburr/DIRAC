@@ -30,6 +30,7 @@ stages:
   - coverage
   - coverageDfs
   # If there's a new tag, build the docker images, and also deploy on CVMFS
+  - upload_pypi
   - deploy_release
   - update
   # Left over tasks like tagging the devel container and setting the prod symlink
@@ -65,6 +66,8 @@ stages:
     - pip install 'setuptools<45'
     - pip install --upgrade 'pip<21' 'setuptools_scm<6'
     - pip install -r DIRAC/requirements.txt
+    # HACK: To be reverted after the next DIRAC release
+    - pip install importlib_resources
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
   stage: test
@@ -592,7 +595,7 @@ MR_SWEEP:
     - python /sweep_MR.py -p ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} -b origin/${CI_COMMIT_REF_NAME} -t ${SWEEP_TOKEN} -s "${SWEEP_SINCE}" -u "${SWEEP_UNTIL}" --repository-root ${PWD}
 
 deploy-to-pypi:
-  stage: deploy_release
+  stage: upload_pypi
   only:
     - tags@lhcb-dirac/LHCbDIRAC
   except:
