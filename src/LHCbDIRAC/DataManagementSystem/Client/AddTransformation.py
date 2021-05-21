@@ -16,6 +16,7 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import os
+import json
 from collections import defaultdict
 
 import DIRAC
@@ -23,7 +24,6 @@ from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonLoads
 from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -147,7 +147,7 @@ def executeAddTransformation(pluginScript):
     prodReq = res['Value']['Rows']
     reqDict = defaultdict(set)
     for row in prodReq:
-      mcVersion = pickleOrJsonLoads(row['Extra'])['mcConfigVersion']
+      mcVersion = json.loads(row['Extra'])['mcConfigVersion']
       # If "all" we take all numerical values, otherwise we take the explicit values
       if ('all' in mcVersions and mcVersion.isdigit()) or mcVersion in mcVersions:
         simVersion = row['ProPath'].split('/')[0]

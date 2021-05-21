@@ -27,7 +27,6 @@ from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeeping
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import checkEnoughBKArguments
-from LHCbDIRAC.Core.Utilities.JSONPickle import pickleOrJsonDumps, pickleOrJsonLoads
 
 __RCSID__ = "$Id$"
 
@@ -433,13 +432,7 @@ class BookkeepingManagerHandler(RequestHandler):
     getFilesWithMetadata
     """
     result = S_OK()
-    iscPickleFormat = False
-    try:
-      in_dict = JEncoder.loads(parameters)
-    except Exception:
-      iscPickleFormat = True
-      self.log.exception("Failed to serialise data with JSON", parameters)
-      in_dict = pickleOrJsonLoads(parameters)
+    in_dict = JEncoder.loads(parameters)
     gLogger.verbose("The following dictionary received:", "%s" % in_dict)
     methodName = in_dict.get('MethodName', default)
     if methodName == 'getFiles':
@@ -447,10 +440,7 @@ class BookkeepingManagerHandler(RequestHandler):
     else:
       retVal = self.__getFilesWithMetadata(in_dict)
 
-    if iscPickleFormat:
-      fileString = pickleOrJsonDumps(retVal, protocol=2)
-    else:
-      fileString = JEncoder.dumps(retVal)
+    fileString = JEncoder.dumps(retVal)
 
     retVal = fileHelper.stringToNetwork(fileString)
     if retVal['OK']:
@@ -521,10 +511,7 @@ class BookkeepingManagerHandler(RequestHandler):
   @classmethod
   @checkEnoughBKArguments
   def __getFilesWithMetadata(cls, in_dict):
-    """It returns the files with their metadata.
-
-    This result will be transfered to the client using a pickle file
-    """
+    """It returns the files with their metadata."""
     configName = in_dict.get('ConfigName', default)
     configVersion = in_dict.get('ConfigVersion', default)
     conddescription = in_dict.get('ConditionDescription', default)
