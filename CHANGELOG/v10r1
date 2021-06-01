@@ -1,3 +1,13 @@
+v10r1p16
+Based on DIRAC v7r1p40
+LHCbWebDIRAC v5r2p3
+LHCbDIRACOS v1r18
+*ConfigurationSystem
+
+CHANGE: (!1011) Update test references to use x86_64 microarchitecture levels
+
+
+
 v10r1p15
 Based on DIRAC v7r1p40
 LHCbWebDIRAC v5r2p3
