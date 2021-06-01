@@ -1,0 +1,106 @@
+v10r2-pre13
+Based on DIRAC v7r2p7
+LHCbWebDIRAC  v5r3-pre2
+LHCbDIRACOS v1r18
+*Core
+
+CHANGE: (!1008) Remove JSONPickle module
+
+
+
+v10r2-pre12
+Based on DIRAC v7r2p6
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r18
+
+
+v10r2-pre11
+Based on DIRAC v7r2p6
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r18
+v10r2-pre10
+Based on DIRAC v7r2p6
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r18
+v10r2-pre9
+Based on DIRAC v7r2p6
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r17
+
+
+v10r2-pre8
+Based on DIRAC v7r2p4
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r17
+
+
+v10r2-pre7
+Based on DIRAC v7r2p4
+LHCbWebDIRAC v5r3-pre1
+LHCbDIRACOS v1r17
+Thank you for writing the text to appear in the release notes. It will show up
+exactly as it appears between the two bold lines
+Please follow the template:
+
+*Subsystem
+
+NEW/CHANGE/FIX: (!969) explanation
+For examples look into release.notes
+
+
+
+v10r2-pre6
+Based on DIRAC v7r2p2
+LHCbWebDIRAC v5r2p1
+LHCbDIRACOS v1r16
+
+
+v10r2-pre5
+Based on DIRAC v7r2p2
+LHCbWebDIRAC v5r2p1
+LHCbDIRACOS v1r16
+v10r2-pre4
+Based on DIRAC v7r2-pre38
+LHCbWebDIRAC v5r2p1
+LHCbDIRACOS v1r16
+
+
+v10r2-pre3
+Based on DIRAC v7r2-pre35
+LHCbWebDIRAC v5r2p1
+LHCbDIRACOS v1r16
+v10r2-pre2
+Based on DIRAC v7r2-pre33
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r15
+
+*tests
+
+FIX: (!902) adjust pylint and pytest for new repo layout
+
+*ConfigurationSystem
+
+CHANGE: (!905) Get CA certificates from CVMFS when querying the software configuration database
+
+*Python3
+
+NEW: (!904) Move to src repository layout
+NEW: (!904) Run unit tests with Python 3
+
+*Python 3
+
+CHANGE: (!910) Convert scripts to new entrypoint compatible style
+NEW: (!911) Support installing a client with pip
+
+v10r2-pre1
+Based on DIRAC v7r2-pre33
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r15
+
+
+
+v10r2-pre1
+Based on DIRAC v7r2-pre31
+LHCbWebDIRAC v5r2
+LHCbDIRACOS v1r13
+Start of the v10r2 LHCbDIRAC series, based on DIRAC v7r2.

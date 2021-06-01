@@ -15,12 +15,14 @@
 
     It also supposes that the DB is empty!
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=invalid-name,wrong-import-position
 
 import sys
 import time
-import cPickle
 import json
 import unittest
 
@@ -47,10 +49,6 @@ class TestProductionRequestTestCase(unittest.TestCase):
 class TestProductionRequestTestCaseChain(TestProductionRequestTestCase):
   """ a chain of tests
   """
-
-  def test_mix_pickle(self):
-    # TODO: This should be removed when pickle is removed all together
-    return self._run_mix_test(cPickle.dumps)
 
   def test_mix_json(self):
     return self._run_mix_test(json.dumps)

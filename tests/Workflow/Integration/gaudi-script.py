@@ -10,7 +10,10 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 '''Script to run '''
-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+# pylint: skip-file
 from os import system, environ, pathsep, getcwd
 import sys
 from Configurables import LHCbApp
@@ -27,4 +30,4 @@ if __name__ == '__main__':
 
   options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
   LHCbApp().EvtMax = 2
-  sys.exit(system('''gaudirun.py -T %s''' % options) / 256)
+  sys.exit(int(system('''gaudirun.py -T %s''' % options) / 256))

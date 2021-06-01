@@ -11,6 +11,9 @@
 ###############################################################################
 """ "Integration" production jobs. StepIDs are taken from REAL productions that ran "recently"
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=line-too-long,protected-access,invalid-name,wrong-import-position
 
@@ -23,7 +26,7 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from tests.Utilities.IntegrationTest import IntegrationTest
+from LHCbDIRAC.tests.Utilities.IntegrationTest import IntegrationTest
 
 from LHCbDIRAC import rootPath
 from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction

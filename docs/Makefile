@@ -46,7 +46,7 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 
 cleanall: clean
-	$(DIRACDOCTOOLS)/scripts/dirac-docs-build-code.py --clean
+	dirac-docs-build-code.py --clean
 	@echo "Cleaned..., for even more thorough cleaning, use ' git clean -X -d -f'"
 
 html:
@@ -56,9 +56,9 @@ html:
 
 # AUTO MAKE START
 htmlall:
-	$(DIRACDOCTOOLS)/scripts/dirac-docs-build-commands.py
-	$(DIRACDOCTOOLS)/scripts/dirac-docs-build-code.py
-	$(DIRACDOCTOOLS)/scripts/dirac-docs-concatenate-diraccfg.py
+	dirac-docs-build-commands.py
+	dirac-docs-build-code.py
+	dirac-docs-concatenate-diraccfg.py
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

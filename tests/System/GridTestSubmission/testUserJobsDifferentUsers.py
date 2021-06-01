@@ -11,6 +11,9 @@
 """ This submits user jobs using a second user, for which a proxy is downloaded locally
     This means that to run this test you need to have the KARMA!
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=wrong-import-position,unused-wildcard-import,wildcard-import
 
@@ -28,16 +31,10 @@ from DIRAC import gLogger
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 from DIRAC.ResourceStatusSystem.Client.ResourceStatus import ResourceStatus
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
-from DIRAC.tests.System.unitTestUserJobs import GridSubmissionTestCase as DIRACGridSubmissionTestCase
 
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 
-# from DIRAC.tests.Utilities.utils import find_all
-
-try:
-  from LHCbDIRAC.tests.Utilities.testJobDefinitions import *
-except ImportError:
-  from tests.Utilities.testJobDefinitions import *
+from LHCbDIRAC.tests.Utilities.testJobDefinitions import *
 
 gLogger.setLevel('VERBOSE')
 
@@ -80,7 +77,7 @@ class GridSubmissionTestCase(unittest.TestCase):
     pass
 
 
-class LHCbsubmitSuccess(GridSubmissionTestCase, DIRACGridSubmissionTestCase):
+class LHCbsubmitSuccess(GridSubmissionTestCase):
 
   def test_LHCbsubmit(self):
 

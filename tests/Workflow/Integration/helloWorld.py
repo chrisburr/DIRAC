@@ -8,6 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 # dirac job created by ganga
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
@@ -16,20 +19,23 @@ j = LHCbJob()
 dirac = DiracLHCb()
 
 # default commands added by ganga
-j.setName( "helloWorld-test" )
-j.setInputSandbox( ['/afs/cern.ch/user/f/fstagni/userJobs/_inputHello.tgz', '/afs/cern.ch/user/f/fstagni/userJobs/hello-script.py'] )
+j.setName("helloWorld-test")
+j.setInputSandbox([
+    '/afs/cern.ch/user/f/fstagni/userJobs/_inputHello.tgz',
+    '/afs/cern.ch/user/f/fstagni/userJobs/hello-script.py',
+])
 
-j.setExecutable( "exe-script.py", "", "Ganga_Executable.log" )
+j.setExecutable("exe-script.py", "", "Ganga_Executable.log")
 
 # <-- user settings
-j.setCPUTime( 172800 )
+j.setCPUTime(172800)
 try:
-  tier1s = DMSHelpers().getTiers( tier = ( 0, 1 ) )
+  tier1s = DMSHelpers().getTiers(tier=(0, 1))
 except AttributeError:
   tier1s = ['LCG.CERN.cern', 'LCG.CNAF.it', 'LCG.GRIDKA.de',
             'LCG.IN2P3.fr', 'LCG.NIKHEF.nl', 'LCG.PIC.es', 'LCG.RAL.uk',
             'LCG.RRCKI.ru', 'LCG.SARA.nl']
-j.setBannedSites( tier1s )
+j.setBannedSites(tier1s)
 # user settings -->
 
 
@@ -37,4 +43,4 @@ j.setBannedSites( tier1s )
 
 # submit the job to dirac
 result = dirac.submitJob(j)
-print result
+print(result)

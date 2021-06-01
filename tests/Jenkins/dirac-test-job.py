@@ -11,6 +11,9 @@
 ###############################################################################
 """ Submission of test jobs for use by Jenkins
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=wrong-import-position,unused-wildcard-import,wildcard-import
 
@@ -25,7 +28,6 @@ from DIRAC.tests.Utilities.utils import find_all
 
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-#from tests.Workflow.Integration.Test_UserJobs import createJob
 
 gLogger.setLevel('DEBUG')
 

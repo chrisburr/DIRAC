@@ -15,6 +15,9 @@ production to db requites:
 -steps
 -production
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # pylint: disable=invalid-name,wrong-import-position
 
@@ -27,7 +30,7 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from tests.Integration.BookkeepingSystem.Utilities import wipeOutDB
+from .Utilities import wipeOutDB
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
@@ -823,6 +826,7 @@ def test_getJobInformation():
   retVal = bk.getJobInformation(
       {'LFN': ['/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_8.digi',
                '/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_7.digi']})
+  assert retVal['OK'] is True
   assert len(retVal['Value']) == 2
   params = [
       'WNMJFHS06',
@@ -965,6 +969,7 @@ def test_addFiles():
   lfns = ['/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim',
           '/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_2.digi']
   retVal = bk.addFiles(lfns)
+  assert retVal['OK'] is True
   assert retVal['Value']['Successful']
   assert retVal['Value']['Failed'] == []
   assert retVal['Value']['Successful'] == lfns

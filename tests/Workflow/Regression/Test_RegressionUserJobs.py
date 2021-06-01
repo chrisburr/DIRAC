@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 """ Testings XMLs of user jobs that ran before
 """
@@ -28,7 +31,7 @@ from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-from tests.Utilities.IntegrationTest import IntegrationTest
+from LHCbDIRAC.tests.Utilities.IntegrationTest import IntegrationTest
 
 
 class RegressionTestCase(IntegrationTest):

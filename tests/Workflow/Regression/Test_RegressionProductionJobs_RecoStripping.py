@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 """ Regression production jobs are "real" XMLs of production jobs that ran in production
 """
@@ -24,7 +27,7 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from tests.Utilities.IntegrationTest import IntegrationTest
+from LHCbDIRAC.tests.Utilities.IntegrationTest import IntegrationTest
 
 from LHCbDIRAC import rootPath
 from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob

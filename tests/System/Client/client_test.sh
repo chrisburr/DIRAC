@@ -9,53 +9,32 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-
+set -e
 
 dir=$( echo "${USER}" |cut -c 1)/${USER}
 echo "this is a test file" >> DMS_Scripts_Test_File.txt
 
 echo "lhcb-proxy-init -g lhcb_prmgr"
 lhcb-proxy-init -g lhcb_prmgr
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "======  dirac-proxy-info"
 dirac-proxy-info
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "======  dirac-dms-lfn-replicas /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000071.raw"
 dirac-dms-lfn-replicas /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000071.raw
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "======  dirac-dms-check-directory-integrity /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789"
 dirac-dms-check-directory-integrity /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "====== dirac-dms-check-file-integrity /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw"
 dirac-dms-check-file-integrity /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "====== dirac-dms-lfn-metadata /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw"
 dirac-dms-lfn-metadata /lhcb/data/2010/RAW/FULL/LHCb/COLLISION10/81789/081789_0000000044.raw
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 
 echo " "
 echo "====== dirac-lhcb-get-root-guid /lhcb/MC/2015/ALLSTREAMS.DST/00001164/0000/00001164_00000001_3.AllStreams.dst"
 dirac-lhcb-get-root-guid /lhcb/MC/2015/ALLSTREAMS.DST/00001164/0000/00001164_00000001_3.AllStreams.dst
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 
 # Comment it out because asking the accessURL of files on tape is not the best...
 
@@ -78,70 +57,40 @@ echo " "
 
 echo "lhcb-proxy-init"
 lhcb-proxy-init
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 
 echo "====== dirac-dms-list-directory /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/"
 dirac-dms-list-directory /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 
 echo "====== dirac-dms-remove-files /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt"
 dirac-dms-remove-files /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 
 
 echo "======  dirac-dms-storage-usage-summary -S CERN-USER -D /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/"
 dirac-dms-storage-usage-summary -S CERN-USER -D /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "====== dirac-dms-add-file /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt ./DMS_Scripts_Test_File.txt CNAF-USER"
 dirac-dms-add-file /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt ./DMS_Scripts_Test_File.txt CNAF-USER
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 mv DMS_Scripts_Test_File.txt DMS_Scripts_Test_File.old
 echo "======  dirac-dms-replicate-lfn /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt SARA-USER CNAF-USER"
 dirac-dms-replicate-lfn /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt SARA-USER CNAF-USER
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "======  dirac-dms-replica-stats /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt"
 dirac-dms-replica-stats /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "====== dirac-dms-catalog-metadata /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt"
 dirac-dms-catalog-metadata /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 echo "====== dirac-dms-get-file /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt"
 dirac-dms-get-file /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 
 echo " "
 echo "====== dirac-dms-remove-replicas /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt CNAF-USER"
 dirac-dms-remove-replicas /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt SARA-USER
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 echo " "
 ls DMS_Scripts_Test_File.txt
 if [[ ${?} -ne 0 ]]; then
@@ -152,9 +101,6 @@ fi
 echo " "
 echo "====== dirac-dms-remove-files /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt CNAF-USER"
 dirac-dms-remove-files /lhcb/user/${dir}/Dirac_Scripts_Test_Directory/DMS_Scripts_Test_File.txt CNAF-USER
-if [[ ${?} -ne 0 ]]; then
-   exit ${?}
-fi
 
 echo " "
 echo " "

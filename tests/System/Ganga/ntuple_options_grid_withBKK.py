@@ -12,8 +12,11 @@
 
     Takes input files from BKK call
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-#pylint: skip-file
+# pylint: skip-file
 
 from Gaudi.Configuration import importOptions, FileCatalog
 from Configurables import DaVinci, DecayTreeTuple
@@ -43,10 +46,12 @@ DaVinci().DDDBtag = 'dddb-20130929-1'
 
 # Use input data from the bookkeeping query with XML catalog
 importOptions(
-        "MC_2012_27163003_Beam4000GeV2012MagDownNu2.5Pythia8_Sim08e_Digi13_"
-        "Trig0x409f0045_Reco14a_Stripping20NoPrescalingFlagged_ALLSTREAMS"
-        ".DST.py")
+    "MC_2012_27163003_Beam4000GeV2012MagDownNu2.5Pythia8_Sim08e_Digi13_"
+    "Trig0x409f0045_Reco14a_Stripping20NoPrescalingFlagged_ALLSTREAMS"
+    ".DST.py"
+)
 FileCatalog().Catalogs = [
-        "xmlcatalog_file:MC_2012_27163003_"
-        "Beam4000GeV2012MagDownNu2.5Pythia8_Sim08e_Digi13_Trig0x409f0045_Reco14a_"
-        "Stripping20NoPrescalingFlagged_ALLSTREAMS.DST.xml"]
+    "xmlcatalog_file:MC_2012_27163003_"
+    "Beam4000GeV2012MagDownNu2.5Pythia8_Sim08e_Digi13_Trig0x409f0045_Reco14a_"
+    "Stripping20NoPrescalingFlagged_ALLSTREAMS.DST.xml"
+]

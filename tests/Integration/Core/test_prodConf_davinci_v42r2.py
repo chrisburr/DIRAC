@@ -8,19 +8,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-#pylint: skip-file
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+# pylint: skip-file
 # Used by Test_RunApplication.py (for integration test)
 
 from ProdConf import ProdConf
 
 ProdConf(
-  NOfEvents=-1,
-  DDDBTag='dddb-20150724',
-  CondDBTag='cond-20161011',
-  AppVersion='v42r2',
-  XMLSummaryFile='summaryDaVinci_0daVinci_000v42r2_1.xml',
-  OptionFormat='Stripping',
-  Application='DaVinci',
-  OutputFilePrefix='0daVinci_000v42r2',
-  XMLFileCatalog='pool_xml_catalog.xml',
+    NOfEvents=-1,
+    DDDBTag='dddb-20150724',
+    CondDBTag='cond-20161011',
+    AppVersion='v42r2',
+    XMLSummaryFile='summaryDaVinci_0daVinci_000v42r2_1.xml',
+    OptionFormat='Stripping',
+    Application='DaVinci',
+    OutputFilePrefix='0daVinci_000v42r2',
+    XMLFileCatalog='pool_xml_catalog.xml',
 )

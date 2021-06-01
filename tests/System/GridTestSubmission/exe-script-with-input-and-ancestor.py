@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 '''Script to run Executable application'''
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from os import system
 import sys
@@ -17,4 +20,4 @@ import sys
 # Main
 if __name__ == '__main__':
 
-  sys.exit(system('''ls 081616_0000000213.raw''') / 256)
+  sys.exit(int(system('''ls 081616_0000000213.raw''') / 256))

@@ -1,0 +1,33 @@
+config:
+  DIRAC_CI_SETUP_SCRIPT: LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
+  INSTALLOPTIONS: ["-l", "LHCb", "-e", "LHCb"]
+
+# List of feature variables which must be passed when preparing
+required-feature-flags:
+  - LHCBDIRAC_RELEASE
+
+# Additional services to use in docker-compose
+extra-services:
+  bkdb:
+    image: gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database-snapshots:19.3.0-ee
+    container_name: bkdb
+    environment:
+      - ORACLE_SID=bkdbsid
+      - ORACLE_PDB=bkdbpdb
+      - ORACLE_PWD=bkdbpass
+      - ORACLE_CHARACTERSET=AL32UTF8
+    ports:
+      - 1521:1521
+
+# Additional shell commands to run
+commands:
+  post-prepare:
+    - docker exec -u root -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
+    # This will only work inside the CERN network!
+    - docker exec -u root -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
+    - |
+      while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do
+        echo "Waiting for bookkeeping database to be ready... $(docker logs bkdb | grep 'complete' | tail -n 1)";
+        sleep 15;
+      done
+    - docker exec bkdb bash -x /home/dirac/LocalRepo/ALTERNATIVE_MODULES/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh

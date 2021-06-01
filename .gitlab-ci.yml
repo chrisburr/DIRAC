@@ -30,6 +30,7 @@ stages:
   - coverage
   - coverageDfs
   # If there's a new tag, build the docker images, and also deploy on CVMFS
+  - upload_pypi
   - deploy_release
   - update
   # Left over tasks like tagging the devel container and setting the prod symlink
@@ -50,8 +51,8 @@ stages:
     - pip install --upgrade 'pip<21'
     - pip install diraccfg virtualenv
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    - lhcbdiracTag=$(python -c "from LHCbDIRAC import version; print(version)")
-    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
     # Clone the latest LHCbDIRAC
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
@@ -63,8 +64,10 @@ stages:
     - source DIRAC_VENV/bin/activate
      # last version supporting python 2
     - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
+    - pip install --upgrade 'pip<21' 'setuptools_scm<6'
     - pip install -r DIRAC/requirements.txt
+    # HACK: To be reverted after the next DIRAC release
+    - pip install importlib_resources
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
   stage: test
@@ -74,61 +77,76 @@ stages:
     variables:
       - $SWEEP != "true"
 
+.test_setup_py3:
+  stage: test
+  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
+  before_script:
+    - eval "$(python -m conda shell.bash hook)"
+    - conda install --yes mamba diraccfg git jq
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
+    - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
+    - echo "lhcbdiracTag=${lhcbdiracTag}"
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    - echo "diracTAG=${diracTAG}"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
+    - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
+    - conda activate test-env
+    - pip install ../DIRAC[server]
+    - pip install .[server]
+
 # This runs pylint and fails if there are errors
 run_pylint:
   <<: *test_setup
   script:
-    - cd LHCbDIRAC
+    - export PYTHONPATH=$(pwd)/DIRAC/src/
+    - cd src/LHCbDIRAC
     - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
+
+run_pylint_py3:
+  extends: .test_setup_py3
+  script:
+    - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
 
 # This runs pytest and generates the coverage report
 run_pytest:
   <<: *test_setup
   script:
-    - cd LHCbDIRAC
+    - export PYTHONPATH=$(pwd)/DIRAC/src/
+    - cd src/LHCbDIRAC
     - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
   coverage: '/\d+\%\s*$/'
   artifacts:
     paths:
-      - LHCbDIRAC/htmlcov/
+      - src/LHCbDIRAC/htmlcov/
+
+run_pytest_py3:
+  extends: .test_setup_py3
+  script:
+    - DIRAC_DEPRECATED_FAIL=True pytest src/LHCbDIRAC
 
 # This runs pycodestyle
 run_pycodestyle:
   <<: *test_setup
   script:
-    - lhcbDiracBranch=$(python -c "s = open('LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
+    - lhcbDiracBranch=$(python -c "s = open('src/LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
     - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
     - git fetch --no-tags GL
     - git branch -avv
     - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
 
+pycodestyle_py3:
+  extends: .test_setup_py3
+  script:
+    - pycodestyle
+
 # Check that the documentation does not generate any error/warning
 check_docs:
-  image:  gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
-  before_script:
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel swig
-    # One has to do it in a virtual env because pip-compile
-    # generates a requirements.txt which conflicts with the
-    # yum installed python packages (like ipaddress or requests)
-    - virtualenv /tmp/generateDoc
-    - source /tmp/generateDoc/bin/activate
-    - export PYCURL_SSL_LIBRARY=openssl
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
-    - pip install pip-tools
+  extends: .test_setup_py3
   script:
-    # We need to use m2crypto, otherwise it looks for GSI, which is annoying
-    - export DIRAC_USE_M2CRYPTO=True
-    - export PYTHONPATH=$PWD:$PYTHONPATH
+    - pip install ../DIRAC/docs
     - cd docs
-    # We need to compile the requirements.txt because the crappy pip dependency
-    # resolution cannot figure out matplotlib dependency properly
-    - mv requirements.txt requirements.in
-    - pip-compile requirements.in
-    - pip install -r requirements.txt
     # We need to export the DIRAC env variable so that the makefile knows where to find the documentation tools
-    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print diracdoctools.__file__"))
+    - export DIRACDOCTOOLS=$(dirname $(python -c "import diracdoctools; print(diracdoctools.__file__)"))
     # Remove  numpy from DIRAC_DOC_MOCK_LIST as uproot fails to import without it
     - sed -i "s@'numpy',@@" "${DIRACDOCTOOLS}/__init__.py"
     - SPHINXOPTS=-wsphinxWarnings make htmlall || { echo "Failed to build documentation, check for errors above" ; exit 1; }
@@ -168,18 +186,14 @@ check-copyright:
 # Integration tests
 integration_tests:
   stage: test
+  image: registry.cern.ch/docker.io/library/alpine:edge
   tags:
     - docker-privileged-xl
-  image: diracgrid/docker-compose-dirac:latest
   services:
     - docker:19.03.1-dind
   variables:
-    # As of GitLab 12.5, privileged runners at CERN mount a /certs/client docker volume that enables use of TLS to
-    # communicate with the docker daemon. This avoids a warning about the docker service possibly not starting
-    # successfully.
-    # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
-    DOCKER_TLS_CERTDIR: "/certs"
-    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME/LHCbDIRAC
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375/
   rules:
     # Using rules causes "Pipelines for Merge Requests" to be triggered, so disable them explicitly
     # https://docs.gitlab.com/ee/ci/merge_request_pipelines/
@@ -188,6 +202,19 @@ integration_tests:
     - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: false
   before_script:
+    # Install dependencies
+    - apk add docker py3-pip python3 bash git docker-compose jq
+    - pip3 install typer pyyaml gitpython diraccfg
+    # Clone DIRAC
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
+    - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
+    - echo "lhcbdiracTag=${lhcbdiracTag}"
+    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
+    - diracTAG=rel-$(echo ${diracTAG} | cut -d 'p' -f 1)
+    - echo "diracTAG=${diracTAG}"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
+    - cd ../DIRAC
+    # Login to the GitLab container registry for access to Oracle
     - |
       if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD:-}" ]]; then
         echo -e '\033[1m\033[31mError LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD variable is not defined!!!\033[0m';
@@ -197,75 +224,9 @@ integration_tests:
         echo -e ' > https://docs.gitlab.com/ee/ci/variables/#via-the-ui';
         exit 67;
       fi
-    # Login to GitLab
-    - docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch <<< "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}"
-    # Add some dependencies
-    - apk add jq python2 python3
-    - pip3 install diraccfg
-    # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
-    # Needs to use Python 2 as it hasn't been installed so setuptools_scm doesn't find a version
-    - curl -O -L https://diracos.web.cern.ch/diracos/bootstrap/get-pip.py
-    - python2 get-pip.py pip==20.2.4
-    - python2 -m pip install six
-    - LHCBDIRAC_RELEASE=$(python2 -c "from LHCbDIRAC import version; print(version)")
-    - export LHCBDIRAC_RELEASE
-    - diracTAG=$(diraccfg as-json LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${LHCBDIRAC_RELEASE}\".Depends" | cut -d ':' -f2)
-    - diracRef="rel-$(echo "${diracTAG}" | cut -d 'p' -f1)"
-    - cd $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
-    # Get DIRAC
-    - git clone https://github.com/DIRACGrid/DIRAC.git
-    - cd DIRAC
-    - git checkout "$diracRef"
-    - cd ..
-    # Environment
-    - export DIRAC_CI_SETUP_SCRIPT=LHCbDIRAC/tests/Jenkins/lhcb_ci.sh
-    - export DIRACOSVER=LHCb:master
-    - export DIRACBRANCH=${LHCBDIRAC_RELEASE}
-    - export CI_REGISTRY_IMAGE=diracgrid
-    # ALTERNATIVE_MODULES
-    - declare -a ALTERNATIVE_MODULES
-    - ALTERNATIVE_MODULES+=("$PWD/LHCbDIRAC")
-    - ALTERNATIVE_MODULES+=("$PWD/DIRAC")
-    # TESTREPO
-    - declare -a TESTREPO
-    - TESTREPO+=("$PWD/LHCbDIRAC")
-    - TESTREPO+=("$PWD/DIRAC")
-    # EXTRA_ENVIRONMENT_CONFIG
-    - declare -a EXTRA_ENVIRONMENT_CONFIG
-    - EXTRA_ENVIRONMENT_CONFIG+=("export LHCBDIRAC_RELEASE=${LHCBDIRAC_RELEASE}")
-    # INSTALLOPTIONS
-    - declare -a INSTALLOPTIONS
-    - INSTALLOPTIONS+=("-l" "LHCb" "-e" "LHCb")
-    # Start the bookkeeping database container
-    - |
-      docker run --rm --detach --name bkdb \
-        -p 1521:1521 \
-        -e ORACLE_SID=bkdbsid \
-        -e ORACLE_PDB=bkdbpdb \
-        -e ORACLE_PWD=bkdbpass \
-        -e ORACLE_CHARACTERSET=AL32UTF8 \
-        -v $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME:/repo \
-        gitlab-registry.cern.ch/lhcb-dirac/bookkeeping-ci-container/oracle-database-snapshots:19.3.0-ee
+    - echo "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}" | docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch
   script:
-    - source DIRAC/tests/CI/run_docker_setup.sh
-    - prepareEnvironment
-    # Install oracle client (will only work inside the CERN network!)
-    - docker exec -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
-    - docker exec -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
-    # Finish configuring the bokkeeping database
-    - docker network connect ci_default bkdb
-    - |
-      while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do
-        echo "Waiting for bookkeeping database to be ready... $(docker logs bkdb | grep 'complete' | tail -n 1)";
-        sleep 15;
-      done
-    - docker exec bkdb bash -x /repo/LHCbDIRAC/tests/Jenkins/bookkeeping_install/setup_ci_bookkeeping_db.sh
-    # Carry on with the CI as normal
-    - installServer
-    - installClient
-    - testServer
-    - testClient
-    - checkErrors
+    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
 
 ### coverage stage ###
 
@@ -278,7 +239,7 @@ pages:
     - TARGET_DIR="public/${CI_COMMIT_REF_NAME}"
     - if [ ! -d "$TARGET_DIR" ]; then mkdir -p $TARGET_DIR; fi
     - echo "Copying into $TARGET_DIR"
-    - mv LHCbDIRAC/htmlcov/* $TARGET_DIR
+    - mv src/LHCbDIRAC/htmlcov/* $TARGET_DIR
   artifacts:
     paths:
       - public
@@ -329,6 +290,8 @@ create_tarball:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   variables:
     GIT_STRATEGY: none
   script:
@@ -336,7 +299,7 @@ create_tarball:
     # We take it from devel if it is a pre release, otherwise master
     - BRANCH=$(echo ${CI_COMMIT_TAG} | grep -qE '^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$'; if [ $? -eq 0 ]; then echo "master"; else echo "devel"; fi)
     # Get the releases.cfg from the appropriate branch
-    - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/LHCbDIRAC/releases.cfg
+    - curl -O -L https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/$BRANCH/src/LHCbDIRAC/releases.cfg
     # Create the release tarball
     # The last line output by the script is the command to run in order to deploy
     - python3 /dirac-distribution.py -r ${CI_COMMIT_TAG} -l LHCb -C file:///$(pwd)/releases.cfg | tail -n 1  > /tmp/deploy.sh
@@ -353,9 +316,11 @@ build_docker_image:
   stage: deploy_release
   only:
     refs:
-      - tags
+      - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
@@ -396,10 +361,9 @@ build_sweeper_image:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
-      - ($CI_COMMIT_TAG =~ /v\d+r.+/ && $SWEEP != "true")
   before_script:
     - |
-      if [[ "${CI_COMMIT_TAG}" == *"-pre"* ]]; then
+      if [[ "${CI_COMMIT_TAG}" == *"-pre"* || "${CI_COMMIT_TAG}" == *"a"*  ]]; then
         LHCB_DIRAC_SETUP="LHCb-Certification"
       else
         LHCB_DIRAC_SETUP="LHCb-Production"
@@ -425,6 +389,8 @@ deploy_on_cvmfs:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
   before_script:
     - mkdir -p ~/.globus
@@ -476,6 +442,8 @@ add_devel_tag:
     variables:
       - $SWEEP != "true"
       - ($CI_COMMIT_TAG =~ /.*-pre.*/ && $SWEEP != "true")
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   variables:
     DOCKER_IMAGE_PATH: $CI_REGISTRY_IMAGE
     OLDTAG: ${CI_COMMIT_TAG}
@@ -486,10 +454,32 @@ add_devel_tag:
 # This task can be ran multiple times which means an old pipeline can be restarted to roll back the prod symlink
 set_cvmfs_prod_link:
   extends: .cvmfs_task
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
   stage: finish_up
   when: manual
   script:
     - ./.ci/trigger_cvmfs_deployment.sh set-prod "${LHCB_DIRAC_SETUP}" "${CI_COMMIT_TAG}"
+
+
+# Update the Helm configuration
+# by setting LHCB_DIRAC_VERSION
+# and triggering chaen/diracchart pipeline
+deploy_k8:
+  stage: finish_up
+  allow_failure: true
+  variables:
+    LHCB_DIRAC_VERSION: ${CI_COMMIT_TAG}
+  only:
+    refs:
+      - tags@lhcb-dirac/LHCbDIRAC
+    variables:
+      - $SWEEP != "true"
+  except:
+    - /^v[0-9]+\.[0-9]+.+$/
+  trigger:
+    project: chaen/diracchart
+    strategy: depend
 
 # Job for starting the tag procedure
 make_tag:
@@ -551,22 +541,24 @@ make_tag:
     # get the last releases.cfg
     - mv ../releases.cfg releases.cfg
     # Call the python script that generated all the artifacts for the release
-    - python3 tests/Utilities/createReleaseFiles.py
-    - mv releases.cfg LHCbDIRAC/releases.cfg
+    - python3 src/LHCbDIRAC/tests/Utilities/createReleaseFiles.py
+    - mv releases.cfg src/LHCbDIRAC/releases.cfg
     - export SERIES=`cat series.txt`
     - export VERSION=`cat version.txt`
+    - export VERSION_PY3=`cat versionPy3.txt`
     # insert new release notes into the changelog
     - cat ../notes.txt CHANGELOG/$SERIES > newNotes.txt
     - mv newNotes.txt CHANGELOG/$SERIES
     # show all the changes we have done
     - cp CHANGELOG/$SERIES ../changes.txt
-    - cp LHCbDIRAC/releases.cfg ../releases.cfg
+    - cp src/LHCbDIRAC/releases.cfg ../releases.cfg
     - git diff
     - git add -u
     # commit all the changes to the current branch
     - git commit -av -m "Update versions and changelog for release of ${VERSION}"
     # tag current branch
     - git tag -a ${VERSION} -m ${VERSION}
+    - git tag -a ${VERSION_PY3} -m ${VERSION_PY3}
     # push commits and tag to main repo back
     - git push --tags origin ${CI_COMMIT_REF_NAME}
     # If we just tagged master we need to update also the releases.cfg and CHANGELOG in devel
@@ -600,3 +592,18 @@ MR_SWEEP:
   after_script: []
   script:
     - python /sweep_MR.py -p ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} -b origin/${CI_COMMIT_REF_NAME} -t ${SWEEP_TOKEN} -s "${SWEEP_SINCE}" -u "${SWEEP_UNTIL}" --repository-root ${PWD}
+
+deploy-to-pypi:
+  stage: upload_pypi
+  only:
+    - tags@lhcb-dirac/LHCbDIRAC
+  except:
+    - /^v[0-9]+r[0-9]+.+$/
+  image: registry.cern.ch/docker.io/library/python:3.9
+  before_script:
+    - pip install twine wheel setuptools-scm[toml]
+  script:
+    - python setup.py sdist
+    - python setup.py bdist_wheel
+    - if [ -z "$TWINE_PASSWORD" ] ; then echo "Set TWINE_PASSWORD in CI variables" ; exit 1 ; fi
+    - twine upload -u __token__ dist/*

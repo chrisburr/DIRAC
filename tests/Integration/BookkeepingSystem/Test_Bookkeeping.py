@@ -12,6 +12,9 @@
 It tests the RAW data insert to the db.
 It requires an Oracle database
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # FIXME: restore + move to pytest
 

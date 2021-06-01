@@ -10,6 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 '''Create a file whose name and content is dictated by the first parameter'''
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 
 import sys
@@ -18,6 +21,6 @@ import time
 
 if __name__ == '__main__':
   arg = sys.argv[1]
-  with open('%s_toto.txt'%arg, 'w') as f:
-    f.write("%s"%arg)
+  with open('%s_toto.txt' % arg, 'w') as f:
+    f.write("%s" % arg)
   sys.exit(0)

@@ -10,11 +10,13 @@
 ###############################################################################
 """ Running this file with "ganga gangaJobs.py" will submit some user jobs via Ganga
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
+# pylint: skip-file
 
-#pylint: skip-file
-
-myApp = prepareGaudiExec('DaVinci','v41r2', myPath='.')
+myApp = prepareGaudiExec('DaVinci', 'v41r2', myPath='.')
 
 
 j = Job(name='GangaJob-DVv41r2-wInputs')

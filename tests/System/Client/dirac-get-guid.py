@@ -11,6 +11,9 @@
 ###############################################################################
 """ Retrieves the GUID from a local file
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()
@@ -20,4 +23,4 @@ from LHCbDIRAC.Core.Utilities.File import makeGuid
 fileName = Script.getPositionalArgs()[0]
 
 guids = makeGuid(fileName)
-print guids[fileName]
+print(guids[fileName])

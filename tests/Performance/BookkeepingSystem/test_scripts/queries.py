@@ -9,6 +9,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import random
 import time
@@ -438,7 +441,7 @@ class Transaction(object):
     self.custom_timers = {}
 
   def run(self):
-    print len(datasets)
+    print(len(datasets))
     i = random.randint(0, len(datasets) - 1)
     dataset = datasets[i]
     start_time = time.time()
@@ -447,19 +450,19 @@ class Transaction(object):
     else:
       retVal = cl.getFilesWithMetadata(dataset)
     if not retVal['OK']:
-      print retVal['Message']
+      print(retVal['Message'])
     end_time = time.time()
     query_time = end_time - start_time
     if query_time > 10:
       self.custom_timers['LongQueries'] = query_time
     self.custom_timers['Bkk_ResponseTime'] = query_time
     q = dataset.get('fullpath', 0)
-    if q and q in xrange(0, c):
-      print 'Query-%s' % q
+    if q and q in range(0, c):
+      print('Query-%s' % q)
       self.custom_timers["Query-%s" % q] = query_time
 
 
 if __name__ == '__main__':
   trans = Transaction()
   trans.run()
-  print trans.custom_timers
+  print(trans.custom_timers)

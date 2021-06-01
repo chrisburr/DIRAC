@@ -11,17 +11,17 @@
 """
 Tests set(), get() and remove() from ElasticMCGaussLogErrorsDB
 """
-
-from __future__ import print_function
-from __future__ import division
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
 parseCommandLine()
 
-from tests.Integration.ProductionManagementSystem.MCStatsSampleData import gauss_errors_1
+from .MCStatsSampleData import gauss_errors_1
 
 # sut
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCGaussLogErrorsDB import ElasticMCGaussLogErrorsDB

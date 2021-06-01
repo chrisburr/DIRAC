@@ -44,11 +44,11 @@ def fetchCpuPoints(stats):
 
 def defaultFetch(dataDict):
   fields = {}
-  for key, value in dataDict.iteritems():
+  for key, value in dataDict.items():
     if isinstance(value, dict):
-      #print "CHRIS %s"%dataDict
+      # print "CHRIS %s"%dataDict
       continue
-      fields.update(dict(("%s_%s" % (key, k1), v1)for k1, v1 in value.iteritems()))
+      fields.update(dict(("%s_%s" % (key, k1), v1) for k1, v1 in value.items()))
     else:
       fields[key] = value
 
@@ -104,7 +104,7 @@ def collectData(target):
 
   collected_data = []  # list of (points, tags)
 
-  for container, container_data in d.iteritems():
+  for container, container_data in d.items():
     if not any('mesos' in alias for alias in container_data['aliases']):
       continue
     dirac_component = container_data.get('labels', {}).get('dirac_component')
