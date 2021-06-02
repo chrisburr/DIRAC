@@ -25,16 +25,16 @@ There's also a `mattermost channel <https://mattermost.web.cern.ch/it-dep/channe
 Compile oracle stored procedure
 ===============================
 
-In order to compile the stored procedure you need the `sql file <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_storedprocedures.sql>`_.
+In order to compile the stored procedure you need the `sql file <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/src/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_storedprocedures.sql>`_.
 Make sure that you are using the correct version.
 
 #. Login the database (e.g. using ``sqlplus``, but also with **sqldeveloper** or **sqlcl**)
-#. in the terminal execute @/home/user/oracle_schema_storedprocedures.sql
+#. in the terminal execute ``@/path/to/oracle_schema_storedprocedures.sql``
 #. commit;
 
 In case of error you have to use 'show errors' command
 
-In case of a schema change, you can find the command that needs to be executed in this sql file `oracle_schema_commands.sql <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_commands.sql>`_
+In case of a schema change, you can find the command that needs to be executed in this sql file `oracle_schema_commands.sql <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/src/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_commands.sql>`_
 
 
 Discover slow queries in the db

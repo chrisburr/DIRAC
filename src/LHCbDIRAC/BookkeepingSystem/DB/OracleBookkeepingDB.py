@@ -1012,7 +1012,10 @@ class OracleBookkeepingDB(object):
 
     condition, tables = self.__buildFileTypes(fileType, condition, tables, useMainTables=False)
 
-    condition, tables = self.__buildProcessingPass(processing, condition, tables, useMainTables=False)
+    retVal = self.__buildProcessingPass(processing, condition, tables, useMainTables=False)
+    if not retVal["OK"]:
+      return retVal
+    condition, tables = retVal["Value"]
 
     command = "select prod.production from %s where 1=1  %s group by prod.production" % (tables, condition)
 
@@ -1126,7 +1129,7 @@ class OracleBookkeepingDB(object):
 
     condition = self.__buildStartenddate(startDate, endDate, condition)
 
-    conddescription = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition)
+    condition = self.__buildJobsStartJobEndDate(jobStart, jobEnd, condition)
 
     retVal = self._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
     if not retVal['OK']:
@@ -1156,7 +1159,10 @@ class OracleBookkeepingDB(object):
       return retVal
     condition, tables = retVal['Value']
 
-    condition, tables = self.__buildProcessingPass(processing, condition, tables)
+    retVal = self.__buildProcessingPass(processing, condition, tables)
+    if not retVal["OK"]:
+      return retVal
+    condition, tables = retVal["Value"]
 
     condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
@@ -2853,7 +2859,10 @@ class OracleBookkeepingDB(object):
 
     condition, tables = self.__buildEventType(evttype, condition, tables, useMainTables=False)
 
-    condition, tables = self.__buildProcessingPass(processing, condition, tables)
+    retVal = self.__buildProcessingPass(processing, condition, tables)
+    if not retVal["OK"]:
+      return retVal
+    condition, tables = retVal["Value"]
 
     condition, tables = self.__buildFileTypes(ftype, condition, tables, useMainTables=False)
 
@@ -3272,7 +3281,10 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition = retVal['Value']
 
-    condition, tables = self.__buildProcessingPass(procPass, condition, tables)
+    retVal = self.__buildProcessingPass(procPass, condition, tables)
+    if not retVal["OK"]:
+      return retVal
+    condition, tables = retVal["Value"]
 
     condition, tables = self.__buildFileTypes(ftype, condition, tables)
 
@@ -3446,7 +3458,7 @@ and files.qualityid= dataquality.qualityid" % lfn
 
       if 'productionscontainer' not in tables.lower():
         tables += ',productionscontainer cont'
-    return condition, tables
+    return S_OK((condition, tables))
 
   #############################################################################
   @staticmethod
@@ -3850,7 +3862,10 @@ and files.qualityid= dataquality.qualityid" % lfn
 
     condition = self.__buildReplicaflag(replicaFlag, condition)
 
-    condition, tables = self.__buildProcessingPass(processingPass, condition, tables, useMainTables=False)
+    retVal = self.__buildProcessingPass(processingPass, condition, tables, useMainTables=False)
+    if not retVal["OK"]:
+      return retVal
+    condition, tables = retVal["Value"]
 
     retVal = self.__buildDataquality(dataQuality, condition, tables)
     if not retVal['OK']:
@@ -3907,7 +3922,10 @@ and files.qualityid= dataquality.qualityid" % lfn
       return retVal
     condition, tables = retVal['Value']
 
-    condition, tables = self.__buildProcessingPass(processing, condition, tables)
+    retVal = self.__buildProcessingPass(processing, condition, tables)
+    if not retVal["OK"]:
+      return retVal
+    condition, tables = retVal["Value"]
 
     condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
