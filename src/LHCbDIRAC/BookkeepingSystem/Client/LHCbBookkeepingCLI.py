@@ -162,16 +162,11 @@ class LHCbBookkeepingCLI(cmd.Cmd):
           self.__bkListAll(path)
       except IndexError as e:
         print("Invalid oprion:", e)
-    elif path == '':
-      res = self.__bklist(self.currentPath)
-      for i in sorted(res):
-        if paging:
-          text += i['name'] + '\n'
-        else:
-          print(i['name'])
     else:
+      if path == '':
+        path = self.currentPath
       res = self.__bklist(path)
-      for i in sorted(res):
+      for i in sorted(res, key=lambda x: x["fullpath"]):
         if paging:
           text += i['name'] + '\n'
         else:
