@@ -66,8 +66,6 @@ stages:
     - pip install 'setuptools<45'
     - pip install --upgrade 'pip<21' 'setuptools_scm<6'
     - pip install -r DIRAC/requirements.txt
-    # HACK: To be reverted after the next DIRAC release
-    - pip install importlib_resources
     - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
 
   stage: test
