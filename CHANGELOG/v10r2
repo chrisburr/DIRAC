@@ -1,3 +1,14 @@
+v10r2p2
+Based on DIRAC v7r2p9
+LHCbWebDIRAC v5r3
+LHCbDIRACOS v1r19
+*Bookkeeping
+
+FIX: (!1013) Fix dirac-bookkkeeping-CLI for Python 3
+FIX: (!1013) Avoid crash when parsing invalid bookkeeping queries
+
+
+
 v10r2p1
 Based on DIRAC v7r2p8
 LHCbWebDIRAC v5r3
