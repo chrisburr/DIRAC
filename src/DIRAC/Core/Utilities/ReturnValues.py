@@ -14,7 +14,7 @@ import traceback
 from DIRAC.Core.Utilities.DErrno import strerror
 
 
-def S_ERROR(*args):
+def S_ERROR(*args, **kwargs):
   """ return value on error condition
 
   Arguments are either Errno and ErrorMessage or just ErrorMessage fro backward compatibility
@@ -22,6 +22,8 @@ def S_ERROR(*args):
   :param int errno: Error number
   :param string message: Error message
   """
+  withStack = kwargs.pop("withStack", True)
+
   result = {"OK": False, "Errno": 0, "Message": ""}
 
   message = ''
@@ -37,11 +39,13 @@ def S_ERROR(*args):
     message = "%s ( %s : %s)" % (strerror(result['Errno']), result['Errno'], message)
   result["Message"] = message
 
-  try:
-    callStack = traceback.format_stack()
-    callStack.pop()
-  except BaseException:
-    callStack = []
+  callStack = []
+  if withStack:
+    try:
+      callStack = traceback.format_stack()
+      callStack.pop()
+    except BaseException:
+      pass
 
   result["CallStack"] = callStack
 
