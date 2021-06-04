@@ -115,7 +115,12 @@ class TaskManagerAgentBase(AgentModule, TransformationAgentsUtilities):
       self._logInfo("Wait for threads to get empty before terminating the agent (%d tasks)" %
                     len(self.transInThread))
       self.transInQueue = []
+      i = 0
       while self.transInThread:
+        i += 1
+        if i % 15 == 0:
+          self._logInfo("Still waiting for threads terminating the agent (%d tasks)" %
+                        len(self.transInThread))
         time.sleep(2)
       self.log.info("Threads are empty, terminating the agent...")
     return S_OK()
