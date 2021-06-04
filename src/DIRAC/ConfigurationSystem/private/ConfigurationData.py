@@ -398,22 +398,22 @@ class ConfigurationData(object):
     PRIVATE USE
     """
     self.threadingEvent.wait()
-    self.threadingLock.acquire()
+    # self.threadingLock.acquire()
     self.runningThreadsNumber += 1
-    try:
-      self.threadingLock.release()
-    except thread.error:
-      pass
+    # try:
+    #   self.threadingLock.release()
+    # except thread.error:
+    #   pass
 
   def dangerZoneEnd(self, returnValue=None):
     """
     End of danger zone.
     PRIVATE USE
     """
-    self.threadingLock.acquire()
+    # self.threadingLock.acquire()
     self.runningThreadsNumber -= 1
-    try:
-      self.threadingLock.release()
-    except thread.error:
-      pass
+    # try:
+    #   self.threadingLock.release()
+    # except thread.error:
+    #   pass
     return returnValue

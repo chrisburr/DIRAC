@@ -80,7 +80,7 @@ class RefresherBase(object):
     """
       Just returns if last refresh must be considered as expired or not
     """
-    return time.time() - self._lastUpdateTime >= gConfigurationData.getRefreshTime()
+    return time.time() - self._lastUpdateTime >= 300
 
   def forceRefresh(self, fromMaster=False):
     """
