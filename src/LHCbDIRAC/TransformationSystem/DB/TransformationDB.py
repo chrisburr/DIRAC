@@ -488,14 +488,15 @@ class TransformationDB(DIRACTransformationDB):
     if not res['OK']:
       return res
     fileIDs = res['Value'][0]
-    rDict = {}
-    for fileID, lfn in fileIDs.items():
-      rDict[fileID] = lfnsDict[lfn]
+    rDict = {fileID: lfnsDict[lfn] for fileID, lfn in fileIDs.items()}
     for fID, param in rDict.items():
-      req = "UPDATE TransformationFiles SET %s \
-       WHERE TransformationID = %d AND FileID = %d" % \
-          (','.join("`%s` = '%s'" % keyVal for keyVal in param.items()), transID, fID)
-      res = self._update(req, connection)
+      values = ','.join(
+          "`%s` = NULL" % k if v is None else "`%s` = '%s'" % (k, v)
+          for k, v in param.items()
+      )
+      query = "UPDATE TransformationFiles SET %s WHERE TransformationID = %d AND FileID = %d"
+      query %= (values, transID, fID)
+      res = self._update(query, connection)
       if not res['OK']:
         gLogger.error("Failed to update TransformationFiles table", res['Message'])
         return res
