@@ -1,3 +1,17 @@
+v10r2p3
+Based on DIRAC v7r2p10
+LHCbWebDIRAC v5r3
+LHCbDIRACOS v1r20
+*WorkloadManagement
+
+CHANGE: (!1023) Add hacky version of SandboxStoreHandler for migrating to a new volume
+
+*TransformationSystem
+
+FIX: (!1020) Fix "Execution failed.: ( 1366: Incorrect integer value: 'None' for column 'RunNumber'"
+
+
+
 v10r2p2
 Based on DIRAC v7r2p9
 LHCbWebDIRAC v5r3
