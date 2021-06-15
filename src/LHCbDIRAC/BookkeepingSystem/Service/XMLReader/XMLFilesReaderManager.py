@@ -388,7 +388,7 @@ class XMLFilesReaderManager(object):
           self.log.error(errorMessage[0], errorMessage[1])
           res = self.bkClient_.deleteJob(job.getJobId())
           if not res['OK']:
-            self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
+            self.log.warn("Unable to delete job", str(job.getJobId()) + res['Message'])
           return S_ERROR(errorMessage[0])
 
         # we may using HLT2 output to flag the runs as a consequence we may flagged the
@@ -418,7 +418,7 @@ class XMLFilesReaderManager(object):
         self.log.error(errorMessage[0], errorMessage[1])
         res = self.bkClient_.deleteJob(job.getJobId())
         if not res['OK']:
-          self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
+          self.log.warn("Unable to delete job", str(job.getJobId()) + res['Message'])
         return S_ERROR(errorMessage[0])
 
     outputFiles = job.getJobOutputFiles()
@@ -455,10 +455,10 @@ class XMLFilesReaderManager(object):
         self.log.error(errorMessage[0], errorMessage[1])
         res = self.bkClient_.deleteInputFiles(job.getJobId())
         if not res['OK']:
-          self.log.warn("Unable to delete inputfiles of", job.getJobId() + res['Message'])
+          self.log.warn("Unable to delete inputfiles of", str(job.getJobId()) + res['Message'])
         res = self.bkClient_.deleteJob(job.getJobId())
         if not res['OK']:
-          self.log.warn("Unable to delete job", job.getJobId() + res['Message'])
+          self.log.warn("Unable to delete job", str(job.getJobId()) + res['Message'])
         return S_ERROR(errorMessage[0])
       else:
         fileid = int(result['Value'])
