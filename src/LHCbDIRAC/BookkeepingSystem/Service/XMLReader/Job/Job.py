@@ -71,11 +71,7 @@ class Job:
   #############################################################################
   def exists(self, jobParam):
     """checks a given job parameter."""
-    ok = False
-    for i in self.jobParameters_:
-      if i.getName() == jobParam:
-        ok = True
-    return ok
+    return any(i.getName() == jobParam for i in self.jobParameters_)
 
   #############################################################################
   def getParam(self, jobParam):
@@ -175,48 +171,47 @@ class Job:
   #############################################################################
   def __repr__(self):
     """formats the output of the print command."""
-    result = "JOB: \n"
-    result += str(self.jobConfiguration_) + " "
+    result = ["JOB: \n"]
+    result += [str(self.jobConfiguration_) + " "]
     for option in self.jobOptions_:
-      result += str(option)
-    result += '\n'
+      result += [str(option)]
+    result += ['\n']
     for param in self.jobParameters_:
-      result += str(param)
-    result += '\n'
+      result += [str(param)]
+    result += ['\n']
     for jobinput in self.jobInputFiles_:
-      result += str(jobinput)
-
+      result += [str(jobinput)]
     for output in self.jobOutputfiles_:
-      result += str(output)
-    result += '\n'
-    return result
+      result += [str(output)]
+    result += ['\n']
+    return "".join(result)
 
   #############################################################################
   def writeToXML(self):
     """writes an XML string."""
-    string = ''
-    string += '<?xml version="1.0" encoding="ISO-8859-1"?>\n'
-    string += '<!DOCTYPE Job SYSTEM "book.dtd">\n'
+    string = []
+    string += ['<?xml version="1.0" encoding="ISO-8859-1"?>\n']
+    string += ['<!DOCTYPE Job SYSTEM "book.dtd">\n']
 
-    string = "%s%s" % (string, self.getJobConfiguration().writeToXML())
+    string += [str(self.getJobConfiguration().writeToXML())]
     for param in self.jobParameters_:
-      string = "%s%s" % (string, param.writeToXML())
+      string += [str(param.writeToXML())]
 
     for inputFile in self.jobInputFiles_:
-      string = "%s%s" % (string, inputFile.writeToXML())
+      string += [str(inputFile.writeToXML())]
 
     for output in self.jobOutputfiles_:
-      string = "%s%s" % (string, output.writeToXML())
+      string += [str(output.writeToXML())]
 
     sim = self.getSimulationCond()
     if sim is not None:
-      string = "%s%s" % (string, sim.writeToXML())
+      string += [str(sim.writeToXML())]
 
     daq = self.getDataTakingCond()
     if daq is not None:
-      string = "%s%s" % (string, daq.writeToXML())
+      string += [str(daq.writeToXML())]
 
-    string += '</Job>'
+    string += ['</Job>']
 
-    return string
+    return "".join(string)
 #############################################################################
