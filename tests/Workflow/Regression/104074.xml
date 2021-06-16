@@ -36,10 +36,10 @@
 <Parameter name="multicore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="Flag for enabling gaudi parallel"><value><![CDATA[True]]></value></Parameter>
 <Parameter name="InputDataPolicy" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified input data policy"><value><![CDATA[DIRAC.WorkloadManagementSystem.Client.InputDataByProtocol]]></value></Parameter>
 <Parameter name="outputDataStep" type="string" linked_module="" linked_parameter="" in="True" out="False" description="outputDataStep Mask"><value><![CDATA[7]]></value></Parameter>
-<Parameter name="BKProcessingPass" type="dict" linked_module="" linked_parameter="" in="True" out="False" description="BKProcessingPassInfo"><value><![CDATA[{'Step6': {'ApplicationName': 'DaVinci', 'ApplicationVersion': 'v39r1', 'StepVisible': 'Y', 'ExtraPackages': 'AppConfig.v3r394;WG/CharmConfig.v3r98;ProdConf', 'StepName': 'Turbo02Filtered mDST for CharmWG (D02HHHH) - Sim09', 'BKStepID': 140942, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$CHARMCONFIGOPTS/MCFiltering/DstarD02hhhhTriggerFiltering.py;$APPCONFIGOPTS/DaVinci/DataType-2015.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DSTARD02HHHH.HLTFILTER.MDST'}]}, 'Step5': {'ApplicationName': 'DaVinci', 'ApplicationVersion': 'v38r1p6', 'StepVisible': 'Y', 'ExtraPackages': 'AppConfig.v3r343;ProdConf', 'StepName': 'Stripping24r1-NoPrescalingFlagged for Sim09 - pp at 13 TeV (muDST)', 'BKStepID': 132850, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/DaVinci/DV-Stripping24r1-Stripping-MC-NoPrescaling-DST.py;$APPCONFIGOPTS/DaVinci/DV-Stripping-MC-muDST.py;$APPCONFIGOPTS/DaVinci/DataType-2015.py;$APPCONFIGOPTS/DaVinci/InputType-DST.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'ALLSTREAMS.MDST'}]}, 'Step4': {'ApplicationName': 'DaVinci', 'ApplicationVersion': 'v40r1p3', 'StepVisible': 'Y', 'ExtraPackages': 'AppConfig.v3r274;TurboStreamProd.v2r0;ProdConf', 'StepName': 'Turbo lines (MC), Turbo 2015 reprocessing', 'BKStepID': 129522, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/Turbo/Tesla_AllHlt2Lines_v10r0_0x00fa0051.py;$APPCONFIGOPTS/Turbo/Tesla_Simulation_2015_PVHLT2.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DST'}]}, 'Step3': {'ApplicationName': 'Brunel', 'ApplicationVersion': 'v48r3', 'StepVisible': 'Y', 'ExtraPackages': 'AppConfig.v3r376;Det/SQLDDDB.v7r10;ProdConf', 'StepName': 'Reco15a for MC 2015', 'BKStepID': 138372, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/Brunel/DataType-2015.py;$APPCONFIGOPTS/Brunel/MC-WithTruth.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DST'}]}, 'Step2': {'ApplicationName': 'Moore', 'ApplicationVersion': 'v24r2', 'StepVisible': 'Y', 'ExtraPackages': 'AppConfig.v3r274;ProdConf', 'StepName': 'TCK-0x411400a2 Flagged for 2015', 'BKStepID': 129527, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/Moore/MooreSimProductionForSeparateL0AppStep2015.py;$APPCONFIGOPTS/Conditions/TCK-0x411400a2.py;$APPCONFIGOPTS/Moore/DataType-2015.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}, 'Step1': {'ApplicationName': 'Moore', 'ApplicationVersion': 'v24r2', 'StepVisible': 'N', 'ExtraPackages': 'AppConfig.v3r274;ProdConf', 'StepName': 'L0 emulation for 2015 - TCK 0x00a2', 'BKStepID': 129526, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/L0App/L0AppSimProduction.py;$APPCONFIGOPTS/L0App/L0AppTCK-0x00a2.py;$APPCONFIGOPTS/L0App/ForceLUTVersionV8.py;$APPCONFIGOPTS/L0App/DataType-2015.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}, 'Step0': {'ApplicationName': 'Boole', 'ApplicationVersion': 'v30r4', 'StepVisible': 'N', 'ExtraPackages': 'AppConfig.v3r374;ProdConf', 'StepName': 'Digi14c for 2015 - 25ns spillover', 'BKStepID': 137780, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/Boole/Default.py;$APPCONFIGOPTS/Boole/EnableSpillover.py;$APPCONFIGOPTS/Boole/DataType-2015.py;$APPCONFIGOPTS/Boole/Boole-SetOdinRndTrigger.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}}]]></value></Parameter>
+<Parameter name="BKProcessingPass" type="dict" linked_module="" linked_parameter="" in="True" out="False" description="BKProcessingPassInfo"><value><![CDATA[{'Step1': {'ApplicationName': 'Moore', 'ApplicationVersion': 'v24r2', 'StepVisible': 'N', 'ExtraPackages': 'AppConfig.v3r274;ProdConf', 'StepName': 'L0 emulation for 2015 - TCK 0x00a2', 'BKStepID': 129526, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/L0App/L0AppSimProduction.py;$APPCONFIGOPTS/L0App/L0AppTCK-0x00a2.py;$APPCONFIGOPTS/L0App/ForceLUTVersionV8.py;$APPCONFIGOPTS/L0App/DataType-2015.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}, 'Step0': {'ApplicationName': 'Boole', 'ApplicationVersion': 'v30r4', 'StepVisible': 'N', 'ExtraPackages': 'AppConfig.v3r374;ProdConf', 'StepName': 'Digi14c for 2015 - 25ns spillover', 'BKStepID': 137780, 'DDDb': 'dddb-20170721-3', 'OptionFiles': '$APPCONFIGOPTS/Boole/Default.py;$APPCONFIGOPTS/Boole/EnableSpillover.py;$APPCONFIGOPTS/Boole/DataType-2015.py;$APPCONFIGOPTS/Boole/Boole-SetOdinRndTrigger.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py', 'CondDb': 'sim-20161124-vc-md100', 'DQTag': None, 'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}}]]></value></Parameter>
 <Parameter name="Platform" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="Platform (host OS + micro arch)"><value><![CDATA[x86_64-slc6]]></value></Parameter>
 <Parameter name="ProcessingType" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="ProductionGroupOrType"><value><![CDATA[Sim09h-ReDecay01/Trig0x411400a2/Reco15a/Turbo02/Stripping24r1NoPrescalingFlagged/Turbo02Filtered]]></value></Parameter>
-<Parameter name="gaudiSteps" type="list" linked_module="" linked_parameter="" in="True" out="False" description="list of Gaudi Steps"><value><![CDATA[['Boole_1', 'Moore_2', 'Moore_3', 'Brunel_4', 'DaVinci_5', 'DaVinci_6', 'DaVinci_7']]]></value></Parameter>
+<Parameter name="gaudiSteps" type="list" linked_module="" linked_parameter="" in="True" out="False" description="list of Gaudi Steps"><value><![CDATA[['Boole_1', 'Moore_2']]]></value></Parameter>
 <Parameter name="outputSEs" type="dict" linked_module="" linked_parameter="" in="True" out="False" description="dictionary of output SEs"><value><![CDATA[{'HIST': 'CERN-HIST-EOS', 'DST': 'Tier1-Buffer', 'HIST.ROOT': 'CERN-HIST-EOS', 'BRUNELHIST': 'CERN-HIST-EOS', 'GAUSSHIST': 'CERN-HIST-EOS', 'ALLSTREAMS.MDST': 'Tier1-Buffer', 'DIGI': 'Tier1-Buffer', 'DAVINCIHIST': 'CERN-HIST-EOS', 'SIM': 'Tier1-Buffer', 'DSTARD02HHHH.HLTFILTER.MDST': 'Tier1-Buffer'}]]></value></Parameter>
 <Parameter name="Owner" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified ID"><value><![CDATA[fstagni]]></value></Parameter>
 <Parameter name="OwnerGroup" type="JDL" linked_module="" linked_parameter="" in="True" out="False" description="User specified owner group."><value><![CDATA[lhcb_mcproc]]></value></Parameter>
@@ -325,131 +325,6 @@ from LHCbDIRAC.Workflow.Modules.BookkeepingReport import BookkeepingReport
 <Parameter name="DQTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DataQualityTag"><value><![CDATA[]]></value></Parameter>
 <Parameter name="multiCore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="MultiCore Flag"><value><![CDATA[N]]></value></Parameter>
 <Parameter name="SystemConfig" type="string" linked_module="" linked_parameter="" in="True" out="False" description="system config"><value><![CDATA[x86_64-slc6-gcc48-opt]]></value></Parameter>
-<Parameter name="mcTCK" type="string" linked_module="" linked_parameter="" in="True" out="False" description="TCK to be simulated"><value><![CDATA[]]></value></Parameter>
-</StepInstance>
-<StepInstance>
-<type>Gaudi_App_Step</type>
-<name>Moore_3</name>
-<descr_short></descr_short>
-<Parameter name="inputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepInputData"><value><![CDATA[previousStep]]></value></Parameter>
-<Parameter name="inputDataType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="InputDataType"><value><![CDATA[DIGI]]></value></Parameter>
-<Parameter name="applicationName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationName"><value><![CDATA[Moore]]></value></Parameter>
-<Parameter name="applicationVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationVersion"><value><![CDATA[v24r2]]></value></Parameter>
-<Parameter name="runTimeProjectName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectName"><value><![CDATA[]]></value></Parameter>
-<Parameter name="runTimeProjectVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectVersion"><value><![CDATA[]]></value></Parameter>
-<Parameter name="applicationType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationType"><value><![CDATA[]]></value></Parameter>
-<Parameter name="optionsFile" type="string" linked_module="" linked_parameter="" in="True" out="False" description="OptionsFile"><value><![CDATA[$APPCONFIGOPTS/Moore/MooreSimProductionForSeparateL0AppStep2015.py;$APPCONFIGOPTS/Conditions/TCK-0x411400a2.py;$APPCONFIGOPTS/Moore/DataType-2015.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py]]></value></Parameter>
-<Parameter name="extraOptionsLine" type="string" linked_module="" linked_parameter="" in="True" out="False" description="extraOptionsLines"><value><![CDATA[]]></value></Parameter>
-<Parameter name="listoutput" type="list" linked_module="" linked_parameter="" in="True" out="False" description="StepOutputList"><value><![CDATA[[{'outputDataType': 'digi'}]]]></value></Parameter>
-<Parameter name="extraPackages" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ExtraPackages"><value><![CDATA[AppConfig.v3r274;ProdConf]]></value></Parameter>
-<Parameter name="BKStepID" type="string" linked_module="" linked_parameter="" in="True" out="False" description="BKKStepID"><value><![CDATA[129527]]></value></Parameter>
-<Parameter name="StepProcPass" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepProcessingPass"><value><![CDATA[Trig0x411400a2]]></value></Parameter>
-<Parameter name="optionsFormat" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ProdConf configuration"><value><![CDATA[]]></value></Parameter>
-<Parameter name="CondDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ConditionDatabaseTag"><value><![CDATA[sim-20161124-vc-md100]]></value></Parameter>
-<Parameter name="DDDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DetDescTag"><value><![CDATA[dddb-20170721-3]]></value></Parameter>
-<Parameter name="DQTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DataQualityTag"><value><![CDATA[]]></value></Parameter>
-<Parameter name="multiCore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="MultiCore Flag"><value><![CDATA[N]]></value></Parameter>
-<Parameter name="SystemConfig" type="string" linked_module="" linked_parameter="" in="True" out="False" description="system config"><value><![CDATA[x86_64-slc6-gcc48-opt]]></value></Parameter>
-<Parameter name="mcTCK" type="string" linked_module="" linked_parameter="" in="True" out="False" description="TCK to be simulated"><value><![CDATA[]]></value></Parameter>
-</StepInstance>
-<StepInstance>
-<type>Gaudi_App_Step</type>
-<name>Brunel_4</name>
-<descr_short></descr_short>
-<Parameter name="inputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepInputData"><value><![CDATA[previousStep]]></value></Parameter>
-<Parameter name="inputDataType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="InputDataType"><value><![CDATA[DIGI]]></value></Parameter>
-<Parameter name="applicationName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationName"><value><![CDATA[Brunel]]></value></Parameter>
-<Parameter name="applicationVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationVersion"><value><![CDATA[v48r3]]></value></Parameter>
-<Parameter name="runTimeProjectName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectName"><value><![CDATA[]]></value></Parameter>
-<Parameter name="runTimeProjectVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectVersion"><value><![CDATA[]]></value></Parameter>
-<Parameter name="applicationType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationType"><value><![CDATA[]]></value></Parameter>
-<Parameter name="optionsFile" type="string" linked_module="" linked_parameter="" in="True" out="False" description="OptionsFile"><value><![CDATA[$APPCONFIGOPTS/Brunel/DataType-2015.py;$APPCONFIGOPTS/Brunel/MC-WithTruth.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py]]></value></Parameter>
-<Parameter name="extraOptionsLine" type="string" linked_module="" linked_parameter="" in="True" out="False" description="extraOptionsLines"><value><![CDATA[]]></value></Parameter>
-<Parameter name="listoutput" type="list" linked_module="" linked_parameter="" in="True" out="False" description="StepOutputList"><value><![CDATA[[{'outputDataType': 'dst'}]]]></value></Parameter>
-<Parameter name="extraPackages" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ExtraPackages"><value><![CDATA[AppConfig.v3r376;Det/SQLDDDB.v7r10;ProdConf]]></value></Parameter>
-<Parameter name="BKStepID" type="string" linked_module="" linked_parameter="" in="True" out="False" description="BKKStepID"><value><![CDATA[138372]]></value></Parameter>
-<Parameter name="StepProcPass" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepProcessingPass"><value><![CDATA[Reco15a]]></value></Parameter>
-<Parameter name="optionsFormat" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ProdConf configuration"><value><![CDATA[]]></value></Parameter>
-<Parameter name="CondDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ConditionDatabaseTag"><value><![CDATA[sim-20161124-vc-md100]]></value></Parameter>
-<Parameter name="DDDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DetDescTag"><value><![CDATA[dddb-20170721-3]]></value></Parameter>
-<Parameter name="DQTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DataQualityTag"><value><![CDATA[]]></value></Parameter>
-<Parameter name="multiCore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="MultiCore Flag"><value><![CDATA[N]]></value></Parameter>
-<Parameter name="SystemConfig" type="string" linked_module="" linked_parameter="" in="True" out="False" description="system config"><value><![CDATA[x86_64-slc6-gcc49-opt]]></value></Parameter>
-<Parameter name="mcTCK" type="string" linked_module="" linked_parameter="" in="True" out="False" description="TCK to be simulated"><value><![CDATA[]]></value></Parameter>
-</StepInstance>
-<StepInstance>
-<type>Gaudi_App_Step</type>
-<name>DaVinci_5</name>
-<descr_short></descr_short>
-<Parameter name="inputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepInputData"><value><![CDATA[previousStep]]></value></Parameter>
-<Parameter name="inputDataType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="InputDataType"><value><![CDATA[DST]]></value></Parameter>
-<Parameter name="applicationName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationName"><value><![CDATA[DaVinci]]></value></Parameter>
-<Parameter name="applicationVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationVersion"><value><![CDATA[v40r1p3]]></value></Parameter>
-<Parameter name="runTimeProjectName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectName"><value><![CDATA[]]></value></Parameter>
-<Parameter name="runTimeProjectVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectVersion"><value><![CDATA[]]></value></Parameter>
-<Parameter name="applicationType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationType"><value><![CDATA[]]></value></Parameter>
-<Parameter name="optionsFile" type="string" linked_module="" linked_parameter="" in="True" out="False" description="OptionsFile"><value><![CDATA[$APPCONFIGOPTS/Turbo/Tesla_AllHlt2Lines_v10r0_0x00fa0051.py;$APPCONFIGOPTS/Turbo/Tesla_Simulation_2015_PVHLT2.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py]]></value></Parameter>
-<Parameter name="extraOptionsLine" type="string" linked_module="" linked_parameter="" in="True" out="False" description="extraOptionsLines"><value><![CDATA[]]></value></Parameter>
-<Parameter name="listoutput" type="list" linked_module="" linked_parameter="" in="True" out="False" description="StepOutputList"><value><![CDATA[[{'outputDataType': 'dst'}]]]></value></Parameter>
-<Parameter name="extraPackages" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ExtraPackages"><value><![CDATA[AppConfig.v3r274;TurboStreamProd.v2r0;ProdConf]]></value></Parameter>
-<Parameter name="BKStepID" type="string" linked_module="" linked_parameter="" in="True" out="False" description="BKKStepID"><value><![CDATA[129522]]></value></Parameter>
-<Parameter name="StepProcPass" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepProcessingPass"><value><![CDATA[Turbo02]]></value></Parameter>
-<Parameter name="optionsFormat" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ProdConf configuration"><value><![CDATA[Tesla]]></value></Parameter>
-<Parameter name="CondDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ConditionDatabaseTag"><value><![CDATA[sim-20161124-vc-md100]]></value></Parameter>
-<Parameter name="DDDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DetDescTag"><value><![CDATA[dddb-20170721-3]]></value></Parameter>
-<Parameter name="DQTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DataQualityTag"><value><![CDATA[]]></value></Parameter>
-<Parameter name="multiCore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="MultiCore Flag"><value><![CDATA[N]]></value></Parameter>
-<Parameter name="SystemConfig" type="string" linked_module="" linked_parameter="" in="True" out="False" description="system config"><value><![CDATA[x86_64-slc6-gcc48-opt]]></value></Parameter>
-<Parameter name="mcTCK" type="string" linked_module="" linked_parameter="" in="True" out="False" description="TCK to be simulated"><value><![CDATA[]]></value></Parameter>
-</StepInstance>
-<StepInstance>
-<type>Gaudi_App_Step</type>
-<name>DaVinci_6</name>
-<descr_short></descr_short>
-<Parameter name="inputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepInputData"><value><![CDATA[previousStep]]></value></Parameter>
-<Parameter name="inputDataType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="InputDataType"><value><![CDATA[DST]]></value></Parameter>
-<Parameter name="applicationName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationName"><value><![CDATA[DaVinci]]></value></Parameter>
-<Parameter name="applicationVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationVersion"><value><![CDATA[v38r1p6]]></value></Parameter>
-<Parameter name="runTimeProjectName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectName"><value><![CDATA[]]></value></Parameter>
-<Parameter name="runTimeProjectVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectVersion"><value><![CDATA[]]></value></Parameter>
-<Parameter name="applicationType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationType"><value><![CDATA[]]></value></Parameter>
-<Parameter name="optionsFile" type="string" linked_module="" linked_parameter="" in="True" out="False" description="OptionsFile"><value><![CDATA[$APPCONFIGOPTS/DaVinci/DV-Stripping24r1-Stripping-MC-NoPrescaling-DST.py;$APPCONFIGOPTS/DaVinci/DV-Stripping-MC-muDST.py;$APPCONFIGOPTS/DaVinci/DataType-2015.py;$APPCONFIGOPTS/DaVinci/InputType-DST.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py]]></value></Parameter>
-<Parameter name="extraOptionsLine" type="string" linked_module="" linked_parameter="" in="True" out="False" description="extraOptionsLines"><value><![CDATA[]]></value></Parameter>
-<Parameter name="listoutput" type="list" linked_module="" linked_parameter="" in="True" out="False" description="StepOutputList"><value><![CDATA[[{'outputDataType': 'allstreams.mdst'}]]]></value></Parameter>
-<Parameter name="extraPackages" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ExtraPackages"><value><![CDATA[AppConfig.v3r343;ProdConf]]></value></Parameter>
-<Parameter name="BKStepID" type="string" linked_module="" linked_parameter="" in="True" out="False" description="BKKStepID"><value><![CDATA[132850]]></value></Parameter>
-<Parameter name="StepProcPass" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepProcessingPass"><value><![CDATA[Stripping24r1NoPrescalingFlagged]]></value></Parameter>
-<Parameter name="optionsFormat" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ProdConf configuration"><value><![CDATA[]]></value></Parameter>
-<Parameter name="CondDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ConditionDatabaseTag"><value><![CDATA[sim-20161124-vc-md100]]></value></Parameter>
-<Parameter name="DDDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DetDescTag"><value><![CDATA[dddb-20170721-3]]></value></Parameter>
-<Parameter name="DQTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DataQualityTag"><value><![CDATA[]]></value></Parameter>
-<Parameter name="multiCore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="MultiCore Flag"><value><![CDATA[N]]></value></Parameter>
-<Parameter name="SystemConfig" type="string" linked_module="" linked_parameter="" in="True" out="False" description="system config"><value><![CDATA[x86_64-slc6-gcc49-opt]]></value></Parameter>
-<Parameter name="mcTCK" type="string" linked_module="" linked_parameter="" in="True" out="False" description="TCK to be simulated"><value><![CDATA[]]></value></Parameter>
-</StepInstance>
-<StepInstance>
-<type>Gaudi_App_Step</type>
-<name>DaVinci_7</name>
-<descr_short></descr_short>
-<Parameter name="inputData" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepInputData"><value><![CDATA[previousStep]]></value></Parameter>
-<Parameter name="inputDataType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="InputDataType"><value><![CDATA[ALLSTREAMS.MDST]]></value></Parameter>
-<Parameter name="applicationName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationName"><value><![CDATA[DaVinci]]></value></Parameter>
-<Parameter name="applicationVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationVersion"><value><![CDATA[v39r1]]></value></Parameter>
-<Parameter name="runTimeProjectName" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectName"><value><![CDATA[]]></value></Parameter>
-<Parameter name="runTimeProjectVersion" type="string" linked_module="" linked_parameter="" in="True" out="False" description="runTimeProjectVersion"><value><![CDATA[]]></value></Parameter>
-<Parameter name="applicationType" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ApplicationType"><value><![CDATA[]]></value></Parameter>
-<Parameter name="optionsFile" type="string" linked_module="" linked_parameter="" in="True" out="False" description="OptionsFile"><value><![CDATA[$CHARMCONFIGOPTS/MCFiltering/DstarD02hhhhTriggerFiltering.py;$APPCONFIGOPTS/DaVinci/DataType-2015.py;$APPCONFIGOPTS/Persistency/Compression-ZLIB-1.py]]></value></Parameter>
-<Parameter name="extraOptionsLine" type="string" linked_module="" linked_parameter="" in="True" out="False" description="extraOptionsLines"><value><![CDATA[]]></value></Parameter>
-<Parameter name="listoutput" type="list" linked_module="" linked_parameter="" in="True" out="False" description="StepOutputList"><value><![CDATA[[{'outputDataType': 'dstard02hhhh.hltfilter.mdst'}]]]></value></Parameter>
-<Parameter name="extraPackages" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ExtraPackages"><value><![CDATA[AppConfig.v3r394;WG/CharmConfig.v3r98;ProdConf]]></value></Parameter>
-<Parameter name="BKStepID" type="string" linked_module="" linked_parameter="" in="True" out="False" description="BKKStepID"><value><![CDATA[140942]]></value></Parameter>
-<Parameter name="StepProcPass" type="string" linked_module="" linked_parameter="" in="True" out="False" description="StepProcessingPass"><value><![CDATA[Turbo02Filtered]]></value></Parameter>
-<Parameter name="optionsFormat" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ProdConf configuration"><value><![CDATA[]]></value></Parameter>
-<Parameter name="CondDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="ConditionDatabaseTag"><value><![CDATA[sim-20161124-vc-md100]]></value></Parameter>
-<Parameter name="DDDBTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DetDescTag"><value><![CDATA[dddb-20170721-3]]></value></Parameter>
-<Parameter name="DQTag" type="string" linked_module="" linked_parameter="" in="True" out="False" description="DataQualityTag"><value><![CDATA[]]></value></Parameter>
-<Parameter name="multiCore" type="string" linked_module="" linked_parameter="" in="True" out="False" description="MultiCore Flag"><value><![CDATA[N]]></value></Parameter>
-<Parameter name="SystemConfig" type="string" linked_module="" linked_parameter="" in="True" out="False" description="system config"><value><![CDATA[ANY]]></value></Parameter>
 <Parameter name="mcTCK" type="string" linked_module="" linked_parameter="" in="True" out="False" description="TCK to be simulated"><value><![CDATA[]]></value></Parameter>
 </StepInstance>
 <StepInstance>
