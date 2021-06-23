@@ -105,6 +105,9 @@ def main():
       gLogger.notice("Transformation %d doesn't have RunNumbers key or set to All" % prodId)
       settings = {'List': True}
 
+    if not isinstance(runNumbers, list):
+      runNumbers = [runNumbers]
+
     changed = False
     if 'StartRun' in settings:
       changed = True
@@ -129,6 +132,7 @@ def main():
     if 'AddRuns' in settings:
       changed = True
       runList = [int(run) for run in settings['AddRuns'] if run not in runNumbers]
+      print (settings['AddRuns'], runList)
       res = client.addBookkeepingQueryRunList(prodId, runList)
       if res['OK']:
         gLogger.notice("Run list modified for transformation %d" % prodId)
@@ -139,7 +143,7 @@ def main():
     if 'List' in settings:
       gLogger.notice('%sRun selection settings for transformation %d:' % ('\n' if changed else '', prodId))
       if runNumbers:
-        gLogger.notice("List of runs for: %s" %
+        gLogger.notice("List of runs: %s" %
                        ','.join([str(run) for run in sorted(runNumbers)]))
       else:
         if startRun:
