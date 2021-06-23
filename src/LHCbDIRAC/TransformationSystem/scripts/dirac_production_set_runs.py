@@ -132,7 +132,6 @@ def main():
     if 'AddRuns' in settings:
       changed = True
       runList = [int(run) for run in settings['AddRuns'] if run not in runNumbers]
-      print (settings['AddRuns'], runList)
       res = client.addBookkeepingQueryRunList(prodId, runList)
       if res['OK']:
         gLogger.notice("Run list modified for transformation %d" % prodId)
