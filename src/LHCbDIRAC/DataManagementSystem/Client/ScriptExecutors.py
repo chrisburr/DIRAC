@@ -648,7 +648,7 @@ def removeFiles(lfnList, setProcessed=False):
   notExisting = []
   # Avoid spurious error messages
   savedLevel = gLogger.getLevel()
-  chunkSize = max(10, min(100, len(lfnList) / 10))
+  chunkSize = max(10, min(100, int(len(lfnList) / 10)))
   progressBar = ProgressBar(len(lfnList), title="Removing %d files" % len(lfnList), chunk=chunkSize)
   for lfnChunk in breakListIntoChunks(lfnList, chunkSize):
     progressBar.loop()
