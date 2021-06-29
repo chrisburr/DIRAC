@@ -281,9 +281,10 @@ class ModuleBase(object):
 
     if 'runMetadata' in self.workflow_commons:
       runMetadataDict = eval(self.workflow_commons['runMetadata'])
-      self.onlineDDDBTag = runMetadataDict['DDDB']
-      self.onlineCondDBTag = runMetadataDict['CondDb']
-      self.TCK = runMetadataDict['TCK']
+      # If the information is absent, set to None
+      self.onlineDDDBTag = runMetadataDict.get('DDDB')
+      self.onlineCondDBTag = runMetadataDict.get('CondDb')
+      self.TCK = runMetadataDict.get('TCK')
 
     if 'outputDataFileMask' in self.workflow_commons:
       self.outputDataFileMask = self.workflow_commons['outputDataFileMask']
