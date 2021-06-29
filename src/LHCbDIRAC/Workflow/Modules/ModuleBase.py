@@ -285,11 +285,11 @@ class ModuleBase(object):
       self.onlineCondDBTag = runMetadataDict.get('CondDb')
       self.TCK = runMetadataDict.get('TCK')
       if not (self.onlineDDDBTag and self.onlineCondDBTag and self.TCK):
-	self.log.error(
-	    "Missing normally required Run Metadata",
-	    "DDDB=%s, CondDb=%s, TCK=%s"
-	    % (self.onlineDDDBTag, self.onlineCondDBTag, self.TCK)
-	)
+        self.log.error(
+            "Missing normally required Run Metadata",
+            "DDDB=%s, CondDb=%s, TCK=%s"
+            % (self.onlineDDDBTag, self.onlineCondDBTag, self.TCK)
+        )
 
     if 'outputDataFileMask' in self.workflow_commons:
       self.outputDataFileMask = self.workflow_commons['outputDataFileMask']

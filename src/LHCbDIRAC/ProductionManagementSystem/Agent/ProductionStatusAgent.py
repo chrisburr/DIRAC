@@ -495,7 +495,7 @@ class ProductionStatusAgent(AgentModule):
       return S_OK()
     if len(self.prProds) < len(self.prSummary):
       self.log.fatal(
-	  "Aborting cycle, as the number of sub-requests can't be larger than the number of productions")
+          "Aborting cycle, as the number of sub-requests can't be larger than the number of productions")
       return S_OK()
 
     self._getTransformationsState()
