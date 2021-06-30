@@ -235,7 +235,7 @@ def removeReplicasWithFC(lfnList, seList, minReplicas=1, allDisk=False, force=Fa
   notExisting = {}
   savedLevel = gLogger.getLevel()
   seList = set(seList)
-  chunkSize = max(10, min(500, int(len(lfnList) / 10)))
+  chunkSize = max(10, min(500, len(lfnList) // 10))
   progressBar = ProgressBar(len(lfnList),
                             title='Removing replicas' + (' and setting them invisible in BK' if allDisk else ''),
                             chunk=chunkSize)
@@ -376,7 +376,7 @@ def removeReplicasNoFC(lfnList, seList):
   notInFC = set()
   notInBK = {}
   bkOK = 0
-  chunkSize = max(50, min(500, int(len(lfnList) / 10)))
+  chunkSize = max(50, min(500, len(lfnList) // 10))
   progressBar = ProgressBar(len(lfnList), title='Removing replica flag in BK for files not in FC', chunk=chunkSize)
   for lfnChunk in breakListIntoChunks(lfnList, chunkSize):
     progressBar.loop()
@@ -648,7 +648,7 @@ def removeFiles(lfnList, setProcessed=False):
   notExisting = []
   # Avoid spurious error messages
   savedLevel = gLogger.getLevel()
-  chunkSize = max(10, min(100, int(len(lfnList) / 10)))
+  chunkSize = max(10, min(100, len(lfnList) // 10))
   progressBar = ProgressBar(len(lfnList), title="Removing %d files" % len(lfnList), chunk=chunkSize)
   for lfnChunk in breakListIntoChunks(lfnList, chunkSize):
     progressBar.loop()
@@ -1069,7 +1069,7 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
         continue
       lfnReplicas.update(res['Value'])
   elif lfnList:
-    chunkSize = max(50, min(500, int(len(lfnList) / 10)))
+    chunkSize = max(50, min(500, len(lfnList) // 10))
     lfnReplicas = {}
     progressBar = ProgressBar(len(lfnList), title='Getting replicas for %d LFNs' % len(lfnList), chunk=chunkSize)
     for lfnChunk in breakListIntoChunks(lfnList, chunkSize):
@@ -1102,7 +1102,7 @@ def printReplicaStats(directories, lfnList, getSize=False, prNoReplicas=False,
   dumpFromSE = {}
   if getSize:
     lfnSize = {}
-    chunkSize = max(50, min(500, int(len(lfnReplicas) / 10)))
+    chunkSize = max(50, min(500, len(lfnReplicas) // 10))
     progressBar = ProgressBar(len(lfnReplicas), title='Getting size for %d LFNs' % len(lfnReplicas), chunk=chunkSize)
     for lfns in breakListIntoChunks(lfnReplicas, chunkSize):
       progressBar.loop()
@@ -1460,7 +1460,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
   bk = BookkeepingClient()
 
   gLogger.notice("Now processing %d files" % len(lfnList))
-  chunkSize = max(50, min(500, int(len(lfnList) / 10)))
+  chunkSize = max(50, min(500, len(lfnList) // 10))
   progressBar = ProgressBar(len(lfnList), title='Getting replicas from FC ', chunk=chunkSize)
   replicas = {'Successful': {}, 'Failed': {}}
   for chunk in breakListIntoChunks(lfnList, chunkSize):
@@ -1499,7 +1499,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
         bkToggle.append(lfn)
 
   if bkToggle:
-    chunkSize = max(10, min(100, int(len(bkToggle) / 10)))
+    chunkSize = max(10, min(100, len(bkToggle) // 10))
     transStatusOK = {True: ('Problematic', 'MissingLFC', 'MissingInFC', 'ProbInFC', 'MaxReset'),
                      False: ('Unused', 'MaxReset', 'Assigned')}
     progressBar = ProgressBar(len(bkToggle), title='Checking with Transformation system', chunk=chunkSize)
@@ -1536,7 +1536,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
   if repsDict:
     nreps = 0
     toSet = len(repsDict)
-    chunkSize = max(10, min(100, int(toSet / 10)))
+    chunkSize = max(10, min(100, toSet // 10))
     progressBar = ProgressBar(toSet,
                               title="Setting replicas %s for %d files" % (status, toSet),
                               chunk=chunkSize)
@@ -1558,7 +1558,7 @@ def setProblematicFiles(lfnList, targetSEs, reset=False, fullInfo=False, action=
     # This created data difficult to access... Keep just for resetting
     toSet = len(bkToggle)
     status = 'set' if reset else 'removed'
-    chunkSize = max(10, min(100, int(toSet / 10)))
+    chunkSize = max(10, min(100, toSet // 10))
     progressBar = ProgressBar(toSet,
                               title="Replica flag being %s for %d files" % (status, toSet),
                               chunk=chunkSize)
