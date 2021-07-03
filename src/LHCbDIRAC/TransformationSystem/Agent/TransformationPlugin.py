@@ -1547,7 +1547,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
   def __addAncestors(self, pluginMethod=None):
     """Call a standard plugin and then add ancestors to tasks."""
-    maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100) / 2
+    maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100) // 2
     tasks = pluginMethod(maxFiles=maxFiles)
     if not tasks['OK']:
       return tasks
