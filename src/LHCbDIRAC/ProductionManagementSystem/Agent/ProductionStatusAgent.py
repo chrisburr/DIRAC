@@ -37,6 +37,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from collections import defaultdict
 import time
 import os
 import sqlite3
@@ -61,6 +62,18 @@ gSimulate = False
 gDoRealUpdate = True         # call status updates
 gDoRealTracking = True       # update requests progress
 
+KNOWN_TASK_STATES = [
+    'Checking',
+    'Completed',
+    'Created',
+    'Matched',
+    'Received',
+    'Reserved',
+    'Rescheduled',
+    'Running',
+    'Submitted',
+    'Waiting',
+]
 
 __RCSID__ = "$Id$"
 
@@ -113,10 +126,9 @@ class ProductionRequestSIM(object):
         toInclude = True
       if toInclude:
         hasSubrequest = 2 if len(summary['prods']) == 0 else 0
-        bkTotal = 0
-        for _tID, tInfo in summary['prods'].items():
-          if tInfo['Used']:
-            bkTotal += tInfo['Events']
+        bkTotal = sum(tInfo['Events']
+                      for _tID, tInfo in summary['prods'].items()
+                      if tInfo['Used'])
         answer.append({'RequestID': prID,
                        'HasSubrequest': hasSubrequest,
                        'RequestType': summary['type'],
@@ -151,12 +163,9 @@ class ProductionRequestSIM(object):
 
   def getBkTotalForT(self, tID):
     """For simulation only."""
-    bkTotal = 0
     summary = self.__getPrForT(tID)
-    for _tID, tInfo in summary['prods'].items():
-      if tInfo['Used']:
-        bkTotal += tInfo['Events']
-    return bkTotal
+    return sum(tInfo['Events'] for _tID, tInfo in summary['prods'].items()
+               if tInfo['Used'])
 
   def getPrTotalForT(self, tID):
     """For simulation only."""
@@ -407,8 +416,10 @@ class ProductionStatusAgent(AgentModule):
     self.prClient = None
     self.tClient = None
 
-    self.simulationTypes = Operations().getValue('Transformations/ExtendableTransfTypes', ['MCSimulation',
-                                                                                           'Simulation'])
+    self.simulationTypes = Operations().getValue(
+        'Transformations/ExtendableTransfTypes',
+        ['MCSimulation', 'Simulation'],
+    )
 
     self.allKnownStates = (
         'RemovedFiles',
@@ -417,7 +428,8 @@ class ProductionStatusAgent(AgentModule):
         'ValidatingInput',
         'Testing',
         'Active',
-        'Idle')
+        'Idle',
+    )
 
     self.notify = True
 
@@ -428,7 +440,7 @@ class ProductionStatusAgent(AgentModule):
 
     # For processing transformations, it can happen that there are some Unused files
     # with which no tasks can be created. The number of such files can be different depending
-    # from the module and distrubution between centres.
+    # from the module and distribution between centres.
     # So we declare such transformations isIdle() once there is no jobs, no files in other
     # pending states and the number of Unused files was not changed last cyclesTillIdle times
     self.cyclesTillIdle = 1
@@ -437,7 +449,7 @@ class ProductionStatusAgent(AgentModule):
     self.prMasters = {}  # [ prID: [<subrequests> ...] ]
     self.prSummary = {}
     self.prProds = {}  # <prID>, map production to known request, from _getProductionRequestsProgress
-    self.notPrTrans = {}  # transformation without PR, from _getTransformationsState
+    self.notPrTrans = defaultdict(list)  # transformation without PR, from _getTransformationsState
     self.toUpdate = []
 
   #############################################################################
@@ -466,7 +478,7 @@ class ProductionStatusAgent(AgentModule):
     """The execution method, track requests progress and implement a part of
     Production SM."""
     updatedT = {}  # updated transformations
-    updatedPr = []  # updated production requests (excluding traking updates)
+    updatedPr = []  # updated production requests (excluding tracking updates)
 
     # Distinguish between leafs and master requests
     # Masters should not appear in the prodReqSummary and they should have no
@@ -483,7 +495,7 @@ class ProductionStatusAgent(AgentModule):
     # }
     self.prProds = {}  # <prID>, map production to known request, from _getProductionRequestsProgress
 
-    self.notPrTrans = {}  # transformation without PR, from _getTransformationsState
+    self.notPrTrans = defaultdict(list)  # transformation without PR, from _getTransformationsState
 
     self.log.info("******************************")
     self.log.info("Collecting required information")
@@ -526,7 +538,10 @@ class ProductionStatusAgent(AgentModule):
         self.log.info('Transformations %s: %s => %s' % (name, value['from'], value['to']))
 
     if updatedPr:
-      self.log.info('Production Requests updated to Done status: %s' % (', '.join([str(i) for i in updatedPr])))
+      self.log.info(
+          "Production Requests updated to Done status:",
+          "%s" % (", ".join(str(i) for i in updatedPr))
+      )
 
     if gDoRealUpdate and not gSimulate:
       self._mailProdManager(updatedT, updatedPr)
@@ -543,8 +558,7 @@ class ProductionStatusAgent(AgentModule):
   @timeThis
   def __getProductionRequestsProgress(self):
     """get known progress for Active requests related productions Failures
-    there are critical and can inforce wrong logic."""
-
+    there are critical and can enforce wrong logic."""
     self.log.verbose("Collecting old Production Request Progress...")
     result = self.prClient.getAllProductionProgress()
     if not result['OK']:
@@ -553,7 +567,7 @@ class ProductionStatusAgent(AgentModule):
 
     for prID, summary in self.prSummary.items():
       # Setting it before updating will give grace period before SM ops
-      summary['isDone'] = True if summary['bkTotal'] >= summary['prTotal'] else False
+      summary['isDone'] = summary['bkTotal'] >= summary['prTotal']
       summary['prods'] = progressSummary.get(prID, {})
       for tID in summary['prods']:
         self.prProds[tID] = prID
@@ -564,7 +578,7 @@ class ProductionStatusAgent(AgentModule):
   def _getActiveProductionRequests(self):
     """get 'Active' requests.
 
-    Failures there are critical and can inforce wrong logic
+    Failures there are critical and can enforce wrong logic
     Note: this method can be moved to the service
     """
     self.log.info("Collecting active production requests...")
@@ -604,7 +618,6 @@ class ProductionStatusAgent(AgentModule):
 
     Get the transformations (print info in the meanwhile)
     """
-
     res = self.tClient.getTransformationWithStatus(status)
     if not res['OK']:
       self.log.error("Failed to get transformations", "%s: %s" % (status, res['Message']))
@@ -612,13 +625,12 @@ class ProductionStatusAgent(AgentModule):
     if not res['Value']:
       self.log.debug('No transformations in %s status' % status)
       return []
+    if len(res['Value']) > 20:
+      self.log.verbose("The following number of transformations are in %s status: %u" % (status, len(res['Value'])))
     else:
-      if len(res['Value']) > 20:
-        self.log.verbose("The following number of transformations are in %s status: %u" % (status, len(res['Value'])))
-      else:
-        valOutStr = ', '.join([str(i) for i in res['Value']])
-        self.log.verbose("The following transformations are in %s status: %s" % (status, valOutStr))
-      return res['Value']
+      valOutStr = ', '.join(str(i) for i in res['Value'])
+      self.log.verbose("The following transformations are in %s status: %s" % (status, valOutStr))
+    return res['Value']
 
   @timeThis
   def _getTransformationsState(self):
@@ -643,8 +655,7 @@ class ProductionStatusAgent(AgentModule):
           if prID:
             self.prSummary[prID]['prods'][tID]['state'] = state
           else:
-            notPrList = self.notPrTrans.setdefault(state, [])
-            notPrList.append(tID)
+            self.notPrTrans[state].append(tID)
     except RuntimeError as error:
       self.log.error(error)
 
@@ -695,10 +706,8 @@ class ProductionStatusAgent(AgentModule):
       # AND number of tasks created in total == number of tasks submitted
       tStats = self.__getTransformationTaskStats(tID)
       self.log.verbose("Tasks Stats for %d: %s" % (tID, str(tStats)))
-      isIdle = (tStats.get('TotalCreated', 0) > 0) and\
-          all([tStats.get(status, 0) == 0 for status in ['Checking', 'Completed', 'Created', 'Matched',
-                                                         'Received', 'Reserved', 'Rescheduled', 'Running',
-                                                         'Submitted', 'Waiting']])
+      isIdle = (tStats.get('TotalCreated', 0) > 0) and \
+          all(tStats.get(status, 0) == 0 for status in KNOWN_TASK_STATES)
       isProcIdle = isIdle
     else:
       isSimulation = False
@@ -720,16 +729,14 @@ class ProductionStatusAgent(AgentModule):
       if isProcIdle:
         tStats = self.__getTransformationTaskStats(tID)
         self.log.debug("Tasks Stats: %s" % str(tStats))
-        isProcIdle = all([tStats.get(status, 0) == 0 for status in ['Checking', 'Completed', 'Created', 'Matched',
-                                                                    'Received', 'Reserved', 'Rescheduled', 'Running',
-                                                                    'Submitted', 'Waiting']])
+        isProcIdle = all(tStats.get(status, 0) == 0 for status in KNOWN_TASK_STATES)
       isIdle = isProcIdle and (unused == 0) and (unusedInherited == 0)
     return (isIdle, isProcIdle, isSimulation)
 
   def _getIdleProductionRequestProductions(self):
     """evaluate isIdle and isProcIdle status for all productions we need.
 
-    failures are rememberd and are taken into account later
+    failures are remembered and are taken into account later
     """
     self.log.verbose("Checking idle productions...")
     for tID, prID in self.prProds.items():
@@ -803,12 +810,7 @@ class ProductionStatusAgent(AgentModule):
     for tID in self.filesUnused:
       if tID in self.prProds:
         continue
-      used = False
-      for _status, IDs in self.notPrTrans.items():
-        if tID in IDs:
-          used = True
-          break
-      if not used:
+      if all(tID not in IDs for _status, IDs in self.notPrTrans.items()):
         oldIDs.append(tID)
     for tID in oldIDs:
       del self.filesUnused[tID]
@@ -895,33 +897,30 @@ class ProductionStatusAgent(AgentModule):
     clitical."""
     self.log.verbose("Updating requests unrelated transformations...")
 
-    if 'RemovedFiles' in self.notPrTrans:
-      self.log.info('Processing %s requests unrelated transformations in "RemovedFiles" state' %
-                    len(self.notPrTrans['RemovedFiles']))
-      for tID in self.notPrTrans['RemovedFiles']:
-        self.__updateTransformationStatus(tID, 'RemovedFiles', 'Completed', updatedT)
+    self.log.info('Processing %s requests unrelated transformations in "RemovedFiles" state' %
+                  len(self.notPrTrans['RemovedFiles']))
+    for tID in self.notPrTrans['RemovedFiles']:
+      self.__updateTransformationStatus(tID, 'RemovedFiles', 'Completed', updatedT)
 
-    if 'Active' in self.notPrTrans:
-      self.log.info('Processing %s requests unrelated transformations in "Active" state' %
-                    len(self.notPrTrans['Active']))
-      for tID in self.notPrTrans['Active']:
-        try:
-          isIdle, _isProcIdle, _isSimulation = self.__isIdle(tID)
-          if isIdle:
-            self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-        except RuntimeError as error:
-          self.log.error(error)
+    self.log.info('Processing %s requests unrelated transformations in "Active" state' %
+                  len(self.notPrTrans['Active']))
+    for tID in self.notPrTrans['Active']:
+      try:
+        isIdle, _isProcIdle, _isSimulation = self.__isIdle(tID)
+        if isIdle:
+          self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
+      except RuntimeError as error:
+        self.log.error(error)
 
-    if 'Idle' in self.notPrTrans:
-      self.log.info('Processing %s requests unrelated transformations in "Idle" state' %
-                    len(self.notPrTrans['Idle']))
-      for tID in self.notPrTrans['Idle']:
-        try:
-          isIdle, _isProcIdle, _isSimulation = self.__isIdle(tID)
-          if not isIdle:
-            self.__updateTransformationStatus(tID, 'Idle', 'Active', updatedT)
-        except RuntimeError as error:
-          self.log.error(error)
+    self.log.info('Processing %s requests unrelated transformations in "Idle" state' %
+                  len(self.notPrTrans['Idle']))
+    for tID in self.notPrTrans['Idle']:
+      try:
+        isIdle, _isProcIdle, _isSimulation = self.__isIdle(tID)
+        if not isIdle:
+          self.__updateTransformationStatus(tID, 'Idle', 'Active', updatedT)
+      except RuntimeError as error:
+        self.log.error(error)
 
     self.log.verbose('Requests unrelated transformations update is finished')
 
@@ -1000,7 +999,6 @@ class ProductionStatusAgent(AgentModule):
 
     for prID, summary in self.prSummary.items():
       countFinished = 0
-
       for tID, tInfo in summary['prods'].items():
         if tInfo['state'] == 'Finished':
           # Do nothing with finished transformations
