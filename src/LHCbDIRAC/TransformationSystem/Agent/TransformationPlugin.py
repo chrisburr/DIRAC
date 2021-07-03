@@ -1256,7 +1256,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                                 minKeep,
                                 keepSEs),
                                (replicasWithKeep,
-                                (abs(minKeep) - 1) * minKeep / abs(minKeep),
+                                (abs(minKeep) - 1) * minKeep // abs(minKeep),
                                 keepSEs + [destinationSE])):
         if reps:
           res = self._removeReplicas(replicas=reps, fromSEs=fromSEs, keepSEs=kSEs, minKeep=keep)
