@@ -1063,84 +1063,21 @@ class ProductionStatusAgent(AgentModule):
       countFinished = 0
       for tID, tInfo in summary['prods'].items():
         if tInfo['state'] == 'Finished':
-          # Do nothing with finished transformations
           countFinished += 1
         elif tInfo['state'] == 'Idle':
-          if tInfo['isIdle'] == 'No':
-            # 'Idle' && !isIdle() --> 'Active'
-            self.__updateTransformationStatus(tID, 'Idle', 'Active', updatedT)
-          elif tInfo['isIdle'] == 'Yes' and self._isReallyDone(summary):
-            if summary['type'] == 'Simulation':
-              # 'Idle' && isIdle() && isDone for MC logic
-              if tInfo['Used']:  # for standard sim requests, only the merge will go to ValidatingOutput
-                if self._producersAreIdle(summary):
-                  self.__updateTransformationStatus(tID, 'Idle', 'ValidatingOutput', updatedT)
-                # else
-                #  it can happened that MC is !isIdle()
-              else:  # for standard sim requests, all but the merge will go to ValidatingInput
-                if self._mergersAreProcIdle(summary):
-                  # Note: 'isSimulation' should not be there (it should stay in 'Active')
-                  self.__updateTransformationStatus(tID, 'Idle', 'ValidatingInput', updatedT)
-                # else:
-                #   We wait till mergers finish the job
-            # else
-            #  we do not know what to do with that (yet)
-           # else
-          # 'Idle' && isIdle() (or unknown) && !isDone is not interesting combination
+          self._handleStateIdle(tID)
         elif tInfo['state'] == 'RemovedFiles':
-          self.__updateTransformationStatus(tID, 'RemovedFiles', 'Completed', updatedT)
+          self._handleStateRemovedFiles(tID)
         elif tInfo['state'] == 'Active':
-          if tInfo['isIdle'] == 'Yes':
-            if summary['type'] == 'Simulation':
-              # 'Active' && isIdle() for MC logic
-              if tInfo['Used'] or not tInfo['isSimulation']:
-                # The merger will either wait for MC extention (if !isDone)
-                # or will start validation once producers are isIdle()
-                self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-              else:
-                # 'Active' && isIdle() && !Used && isSimulation
-                if self._isReallyDone(summary):
-                  if self._mergersAreProcIdle(summary):
-                    self.__updateTransformationStatus(tID, 'Active', 'ValidatingInput', updatedT)
-                elif self._processorsAreProcIdle(summary) or self._requestedMoreThenProduced(tID, summary):
-                  # we are not done yet, extend production
-                  self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-                # else:
-                #  we wait till the situation with mergers is clear
-            else:
-              # for not MC, use reasonable default
-              self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-          # elif tInfo['isProcIdle'] == 'Yes'
-          #   Should we do something there? For Sim prod that is not possible conditions since (isProcIdle == isIdle)
-          # else:
-          #  'Active' && ! isIdle() (or unknown) is not interesting
+          self._handleStateActive(tID)
         elif tInfo['state'] == 'ValidatedOutput':
-          if (summary['type'] == 'Simulation') and\
-             summary['isDone'] and tInfo['Used']:  # for standard sim requests, only the merge
-            self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
-          else:
-            self.log.warn("Logical bug: transformation %s unexpectedly has 'ValidatedOutput'" & tID)
+          self._handleStateValidatedOutput(tID)
         elif tInfo['state'] == 'ValidatingInput':
-          if (summary['type'] == 'Simulation') and\
-             summary['isDone'] and not tInfo['Used']:  # for standard sim requests, all but the merge
-            self.__updateTransformationStatus(tID, 'ValidatingInput', 'RemovingFiles', updatedT)
-          else:
-            self.log.warn("Logical bug: transformation %s is unexpectedly 'ValidatingInput'" & tID)
+          self._handleStateValidatingInput(tID)
         elif tInfo['state'] == 'Testing':
-          try:
-            # TODO This should ideally be moved out of the loop
-            transformations, taskStatuses, fileStatuses = self._isIdleCache([str(tID)])
-          except RuntimeError:
-            self.log.error("Failed to get _isIdleCache for", str(tID))
-          else:
-            isIdle, isProcIdle, isSimulation = self.__isIdle(
-                tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
-            )
-            self.log.verbose("TransID %d, %s, %s, %s" % (tID, isIdle, isProcIdle, isSimulation))
-            if isIdle:
-              self.__updateTransformationStatus(tID, 'Testing', 'Idle', updatedT)
+          self._handleStateTesting(tID)
 
-      summary['isFinished'] = True if countFinished == len(summary['prods']) else False
+      summary['isFinished'] = countFinished == len(summary['prods'])
       if summary['isFinished'] and not summary['master'] and summary['type'] == 'Simulation':
         self.__updateProductionRequestStatus(prID, 'Done', updatedPr)
 
@@ -1153,3 +1090,89 @@ class ProductionStatusAgent(AgentModule):
         self.__updateProductionRequestStatus(masterID, 'Done', updatedPr)
 
     self.log.verbose("Done with Production Requests logic")
+
+  def _handleStateIdle(self, tID):
+    """Used by _applyProductionRequestsLogic"""
+    if tInfo['isIdle'] == 'No':
+      # 'Idle' && !isIdle() --> 'Active'
+      self.__updateTransformationStatus(tID, 'Idle', 'Active', updatedT)
+    elif tInfo['isIdle'] == 'Yes' and self._isReallyDone(summary):
+      if summary['type'] == 'Simulation':
+        # 'Idle' && isIdle() && isDone for MC logic
+        if tInfo['Used']:  # for standard sim requests, only the merge will go to ValidatingOutput
+          if self._producersAreIdle(summary):
+            self.__updateTransformationStatus(tID, 'Idle', 'ValidatingOutput', updatedT)
+          # else
+          #  it can happened that MC is !isIdle()
+        else:  # for standard sim requests, all but the merge will go to ValidatingInput
+          if self._mergersAreProcIdle(summary):
+            # Note: 'isSimulation' should not be there (it should stay in 'Active')
+            self.__updateTransformationStatus(tID, 'Idle', 'ValidatingInput', updatedT)
+          # else:
+          #   We wait till mergers finish the job
+      # else
+      #  we do not know what to do with that (yet)
+      # else
+    # 'Idle' && isIdle() (or unknown) && !isDone is not interesting combination
+
+  def _handleStateRemovedFiles(self, tID):
+    """Used by _applyProductionRequestsLogic"""
+    self.__updateTransformationStatus(tID, 'RemovedFiles', 'Completed', updatedT)
+
+  def _handleStateActive(self, tID):
+    """Used by _applyProductionRequestsLogic"""
+    if tInfo['isIdle'] == 'Yes':
+      if summary['type'] == 'Simulation':
+        # 'Active' && isIdle() for MC logic
+        if tInfo['Used'] or not tInfo['isSimulation']:
+          # The merger will either wait for MC extention (if !isDone)
+          # or will start validation once producers are isIdle()
+          self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
+        else:
+          # 'Active' && isIdle() && !Used && isSimulation
+          if self._isReallyDone(summary):
+            if self._mergersAreProcIdle(summary):
+              self.__updateTransformationStatus(tID, 'Active', 'ValidatingInput', updatedT)
+          elif self._processorsAreProcIdle(summary) or self._requestedMoreThenProduced(tID, summary):
+            # we are not done yet, extend production
+            self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
+          # else:
+          #  we wait till the situation with mergers is clear
+      else:
+        # for not MC, use reasonable default
+        self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
+    # elif tInfo['isProcIdle'] == 'Yes'
+    #   Should we do something there? For Sim prod that is not possible conditions since (isProcIdle == isIdle)
+    # else:
+    #  'Active' && ! isIdle() (or unknown) is not interesting
+
+  def _handleStateValidatedOutput(self, tID):
+    """Used by _applyProductionRequestsLogic"""
+    if (summary['type'] == 'Simulation') and\
+        summary['isDone'] and tInfo['Used']:  # for standard sim requests, only the merge
+      self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
+    else:
+      self.log.warn("Logical bug: transformation %s unexpectedly has 'ValidatedOutput'" & tID)
+
+  def _handleStateValidatingInput(self, tID):
+    """Used by _applyProductionRequestsLogic"""
+    if (summary['type'] == 'Simulation') and\
+        summary['isDone'] and not tInfo['Used']:  # for standard sim requests, all but the merge
+      self.__updateTransformationStatus(tID, 'ValidatingInput', 'RemovingFiles', updatedT)
+    else:
+      self.log.warn("Logical bug: transformation %s is unexpectedly 'ValidatingInput'" & tID)
+
+  def _handleStateTesting(self, tID):
+    """Used by _applyProductionRequestsLogic"""
+    try:
+      # TODO This should ideally be moved out of the loop
+      transformations, taskStatuses, fileStatuses = self._isIdleCache([str(tID)])
+    except RuntimeError:
+      self.log.error("Failed to get _isIdleCache for", str(tID))
+    else:
+      isIdle, isProcIdle, isSimulation = self.__isIdle(
+          tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+      )
+      self.log.verbose("TransID %d, %s, %s, %s" % (tID, isIdle, isProcIdle, isSimulation))
+      if isIdle:
+        self.__updateTransformationStatus(tID, 'Testing', 'Idle', updatedT)
