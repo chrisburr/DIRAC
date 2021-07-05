@@ -882,14 +882,11 @@ class ProductionStatusAgent(AgentModule):
       updatedT[tID] = {'to': status, 'from': origStatus}
       return
 
-    try:
-      result = self.tClient.setTransformationParameter(tID, 'Status', status)
-      if not result['OK']:
-        self.log.error("Failed to update status of transformation", "%s from %s to %s" % (tID, origStatus, status))
-      else:
-        updatedT[tID] = {'to': status, 'from': origStatus}
-    except RuntimeError as error:
-      self.log.error(error)
+    result = self.tClient.setTransformationParameter(tID, 'Status', status)
+    if not result['OK']:
+      self.log.error("Failed to update status of transformation", "%s from %s to %s" % (tID, origStatus, status))
+    else:
+      updatedT[tID] = {'to': status, 'from': origStatus}
 
   def _mailProdManager(self, updatedT, updatedPr):
     """Notify the production manager of the changes as productions should be
@@ -1065,33 +1062,30 @@ class ProductionStatusAgent(AgentModule):
         if tInfo['state'] == 'Finished':
           countFinished += 1
         elif tInfo['state'] == 'Idle':
-          self._handleStateIdle(tID)
+          self._handleStateIdle(tID, tInfo, summary, updatedT)
         elif tInfo['state'] == 'RemovedFiles':
-          self._handleStateRemovedFiles(tID)
+          self._handleStateRemovedFiles(tID, tInfo, summary, updatedT)
         elif tInfo['state'] == 'Active':
-          self._handleStateActive(tID)
+          self._handleStateActive(tID, tInfo, summary, updatedT)
         elif tInfo['state'] == 'ValidatedOutput':
-          self._handleStateValidatedOutput(tID)
+          self._handleStateValidatedOutput(tID, tInfo, summary, updatedT)
         elif tInfo['state'] == 'ValidatingInput':
-          self._handleStateValidatingInput(tID)
+          self._handleStateValidatingInput(tID, tInfo, summary, updatedT)
         elif tInfo['state'] == 'Testing':
-          self._handleStateTesting(tID)
+          self._handleStateTesting(tID, tInfo, summary, updatedT)
 
       summary['isFinished'] = countFinished == len(summary['prods'])
       if summary['isFinished'] and not summary['master'] and summary['type'] == 'Simulation':
         self.__updateProductionRequestStatus(prID, 'Done', updatedPr)
 
     for masterID, prList in self.prMasters.items():
-      countFinished = 0
-      for prID in prList:
-        if self.prSummary[prID]['isFinished']:
-          countFinished += 1
+      countFinished = sum(1 for prID in prList if self.prSummary[prID]['isFinished'])
       if countFinished == len(prList):
         self.__updateProductionRequestStatus(masterID, 'Done', updatedPr)
 
     self.log.verbose("Done with Production Requests logic")
 
-  def _handleStateIdle(self, tID):
+  def _handleStateIdle(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
     if tInfo['isIdle'] == 'No':
       # 'Idle' && !isIdle() --> 'Active'
@@ -1115,11 +1109,11 @@ class ProductionStatusAgent(AgentModule):
       # else
     # 'Idle' && isIdle() (or unknown) && !isDone is not interesting combination
 
-  def _handleStateRemovedFiles(self, tID):
+  def _handleStateRemovedFiles(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
     self.__updateTransformationStatus(tID, 'RemovedFiles', 'Completed', updatedT)
 
-  def _handleStateActive(self, tID):
+  def _handleStateActive(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
     if tInfo['isIdle'] == 'Yes':
       if summary['type'] == 'Simulation':
@@ -1128,16 +1122,15 @@ class ProductionStatusAgent(AgentModule):
           # The merger will either wait for MC extention (if !isDone)
           # or will start validation once producers are isIdle()
           self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-        else:
-          # 'Active' && isIdle() && !Used && isSimulation
-          if self._isReallyDone(summary):
-            if self._mergersAreProcIdle(summary):
-              self.__updateTransformationStatus(tID, 'Active', 'ValidatingInput', updatedT)
-          elif self._processorsAreProcIdle(summary) or self._requestedMoreThenProduced(tID, summary):
-            # we are not done yet, extend production
-            self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-          # else:
-          #  we wait till the situation with mergers is clear
+        # 'Active' && isIdle() && !Used && isSimulation
+        elif self._isReallyDone(summary):
+          if self._mergersAreProcIdle(summary):
+            self.__updateTransformationStatus(tID, 'Active', 'ValidatingInput', updatedT)
+        elif self._processorsAreProcIdle(summary) or self._requestedMoreThenProduced(tID, summary):
+          # we are not done yet, extend production
+          self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
+        # else:
+        #  we wait till the situation with mergers is clear
       else:
         # for not MC, use reasonable default
         self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
@@ -1146,33 +1139,33 @@ class ProductionStatusAgent(AgentModule):
     # else:
     #  'Active' && ! isIdle() (or unknown) is not interesting
 
-  def _handleStateValidatedOutput(self, tID):
+  def _handleStateValidatedOutput(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
-    if (summary['type'] == 'Simulation') and\
-        summary['isDone'] and tInfo['Used']:  # for standard sim requests, only the merge
+    if summary['type'] == 'Simulation' and summary['isDone'] and tInfo['Used']:
+      # for standard sim requests, only the merge
       self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
     else:
       self.log.warn("Logical bug: transformation %s unexpectedly has 'ValidatedOutput'" & tID)
 
-  def _handleStateValidatingInput(self, tID):
+  def _handleStateValidatingInput(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
-    if (summary['type'] == 'Simulation') and\
-        summary['isDone'] and not tInfo['Used']:  # for standard sim requests, all but the merge
+    if summary['type'] == 'Simulation' and summary['isDone'] and not tInfo['Used']:
+      # for standard sim requests, all but the merge
       self.__updateTransformationStatus(tID, 'ValidatingInput', 'RemovingFiles', updatedT)
     else:
       self.log.warn("Logical bug: transformation %s is unexpectedly 'ValidatingInput'" & tID)
 
-  def _handleStateTesting(self, tID):
+  def _handleStateTesting(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
     try:
       # TODO This should ideally be moved out of the loop
       transformations, taskStatuses, fileStatuses = self._isIdleCache([str(tID)])
     except RuntimeError:
       self.log.error("Failed to get _isIdleCache for", str(tID))
-    else:
-      isIdle, isProcIdle, isSimulation = self.__isIdle(
-          tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
-      )
-      self.log.verbose("TransID %d, %s, %s, %s" % (tID, isIdle, isProcIdle, isSimulation))
-      if isIdle:
-        self.__updateTransformationStatus(tID, 'Testing', 'Idle', updatedT)
+      return
+    isIdle, isProcIdle, isSimulation = self.__isIdle(
+        tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+    )
+    self.log.verbose("TransID %d, %s, %s, %s" % (tID, isIdle, isProcIdle, isSimulation))
+    if isIdle:
+      self.__updateTransformationStatus(tID, 'Testing', 'Idle', updatedT)
