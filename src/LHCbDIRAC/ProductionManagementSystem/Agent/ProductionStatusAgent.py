@@ -507,7 +507,10 @@ class ProductionStatusAgent(AgentModule):
       return S_OK()
 
     self._getTransformationsState()
-    self._getIdleProductionRequestProductions()
+    result = self._getIdleProductionRequestProductions()
+    if not result['OK']:
+      self.log.error("Aborting cycle", result["Message"])
+      return S_OK()
 
     # That is IMPORTANT to do that after we have the transformation status,
     # since Validation can (really???) update BK, rendering MC incomplete
@@ -523,7 +526,7 @@ class ProductionStatusAgent(AgentModule):
     self._applyProductionRequestsLogic(updatedT, updatedPr)
 
     self.log.info("******************************")
-    self.log.info("Updating Production Request unrelated transformations (replication, etc.)")
+    self.log.info("Updating Production Request for unrelated transformations (replication, etc.)")
     self.log.info("******************************")
 
     self._applyOtherTransformationsLogic(updatedT)
@@ -665,46 +668,92 @@ class ProductionStatusAgent(AgentModule):
 
     self.log.verbose("Done with collecting transformations states")
 
-  def __getTransformationTaskStats(self, tID):
-    """get the stats for a transformation tasks (number of tasks in each
-    status)"""
+  def _getStatusCountersBulk(self, tableName, statusKey, transformationIDs):
+    """Get the counter named ``statusKey`` for many transformations
 
-    result = self.tClient.getTransformationTaskStats(tID)
-    if not result['OK']:
-      self.log.error('Could not retrieve transformation tasks stats', result['Message'])
-      tTaskStats = {}
+    Wrapper around ``TransformationClient.getCounters`` that returns a nested
+    dictionary of:
+    ``{transformationID: {state1: X, state2: Y, ..., "TotalCreated": X+Y+...}}``
+
+    :param str tableName: Table in the TransformationDB to use
+    :param str statusKey: Name of the status column to consider
+    :param list transformationIDs: List of transformation IDs to inspect
+    :returns: ``dict`` of ``dict`` of ``int``
+    """
+    # This is for compatibility with TransformationClient.getTransformationStats
+    # and TransformationClient.getTransformationTaskStats
+    if tableName == "TransformationTasks":
+      totalColumnName = "TotalCreated"
+    elif tableName == "TransformationFiles":
+      totalColumnName = "Total"
     else:
-      tTaskStats = result['Value']
+      raise NotImplementedError(tableName)
+    self.log.verbose(
+        "Getting counters from for", "%s transformations" % len(transformationIDs)
+    )
+    res = self.tClient.getCounters(
+        tableName,
+        ["TransformationID", statusKey],
+        {'TransformationID': transformationIDs},
+    )
+    if not res["OK"]:
+        raise RuntimeError(res)
+    # Ensure totalColumnName is always included in the output
+    statusDict = defaultdict(lambda: defaultdict(int, **{totalColumnName: 0}))
+    for attrDict, count in res['Value']:
+        tID = attrDict["TransformationID"]
+        status = attrDict[statusKey]
+        statusDict[tID][status] = count
+        statusDict[tID][totalColumnName] += count
+    # Loop over transformationIDs to ensure all IDs are included in the output
+    return {int(tID): dict(statusDict[int(tID)]) for tID in transformationIDs}
 
-    return tTaskStats
+  def _isIdleCache(self, transIDs):
+    """Get the cache dictionaries that need to be passed to __isIdle
 
-  def __getTransformationFilesStats(self, tID):
-    """get the stats for a transformation files (number of files in each
-    status)"""
+    This method is used with __isIdle to minimise the number of RPC calls required::
 
-    result = self.tClient.getTransformationStats(tID)
+      transformations, taskStatuses, fileStatuses = self._isIdleCache(tIDs)
+      for tID in tIDs:
+        isIdle, isProcIdle, isSimulation = self.__isIdle(
+            tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+        )
+
+    :param list of str tIDs: The IDs to get cached data for
+    :returns: transformations, taskStatuses, fileStatuses
+    """
+    self.log.verbose("Filling _isIdleCache caches for", "%s transformations" % len(transIDs))
+    result = self.tClient.getTransformations(condDict={'TransformationID': transIDs}, limit=1000)
     if not result['OK']:
-      self.log.error('Could not retrieve transformation files stats', result['Message'])
-      tFilesStats = {}
-    else:
-      tFilesStats = result['Value']
+      self.log.error('Could not get transformations', result['Message'])
+      raise RuntimeError('Could not get transformations')
+    transformations = {x["TransformationID"]: x for x in result['Value']}
+    taskStatuses = self._getStatusCountersBulk("TransformationTasks", "ExternalStatus", transIDs)
+    fileStatuses = self._getStatusCountersBulk("TransformationFiles", "Status", transIDs)
+    return transformations, taskStatuses, fileStatuses
 
-    return tFilesStats
-
-  def __isIdle(self, tID):
+  def __isIdle(self, tID, tInfo, tStats, filesStats):
     """Checks if a transformation is idle, is procIdle and either the
-    transformation is simulation."""
-    self.log.debug("Checking either transformation %d is idle" % tID)
-    result = self.tClient.getTransformation(tID)
-    if not result['OK']:
-      raise RuntimeError("Failed to get transformation %s: %s" % (tID, result['Message']))
-    tInfo = result['Value']
+    transformation is simulation.
+
+    The ``tInfo``, ``tStats``, ``filesStats`` parameters are passed to improve
+    performance by avoiding 3 round trips to the transformation service. See
+    ``_isIdleCache`` for more details.
+
+    :param str tID: ID of the transformation to check
+    :param dict tInfo: Result of ``TransformationClient.getTransformations``
+    :param dict tStats: Result of ``self._getStatusCountersBulk`` for the
+                        ``ExternalStatus`` column in the ``TransformationTasks`` table
+    :param dict filesStats: Result of ``self._getStatusCountersBulk`` for the
+                            ``Status`` column in the ``TransformationFiles`` table
+    :returns: ``dict`` of ``dict`` of ``int``
+    """
+    self.log.debug("Checking if transformation is idle", str(tID))
     if tInfo.get('Type', None) in self.simulationTypes:
       isSimulation = True
       # simulation : go to Idle if
       # only failed and done tasks
       # AND number of tasks created in total == number of tasks submitted
-      tStats = self.__getTransformationTaskStats(tID)
       self.log.verbose("Tasks Stats for %d: %s" % (tID, str(tStats)))
       isIdle = (tStats.get('TotalCreated', 0) > 0) and \
           all(tStats.get(status, 0) == 0 for status in KNOWN_TASK_STATES)
@@ -714,7 +763,6 @@ class ProductionStatusAgent(AgentModule):
       # other transformation type : go to Idle if
       # 0 assigned files, unused files number was not changing during the last cyclesTillIdle time
       # AND only failed and done tasks
-      filesStats = self.__getTransformationFilesStats(tID)
       self.log.debug("Files stats: %s" % str(filesStats))
       unused = filesStats.get('Unused', 0)
       unusedInherited = filesStats.get('Unused-inherited', 0)
@@ -727,7 +775,6 @@ class ProductionStatusAgent(AgentModule):
       assigned = filesStats.get('Assigned', 0)
       isProcIdle = ((assigned == 0) and ((unused == 0) or (oldUnused['NotChanged'] >= self.cyclesTillIdle)))
       if isProcIdle:
-        tStats = self.__getTransformationTaskStats(tID)
         self.log.debug("Tasks Stats: %s" % str(tStats))
         isProcIdle = all(tStats.get(status, 0) == 0 for status in KNOWN_TASK_STATES)
       isIdle = isProcIdle and (unused == 0) and (unusedInherited == 0)
@@ -738,25 +785,32 @@ class ProductionStatusAgent(AgentModule):
 
     failures are remembered and are taken into account later
     """
+    self.log.verbose("Filling caches for _getIdleProductionRequestProductions...")
+    transIDs = [
+        str(tID) for tID, prID in self.prProds.items()
+        if self.prSummary[prID]['prods'][tID]['state'] in ('Active', 'Idle')
+    ]
+    try:
+      transformations, taskStatuses, fileStatuses = self._isIdleCache(transIDs)
+    except RuntimeError:
+      return S_ERROR("Failed to get _isIdleCache in _getIdleProductionRequestProductions")
+
     self.log.verbose("Checking idle productions...")
     for tID, prID in self.prProds.items():
       tInfo = self.prSummary[prID]['prods'][tID]
       if tInfo['state'] in ('Active', 'Idle'):
-        try:
-          isIdle, isProcIdle, isSimulation = self.__isIdle(tID)
-          tInfo['isIdle'] = 'Yes' if isIdle else 'No'
-          tInfo['isProcIdle'] = 'Yes' if isProcIdle else 'No'
-          tInfo['isSimulation'] = isSimulation
-        except RuntimeError as error:
-          self.log.error(error)
-          tInfo['isIdle'] = 'Unknown'
-          tInfo['isProcIdle'] = 'Unknown'
-          tInfo['isSimulation'] = False
+        isIdle, isProcIdle, isSimulation = self.__isIdle(
+            tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+        )
+        tInfo['isIdle'] = 'Yes' if isIdle else 'No'
+        tInfo['isProcIdle'] = 'Yes' if isProcIdle else 'No'
+        tInfo['isSimulation'] = isSimulation
       else:
         tInfo['isIdle'] = 'Unknown'
         tInfo['isProcIdle'] = 'Unknown'
         tInfo['isSimulation'] = False
     self.log.verbose("Checking idle done")
+    return S_OK()
 
   def _trackProductionRequests(self):
     """contact BK for the current number of processed events failures are
@@ -894,7 +948,7 @@ class ProductionStatusAgent(AgentModule):
 
   def _applyOtherTransformationsLogic(self, updatedT):
     """animate not Production Requests related transformations failures are not
-    clitical."""
+    critical."""
     self.log.verbose("Updating requests unrelated transformations...")
 
     self.log.info('Processing %s requests unrelated transformations in "RemovedFiles" state' %
@@ -904,23 +958,31 @@ class ProductionStatusAgent(AgentModule):
 
     self.log.info('Processing %s requests unrelated transformations in "Active" state' %
                   len(self.notPrTrans['Active']))
-    for tID in self.notPrTrans['Active']:
-      try:
-        isIdle, _isProcIdle, _isSimulation = self.__isIdle(tID)
+    try:
+      transformations, taskStatuses, fileStatuses = self._isIdleCache(self.notPrTrans['Active'])
+    except RuntimeError:
+      self.log.error('Failed to get _isIdleCache for monitoring "Active" requests')
+    else:
+      for tID in self.notPrTrans['Active']:
+        isIdle, _isProcIdle, _isSimulation = self.__isIdle(
+            tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+        )
         if isIdle:
           self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-      except RuntimeError as error:
-        self.log.error(error)
 
     self.log.info('Processing %s requests unrelated transformations in "Idle" state' %
                   len(self.notPrTrans['Idle']))
-    for tID in self.notPrTrans['Idle']:
-      try:
-        isIdle, _isProcIdle, _isSimulation = self.__isIdle(tID)
+    try:
+      transformations, taskStatuses, fileStatuses = self._isIdleCache(self.notPrTrans['Idle'])
+    except RuntimeError:
+      self.log.error('Failed to get _isIdleCache for monitoring "Idle" requests')
+    else:
+      for tID in self.notPrTrans['Idle']:
+        isIdle, _isProcIdle, _isSimulation = self.__isIdle(
+            tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+        )
         if not isIdle:
           self.__updateTransformationStatus(tID, 'Idle', 'Active', updatedT)
-      except RuntimeError as error:
-        self.log.error(error)
 
     self.log.verbose('Requests unrelated transformations update is finished')
 
@@ -1065,10 +1127,18 @@ class ProductionStatusAgent(AgentModule):
           else:
             self.log.warn("Logical bug: transformation %s is unexpectedly 'ValidatingInput'" & tID)
         elif tInfo['state'] == 'Testing':
-          isIdle, isProcIdle, isSimulation = self.__isIdle(tID)
-          self.log.verbose("TransID %d, %s, %s, %s" % (tID, isIdle, isProcIdle, isSimulation))
-          if isIdle:
-            self.__updateTransformationStatus(tID, 'Testing', 'Idle', updatedT)
+          try:
+            # TODO This should ideally be moved out of the loop
+            transformations, taskStatuses, fileStatuses = self._isIdleCache([str(tID)])
+          except RuntimeError:
+            self.log.error("Failed to get _isIdleCache for", str(tID))
+          else:
+            isIdle, isProcIdle, isSimulation = self.__isIdle(
+                tID, transformations[tID], taskStatuses[tID], fileStatuses[tID]
+            )
+            self.log.verbose("TransID %d, %s, %s, %s" % (tID, isIdle, isProcIdle, isSimulation))
+            if isIdle:
+              self.__updateTransformationStatus(tID, 'Testing', 'Idle', updatedT)
 
       summary['isFinished'] = True if countFinished == len(summary['prods']) else False
       if summary['isFinished'] and not summary['master'] and summary['type'] == 'Simulation':
