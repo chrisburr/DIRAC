@@ -37,11 +37,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from collections import defaultdict
 import time
 import os
 import sqlite3
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, wait
+from itertools import chain
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.AgentModule import AgentModule
@@ -174,6 +175,10 @@ class ProductionStatusAgent(AgentModule):
     #     'isIdle', 'isProcIdle' for each 'Active' or 'Idle' production,
     #     'isSimulation' - from _getIdleProductionRequestProductions()
     #     'isFinished' - from _applyProductionRequestsLogic()
+    #     'filesTotal' - from _getIdleProductionRequestProductions()
+    #     'filesProcessed' - from _getIdleProductionRequestProductions()
+    #     'inputIDs' - from _getExtraInfo()
+    #     'hasActiveInput' - from _trackProductionRequests()
     # }
     self.prProds = {}  # <prID>, map production to known request, from _getProductionRequestsProgress
 
@@ -494,10 +499,14 @@ class ProductionStatusAgent(AgentModule):
         tInfo['isIdle'] = 'Yes' if isIdle else 'No'
         tInfo['isProcIdle'] = 'Yes' if isProcIdle else 'No'
         tInfo['isSimulation'] = isSimulation
+        tInfo['filesTotal'] = fileStatuses[tID]["Total"]
+        tInfo['filesProcessed'] = fileStatuses[tID].get("Processed", 0)
       else:
         tInfo['isIdle'] = 'Unknown'
         tInfo['isProcIdle'] = 'Unknown'
         tInfo['isSimulation'] = False
+        tInfo['filesTotal'] = None
+        tInfo['filesProcessed'] = 0
     self.log.verbose("Checking idle done")
     return S_OK()
 
@@ -510,9 +519,10 @@ class ProductionStatusAgent(AgentModule):
     futureThreads = []
     with ThreadPoolExecutor(10) as threadPool:
       for tID, prID in self.prProds.items():
-        futureThreads.append(threadPool.submit(self._getProducedEvents, tID, prID))
+        futureThreads.append(threadPool.submit(self._getExtraInfo, tID, prID))
       wait(futureThreads)
 
+    # Update the Production request DB with the number of bookkeeping events
     if self.toUpdate:
       if gDoRealTracking:
         result = self.prClient.updateTrackedProductions(self.toUpdate)
@@ -525,11 +535,46 @@ class ProductionStatusAgent(AgentModule):
       else:
         self.log.verbose('The progress of %s Production Requests is updated' % len(self.toUpdate))
     self.log.info("Production requests progress update is finished")
+
+    # Get the status of the Analysis Productions input transformations
+    inputTransformIDs = set()
+    for summary in self.prSummary.values():
+      for tID, tInfo in summary["prods"].items():
+        inputTransformIDs = inputTransformIDs.union(
+            x for x in tInfo.get("inputIDs", []) if x not in summary["prods"]
+        )
+    inputTransformStatuses = {}
+    if inputTransformIDs:
+      retVal = self.tClient.getTransformations(
+          condDict={'TransformationID': list(inputTransformIDs)},
+          limit=1000,
+      )
+      if not retVal["OK"]:
+        self.log.error("Failed to call getTransformations", retVal["Message"])
+        return S_ERROR("Too dangerous to continue")
+      inputTransformStatuses = {d["TransformationID"]: d["Status"] for d in retVal["Value"]}
+    for summary in self.prSummary.values():
+      for tID, tInfo in summary["prods"].items():
+        if "inputIDs" not in tInfo:
+          continue
+        tInfo["hasActiveInput"] = False
+        for inputID in tInfo["inputIDs"]:
+          if inputID in summary["prods"]:
+            continue
+          if inputTransformStatuses[inputID] != "Archived":
+            self.log.info(
+                "Marking hasActiveInput=True for",
+                "%s as input %s has status %s" % (tID, inputID, inputTransformStatuses[inputID])
+            )
+            tInfo["hasActiveInput"] = True
+
     return S_OK()
 
-  def _getProducedEvents(self, tID, prID):
+  def _getExtraInfo(self, tID, prID):
     tInfo = self.prSummary[prID]['prods'][tID]
-    result = self.__getProductionProducedEvents(tID)
+    # Get the number of bookkeeping events
+    self.log.verbose("Getting BK production progress", "Transformation ID = %d" % tID)
+    result = BookkeepingClient().getProductionProducedEvents(tID)
     if result['OK']:
       nEvents = result['Value']
       if nEvents and nEvents != tInfo['Events']:
@@ -539,13 +584,24 @@ class ProductionStatusAgent(AgentModule):
     else:
       self.log.error("Progress is not updated", "%s : %s" % (tID, result['Message']))
       return S_ERROR("Too dangerous to continue")
-
-  @timeThis
-  def __getProductionProducedEvents(self, tID):
-    """ dev function - separate only for timing purposes
-    """
-    self.log.verbose("Getting BK production progress", "Transformation ID = %d" % tID)
-    return BookkeepingClient().getProductionProducedEvents(tID)
+    # Find the transfromation ID for the input to each Analysis Production
+    if self.prSummary[prID]["type"] == "AnalysisProduction":
+      retVal = TransformationClient().getBookkeepingQuery(tID)
+      if not retVal["OK"]:
+        self.log.error("Failed to call getBookkeepingQuery", "%s %s" % (tID, retVal["Message"]))
+        return S_ERROR("Too dangerous to continue")
+      inputBkQuery = retVal["Value"]
+      if "ProductionID" in inputBkQuery:
+        tInfo["inputIDs"] = [inputBkQuery["ProductionID"]]
+      else:
+        # FIXME: Just why?!
+        if "DataTakingConditions" in inputBkQuery:
+          inputBkQuery["ConditionDescription"] = inputBkQuery["DataTakingConditions"]
+        retVal = BookkeepingClient().getProductions(inputBkQuery)
+        if not retVal["OK"]:
+          self.log.error("Failed to call getProductions", "%s %s" % (tID, retVal["Message"]))
+          return S_ERROR("Too dangerous to continue")
+        tInfo["inputIDs"] = [x[0] for x in retVal["Value"]["Records"]]
 
   def _cleanFilesUnused(self):
     """remove old transformations from filesUnused."""
@@ -674,11 +730,19 @@ class ProductionStatusAgent(AgentModule):
 
   def _isReallyDone(self, summary):
     """Evaluate 'isDone' from current update cycle."""
-    bkTotal = 0
-    for _tID, tInfo in summary['prods'].items():
-      if tInfo['Used']:
-        bkTotal += tInfo['Events']
-    return True if bkTotal >= summary['prTotal'] else False
+    if summary["type"] == "AnalysisProduction":
+      # The number of bookkeeping events is not well defined for Analysis Productions
+      allFilesProcessed = all(
+          transform["filesTotal"] and transform["filesTotal"] == transform["filesProcessed"]
+          for transform in summary["prods"].values()
+      )
+      if not allFilesProcessed:
+        return False
+      return not any(tInfo["hasActiveInput"] for tInfo in summary["prods"].values())
+    else:
+      # Other production types rely on the number of bookkeeping events
+      bkTotal = sum(t['Events'] for t in summary['prods'].values() if t['Used'])
+      return bkTotal >= summary['prTotal']
 
   def _producersAreIdle(self, summary):
     """Return True in case all producers (not 'Used') transformations are Idle,
@@ -793,6 +857,11 @@ class ProductionStatusAgent(AgentModule):
             self.__updateTransformationStatus(tID, 'Idle', 'ValidatingInput', updatedT)
           # else:
           #   We wait till mergers finish the job
+      elif summary['type'] == 'AnalysisProduction':
+        if tInfo['Used']:
+          self.__updateTransformationStatus(tID, 'Idle', 'ValidatingOutput', updatedT)
+        else:
+          self.__updateTransformationStatus(tID, 'Idle', 'Completed', updatedT)
       # else
       #  we do not know what to do with that (yet)
       # else
@@ -830,7 +899,7 @@ class ProductionStatusAgent(AgentModule):
 
   def _handleStateValidatedOutput(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
-    if summary['type'] == 'Simulation' and summary['isDone'] and tInfo['Used']:
+    if summary['type'] in ['Simulation', 'AnalysisProduction'] and summary['isDone'] and tInfo['Used']:
       # for standard sim requests, only the merge
       self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
     else:
