@@ -280,13 +280,20 @@ class ProductionStatusAgent(AgentModule):
           return S_ERROR('Could not get subrequests for production request %s: %s' % (prID, result['Message']))
         for subPr in result['Value']['Rows']:
           subPrID = subPr['RequestID']
-          self.prSummary[subPrID] = \
-              {'type': pr['RequestType'], 'master': prID, 'bkTotal': subPr['bkTotal'],
-               'prTotal': subPr['rqTotal']}
+          self.prSummary[subPrID] = {
+              'type': pr['RequestType'],
+              'master': prID,
+              'bkTotal': subPr['bkTotal'],
+              'prTotal': subPr['rqTotal'],
+          }
           self.prMasters[prID].append(subPrID)
       else:
-        self.prSummary[prID] = \
-            {'type': pr['RequestType'], 'master': 0, 'bkTotal': pr['bkTotal'], 'prTotal': pr['rqTotal']}
+        self.prSummary[prID] = {
+            'type': pr['RequestType'],
+            'master': 0,
+            'bkTotal': pr['bkTotal'],
+            'prTotal': pr['rqTotal'],
+        }
 
     result = self.__getProductionRequestsProgress()
     if not result['OK']:
@@ -827,7 +834,7 @@ class ProductionStatusAgent(AgentModule):
       # for standard sim requests, only the merge
       self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
     else:
-      self.log.warn("Logical bug: transformation %s unexpectedly has 'ValidatedOutput'" & tID)
+      self.log.warn("Logical bug: transformation %s unexpectedly has 'ValidatedOutput'" % tID)
 
   def _handleStateValidatingInput(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
@@ -835,7 +842,7 @@ class ProductionStatusAgent(AgentModule):
       # for standard sim requests, all but the merge
       self.__updateTransformationStatus(tID, 'ValidatingInput', 'RemovingFiles', updatedT)
     else:
-      self.log.warn("Logical bug: transformation %s is unexpectedly 'ValidatingInput'" & tID)
+      self.log.warn("Logical bug: transformation %s is unexpectedly 'ValidatingInput'" % tID)
 
   def _handleStateTesting(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
