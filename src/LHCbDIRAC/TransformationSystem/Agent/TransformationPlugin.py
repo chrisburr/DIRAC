@@ -1256,7 +1256,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                                 minKeep,
                                 keepSEs),
                                (replicasWithKeep,
-                                (abs(minKeep) - 1) * minKeep / abs(minKeep),
+                                (abs(minKeep) - 1) * minKeep // abs(minKeep),
                                 keepSEs + [destinationSE])):
         if reps:
           res = self._removeReplicas(replicas=reps, fromSEs=fromSEs, keepSEs=kSEs, minKeep=keep)
@@ -1547,7 +1547,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
   def __addAncestors(self, pluginMethod=None):
     """Call a standard plugin and then add ancestors to tasks."""
-    maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100) / 2
+    maxFiles = self.util.getPluginParam('MaxFilesPerTask', 100) // 2
     tasks = pluginMethod(maxFiles=maxFiles)
     if not tasks['OK']:
       return tasks
