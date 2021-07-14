@@ -206,7 +206,6 @@ it is useful to have some transformations always at hand where you can just add 
   # destroy dataset
   dirac-dms-add-transformation --Plugin=DestroyDataset --Name 'Destroy-dataset' --Force
 
-As a reminder, to add files in these transfo (see :ref:`dirac-transformation-add-files`)::
+As a reminder, to add files in these transformations::
 
   dirac-transformation-add-files <transName> [--Term | --File <file> | --LFN <lfn>] 
-  
