@@ -902,7 +902,7 @@ class ProductionStatusAgent(AgentModule):
 
   def _handleStateValidatedOutput(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
-    if summary['type']  == 'Simulation' and summary['isDone'] and tInfo['Used']:
+    if summary['type'] == 'Simulation' and summary['isDone'] and tInfo['Used']:
       # for standard sim requests, only the merge
       self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
     elif summary['type'] == 'AnalysisProduction' and tInfo['Used']:
