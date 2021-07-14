@@ -177,6 +177,8 @@ class ProductionStatusAgent(AgentModule):
     #     'isFinished' - from _applyProductionRequestsLogic()
     #     'filesTotal' - from _getIdleProductionRequestProductions()
     #     'filesProcessed' - from _getIdleProductionRequestProductions()
+    #     'filesUnused' - from _getIdleProductionRequestProductions()
+    #     'filesMaxReset' - from _getIdleProductionRequestProductions()
     #     'inputIDs' - from _getExtraInfo()
     #     'hasActiveInput' - from _trackProductionRequests()
     # }
@@ -395,10 +397,10 @@ class ProductionStatusAgent(AgentModule):
     # Ensure totalColumnName is always included in the output
     statusDict = defaultdict(lambda: defaultdict(int, **{totalColumnName: 0}))
     for attrDict, count in res['Value']:
-        tID = attrDict["TransformationID"]
-        status = attrDict[statusKey]
-        statusDict[tID][status] = count
-        statusDict[tID][totalColumnName] += count
+      tID = attrDict["TransformationID"]
+      status = attrDict[statusKey]
+      statusDict[tID][status] = count
+      statusDict[tID][totalColumnName] += count
     # Loop over transformationIDs to ensure all IDs are included in the output
     return {int(tID): dict(statusDict[int(tID)]) for tID in transformationIDs}
 
@@ -501,12 +503,16 @@ class ProductionStatusAgent(AgentModule):
         tInfo['isSimulation'] = isSimulation
         tInfo['filesTotal'] = fileStatuses[tID]["Total"]
         tInfo['filesProcessed'] = fileStatuses[tID].get("Processed", 0)
+        tInfo['filesUnused'] = fileStatuses[tID].get("Unused", 0)
+        tInfo['filesMaxReset'] = fileStatuses[tID].get("MaxReset", 0)
       else:
         tInfo['isIdle'] = 'Unknown'
         tInfo['isProcIdle'] = 'Unknown'
         tInfo['isSimulation'] = False
         tInfo['filesTotal'] = None
         tInfo['filesProcessed'] = 0
+        tInfo['filesUnused'] = 0
+        tInfo['filesMaxReset'] = 0
     self.log.verbose("Checking idle done")
     return S_OK()
 
@@ -553,18 +559,20 @@ class ProductionStatusAgent(AgentModule):
         self.log.error("Failed to call getTransformations", retVal["Message"])
         return S_ERROR("Too dangerous to continue")
       inputTransformStatuses = {d["TransformationID"]: d["Status"] for d in retVal["Value"]}
-    for summary in self.prSummary.values():
+    for prID, summary in self.prSummary.items():
       for tID, tInfo in summary["prods"].items():
         if "inputIDs" not in tInfo:
           continue
         tInfo["hasActiveInput"] = False
         for inputID in tInfo["inputIDs"]:
           if inputID in summary["prods"]:
-            continue
-          if inputTransformStatuses[inputID] != "Archived":
+            inputState = summary["prods"][inputID]["state"]
+          else:
+            inputState = inputTransformStatuses[inputID]
+          if inputState not in ["Archived", "Completed", "Finished"]:
             self.log.info(
                 "Marking hasActiveInput=True for",
-                "%s as input %s has status %s" % (tID, inputID, inputTransformStatuses[inputID])
+                "%s (%s) as input %s has status %s" % (tID, prID, inputID, inputState)
             )
             tInfo["hasActiveInput"] = True
 
@@ -730,19 +738,9 @@ class ProductionStatusAgent(AgentModule):
 
   def _isReallyDone(self, summary):
     """Evaluate 'isDone' from current update cycle."""
-    if summary["type"] == "AnalysisProduction":
-      # The number of bookkeeping events is not well defined for Analysis Productions
-      allFilesProcessed = all(
-          transform["filesTotal"] and transform["filesTotal"] == transform["filesProcessed"]
-          for transform in summary["prods"].values()
-      )
-      if not allFilesProcessed:
-        return False
-      return not any(tInfo["hasActiveInput"] for tInfo in summary["prods"].values())
-    else:
-      # Other production types rely on the number of bookkeeping events
-      bkTotal = sum(t['Events'] for t in summary['prods'].values() if t['Used'])
-      return bkTotal >= summary['prTotal']
+    # Other production types rely on the number of bookkeeping events
+    bkTotal = sum(t['Events'] for t in summary['prods'].values() if t['Used'])
+    return bkTotal >= summary['prTotal']
 
   def _producersAreIdle(self, summary):
     """Return True in case all producers (not 'Used') transformations are Idle,
@@ -828,7 +826,7 @@ class ProductionStatusAgent(AgentModule):
           self._handleStateTesting(tID, tInfo, summary, updatedT)
 
       summary['isFinished'] = countFinished == len(summary['prods'])
-      if summary['isFinished'] and not summary['master'] and summary['type'] == 'Simulation':
+      if summary['isFinished'] and not summary['master'] and summary['type'] in ['Simulation', 'AnalysisProduction']:
         self.__updateProductionRequestStatus(prID, 'Done', updatedPr)
 
     for masterID, prList in self.prMasters.items():
@@ -843,8 +841,11 @@ class ProductionStatusAgent(AgentModule):
     if tInfo['isIdle'] == 'No':
       # 'Idle' && !isIdle() --> 'Active'
       self.__updateTransformationStatus(tID, 'Idle', 'Active', updatedT)
-    elif tInfo['isIdle'] == 'Yes' and self._isReallyDone(summary):
-      if summary['type'] == 'Simulation':
+    elif tInfo['isIdle'] != 'Yes':
+      return
+
+    if summary['type'] == 'Simulation':
+      if not self._isReallyDone(summary):
         # 'Idle' && isIdle() && isDone for MC logic
         if tInfo['Used']:  # for standard sim requests, only the merge will go to ValidatingOutput
           if self._producersAreIdle(summary):
@@ -857,15 +858,18 @@ class ProductionStatusAgent(AgentModule):
             self.__updateTransformationStatus(tID, 'Idle', 'ValidatingInput', updatedT)
           # else:
           #   We wait till mergers finish the job
-      elif summary['type'] == 'AnalysisProduction':
-        if tInfo['Used']:
-          self.__updateTransformationStatus(tID, 'Idle', 'ValidatingOutput', updatedT)
-        else:
-          self.__updateTransformationStatus(tID, 'Idle', 'Completed', updatedT)
-      # else
-      #  we do not know what to do with that (yet)
-      # else
-    # 'Idle' && isIdle() (or unknown) && !isDone is not interesting combination
+
+    elif summary['type'] == 'AnalysisProduction':
+      if not tInfo["hasActiveInput"]:
+        # The number of bookkeeping events is not well defined for Analysis Productions
+        allFilesProcessed = tInfo["filesTotal"] and tInfo["filesTotal"] == tInfo["filesProcessed"]
+        if allFilesProcessed:
+          if tInfo['Used']:
+            self.__updateTransformationStatus(tID, 'Idle', 'ValidatingOutput', updatedT)
+          else:
+            self.__updateTransformationStatus(tID, 'Idle', 'Completed', updatedT)
+        elif tInfo["filesTotal"] == tInfo["filesProcessed"] + tInfo["filesMaxReset"]:
+          self.log.warn("Transformation has files in MaxReset", "ID=%s count=%s" % (tID, tInfo["filesMaxReset"]))
 
   def _handleStateRemovedFiles(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
@@ -892,15 +896,17 @@ class ProductionStatusAgent(AgentModule):
       else:
         # for not MC, use reasonable default
         self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
-    # elif tInfo['isProcIdle'] == 'Yes'
-    #   Should we do something there? For Sim prod that is not possible conditions since (isProcIdle == isIdle)
-    # else:
-    #  'Active' && ! isIdle() (or unknown) is not interesting
+    elif summary["type"] == 'AnalysisProduction' and not tInfo["hasActiveInput"]:
+      if tInfo["filesTotal"] == tInfo["filesProcessed"] + tInfo["filesUnused"]:
+        self.__updateTransformationStatus(tID, 'Active', 'Flush', updatedT)
 
   def _handleStateValidatedOutput(self, tID, tInfo, summary, updatedT):
     """Used by _applyProductionRequestsLogic"""
-    if summary['type'] in ['Simulation', 'AnalysisProduction'] and summary['isDone'] and tInfo['Used']:
+    if summary['type']  == 'Simulation' and summary['isDone'] and tInfo['Used']:
       # for standard sim requests, only the merge
+      self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
+    elif summary['type'] == 'AnalysisProduction' and tInfo['Used']:
+      # isDone only uses the bookkeeping and therefore isn't useful
       self.__updateTransformationStatus(tID, 'ValidatedOutput', 'Completed', updatedT)
     else:
       self.log.warn("Logical bug: transformation %s unexpectedly has 'ValidatedOutput'" % tID)
