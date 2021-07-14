@@ -82,14 +82,19 @@ stages:
     - eval "$(python -m conda shell.bash hook)"
     - conda install --yes mamba diraccfg git jq
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
-    - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
-    - echo "lhcbdiracTag=${lhcbdiracTag}"
-    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - echo "diracTAG=${diracTAG}"
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
-    - mamba env create --file ../DIRAC/environment-py3.yml --name test-env
+    # Checkout the latest compatible DIRAC release
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    - echo "diracBranch=${diracBranch}"
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
+    - cd ../DIRAC
+    - diracTag=$(git describe --tags --long --match '*[0-9]*' --exclude 'v[0-9]r*' --exclude 'v[0-9][0-9]r*' | cut -d '-' -f 1)
+    - echo "diracTag=${diracTag}"
+    - git checkout "${diracTag}"
+    # Create the environment and install DIRAC+LHCbDIRAC
+    - mamba env create --file environment-py3.yml --name test-env
     - conda activate test-env
-    - pip install ../DIRAC[server]
+    - pip install .[server]
+    - cd ../LHCbDIRAC
     - pip install .[server]
 
 # This runs pylint and fails if there are errors
