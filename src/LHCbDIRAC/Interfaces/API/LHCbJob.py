@@ -661,6 +661,13 @@ class LHCbJob(Job):
       self._addParameter(self.workflow, 'AncestorDepth', 'JDL', depth, description)
     else:
       return self._reportError('Expected integer for Ancestor Depth', __name__, **kwargs)
+    self._addParameter(
+        self.workflow,
+        "JobPath",
+        "JDL",
+        "JobPath,JobSanity,InputData,AncestorFiles,JobScheduling",
+        "Custom list of optimizers",
+    )
     return S_OK()
 
   #############################################################################
@@ -685,7 +692,10 @@ class LHCbJob(Job):
       try:
         inputDataType = str(inputDataType)
       except TypeError:
-        return self._reportError('Expected string for input data type', __name__, **{'inputDataType': inputDataType})
+        return self._reportError(
+            'Expected string for input data type',
+            __name__, **{'inputDataType': inputDataType}
+        )
 
     self.inputDataType = inputDataType
     self._addParameter(self.workflow, 'InputDataType', 'JDL', inputDataType, description)
