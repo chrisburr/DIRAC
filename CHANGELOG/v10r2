@@ -1,3 +1,32 @@
+v10r2p5
+Based on DIRAC v7r2p14
+LHCbWebDIRAC v5r3
+LHCbDIRACOS v1r20
+*Production Management
+
+NEW: (!1036) Handle Idle Analysis Production transformations in ProductionStatusAgent
+
+*TransformationSystem
+
+FIX: (!1033) correct order of import in dirac-test-script
+FIX: (!1032) adding runs to a BK query containing a single run was not working, neither was the `--List` option in `dirac-production-set-runs`
+FIX (`TransformationPlugin`): pb with integer division (urgent)
+FIX: (!1029) Fix submitting files without a RunNumber (i.e. MCReconstruction)
+
+*DataManagementSystem
+
+FIX: (!1032) use integer division `//`
+
+*Interfaces
+
+CHANGE: (!1031) add specific LHCb Optimizer when needed
+
+*Bookkeeping
+
+FIX: (!1028) Fix TypeErrors from logging in XMLFilesReaderManager
+
+
+
 v10r2p4
 Based on DIRAC v7r2p13
 LHCbWebDIRAC v5r3
