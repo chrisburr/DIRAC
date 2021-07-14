@@ -29,8 +29,8 @@ class LHCbWorkflowTasks(WorkflowTasks):
     try:
       if paramsDict['InputData']:
         self.log.verbose('Setting input data to %s' % paramsDict['InputData'])
-        self.log.verbose('Setting run number to %s' % str(paramsDict['RunNumber']))
-        oJob.setInputData(paramsDict['InputData'], runNumber=paramsDict['RunNumber'])
+        self.log.verbose('Setting run number to %s' % str(paramsDict.get('RunNumber')))
+        oJob.setInputData(paramsDict['InputData'], runNumber=paramsDict.get('RunNumber'))
 
         try:
           runMetadata = paramsDict['RunMetadata']
@@ -40,7 +40,7 @@ class LHCbWorkflowTasks(WorkflowTasks):
           pass
 
     except KeyError:
-      self.log.error('Could not found an input data or a run number')
+      self.log.exception('Could not find input data or a run number')
       raise KeyError('Could not found an input data or a run number')
 
   #############################################################################
