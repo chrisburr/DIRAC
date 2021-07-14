@@ -403,9 +403,10 @@ class TransformationDebug(object):
                                                                {'TransformationID': transID, 'TaskID': taskID})
         if res['OK']:
           # Keep track of which file corresponds to which task
-          fileID = res['Value']['FileID'][0]
-          taskFiles.setdefault(fileID, []).append(taskID)
-          selectDict.setdefault('FileID', []).append(fileID)
+          if res['Value']['FileID']:
+            fileID = res['Value']['FileID'][0]
+            taskFiles.setdefault(fileID, []).append(taskID)
+            selectDict.setdefault('FileID', []).append(fileID)
         else:
           gLogger.error("Error getting Transformation tasks:", res['Message'])
           return []
