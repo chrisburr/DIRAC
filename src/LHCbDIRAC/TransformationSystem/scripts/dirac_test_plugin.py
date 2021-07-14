@@ -19,7 +19,7 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 import DIRAC
-from DIRAC import S_OK, gLogger
+from DIRAC import S_OK
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
@@ -244,7 +244,6 @@ def main():
   import DIRAC
   from DIRAC.Core.Base import Script
   from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript
-  from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
   pluginScript = PluginScript()
   pluginScript.registerPluginSwitches()
@@ -260,6 +259,12 @@ def main():
       '  %s [option|cfgfile] ...' % Script.scriptName, ]))
 
   Script.parseCommandLine(ignoreErrors=True)
+
+  from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
+  from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
+  from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+  from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import getRemovalPlugins, getReplicationPlugins
+  from DIRAC import gLogger
 
   asIfProd = None
   allFiles = False
@@ -313,10 +318,6 @@ def main():
   # FIXME: can be removed when the subLoggers can do it...
   gLogger.showHeaders()
 
-  from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
-  from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-  from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import getRemovalPlugins, getReplicationPlugins
-  from DIRAC import gLogger
   gLogger.setLevel('INFO')
   # Create the transformation
   transformation = Transformation()
