@@ -52,6 +52,28 @@ If you are making a Major release please merge devel to master follow the instru
 Propagate to the devel branch
 `````````````````````````````
 
+Automatic propagation
+"""""""""""""""""""""
+The LHCbDIRAC repo has a webhook installed to trigger a job in `GitLab(lhcb-dirac/sweeper) <https://gitlab.cern.ch/lhcb-dirac/sweeper>`_  for each MR action taken on the repo.
+The pipeline in this repo converts all the information from GitLab hook to environment variables that are accessible for usage.
+For each MR that it is determined that it targets ``master`` we call the script ``labelMR.py`` (in lhcb-dirac/sweeper) to add the label ``alsoTargeting:devel``.
+This is a hint for the subsequent procedure to cherry-pick this MR into ``devel``.
+
+The automatic cherry-picking (also referred to as sweeping), is performed in the CI job ``MR_SWEEP``, which tries to cheery-pick the merged MRs into a new branch and open a new MR against ``devel``.
+This mechanism is only triggered on MRs that have the label ``alsoTargeting:devel``. Once the mechanism finished the merged MR will receive the label ``sweep:done``.
+In the case an automatic sweep is not possible (e.g. merge conflict) the MR will receive the label ``sweep:failed``, in the comment of the MR you will see a link to the job where the sweep was attempted.
+In the log this job you will see a hint how to reproduce the failed merge, so the you can manually resolve the problem e.g.::
+
+  git checkout devel
+  git cherry-pick -m 1 9f142d8c1
+  git status
+
+To not overlook failed sweeps, it is advisable that you subscribe to the label `sweep:failed` in `GitLab Labels <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/labels>`_.
+If everything is successful, after merging something to ``master`` in a relatively short period of time a MR should appear that is the result of the sweep, it will have the label ``sweep:from master``.
+
+Manual propagation
+""""""""""""""""""
+
 Before you start doing any merging it's good to setup the correct merge driver, you do this by adding to your .gitconfig
 
   [merge "ours"]
@@ -99,8 +121,6 @@ At the end of the pipeline there is a manual trigger job with name `make_tag`, y
 As key you can specify the versions you want your release to be based upon. If you don't specify any version only the LHCbDIRAC patch version will be increased for +1.
 After you have set the proper values press trigger this manual action. This will create the release for you and creating the release tarball, and uploading it to the LHCb web service
 
-
-```````````````````
 Automatic procedure
 ```````````````````
 
@@ -151,9 +171,15 @@ A overview of the current installation health can be found at `here <https://mon
 Server
 ``````
 
-````````````````````````````````
-Method 1 (preferred): web portal
-````````````````````````````````
+Method 1 (preferred): inside the tag pipeline
+`````````````````````````````````````````````
+The CI pipeline associate the tag pipeline has a manual job ``update_instance`` which you have to trigger. This will automatically apply the release to all machines that that constitute the respective instance.
+In the case of normal tags this is the production instance and in the case of ``-pre`` tag this is the certification instance.
+The update is based on the dirac command ``dirac-admin-update-instance``. The same job will also update the pilot version via ``dirac-admin-update-pilot``.
+
+
+Method 2: web portal
+````````````````````
 
 
 Using the web portal:
@@ -162,8 +188,7 @@ Using the web portal:
   * Start again selecting them by block, but this time, click on "restart" to restart the components.
 
 
-``````````````````````````````````````
-Method 2: interactive via sysadmin cli
+Method 3: interactive via sysadmin cli
 ``````````````````````````````````````
 
 To install it on the VOBOXes from lxplus::
@@ -172,84 +197,6 @@ To install it on the VOBOXes from lxplus::
   dirac-admin-sysadmin-cli --host lbvoboxXYZ.cern.ch
   > update LHCbDIRAC v9r3p3
   > restart *
-
-
-`````````````````````
-Method 3: from lxplus
-`````````````````````
-
-
-
-The recommended way is the following::
-
-      ssh lxplus
-      mkdir -p DiracInstall && cd  DiracInstall
-      curl https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/raw/devel/dist-tools/create_vobox_update.py -O
-      python create_vobox_update.py vArBpC
-
-This command will create 6 files called "vobox_update_MyLetter" then you can run in 6 windows the recipe for one single machine like that::
-
-      ssh lxplus
-      cd  DiracInstall ; source /cvmfs/lhcb.cern.ch/lib/lhcb/LHCBDIRAC/lhcbdirac ; lhcb-proxy-init -g lhcb_admin; dirac-admin-sysadmin-cli
-            and from the prompt ::
-               [host] : execfile vobox_update_MyLetter
-               [host] : quit
-
-Note:
-
-It is normal if you see the following errors::
-
-   --> Executing restart Framework SystemAdministrator
-   [ERROR] Exception while reading from peer: (-1, 'Unexpected EOF')
-
-
-In case of failure you have to update the machine by hand.
-Example of a typical failure::
-
-   --> Executing update v9r3p3
-   Software update can take a while, please wait ...
-   [ERROR] Failed to update the software
-   Timeout (240 seconds) for '['dirac-install', '-r', 'v9r3p3', '-t', 'server', '-e', 'LHCb', '-e', 'LHCb', '/opt/dirac/etc/dirac.cfg']' call
-
-Login to the failing machine, become dirac, execute manually the update, and restart everything. For example::
-
-   ssh lbvobox11
-   sudo su - dirac
-   dirac-install -r v9r3p3 -t server -e LHCb -e LHCb /opt/dirac/etc/dirac.cfg
-   lhcb-restart-agent-service
-   runsvctrl t startup/Framework_SystemAdministrator/
-
-Specify that this error can be ignored (but should be fixed ! )::
-
-      2016-05-17 12:00:00 UTC dirac-install [ERROR] Requirements installation script /opt/dirac/versions/v8r2p42_1463486162/scripts/dirac-externals-requirements failed. Check /opt/dirac/versions/v8r2p42_1463486162/scripts/dirac-externals-requirements.err
-
-
-WebPortal
-`````````
-
-When the web portal machine is updated then you have to compile the WebApp::
-
-    ssh lhcb-portal-dirac.cern.ch
-    sudo su - dirac
-    #  (for example: dirac-install -r v9r3p3 -t server -l LHCb -e LHCb,LHCbWeb,WebAppDIRAC /opt/dirac/etc/dirac.cfg)
-    dirac-install -r VERSIONTOBEINSTALLED -t server -l LHCb -e LHCb,LHCbWeb,WebAppDIRAC /opt/dirac/etc/dirac.cfg
-
-
-When the compilation is finished::
-
-    lhcb-restart-agent-service
-    runsvctrl t startup/Framework_SystemAdministrator/
-
-
-TODO
-````
-
-When the machines are updated, then you have to go through all the components and check the errors. There are two possibilities:
-   1. Use the Web portal (SystemAdministrator)
-
-   2. Command line::
-
-       for h in $(grep 'set host' vobox_update_* | awk {'print $NF'}); do echo "show errors" | dirac-admin-sysadmin-cli -H $h; done | less
 
 Pilot
 `````
@@ -262,6 +209,20 @@ The newer version should be the first in the list
 
 for checking and updating the pilot version. Note that you'll need a proxy that can write in the CS (i.e. lhcb-admin).
 This script will make sure that the pilot version is update BOTH in the CS and in the json file used by pilots started in the vacuum.
+
+
+5. Making a major releases
+==========================
+Making a major release is a manual intervention, especially as in the CI it is on many places expected that a tag exists.
+
+Updating LHCbWebApp
+```````````````````
+You merge devel to master (procedure described below) and update the version in ``__init__.py``, you commit and tag and push back to repo.
+At this stage the CI will inevitably fail, as the full release is not yet present. Don't worry you will re-trigger the CI once the complete release is done and verify that the release is OK.
+
+Updating LHCbDIRAC
+``````````````````
+You merge devel to master (procedure described below) and update the version in ``src/LHCbDIRAC/__init__.py`` you add to ``src/LHCbDIRAC/releases.cfg`` the desired version with tags of dependencies and you also add a new entry in ``CHANGELOG/vXrY``. You commit and push the tag. When the tag pipeline will create the tar ball for the release you can re-trigger the webapp pipeline and test that it works with the CI. This manual intervention is only needed when you do major releases (merging devel to master), for subsequent patch releases use the pipeline job ``make_tag``.
 
 
 .. _devel_to_master:
@@ -298,46 +259,3 @@ merge devel to master for LHCbWebDIRAC as well::
     git push upstream newMaster:master
 
 When it is ready you can create the final tag for the new release.
-
-
-5. Mesos cluster
-========================
-
-Mesos is currently only used for the certification.
-In order to push a new version on the Mesos cluster, 3 steps are needed:
-
-- Build the new image
-- Push it the lhcbdirac gitlab repository
-- Update the version of the running containers
-
-
-Automatic procedure
-````````````````````
-
-The first two steps should be automatically done by the gitlab-ci of the LHCbDIRAC repository.
-The last step will be taken care of by the gitlab-ci of the MesosClusterConf repository (https://gitlab.cern.ch/lhcb-dirac/MesosClusterConf)
-For a simple version upgrade, edit directly on the gitlab web page the file clusterConfiguration.json and replace the "version" attribute with what you want. Of course add a meaningful commit message.
-
-Manual procedure
-````````````````
-
-This should in principle not happen. Remember that any manual change of the mesos cluster will be erased next time the gitlab-ci of the MesosClusterConf repository will run.
-However, you can do all the above step manually.
-
-All these functionalities have been wrapped up in a script (dirac-docker-mgmt), available on all the lbmesosadm* machines (01, 02)
-
-The next steps are the following::
-
-    # build the new image
-    # this will download the necessary files, and build
-    # the image localy
-    dirac-docker-mgmt.py -v v8r5 --build
-
-    # Push it to the remote lhcbdirac registry
-    # Your credentials for gitlab will be asked
-    dirac-docker-mgmt.py -v v8r5 --release
-
-    # Update the version of the running containers
-    # The services and number of instances running
-    # will be preserved
-    dirac-docker-mgmt.py -v v8r5 --deploy
