@@ -15,16 +15,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from collections import defaultdict
 import sys
 import os
 import datetime
 import gzip
 import ssl
 import tarfile
-from fnmatch import fnmatch
 import tempfile
 import six
+
+from collections import defaultdict
+from fnmatch import fnmatch
 from six.moves.urllib.request import FancyURLopener
 
 import DIRAC
@@ -789,8 +790,10 @@ class TransformationDebug(object):
     requestID = int(task['ExternalID'])
     taskID = task['TaskID']
     taskName = '%08d_%08d' % (self.transID, taskID)
-    if taskCompleted and (task['ExternalStatus'] not in ('Done', 'Failed') or
-                          set(status) & {'Assigned', 'Problematic'}):
+    if taskCompleted and (
+        task["ExternalStatus"] not in ("Done", "Failed")
+        or set(status) & {"Assigned", "Problematic"}
+    ):
       # If the task is completed but files are not set Processed, wand or fix it
       #   note that this may just be to a delay of the RequestTaskAgent, but it wouldn't harm anyway
       prString = "\tTask %s is completed: no %s replicas" % (taskName, dmFileStatusComment)
@@ -1319,9 +1322,11 @@ class TransformationDebug(object):
           prStr += ' in status:'
         gLogger.notice(prStr, prevStatus)
         majorStatus, minorStatus, applicationStatus = prevStatus.split('; ')
-        if majorStatus == 'Failed' and ('exited with status' in applicationStatus.lower() or
-                                        'non-zero exit status' in applicationStatus.lower() or
-                                        'problem executing application' in applicationStatus.lower()):
+        if majorStatus == "Failed" and (
+            "exited with status" in applicationStatus.lower()
+            or "non-zero exit status" in applicationStatus.lower()
+            or "problem executing application" in applicationStatus.lower()
+        ):
           exitedJobs.update(dict.fromkeys(jobs, applicationStatus))
         elif majorStatus == 'Failed' and applicationStatus == 'Failed Input Data Resolution ':
           # Try and find out which file was faulty
@@ -1907,7 +1912,7 @@ class TransformationDebug(object):
             else:
               for taskID in res['Value']['TaskID']:
                 taskDict.setdefault(taskID, []).append(fileDict['LFN'])
-          fileRun = fileDict['RunNumber']
+          fileRun = fileDict.get('RunNumber')
           fileLfn = fileDict['LFN']
           if byFiles:
             gLogger.notice("%s - Run: %s - Status: %s - UsedSE: %s - ErrorCount %s" %

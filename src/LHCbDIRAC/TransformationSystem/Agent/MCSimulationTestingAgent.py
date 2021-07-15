@@ -205,7 +205,7 @@ class MCSimulationTestingAgent (AgentModule):
       body.append("TaskID: " + str(task['TaskID']))
       body.append("TargetSE: " + task['TargetSE'])
       body.append("LastUpdateTime: " + task['LastUpdateTime'].strftime(dateformat))
-      body.append("RunNumber: " + str(task['RunNumber']))
+      body.append("RunNumber: " + str(task.get('RunNumber', 0)))
       body.append("CreationTime: " + task['CreationTime'].strftime(dateformat))
       body.append("ExternalID: " + str(task['ExternalID']))
       body.append("ExternalStatus: " + task['ExternalStatus'])
