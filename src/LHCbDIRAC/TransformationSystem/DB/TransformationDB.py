@@ -196,9 +196,13 @@ class TransformationDB(DIRACTransformationDB):
       return S_ERROR("RunList incompatible with start or end run")
     runsInQuery = set()
     try:
-      if 'RunNumbers' in res['Value']:
-        if res['Value']['RunNumbers'] != 'All':
-          runsInQuery = set(int(run) for run in res['Value']['RunNumbers'])
+      runNumbers = res['Value'].get('RunNumbers', [])
+      if runNumbers != 'All':
+        if not isinstance(runNumbers, list):
+          runNumbers = [runNumbers]
+        runsInQuery = set(int(run) for run in runNumbers)
+      else:
+        return S_ERROR("Cannot add runs to 'All'")
       runsInQuery |= set(int(run) for run in runList)
     except ValueError as e:
       return S_ERROR("RunList invalid: %s" % repr(e))
