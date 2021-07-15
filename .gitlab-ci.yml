@@ -424,7 +424,7 @@ update_instance:
         grep ".cern.ch" allHosts.txt > primaryHosts.txt
         grep -v ".cern.ch" allHosts.txt > secondaryHosts.txt
         dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=secondaryHosts.txt || echo "Allow failure"
-        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=primaryHosts.txt
+        dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2 --hosts=primaryHosts.txt --excludeHosts=datamover01.cern.ch
       else
         dirac-admin-update-instance ${CI_COMMIT_TAG} --retry=2
       fi
