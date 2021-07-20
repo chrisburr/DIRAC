@@ -8,3 +8,4 @@ User Guide
    CommandReference/Bookkeeping/index.rst
    CommandReference/DataManagement/index.rst
    CommandReference/WorkloadManagement/index.rst
+   HowTo/index.rst
