@@ -952,15 +952,13 @@ class LHCbJob(Job):
         except KeyError:
           continue
 
-      if len(runNumbers) > 1:
-        runNumber = 'Multiple'
-      elif len(runNumbers) == 1:
+      if len(runNumbers) == 1:
         runNumber = str(runNumbers[0])
-      else:
-        runNumber = 'Unknown'
+
+    if runNumber:
+      self._addParameter(self.workflow, 'runNumber', 'JDL', runNumber, 'Input run number')
 
     if not persistencyType:
-
       res = bkClient.getFileTypeVersion(lfns)
       if not res['OK']:
         return res
@@ -979,8 +977,8 @@ class LHCbJob(Job):
         else:
           typeVersion = ''
 
-    self._addParameter(self.workflow, 'runNumber', 'JDL', runNumber, 'Input run number')
-    self._addParameter(self.workflow, 'persistency', 'String', typeVersion, 'Persistency type of the inputs')
+    if persistencyType:
+      self._addParameter(self.workflow, 'persistency', 'String', typeVersion, 'Persistency type of the inputs')
 
     return S_OK()
 
