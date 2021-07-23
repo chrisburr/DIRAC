@@ -48,11 +48,7 @@ class XMLFilesReaderManager(object):
 
   def __init__(self):
     """initialize the member of class."""
-    self.jobReader_ = JobReader()
-    self.replicaReader_ = ReplicaReader()
-
     self.bkClient_ = OracleBookkeepingDB()
-    self.dm_ = DataManager()
     self.fileTypeCache = {}
 
     self.log = gLogger.getSubLogger('XMLFilesReaderManager')
@@ -83,12 +79,12 @@ class XMLFilesReaderManager(object):
       xmltype = docType.name
 
       if xmltype == 'Replicas':
-        replica = self.replicaReader_.readReplica(doc, "IN Memory")
+        replica = ReplicaReader().readReplica(doc, "IN Memory")
         result = self.processReplicas(replica)
         del replica
         return result
       elif xmltype == 'Job':
-        job = self.jobReader_.readJob(doc, "IN Memory")
+        job = JobReader().readJob(doc, "IN Memory")
         result = self.processJob(job)
         del job
         return result
@@ -104,7 +100,7 @@ class XMLFilesReaderManager(object):
     self.log.debug("Start Job Processing")
 
     # prepare for the insert, check the existence of the input files and retreive the fileid
-    inputFiles = [inputFile.getFileName() for inputFile in job.getJobInputFiles()]
+    inputFiles = [inputFile.name for inputFile in job.inputFiles]
     if inputFiles:
       result = self.bkClient_.bulkgetIDsFromFilesTable(inputFiles)
       if not result['OK']:
@@ -114,22 +110,22 @@ class XMLFilesReaderManager(object):
                        "%s" % (",".join(result['Value']['Failed'])))
         return S_ERROR("Files not in bkk")
 
-      for inputFile in job.getJobInputFiles():
-        lfn = inputFile.getFileName()
+      for inputFile in job.inputFiles:
+        lfn = inputFile.name
         fileID = int(result['Value']['Successful'][lfn]['FileId'])
         inputFile.setFileID(fileID)
 
-    outputFiles = job.getJobOutputFiles()
+    outputFiles = job.outputFiles
     dqvalue = None
     for outputfile in outputFiles:
 
-      typeName = outputfile.getFileType()
-      typeVersion = outputfile.getFileVersion()
+      typeName = outputfile.type
+      typeVersion = outputfile.version
       cahedTypeNameVersion = typeName + '<<' + typeVersion
       if cahedTypeNameVersion in self.fileTypeCache:
         self.log.debug(cahedTypeNameVersion + ' in the cache!')
         typeID = self.fileTypeCache[cahedTypeNameVersion]
-        outputfile.setTypeID(typeID)
+        outputfile.typeID = typeID
       else:
         result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
         if not result['OK']:
@@ -139,44 +135,44 @@ class XMLFilesReaderManager(object):
 
         self.log.debug(cahedTypeNameVersion + " added to the cache!")
         typeID = int(result['Value'])
-        outputfile.setTypeID(typeID)
+        outputfile.typeID = typeID
         self.fileTypeCache[cahedTypeNameVersion] = typeID
 
       if job.getParam('JobType') and \
-         job.getParam('JobType').getValue() == 'DQHISTOMERGING':  # all the merged histogram files have to be visible
+         job.getParam('JobType').value == 'DQHISTOMERGING':  # all the merged histogram files have to be visible
         newFileParams = FileParam()
-        newFileParams.setParamName('VisibilityFlag')
-        newFileParams.setParamValue('Y')
+        newFileParams.name = 'VisibilityFlag'
+        newFileParams.value = 'Y'
         outputfile.addFileParam(newFileParams)
         self.log.debug('The Merged histograms visibility flag has to be Y!')
 
-      params = outputfile.getFileParams()
+      params = outputfile.params
       evtExists = False
 
       for param in params:
-        paramName = param.getParamName()
+        paramName = param.name
         self.log.debug('ParamName check of ' + str(paramName))
 
         if paramName == "EventType":
-          value = int(param.getParamValue())
+          value = int(param.value)
           result = self.bkClient_.checkEventType(value)
           if not result['OK']:
             errorMessage = "The event type %s is missing!" % (str(value))
             return S_ERROR(errorMessage)
 
         if paramName == "EventTypeId":
-          if param.getParamValue() != '':
-            value = int(param.getParamValue())
+          if param.value != '':
+            value = int(value)
             result = self.bkClient_.checkEventType(value)
             if not result['OK']:
               errorMessage = "The event type %s is missing!" % (str(value))
               return S_ERROR(errorMessage)
             evtExists = True
 
-      if not evtExists and outputfile.getFileType() not in ['LOG']:
-        inputFiles = job.getJobInputFiles()
+      if not evtExists and outputfile.type not in ['LOG']:
+        inputFiles = job.inputFiles
         if inputFiles:
-          fileName = inputFiles[0].getFileName()
+          fileName = inputFiles[0].name
           res = self.bkClient_.getFileMetadata([fileName])
           if res['OK']:
             fileMetadata = res['Value']['Successful'].get(fileName)
@@ -184,11 +180,11 @@ class XMLFilesReaderManager(object):
               if 'EventTypeId' in fileMetadata:
                 if outputfile.exists('EventTypeId'):
                   param = outputfile.getParam('EventTypeId')
-                  param.setParamValue(str(fileMetadata['EventTypeId']))
+                  param.value = str(fileMetadata['EventTypeId'])
                 else:
                   newFileParams = FileParam()
-                  newFileParams.setParamName('EventTypeId')
-                  newFileParams.setParamValue(str(fileMetadata['EventTypeId']))
+                  newFileParams.name = 'EventTypeId'
+                  newFileParams.value = str(fileMetadata['EventTypeId'])
                   outputfile.addFileParam(newFileParams)
             else:
               errMsg = "Can not get the metadata of %s file" % fileName
@@ -199,19 +195,19 @@ class XMLFilesReaderManager(object):
         elif job.getOutputFileParam('EventTypeId') is not None:
           param = job.getOutputFileParam('EventTypeId')
           newFileParams = FileParam()
-          newFileParams.setParamName('EventTypeId')
-          newFileParams.setParamValue(param.getParamValue())
+          newFileParams.name = 'EventTypeId'
+          newFileParams.value = param.value
           outputfile.addFileParam(newFileParams)
         else:
           return S_ERROR('It can not fill the EventTypeId because there is no input files!')
 
-      infiles = job.getJobInputFiles()
+      infiles = job.inputFiles
       if not job.exists('RunNumber') and infiles:
         tck = -2
         runnumbers = []
         tcks = []
         for i in infiles:
-          fileName = i.getFileName()
+          fileName = i.name
           retVal = self.bkClient_.getRunNbAndTck(fileName)
 
           if not retVal['OK']:
@@ -242,29 +238,29 @@ class XMLFilesReaderManager(object):
 
           if not job.exists('Tck'):
             newJobParams = JobParameters()
-            newJobParams.setName('Tck')
-            newJobParams.setValue(tck)
+            newJobParams.name = 'Tck'
+            newJobParams.value = tck
             job.addJobParams(newJobParams)
 
           if runnumber is not None:
             prod = None
             newJobParams = JobParameters()
-            newJobParams.setName('RunNumber')
-            newJobParams.setValue(str(runnumber))
+            newJobParams.name = 'RunNumber'
+            newJobParams.value = str(runnumber)
             job.addJobParams(newJobParams)
 
-            if job.getParam('JobType') and job.getParam('JobType').getValue() == 'DQHISTOMERGING':
+            if job.getParam('JobType') and job.getParam('JobType').value == 'DQHISTOMERGING':
               self.log.debug('DQ merging!')
               retVal = self.bkClient_.getJobInfo(fileName)
               if retVal['OK']:
                 prod = retVal['Value'][0][18]
                 newJobParams = JobParameters()
-                newJobParams.setName('Production')
-                newJobParams.setValue(str(prod))
+                newJobParams.name = 'Production'
+                newJobParams.value = str(prod)
                 job.addJobParams(newJobParams)
                 self.log.debug('Production inherited from input:', '%s' % prod)
             else:
-              prod = job.getParam('Production').getValue()
+              prod = job.getParam('Production').value
               self.log.debug('Production:', '%s' % prod)
 
             retVal = self.bkClient_.getProductionProcessingPassID(prod)
@@ -286,7 +282,7 @@ class XMLFilesReaderManager(object):
               self.log.warn('Bkk can not set the quality flag because the processing \
               pass is missing for % d production (run number: %d )!' % (int(prod), int(runnumber)))
 
-    inputfiles = job.getJobInputFiles()
+    inputfiles = job.inputFiles
 
     sumEventInputStat = 0
     sumEvtStat = 0
@@ -298,7 +294,7 @@ class XMLFilesReaderManager(object):
     # This must be replaced by a single call!!!!
     # ## It is not urgent as we do not have a huge load on the database
     for i in inputfiles:
-      fname = i.getFileName()
+      fname = i.name
       res = self.bkClient_.getJobInfo(fname)
       if not res['OK']:
         return res
@@ -333,62 +329,62 @@ class XMLFilesReaderManager(object):
     if inputfiles:
       if not job.exists('EventInputStat'):
         newJobParams = JobParameters()
-        newJobParams.setName('EventInputStat')
-        newJobParams.setValue(str(evtinput))
+        newJobParams.name = 'EventInputStat'
+        newJobParams.value = str(evtinput)
         job.addJobParams(newJobParams)
       else:
         currentEventInputStat = job.getParam('EventInputStat')
-        currentEventInputStat.setValue(evtinput)
+        currentEventInputStat.value = evtinput
 
     self.log.debug('Luminosity:', '%s' % sumLuminosity)
-    outputFiles = job.getJobOutputFiles()
+    outputFiles = job.outputFiles
     for outputfile in outputFiles:
-      if outputfile.getFileType() not in ['LOG'] and \
+      if outputfile.type not in ['LOG'] and \
          sumLuminosity > 0 and not outputfile.exists('Luminosity'):
         newFileParams = FileParam()
-        newFileParams.setParamName('Luminosity')
-        newFileParams.setParamValue(sumLuminosity)
+        newFileParams.name = 'Luminosity'
+        newFileParams.value = sumLuminosity
         outputfile.addFileParam(newFileParams)
-        self.log.debug('Luminosity added to ', '%s' % outputfile.getFileName())
+        self.log.debug('Luminosity added to ', '%s' % outputfile.name)
       ################
 
-    config = job.getJobConfiguration()
-    params = job.getJobParams()
+    config = job.configuration
+    params = job.parameters
 
     for param in params:
-      if param.getName() == "RunNumber":
-        value = int(param.getValue())
-        if value <= 0 and len(job.getJobInputFiles()) == 0:
+      if param.name == "RunNumber":
+        value = int(param.value)
+        if value <= 0 and len(job.inputFiles) == 0:
           # The files which inherits the runs can be entered to the database
           return S_ERROR('The run number not greater 0!')
 
     result = self.__insertJob(job)
 
     if not result['OK']:
-      errorMessage = "Unable to create Job: %s , %s, %s .\n Error: %s" % (str(config.getConfigName()),
-                                                                          str(config.getConfigVersion()),
-                                                                          str(config.getDate()),
+      errorMessage = "Unable to create Job: %s , %s, %s .\n Error: %s" % (str(config.configName),
+                                                                          str(config.configVersion),
+                                                                          str(config.date),
                                                                           str(result['Message']))
       return S_ERROR(errorMessage)
     else:
       jobID = int(result['Value'])
-      job.setJobId(jobID)
+      job.jobID = jobID
 
     if job.exists('RunNumber'):
       try:
-        runnumber = int(job.getParam('RunNumber').getValue())
+        runnumber = int(job.getParam('RunNumber').value)
       except ValueError:
         runnumber = -1
       if runnumber != -1:
         self.log.verbose("Registering the run status for ", "Run number %s,  JobId %s" %
-                         (runnumber, job.getJobId()))
-        result = self.bkClient_.insertRunStatus(runnumber, job.getJobId(), "N")
+                         (runnumber, job.jobID))
+        result = self.bkClient_.insertRunStatus(runnumber, job.jobID, "N")
         if not result['OK']:
           errorMessage = ("Unable to register run status", runnumber + result['Message'])
           self.log.error(errorMessage[0], errorMessage[1])
-          res = self.bkClient_.deleteJob(job.getJobId())
+          res = self.bkClient_.deleteJob(job.jobID)
           if not res['OK']:
-            self.log.warn("Unable to delete job", str(job.getJobId()) + res['Message'])
+            self.log.warn("Unable to delete job", str(job.jobID) + res['Message'])
           return S_ERROR(errorMessage[0])
 
         # we may using HLT2 output to flag the runs as a consequence we may flagged the
@@ -407,23 +403,23 @@ class XMLFilesReaderManager(object):
           self.log.error(retVal['Message'])
       else:
         # we reconstruct multiple runs
-        self.log.warn("Run number can not determined for production:", job.getParam('Production').getValue())
+        self.log.warn("Run number can not determined for production:", job.getParam('Production').value)
 
-    inputFiles = job.getJobInputFiles()
+    inputFiles = job.inputFiles
     for inputfile in inputFiles:
-      result = self.bkClient_.insertInputFile(job.getJobId(), inputfile.getFileID())
+      result = self.bkClient_.insertInputFile(job.jobID, inputfile.fileID)
       if not result['OK']:
         errorMessage = ("Unable to insert input file",
-                        (str(inputfile.getFileName())) + result['Message'])
+                        (str(inputfile.name)) + result['Message'])
         self.log.error(errorMessage[0], errorMessage[1])
-        res = self.bkClient_.deleteJob(job.getJobId())
+        res = self.bkClient_.deleteJob(job.jobID)
         if not res['OK']:
-          self.log.warn("Unable to delete job", str(job.getJobId()) + res['Message'])
+          self.log.warn("Unable to delete job", str(job.jobID) + res['Message'])
         return S_ERROR(errorMessage[0])
 
-    outputFiles = job.getJobOutputFiles()
-    prod = job.getParam('Production').getValue()
-    stepid = job.getParam('StepID').getValue()
+    outputFiles = job.outputFiles
+    prod = job.getParam('Production').value
+    stepid = job.getParam('StepID').value
     retVal = self.bkClient_.getProductionOutputFileTypes(prod, stepid)
     if not retVal['OK']:
       return retVal
@@ -431,45 +427,45 @@ class XMLFilesReaderManager(object):
     for outputfile in outputFiles:
       if dqvalue is not None:
         newFileParams = FileParam()
-        newFileParams.setParamName('QualityId')
-        newFileParams.setParamValue(dqvalue)
+        newFileParams.name = 'QualityId'
+        newFileParams.value = dqvalue
         outputfile.addFileParam(newFileParams)
       if not job.exists('RunNumber'):  # if it is MC
         newFileParams = FileParam()
-        newFileParams.setParamName('QualityId')
-        newFileParams.setParamValue('OK')
+        newFileParams.name = 'QualityId'
+        newFileParams.value = 'OK'
         outputfile.addFileParam(newFileParams)
-      ftype = outputfile.getFileType()
+      ftype = outputfile.type
       if ftype in outputFileTypes:
         vFileParams = FileParam()
-        vFileParams.setParamName('VisibilityFlag')
-        vFileParams.setParamValue(outputFileTypes[ftype])
+        vFileParams.name = 'VisibilityFlag'
+        vFileParams.value = outputFileTypes[ftype]
         outputfile.addFileParam(vFileParams)
         self.log.debug('The visibility flag is:' + outputFileTypes[ftype])
 
       result = self.__insertOutputFiles(job, outputfile)
       if not result['OK']:
         errorMessage = ("Unable to insert output file",
-                        "%s ! ERROR: %s" % (str(outputfile.getFileName()),
+                        "%s ! ERROR: %s" % (str(outputfile.name),
                                             result["Message"]))
         self.log.error(errorMessage[0], errorMessage[1])
-        res = self.bkClient_.deleteInputFiles(job.getJobId())
+        res = self.bkClient_.deleteInputFiles(job.jobID)
         if not res['OK']:
-          self.log.warn("Unable to delete inputfiles of", str(job.getJobId()) + res['Message'])
-        res = self.bkClient_.deleteJob(job.getJobId())
+          self.log.warn("Unable to delete inputfiles of", str(job.jobID) + res['Message'])
+        res = self.bkClient_.deleteJob(job.jobID)
         if not res['OK']:
-          self.log.warn("Unable to delete job", str(job.getJobId()) + res['Message'])
+          self.log.warn("Unable to delete job", str(job.jobID) + res['Message'])
         return S_ERROR(errorMessage[0])
       else:
         fileid = int(result['Value'])
-        outputfile.setFileID(fileid)
+        outputfile.fileID = fileid
 
-      replicas = outputfile.getReplicas()
+      replicas = outputfile.replicas
       for replica in replicas:
-        params = replica.getaprams()
+        params = replica.params
         for param in params:  # just one param exist in params list, because JobReader only one param add to Replica
-          name = param.getName()
-        result = self.bkClient_.updateReplicaRow(outputfile.getFileID(), 'No')  # , name, location)
+          name = param.name
+        result = self.bkClient_.updateReplicaRow(outputfile.fileID, 'No')  # , name, location)
         if not result['OK']:
           errorMessage = "Unable to create Replica %s !" % (str(name))
           return S_ERROR(errorMessage)
@@ -480,20 +476,20 @@ class XMLFilesReaderManager(object):
 
   def __insertJob(self, job):
     """Inserts the job to the database."""
-    config = job.getJobConfiguration()
+    config = job.configuration
 
     production = None
 
-    condParams = job.getDataTakingCond()
+    condParams = job.dataTakingCondition
     if condParams is not None:
-      datataking = condParams.getParams()
-      config = job.getJobConfiguration()
+      datataking = condParams.params
+      config = job.configuration
 
-      ver = config.getConfigVersion()  # online bug fix
+      ver = config.configVersion  # online bug fix
       ver = ver.capitalize()
-      config.setConfigVersion(ver)
+      config.configVersion = ver
       self.log.debug("Data taking:", "%s" % datataking)
-      context = Context(datataking, config.getConfigName())
+      context = Context(datataking, config.configName)
       conditions = [BeamEnergyCondition(), VeloCondition(),
                     MagneticFieldCondition(), EcalCondition(),
                     HcalCondition(), HltCondition(),
@@ -535,17 +531,17 @@ class XMLFilesReaderManager(object):
       conddb = None
       dddb = None
       found = False
-      for param in job.getJobParams():
-        if param.getName() == 'ProgramName':
-          programName = param.getValue()
-        elif param.getName() == 'ProgramVersion':
-          programVersion = param.getValue()
-        elif param.getName() == 'CondDB':
-          conddb = param.getValue()
-        elif param.getName() == 'DDDB':
-          dddb = param.getValue()
-        elif param.getName() == 'RunNumber':
-          production = int(param.getValue()) * -1
+      for param in job.parameters:
+        if param.name == 'ProgramName':
+          programName = param.value
+        elif param.name == 'ProgramVersion':
+          programVersion = param.value
+        elif param.name == 'CondDB':
+          conddb = param.value
+        elif param.name == 'DDDB':
+          dddb = param.value
+        elif param.name == 'RunNumber':
+          production = int(param.value) * -1
           found = True
 
       if job.exists('CondDB'):
@@ -566,11 +562,11 @@ class XMLFilesReaderManager(object):
 
       # now we have to get the list of eventtypes
       eventtypes = []
-      for outputFiles in job.getJobOutputFiles():
-        for outPutfileParam in outputFiles.getFileParams():
-          outputFileParamName = outPutfileParam.getParamName()
+      for outputFiles in job.outputFiles:
+        for outPutfileParam in outputFiles.params:
+          outputFileParamName = outPutfileParam.name
           if outputFileParamName == "EventTypeId":
-            eventtypes.append(int(outPutfileParam.getParamValue()))
+            eventtypes.append(int(outPutfileParam.value))
 
       steps = {'Steps':
                [{'StepId': stepid,
@@ -584,8 +580,8 @@ class XMLFilesReaderManager(object):
       self.log.debug('production', production)
 
       newJobParams = JobParameters()
-      newJobParams.setName('StepID')
-      newJobParams.setValue(str(stepid))
+      newJobParams.name = 'StepID'
+      newJobParams.value = str(stepid)
       job.addJobParams(newJobParams)
 
       message = "StepID for run: %s" % (str(production))
@@ -596,8 +592,8 @@ class XMLFilesReaderManager(object):
                                          daq=dataTackingPeriodDesc,
                                          steps=steps['Steps'],
                                          inputproc='',
-                                         configName=config.getConfigName(),
-                                         configVersion=config.getConfigVersion(),
+                                         configName=config.configName,
+                                         configVersion=config.configVersion,
                                          eventType=eventtypes)
       if res['OK']:
         self.log.verbose("New processing pass has been created!")
@@ -611,12 +607,12 @@ class XMLFilesReaderManager(object):
           return retVal
         return S_ERROR('Failing adding production')
 
-    attrList = {'ConfigName': config.getConfigName(),
-                'ConfigVersion': config.getConfigVersion(),
+    attrList = {'ConfigName': config.configName,
+                'ConfigVersion': config.configVersion,
                 'JobStart': None}
 
-    for param in job.getJobParams():
-      attrList[str(param.getName())] = param.getValue()
+    for param in job.parameters:
+      attrList[str(param.name)] = param.value
 
     res = self.bkClient_.checkProcessingPassAndSimCond(attrList['Production'])
     if not res['OK']:
@@ -629,10 +625,10 @@ class XMLFilesReaderManager(object):
         self.log.warn(errorMessage)
 
     if attrList['JobStart'] is None:
-      # date = config.getDate().split('-')
-      # time = config.getTime().split(':')
+      # date = config.date.split('-')
+      # time = config.time.split(':')
       # dateAndTime = datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), 0, 0)
-      attrList['JobStart'] = config.getDate() + ' ' + config.getTime()
+      attrList['JobStart'] = config.date + ' ' + config.time
 
     if production is not None:  # for the online registration
       attrList['Production'] = production
@@ -649,30 +645,30 @@ class XMLFilesReaderManager(object):
   #############################################################################
   def __insertOutputFiles(self, job, outputfile):
     """insert the files produced by a job."""
-    attrList = {'FileName': outputfile.getFileName(),
-                'FileTypeId': outputfile.getTypeID(),
-                'JobId': job.getJobId()}
+    attrList = {'FileName': outputfile.name,
+                'FileTypeId': outputfile.typeID,
+                'JobId': job.jobID}
 
-    fileParams = outputfile.getFileParams()
+    fileParams = outputfile.params
     for param in fileParams:
-      attrList[str(param.getParamName())] = param.getParamValue()
+      attrList[str(param.name)] = param.value
     return self.bkClient_.insertOutputFile(attrList)
 
   #############################################################################
   def processReplicas(self, replica):
     """process the replica registration request."""
-    outputfile = replica.getFileName()
+    outputfile = replica.name
     self.log.debug("Processing replicas:", "%s" % outputfile)
     fileID = -1
 
-    params = replica.getaprams()
+    params = replica.params
     delete = True
 
     replicaFileName = ""
     for param in params:
-      replicaFileName = param.getFile()
-      location = param.getLocation()
-      delete = param.getAction() == "Delete"
+      replicaFileName = param.file
+      location = param.location
+      delete = param.action == "Delete"
 
       result = self.bkClient_.checkfile(replicaFileName)
       if not result['OK']:
@@ -688,7 +684,7 @@ class XMLFilesReaderManager(object):
         self.log.debug("FileId:", fileID)
 
       if delete:
-        result = self.dm_.getReplicas(replicaFileName)
+        result = DataManager().getReplicas(replicaFileName)
         replicaList = result['Value']['Successful']
         if len(replicaList) == 0:
           result = self.bkClient_.updateReplicaRow(fileID, "No")

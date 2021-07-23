@@ -16,47 +16,21 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 
-class QualityParameters:
-  """QualityParameters class."""
-  #############################################################################
+class QualityParameters(object):
 
   def __init__(self):
     """initialize the class members."""
-    self.name_ = ""
-    self.value_ = ""
+    self.name = ""
+    self.value = ""
 
-  #############################################################################
-  def setName(self, name):
-    """sets the parameter name."""
-    self.name_ = name
-
-  #############################################################################
-  def getName(self):
-    """retunrs the name."""
-    return self.name_
-
-  #############################################################################
-  def setValue(self, value):
-    """sets the value."""
-    self.value_ = value
-
-  #############################################################################
-  def getValue(self):
-    """returns the value."""
-    return self.value_
-
-  #############################################################################
   def __repr__(self):
     """formats the output of the print command."""
-    result = self.name_ + " " + self.value_ + "\n"
+    result = self.name + " " + self.value + "\n"
     return result
 
-  #############################################################################
   def writeToXML(self):
     """creates an xml string."""
-    result = '  <Parameter Name="' + str(self.getName()) + \
-        '" Value="' + str(self.getValue()) + '"/>\n'
+    result = '  <Parameter Name="' + str(self.name) + \
+        '" Value="' + str(self.value) + '"/>\n'
 
     return result
-
-  #############################################################################

@@ -18,41 +18,26 @@ from DIRAC import gLogger
 __RCSID__ = "$Id$"
 
 
-class Replica:
+class Replica(object):
   """Replica class."""
 
   #############################################################################
   def __init__(self):
     """initialize the class members."""
-    self.params_ = []
-    self.fileName_ = ""
+    self.params = []
+    self.name = ""
 
   #############################################################################
   def addParam(self, param):
     """sets the parameters."""
-    self.params_ += [param]
-
-  #############################################################################
-  def getaprams(self):
-    """returns the list of parameters."""
-    return self.params_
-
-  #############################################################################
-  def getFileName(self):
-    """returns the file name."""
-    return self.fileName_
-
-  #############################################################################
-  def setFileName(self, name):
-    """sets the file name."""
-    self.fileName_ = name
+    self.params += [param]
 
   #############################################################################
   def __repr__(self):
     """It idents the print output."""
     result = "\nReplica: "
-    result += self.fileName_ + "\n"
-    for param in self.params_:
+    result += self.name + "\n"
+    for param in self.params:
       result += str(param)
 
     return result
@@ -65,7 +50,7 @@ class Replica:
 <!DOCTYPE Replicas SYSTEM "book.dtd">
 <Replicas>
 """
-    for param in self.getaprams():
+    for param in self.params:
       result += param.writeToXML(False)
 
     result += '</Replicas>'
