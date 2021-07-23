@@ -581,9 +581,9 @@ BEGIN
   RETURN RESULT;
   EXCEPTION
   WHEN no_data_found THEN
-  raise_application_error(-20014, 'The data quality does not exist in the newrunquality table!');
+    return NULL
   WHEN others THEN
-  ecode := sqlerrm;
+    ecode := sqlerrm;
 END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
