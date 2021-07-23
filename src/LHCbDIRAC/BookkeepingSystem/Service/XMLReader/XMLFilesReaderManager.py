@@ -111,9 +111,7 @@ class XMLFilesReaderManager(object):
         return S_ERROR("Files not in bkk")
 
       for inputFile in job.inputFiles:
-        lfn = inputFile.name
-        fileID = int(result['Value']['Successful'][lfn]['FileId'])
-        inputFile.setFileID(fileID)
+        inputFile.fileID = int(result['Value']['Successful'][inputFile.name]['FileId'])
 
     outputFiles = job.outputFiles
     dqvalue = None
@@ -150,54 +148,53 @@ class XMLFilesReaderManager(object):
       evtExists = False
 
       for param in params:
-        paramName = param.name
-        self.log.debug('ParamName check of ' + str(paramName))
+        self.log.debug('ParamName check of ' + str(param.name))
 
-        if paramName == "EventType":
-          value = int(param.value)
-          result = self.bkClient_.checkEventType(value)
+        if param.name == "EventType":
+          result = self.bkClient_.checkEventType(int(param.value))
           if not result['OK']:
-            errorMessage = "The event type %s is missing!" % (str(value))
+            errorMessage = "The event type %s is missing!" % (str(param.value))
             return S_ERROR(errorMessage)
 
-        if paramName == "EventTypeId":
-          if param.value != '':
-            value = int(value)
-            result = self.bkClient_.checkEventType(value)
+        if param.name == "EventTypeId":
+          if param.value:
+            result = self.bkClient_.checkEventType(int(param.value))
             if not result['OK']:
-              errorMessage = "The event type %s is missing!" % (str(value))
+              errorMessage = "The event type %s is missing!" % (str(param.value))
               return S_ERROR(errorMessage)
             evtExists = True
 
       if not evtExists and outputfile.type not in ['LOG']:
         inputFiles = job.inputFiles
+
         if inputFiles:
           fileName = inputFiles[0].name
           res = self.bkClient_.getFileMetadata([fileName])
-          if res['OK']:
-            fileMetadata = res['Value']['Successful'].get(fileName)
-            if fileMetadata:
-              if 'EventTypeId' in fileMetadata:
-                if outputfile.exists('EventTypeId'):
-                  param = outputfile.getParam('EventTypeId')
-                  param.value = str(fileMetadata['EventTypeId'])
-                else:
-                  newFileParams = FileParam()
-                  newFileParams.name = 'EventTypeId'
-                  newFileParams.value = str(fileMetadata['EventTypeId'])
-                  outputfile.addFileParam(newFileParams)
-            else:
-              errMsg = "Can not get the metadata of %s file" % fileName
-              self.log.error(errMsg)
-              return S_ERROR(errMsg)
-          else:
+          if not res['OK']:
             return res
+          fileMetadata = res['Value']['Successful'].get(fileName)
+          if fileMetadata:
+            if 'EventTypeId' in fileMetadata:
+              if outputfile.exists('EventTypeId'):
+                param = outputfile.getParam('EventTypeId')
+                param.value = str(fileMetadata['EventTypeId'])
+              else:
+                newFileParams = FileParam()
+                newFileParams.name = 'EventTypeId'
+                newFileParams.value = str(fileMetadata['EventTypeId'])
+                outputfile.addFileParam(newFileParams)
+          else:
+            errMsg = "Can not get the metadata of %s file" % fileName
+            self.log.error(errMsg)
+            return S_ERROR(errMsg)
+
         elif job.getOutputFileParam('EventTypeId') is not None:
           param = job.getOutputFileParam('EventTypeId')
           newFileParams = FileParam()
           newFileParams.name = 'EventTypeId'
           newFileParams.value = param.value
           outputfile.addFileParam(newFileParams)
+
         else:
           return S_ERROR('It can not fill the EventTypeId because there is no input files!')
 
@@ -242,7 +239,7 @@ class XMLFilesReaderManager(object):
             newJobParams.value = tck
             job.addJobParams(newJobParams)
 
-          if runnumber is not None:
+          if runnumber:
             prod = None
             newJobParams = JobParameters()
             newJobParams.name = 'RunNumber'
