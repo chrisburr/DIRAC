@@ -35,26 +35,20 @@ class Job(object):
     """sets the job parameters."""
     self.parameters += [jobParams]
 
-  def removeJobParam(self, paramName):
-    """remove a job parameter."""
-    self.parameters.remove(paramName)
-
   def exists(self, jobParam):
     """checks a given job parameter."""
     return any(i.name == jobParam for i in self.parameters)
 
   def getParam(self, jobParam):
     """returns a job parameter."""
-    param = None
     for i in self.parameters:
-      if i.getName() == jobParam:
-        param = i
-    return param
+      if i.name == jobParam:
+        return i
 
   def removeParam(self, jobParam):
     """removes a job parameter."""
     for i in self.parameters:
-      if i.getName() == jobParam:
+      if i.name == jobParam:
         self.parameters.remove(i)
 
   def addJobInputFiles(self, files):
@@ -71,7 +65,6 @@ class Job(object):
       param = i.getParam(paramName)
       if param is not None:
         return param
-    return None
 
   def __repr__(self):
     """formats the output of the print command."""

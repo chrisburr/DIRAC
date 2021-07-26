@@ -363,9 +363,9 @@ class XMLFilesReaderManager(object):
                                                                           str(config.date),
                                                                           str(result['Message']))
       return S_ERROR(errorMessage)
-    else:
-      jobID = int(result['Value'])
-      job.jobID = jobID
+
+    jobID = int(result['Value'])
+    job.jobID = jobID
 
     if job.exists('RunNumber'):
       try:

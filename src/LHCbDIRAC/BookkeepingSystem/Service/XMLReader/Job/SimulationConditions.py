@@ -18,7 +18,7 @@ from DIRAC import gLogger
 __RCSID__ = "$Id$"
 
 
-class SimulationConditions:
+class SimulationConditions(object):
   """SimulationConditions class."""
 
   def __init__(self):

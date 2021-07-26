@@ -33,7 +33,7 @@ class ReplicaParam(object):
     """formats the output of print."""
     result = "\n Replica:\n"
     result += self.file + " " + self.name + " " + self.location + " "
-    result += self.se + " " + self.action_
+    result += self.se + " " + self.action
 
     return result
 
@@ -42,7 +42,7 @@ class ReplicaParam(object):
     # job replica param
     gLogger.info("replica param", str(flag))
     if flag:
-      result = '     <Replica Name="' + self.name + '" Location="' + self.location() + '"/>\n'
+      result = '     <Replica Name="' + self.name + '" Location="' + self.location + '"/>\n'
 
     else:
       result = '<Replica File="' + self.file + '"\n'

@@ -35,35 +35,36 @@ class ReplicaReader(object):
       param = ReplicaParam()
 
       outputfile = node.getAttributeNode('File')
-      if outputfile is not None:
+      if outputfile:
         param.file = outputfile.value
       else:
-        gLogger.warn("Missing the <file> tag in replica xml file!")
+        gLogger.warn("Missing the <file> tag in replica xml file")
 
       name = node.getAttributeNode('Name')
-      if name is not None:
+      if name:
         param.name = name.value
       else:
-        gLogger.warn("Missing the <name> tag in replica xml file!")
+        gLogger.warn("Missing the <name> tag in replica xml file")
 
       location = node.getAttributeNode('Location')
-      if location is not None:
+      if location:
         param.location = location.value
       else:
-        gLogger.warn("Missing the <location> tag in replica xml file!")
+        gLogger.warn("Missing the <location> tag in replica xml file")
 
       se = node.getAttributeNode('SE')
-      if se is not None:
+      if se:
         param.se = se.value
       else:
-        gLogger.warn("Missing the <SE> tag in replica xml file!")
+        gLogger.warn("Missing the <SE> tag in replica xml file")
 
       action = node.getAttributeNode('Action')
-      if action is not None:
+      if action:
         param.action = action.value
       else:
-        gLogger.warn("Missing the <Action> tag in replica xml file!")
+        gLogger.warn("Missing the <Action> tag in replica xml file")
 
       replica.addParam(param)
-      gLogger.info("Replica Reading fhinished succesefull!!")
-      return replica
+      gLogger.info("Replica Reading finished successfully")
+
+    return replica

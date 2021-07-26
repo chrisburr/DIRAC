@@ -26,6 +26,7 @@ class File(object):
     self.version = ""
     self.params = []
     self.replicas = []
+    self.qualities = []
     self.fileID = -1
 
   def addFileParam(self, param):
@@ -34,19 +35,16 @@ class File(object):
 
   def exists(self, fileParam):
     """checks a given parameter."""
-    ok = False
     for i in self.params:
-      if i.getParamName() == fileParam:
-        ok = True
-    return ok
+      if i.name == fileParam:
+        return True
+    return False
 
   def getParam(self, fileParam):
     """returns the file parameters."""
-    param = None
     for i in self.params:
-      if i.getParamName() == fileParam:
-        param = i
-    return param
+      if i.name == fileParam:
+        return i
 
   def removeFileParam(self, param):
     """removes a file parameter."""
@@ -55,10 +53,6 @@ class File(object):
   def addReplicas(self, replica):
     """adds a replicas."""
     self.replicas += [replica]
-
-  def addQuality(self, quality):
-    """adds the data quality."""
-    self.qualities += [quality]
 
   def __repr__(self):
     """formats the output of print."""

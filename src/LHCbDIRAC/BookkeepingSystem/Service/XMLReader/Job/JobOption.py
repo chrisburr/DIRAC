@@ -25,5 +25,4 @@ class JobOption(object):
 
   def __repr__(self):
     """formats the output of the print."""
-    result = '\nJobOption: \n' + self.name + ' ' + self.value + ' ' + self.recipient
-    return result
+    return '\nJobOption: \n' + self.name + ' ' + self.value + ' ' + self.recipient

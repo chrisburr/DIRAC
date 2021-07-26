@@ -25,12 +25,8 @@ class QualityParameters(object):
 
   def __repr__(self):
     """formats the output of the print command."""
-    result = self.name + " " + self.value + "\n"
-    return result
+    return self.name + " " + self.value + "\n"
 
   def writeToXML(self):
     """creates an xml string."""
-    result = '  <Parameter Name="' + str(self.name) + \
-        '" Value="' + str(self.value) + '"/>\n'
-
-    return result
+    return '  <Parameter Name="' + str(self.name) + '" Value="' + str(self.value) + '"/>\n'

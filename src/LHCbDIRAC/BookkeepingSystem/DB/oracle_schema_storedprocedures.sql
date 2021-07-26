@@ -581,7 +581,7 @@ BEGIN
   RETURN RESULT;
   EXCEPTION
   WHEN no_data_found THEN
-    return NULL
+    return NULL;
   WHEN others THEN
     ecode := sqlerrm;
 END;

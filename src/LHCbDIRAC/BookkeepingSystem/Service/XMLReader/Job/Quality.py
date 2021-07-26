@@ -23,25 +23,16 @@ class Quality(object):
     """initialize the class members."""
     self.group = ""
     self.flag = ""
-    self.qualityID_ = -1
     self.params = []
 
   def addParam(self, param):
     """adds a param."""
     self.params += [param]
 
-  def setQualityID(self, qualityid):
-    """sets the quality identifier."""
-    self.qualityID_ = qualityid
-
-  def getQualityID(self):
-    """returns the quality identifier."""
-    return self.qualityID_
-
   def __repr__(self):
     """formats the output of the print."""
     result = "Quality: "
-    result += self.group_ + " " + self.flag_ + "\n"
+    result += self.group + " " + self.flag + "\n"
 
     for param in self.params:
       result += str(param)
@@ -51,5 +42,4 @@ class Quality(object):
 
   def writeToXML(self):
     """creates an XML string."""
-    result = '<Quality Group="' + self.group + '" Flag="' + self.flag + '"/>\n'
-    return result
+    return '<Quality Group="' + self.group + '" Flag="' + self.flag + '"/>\n'

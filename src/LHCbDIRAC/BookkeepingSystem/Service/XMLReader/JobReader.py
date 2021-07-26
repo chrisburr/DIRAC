@@ -111,7 +111,7 @@ class JobReader(object):
       else:
         gLogger.warn("<Value> JobOption XML tag is missing!!")
 
-      job.options += options
+      job.options += [options]
 
   #############################################################################
   @staticmethod
@@ -218,7 +218,7 @@ class JobReader(object):
       if location is not None:
         param.location = location.value
         rep.addParam(param)
-      outputFile.addReplicas(rep)
+      outputFile.replicas += [rep]
 
   ########################################################################
   @staticmethod
@@ -256,7 +256,7 @@ class JobReader(object):
 
         fileQuality.addParam(qualityParameters)
 
-      outputFile.addQuality(fileQuality)
+      outputFile.qualities += [fileQuality]
 
   ########################################################################
   @staticmethod
