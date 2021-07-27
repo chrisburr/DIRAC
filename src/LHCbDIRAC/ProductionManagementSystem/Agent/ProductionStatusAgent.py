@@ -557,7 +557,8 @@ class ProductionStatusAgent(AgentModule):
     if inputTransformIDs:
       retVal = self.tClient.getTransformations(
           condDict={'TransformationID': list(inputTransformIDs)},
-          limit=1000,
+          limit=10000,
+          columns=["TransformationID", "Status"],
       )
       if not retVal["OK"]:
         self.log.error("Failed to call getTransformations", retVal["Message"])
