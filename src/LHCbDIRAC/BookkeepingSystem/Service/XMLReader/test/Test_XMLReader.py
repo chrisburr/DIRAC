@@ -13,7 +13,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import pytest
 import datetime
 from xml.dom.minidom import parseString
 
@@ -65,6 +64,7 @@ xmlString = """<?xml version="1.0" encoding="ISO-8859-1"?>
   </SimulationCondition>
 </Job>
 """
+
 
 def test_JobReader():
 

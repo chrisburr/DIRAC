@@ -468,7 +468,7 @@ def test_registerProduction():
                   'Visible': 'Y',
                   'FileType': 'SIM'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] > 0
   gauss_sid = retVal['Value']
   productionSteps['Steps'].append({'StepId': gauss_sid,
@@ -503,7 +503,7 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'SIM'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] > 0
   productionSteps['Steps'].append({'StepId': retVal['Value'], 'Visible': 'N',
                                    'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
@@ -528,7 +528,7 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] > 0
   moore_sid = retVal['Value']
   productionSteps['Steps'].append({'StepId': moore_sid,
@@ -568,7 +568,7 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['OK'] > 0
   productionSteps['Steps'].append({'StepId': retVal['Value'],
                                    'Visible': 'N',
@@ -591,7 +591,7 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['OK'] > 0
   noether_sid = retVal['Value']
   productionSteps['Steps'].append({'StepId': noether_sid,
@@ -625,7 +625,7 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['OK'] > 0
   productionSteps['Steps'].append({'StepId': retVal['Value'], 'Visible': 'N',
                                    'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
@@ -649,7 +649,7 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['OK'] > 0
   productionSteps['Steps'].append({'StepId': retVal['Value'], 'Visible': 'N',
                                    'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
@@ -671,13 +671,13 @@ def test_registerProduction():
        'InputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}],
        'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['OK'] > 0
   productionSteps['Steps'].append({'StepId': retVal['Value'], 'Visible': 'N',
                                    'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]})
   productionSteps['EventType'] = 11104131
   retVal = bk.addProduction(productionSteps)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   res = bk.getProductionInformation(12345)
   assert res['OK']
@@ -706,11 +706,11 @@ def test_sendMCXMLBookkeepingReport():
   step1 = step1.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
   step1 = step1.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps({'StepName': 'Cert-Sim09b - 2012 - MU - Pythia8'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step1 = step1.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step1)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step2 = xmlStep2.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -719,11 +719,11 @@ def test_sendMCXMLBookkeepingReport():
   step2 = step2.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
   step2 = step2.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps({'StepName': 'Cert-Digi14a for 2012 (to use w Sim09)'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step2 = step2.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step2)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step3 = xmlStep3.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -732,11 +732,11 @@ def test_sendMCXMLBookkeepingReport():
   step3 = step3.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
   step3 = step3.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps({'StepName': 'Cert-L0 emulation - TCK 003d'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step3 = step3.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step3)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step4 = xmlStep4.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -746,11 +746,11 @@ def test_sendMCXMLBookkeepingReport():
   step4 = step4.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps(
       {'StepName': 'Cert-TCK-0x4097003d Flagged MC - 2012 - to be used in multipleTCKs'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step4 = step4.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step4)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step5 = xmlStep5.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -759,11 +759,11 @@ def test_sendMCXMLBookkeepingReport():
   step5 = step5.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
   step5 = step5.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps({'StepName': 'Cert-Move TCK-0x4097003d from default location'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step5 = step5.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step5)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step6 = xmlStep6.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -772,11 +772,11 @@ def test_sendMCXMLBookkeepingReport():
   step6 = step6.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
   step6 = step6.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps({'StepName': 'Cert-L0 emulation - TCK 0042'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step6 = step6.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step6)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step7 = xmlStep7.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -786,11 +786,11 @@ def test_sendMCXMLBookkeepingReport():
   step7 = step7.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps(
       {'StepName': 'Cert-TCK-0x40990042 Flagged MC - 2012 - to be used in multipleTCKs'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step7 = step7.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step7)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
   currentTime = datetime.datetime.now()
   step8 = xmlStep8.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -799,11 +799,11 @@ def test_sendMCXMLBookkeepingReport():
   step8 = step8.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
   step8 = step8.replace("%jProduction%", '12345')
   retVal = bk.getAvailableSteps({'StepName': 'Cert-Move TCK-0x40990042 from default location'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']['Records']) > 0
   step8 = step8.replace("%jStepid%", str(retVal['Value']['Records'][0][0]))
   retVal = bk.sendXMLBookkeepingReport(step8)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
 
 def test_getSimConditions():
@@ -811,7 +811,7 @@ def test_getSimConditions():
   check the existence of the sim cond
   """
   retVal = bk.getSimConditions()
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) >= 1
   assert simCondDict['SimDescription'] in (i[1] for i in retVal['Value'])
 
@@ -826,7 +826,7 @@ def test_getJobInformation():
   retVal = bk.getJobInformation(
       {'LFN': ['/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_8.digi',
                '/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_7.digi']})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) == 2
   params = [
       'WNMJFHS06',
@@ -924,19 +924,19 @@ def test_getJobInformation():
       assert False
 
   retVal = bk.getJobInformation({'Production': 12345})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) == 8
 
   retVal = bk.getJobInformation({'DiracJobId': 147844677})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) == 8
 
   retVal = bk.getJobInformation({'DiracJobId': [147844677]})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) == 8
 
   retVal = bk.getJobInformation({'DiracJobId': [147844677, 147844677]})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) == 8
 
 
@@ -969,13 +969,13 @@ def test_addFiles():
   lfns = ['/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim',
           '/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_2.digi']
   retVal = bk.addFiles(lfns)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Successful']
   assert retVal['Value']['Failed'] == []
   assert retVal['Value']['Successful'] == lfns
 
   bk.updateProductionOutputfiles()
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
 
 # FIXME: the below one fails, to understand why!
@@ -984,7 +984,7 @@ def test_addFiles():
 #   bkQuery = {'ConfigName': 'test',
 #              'ConfigVersion': 'Jenkins'}
 #   retVal = bk.getFileTypes(bkQuery)
-#   assert retVal['OK'] is True
+#   assert retVal['OK'], retVal['Message']
 #   print retVal
 #   assert retVal['Value']['ParameterNames']
 #   assert retVal['Value']['Records']
@@ -999,7 +999,7 @@ def test_addFiles():
 #              'Production': 12345,
 #              'Visible': 'N'}
 #   retVal = bk.getFileTypes(bkQuery)
-#   assert retVal['OK'] is True
+#   assert retVal['OK'], retVal['Message']
 #   print retVal
 #   assert retVal['Value']['ParameterNames']
 #   assert retVal['Value']['Records']
@@ -1011,7 +1011,7 @@ def test_addFiles():
 
 #   bkQuery['EventType'] = 11104131
 #   retVal = bk.getFileTypes(bkQuery)
-#   assert retVal['OK'] is True
+#   assert retVal['OK'], retVal['Message']
 #   assert retVal['Value']['ParameterNames']
 #   assert retVal['Value']['Records']
 #   assert retVal['Value']['TotalRecords']
@@ -1022,7 +1022,7 @@ def test_addFiles():
 
 #   bkQuery['ConditionDescription'] = 'Beam4000GeV-2012-MagUp-Nu2.5-Pythia8'
 #   retVal = bk.getFileTypes(bkQuery)
-#   assert retVal['OK'] is True
+#   assert retVal['OK'], retVal['Message']
 #   assert retVal['Value']['ParameterNames']
 #   assert retVal['Value']['Records']
 #   assert retVal['Value']['TotalRecords']
@@ -1033,7 +1033,7 @@ def test_addFiles():
 
 #   bkQuery['ProcessingPass'] = '/Sim09b'
 #   retVal = bk.getFileTypes(bkQuery)
-#   assert retVal['OK'] is True
+#   assert retVal['OK'], retVal['Message']
 #   assert retVal['Value']['ParameterNames']
 #   assert retVal['Value']['Records']
 #   assert retVal['Value']['TotalRecords']

@@ -92,6 +92,7 @@ class XMLFilesReaderManager(object):
         self.log.error("unknown XML file!!!")
     except ExpatError as ex:
       self.log.error("XML reading error", repr(ex))
+      self.log.exception()
       return S_ERROR(ex)
 
   #############################################################################
@@ -113,16 +114,15 @@ class XMLFilesReaderManager(object):
       for inputFile in job.inputFiles:
         inputFile.fileID = int(result['Value']['Successful'][inputFile.name]['FileId'])
 
-    outputFiles = job.outputFiles
     dqvalue = None
-    for outputfile in outputFiles:
+    for outputfile in job.outputFiles:
 
       typeName = outputfile.type
       typeVersion = outputfile.version
-      cahedTypeNameVersion = typeName + '<<' + typeVersion
-      if cahedTypeNameVersion in self.fileTypeCache:
-        self.log.debug(cahedTypeNameVersion + ' in the cache!')
-        typeID = self.fileTypeCache[cahedTypeNameVersion]
+      cachedTypeNameVersion = typeName + '<<' + typeVersion
+      if cachedTypeNameVersion in self.fileTypeCache:
+        self.log.debug(cachedTypeNameVersion + ' in the cache!')
+        typeID = self.fileTypeCache[cachedTypeNameVersion]
         outputfile.typeID = typeID
       else:
         result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
@@ -131,10 +131,10 @@ class XMLFilesReaderManager(object):
                          "[%s: %s]" % (str(typeName), str(typeVersion)))
           return S_ERROR("[type:version] missing")
 
-        self.log.debug(cahedTypeNameVersion + " added to the cache!")
+        self.log.debug(cachedTypeNameVersion + " added to the cache!")
         typeID = int(result['Value'])
         outputfile.typeID = typeID
-        self.fileTypeCache[cahedTypeNameVersion] = typeID
+        self.fileTypeCache[cachedTypeNameVersion] = typeID
 
       if job.getParam('JobType') and \
          job.getParam('JobType').value == 'DQHISTOMERGING':  # all the merged histogram files have to be visible
@@ -144,25 +144,21 @@ class XMLFilesReaderManager(object):
         outputfile.addFileParam(newFileParams)
         self.log.debug('The Merged histograms visibility flag has to be Y!')
 
-      params = outputfile.params
       evtExists = False
 
-      for param in params:
+      for param in outputfile.params:
         self.log.debug('ParamName check of ' + str(param.name))
 
-        if param.name == "EventType":
+        if param.name == "EventType" and param.value:
           result = self.bkClient_.checkEventType(int(param.value))
           if not result['OK']:
-            errorMessage = "The event type %s is missing!" % (str(param.value))
-            return S_ERROR(errorMessage)
+            return S_ERROR("The event type %s is missing!" % (str(param.value)))
 
-        if param.name == "EventTypeId":
-          if param.value:
-            result = self.bkClient_.checkEventType(int(param.value))
-            if not result['OK']:
-              errorMessage = "The event type %s is missing!" % (str(param.value))
-              return S_ERROR(errorMessage)
-            evtExists = True
+        if param.name == "EventTypeId" and param.value:
+          result = self.bkClient_.checkEventType(int(param.value))
+          if not result['OK']:
+            return S_ERROR("The event type %s is missing!" % (str(param.value)))
+          evtExists = True
 
       if not evtExists and outputfile.type not in ['LOG']:
         inputFiles = job.inputFiles
@@ -219,19 +215,19 @@ class XMLFilesReaderManager(object):
                 tcks += [i[1]]
 
           if len(runnumbers) > 1:
-            self.log.warn('Different runs are reconstructed:', '%s' % runnumbers)
+            self.log.warn('More than 1 run', '[%s]' % ','.join(runnumbers))
             runnumber = None
           else:
             runnumber = runnumbers[0]
 
           if len(tcks) > 1:
-            self.log.warn('Different TCKs are reconstructed:', '%s' % tcks)
+            self.log.warn('More than 1 TCK', '[%s]' % ','.join(tcks))
             tck = -2
           else:
             tck = tcks[0]
 
-          self.log.debug('The output files of the job inherits the following run:', "%s" % runnumber)
-          self.log.debug('The output files of the job inherits the following TCK:', '%s' % tck)
+          self.log.debug("The output files of the job inherits the following run:", runnumber)
+          self.log.debug("The output files of the job inherits the following TCK:", tck)
 
           if not job.exists('Tck'):
             newJobParams = JobParameters()
@@ -311,7 +307,7 @@ class XMLFilesReaderManager(object):
         if fileMetadata['Luminosity'] is not None:
           sumLuminosity += fileMetadata['Luminosity']
         if dqvalue is None:
-          dqvalue = fileMetadata.get('DataqualityFlag', fileMetadata.get('DQFlag', None))
+          dqvalue = fileMetadata.get('DataqualityFlag', fileMetadata.get('DQFlag'))
       else:
         errMsg = "Can not get the metadata of %s file" % fname
         self.log.error(errMsg)
@@ -333,7 +329,7 @@ class XMLFilesReaderManager(object):
         currentEventInputStat = job.getParam('EventInputStat')
         currentEventInputStat.value = evtinput
 
-    self.log.debug('Luminosity:', '%s' % sumLuminosity)
+    self.log.debug('Luminosity:', sumLuminosity)
     outputFiles = job.outputFiles
     for outputfile in outputFiles:
       if outputfile.type not in ['LOG'] and \
@@ -342,13 +338,10 @@ class XMLFilesReaderManager(object):
         newFileParams.name = 'Luminosity'
         newFileParams.value = sumLuminosity
         outputfile.addFileParam(newFileParams)
-        self.log.debug('Luminosity added to ', '%s' % outputfile.name)
+        self.log.debug('Luminosity added to ', outputfile.name)
       ################
 
-    config = job.configuration
-    params = job.parameters
-
-    for param in params:
+    for param in job.parameters:
       if param.name == "RunNumber":
         value = int(param.value)
         if value <= 0 and len(job.inputFiles) == 0:
@@ -356,16 +349,15 @@ class XMLFilesReaderManager(object):
           return S_ERROR('The run number not greater 0!')
 
     result = self.__insertJob(job)
-
     if not result['OK']:
+      config = job.configuration
       errorMessage = "Unable to create Job: %s , %s, %s .\n Error: %s" % (str(config.configName),
                                                                           str(config.configVersion),
                                                                           str(config.date),
                                                                           str(result['Message']))
       return S_ERROR(errorMessage)
 
-    jobID = int(result['Value'])
-    job.jobID = jobID
+    job.jobID = int(result['Value'])
 
     if job.exists('RunNumber'):
       try:
@@ -478,8 +470,8 @@ class XMLFilesReaderManager(object):
     production = None
 
     condParams = job.dataTakingCondition
-    if condParams is not None:
-      datataking = condParams.params
+    if condParams:
+      datataking = condParams.parameters
       config = job.configuration
 
       ver = config.configVersion  # online bug fix
@@ -658,11 +650,10 @@ class XMLFilesReaderManager(object):
     self.log.debug("Processing replicas:", "%s" % outputfile)
     fileID = -1
 
-    params = replica.params
     delete = True
 
     replicaFileName = ""
-    for param in params:
+    for param in replica.params:
       replicaFileName = param.file
       location = param.location
       delete = param.action == "Delete"

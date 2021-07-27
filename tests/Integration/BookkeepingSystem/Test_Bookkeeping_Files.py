@@ -130,16 +130,16 @@ def test_sendXMLBookkeepingReport():
   """
 
   res = bk.insertFileTypes('RAW', 'Boole output, RAW buffer', 'MDF')
-  assert res['OK']
+  assert res['OK'], res['Message']
 
   res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
-  assert res['OK']
+  assert res['OK'], res['Message']
 
   res = bk.insertEventType(30000000, 'This is 30000000', 'something Lambda X (blah)')
-  assert res['OK']
+  assert res['OK'], res['Message']
 
   res = bk.setRunAndProcessingPassDataQuality(1122, '/Real Data', 'OK')
-  assert res['OK']
+  assert res['OK'], res['Message']
 
   currentTime = datetime.datetime.now()
   jobXML = xmlJob.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
@@ -154,7 +154,7 @@ def test_sendXMLBookkeepingReport():
 
   xmlReport += dqCond
   res = bk.sendXMLBookkeepingReport(xmlReport)
-  assert res['OK']
+  assert res['OK'], res['Message']
 
 
 def test_getRunInformation():
@@ -162,7 +162,7 @@ def test_getRunInformation():
   Test the run metadata
   """
   retVal = bk.getRunInformation({'RunNumber': runnb})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert runnb not in retVal['Value']
   assert sorted(retVal['Value'][int(runnb)]) == sorted(['ConfigName',
                                                         'JobEnd',
@@ -189,13 +189,13 @@ def test_getRunInformation():
 
 def test_getListOfFills():
   retVal = bk.getListOfFills({'ConfigName': 'Test', 'ConfigVersion': 'Test01'})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] == [29]
 
 
 def test_getRunsForFill():
   retVal = bk.getRunsForFill(29)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] == [1122]
 
 
@@ -212,7 +212,7 @@ def test_getRunInformations():
   assert res['Value']['Successful'] == files
 
   retVal = bk.getRunInformations(1122)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Configuration Name'] == 'Test'
   assert retVal['Value']['Configuration Version'] == 'Test01'
   assert retVal['Value']['DataTakingDescription'] == 'Beam450GeV-MagDown'
@@ -231,7 +231,7 @@ def test_getRunInformations():
 
 def test_getRunFiles():
   retVal = bk.getRunFiles(1122)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) == 5
 
   files = ['/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw',
@@ -254,19 +254,19 @@ def test_getRunFiles():
 
 def test_getRunNbAndTck():
   retVal = bk.getRunNbAndTck('/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw')
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] == [(1122, '-0x7f6bffff')]
 
 
 def test_getRunFilesDataQuality():
   retVal = bk.getRunFilesDataQuality(1122)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] == [(1122, 'OK', 30000000)]
 
 
 def test_getNbOfRawFiles():
   retVal = bk.getNbOfRawFiles({'RunNumber': 1122})
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value'] == 5
 
 
@@ -275,17 +275,17 @@ def test_addFiles():
   add replica flag
   """
   retVal = bk.addFiles(files)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Failed'] == []
   assert retVal['Value']['Successful'] == files
 
   retVal = bk.addFiles('test.txt')
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Successful'] == []
   assert retVal['Value']['Failed'] == ['test.txt']
 
   bk.updateProductionOutputfiles()
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
 
 
 def test_fileMetadata():
@@ -298,7 +298,7 @@ def test_fileMetadata():
                 'CreationDate', 'InstLuminosity', 'DataqualityFlag']
   retVal = bk.getFileMetadata(files)
 
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Failed'] == []
   assert len(retVal['Value']['Successful']) == len(files)
   assert sorted(retVal['Value']['Successful']) == sorted(files)
@@ -307,7 +307,7 @@ def test_fileMetadata():
     assert sorted(retVal['Value']['Successful'][fName]) == sorted(fileParams)
 
   retVal = bk.getFileMetadata('test.txt')
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Successful'] == {}
   assert retVal['Value']['Failed'] == ['test.txt']
 
@@ -318,7 +318,7 @@ def test_getAvailableFileTypes():
   """
 
   retVal = bk.getAvailableFileTypes()
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert len(retVal['Value']) > 0
 
 
@@ -328,11 +328,11 @@ def test_removeFiles():
   """
 
   retVal = bk.removeFiles(files)
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Failed'] == []
   assert retVal['Value']['Successful'] == files
 
   retVal = bk.removeFiles('test.txt')
-  assert retVal['OK'] is True
+  assert retVal['OK'], retVal['Message']
   assert retVal['Value']['Successful'] == []
   assert retVal['Value']['Failed'] == ['test.txt']
