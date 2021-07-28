@@ -944,16 +944,14 @@ class LHCbJob(Job):
       if not res['OK']:
         return res
 
-      runNumbers = []
-      for fileMeta in res['Value']['Successful'].values():
-        try:
-          if fileMeta['RunNumber'] not in runNumbers and fileMeta['RunNumber'] is not None:
-            runNumbers.append(fileMeta['RunNumber'])
-        except KeyError:
-          continue
+      runNumbers = {
+          fileMeta['RunNumber']
+          for fileMeta in res['Value']['Successful'].values()
+          if isinstance(fileMeta.get("RunNumber"), int) and fileMeta["RunNumber"] > 0
+      }
 
       if len(runNumbers) == 1:
-        runNumber = str(runNumbers[0])
+        runNumber = str(runNumbers.pop())
 
     if runNumber and int(runNumber) > 0:
       self._addParameter(self.workflow, 'runNumber', 'JDL', runNumber, 'Input run number')
