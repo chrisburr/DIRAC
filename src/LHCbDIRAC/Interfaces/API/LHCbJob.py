@@ -955,7 +955,7 @@ class LHCbJob(Job):
       if len(runNumbers) == 1:
         runNumber = str(runNumbers[0])
 
-    if runNumber:
+    if runNumber and int(runNumber) > 0:
       self._addParameter(self.workflow, 'runNumber', 'JDL', runNumber, 'Input run number')
 
     if not persistencyType:
