@@ -277,9 +277,13 @@ class DataIntegrityClient(DIRACDataIntegrityClient):
         seLfns.setdefault(se, []).append(lfn)
     gLogger.info('%s %s' % ('Storage Element'.ljust(20), 'Replicas'.rjust(20)))
 
-    for se in sorted(seLfns):
-      lfns = seLfns[se]
+    for se in seLfns:
+      res = StorageElement(se).isValid("Check")
+      if not res["OK"]:
+        gLogger.error('Unable to checkPhysicalFiles at', "%s: %s" % (se, res['Message']))
+        return res
 
+    for se, lfns in sorted(seLfns.items()):
       sizeMismatch = []
       checksumMismatch = []
       checksumBadInFC = []
