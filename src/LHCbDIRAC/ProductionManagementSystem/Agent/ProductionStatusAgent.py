@@ -850,7 +850,7 @@ class ProductionStatusAgent(AgentModule):
       return
 
     if summary['type'] == 'Simulation':
-      if not self._isReallyDone(summary):
+      if self._isReallyDone(summary):
         # 'Idle' && isIdle() && isDone for MC logic
         if tInfo['Used']:  # for standard sim requests, only the merge will go to ValidatingOutput
           if self._producersAreIdle(summary):
