@@ -944,23 +944,19 @@ class LHCbJob(Job):
       if not res['OK']:
         return res
 
-      runNumbers = []
-      for fileMeta in res['Value']['Successful'].values():
-        try:
-          if fileMeta['RunNumber'] not in runNumbers and fileMeta['RunNumber'] is not None:
-            runNumbers.append(fileMeta['RunNumber'])
-        except KeyError:
-          continue
+      runNumbers = {
+          fileMeta['RunNumber']
+          for fileMeta in res['Value']['Successful'].values()
+          if isinstance(fileMeta.get("RunNumber"), int) and fileMeta["RunNumber"] > 0
+      }
 
-      if len(runNumbers) > 1:
-        runNumber = 'Multiple'
-      elif len(runNumbers) == 1:
-        runNumber = str(runNumbers[0])
-      else:
-        runNumber = 'Unknown'
+      if len(runNumbers) == 1:
+        runNumber = str(runNumbers.pop())
+
+    if runNumber and int(runNumber) > 0:
+      self._addParameter(self.workflow, 'runNumber', 'JDL', runNumber, 'Input run number')
 
     if not persistencyType:
-
       res = bkClient.getFileTypeVersion(lfns)
       if not res['OK']:
         return res
@@ -979,8 +975,8 @@ class LHCbJob(Job):
         else:
           typeVersion = ''
 
-    self._addParameter(self.workflow, 'runNumber', 'JDL', runNumber, 'Input run number')
-    self._addParameter(self.workflow, 'persistency', 'String', typeVersion, 'Persistency type of the inputs')
+    if persistencyType:
+      self._addParameter(self.workflow, 'persistency', 'String', typeVersion, 'Persistency type of the inputs')
 
     return S_OK()
 
