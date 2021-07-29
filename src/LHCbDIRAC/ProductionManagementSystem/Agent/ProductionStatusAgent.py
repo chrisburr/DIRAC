@@ -557,7 +557,8 @@ class ProductionStatusAgent(AgentModule):
     if inputTransformIDs:
       retVal = self.tClient.getTransformations(
           condDict={'TransformationID': list(inputTransformIDs)},
-          limit=1000,
+          limit=10000,
+          columns=["TransformationID", "Status"],
       )
       if not retVal["OK"]:
         self.log.error("Failed to call getTransformations", retVal["Message"])
@@ -901,7 +902,7 @@ class ProductionStatusAgent(AgentModule):
         # for not MC, use reasonable default
         self.__updateTransformationStatus(tID, 'Active', 'Idle', updatedT)
     elif summary["type"] == 'AnalysisProduction' and not tInfo["hasActiveInput"]:
-      if tInfo["filesTotal"] == tInfo["filesProcessed"] + tInfo["filesUnused"]:
+      if tInfo["filesUnused"] and tInfo["filesTotal"] == tInfo["filesProcessed"] + tInfo["filesUnused"]:
         self.__updateTransformationStatus(tID, 'Active', 'Flush', updatedT)
 
   def _handleStateValidatedOutput(self, tID, tInfo, summary, updatedT):
