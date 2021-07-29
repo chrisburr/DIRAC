@@ -1,3 +1,21 @@
+v10r2p7
+Based on DIRAC v7r2p17
+LHCbWebDIRAC v5r3p1
+LHCbDIRACOS v1r20
+*Data Management
+
+CHANGE: (!1056) Optimise running checkPhysicalFiles when it is guaranteed to fail due to storage elements being banned
+
+*Production Management
+
+FIX: (!1055) Only flush transformations if there are unused files
+
+*Production
+
+FIX: (!1053) Fix inverted if condition in ProductionStatusAgent that causes Idle transformations to be finished prematurely
+
+
+
 v10r2p6
 Based on DIRAC v7r2p16
 LHCbWebDIRAC v5r3
