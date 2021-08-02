@@ -16,10 +16,13 @@ from __future__ import print_function
 
 import os
 import time
+import shlex
 
 import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Utilities.Subprocess import systemCall
+
 
 __RCSID__ = "$Id$"
 
@@ -41,10 +44,12 @@ def __getLfnsFromFile(optFiles, gaudiVerbose):
 
   gLogger.info("lb-run LHCb for getting environment")
   command = "lb-run --siteroot=/cvmfs/lhcb.cern.ch/lib LHCb/latest " + gaudiRun
-  rc = os.system(command)
-  if rc:
-    gLogger.always("Error when parsing options files", optFiles)
-    DIRAC.exit(rc)
+
+  res = systemCall(timeout=0,
+                   cmdSeq=shlex.split(command))
+  if not res['OK']:
+    gLogger.always("Error when parsing options files", res['Message'])
+    DIRAC.exit(1)
 
   optDict = eval(open(tmpFile, 'r').read())
   os.remove(tmpFile)
@@ -160,11 +165,6 @@ def execute():
   rc = 0
   savedLevel = gLogger.getLevel()
   try:
-      # Verify the user has a valid proxy
-    done = 1
-    while done and os.system("dirac-proxy-info --checkvalid > /dev/null") != 0:
-      gLogger.always("You don't have a valid proxy, we create one...")
-      done = os.system("lhcb-proxy-init")
 
     if depth > 1:
       from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
