@@ -457,6 +457,8 @@ add_devel_tag:
 # This task can be ran multiple times which means an old pipeline can be restarted to roll back the prod symlink
 set_cvmfs_prod_link:
   extends: .cvmfs_task
+  except:
+    - /^v[0-9]+r[0-9]+.+$/
   stage: finish_up
   when: manual
   script:
