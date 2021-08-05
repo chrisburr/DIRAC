@@ -42,9 +42,9 @@ if six.PY3:
     version = "Unknown"
 else:
   majorVersion = 10
-  minorVersion = 2
+  minorVersion = 3
   patchLevel = 0
-  preVersion = 13
+  preVersion = 1
 
   version = "v%sr%s" % (majorVersion, minorVersion)
   __version__ = "%s.%s" % (majorVersion, minorVersion)
