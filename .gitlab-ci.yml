@@ -288,7 +288,7 @@ create_tarball:
   before_script:
     # Fetch a Kerberos token
     - echo "${KRB_PASSWORD}" | kinit ${KRB_USERNAME}@CERN.CH
-    - apt-get install -y curl
+    - apt-get -y update && apt-get install -y curl
   stage: release
   only:
     refs:
