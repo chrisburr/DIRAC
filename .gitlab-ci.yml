@@ -42,33 +42,29 @@ stages:
 
 # Common configuration between pytest, pylint, pycodestyle
 .test_setup: &test_setup
+  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
   before_script:
-    - yum install -y epel-release
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq swig
     - export PYCURL_SSL_LIBRARY=openssl
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
-    - pip install diraccfg virtualenv
+    - eval "$(python -m conda shell.bash hook)"
+    - conda create --yes --name py2 python=2.7
+    - conda activate py2
+    - conda install --yes diraccfg git jq
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - echo "Using LHCbDIRAC tag $lhcbdiracTag"
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    # Clone the latest LHCbDIRAC
+    # Clone the DIRAC version
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
     - git checkout $diracTAG
     - cd ..
-    # Create a virtual environment in which to run the tests
-    - virtualenv DIRAC_VENV
-    - source DIRAC_VENV/bin/activate
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21' 'setuptools_scm<6'
-    - pip install -r DIRAC/requirements.txt
-    # HACK: To be reverted after the next DIRAC release
-    - pip install importlib_resources
-    - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
+    - conda deactivate
+    # Now creating the environment for running the tests
+    - conda env create -f DIRAC/environment.yml
+    - conda activate dirac-development
+    - conda install LbEnv LbPlatformUtils uproot backports.lzma lz4 uproot cx_Oracle==7.3 xmltodict
 
   stage: test
   only:
