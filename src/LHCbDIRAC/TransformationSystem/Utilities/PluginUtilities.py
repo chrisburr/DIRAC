@@ -63,7 +63,7 @@ class PluginUtilities(DIRACPluginUtilities):
 
   def __init__(self, plugin='LHCbStandard', transClient=None, dataManager=None, fc=None,
                bkClient=None, rmClient=None,
-               debug=False, transInThread=None, transID=None):
+               debug=False, transID=None):
     """c'tor."""
     # clients
     if transClient is None:
@@ -80,7 +80,7 @@ class PluginUtilities(DIRACPluginUtilities):
 
     super(PluginUtilities, self).__init__(plugin=plugin, transClient=self.transClient,
                                           dataManager=dataManager, fc=fc,
-                                          debug=debug, transInThread=transInThread, transID=transID)
+                                          debug=debug, transID=transID)
 
     self.freeSpace = {}
     self.transFiles = []

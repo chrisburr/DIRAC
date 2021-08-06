@@ -47,7 +47,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
   def __init__(self, plugin,
                transClient=None, dataManager=None,
                bkClient=None, rmClient=None, fc=None,
-               debug=False, transInThread=None):
+               debug=False):
     """The clients can be passed in."""
     super(TransformationPlugin, self).__init__(plugin,
                                                transClient=transClient,
@@ -84,7 +84,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     self.util = PluginUtilities(plugin=plugin,
                                 transClient=transClient, dataManager=dataManager,
                                 bkClient=self.bkClient, rmClient=self.rmClient,
-                                debug=debug, transInThread=transInThread if transInThread else {})
+                                debug=debug)
     self.setDebug(self.util.getPluginParam('Debug', False))
 
     self.processingShares = ({}, {})

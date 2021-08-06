@@ -66,8 +66,7 @@ class TransformationAgent(DIRACTransformationAgent):
                                                             dataManager=clients['DataManager'],
                                                             transClient=clients['TransformationClient'],
                                                             bkClient=clients['BookkeepingClient'],
-                                                            rmClient=clients['ResourceManagementClient'],
-                                                            transInThread=self.transInThread)
+                                                            rmClient=clients['ResourceManagementClient'])
     except Exception as x:  # pylint: disable=broad-except
       gLogger.exception("%s.__generatePluginObject: Failed to create %s()." % (AGENT_NAME, plugin), '', x)
       return S_ERROR()
