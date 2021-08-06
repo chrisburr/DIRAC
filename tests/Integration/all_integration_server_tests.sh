@@ -23,7 +23,7 @@ echo -e "THIS_DIR=${THIS_DIR}" |& tee -a "${SERVER_TEST_OUTPUT}"
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
-pytest --ignore=. "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_Files.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_MCProds.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
