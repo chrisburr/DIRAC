@@ -211,10 +211,10 @@ integration_tests:
     - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
     - echo "lhcbdiracTag=${lhcbdiracTag}"
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - diracTAG=rel-$(echo ${diracTAG} | cut -d 'p' -f 1)
     - echo "diracTAG=${diracTAG}"
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
-    - cd ../DIRAC
+    - git clone https://github.com/DIRACGrid/DIRAC.git
+    - cd DIRAC
+    - git checkout "${diracTAG}"
     # Login to the GitLab container registry for access to Oracle
     - |
       if [[ -z "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD:-}" ]]; then
