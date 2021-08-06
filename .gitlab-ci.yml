@@ -81,7 +81,7 @@ stages:
     - mamba install --yes diraccfg git jq curl
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     # Find the latest compatible DIRAC release
-    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
     - echo "Found DIRAC branch $diracBranch"
     - |
       if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
@@ -217,7 +217,7 @@ integration_tests:
     - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
     - echo "lhcbdiracTag=${lhcbdiracTag}"
     # Find the latest compatible DIRAC release
-    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
     - echo "Found DIRAC branch $diracBranch"
     - |
       if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
