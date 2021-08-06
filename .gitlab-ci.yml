@@ -75,14 +75,20 @@ stages:
 
 .test_setup_py3:
   stage: test
-  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
+  image: registry.cern.ch/docker.io/condaforge/mambaforge:latest
   before_script:
     - eval "$(python -m conda shell.bash hook)"
-    - conda install --yes mamba diraccfg git jq
+    - mamba install --yes diraccfg git jq curl
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
-    # Checkout the latest compatible DIRAC release
+    # Find the latest compatible DIRAC release
     - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    - echo "Found DIRAC branch $diracBranch"
+    - |
+      if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
+        diracBranch="integration"
+      fi
     - echo "diracBranch=${diracBranch}"
+    # Checkout the latest compatible DIRAC release
     - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
     - diracTag=$(git describe --tags --long --match '*[0-9]*' --exclude 'v[0-9]r*' --exclude 'v[0-9][0-9]r*' | cut -d '-' -f 1)
@@ -204,14 +210,21 @@ integration_tests:
       allow_failure: false
   before_script:
     # Install dependencies
-    - apk add docker py3-pip python3 bash git docker-compose jq
+    - apk add docker py3-pip python3 bash git docker-compose jq curl
     - pip3 install typer pyyaml gitpython diraccfg
-    # Clone DIRAC
+    # Find the latest LHCbDIRAC release
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
     - echo "lhcbdiracTag=${lhcbdiracTag}"
+    # Find the latest compatible DIRAC release
     - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    - echo "Found DIRAC branch $diracBranch"
+    - |
+      if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
+        diracBranch="integration"
+      fi
     - echo "diracBranch=${diracBranch}"
+    # Checkout the latest compatible DIRAC release
     - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
     # Login to the GitLab container registry for access to Oracle
