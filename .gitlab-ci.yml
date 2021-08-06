@@ -239,7 +239,9 @@ integration_tests:
       fi
     - echo "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}" | docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch
   script:
-    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
+    # FIXME: --release-var here is a hack to prevent the Python 2 CI from getting confused
+    # It's hopefully good enough for the time we care about Py2
+    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" --release-var "LHCBDIRAC_RELEASE=${lhcbdiracTag}" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
 
 ### coverage stage ###
 
