@@ -971,8 +971,8 @@ get from BK" % (param, self.paramName))
         # print '*****'
         # print '\n'.join( ['%s %s' % ( key, val ) for key, val in self.cachedLFNProcessedPath.items()] )
         break
-      except IOError:
-        self.logVerbose("Cache file %s could not be loaded" % cacheFile)
+      except (IOError, LookupError) as e:
+        self.logException("Cache file could not be loaded", cacheFile, lException=e)
 
   def getCachedRunLFNs(self, runID, paramValue):
     """Keep track of all files for a given parameter value."""
