@@ -42,33 +42,29 @@ stages:
 
 # Common configuration between pytest, pylint, pycodestyle
 .test_setup: &test_setup
+  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
   before_script:
-    - yum install -y epel-release
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq swig
     - export PYCURL_SSL_LIBRARY=openssl
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
-    - pip install diraccfg virtualenv
+    - eval "$(python -m conda shell.bash hook)"
+    - conda create --yes --name py2 python=2.7
+    - conda activate py2
+    - conda install --yes diraccfg git jq
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - echo "Using LHCbDIRAC tag $lhcbdiracTag"
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    # Clone the latest LHCbDIRAC
+    # Clone the DIRAC version
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
     - git checkout $diracTAG
     - cd ..
-    # Create a virtual environment in which to run the tests
-    - virtualenv DIRAC_VENV
-    - source DIRAC_VENV/bin/activate
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21' 'setuptools_scm<6'
-    - pip install -r DIRAC/requirements.txt
-    # HACK: To be reverted after the next DIRAC release
-    - pip install importlib_resources
-    - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
+    - conda deactivate
+    # Now creating the environment for running the tests
+    - conda env create -f DIRAC/environment.yml
+    - conda activate dirac-development
+    - conda install LbEnv LbPlatformUtils uproot backports.lzma lz4 uproot cx_Oracle==7.3 xmltodict
 
   stage: test
   only:
@@ -79,14 +75,20 @@ stages:
 
 .test_setup_py3:
   stage: test
-  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
+  image: registry.cern.ch/docker.io/condaforge/mambaforge:latest
   before_script:
     - eval "$(python -m conda shell.bash hook)"
-    - conda install --yes mamba diraccfg git jq
+    - mamba install --yes diraccfg git jq curl
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
-    # Checkout the latest compatible DIRAC release
-    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    # Find the latest compatible DIRAC release
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
+    - echo "Found DIRAC branch $diracBranch"
+    - |
+      if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
+        diracBranch="integration"
+      fi
     - echo "diracBranch=${diracBranch}"
+    # Checkout the latest compatible DIRAC release
     - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
     - diracTag=$(git describe --tags --long --match '*[0-9]*' --exclude 'v[0-9]r*' --exclude 'v[0-9][0-9]r*' | cut -d '-' -f 1)
@@ -208,16 +210,22 @@ integration_tests:
       allow_failure: false
   before_script:
     # Install dependencies
-    - apk add docker py3-pip python3 bash git docker-compose jq
+    - apk add docker py3-pip python3 bash git docker-compose jq curl
     - pip3 install typer pyyaml gitpython diraccfg
-    # Clone DIRAC
+    # Find the latest LHCbDIRAC release
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
     - echo "lhcbdiracTag=${lhcbdiracTag}"
-    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - diracTAG=rel-$(echo ${diracTAG} | cut -d 'p' -f 1)
-    - echo "diracTAG=${diracTAG}"
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
+    # Find the latest compatible DIRAC release
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
+    - echo "Found DIRAC branch $diracBranch"
+    - |
+      if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
+        diracBranch="integration"
+      fi
+    - echo "diracBranch=${diracBranch}"
+    # Checkout the latest compatible DIRAC release
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
     # Login to the GitLab container registry for access to Oracle
     - |
@@ -231,7 +239,9 @@ integration_tests:
       fi
     - echo "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}" | docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch
   script:
-    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
+    # FIXME: --release-var here is a hack to prevent the Python 2 CI from getting confused
+    # It's hopefully good enough for the time we care about Py2
+    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" --release-var "LHCBDIRAC_RELEASE=${lhcbdiracTag}" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
 
 ### coverage stage ###
 
