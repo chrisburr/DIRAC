@@ -14,9 +14,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import ast
 import os
 import time
 import shlex
+import tempfile
 
 import DIRAC
 from DIRAC import gLogger
@@ -28,31 +30,30 @@ __RCSID__ = "$Id$"
 
 
 def __getLfnsFromFile(optFiles, gaudiVerbose):
-  import tempfile
-  _a, tmpFile = tempfile.mkstemp(suffix=".py")
-  runOpts = ""
-  for opt in optFiles:
-    if not os.path.exists(opt):
-      gLogger.always("File not found: ", opt)
+  with tempfile.NamedTemporaryFile(mode="rt", suffix=".py") as tmpFile:
+    runOpts = ""
+    for opt in optFiles:
+      if not os.path.exists(opt):
+        gLogger.always("File not found: ", opt)
+        DIRAC.exit(1)
+      runOpts += opt + " "
+
+    gaudiRun = "gaudirun.py -n -o %s %s" % (tmpFile.name, runOpts)
+    gLogger.info("Extract list of input files from", optFiles)
+
+    gLogger.info("lb-run LHCb for getting environment")
+    command = "lb-run --siteroot=/cvmfs/lhcb.cern.ch/lib LHCb/latest " + gaudiRun
+
+    res = systemCall(timeout=0, cmdSeq=shlex.split(command))
+    if not res['OK']:
+      gLogger.always("Error when parsing options files", res['Message'])
       DIRAC.exit(1)
-    runOpts += opt + " "
+    if gaudiVerbose:
+      print(res["Value"][1])
 
-  gaudiRun = "gaudirun.py -n -o %s %s" % (tmpFile, runOpts)
-  if not gaudiVerbose:
-    gaudiRun += " &>/dev/null"
-  gLogger.info("Extract list of input files from", optFiles)
+    result = tmpFile.read()
+    optDict = ast.literal_eval(result)
 
-  gLogger.info("lb-run LHCb for getting environment")
-  command = "lb-run --siteroot=/cvmfs/lhcb.cern.ch/lib LHCb/latest " + gaudiRun
-
-  res = systemCall(timeout=0,
-                   cmdSeq=shlex.split(command))
-  if not res['OK']:
-    gLogger.always("Error when parsing options files", res['Message'])
-    DIRAC.exit(1)
-
-  optDict = eval(open(tmpFile, 'r').read())
-  os.remove(tmpFile)
   appInput = optDict.get('EventSelector', {}).get('Input')
   if not appInput:
     gLogger.always("Options file do not set EventSelector().Input")
@@ -236,7 +237,6 @@ def execute():
 @DIRACScript()
 def main():
   execute()
-  DIRAC.exit(0)
 
 
 if __name__ == "__main__":
