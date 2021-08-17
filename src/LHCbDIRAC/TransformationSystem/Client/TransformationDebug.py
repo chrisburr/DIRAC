@@ -1836,8 +1836,10 @@ class TransformationDebug(object):
         runStatus = runDict.get('Status')
 
         # Get all files from TransformationDB
-        transFilesList = sorted(self.__getFilesForRun(runID=runID, status=status,
-                                                      lfnList=lfnList, seList=seList, taskList=taskList))
+        transFilesList = sorted(
+            self.__getFilesForRun(runID=runID, status=status, lfnList=lfnList, seList=seList, taskList=taskList),
+            key=lambda d: (d["TaskID"], d["LFN"])
+        )
         if jobList and allTasks:
           taskList = []
         if lfnList:
