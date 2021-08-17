@@ -1638,7 +1638,6 @@ class TransformationPlugin(DIRACTransformationPlugin):
           candidateSEs = [se for se in candidateSEs if se not in shortSEs]
           if not candidateSEs:
             if overflowSEs:
-              print('Get overflow SE in', overflowSEs)
               # Use some overflow SE to replicate files
               candidateSEs = [se for se in self.util.rankSEs(overflowSEs) if freeSpace[se]
                               >= watermark and maxFilesAtSE.get(se, sys.maxsize) > 0]
