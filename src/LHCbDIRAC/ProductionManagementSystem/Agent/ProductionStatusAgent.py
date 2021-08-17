@@ -397,7 +397,7 @@ class ProductionStatusAgent(AgentModule):
         {'TransformationID': transformationIDs},
     )
     if not res["OK"]:
-        raise RuntimeError(res)
+      raise RuntimeError(res)
     # Ensure totalColumnName is always included in the output
     statusDict = defaultdict(lambda: defaultdict(int, **{totalColumnName: 0}))
     for attrDict, count in res['Value']:
@@ -640,7 +640,7 @@ class ProductionStatusAgent(AgentModule):
       updatedT[tID] = {'to': status, 'from': origStatus}
       return
 
-    result = self.tClient.setTransformationParameter(tID, 'Status', status)
+    result = self.tClient.setTransformationParameter(tID, 'Status', status, currentStatus=origStatus)
     if not result['OK']:
       self.log.error("Failed to update status of transformation", "%s from %s to %s" % (tID, origStatus, status))
     else:
