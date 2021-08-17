@@ -1604,6 +1604,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
     if watermark is None:
       return S_OK([])
     destSEs = set(maxFilesAtSE)
+    overflowSEs = set(resolveSEGroup(self.util.getPluginParam('OverflowSEs', [])))
     storageElementGroups = {}
 
     for replicaSE, lfns in getFileGroups(self.transReplicas).items():  # can be an iterator
@@ -1632,12 +1633,21 @@ class TransformationPlugin(DIRACTransformationPlugin):
           self.util.logInfo("No candidate SE where more files are accepted (%s not allowed)" % ','.join(shortSEs))
         else:
           # Check if enough free space
-          freeSpace = self.util.getStorageFreeSpace(candidateSEs)
+          freeSpace = self.util.getStorageFreeSpace(candidateSEs + list(overflowSEs))
           shortSEs = [se for se in candidateSEs if freeSpace[se] < watermark]
           candidateSEs = [se for se in candidateSEs if se not in shortSEs]
           if not candidateSEs:
-            self.util.logInfo("No enough space (%s TB) found at %s" % (watermark, ','.join(shortSEs)))
-          else:
+            if overflowSEs:
+              # Use some overflow SE to replicate files
+              candidateSEs = [se for se in self.util.rankSEs(overflowSEs) if freeSpace[se]
+                              >= watermark and maxFilesAtSE.get(se, sys.maxsize) > 0]
+            if candidateSEs:
+              self.util.logInfo(
+                  "No enough space (%s TB) found at %s, use %s instead" %
+                  (watermark, ','.join(shortSEs), candidateSEs[0]))
+            else:
+              self.util.logInfo("No enough space (%s TB) found at %s" % (watermark, ','.join(shortSEs)))
+          if candidateSEs:
             # Select a single SE out of candidates; in most cases there is one only
             candidateSE = candidateSEs[0]
             maxToReplicate = maxFilesAtSE.get(candidateSE, sys.maxsize)
