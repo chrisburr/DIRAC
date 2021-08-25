@@ -1,3 +1,30 @@
+v10r2p10
+Based on DIRAC v7r2p22
+LHCbWebDIRAC v5r3p1
+LHCbDIRACOS v1r22
+*WorkloadManagement
+
+CHANGE: (!1072) Remove the hack for migrating to a new sandbox store volume
+
+*TransformationSystem
+
+CHANGE: (!1071) define an option `OverflowSEs` in the `Operations/TransformationPlugin` section.
+FIX: (!1064) Fix AttributeError in dirac-transformation-debug with Python 3
+
+*Core
+
+FIX: (!1070) Fix extracting GUID from ROOT files with Python 3
+
+*Bookkeeping
+
+FIX: (!1067) Fix running dirac-bookkeeping-genXMLCatalog with --Options
+
+*ProductionManagementSystem
+
+NEW: (!1061) ProductionStatusAgent avoids race condition when setting transformation status
+
+
+
 v10r2p9
 Based on DIRAC v7r2p19
 LHCbWebDIRAC v5r3p1
