@@ -14,7 +14,6 @@ from __future__ import division
 from __future__ import print_function
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.Replica import Replica
-from DIRAC import gLogger
 
 __RCSID__ = "$Id$"
 
@@ -24,9 +23,8 @@ class FileReplica(Replica):
 
   def writeToXML(self):
     """creates an xml string."""
-    gLogger.debug("Job Replica XML writing!!!")
     result = ''
-    for param in self.getaprams():
+    for param in self.params:
       result += param.writeToXML()
 
     return result

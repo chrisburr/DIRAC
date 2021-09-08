@@ -16,46 +16,19 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 
-class FileParam:
-
-  """FileParam class."""
-  #############################################################################
+class FileParam(object):
 
   def __init__(self):
     """initialize the class members."""
-    self.name_ = ""
-    self.value_ = ""
+    self.name = ""
+    self.value = ""
 
-  #############################################################################
-  def setParamName(self, name):
-    """sets the file parameter."""
-    self.name_ = name
-
-  #############################################################################
-  def getParamName(self):
-    """returns the file parameter."""
-    return self.name_
-
-  #############################################################################
-  def setParamValue(self, value):
-    """sets the value of the parameter."""
-    self.value_ = value
-
-  #############################################################################
-  def getParamValue(self):
-    """returns the value of the parameter."""
-    return self.value_
-
-  #############################################################################
   def __repr__(self):
     """formats the output of print."""
     result = '\nFileParam: \n'
-    result += self.name_ + ' ' + self.value_ + '\n'
+    result += self.name + ' ' + self.value + '\n'
     return result
 
-  #############################################################################
   def writeToXML(self):
     """creates an xml string."""
-    return '    <Parameter  Name="' + self.getParamName() + '"     Value="' + self.getParamValue() + '"/>\n'
-
-  #############################################################################
+    return '    <Parameter  Name="' + self.name + '"     Value="' + self.value + '"/>\n'

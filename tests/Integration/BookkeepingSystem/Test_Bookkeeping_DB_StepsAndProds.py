@@ -118,86 +118,86 @@ def test_Steps():
 
   # insert gauss step
   res = bk.insertStep(step_gauss)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   gaussStepID = res['Value']
   res = bk.getStepOutputFiles(gaussStepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('SIM', 'Y')]
 
   # insert boole step
   res = bk.insertStep(step_boole)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   booleStepID = res['Value']
   res = bk.getStepInputFiles(booleStepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('SIM', 'Y')]
   res = bk.getStepOutputFiles(booleStepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('DIGI', 'N')]
 
   # insert boole/2 step
   res = bk.insertStep(step_boole2)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   boole2StepID = res['Value']
   res = bk.getStepInputFiles(boole2StepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('SIM', 'Y')]
   res = bk.getStepOutputFiles(boole2StepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('DIGI', 'N')]
 
   # insert moore step
   res = bk.insertStep(step_moore)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   mooreStepID = res['Value']
   res = bk.getStepInputFiles(mooreStepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('DIGI', 'Y')]
   res = bk.getStepOutputFiles(mooreStepID)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('DIGI', 'Y')]
 
   # FIXME: this getAvailableSteps should be expanded
   res = bk.getAvailableSteps({})
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   stepsInDB = res['Value']['Records']
   assert {gaussStepID, booleStepID, boole2StepID, mooreStepID}.issubset(set([x[0] for x in stepsInDB]))
 
   # Production 1: [gauss]
   res = bk.addProductionSteps([{'StepId': gaussStepID}], 1)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   # Production 2: [gauss, boole]
   res = bk.addProductionSteps([{'StepId': gaussStepID}, {'StepId': booleStepID}], 2)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   # Production 3: [gauss, boole2]
   res = bk.addProductionSteps([{'StepId': gaussStepID}, {'StepId': boole2StepID}], 3)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   # Production 4: [gauss, boole, boole2]
   res = bk.addProductionSteps([{'StepId': gaussStepID}, {'StepId': booleStepID}, {'StepId': boole2StepID}], 4)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   # Production 5: [gauss, boole2, boole, moore]
   res = bk.addProductionSteps([{'StepId': gaussStepID}, {'StepId': boole2StepID},
                                {'StepId': booleStepID}, {'StepId': mooreStepID}], 5)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   # Production 6: [boole2, moore] (this should be in the same "production request" with 1)
   res = bk.addProductionSteps([{'StepId': boole2StepID}, {'StepId': mooreStepID}], 6)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   # Now testing getting the steps
   res = bk.getSteps(1)  # [gauss]
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
                            '/some/gauss/option/files',
                            'gauss-dddb', 'gauss-conddb',
                            None, gaussStepID, 'Y')]
 
   res = bk.getSteps(2)  # [gauss, boole]
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
                            '/some/gauss/option/files',
                            'gauss-dddb', 'gauss-conddb',
@@ -208,7 +208,7 @@ def test_Steps():
                            None, booleStepID, 'N')]
 
   res = bk.getSteps(3)  # [gauss, boole2]
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('gauss', 'Gauss', 'v1r1',
                            '/some/gauss/option/files',
                            'gauss-dddb', 'gauss-conddb',
@@ -230,13 +230,13 @@ def test_Steps():
                  'Luminosity': 'Luminosity',
                  'G4settings': 'G4settings'}
   res = bk.insertSimConditions(simcondDict)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   res = bk.insertFileTypes('SIM', 'bofbof', 'ROOT')
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   res = bk.insertFileTypes('DIGI', 'bof', 'ROOT')
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   res = bk.insertEventTypes(12345, 'boh', 'primary')
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   gaussStep = {'StepId': gaussStepID, 'Visible': 'Y',
                'OutputFileTypes': [{'Visible': 'N', 'FileType': 'SIM'}]}
@@ -245,10 +245,10 @@ def test_Steps():
 
   res = bk.addProduction(7, simcond='SimCond', steps=[gaussStep, booleStep],
                          inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   res = bk.getSteps(6)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('boole2', 'Boole', 'v2r3',
                            '/some/boole2/option/files',
                            'fromPreviousStep', 'fromPreviousStep',
@@ -266,10 +266,10 @@ def test_Steps():
                'OutputFileTypes': [{'Visible': 'N', 'FileType': 'DIGI'}]}
   res = bk.addProduction(8, simcond='SimCond', steps=[boole2Step, mooreStep],
                          inputproc='Sim', configName='MC', configVersion='20', eventType=12345)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
 
   res = bk.getSteps(8)
-  assert res['OK'] is True
+  assert res['OK'], res['Message']
   assert res['Value'] == [('boole2', 'Boole', 'v2r3',
                            '/some/boole2/option/files',
                            'fromPreviousStep', 'fromPreviousStep',

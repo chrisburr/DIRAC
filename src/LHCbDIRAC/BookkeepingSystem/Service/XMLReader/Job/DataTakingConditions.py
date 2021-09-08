@@ -18,30 +18,18 @@ from DIRAC import gLogger
 __RCSID__ = "$Id$"
 
 
-class DataTakingConditions:
+class DataTakingConditions(object):
   """DataTakingConditions class."""
-  #############################################################################
 
   def __init__(self):
     """initialize the class memeber."""
-    self.parameters_ = {}
+    self.parameters = {}
 
-  #############################################################################
-  def addParam(self, name, value):
-    """adds parameter."""
-    self.parameters_[name] = value
-
-  #############################################################################
-  def getParams(self):
-    """returns the parameters (data taking conditions)"""
-    return self.parameters_
-
-  #############################################################################
   def writeToXML(self):
     """creates an xml string."""
     gLogger.info("Write DataTaking conditions to XML!!")
     result = '<DataTakingConditions>\n'
-    for name, value in self.getParams().items():
+    for name, value in self.parameters.items():
       result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
     result += '</DataTakingConditions>\n'
 

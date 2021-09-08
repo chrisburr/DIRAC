@@ -20,20 +20,14 @@ from DIRAC import gLogger
 __RCSID__ = "$Id$"
 
 
-class ReplicaReader:
-  """ReplicaReader class."""
-  #############################################################################
+class ReplicaReader(object):
 
-  def __init__(self):
-    pass
-
-  #############################################################################
   @staticmethod
   def readReplica(doc, filename):
     """reads the replica information."""
     gLogger.debug("Reading Replica from" + str(filename))
     replica = Replica()
-    replica.setFileName(filename)  # full path
+    replica.name = filename  # full path
 
     replicaElements = doc.getElementsByTagName("Replica")
 
@@ -41,35 +35,36 @@ class ReplicaReader:
       param = ReplicaParam()
 
       outputfile = node.getAttributeNode('File')
-      if outputfile is not None:
-        param.setFile(outputfile.value)
+      if outputfile:
+        param.file = outputfile.value
       else:
-        gLogger.warn("Missing the <file> tag in replica xml file!")
+        gLogger.warn("Missing the <file> tag in replica xml file")
 
       name = node.getAttributeNode('Name')
-      if name is not None:
-        param.setName(name.value)
+      if name:
+        param.name = name.value
       else:
-        gLogger.warn("Missing the <name> tag in replica xml file!")
+        gLogger.warn("Missing the <name> tag in replica xml file")
 
       location = node.getAttributeNode('Location')
-      if location is not None:
-        param.setLocation(location.value)
+      if location:
+        param.location = location.value
       else:
-        gLogger.warn("Missing the <location> tag in replica xml file!")
+        gLogger.warn("Missing the <location> tag in replica xml file")
 
       se = node.getAttributeNode('SE')
-      if se is not None:
-        param.setSE(se.value)
+      if se:
+        param.se = se.value
       else:
-        gLogger.warn("Missing the <SE> tag in replica xml file!")
+        gLogger.warn("Missing the <SE> tag in replica xml file")
 
       action = node.getAttributeNode('Action')
-      if action is not None:
-        param.setAction(action.value)
+      if action:
+        param.action = action.value
       else:
-        gLogger.warn("Missing the <Action> tag in replica xml file!")
+        gLogger.warn("Missing the <Action> tag in replica xml file")
 
       replica.addParam(param)
-      gLogger.info("Replica Reading fhinished succesefull!!")
-      return replica
+      gLogger.info("Replica Reading finished successfully")
+
+    return replica

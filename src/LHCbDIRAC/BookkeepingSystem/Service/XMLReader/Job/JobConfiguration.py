@@ -16,73 +16,27 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 
-class JobConfiguration:
-
-  """JobConfiguration class."""
-  #############################################################################
+class JobConfiguration(object):
 
   def __init__(self):
     """initialize the class members."""
-    self.configName_ = ""  # None
-    self.configVersion_ = ""  # None
-    self.date_ = ""  # None
-    self.time_ = ""  # None
+    self.configName = ""  # None
+    self.configVersion = ""  # None
+    self.date = ""  # None
+    self.time = ""  # None
 
-  #############################################################################
-  def setConfigName(self, name):
-    """sets the configuration name."""
-    self.configName_ = name
-
-  #############################################################################
-  def getConfigName(self):
-    """returns the configuration name."""
-    return self.configName_
-
-  #############################################################################
-  def setConfigVersion(self, version):
-    """sets the configuration version."""
-    self.configVersion_ = version
-
-  #############################################################################
-  def getConfigVersion(self):
-    """returns the configuration version."""
-    return self.configVersion_
-
-  #############################################################################
-  def setDate(self, date):
-    """sets the creation data."""
-    self.date_ = date
-
-  #############################################################################
-  def getDate(self):
-    """returns the creation data."""
-    return self.date_
-
-  #############################################################################
-  def setTime(self, time):
-    """sets the creation time."""
-    self.time_ = time
-
-  #############################################################################
-  def getTime(self):
-    """returns the creation time."""
-    return self.time_
-
-  #############################################################################
   def __repr__(self):
     """formats the output of the print."""
     result = 'JobConfiguration: \n'
-    result += 'ConfigName:' + self.configName_ + '\n'
-    result += 'ConfigVersion:' + self.configVersion_ + '\n'
-    result += 'Date and Time:' + self.date_ + ' ' + self.time_
+    result += 'ConfigName:' + self.configName + '\n'
+    result += 'ConfigVersion:' + self.configVersion + '\n'
+    result += 'Date and Time:' + self.date + ' ' + self.time
     return result
 
   def writeToXML(self):
     """creates an xml string."""
-    result = '<Job ConfigName="' + self.getConfigName() + \
-        '" ConfigVersion="' + self.getConfigVersion() + \
-        '" Date="' + self.getDate() + \
-        '" Time="' + self.getTime() + '">\n'
+    result = '<Job ConfigName="' + self.configName + \
+        '" ConfigVersion="' + self.configVersion + \
+        '" Date="' + self.date + \
+        '" Time="' + self.time + '">\n'
     return result
-
-  #############################################################################
