@@ -58,22 +58,27 @@ class LHCbFTS3Plugin(DefaultFTS3Plugin):
         destSEName=destSEName,
         **kwargs)
 
-  def selectSourceSE(self, ftsFile, replicaDict, allowedSources):
-    """
-      This is basically a copy/paste of the parent method, with the exception
-      of not staging between CTA and Echo....
-    """
+  # According to RAL, their problem is fixed,
+  # (https://ggus.eu/?mode=ticket_info&ticket_id=151955#update#13
+  # so I comment this out, but I'll keep it a bit
+  # for ease of hotfixing, you know, just in case...
 
-    allowedSourcesSet = set(allowedSources) if allowedSources else set()
-    # Only consider the allowed sources
+  # def selectSourceSE(self, ftsFile, replicaDict, allowedSources):
+  #   """
+  #     This is basically a copy/paste of the parent method, with the exception
+  #     of not staging between CTA and Echo....
+  #   """
 
-    # If we have a restriction, apply it, otherwise take all the replicas
-    allowedReplicaSource = (set(replicaDict) & allowedSourcesSet) if allowedSourcesSet else replicaDict
+  #   allowedSourcesSet = set(allowedSources) if allowedSources else set()
+  #   # Only consider the allowed sources
 
-    # If we have CTA and RAL as a tape source, choose RAL.
-    if 'CERN-RAW' in allowedReplicaSource and 'RAL-RAW' in allowedReplicaSource:
-      allowedReplicaSource = {'RAL-RAW': True}
-    # pick a random source
+  #   # If we have a restriction, apply it, otherwise take all the replicas
+  #   allowedReplicaSource = (set(replicaDict) & allowedSourcesSet) if allowedSourcesSet else replicaDict
 
-    randSource = random.choice(list(allowedReplicaSource))  # one has to convert to list
-    return randSource
+  #   # If we have CTA and RAL as a tape source, choose RAL.
+  #   if 'CERN-RAW' in allowedReplicaSource and 'RAL-RAW' in allowedReplicaSource:
+  #     allowedReplicaSource = {'RAL-RAW': True}
+  #   # pick a random source
+
+  #   randSource = random.choice(list(allowedReplicaSource))  # one has to convert to list
+  #   return randSource
