@@ -208,6 +208,13 @@ integration_tests:
       allow_failure: true
     - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: false
+  parallel:
+    matrix:
+      - TEST_COMMAND:
+          # FIXME: --release-var here is a hack to prevent the Python 2 CI from getting confused
+          # It's hopefully good enough for the time we care about Py2
+          - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" --release-var "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
+          - python3 ./integration_tests.py create "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" USE_PYTHON3=Yes --extra-module LHCbDIRAC=../LHCbDIRAC
   before_script:
     # Install dependencies
     - apk add docker py3-pip python3 bash git docker-compose jq curl
@@ -239,9 +246,9 @@ integration_tests:
       fi
     - echo "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}" | docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch
   script:
-    # FIXME: --release-var here is a hack to prevent the Python 2 CI from getting confused
-    # It's hopefully good enough for the time we care about Py2
-    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" --release-var "LHCBDIRAC_RELEASE=${lhcbdiracTag}" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
+    - echo $TEST_COMMAND
+    - eval echo $TEST_COMMAND
+    - eval $TEST_COMMAND
 
 ### coverage stage ###
 

@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS BkQueriesNew;
 CREATE TABLE BkQueriesNew (
     TransformationID INTEGER NOT NULL,
     ParameterName VARCHAR(32) NOT NULL,
-    ParameterValue LONGBLOB NOT NULL,
+    ParameterValue LONGTEXT NOT NULL,
     PRIMARY KEY(TransformationID,ParameterName),
     FOREIGN KEY (TransformationID) REFERENCES Transformations(TransformationID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -96,7 +96,7 @@ CREATE TABLE RunDestination(
 DROP TABLE IF EXISTS StoredJobDescription;
 CREATE TABLE StoredJobDescription(
   TransformationID INTEGER NOT NULL,
-  JobDescription LONGBLOB NOT NULL,
+  JobDescription LONGTEXT NOT NULL,
   PRIMARY KEY (TransformationID),
   FOREIGN KEY (TransformationID) REFERENCES Transformations (TransformationID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

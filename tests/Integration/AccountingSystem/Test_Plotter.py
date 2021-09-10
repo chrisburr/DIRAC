@@ -24,6 +24,7 @@ import math
 import operator
 from PIL import Image
 
+import six
 from LHCbDIRAC.AccountingSystem.private.Plotters.DataStoragePlotter import DataStoragePlotter
 from LHCbDIRAC.AccountingSystem.private.Plotters.StoragePlotter import StoragePlotter
 from functools import reduce
@@ -37,6 +38,9 @@ def compare(file1Path, file2Path):
 
     returns 0.0 if both are identical
   '''
+  if six.PY3:
+    file2Path += ".py3k"
+
   # Crops image to remove the "Generated on xxxx UTC" string
   image1 = Image.open(file1Path).crop((0, 0, 800, 570))
   image2 = Image.open(file2Path).crop((0, 0, 800, 570))
