@@ -26,9 +26,6 @@ stages:
   - test
   #  build images
   - images
-  # deploy the coverage results
-  - coverage
-  - coverageDfs
   # If there's a new tag, build the docker images, and also deploy on CVMFS
   - upload_pypi
   - deploy_release
@@ -114,17 +111,13 @@ run_pylint_py3:
   script:
     - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
 
-# This runs pytest and generates the coverage report
+# This runs pytest
 run_pytest:
   <<: *test_setup
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
     - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
-  coverage: '/\d+\%\s*$/'
-  artifacts:
-    paths:
-      - src/LHCbDIRAC/htmlcov/
 
 run_pytest_py3:
   extends: .test_setup_py3
@@ -249,52 +242,6 @@ integration_tests:
     - echo $TEST_COMMAND
     - eval echo $TEST_COMMAND
     - eval $TEST_COMMAND
-
-### coverage stage ###
-
-# This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
-pages:
-  stage: coverage
-  dependencies:
-    - run_pytest
-  script:
-    - TARGET_DIR="public/${CI_COMMIT_REF_NAME}"
-    - if [ ! -d "$TARGET_DIR" ]; then mkdir -p $TARGET_DIR; fi
-    - echo "Copying into $TARGET_DIR"
-    - mv src/LHCbDIRAC/htmlcov/* $TARGET_DIR
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
-  only:
-    refs:
-      - master@lhcb-dirac/LHCbDIRAC
-      - devel@lhcb-dirac/LHCbDIRAC
-    variables:
-      - $SWEEP != "true"
-
-# Deploy the pages generated to DFS
-dfsdeploy:
-  # Executed during the deploy stage
-  stage: coverageDfs
-  # # Only when the master branch is pushed
-  only:
-    refs:
-      - master@lhcb-dirac/LHCbDIRAC
-      - devel@lhcb-dirac/LHCbDIRAC
-    variables:
-      - $SWEEP != "true"
-  # Custom docker image providing the needed tools to deploy in DFS
-  image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
-  script:
-  # Script that performs the deploy to DFS. Makes use of the variables defined in the project
-  # It will not sync the generated content with the folder in DFS (risk of deleting DFS management files)
-  # It will just override the contents of DFS or copy new files
-  - deploy-dfs
-  # do not run any globally defined before_script or after_script for this step
-  before_script: []
-  after_script: []
-
 
 # ### release stage ###
 
