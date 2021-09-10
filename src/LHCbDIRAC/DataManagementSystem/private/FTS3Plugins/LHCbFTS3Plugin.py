@@ -12,17 +12,44 @@
     This module implements the default behavior for the FTS3Agent for TPC and source SE selection
 """
 import random
+import itertools
 from DIRAC import S_OK, S_ERROR
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.DataManagementSystem.private.FTS3Plugins.DefaultFTS3Plugin import DefaultFTS3Plugin
+from DIRAC.Resources.Storage.StorageElement import StorageElement
 
 
 class LHCbFTS3Plugin(DefaultFTS3Plugin):
 
+  @staticmethod
+  def _isCERNEOSCTATransfer(ftsJob=None, sourceSEName=None, destSEName=None, **kwargs):
+    """ Check if the transfer involves both CERN EOS and CTA"""
+    try:
+      if not sourceSEName:
+        sourceSEName = ftsJob.sourceSE
+      if not destSEName:
+        destSEName = ftsJob.targetSE
+
+      srcSE = StorageElement(sourceSEName)
+      srcBaseSEName = srcSE.options.get('BaseSE')
+      dstSE = StorageElement(destSEName)
+      dstBaseSEName = dstSE.options.get('BaseSE')
+
+      if (srcBaseSEName, dstBaseSEName) in list(itertools.product(('CERN-EOS', 'CERN-CTA'), repeat=2)):
+        return True
+
+    except Exception:
+      pass
+
+    return False
+
   def selectTPCProtocols(self, ftsJob=None, sourceSEName=None, destSEName=None, **kwargs):
-    # For the time being, just return the default.
-    # Later, we may specialize some links
-    # like EOS -> CTA
+    """ Specialised TPC selection"""
+
+    # If the transfer involves both CERN EOS and CTA, return root as TPC
+    if self._isCERNEOSCTATransfer(ftsJob=ftsJob, sourceSEName=sourceSEName, destSEName=destSEName, **kwargs):
+      return ['root']
+
     return super(
         LHCbFTS3Plugin,
         self).selectTPCProtocols(
