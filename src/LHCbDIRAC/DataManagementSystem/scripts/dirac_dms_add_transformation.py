@@ -43,6 +43,7 @@ def main():
       "",
       "MCVersion=",
       "   (list of) BK ConfigVersion; gets active MC processing passes ('All' for all years)")
+  Script.registerSwitch("", "CheckMCReplication", "   List all MC replication transformations that are obsolete")
   Script.registerSwitch("", "ListProcessingPasses", "   Only lists the processing passes")
 
   Script.setUsageMessage(__doc__ + '\n'.join([
