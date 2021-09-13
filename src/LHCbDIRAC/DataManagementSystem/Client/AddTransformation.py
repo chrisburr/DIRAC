@@ -34,6 +34,31 @@ from LHCbDIRAC.DataManagementSystem.Utilities.FCUtilities import chown
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
 
 
+def _checkMCReplication(bkPaths):
+  """
+  Check all MC replication transformations and list those that are obsolete
+  """
+  # Check only against Idle transformations
+  res = TransformationClient().getTransformations(
+      {'TransformationGroup': 'LHCbMCDSTBroadcastRandom', 'Status': ['Idle']})
+  if not res['OK']:
+    gLogger.fatal("Error getting transformations", res['Message'])
+    DIRAC.exit(1)
+  transPaths = [(dt['TransformationID'], dt['TransformationName'].replace('Replication-', '')) for dt in res['Value']]
+  gLogger.notice("Checking %d transformations against %d BK paths" % (len(transPaths), len(bkPaths)))
+  # Only keep BK paths
+  transPaths = [trans for trans in transPaths if trans[1].startswith('/MC/')]
+  obsoleteTrans = []
+  for transID, path in transPaths:
+    # Check if name ends with -<number>
+    xx = path.split('-')
+    if xx[-1].isdigit():
+      path = '-'.join(xx[:-1])
+    if path not in bkPaths:
+      obsoleteTrans.append(transID)
+  return obsoleteTrans
+
+
 def executeAddTransformation(pluginScript):
   """Method for actually adding a DM transformation It takes its options and
   argument values from pluginScript."""
@@ -49,6 +74,7 @@ def executeAddTransformation(pluginScript):
   listProcessingPasses = False
   mcVersionSet = None
   nameOption = None
+  checkMCReplication = False
 
   switches = Script.getUnprocessedSwitches()
   for opt, val in switches:
@@ -80,7 +106,12 @@ def executeAddTransformation(pluginScript):
     elif opt == 'Name':
       nameOption = val
     elif opt == 'MCVersion':
-      mcVersionSet = set(x.lower() for x in val.split(','))
+      if not mcVersionSet:
+        mcVersionSet = set(x.lower() for x in val.split(','))
+    elif opt == 'CheckMCReplication':
+      # Force to check all versions
+      mcVersionSet = {'all'}
+      checkMCReplication = True
 
   if userGroup:
     from DIRAC.Core.Security.ProxyInfo import getProxyInfo
@@ -168,7 +199,9 @@ def executeAddTransformation(pluginScript):
   for bkPath in sorted(bkPaths):
     if bkPath:
       bkQuery = BKQuery(bkPath)
-      if not listProcessingPasses:
+      if checkMCReplication:
+        gLogger.notice("Getting list of BK paths for %s" % bkPath)
+      elif not listProcessingPasses:
         gLogger.notice("For BK path: %s" % bkPath)
     else:
       bkQuery = pluginScript.getBKQuery()
@@ -183,9 +216,10 @@ def executeAddTransformation(pluginScript):
           gLogger.notice("List of processing passes for BK path", bkPath)
         processingPasses = getProcessingPasses(bkQuery, depth=depth)
         if processingPasses:
-          if not listProcessingPasses:
-            gLogger.notice("Transformations will be launched for the following list of processing passes:")
-          gLogger.notice('\t' + '\n\t'.join(processingPasses))
+          if not checkMCReplication:
+            if not listProcessingPasses:
+              gLogger.notice("Transformations will be launched for the following list of processing passes:")
+            gLogger.notice('\t' + '\n\t'.join(processingPasses))
         else:
           gLogger.notice("No processing passes matching the BK path")
           continue
@@ -204,6 +238,15 @@ def executeAddTransformation(pluginScript):
 
   if listProcessingPasses:
     DIRAC.exit(0)
+  # Check all MC replication transformations and list obsolete ones
+  if checkMCReplication:
+    bkPaths = [bkQuery.getPath() for bkQuery in bkQueries]
+    obsoleteTrans = _checkMCReplication(bkPaths)
+    # Print list of BK paths
+    gLogger.notice("List of %d transformations to set Completed:" % len(obsoleteTrans),
+                   '\n' + ','.join(str(transID) for transID in obsoleteTrans))
+    DIRAC.exit(0)
+
   reqID = pluginScript.getRequestID()
   if not requestID and reqID:
     requestID = reqID
@@ -212,6 +255,7 @@ def executeAddTransformation(pluginScript):
   # If no BK queries are given, set to None to go once in the loop
   if not bkQueries:
     bkQueries = [None]
+
   for bkQuery in bkQueries:
     if bkQuery != bkQueries[0]:
       gLogger.notice("**************************************")
