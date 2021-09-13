@@ -580,7 +580,7 @@ class StorageHistoryAgent(AgentModule):
         self.log.error("Cannot retrieve LFN usage", res['Message'])
         continue
       if not res['Value']:
-        self.log.error("getSummary returned empty value", "for %d: %s" % (directory, str(res)))
+        self.log.error("getSummary returned empty value", "for %s: %s" % (directory, str(res)))
         continue
       # Sum up all subdirectories
       for dirInfo in res['Value'].values():  # can be an iterator
