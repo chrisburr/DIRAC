@@ -1,3 +1,27 @@
+v10r3-pre3
+Based on DIRAC v7r3p1
+LHCbWebDIRAC v5r4-pre1
+LHCbDIRACOS v1r23
+Thank you for writing the text to appear in the release notes. It will show up
+exactly as it appears between the two bold lines
+Please follow the template:
+
+*DataManagementSystem
+
+CHANGE: (!1085) Add option --CheckMCReplication to `dirac-dms-add-transformation` to check all existing MC replication transformations against active MC paths. Lists all transformations that do not match and hence could be set Completed
+FIX: (!1085) format error in `StorageHistoryAgent`
+For examples look into release.notes
+
+*Docs
+
+CHANGE: (!1082) CI does not publish coverage results anymore
+
+*Core
+
+NEW: (!1080) Support Python 3 server installation
+
+
+
 v10r3-pre2
 Based on DIRAC v7r3-pre19
 LHCbWebDIRAC v5r4-pre1
