@@ -226,13 +226,13 @@ class XMLFilesReaderManager(object):
                 tcks += [i[1]]
 
           if len(runnumbers) > 1:
-            self.log.warn('Different runs are reconstructed:', '%s' % runnumbers)
+            self.log.verbose('Different runs are reconstructed:', '%s' % runnumbers)
             runnumber = None
           else:
             runnumber = runnumbers[0]
 
           if len(tcks) > 1:
-            self.log.warn('Different TCKs are reconstructed:', '%s' % tcks)
+            self.log.verbose('Different TCKs are reconstructed:', '%s' % tcks)
             tck = -2
           else:
             tck = tcks[0]
