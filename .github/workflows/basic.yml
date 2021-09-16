@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   check:
     runs-on: ubuntu-latest
-    if: github.event_name != 'push' || github.repository == 'DIRACGrid/DIRAC'
+    if: github.event_name != 'push' || github.repository == 'chrisburr/DIRAC'
     timeout-minutes: 30
 
     strategy:
@@ -23,7 +23,7 @@ jobs:
           - CHECK=pylintPY3K tests/runPylint.sh
           - |
             if [[ "${REFERENCE_BRANCH}" != "" ]]; then
-                git remote add upstream https://github.com/DIRACGrid/DIRAC.git
+                git remote add upstream https://github.com/chrisburr/DIRAC.git
                 git fetch --no-tags upstream "${REFERENCE_BRANCH}"
                 git branch -vv
                 git diff -U0 "upstream/${REFERENCE_BRANCH}" ':(exclude)tests/formatting/pep8_bad.py' | pycodestyle --diff
