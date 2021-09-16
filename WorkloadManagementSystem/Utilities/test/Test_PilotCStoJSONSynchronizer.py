@@ -5,7 +5,9 @@ import unittest
 import os
 from mock import patch, MagicMock as Mock
 
-from DIRAC.WorkloadManagementSystem.Utilities.PilotCStoJSONSynchronizer import PilotCStoJSONSynchronizer
+from DIRAC.WorkloadManagementSystem.Utilities.PilotCStoJSONSynchronizer import (
+    PilotCStoJSONSynchronizer,
+)
 from DIRAC.ConfigurationSystem.private.ConfigurationClient import ConfigurationClient
 from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData
 from DIRAC.Core.Utilities.CFG import CFG
@@ -14,15 +16,14 @@ from DIRAC.Core.Utilities.CFG import CFG
 
 
 class PilotCStoJSONSynchronizerTestCase(unittest.TestCase):
-  """ Base class for the PilotCStoJSONSynchronizer test cases
-  """
+    """Base class for the PilotCStoJSONSynchronizer test cases"""
 
-  def setUp(self):
-    # Creating test configuration file
-    self.clearCFG()
+    def setUp(self):
+        # Creating test configuration file
+        self.clearCFG()
 
-    self.testCfgFileName = 'test.cfg'
-    cfgContent = '''
+        self.testCfgFileName = "test.cfg"
+        cfgContent = """
     DIRAC
     {
       Setup=TestSetup
@@ -117,63 +118,81 @@ class PilotCStoJSONSynchronizerTestCase(unittest.TestCase):
         }
       }
     }
-    '''
-    with open(self.testCfgFileName, 'w') as f:
-      f.write(cfgContent)
-    # we replace the configuration by our own one.
-    gConfig = ConfigurationClient(fileToLoadList=[self.testCfgFileName])
-    self.setup = gConfig.getValue('/DIRAC/Setup', '')
-    self.wm = gConfig.getValue('DIRAC/Setups/' + self.setup + '/WorkloadManagement', '')
+    """
+        with open(self.testCfgFileName, "w") as f:
+            f.write(cfgContent)
+        # we replace the configuration by our own one.
+        gConfig = ConfigurationClient(fileToLoadList=[self.testCfgFileName])
+        self.setup = gConfig.getValue("/DIRAC/Setup", "")
+        self.wm = gConfig.getValue(
+            "DIRAC/Setups/" + self.setup + "/WorkloadManagement", ""
+        )
 
-  def tearDown(self):
-    for aFile in [self.testCfgFileName, 'checksums.sha512', 'pilot.json']:
-      try:
-        os.remove(aFile)
-      except OSError:
-        pass
-    self.clearCFG()
+    def tearDown(self):
+        for aFile in [self.testCfgFileName, "checksums.sha512", "pilot.json"]:
+            try:
+                os.remove(aFile)
+            except OSError:
+                pass
+        self.clearCFG()
 
-  @staticmethod
-  def clearCFG():
-    """SUPER UGLY: one must recreate the CFG objects of gConfigurationData
-    not to conflict with other tests that might be using a local dirac.cfg"""
-    gConfigurationData.localCFG = CFG()
-    gConfigurationData.remoteCFG = CFG()
-    gConfigurationData.mergedCFG = CFG()
-    gConfigurationData.generateNewVersion()
+    @staticmethod
+    def clearCFG():
+        """SUPER UGLY: one must recreate the CFG objects of gConfigurationData
+        not to conflict with other tests that might be using a local dirac.cfg"""
+        gConfigurationData.localCFG = CFG()
+        gConfigurationData.remoteCFG = CFG()
+        gConfigurationData.mergedCFG = CFG()
+        gConfigurationData.generateNewVersion()
 
 
 class Test_PilotCStoJSONSynchronizer_sync(PilotCStoJSONSynchronizerTestCase):
+    @patch(
+        "DIRAC.WorkloadManagementSystem.Utilities.PilotCStoJSONSynchronizer.requests",
+        new=Mock(),
+    )
+    def test_success(self):
+        synchroniser = PilotCStoJSONSynchronizer()
+        synchroniser.pilotFileServer = "value"
+        res = synchroniser._syncJSONFile()
+        assert res["OK"], res["Message"]
+        # ensure pilot.json was "uploaded"
+        assert "pilot.json" in synchroniser._checksumDict
 
-  @patch('DIRAC.WorkloadManagementSystem.Utilities.PilotCStoJSONSynchronizer.requests', new=Mock())
-  def test_success(self):
-    synchroniser = PilotCStoJSONSynchronizer()
-    synchroniser.pilotFileServer = 'value'
-    res = synchroniser._syncJSONFile()
-    assert res['OK'], res['Message']
-    # ensure pilot.json was "uploaded"
-    assert 'pilot.json' in synchroniser._checksumDict
+    @patch(
+        "DIRAC.WorkloadManagementSystem.Utilities.PilotCStoJSONSynchronizer.requests",
+        new=Mock(),
+    )
+    def test_syncchecksum(self):
+        # If the hashes need to be changed because the pilot or test.cfg file change, they should be created with the
+        # sha512sum command line tool, and the files should be checked for correctness
+        expectedHash = (
+            "00e67a2d45e2c2508a935500a4765e1a5f1ce661f23c1fb329987c8211bde754ed"
+            + "79f6b02cdeabd429979a82014c474c5ce2f46a879f17e2a6ce4bcac683e2e4"
+        )
+        synchroniser = PilotCStoJSONSynchronizer()
+        synchroniser.pilotFileServer = "value"
+        synchroniser._checksumFile(self.testCfgFileName)
+        res = synchroniser._syncJSONFile()
+        assert res["OK"], res["Message"]
+        synchroniser._syncChecksum()
+        assert self.testCfgFileName in synchroniser._checksumDict
+        assert synchroniser._checksumDict[self.testCfgFileName] == expectedHash
+        assert open("checksums.sha512", "rb").read().split("\n")[1] == "%s  %s" % (
+            expectedHash,
+            self.testCfgFileName,
+        )
+        # this tests if the checksums file was also "uploaded"
+        assert "checksums.sha512" in list(synchroniser._checksumDict)
 
-  @patch('DIRAC.WorkloadManagementSystem.Utilities.PilotCStoJSONSynchronizer.requests', new=Mock())
-  def test_syncchecksum(self):
-    # If the hashes need to be changed because the pilot or test.cfg file change, they should be created with the
-    # sha512sum command line tool, and the files should be checked for correctness
-    expectedHash = '00e67a2d45e2c2508a935500a4765e1a5f1ce661f23c1fb329987c8211bde754ed' + \
-                   '79f6b02cdeabd429979a82014c474c5ce2f46a879f17e2a6ce4bcac683e2e4'
-    synchroniser = PilotCStoJSONSynchronizer()
-    synchroniser.pilotFileServer = 'value'
-    synchroniser._checksumFile(self.testCfgFileName)
-    res = synchroniser._syncJSONFile()
-    assert res['OK'], res['Message']
-    synchroniser._syncChecksum()
-    assert self.testCfgFileName in synchroniser._checksumDict
-    assert synchroniser._checksumDict[self.testCfgFileName] == expectedHash
-    assert open('checksums.sha512', 'rb').read().split('\n')[1] == '%s  %s' % (expectedHash, self.testCfgFileName)
-    # this tests if the checksums file was also "uploaded"
-    assert 'checksums.sha512' in list(synchroniser._checksumDict)
 
-
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(PilotCStoJSONSynchronizerTestCase)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(Test_PilotCStoJSONSynchronizer_sync))
-  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+if __name__ == "__main__":
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(
+        PilotCStoJSONSynchronizerTestCase
+    )
+    suite.addTest(
+        unittest.defaultTestLoader.loadTestsFromTestCase(
+            Test_PilotCStoJSONSynchronizer_sync
+        )
+    )
+    testResult = unittest.TextTestRunner(verbosity=2).run(suite)

@@ -69,6 +69,7 @@ import sys
 import os
 import platform as pyPlatform
 from pkgutil import extend_path
+
 __path__ = extend_path(__path__, __name__)
 
 # Set the environment variable such that openssl accepts proxy cert
@@ -76,7 +77,7 @@ __path__ = extend_path(__path__, __name__)
 # https://github.com/openssl/openssl/commit/8e21938ce3a5306df753eb40a20fe30d17cf4a68
 # Lets see if they would accept to put it back
 # https://github.com/openssl/openssl/issues/8177
-os.environ['OPENSSL_ALLOW_PROXY_CERTS'] = "True"
+os.environ["OPENSSL_ALLOW_PROXY_CERTS"] = "True"
 
 __RCSID__ = "$Id$"
 
@@ -91,34 +92,37 @@ import _strptime
 # Define Version, use an unsual structure to minimise conflicts with rel-v7r2
 pythonVersion = pyPlatform.python_version_tuple()
 if pythonVersion[0] == "3":
-  pass
+    pass
 else:
-  majorVersion = 7
-  minorVersion = 1
-  patchLevel = 46
-  preVersion = 0
+    majorVersion = 7
+    minorVersion = 1
+    patchLevel = 46
+    preVersion = 0
 
 version = "v%sr%s" % (majorVersion, minorVersion)
 buildVersion = "v%dr%d" % (majorVersion, minorVersion)
 if patchLevel:
-  version = "%sp%s" % (version, patchLevel)
-  buildVersion = "%s build %s" % (buildVersion, patchLevel)
+    version = "%sp%s" % (version, patchLevel)
+    buildVersion = "%s build %s" % (buildVersion, patchLevel)
 if preVersion:
-  version = "%s-pre%s" % (version, preVersion)
-  buildVersion = "%s pre %s" % (buildVersion, preVersion)
+    version = "%s-pre%s" % (version, preVersion)
+    buildVersion = "%s pre %s" % (buildVersion, preVersion)
 
 # Check of python version
 
-__pythonMajorVersion = ("2", )
-__pythonMinorVersion = ("7")
-if str(pythonVersion[0]) not in __pythonMajorVersion or str(pythonVersion[1]) not in __pythonMinorVersion:
-  print("Python Version %s not supported by DIRAC" % pyPlatform.python_version())
-  print("Supported versions are: ")
-  for major in __pythonMajorVersion:
-    for minor in __pythonMinorVersion:
-      print("%s.%s.x" % (major, minor))
+__pythonMajorVersion = ("2",)
+__pythonMinorVersion = "7"
+if (
+    str(pythonVersion[0]) not in __pythonMajorVersion
+    or str(pythonVersion[1]) not in __pythonMinorVersion
+):
+    print("Python Version %s not supported by DIRAC" % pyPlatform.python_version())
+    print("Supported versions are: ")
+    for major in __pythonMajorVersion:
+        for minor in __pythonMinorVersion:
+            print("%s.%s.x" % (major, minor))
 
-  sys.exit(1)
+    sys.exit(1)
 
 errorMail = "dirac.alarms@gmail.com"
 alarmMail = "dirac.alarms@gmail.com"
@@ -130,7 +134,7 @@ rootPath = os.path.dirname(pythonPath)
 
 # Import DIRAC.Core.Utils modules
 
-#from DIRAC.Core.Utilities import *
+# from DIRAC.Core.Utilities import *
 from DIRAC.Core.Utilities.Network import getFQDN
 import DIRAC.Core.Utilities.ExitCallback as ExitCallback
 
@@ -145,12 +149,12 @@ from DIRAC.ConfigurationSystem.Client.Config import gConfig
 
 # Some Defaults if not present in the configuration
 FQDN = getFQDN()
-if len(FQDN.split('.')) > 2:
-  # Use the last component of the FQDN as country code if there are more than 2 components
-  _siteName = 'DIRAC.Client.%s' % FQDN.split('.')[-1]
+if len(FQDN.split(".")) > 2:
+    # Use the last component of the FQDN as country code if there are more than 2 components
+    _siteName = "DIRAC.Client.%s" % FQDN.split(".")[-1]
 else:
-  # else use local as country code
-  _siteName = 'DIRAC.Client.local'
+    # else use local as country code
+    _siteName = "DIRAC.Client.local"
 
 __siteName = False
 
@@ -182,37 +186,41 @@ __siteName = False
 
 
 def siteName():
-  """
-  Determine and return DIRAC name for current site
-  """
-  global __siteName
-  if not __siteName:
-    __siteName = gConfig.getValue('/LocalSite/Site', _siteName)
-  return __siteName
+    """
+    Determine and return DIRAC name for current site
+    """
+    global __siteName
+    if not __siteName:
+        __siteName = gConfig.getValue("/LocalSite/Site", _siteName)
+    return __siteName
 
 
 # Callbacks
 ExitCallback.registerSignals()
 
 # platform detection
-from DIRAC.Core.Utilities.Platform import getPlatformString, getPlatform, getPlatformTuple
+from DIRAC.Core.Utilities.Platform import (
+    getPlatformString,
+    getPlatform,
+    getPlatformTuple,
+)
 
 
 def exit(exitCode=0):
-  """
-  Finish execution using callbacks
-  """
-  ExitCallback.execute(exitCode, [])
-  sys.exit(exitCode)
+    """
+    Finish execution using callbacks
+    """
+    ExitCallback.execute(exitCode, [])
+    sys.exit(exitCode)
 
 
 def abort(exitCode, *args, **kwargs):
-  """
-  Abort execution
-  """
-  try:
-    gLogger.fatal(*args, **kwargs)
-    os._exit(exitCode)
-  except OSError:
-    gLogger.exception('Error while executing DIRAC.abort')
-    os._exit(exitCode)
+    """
+    Abort execution
+    """
+    try:
+        gLogger.fatal(*args, **kwargs)
+        os._exit(exitCode)
+    except OSError:
+        gLogger.exception("Error while executing DIRAC.abort")
+        os._exit(exitCode)

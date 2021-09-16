@@ -16,6 +16,7 @@ Example::
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
+
 Script.setUsageMessage(__doc__)
 Script.parseCommandLine(ignoreErrors=True)
 
@@ -25,16 +26,16 @@ from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
 diracAdmin = DiracAdmin()
 
 result = diracAdmin.getBannedSites()
-if result['OK']:
-  bannedSites = result['Value']
+if result["OK"]:
+    bannedSites = result["Value"]
 else:
-  gLogger.error(result['Message'])
-  DIRACExit(2)
+    gLogger.error(result["Message"])
+    DIRACExit(2)
 
 for site in bannedSites:
-  result = diracAdmin.getSiteMaskLogging(site, printOutput=True)
-  if not result['OK']:
-    gLogger.error(result['Message'])
-    DIRACExit(2)
+    result = diracAdmin.getSiteMaskLogging(site, printOutput=True)
+    if not result["OK"]:
+        gLogger.error(result["Message"])
+        DIRACExit(2)
 
 DIRACExit(0)

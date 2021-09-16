@@ -34,9 +34,10 @@ Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 3:
-  Script.showHelp(exitCode=1)
+    Script.showHelp(exitCode=1)
 
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 exitCode = 0
 forceCreation = False
@@ -44,34 +45,40 @@ errorList = []
 
 userProps = {}
 for unprocSw in Script.getUnprocessedSwitches():
-  if unprocSw[0] in ("f", "force"):
-    forceCreation = True
-  elif unprocSw[0] in ("p", "property"):
-    prop = unprocSw[1]
-    pl = prop.split("=")
-    if len(pl) < 2:
-      errorList.append(("in arguments", "Property %s has to include a '=' to separate name from value" % prop))
-      exitCode = 255
-    else:
-      pName = pl[0]
-      pValue = "=".join(pl[1:])
-      print("Setting property %s to %s" % (pName, pValue))
-      userProps[pName] = pValue
+    if unprocSw[0] in ("f", "force"):
+        forceCreation = True
+    elif unprocSw[0] in ("p", "property"):
+        prop = unprocSw[1]
+        pl = prop.split("=")
+        if len(pl) < 2:
+            errorList.append(
+                (
+                    "in arguments",
+                    "Property %s has to include a '=' to separate name from value"
+                    % prop,
+                )
+            )
+            exitCode = 255
+        else:
+            pName = pl[0]
+            pValue = "=".join(pl[1:])
+            print("Setting property %s to %s" % (pName, pValue))
+            userProps[pName] = pValue
 
 userName = args[0]
-userProps['DN'] = args[1]
-userProps['Groups'] = args[2:]
+userProps["DN"] = args[1]
+userProps["Groups"] = args[2:]
 
 if not diracAdmin.csModifyUser(userName, userProps, createIfNonExistant=forceCreation):
-  errorList.append(("modify user", "Cannot modify user %s" % userName))
-  exitCode = 255
-else:
-  result = diracAdmin.csCommitChanges()
-  if not result['OK']:
-    errorList.append(("commit", result['Message']))
+    errorList.append(("modify user", "Cannot modify user %s" % userName))
     exitCode = 255
+else:
+    result = diracAdmin.csCommitChanges()
+    if not result["OK"]:
+        errorList.append(("commit", result["Message"]))
+        exitCode = 255
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

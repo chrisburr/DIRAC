@@ -29,116 +29,124 @@ gTaskQueueDB = False
 
 
 def initializeMatcherHandler(serviceInfo):
-  """  Matcher Service initialization
-  """
+    """Matcher Service initialization"""
 
-  global gJobDB
-  global gTaskQueueDB
-  global jlDB
-  global pilotAgentsDB
+    global gJobDB
+    global gTaskQueueDB
+    global jlDB
+    global pilotAgentsDB
 
-  gJobDB = JobDB()
-  gTaskQueueDB = TaskQueueDB()
-  jlDB = JobLoggingDB()
-  pilotAgentsDB = PilotAgentsDB()
+    gJobDB = JobDB()
+    gTaskQueueDB = TaskQueueDB()
+    jlDB = JobLoggingDB()
+    pilotAgentsDB = PilotAgentsDB()
 
-  gMonitor.registerActivity('matchTime', "Job matching time",
-                            'Matching', "secs", gMonitor.OP_MEAN, 300)
-  gMonitor.registerActivity('matchesDone', "Job Match Request",
-                            'Matching', "matches", gMonitor.OP_RATE, 300)
-  gMonitor.registerActivity('matchesOK', "Matched jobs",
-                            'Matching', "matches", gMonitor.OP_RATE, 300)
-  gMonitor.registerActivity('numTQs', "Number of Task Queues",
-                            'Matching', "tqsk queues", gMonitor.OP_MEAN, 300)
+    gMonitor.registerActivity(
+        "matchTime", "Job matching time", "Matching", "secs", gMonitor.OP_MEAN, 300
+    )
+    gMonitor.registerActivity(
+        "matchesDone", "Job Match Request", "Matching", "matches", gMonitor.OP_RATE, 300
+    )
+    gMonitor.registerActivity(
+        "matchesOK", "Matched jobs", "Matching", "matches", gMonitor.OP_RATE, 300
+    )
+    gMonitor.registerActivity(
+        "numTQs",
+        "Number of Task Queues",
+        "Matching",
+        "tqsk queues",
+        gMonitor.OP_MEAN,
+        300,
+    )
 
-  gTaskQueueDB.recalculateTQSharesForAll()
-  gThreadScheduler.addPeriodicTask(120, gTaskQueueDB.recalculateTQSharesForAll)
-  gThreadScheduler.addPeriodicTask(60, sendNumTaskQueues)
+    gTaskQueueDB.recalculateTQSharesForAll()
+    gThreadScheduler.addPeriodicTask(120, gTaskQueueDB.recalculateTQSharesForAll)
+    gThreadScheduler.addPeriodicTask(60, sendNumTaskQueues)
 
-  sendNumTaskQueues()
+    sendNumTaskQueues()
 
-  return S_OK()
+    return S_OK()
 
 
 def sendNumTaskQueues():
-  result = gTaskQueueDB.getNumTaskQueues()
-  if result['OK']:
-    gMonitor.addMark('numTQs', result['Value'])
-  else:
-    gLogger.error("Cannot get the number of task queues", result['Message'])
+    result = gTaskQueueDB.getNumTaskQueues()
+    if result["OK"]:
+        gMonitor.addMark("numTQs", result["Value"])
+    else:
+        gLogger.error("Cannot get the number of task queues", result["Message"])
 
 
 class MatcherHandler(RequestHandler):
+    def initialize(self):
+        self.limiter = Limiter(jobDB=gJobDB)
 
-  def initialize(self):
-    self.limiter = Limiter(jobDB=gJobDB)
+    ##############################################################################
+    types_requestJob = [[basestring, dict]]
 
-##############################################################################
-  types_requestJob = [[basestring, dict]]
-
-  def export_requestJob(self, resourceDescription):
-    """ Serve a job to the request of an agent which is the highest priority
+    def export_requestJob(self, resourceDescription):
+        """Serve a job to the request of an agent which is the highest priority
         one matching the agent's site capacity
-    """
+        """
 
-    resourceDescription['Setup'] = self.serviceInfoDict['clientSetup']
-    credDict = self.getRemoteCredentials()
-    pilotRef = resourceDescription.get('PilotReference', 'Unknown')
+        resourceDescription["Setup"] = self.serviceInfoDict["clientSetup"]
+        credDict = self.getRemoteCredentials()
+        pilotRef = resourceDescription.get("PilotReference", "Unknown")
 
-    try:
-      opsHelper = Operations(group=credDict['group'])
-      matcher = Matcher(pilotAgentsDB=pilotAgentsDB,
-                        jobDB=gJobDB,
-                        tqDB=gTaskQueueDB,
-                        jlDB=jlDB,
-                        opsHelper=opsHelper,
-                        pilotRef=pilotRef)
-      result = matcher.selectJob(resourceDescription, credDict)
-    except RuntimeError as rte:
-      self.log.error("[%s] Error requesting job: " % pilotRef, rte)
-      return S_ERROR("Error requesting job")
+        try:
+            opsHelper = Operations(group=credDict["group"])
+            matcher = Matcher(
+                pilotAgentsDB=pilotAgentsDB,
+                jobDB=gJobDB,
+                tqDB=gTaskQueueDB,
+                jlDB=jlDB,
+                opsHelper=opsHelper,
+                pilotRef=pilotRef,
+            )
+            result = matcher.selectJob(resourceDescription, credDict)
+        except RuntimeError as rte:
+            self.log.error("[%s] Error requesting job: " % pilotRef, rte)
+            return S_ERROR("Error requesting job")
 
-    # result can be empty, meaning that no job matched
-    if result:
-      gMonitor.addMark("matchesDone")
-      gMonitor.addMark("matchesOK")
-      return S_OK(result)
-    # FIXME: This is correctly interpreted by the JobAgent, but DErrno should be used instead
-    return S_ERROR("No match found")
+        # result can be empty, meaning that no job matched
+        if result:
+            gMonitor.addMark("matchesDone")
+            gMonitor.addMark("matchesOK")
+            return S_OK(result)
+        # FIXME: This is correctly interpreted by the JobAgent, but DErrno should be used instead
+        return S_ERROR("No match found")
 
-##############################################################################
-  types_getActiveTaskQueues = []
+    ##############################################################################
+    types_getActiveTaskQueues = []
 
-  @staticmethod
-  def export_getActiveTaskQueues():
-    """ Return all task queues
-    """
-    return gTaskQueueDB.retrieveTaskQueues()
+    @staticmethod
+    def export_getActiveTaskQueues():
+        """Return all task queues"""
+        return gTaskQueueDB.retrieveTaskQueues()
 
-##############################################################################
-  types_getMatchingTaskQueues = [dict]
+    ##############################################################################
+    types_getMatchingTaskQueues = [dict]
 
-  def export_getMatchingTaskQueues(self, resourceDict):
-    """ Return all task queues that match the resourceDict
-    """
-    if 'Site' in resourceDict and isinstance(resourceDict['Site'], six.string_types):
-      negativeCond = self.limiter.getNegativeCondForSite(resourceDict['Site'])
-    else:
-      negativeCond = self.limiter.getNegativeCond()
-    matcher = Matcher(pilotAgentsDB=pilotAgentsDB,
-                      jobDB=gJobDB,
-                      tqDB=gTaskQueueDB,
-                      jlDB=jlDB)
-    resourceDescriptionDict = matcher._processResourceDescription(resourceDict)
-    return gTaskQueueDB.getMatchingTaskQueues(resourceDescriptionDict,
-                                              negativeCond=negativeCond)
+    def export_getMatchingTaskQueues(self, resourceDict):
+        """Return all task queues that match the resourceDict"""
+        if "Site" in resourceDict and isinstance(
+            resourceDict["Site"], six.string_types
+        ):
+            negativeCond = self.limiter.getNegativeCondForSite(resourceDict["Site"])
+        else:
+            negativeCond = self.limiter.getNegativeCond()
+        matcher = Matcher(
+            pilotAgentsDB=pilotAgentsDB, jobDB=gJobDB, tqDB=gTaskQueueDB, jlDB=jlDB
+        )
+        resourceDescriptionDict = matcher._processResourceDescription(resourceDict)
+        return gTaskQueueDB.getMatchingTaskQueues(
+            resourceDescriptionDict, negativeCond=negativeCond
+        )
 
-##############################################################################
-  types_matchAndGetTaskQueue = [dict]
+    ##############################################################################
+    types_matchAndGetTaskQueue = [dict]
 
-  @staticmethod
-  @deprecated("Unused")
-  def export_matchAndGetTaskQueue(resourceDict):
-    """ Return matching task queues
-    """
-    return gTaskQueueDB.matchAndGetTaskQueue(resourceDict)
+    @staticmethod
+    @deprecated("Unused")
+    def export_matchAndGetTaskQueue(resourceDict):
+        """Return matching task queues"""
+        return gTaskQueueDB.matchAndGetTaskQueue(resourceDict)

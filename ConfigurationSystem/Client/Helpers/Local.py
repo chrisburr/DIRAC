@@ -7,7 +7,7 @@ gBaseLocalSiteSection = "/LocalSite"
 
 
 def gridEnv():
-  """
+    """
     Return location of gridenv file to get a UI environment
-  """
-  return gConfig.getValue(cfgPath(gBaseLocalSiteSection, 'GridEnv'), '')
+    """
+    return gConfig.getValue(cfgPath(gBaseLocalSiteSection, "GridEnv"), "")

@@ -39,6 +39,7 @@ Example:
 """
 
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 # pylint: disable=wrong-import-position
@@ -50,26 +51,27 @@ Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 1:
-  Script.showHelp()
+    Script.showHelp()
 
 from DIRAC import exit as DIRACExit
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 exitCode = 0
 errorList = []
 
 for gridID in args:
 
-  result = diracAdmin.getPilotLoggingInfo(gridID)
-  if not result['OK']:
-    errorList.append((gridID, result['Message']))
-    exitCode = 2
-  else:
-    print('Pilot Reference: %s', gridID)
-    print(result['Value'])
-    print()
+    result = diracAdmin.getPilotLoggingInfo(gridID)
+    if not result["OK"]:
+        errorList.append((gridID, result["Message"]))
+        exitCode = 2
+    else:
+        print("Pilot Reference: %s", gridID)
+        print(result["Value"])
+        print()
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRACExit(exitCode)

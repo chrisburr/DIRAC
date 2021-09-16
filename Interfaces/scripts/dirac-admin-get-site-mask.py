@@ -21,6 +21,7 @@ Example:
   LCG.MSFG.fr
 """
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
@@ -33,11 +34,11 @@ from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
 
 diracAdmin = DiracAdmin()
 
-gLogger.setLevel('ALWAYS')
+gLogger.setLevel("ALWAYS")
 
 result = diracAdmin.getSiteMask(printOutput=True, status="Active")
-if result['OK']:
-  DIRACExit(0)
+if result["OK"]:
+    DIRACExit(0)
 else:
-  print(result['Message'])
-  DIRACExit(2)
+    print(result["Message"])
+    DIRACExit(2)

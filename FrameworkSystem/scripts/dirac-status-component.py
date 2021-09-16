@@ -22,6 +22,7 @@ Example:
 from __future__ import print_function
 
 from DIRAC.Core.Base import Script
+
 Script.disableCS()
 
 Script.setUsageMessage(__doc__)
@@ -34,21 +35,21 @@ from DIRAC.FrameworkSystem.Client.ComponentInstaller import gComponentInstaller
 __RCSID__ = "$Id$"
 
 if len(args) > 2:
-  Script.showHelp(exitCode=1)
+    Script.showHelp(exitCode=1)
 
-system = '*'
-component = '*'
+system = "*"
+component = "*"
 if len(args) > 0:
-  system = args[0]
-if system != '*':
-  if len(args) > 1:
-    component = args[1]
+    system = args[0]
+if system != "*":
+    if len(args) > 1:
+        component = args[1]
 #
 gComponentInstaller.exitOnError = True
 #
 result = gComponentInstaller.getStartupComponentStatus([system, component])
-if not result['OK']:
-  print('ERROR:', result['Message'])
-  exit(-1)
+if not result["OK"]:
+    print("ERROR:", result["Message"])
+    exit(-1)
 
-gComponentInstaller.printStartupStatus(result['Value'])
+gComponentInstaller.printStartupStatus(result["Value"])

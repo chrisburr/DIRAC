@@ -5,17 +5,23 @@
 """
 
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 import DIRAC
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
-                                  'Usage:',
-                                  '  %s prodID' % Script.scriptName,
-                                  'Arguments:',
-                                  '  prodID: Production ID (mandatory)'
-                                  ]))
+Script.setUsageMessage(
+    "\n".join(
+        [
+            __doc__.split("\n")[1],
+            "Usage:",
+            "  %s prodID" % Script.scriptName,
+            "Arguments:",
+            "  prodID: Production ID (mandatory)",
+        ]
+    )
+)
 
 
 Script.parseCommandLine()
@@ -27,18 +33,18 @@ prodClient = ProductionClient()
 # get arguments
 args = Script.getPositionalArgs()
 if len(args) < 1:
-  Script.showHelp(exitCode=1)
+    Script.showHelp(exitCode=1)
 else:
-  prodID = args[0]
-  res = prodClient.getProduction(prodID)
+    prodID = args[0]
+    res = prodClient.getProduction(prodID)
 
-if res['OK']:
-  prod = res['Value']
+if res["OK"]:
+    prod = res["Value"]
 else:
-  DIRAC.gLogger.error(res['Message'])
-  DIRAC.exit(-1)
+    DIRAC.gLogger.error(res["Message"])
+    DIRAC.exit(-1)
 
-print('Description for production %s:\n' % prodID)
-print(prod['Description'])
+print("Description for production %s:\n" % prodID)
+print(prod["Description"])
 
 DIRAC.exit(0)

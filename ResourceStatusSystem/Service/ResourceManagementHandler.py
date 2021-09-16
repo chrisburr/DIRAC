@@ -1,7 +1,7 @@
-''' ResourceManagementHandler
+""" ResourceManagementHandler
 
   Module that allows users to access the ResourceManagementDB remotely.
-'''
+"""
 
 import six
 
@@ -9,13 +9,15 @@ from DIRAC import gConfig, S_OK, gLogger
 from DIRAC.Core.DISET.RequestHandler import RequestHandler, getServiceOption
 from DIRAC.ResourceStatusSystem.Utilities import Synchronizer
 from DIRAC.ResourceStatusSystem.Service.ResourceStatusHandler import convert
-from DIRAC.ResourceStatusSystem.Service.ResourceStatusHandler import loadResourceStatusComponent
+from DIRAC.ResourceStatusSystem.Service.ResourceStatusHandler import (
+    loadResourceStatusComponent,
+)
 
-__RCSID__ = '$Id$'
+__RCSID__ = "$Id$"
 
 
 def initializeResourceManagementHandler(serviceInfo):
-  """
+    """
     Handler initialization, where we:
       dynamically load ResourceManagement database plugin module, as advised by the config,
       (assumes that the module name and a class name are the same)
@@ -23,31 +25,34 @@ def initializeResourceManagementHandler(serviceInfo):
 
       :param _serviceInfo: service info dictionary
       :return: standard Dirac return object
-  """
+    """
 
-  gLogger.debug("ServiceInfo", serviceInfo)
-  gLogger.debug("Initializing ResourceManagement Service with the following DB component:")
-  defaultOption, defaultClass = 'ResourceManagementDB', 'ResourceManagementDB'
-  configValue = getServiceOption(serviceInfo, defaultOption, defaultClass)
-  gLogger.debug("Option:%-20s Class:%-20s" % (str(defaultOption), str(configValue)))
-  result = loadResourceStatusComponent(configValue, configValue)
+    gLogger.debug("ServiceInfo", serviceInfo)
+    gLogger.debug(
+        "Initializing ResourceManagement Service with the following DB component:"
+    )
+    defaultOption, defaultClass = "ResourceManagementDB", "ResourceManagementDB"
+    configValue = getServiceOption(serviceInfo, defaultOption, defaultClass)
+    gLogger.debug("Option:%-20s Class:%-20s" % (str(defaultOption), str(configValue)))
+    result = loadResourceStatusComponent(configValue, configValue)
 
-  if not result['OK']:
-    return result
+    if not result["OK"]:
+        return result
 
-  global db
+    global db
 
-  db = result['Value']
-  syncObject = Synchronizer.Synchronizer()
-  gConfig.addListenerToNewVersionEvent(syncObject.sync)
+    db = result["Value"]
+    syncObject = Synchronizer.Synchronizer()
+    gConfig.addListenerToNewVersionEvent(syncObject.sync)
 
-  return S_OK()
+    return S_OK()
+
 
 ################################################################################
 
 
 class ResourceManagementHandler(RequestHandler):
-  '''
+    """
   The ResourceManagementHandler exposes the DB front-end functions through a
   XML-RPC server, functionalities inherited from :class:`DIRAC.Core.DISET.Reques\
   tHandler.RequestHandler`
@@ -68,72 +73,72 @@ class ResourceManagementHandler(RequestHandler):
 
    >>> from DIRAC.Core.DISET.RPCClient import RPCCLient
    >>> server = RPCCLient("ResourceStatus/ResourceManagement")
-  '''
+  """
 
-  def __init__(self, *args, **kwargs):
-    super(ResourceManagementHandler, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(ResourceManagementHandler, self).__init__(*args, **kwargs)
 
-  @staticmethod
-  def __logResult(methodName, result):
-    '''
-      Method that writes to log error messages
-    '''
+    @staticmethod
+    def __logResult(methodName, result):
+        """
+        Method that writes to log error messages
+        """
 
-    if not result['OK']:
-      gLogger.error('%s : %s' % (methodName, result['Message']))
+        if not result["OK"]:
+            gLogger.error("%s : %s" % (methodName, result["Message"]))
 
-  @staticmethod
-  def setDatabase(database):
-    '''
-    This method let us inherit from this class and overwrite the database object
-    without having problems with the global variables.
+    @staticmethod
+    def setDatabase(database):
+        """
+        This method let us inherit from this class and overwrite the database object
+        without having problems with the global variables.
 
-    :Parameters:
-      **database** - `MySQL`
-        database used by this handler
+        :Parameters:
+          **database** - `MySQL`
+            database used by this handler
 
-    :return: None
-    '''
-    global db
-    db = database
+        :return: None
+        """
+        global db
+        db = database
 
-  types_insert = [six.string_types, dict]
+    types_insert = [six.string_types, dict]
 
-  def export_insert(self, table, params):
-    '''
-    This method is a bridge to access :class:`ResourceManagementDB` remotely. It
-    does not add neither processing nor validation. If you need to know more
-    about this method, you must keep reading on the database documentation.
+    def export_insert(self, table, params):
+        """
+        This method is a bridge to access :class:`ResourceManagementDB` remotely. It
+        does not add neither processing nor validation. If you need to know more
+        about this method, you must keep reading on the database documentation.
 
-    :Parameters:
-      **table** - `string` or `dict`
-        should contain the table from which querying
-        if it's a `dict` the query comes from a client prior to v6r18
+        :Parameters:
+          **table** - `string` or `dict`
+            should contain the table from which querying
+            if it's a `dict` the query comes from a client prior to v6r18
 
-      **params** - `dict`
-        arguments for the mysql query. Currently it is being used only for column selection.
-        For example: meta = { 'columns' : [ 'Name' ] } will return only the 'Name' column.
+          **params** - `dict`
+            arguments for the mysql query. Currently it is being used only for column selection.
+            For example: meta = { 'columns' : [ 'Name' ] } will return only the 'Name' column.
 
-    :return: S_OK() || S_ERROR()
-    '''
+        :return: S_OK() || S_ERROR()
+        """
 
-    if isinstance(table, dict):  # for backward compatibility: conversion is needed
-      params, table = convert(table, params)
+        if isinstance(table, dict):  # for backward compatibility: conversion is needed
+            params, table = convert(table, params)
 
-    gLogger.info('insert: %s %s' % (table, params))
+        gLogger.info("insert: %s %s" % (table, params))
 
-    # remove unnecessary key generated by locals()
-    del params['self']
+        # remove unnecessary key generated by locals()
+        del params["self"]
 
-    res = db.insert(table, params)
-    self.__logResult('insert', res)
+        res = db.insert(table, params)
+        self.__logResult("insert", res)
 
-    return res
+        return res
 
-  types_select = [[six.string_types, dict], dict]
+    types_select = [[six.string_types, dict], dict]
 
-  def export_select(self, table, params):
-    '''
+    def export_select(self, table, params):
+        """
     This method is a bridge to access :class:`ResourceManagementDB` remotely.
     It does not add neither processing nor validation. If you need to know more\
     about this method, you must keep reading on the database documentation.
@@ -148,21 +153,21 @@ class ResourceManagementHandler(RequestHandler):
         For example: meta = { 'columns' : [ 'Name' ] } will return only the 'Name' column.
 
     :return: S_OK() || S_ERROR()
-    '''
-    if isinstance(table, dict):  # for backward compatibility: conversion is needed
-      params, table = convert(table, params)
+    """
+        if isinstance(table, dict):  # for backward compatibility: conversion is needed
+            params, table = convert(table, params)
 
-    gLogger.info('select: %s %s' % (table, params))
+        gLogger.info("select: %s %s" % (table, params))
 
-    res = db.select(table, params)
-    self.__logResult('select', res)
+        res = db.select(table, params)
+        self.__logResult("select", res)
 
-    return res
+        return res
 
-  types_delete = [[six.string_types, dict], dict]
+    types_delete = [[six.string_types, dict], dict]
 
-  def export_delete(self, table, params):
-    '''
+    def export_delete(self, table, params):
+        """
     This method is a bridge to access :class:`ResourceManagementDB` remotely.\
     It does not add neither processing nor validation. If you need to know more \
     about this method, you must keep reading on the database documentation.
@@ -178,44 +183,44 @@ class ResourceManagementHandler(RequestHandler):
 
 
     :return: S_OK() || S_ERROR()
-    '''
+    """
 
-    if isinstance(table, dict):  # for backward compatibility: conversion is needed
-      params, table = convert(table, params)
+        if isinstance(table, dict):  # for backward compatibility: conversion is needed
+            params, table = convert(table, params)
 
-    gLogger.info('delete: %s %s' % (table, params))
+        gLogger.info("delete: %s %s" % (table, params))
 
-    res = db.delete(table, params)
-    self.__logResult('delete', res)
+        res = db.delete(table, params)
+        self.__logResult("delete", res)
 
-    return res
+        return res
 
-  types_addOrModify = [[six.string_types, dict], dict]
+    types_addOrModify = [[six.string_types, dict], dict]
 
-  def export_addOrModify(self, table, params):
-    '''
-    This method is a bridge to access :class:`ResourceManagementDB` remotely. It does
-    not add neither processing nor validation. If you need to know more about
-    this method, you must keep reading on the database documentation.
+    def export_addOrModify(self, table, params):
+        """
+        This method is a bridge to access :class:`ResourceManagementDB` remotely. It does
+        not add neither processing nor validation. If you need to know more about
+        this method, you must keep reading on the database documentation.
 
-    :Parameters:
-      **table** - `string` or `dict`
-        should contain the table from which querying
-        if it's a `dict` the query comes from a client prior to v6r18
+        :Parameters:
+          **table** - `string` or `dict`
+            should contain the table from which querying
+            if it's a `dict` the query comes from a client prior to v6r18
 
-      **params** - `dict`
-        arguments for the mysql query. Currently it is being used only for column selection.
-        For example: meta = { 'columns' : [ 'Name' ] } will return only the 'Name' column.
+          **params** - `dict`
+            arguments for the mysql query. Currently it is being used only for column selection.
+            For example: meta = { 'columns' : [ 'Name' ] } will return only the 'Name' column.
 
-    :return: S_OK() || S_ERROR()
-    '''
+        :return: S_OK() || S_ERROR()
+        """
 
-    if isinstance(table, dict):  # for backward compatibility: conversion is needed
-      params, table = convert(table, params)
+        if isinstance(table, dict):  # for backward compatibility: conversion is needed
+            params, table = convert(table, params)
 
-    gLogger.info('addOrModify: %s %s' % (table, params))
+        gLogger.info("addOrModify: %s %s" % (table, params))
 
-    res = db.addOrModify(table, params)
-    self.__logResult('addOrModify', res)
+        res = db.addOrModify(table, params)
+        self.__logResult("addOrModify", res)
 
-    return res
+        return res

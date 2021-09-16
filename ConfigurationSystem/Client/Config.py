@@ -11,8 +11,8 @@ gConfig = ConfigurationClient()
 
 
 def getConfig():
-  """
-  :returns: gConfig
-  :rtype: ~DIRAC.ConfigurationSystem.private.ConfigurationClient.ConfigurationClient
-  """
-  return gConfig
+    """
+    :returns: gConfig
+    :rtype: ~DIRAC.ConfigurationSystem.private.ConfigurationClient.ConfigurationClient
+    """
+    return gConfig

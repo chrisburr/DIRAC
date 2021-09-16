@@ -29,85 +29,102 @@ __RCSID__ = "$Id $"
 # # imports
 from DIRAC import S_OK, S_ERROR
 from DIRAC.FrameworkSystem.Client.MonitoringClient import gMonitor
-from DIRAC.DataManagementSystem.Agent.RequestOperations.DMSRequestOperationsBase import DMSRequestOperationsBase
+from DIRAC.DataManagementSystem.Agent.RequestOperations.DMSRequestOperationsBase import (
+    DMSRequestOperationsBase,
+)
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 
 
 ########################################################################
 class ReTransfer(DMSRequestOperationsBase):
-  """
-  .. class:: ReTransfer
+    """
+    .. class:: ReTransfer
 
 
-  online ReTransfer operation handler
+    online ReTransfer operation handler
 
-  :param self: self reference
-  :param ~DIRAC.RequestManagementSystem.Client.Operation.Operation operation: Operation instance
-  :param str csPath: CS path for this handler
-
-  """
-
-  def __init__(self, operation=None, csPath=None):
-    """c'tor
+    :param self: self reference
+    :param ~DIRAC.RequestManagementSystem.Client.Operation.Operation operation: Operation instance
+    :param str csPath: CS path for this handler
 
     """
-    # # base class ctor
-    DMSRequestOperationsBase.__init__(self, operation, csPath)
-    # # gMonitor stuff
-    gMonitor.registerActivity("FileReTransferAtt", "File retransfers attempted",
-                              "RequestExecutingAgent", "Files/min", gMonitor.OP_SUM)
-    gMonitor.registerActivity("FileReTransferOK", "File retransfers successful",
-                              "RequestExecutingAgent", "Files/min", gMonitor.OP_SUM)
-    gMonitor.registerActivity("FileReTransferFail", "File retransfers failed",
-                              "RequestExecutingAgent", "Files/min", gMonitor.OP_SUM)
 
-  def __call__(self):
-    """ reTransfer operation execution """
-    # # list of targetSEs
-    targetSEs = self.operation.targetSEList
-    # # check targetSEs for removal
-    targetSE = targetSEs[0]
-    bannedTargets = self.checkSEsRSS(targetSE)
-    if not bannedTargets['OK']:
-      gMonitor.addMark("FileReTransferAtt")
-      gMonitor.addMark("FileReTransferFail")
-      return bannedTargets
+    def __init__(self, operation=None, csPath=None):
+        """c'tor"""
+        # # base class ctor
+        DMSRequestOperationsBase.__init__(self, operation, csPath)
+        # # gMonitor stuff
+        gMonitor.registerActivity(
+            "FileReTransferAtt",
+            "File retransfers attempted",
+            "RequestExecutingAgent",
+            "Files/min",
+            gMonitor.OP_SUM,
+        )
+        gMonitor.registerActivity(
+            "FileReTransferOK",
+            "File retransfers successful",
+            "RequestExecutingAgent",
+            "Files/min",
+            gMonitor.OP_SUM,
+        )
+        gMonitor.registerActivity(
+            "FileReTransferFail",
+            "File retransfers failed",
+            "RequestExecutingAgent",
+            "Files/min",
+            gMonitor.OP_SUM,
+        )
 
-    if bannedTargets['Value']:
-      return S_OK("%s targets are banned for writing" % ",".join(bannedTargets['Value']))
+    def __call__(self):
+        """reTransfer operation execution"""
+        # # list of targetSEs
+        targetSEs = self.operation.targetSEList
+        # # check targetSEs for removal
+        targetSE = targetSEs[0]
+        bannedTargets = self.checkSEsRSS(targetSE)
+        if not bannedTargets["OK"]:
+            gMonitor.addMark("FileReTransferAtt")
+            gMonitor.addMark("FileReTransferFail")
+            return bannedTargets
 
-    # # get waiting files
-    waitingFiles = self.getWaitingFilesList()
-    # # prepare waiting files
-    toRetransfer = dict([(opFile.PFN, opFile) for opFile in waitingFiles])
+        if bannedTargets["Value"]:
+            return S_OK(
+                "%s targets are banned for writing" % ",".join(bannedTargets["Value"])
+            )
 
-    gMonitor.addMark("FileReTransferAtt", len(toRetransfer))
+        # # get waiting files
+        waitingFiles = self.getWaitingFilesList()
+        # # prepare waiting files
+        toRetransfer = dict([(opFile.PFN, opFile) for opFile in waitingFiles])
 
-    if len(targetSEs) != 1:
-      error = "only one TargetSE allowed, got %d" % len(targetSEs)
-      for opFile in toRetransfer.values():
-        opFile.Error = error
-        opFile.Status = "Failed"
-      self.operation.Error = error
-      gMonitor.addMark("FileReTransferFail", len(toRetransfer))
-      return S_ERROR(error)
+        gMonitor.addMark("FileReTransferAtt", len(toRetransfer))
 
-    se = StorageElement(targetSE)
-    for opFile in toRetransfer.values():
-      reTransfer = se.retransferOnlineFile(opFile.LFN)
-      if not reTransfer["OK"]:
-        opFile.Error = reTransfer["Message"]
-        self.log.error("Retransfer failed", opFile.Error)
-        gMonitor.addMark("FileReTransferFail", 1)
-        continue
-      reTransfer = reTransfer["Value"]
-      if opFile.LFN in reTransfer["Failed"]:
-        opFile.Error = reTransfer["Failed"][opFile.LFN]
-        self.log.error("Retransfer failed", opFile.Error)
-        gMonitor.addMark("FileReTransferFail", 1)
-        continue
-      opFile.Status = "Done"
-      self.log.info("%s retransfer done" % opFile.LFN)
-      gMonitor.addMark("FileReTransferOK", 1)
+        if len(targetSEs) != 1:
+            error = "only one TargetSE allowed, got %d" % len(targetSEs)
+            for opFile in toRetransfer.values():
+                opFile.Error = error
+                opFile.Status = "Failed"
+            self.operation.Error = error
+            gMonitor.addMark("FileReTransferFail", len(toRetransfer))
+            return S_ERROR(error)
 
-    return S_OK()
+        se = StorageElement(targetSE)
+        for opFile in toRetransfer.values():
+            reTransfer = se.retransferOnlineFile(opFile.LFN)
+            if not reTransfer["OK"]:
+                opFile.Error = reTransfer["Message"]
+                self.log.error("Retransfer failed", opFile.Error)
+                gMonitor.addMark("FileReTransferFail", 1)
+                continue
+            reTransfer = reTransfer["Value"]
+            if opFile.LFN in reTransfer["Failed"]:
+                opFile.Error = reTransfer["Failed"][opFile.LFN]
+                self.log.error("Retransfer failed", opFile.Error)
+                gMonitor.addMark("FileReTransferFail", 1)
+                continue
+            opFile.Status = "Done"
+            self.log.info("%s retransfer done" % opFile.LFN)
+            gMonitor.addMark("FileReTransferOK", 1)
+
+        return S_OK()

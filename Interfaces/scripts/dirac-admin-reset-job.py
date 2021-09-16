@@ -31,30 +31,31 @@ Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 1:
-  Script.showHelp()
+    Script.showHelp()
 
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 exitCode = 0
 errorList = []
 
 for job in args:
 
-  try:
-    job = int(job)
-  except Exception as x:
-    errorList.append(('Expected integer for jobID', job))
-    exitCode = 2
-    continue
+    try:
+        job = int(job)
+    except Exception as x:
+        errorList.append(("Expected integer for jobID", job))
+        exitCode = 2
+        continue
 
-  result = diracAdmin.resetJob(job)
-  if result['OK']:
-    print('Reset Job %s' % (job))
-  else:
-    errorList.append((job, result['Message']))
-    exitCode = 2
+    result = diracAdmin.resetJob(job)
+    if result["OK"]:
+        print("Reset Job %s" % (job))
+    else:
+        errorList.append((job, result["Message"]))
+        exitCode = 2
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

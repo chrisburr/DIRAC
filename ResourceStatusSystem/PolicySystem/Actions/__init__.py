@@ -1,4 +1,4 @@
-''' DIRAC.ResourceStatusSystem.PolicySystem.Actions package
-'''
+""" DIRAC.ResourceStatusSystem.PolicySystem.Actions package
+"""
 
-__RCSID__ = '$Id$'
+__RCSID__ = "$Id$"

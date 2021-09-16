@@ -19,6 +19,7 @@ Example:
   $ dirac-admin-ce-info LCG.IN2P3.fr
 """
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC import gConfig, gLogger, exit as Dexit
@@ -33,16 +34,18 @@ from DIRAC.ConfigurationSystem.Client.Helpers import cfgPath
 
 
 if len(args) < 1:
-  Script.showHelp(exitCode=1)
+    Script.showHelp(exitCode=1)
 
 res = getCESiteMapping(args[0])
-if not res['OK']:
-  gLogger.error(res['Message'])
-  Dexit(1)
-site = res['Value'][args[0]]
+if not res["OK"]:
+    gLogger.error(res["Message"])
+    Dexit(1)
+site = res["Value"][args[0]]
 
-res = gConfig.getOptionsDict(cfgPath('Resources', 'Sites', site.split('.')[0], site, 'CEs', args[0]))
-if not res['OK']:
-  gLogger.error(res['Message'])
-  Dexit(1)
-gLogger.notice(res['Value'])
+res = gConfig.getOptionsDict(
+    cfgPath("Resources", "Sites", site.split(".")[0], site, "CEs", args[0])
+)
+if not res["OK"]:
+    gLogger.error(res["Message"])
+    Dexit(1)
+gLogger.notice(res["Value"])

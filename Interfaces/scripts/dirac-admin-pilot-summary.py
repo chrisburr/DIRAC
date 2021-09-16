@@ -28,6 +28,7 @@ Example:
   lappce01.in2p3.fr Aborted 1     Done   111
 """
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 # pylint: disable=wrong-import-position
@@ -40,11 +41,12 @@ Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 
 result = diracAdmin.getPilotSummary()
-if result['OK']:
-  DIRAC.exit(0)
+if result["OK"]:
+    DIRAC.exit(0)
 else:
-  print(result['Message'])
-  DIRAC.exit(2)
+    print(result["Message"])
+    DIRAC.exit(2)

@@ -8,115 +8,132 @@ import os
 from hashlib import md5
 import time
 from DIRAC.Core.Base import Script
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[0],
-                                  __doc__.split('\n')[1],
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... sourceSE LFN targetSE1 [targetSE2...]' % Script.scriptName,
-                                  'Arguments:',
-                                  '  sourceSE:   source SE',
-                                  '  targetSE: target SE',
-                                  '  LFN:      LFN or file containing a List of LFNs']))
+
+Script.setUsageMessage(
+    "\n".join(
+        [
+            __doc__.split("\n")[0],
+            __doc__.split("\n")[1],
+            "Usage:",
+            "  %s [option|cfgfile] ... sourceSE LFN targetSE1 [targetSE2...]"
+            % Script.scriptName,
+            "Arguments:",
+            "  sourceSE:   source SE",
+            "  targetSE: target SE",
+            "  LFN:      LFN or file containing a List of LFNs",
+        ]
+    )
+)
 
 
 def getLFNList(arg):
-  """ get list of LFNs """
-  lfnList = []
-  if os.path.exists(arg):
-    lfnList = [line.split()[0] for line in open(arg).read().splitlines()]
-  else:
-    lfnList = [arg]
-  return list(set(lfnList))
+    """get list of LFNs"""
+    lfnList = []
+    if os.path.exists(arg):
+        lfnList = [line.split()[0] for line in open(arg).read().splitlines()]
+    else:
+        lfnList = [arg]
+    return list(set(lfnList))
 
 
 # # execution
 if __name__ == "__main__":
 
-  from DIRAC.Core.Base.Script import parseCommandLine
-  parseCommandLine()
+    from DIRAC.Core.Base.Script import parseCommandLine
 
-  import DIRAC
-  from DIRAC import gLogger
+    parseCommandLine()
 
-  args = Script.getPositionalArgs()
+    import DIRAC
+    from DIRAC import gLogger
 
-  if len(args) < 3:
-    Script.showHelp()
+    args = Script.getPositionalArgs()
 
-  sourceSE = args[0]
-  lfnList = getLFNList(args[1])
-  targetSEs = list(set([se for targetSE in args[2:] for se in targetSE.split(',')]))
+    if len(args) < 3:
+        Script.showHelp()
 
-  gLogger.info("Will create request with 'MoveReplica' "
-               "operation using %s lfns and %s target SEs" % (len(lfnList), len(targetSEs)))
+    sourceSE = args[0]
+    lfnList = getLFNList(args[1])
+    targetSEs = list(set([se for targetSE in args[2:] for se in targetSE.split(",")]))
 
-  from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient
-  from DIRAC.RequestManagementSystem.Client.Request import Request
-  from DIRAC.RequestManagementSystem.Client.Operation import Operation
-  from DIRAC.RequestManagementSystem.Client.File import File
-  from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
-  from DIRAC.Core.Utilities.List import breakListIntoChunks
+    gLogger.info(
+        "Will create request with 'MoveReplica' "
+        "operation using %s lfns and %s target SEs" % (len(lfnList), len(targetSEs))
+    )
 
-  lfnChunks = breakListIntoChunks(lfnList, 100)
-  multiRequests = len(lfnChunks) > 1
+    from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient
+    from DIRAC.RequestManagementSystem.Client.Request import Request
+    from DIRAC.RequestManagementSystem.Client.Operation import Operation
+    from DIRAC.RequestManagementSystem.Client.File import File
+    from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
+    from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-  error = 0
-  count = 0
-  reqClient = ReqClient()
-  fc = FileCatalog()
-  for lfnChunk in lfnChunks:
-    metaDatas = fc.getFileMetadata(lfnChunk)
-    if not metaDatas["OK"]:
-      gLogger.error("unable to read metadata for lfns: %s" % metaDatas["Message"])
-      error = -1
-      continue
-    metaDatas = metaDatas["Value"]
-    for failedLFN, reason in metaDatas["Failed"].items():
-      gLogger.error("skipping %s: %s" % (failedLFN, reason))
-    lfnChunk = set(metaDatas["Successful"])
+    lfnChunks = breakListIntoChunks(lfnList, 100)
+    multiRequests = len(lfnChunks) > 1
 
-    if not lfnChunk:
-      gLogger.error("LFN list is empty!!!")
-      error = -1
-      continue
+    error = 0
+    count = 0
+    reqClient = ReqClient()
+    fc = FileCatalog()
+    for lfnChunk in lfnChunks:
+        metaDatas = fc.getFileMetadata(lfnChunk)
+        if not metaDatas["OK"]:
+            gLogger.error("unable to read metadata for lfns: %s" % metaDatas["Message"])
+            error = -1
+            continue
+        metaDatas = metaDatas["Value"]
+        for failedLFN, reason in metaDatas["Failed"].items():
+            gLogger.error("skipping %s: %s" % (failedLFN, reason))
+        lfnChunk = set(metaDatas["Successful"])
 
-    if len(lfnChunk) > Operation.MAX_FILES:
-      gLogger.error("too many LFNs, max number of files per operation is %s" % Operation.MAX_FILES)
-      error = -1
-      continue
+        if not lfnChunk:
+            gLogger.error("LFN list is empty!!!")
+            error = -1
+            continue
 
-    count += 1
+        if len(lfnChunk) > Operation.MAX_FILES:
+            gLogger.error(
+                "too many LFNs, max number of files per operation is %s"
+                % Operation.MAX_FILES
+            )
+            error = -1
+            continue
 
-    request = Request()
-    request.RequestName = "%s_%s" % (md5(repr(time.time())).hexdigest()[:16], md5(repr(time.time())).hexdigest()[:16])
+        count += 1
 
-    moveReplica = Operation()
-    moveReplica.Type = 'MoveReplica'
-    moveReplica.SourceSE = sourceSE
-    moveReplica.TargetSE = ",".join(targetSEs)
+        request = Request()
+        request.RequestName = "%s_%s" % (
+            md5(repr(time.time())).hexdigest()[:16],
+            md5(repr(time.time())).hexdigest()[:16],
+        )
 
-    for lfn in lfnChunk:
-      metaDict = metaDatas["Successful"][lfn]
-      opFile = File()
-      opFile.LFN = lfn
-      opFile.Size = metaDict["Size"]
+        moveReplica = Operation()
+        moveReplica.Type = "MoveReplica"
+        moveReplica.SourceSE = sourceSE
+        moveReplica.TargetSE = ",".join(targetSEs)
 
-      if "Checksum" in metaDict:
-        # # should check checksum type, now assuming Adler32 (metaDict["ChecksumType"] = 'AD'
-        opFile.Checksum = metaDict["Checksum"]
-        opFile.ChecksumType = "ADLER32"
-      moveReplica.addFile(opFile)
+        for lfn in lfnChunk:
+            metaDict = metaDatas["Successful"][lfn]
+            opFile = File()
+            opFile.LFN = lfn
+            opFile.Size = metaDict["Size"]
 
-    request.addOperation(moveReplica)
+            if "Checksum" in metaDict:
+                # # should check checksum type, now assuming Adler32 (metaDict["ChecksumType"] = 'AD'
+                opFile.Checksum = metaDict["Checksum"]
+                opFile.ChecksumType = "ADLER32"
+            moveReplica.addFile(opFile)
 
-    result = reqClient.putRequest(request)
-    if not result["OK"]:
-      gLogger.error("Failed to submit Request: %s" % (result["Message"]))
-      error = -1
-      continue
+        request.addOperation(moveReplica)
 
-    if not multiRequests:
-      gLogger.always("Request %d submitted successfully" % result['Value'])
+        result = reqClient.putRequest(request)
+        if not result["OK"]:
+            gLogger.error("Failed to submit Request: %s" % (result["Message"]))
+            error = -1
+            continue
 
-  if multiRequests:
-    gLogger.always("%d requests have been submitted" % (count))
-  DIRAC.exit(error)
+        if not multiRequests:
+            gLogger.always("Request %d submitted successfully" % result["Value"])
+
+    if multiRequests:
+        gLogger.always("%d requests have been submitted" % (count))
+    DIRAC.exit(error)

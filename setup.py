@@ -4,6 +4,7 @@
 
 import os
 import glob
+
 # Actual setuptools
 from setuptools import setup, find_packages
 
@@ -18,18 +19,20 @@ allPackages = find_packages(where=base_dir, exclude=["*test*", "*scripts*", "*do
 # < module name : directory >
 # e.g. DIRAC.DataManagementSystem is base_dir/DataManagementSystem
 
-package_dir = dict(("DIRAC.%s" % p, os.path.join(base_dir, p.replace('.', '/'))) for p in allPackages)
+package_dir = dict(
+    ("DIRAC.%s" % p, os.path.join(base_dir, p.replace(".", "/"))) for p in allPackages
+)
 
 # We also rename the packages so that they contain DIRAC
-allPackages = ['DIRAC.%s' % p for p in allPackages]
+allPackages = ["DIRAC.%s" % p for p in allPackages]
 
 # Artificially create the 'DIRAC' package
 # at the root
-allPackages.insert(0, 'DIRAC')
-package_dir['DIRAC'] = base_dir
+allPackages.insert(0, "DIRAC")
+package_dir["DIRAC"] = base_dir
 
 # The scripts to be distributed
-scripts = glob.glob('%s/*/scripts/*.py' % base_dir)
+scripts = glob.glob("%s/*/scripts/*.py" % base_dir)
 
 setup(
     name="DIRAC",

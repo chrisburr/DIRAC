@@ -38,34 +38,34 @@ from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
 
 
 def getBoolean(value):
-  if value.lower() == 'true':
-    return True
-  elif value.lower() == 'false':
-    return False
-  else:
-    Script.showHelp()
+    if value.lower() == "true":
+        return True
+    elif value.lower() == "false":
+        return False
+    else:
+        Script.showHelp()
 
 
 email = True
 for switch in Script.getUnprocessedSwitches():
-  if switch[0] == "email":
-    email = getBoolean(switch[1])
+    if switch[0] == "email":
+        email = getBoolean(switch[1])
 
 args = Script.getPositionalArgs()
 
 if len(args) < 2:
-  Script.showHelp()
+    Script.showHelp()
 
 diracAdmin = DiracAdmin()
 exitCode = 0
 errorList = []
-setup = gConfig.getValue('/DIRAC/Setup', '')
+setup = gConfig.getValue("/DIRAC/Setup", "")
 if not setup:
-  print('ERROR: Could not contact Configuration Service')
-  exitCode = 2
-  DIRACExit(exitCode)
+    print("ERROR: Could not contact Configuration Service")
+    exitCode = 2
+    DIRACExit(exitCode)
 
-#result = promptUser( 'All the elements that are associated with this site will be banned, are you sure about this action?' )
+# result = promptUser( 'All the elements that are associated with this site will be banned, are you sure about this action?' )
 # if not result['OK'] or result['Value'] is 'n':
 #  print 'Script stopped'
 #  DIRACExit( 0 )
@@ -73,31 +73,39 @@ if not setup:
 site = args[0]
 comment = args[1]
 result = diracAdmin.banSite(site, comment, printOutput=True)
-if not result['OK']:
-  errorList.append((site, result['Message']))
-  exitCode = 2
+if not result["OK"]:
+    errorList.append((site, result["Message"]))
+    exitCode = 2
 else:
-  if email:
-    userName = diracAdmin._getCurrentUser()
-    if not userName['OK']:
-      print('ERROR: Could not obtain current username from proxy')
-      exitCode = 2
-      DIRACExit(exitCode)
-    userName = userName['Value']
-    subject = '%s is banned for %s setup' % (site, setup)
-    body = 'Site %s is removed from site mask for %s setup by %s on %s.\n\n' % (site, setup, userName, time.asctime())
-    body += 'Comment:\n%s' % comment
+    if email:
+        userName = diracAdmin._getCurrentUser()
+        if not userName["OK"]:
+            print("ERROR: Could not obtain current username from proxy")
+            exitCode = 2
+            DIRACExit(exitCode)
+        userName = userName["Value"]
+        subject = "%s is banned for %s setup" % (site, setup)
+        body = "Site %s is removed from site mask for %s setup by %s on %s.\n\n" % (
+            site,
+            setup,
+            userName,
+            time.asctime(),
+        )
+        body += "Comment:\n%s" % comment
 
-    addressPath = 'EMail/Production'
-    address = Operations().getValue(addressPath, '')
-    if not address:
-      gLogger.notice("'%s' not defined in Operations, can not send Mail\n" % addressPath, body)
+        addressPath = "EMail/Production"
+        address = Operations().getValue(addressPath, "")
+        if not address:
+            gLogger.notice(
+                "'%s' not defined in Operations, can not send Mail\n" % addressPath,
+                body,
+            )
+        else:
+            result = diracAdmin.sendMail(address, subject, body)
     else:
-      result = diracAdmin.sendMail(address, subject, body)
-  else:
-    print('Automatic email disabled by flag.')
+        print("Automatic email disabled by flag.")
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRACExit(exitCode)

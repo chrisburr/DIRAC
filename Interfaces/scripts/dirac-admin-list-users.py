@@ -23,6 +23,7 @@ Example:
   atsareg
 """
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 import DIRAC
@@ -34,50 +35,51 @@ Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) == 0:
-  args = ['all']
+    args = ["all"]
 
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 exitCode = 0
 errorList = []
 extendedInfo = False
 
 for unprocSw in Script.getUnprocessedSwitches():
-  if unprocSw[0] in ('e', 'extended'):
-    extendedInfo = True
+    if unprocSw[0] in ("e", "extended"):
+        extendedInfo = True
 
 
 def printUsersInGroup(group=False):
-  result = diracAdmin.csListUsers(group)
-  if result['OK']:
-    if group:
-      print("Users in group %s:" % group)
-    else:
-      print("All users registered:")
-    for username in result['Value']:
-      print(" %s" % username)
+    result = diracAdmin.csListUsers(group)
+    if result["OK"]:
+        if group:
+            print("Users in group %s:" % group)
+        else:
+            print("All users registered:")
+        for username in result["Value"]:
+            print(" %s" % username)
 
 
 def describeUsersInGroup(group=False):
-  result = diracAdmin.csListUsers(group)
-  if result['OK']:
-    if group:
-      print("Users in group %s:" % group)
-    else:
-      print("All users registered:")
-    result = diracAdmin.csDescribeUsers(result['Value'])
-    print(diracAdmin.pPrint.pformat(result['Value']))
+    result = diracAdmin.csListUsers(group)
+    if result["OK"]:
+        if group:
+            print("Users in group %s:" % group)
+        else:
+            print("All users registered:")
+        result = diracAdmin.csDescribeUsers(result["Value"])
+        print(diracAdmin.pPrint.pformat(result["Value"]))
 
 
 for group in args:
-  if 'all' in args:
-    group = False
-  if not extendedInfo:
-    printUsersInGroup(group)
-  else:
-    describeUsersInGroup(group)
+    if "all" in args:
+        group = False
+    if not extendedInfo:
+        printUsersInGroup(group)
+    else:
+        describeUsersInGroup(group)
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

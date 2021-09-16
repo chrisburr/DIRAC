@@ -37,15 +37,16 @@ Script.setUsageMessage(__doc__)
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
-setup = ''
+setup = ""
 if args:
-  setup = args[0]
+    setup = args[0]
 
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 result = diracAdmin.getServicePorts(setup, printOutput=True)
-if result['OK']:
-  DIRAC.exit(0)
+if result["OK"]:
+    DIRAC.exit(0)
 else:
-  print(result['Message'])
-  DIRAC.exit(2)
+    print(result["Message"])
+    DIRAC.exit(2)

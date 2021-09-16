@@ -17,11 +17,17 @@ import shutil
 import DIRAC
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... JobID ...' % Script.scriptName,
-                                  'Arguments:',
-                                  '  JobID:    DIRAC Job ID or a name of the file with JobID per line']))
+Script.setUsageMessage(
+    "\n".join(
+        [
+            __doc__.split("\n")[1],
+            "Usage:",
+            "  %s [option|cfgfile] ... JobID ..." % Script.scriptName,
+            "Arguments:",
+            "  JobID:    DIRAC Job ID or a name of the file with JobID per line",
+        ]
+    )
+)
 
 Script.registerSwitch("D:", "Dir=", "Store the output in this directory")
 Script.registerSwitch("f:", "File=", "Get output for jobs with IDs from the file")
@@ -42,53 +48,56 @@ outputDir = None
 group = None
 jobs = []
 for sw, value in Script.getUnprocessedSwitches():
-  if sw in ('D', 'Dir'):
-    outputDir = value
-  elif sw.lower() in ('f', 'file'):
-    if os.path.exists(value):
-      jFile = open(value)
-      jobs += jFile.read().split()
-      jFile.close()
-  elif sw.lower() in ('g', 'jobgroup'):
-    group = value
-    jobDate = toString(date() - 30 * day)
+    if sw in ("D", "Dir"):
+        outputDir = value
+    elif sw.lower() in ("f", "file"):
+        if os.path.exists(value):
+            jFile = open(value)
+            jobs += jFile.read().split()
+            jFile.close()
+    elif sw.lower() in ("g", "jobgroup"):
+        group = value
+        jobDate = toString(date() - 30 * day)
 
-    # Choose jobs in final state, no more than 30 days old
-    result = dirac.selectJobs(jobGroup=value, date=jobDate, status='Done')
-    if not result['OK']:
-      if "No jobs selected" not in result['Message']:
-        print("Error:", result['Message'])
-        DIRAC.exit(-1)
-    else:
-      jobs += result['Value']
-    result = dirac.selectJobs(jobGroup=value, date=jobDate, status='Failed')
-    if not result['OK']:
-      if "No jobs selected" not in result['Message']:
-        print("Error:", result['Message'])
-        DIRAC.exit(-1)
-    else:
-      jobs += result['Value']
+        # Choose jobs in final state, no more than 30 days old
+        result = dirac.selectJobs(jobGroup=value, date=jobDate, status="Done")
+        if not result["OK"]:
+            if "No jobs selected" not in result["Message"]:
+                print("Error:", result["Message"])
+                DIRAC.exit(-1)
+        else:
+            jobs += result["Value"]
+        result = dirac.selectJobs(jobGroup=value, date=jobDate, status="Failed")
+        if not result["OK"]:
+            if "No jobs selected" not in result["Message"]:
+                print("Error:", result["Message"])
+                DIRAC.exit(-1)
+        else:
+            jobs += result["Value"]
 
 for arg in parseArguments(args):
-  if os.path.isdir(arg):
-    print("Output for job %s already retrieved, remove the output directory to redownload" % arg)
-  else:
-    jobs.append(arg)
+    if os.path.isdir(arg):
+        print(
+            "Output for job %s already retrieved, remove the output directory to redownload"
+            % arg
+        )
+    else:
+        jobs.append(arg)
 
 if not jobs:
-  print("No jobs selected")
-  DIRAC.exit(0)
+    print("No jobs selected")
+    DIRAC.exit(0)
 
 if group:
-  if outputDir:
-    outputDir = os.path.join(outputDir, group)
-  else:
-    outputDir = group
+    if outputDir:
+        outputDir = os.path.join(outputDir, group)
+    else:
+        outputDir = group
 
 if outputDir:
-  mkDir(outputDir)
+    mkDir(outputDir)
 else:
-  outputDir = os.getcwd()
+    outputDir = os.getcwd()
 
 jobs = [str(job) for job in jobs]
 doneJobs = os.listdir(outputDir)
@@ -96,21 +105,21 @@ todoJobs = [job for job in jobs if job not in doneJobs]
 
 for job in todoJobs:
 
-  result = dirac.getOutputSandbox(job, outputDir=outputDir)
+    result = dirac.getOutputSandbox(job, outputDir=outputDir)
 
-  jobDir = str(job)
-  if outputDir:
-    jobDir = os.path.join(outputDir, job)
-  if result['OK']:
-    if os.path.exists(jobDir):
-      print('Job output sandbox retrieved in %s/' % (jobDir))
-  else:
-    if os.path.exists('%s' % jobDir):
-      shutil.rmtree(jobDir)
-    errorList.append((job, result['Message']))
-    exitCode = 2
+    jobDir = str(job)
+    if outputDir:
+        jobDir = os.path.join(outputDir, job)
+    if result["OK"]:
+        if os.path.exists(jobDir):
+            print("Job output sandbox retrieved in %s/" % (jobDir))
+    else:
+        if os.path.exists("%s" % jobDir):
+            shutil.rmtree(jobDir)
+        errorList.append((job, result["Message"]))
+        exitCode = 2
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

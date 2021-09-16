@@ -22,13 +22,13 @@ __RCSID__ = "$Id$"
 Script.setUsageMessage(__doc__)
 
 if __name__ == "__main__":
-  cliParams = CLIParams()
-  cliParams.registerCLISwitches()
+    cliParams = CLIParams()
+    cliParams.registerCLISwitches()
 
-  Script.parseCommandLine()
+    Script.parseCommandLine()
 
-  retVal = uploadProxy(cliParams)
-  if not retVal['OK']:
-    print(retVal['Message'])
-    sys.exit(1)
-  sys.exit(0)
+    retVal = uploadProxy(cliParams)
+    if not retVal["OK"]:
+        print(retVal["Message"])
+        sys.exit(1)
+    sys.exit(0)

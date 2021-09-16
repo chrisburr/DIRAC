@@ -28,18 +28,18 @@ fileName = ""
 
 
 def setFilename(args):
-  global fileName
-  fileName = args
-  return DIRAC.S_OK()
+    global fileName
+    fileName = args
+    return DIRAC.S_OK()
 
 
 raw = False
 
 
 def setRaw(args):
-  global raw
-  raw = True
-  return DIRAC.S_OK()
+    global raw
+    raw = True
+    return DIRAC.S_OK()
 
 
 Script.setUsageMessage(__doc__)
@@ -48,12 +48,13 @@ Script.registerSwitch("r", "raw", "Do not make any modification to the data", se
 Script.parseCommandLine()
 
 from DIRAC import gConfig, gLogger
+
 result = gConfig.dumpCFGAsLocalCache(fileName, raw)
-if not result['OK']:
-  print("Error: %s" % result['Message'])
-  sys.exit(1)
+if not result["OK"]:
+    print("Error: %s" % result["Message"])
+    sys.exit(1)
 
 if not fileName:
-  print(result['Value'])
+    print(result["Value"])
 
 sys.exit(0)

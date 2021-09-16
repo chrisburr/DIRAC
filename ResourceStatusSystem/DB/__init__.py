@@ -1,4 +1,4 @@
-''' DIRAC.ResourceStatusSystem.DB package
-'''
+""" DIRAC.ResourceStatusSystem.DB package
+"""
 
-__RCSID__ = '$Id$'
+__RCSID__ = "$Id$"

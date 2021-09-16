@@ -4,11 +4,14 @@ __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage("""
+Script.setUsageMessage(
+    """
 Returns the LFN matching given GUIDs
 Usage:
    %s <GUIDs>
-""" % Script.scriptName)
+"""
+    % Script.scriptName
+)
 
 Script.parseCommandLine()
 
@@ -17,30 +20,30 @@ from DIRAC import gLogger
 
 args = Script.getPositionalArgs()
 if len(args) != 1:
-  Script.showHelp()
+    Script.showHelp()
 guids = args[0]
 
 try:
-  guids = guids.split(',')
+    guids = guids.split(",")
 except BaseException:
-  pass
+    pass
 
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 
 fc = FileCatalog()
 res = fc.getLFNForGUID(guids)
-if not res['OK']:
-  gLogger.error("Failed to get the LFNs", res['Message'])
-  DIRAC.exit(-2)
+if not res["OK"]:
+    gLogger.error("Failed to get the LFNs", res["Message"])
+    DIRAC.exit(-2)
 
 errorGuid = {}
-for guid, reason in res['Value']['Failed'].items():
-  errorGuid.setdefault(reason, []).append(guid)
+for guid, reason in res["Value"]["Failed"].items():
+    errorGuid.setdefault(reason, []).append(guid)
 
 for error, guidList in errorGuid.items():
-  gLogger.notice("Error '%s' for guids %s" % (error, guidList))
+    gLogger.notice("Error '%s' for guids %s" % (error, guidList))
 
-for guid, lfn in res['Value']['Successful'].items():
-  gLogger.notice("%s -> %s" % (guid, lfn))
+for guid, lfn in res["Value"]["Successful"].items():
+    gLogger.notice("%s -> %s" % (guid, lfn))
 
 DIRAC.exit(0)

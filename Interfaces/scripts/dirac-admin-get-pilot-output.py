@@ -22,6 +22,7 @@ Example:
   drwxr-xr-x  2 hamar marseill      2048 Feb 21 14:13 pilot_26KCLKBFtxXKHF4_ZrQjkw
 """
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Base import Script
@@ -31,22 +32,23 @@ Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 1:
-  Script.showHelp()
+    Script.showHelp()
 
 from DIRAC import exit as DIRACExit
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
+
 diracAdmin = DiracAdmin()
 exitCode = 0
 errorList = []
 
 for gridID in args:
 
-  result = diracAdmin.getPilotOutput(gridID)
-  if not result['OK']:
-    errorList.append((gridID, result['Message']))
-    exitCode = 2
+    result = diracAdmin.getPilotOutput(gridID)
+    if not result["OK"]:
+        errorList.append((gridID, result["Message"]))
+        exitCode = 2
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRACExit(exitCode)

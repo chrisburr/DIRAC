@@ -16,15 +16,15 @@ sites = None
 
 
 def setFullMatch(optVal_):
-  global fullMatch
-  fullMatch = True
-  return S_OK()
+    global fullMatch
+    fullMatch = True
+    return S_OK()
 
 
 def setSites(optVal_):
-  global sites
-  sites = optVal_.split(',')
-  return S_OK()
+    global sites
+    sites = optVal_.split(",")
+    return S_OK()
 
 
 description = """Get computing resources capable to execute a job with the given description.
@@ -34,80 +34,95 @@ can fail matching due to their dynamic state, e.g. occupancy by other jobs. Also
 proximity is not taken into account.
 """
 
-Script.setUsageMessage('\n'.join([description,
-                                  'Usage:',
-                                  '  %s [option]... <job_JDL>' % Script.scriptName]))
+Script.setUsageMessage(
+    "\n".join([description, "Usage:", "  %s [option]... <job_JDL>" % Script.scriptName])
+)
 
-Script.registerSwitch("F", "full-match", "Check all the matching criteria", setFullMatch)
-Script.registerSwitch("S:", "site=", "Check matching for these sites (comma separated list)", setSites)
+Script.registerSwitch(
+    "F", "full-match", "Check all the matching criteria", setFullMatch
+)
+Script.registerSwitch(
+    "S:", "site=", "Check matching for these sites (comma separated list)", setSites
+)
 
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) == 0:
-  gLogger.error("Error: No job description provided")
-  Script.showHelp(exitCode=1)
+    gLogger.error("Error: No job description provided")
+    Script.showHelp(exitCode=1)
 
 from DIRAC.Core.Security.ProxyInfo import getVOfromProxyGroup
 from DIRAC.ConfigurationSystem.Client.Helpers import Resources
 from DIRAC.Core.Utilities.PrettyPrint import printTable
 from DIRAC.ResourceStatusSystem.Client.ResourceStatus import ResourceStatus
 from DIRAC.ResourceStatusSystem.Client.SiteStatus import SiteStatus
-from DIRAC.WorkloadManagementSystem.Utilities.QueueUtilities import getQueuesResolved, matchQueue
+from DIRAC.WorkloadManagementSystem.Utilities.QueueUtilities import (
+    getQueuesResolved,
+    matchQueue,
+)
 
 
-if __name__ == '__main__':
-  with open(args[0]) as f:
-    jdl = f.read()
+if __name__ == "__main__":
+    with open(args[0]) as f:
+        jdl = f.read()
 
-  # Get the current VO
-  result = getVOfromProxyGroup()
-  if not result['OK']:
-    gLogger.error('No proxy found, please login')
-    DIRACExit(-1)
-  voName = result['Value']
+    # Get the current VO
+    result = getVOfromProxyGroup()
+    if not result["OK"]:
+        gLogger.error("No proxy found, please login")
+        DIRACExit(-1)
+    voName = result["Value"]
 
-  resultQueues = Resources.getQueues(siteList=sites, community=voName)
-  if not resultQueues['OK']:
-    gLogger.error('Failed to get CE information')
-    DIRACExit(-1)
-  siteDict = resultQueues['Value']
-  result = getQueuesResolved(siteDict)
-  if not resultQueues['OK']:
-    gLogger.error('Failed to get CE information')
-    DIRACExit(-1)
-  queueDict = result['Value']
+    resultQueues = Resources.getQueues(siteList=sites, community=voName)
+    if not resultQueues["OK"]:
+        gLogger.error("Failed to get CE information")
+        DIRACExit(-1)
+    siteDict = resultQueues["Value"]
+    result = getQueuesResolved(siteDict)
+    if not resultQueues["OK"]:
+        gLogger.error("Failed to get CE information")
+        DIRACExit(-1)
+    queueDict = result["Value"]
 
-  # get list of usable sites within this cycle
-  resultMask = SiteStatus().getUsableSites()
-  if not resultMask['OK']:
-    gLogger.error('Failed to get Site mask information')
-    DIRACExit(-1)
-  siteMaskList = resultMask.get('Value', [])
+    # get list of usable sites within this cycle
+    resultMask = SiteStatus().getUsableSites()
+    if not resultMask["OK"]:
+        gLogger.error("Failed to get Site mask information")
+        DIRACExit(-1)
+    siteMaskList = resultMask.get("Value", [])
 
-  rssClient = ResourceStatus()
+    rssClient = ResourceStatus()
 
-  fields = ('Site', 'CE', 'Queue', 'Status', 'Match', 'Reason')
-  records = []
+    fields = ("Site", "CE", "Queue", "Status", "Match", "Reason")
+    records = []
 
-  for queue, queueInfo in queueDict.iteritems():
-    site = queueInfo['Site']
-    ce = queueInfo['CEName']
-    siteStatus = "Active" if site in siteMaskList else "InActive"
-    ceStatus = siteStatus
-    if rssClient.rssFlag:
-      result = rssClient.getElementStatus(ce, "ComputingElement")
-      if result['OK']:
-        ceStatus = result['Value'][ce]['all']
+    for queue, queueInfo in queueDict.iteritems():
+        site = queueInfo["Site"]
+        ce = queueInfo["CEName"]
+        siteStatus = "Active" if site in siteMaskList else "InActive"
+        ceStatus = siteStatus
+        if rssClient.rssFlag:
+            result = rssClient.getElementStatus(ce, "ComputingElement")
+            if result["OK"]:
+                ceStatus = result["Value"][ce]["all"]
 
-    result = matchQueue(jdl, queueInfo, fullMatch=fullMatch)
-    if not result['OK']:
-      gLogger.error('Failed in getting match data', result['Message'])
-      DIRACExit(-1)
-    status = "Active" if siteStatus is "Active" and ceStatus is "Active" else "Inactive"
-    if result['Value']['Match']:
-      records.append((site, ce, queueInfo['Queue'], status, 'Yes', ''))
-    else:
-      records.append((site, ce, queueInfo['Queue'], status, 'No', result['Value']['Reason']))
+        result = matchQueue(jdl, queueInfo, fullMatch=fullMatch)
+        if not result["OK"]:
+            gLogger.error("Failed in getting match data", result["Message"])
+            DIRACExit(-1)
+        status = (
+            "Active" if siteStatus is "Active" and ceStatus is "Active" else "Inactive"
+        )
+        if result["Value"]["Match"]:
+            records.append((site, ce, queueInfo["Queue"], status, "Yes", ""))
+        else:
+            records.append(
+                (site, ce, queueInfo["Queue"], status, "No", result["Value"]["Reason"])
+            )
 
-  gLogger.notice(printTable(fields, records, sortField='Site', columnSeparator='  ', printOut=False))
+    gLogger.notice(
+        printTable(
+            fields, records, sortField="Site", columnSeparator="  ", printOut=False
+        )
+    )

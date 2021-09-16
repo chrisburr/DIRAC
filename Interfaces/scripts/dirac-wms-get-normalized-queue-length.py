@@ -16,27 +16,33 @@ import DIRAC
 from DIRAC.Core.Base import Script
 from DIRAC.WorkloadManagementSystem.Client.CPUNormalization import queueNormalizedCPU
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... Queue ...' % Script.scriptName,
-                                  'Arguments:',
-                                  '  Queue:     GlueCEUniqueID of the Queue (ie, juk.nikhef.nl:8443/cream-pbs-lhcb)']))
+Script.setUsageMessage(
+    "\n".join(
+        [
+            __doc__.split("\n")[1],
+            "Usage:",
+            "  %s [option|cfgfile] ... Queue ..." % Script.scriptName,
+            "Arguments:",
+            "  Queue:     GlueCEUniqueID of the Queue (ie, juk.nikhef.nl:8443/cream-pbs-lhcb)",
+        ]
+    )
+)
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 1:
-  Script.showHelp()
+    Script.showHelp()
 
 exitCode = 0
 
 for ceUniqueID in args:
 
-  normCPU = queueNormalizedCPU(ceUniqueID)
+    normCPU = queueNormalizedCPU(ceUniqueID)
 
-  if not normCPU['OK']:
-    print('ERROR %s:' % ceUniqueID, normCPU['Message'])
-    exitCode = 2
-    continue
-  print(ceUniqueID, normCPU['Value'])
+    if not normCPU["OK"]:
+        print("ERROR %s:" % ceUniqueID, normCPU["Message"])
+        exitCode = 2
+        continue
+    print(ceUniqueID, normCPU["Value"])
 
 DIRAC.exit(exitCode)

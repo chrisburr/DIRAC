@@ -4,12 +4,15 @@
 
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage("""
+Script.setUsageMessage(
+    """
 Launch the Transformation shell
 
 Usage:
    %s [option]
-""" % Script.scriptName)
+"""
+    % Script.scriptName
+)
 
 
 Script.parseCommandLine(ignoreErrors=False)

@@ -9,124 +9,128 @@ import unittest
 import logging
 from StringIO import StringIO
 
-from DIRAC.FrameworkSystem.private.standardLogging.test.TestLoggingBase import Test_Logging, gLogger, cleaningLog
+from DIRAC.FrameworkSystem.private.standardLogging.test.TestLoggingBase import (
+    Test_Logging,
+    gLogger,
+    cleaningLog,
+)
 
 
 class Test_ConfigForExternalLibs(Test_Logging):
-  """
-  Test enableLogsFromExternalLibs method of LoggingRoot.
-  logging.getLogger() returns the root logger which is used in external libraries
-  """
-
-  def test_00rootLoggerConfiguration(self):
     """
-    Test the good configuration of the root logger
+    Test enableLogsFromExternalLibs method of LoggingRoot.
+    logging.getLogger() returns the root logger which is used in external libraries
     """
-    gLogger.enableLogsFromExternalLibs()
-    handlers = logging.getLogger().handlers
 
-    self.assertEqual(logging.getLogger().getEffectiveLevel(), logging.DEBUG)
+    def test_00rootLoggerConfiguration(self):
+        """
+        Test the good configuration of the root logger
+        """
+        gLogger.enableLogsFromExternalLibs()
+        handlers = logging.getLogger().handlers
 
-    self.assertEqual(1, len(handlers))
-    self.assertIsInstance(handlers[0], logging.StreamHandler)
+        self.assertEqual(logging.getLogger().getEffectiveLevel(), logging.DEBUG)
 
-    gLogger.disableLogsFromExternalLibs()
-    handlers = logging.getLogger().handlers
+        self.assertEqual(1, len(handlers))
+        self.assertIsInstance(handlers[0], logging.StreamHandler)
 
-    self.assertEqual(logging.getLogger().getEffectiveLevel(), logging.DEBUG)
+        gLogger.disableLogsFromExternalLibs()
+        handlers = logging.getLogger().handlers
 
-    self.assertEqual(1, len(handlers))
-    self.assertIsInstance(handlers[0], logging.NullHandler)
+        self.assertEqual(logging.getLogger().getEffectiveLevel(), logging.DEBUG)
 
-  def test_01displayLogs(self):
-    """
-    Test the display of the logs according to the value of the boolean in the method.
-    """
-    # Enabled
-    gLogger.enableLogsFromExternalLibs()
+        self.assertEqual(1, len(handlers))
+        self.assertIsInstance(handlers[0], logging.NullHandler)
 
-    # modify the output to capture logs of the root logger
-    bufferRoot = StringIO()
-    logging.getLogger().handlers[0].stream = bufferRoot
+    def test_01displayLogs(self):
+        """
+        Test the display of the logs according to the value of the boolean in the method.
+        """
+        # Enabled
+        gLogger.enableLogsFromExternalLibs()
 
-    logging.getLogger().info("message")
-    logstring1 = cleaningLog(bufferRoot.getvalue())
+        # modify the output to capture logs of the root logger
+        bufferRoot = StringIO()
+        logging.getLogger().handlers[0].stream = bufferRoot
 
-    self.assertEqual("UTCExternalLibrary/rootINFO:message\n", logstring1)
-    bufferRoot.truncate(0)
+        logging.getLogger().info("message")
+        logstring1 = cleaningLog(bufferRoot.getvalue())
 
-    # this is a direct child of root, as the logger in DIRAC
-    logging.getLogger("sublog").info("message")
-    logstring1 = cleaningLog(bufferRoot.getvalue())
+        self.assertEqual("UTCExternalLibrary/rootINFO:message\n", logstring1)
+        bufferRoot.truncate(0)
 
-    self.assertEqual("UTCExternalLibrary/sublogINFO:message\n", logstring1)
-    bufferRoot.truncate(0)
+        # this is a direct child of root, as the logger in DIRAC
+        logging.getLogger("sublog").info("message")
+        logstring1 = cleaningLog(bufferRoot.getvalue())
 
-    # Disabled
-    gLogger.disableLogsFromExternalLibs()
+        self.assertEqual("UTCExternalLibrary/sublogINFO:message\n", logstring1)
+        bufferRoot.truncate(0)
 
-    logging.getLogger().info("message")
-    # this is a direct child of root, as the logger in DIRAC
-    logging.getLogger("sublog").info("message")
+        # Disabled
+        gLogger.disableLogsFromExternalLibs()
 
-    self.assertEqual("", bufferRoot.getvalue())
+        logging.getLogger().info("message")
+        # this is a direct child of root, as the logger in DIRAC
+        logging.getLogger("sublog").info("message")
 
-  def test_02propagation(self):
-    """
-    Test the no propagation of the logs from the Logging objects to the root logger of 'logging'
-    """
-    gLogger.enableLogsFromExternalLibs()
-    # modify the output to capture logs of the root logger
-    bufferRoot = StringIO()
-    logging.getLogger().handlers[0].stream = bufferRoot
+        self.assertEqual("", bufferRoot.getvalue())
 
-    gLogger.debug('message')
+    def test_02propagation(self):
+        """
+        Test the no propagation of the logs from the Logging objects to the root logger of 'logging'
+        """
+        gLogger.enableLogsFromExternalLibs()
+        # modify the output to capture logs of the root logger
+        bufferRoot = StringIO()
+        logging.getLogger().handlers[0].stream = bufferRoot
 
-    self.assertNotEqual(self.buffer.getvalue(), "")
-    self.assertEqual(bufferRoot.getvalue(), "")
-    self.buffer.truncate(0)
+        gLogger.debug("message")
 
-  def test_03multipleCalls(self):
-    """
-    Test the multiple calls to the method to see if we have no duplication of the logs
-    """
-    gLogger.enableLogsFromExternalLibs()
-    gLogger.enableLogsFromExternalLibs()
-    gLogger.enableLogsFromExternalLibs()
-    gLogger.enableLogsFromExternalLibs()
-    handlers = logging.getLogger().handlers
+        self.assertNotEqual(self.buffer.getvalue(), "")
+        self.assertEqual(bufferRoot.getvalue(), "")
+        self.buffer.truncate(0)
 
-    self.assertEqual(1, len(handlers))
-    self.assertIsInstance(handlers[0], logging.StreamHandler)
+    def test_03multipleCalls(self):
+        """
+        Test the multiple calls to the method to see if we have no duplication of the logs
+        """
+        gLogger.enableLogsFromExternalLibs()
+        gLogger.enableLogsFromExternalLibs()
+        gLogger.enableLogsFromExternalLibs()
+        gLogger.enableLogsFromExternalLibs()
+        handlers = logging.getLogger().handlers
 
-    gLogger.disableLogsFromExternalLibs()
-    gLogger.disableLogsFromExternalLibs()
-    gLogger.disableLogsFromExternalLibs()
-    gLogger.disableLogsFromExternalLibs()
-    handlers = logging.getLogger().handlers
+        self.assertEqual(1, len(handlers))
+        self.assertIsInstance(handlers[0], logging.StreamHandler)
 
-    self.assertEqual(1, len(handlers))
-    self.assertIsInstance(handlers[0], logging.NullHandler)
+        gLogger.disableLogsFromExternalLibs()
+        gLogger.disableLogsFromExternalLibs()
+        gLogger.disableLogsFromExternalLibs()
+        gLogger.disableLogsFromExternalLibs()
+        handlers = logging.getLogger().handlers
 
-    gLogger.enableLogsFromExternalLibs()
-    gLogger.disableLogsFromExternalLibs()
-    gLogger.enableLogsFromExternalLibs()
-    gLogger.disableLogsFromExternalLibs()
-    handlers = logging.getLogger().handlers
+        self.assertEqual(1, len(handlers))
+        self.assertIsInstance(handlers[0], logging.NullHandler)
 
-    self.assertEqual(1, len(handlers))
-    self.assertIsInstance(handlers[0], logging.NullHandler)
+        gLogger.enableLogsFromExternalLibs()
+        gLogger.disableLogsFromExternalLibs()
+        gLogger.enableLogsFromExternalLibs()
+        gLogger.disableLogsFromExternalLibs()
+        handlers = logging.getLogger().handlers
 
-    gLogger.disableLogsFromExternalLibs()
-    gLogger.enableLogsFromExternalLibs()
-    gLogger.disableLogsFromExternalLibs()
-    gLogger.enableLogsFromExternalLibs()
-    handlers = logging.getLogger().handlers
+        self.assertEqual(1, len(handlers))
+        self.assertIsInstance(handlers[0], logging.NullHandler)
 
-    self.assertEqual(1, len(handlers))
-    self.assertIsInstance(handlers[0], logging.StreamHandler)
+        gLogger.disableLogsFromExternalLibs()
+        gLogger.enableLogsFromExternalLibs()
+        gLogger.disableLogsFromExternalLibs()
+        gLogger.enableLogsFromExternalLibs()
+        handlers = logging.getLogger().handlers
+
+        self.assertEqual(1, len(handlers))
+        self.assertIsInstance(handlers[0], logging.StreamHandler)
 
 
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(Test_ConfigForExternalLibs)
-  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+if __name__ == "__main__":
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(Test_ConfigForExternalLibs)
+    testResult = unittest.TextTestRunner(verbosity=2).run(suite)

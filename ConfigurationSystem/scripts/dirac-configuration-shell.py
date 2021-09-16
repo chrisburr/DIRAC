@@ -17,9 +17,9 @@ from DIRAC.ConfigurationSystem.Client.CSShellCLI import CSShellCLI
 
 
 def main():
-  shell = CSShellCLI()
-  shell.cmdloop()
+    shell = CSShellCLI()
+    shell.cmdloop()
 
 
 if __name__ == "__main__":
-  sys.exit(main())
+    sys.exit(main())

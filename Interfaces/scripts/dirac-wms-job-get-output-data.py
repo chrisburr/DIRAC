@@ -13,38 +13,45 @@ __RCSID__ = "$Id$"
 import DIRAC
 from DIRAC.Core.Base import Script
 
-Script.setUsageMessage('\n'.join([__doc__.split('\n')[1],
-                                  'Usage:',
-                                  '  %s [option|cfgfile] ... JobID ...' % Script.scriptName,
-                                  'Arguments:',
-                                  '  JobID:    DIRAC Job ID']))
+Script.setUsageMessage(
+    "\n".join(
+        [
+            __doc__.split("\n")[1],
+            "Usage:",
+            "  %s [option|cfgfile] ... JobID ..." % Script.scriptName,
+            "Arguments:",
+            "  JobID:    DIRAC Job ID",
+        ]
+    )
+)
 Script.registerSwitch("D:", "Dir=", "Store the output in this directory")
 Script.parseCommandLine(ignoreErrors=True)
 args = Script.getPositionalArgs()
 
 if len(args) < 1:
-  Script.showHelp(exitCode=1)
+    Script.showHelp(exitCode=1)
 
 from DIRAC.Interfaces.API.Dirac import Dirac, parseArguments
+
 dirac = Dirac()
 exitCode = 0
 errorList = []
 
-outputDir = ''
+outputDir = ""
 for sw, v in Script.getUnprocessedSwitches():
-  if sw in ('D', 'Dir'):
-    outputDir = v
+    if sw in ("D", "Dir"):
+        outputDir = v
 
 for job in parseArguments(args):
 
-  result = dirac.getJobOutputData(job, destinationDir=outputDir)
-  if result['OK']:
-    print('Job %s output data retrieved' % (job))
-  else:
-    errorList.append((job, result['Message']))
-    exitCode = 2
+    result = dirac.getJobOutputData(job, destinationDir=outputDir)
+    if result["OK"]:
+        print("Job %s output data retrieved" % (job))
+    else:
+        errorList.append((job, result["Message"]))
+        exitCode = 2
 
 for error in errorList:
-  print("ERROR %s: %s" % error)
+    print("ERROR %s: %s" % error)
 
 DIRAC.exit(exitCode)

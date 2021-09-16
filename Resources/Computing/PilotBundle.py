@@ -15,20 +15,16 @@ import tempfile
 
 
 def bundleProxy(executableFile, proxy):
-  """ Create a self extracting archive bundling together an executable script and a proxy
-  """
+    """Create a self extracting archive bundling together an executable script and a proxy"""
 
-  compressedAndEncodedProxy = base64.encodestring(bz2.compress(proxy.dumpAllToString()['Value'])).replace('\n', '')
-  compressedAndEncodedExecutable = base64.encodestring(
-      bz2.compress(
-          open(
-              executableFile,
-              "rb").read(),
-          9)).replace(
-      '\n',
-      '')
+    compressedAndEncodedProxy = base64.encodestring(
+        bz2.compress(proxy.dumpAllToString()["Value"])
+    ).replace("\n", "")
+    compressedAndEncodedExecutable = base64.encodestring(
+        bz2.compress(open(executableFile, "rb").read(), 9)
+    ).replace("\n", "")
 
-  bundle = """#!/usr/bin/env python
+    bundle = """#!/usr/bin/env python
 # Wrapper script for executable and proxy
 import os
 import tempfile
@@ -56,19 +52,23 @@ os.system(cmd)
 
 shutil.rmtree(workingDirectory)
 
-""" % {'compressedAndEncodedProxy': compressedAndEncodedProxy,
-       'compressedAndEncodedExecutable': compressedAndEncodedExecutable,
-       'executable': os.path.basename(executableFile)}
+""" % {
+        "compressedAndEncodedProxy": compressedAndEncodedProxy,
+        "compressedAndEncodedExecutable": compressedAndEncodedExecutable,
+        "executable": os.path.basename(executableFile),
+    }
 
-  return bundle
+    return bundle
 
 
 def writeScript(script, writeDir=None):
-  """
+    """
     Write script into a temporary unique file under provided writeDir
-  """
-  fd, name = tempfile.mkstemp(suffix='_pilotWrapper.py', prefix='DIRAC_', dir=writeDir)
-  pilotWrapper = os.fdopen(fd, 'w')
-  pilotWrapper.write(script)
-  pilotWrapper.close()
-  return name
+    """
+    fd, name = tempfile.mkstemp(
+        suffix="_pilotWrapper.py", prefix="DIRAC_", dir=writeDir
+    )
+    pilotWrapper = os.fdopen(fd, "w")
+    pilotWrapper.write(script)
+    pilotWrapper.close()
+    return name

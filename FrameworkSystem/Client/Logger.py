@@ -6,4 +6,4 @@ gLogger = LoggingRoot()
 
 
 def getLogger():
-  return gLogger
+    return gLogger

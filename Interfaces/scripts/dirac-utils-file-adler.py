@@ -30,16 +30,16 @@ Script.setUsageMessage(__doc__)
 Script.parseCommandLine(ignoreErrors=False)
 files = Script.getPositionalArgs()
 if len(files) == 0:
-  Script.showHelp()
+    Script.showHelp()
 
 exitCode = 0
 
 for fa in files:
-  adler = fileAdler(fa)
-  if adler:
-    print(fa.rjust(100), adler.ljust(10))  # pylint: disable=no-member
-  else:
-    print('ERROR %s: Failed to get adler' % fa)
-    exitCode = 2
+    adler = fileAdler(fa)
+    if adler:
+        print(fa.rjust(100), adler.ljust(10))  # pylint: disable=no-member
+    else:
+        print("ERROR %s: Failed to get adler" % fa)
+        exitCode = 2
 
 DIRAC.exit(exitCode)

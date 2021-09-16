@@ -14,35 +14,47 @@ from DIRAC.Core.Base import Script
 
 
 class Params(object):
+    def __init__(self):
+        self.raw = False
+        self.pingsToDo = 1
 
-  def __init__(self):
-    self.raw = False
-    self.pingsToDo = 1
+    def setRawResult(self, value):
+        self.raw = True
+        return S_OK()
 
-  def setRawResult(self, value):
-    self.raw = True
-    return S_OK()
-
-  def setNumOfPingsToDo(self, value):
-    try:
-      self.pingsToDo = max(1, int(value))
-    except ValueError:
-      return S_ERROR("Number of pings to do has to be a number")
-    return S_OK()
+    def setNumOfPingsToDo(self, value):
+        try:
+            self.pingsToDo = max(1, int(value))
+        except ValueError:
+            return S_ERROR("Number of pings to do has to be a number")
+        return S_OK()
 
 
 # Instantiate the params class
 cliParams = Params()
 
 # Register accepted switches and their callbacks
-Script.registerSwitch("r", "showRaw", "show raw result from the query", cliParams.setRawResult)
-Script.registerSwitch("p:", "numPings=", "Number of pings to do (by default 1)", cliParams.setNumOfPingsToDo)
+Script.registerSwitch(
+    "r", "showRaw", "show raw result from the query", cliParams.setRawResult
+)
+Script.registerSwitch(
+    "p:",
+    "numPings=",
+    "Number of pings to do (by default 1)",
+    cliParams.setNumOfPingsToDo,
+)
 
 # Define a help message
-Script.setUsageMessage('\n'.join([__doc__,
-                                  'Usage:',
-                                  '  %s [option|cfgfile] <system name to ping>+' % Script.scriptName,
-                                  '  Specifying a system is mandatory']))
+Script.setUsageMessage(
+    "\n".join(
+        [
+            __doc__,
+            "Usage:",
+            "  %s [option|cfgfile] <system name to ping>+" % Script.scriptName,
+            "  Specifying a system is mandatory",
+        ]
+    )
+)
 
 # Parse the command line and initialize DIRAC
 Script.parseCommandLine(ignoreErrors=False)
@@ -52,4 +64,4 @@ servicesList = Script.getPositionalArgs()
 
 # Check and process the command line switches and options
 if not servicesList:
-  Script.showHelp(exitCode=1)
+    Script.showHelp(exitCode=1)

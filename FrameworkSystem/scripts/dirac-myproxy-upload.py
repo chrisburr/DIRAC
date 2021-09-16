@@ -5,6 +5,7 @@
 ########################################################################
 
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 import sys
@@ -14,22 +15,22 @@ from DIRAC.Core.Base import Script
 
 class Params:
 
-  proxyLoc = False
-  dnAsUsername = False
+    proxyLoc = False
+    dnAsUsername = False
 
-  def setProxyLocation(self, arg):
-    self.proxyLoc = arg
-    return DIRAC.S_OK()
+    def setProxyLocation(self, arg):
+        self.proxyLoc = arg
+        return DIRAC.S_OK()
 
-  def setDNAsUsername(self, arg):
-    self.dnAsUsername = True
-    return DIRAC.S_OK()
+    def setDNAsUsername(self, arg):
+        self.dnAsUsername = True
+        return DIRAC.S_OK()
 
-  def showVersion(self, arg):
-    print("Version:")
-    print(" ", __RCSID__)
-    sys.exit(0)
-    return DIRAC.S_OK()
+    def showVersion(self, arg):
+        print("Version:")
+        print(" ", __RCSID__)
+        sys.exit(0)
+        return DIRAC.S_OK()
 
 
 params = Params()
@@ -45,18 +46,18 @@ from DIRAC.Core.Security.MyProxy import MyProxy
 from DIRAC.Core.Security import Locations
 
 if not params.proxyLoc:
-  params.proxyLoc = Locations.getProxyLocation()
+    params.proxyLoc = Locations.getProxyLocation()
 
 if not params.proxyLoc:
-  print("Can't find any valid proxy")
-  sys.exit(1)
+    print("Can't find any valid proxy")
+    sys.exit(1)
 print("Uploading proxy file %s" % params.proxyLoc)
 
 mp = MyProxy()
 retVal = mp.uploadProxy(params.proxyLoc, params.dnAsUsername)
-if not retVal['OK']:
-  print("Can't upload proxy:")
-  print(" ", retVal['Message'])
-  sys.exit(1)
+if not retVal["OK"]:
+    print("Can't upload proxy:")
+    print(" ", retVal["Message"])
+    sys.exit(1)
 print("Proxy uploaded")
 sys.exit(0)

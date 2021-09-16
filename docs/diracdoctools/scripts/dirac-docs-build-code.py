@@ -3,4 +3,5 @@
 import sys
 
 from diracdoctools.cmd.codeReference import run, CLParser
+
 sys.exit(run(**(CLParser().optionDict())))

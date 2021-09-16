@@ -9,29 +9,35 @@ from DIRAC.Core.Base import Script
 from DIRAC import gLogger
 from DIRAC.WorkloadManagementSystem.Utilities import JobParameters
 
-Script.setUsageMessage('\n'.join(['Get the parameters (Memory and Number of processors) of a worker node',
-                                  'Usage:',
-                                  ' %s [option]... [cfgfile]' % Script.scriptName,
-                                  'Arguments:',
-                                  ' cfgfile: DIRAC Cfg with description of the configuration (optional)']))
+Script.setUsageMessage(
+    "\n".join(
+        [
+            "Get the parameters (Memory and Number of processors) of a worker node",
+            "Usage:",
+            " %s [option]... [cfgfile]" % Script.scriptName,
+            "Arguments:",
+            " cfgfile: DIRAC Cfg with description of the configuration (optional)",
+        ]
+    )
+)
 
-ceName = ''
-ceType = ''
+ceName = ""
+ceType = ""
 
 
 def setCEName(args):
-  global ceName
-  ceName = args
+    global ceName
+    ceName = args
 
 
 def setSite(args):
-  global Site
-  Site = args
+    global Site
+    Site = args
 
 
 def setQueue(args):
-  global Queue
-  Queue = args
+    global Queue
+    Queue = args
 
 
 Script.registerSwitch("N:", "Name=", "Computing Element Name (Mandatory)", setCEName)
@@ -47,8 +53,10 @@ numberOfProcessor = JobParameters.getNumberOfProcessors(Site, ceName, Queue)
 gLogger.info("Getting memory (RAM) from MJF")
 maxRAM = JobParameters.getMemoryFromMJF()
 if not maxRAM:
-  gLogger.info("maxRAM could not be found in MJF, using JobParameters.getMemoryFromProc()")
-  maxRAM = JobParameters.getMemoryFromProc()
+    gLogger.info(
+        "maxRAM could not be found in MJF, using JobParameters.getMemoryFromProc()"
+    )
+    maxRAM = JobParameters.getMemoryFromProc()
 
 # just communicating it back
 gLogger.notice(numberOfProcessor, maxRAM)

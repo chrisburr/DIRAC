@@ -1,5 +1,5 @@
-''' DIRAC.ResourceStatusSystem.Agent package
+""" DIRAC.ResourceStatusSystem.Agent package
 
-'''
+"""
 
-__RCSID__ = '$Id$'
+__RCSID__ = "$Id$"
