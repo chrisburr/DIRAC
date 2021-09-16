@@ -2,9 +2,9 @@
 # Author: Krzysztof.Ciba@NOSPAMgmail.com
 # Date: 2013/07/03 15:17:23
 ########################################################################
-""" :mod: StateMachineTests 
+""" :mod: StateMachineTests
     =======================
- 
+
     .. module: StateMachineTests
     :synopsis: unittest for StateMachine
     .. moduleauthor:: Krzysztof.Ciba@NOSPAMgmail.com

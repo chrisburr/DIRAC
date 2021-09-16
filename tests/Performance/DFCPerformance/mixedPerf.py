@@ -4,7 +4,7 @@
     It produces two files : time.txt and clock.txt which contain time measurement,
     using time.time and time.clock (see respective doc)
     It assumes that the DB has been filled with the scripts in generateDB
-    
+
     Tunable parameters:
       * maxDuration : time it will run. Cannot be too long, otherwise job
                       is killed because staled

@@ -5,9 +5,9 @@
 # Date: 2012/09/25 13:49:20
 ########################################################################
 
-""" :mod: RequestValidatorTests 
+""" :mod: RequestValidatorTests
     =======================
- 
+
     .. module: RequestValidatorTests
     :synopsis: test cases for RequestValidator
     .. moduleauthor:: Krzysztof.Ciba@NOSPAMgmail.com
