@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      check-ci:
+        description: "Require the CI to have passed for this commit"
+        required: true
+        default: "yes"
 
 jobs:
   deploy-pypi:
