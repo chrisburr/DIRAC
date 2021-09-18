@@ -150,7 +150,6 @@ class GithubInterface(object):
     self.branches = ['Integration', 'rel-v6r21']
     self.openPRs = False
     self.sinceLatestTag = False
-    self.sinceTag = None
     self.headerMessage = None
     self.footerMessage = None
     self.startDate = datetime.datetime.now() - datetime.timedelta(days=14)
@@ -255,9 +254,6 @@ class GithubInterface(object):
     parser.add_argument("--sinceLatestTag", action="store_true", dest="sinceLatestTag", default=self.sinceLatestTag,
                         help="get release notes since latest tag (incompatible with --date)")
 
-    parser.add_argument("--sinceTag", dest="sinceTag", default=self.sinceTag,
-                        help="get release notes since latest tag (incompatible with --date)")
-
     parser.add_argument("--headerMessage", action="store", default=self.headerMessage, dest="headerMessage",
                         help="Header message to add between the release name and the list of PR. If it is a path,\
                          read the content of the file")
@@ -310,11 +306,10 @@ class GithubInterface(object):
 
     # If the date parsed does not correspond to the default,
     # and latestTag is asked, we throw an error
-    if (bool(parsed.date != self.startDate) + bool(parsed.sinceLatestTag) + bool(parsed.sinceTag)) > 1:
-      raise RuntimeError("--sinceLatestTag, --date and --sinceTag are mutually exclusive")
+    if (parsed.date != self.startDate) and parsed.sinceLatestTag:
+      raise RuntimeError("--sinceLatestTag incompatible with --date")
 
     self.sinceLatestTag = parsed.sinceLatestTag
-    self.sinceTag = parsed.sinceTag
 
     if self.sinceLatestTag:
       log.info('Starting from the latest tag')
@@ -416,26 +411,22 @@ class GithubInterface(object):
 
     return prsToReturn
 
-  def getGitlabLatestTagDate(self, sinceTag):
+  def getGitlabLatestTagDate(self):
     """ Get the latest tag creation date from gitlab
 
-    :param str sinceTag: Use this tag as a reference instead of the latest
     :returns: date of the latest tag
     """
-    if sinceTag:
-      raise NotImplementedError()
     glURL = self._gitlab('repository/tags')
     allTags = req2Json(glURL)
     lastTag = max([tag['commit']['created_at'] for tag in allTags])
     return dateutil.parser.isoparse(lastTag)
 
-  def getGithubLatestTagDate(self, sinceTag):
+  def getGithubLatestTagDate(self):
     """ Get the latest tag creation date from gitlab
 
-    :warning: tags can only be sorted by name, so we assume that the tags are ordered version numbers
+      :warning: tags can only be sorted by name, so we assume that the tags are ordered version numbers
 
-    :param str sinceTag: Use this tag as a reference instead of the latest
-    :returns: date of the latest tag
+      :returns: date of the latest tag
     """
     log = LOGGER.getChild('getGithubLatestTagDate')
 
@@ -444,19 +435,11 @@ class GithubInterface(object):
     if isinstance(tags, dict) and 'Not Found' in tags.get('message'):
       raise RuntimeError("Package not found: %s" % str(self))
 
-    if sinceTag:
-      for tag in tags:
-        if tag['name'] == sinceTag:
-          latestTag = tag
-          break
-      else:
-        raise ValueError("Tag %s not found" % sinceTag)
-    else:
-      sortedTags = sorted(
-          tags,
-          key=lambda tag: LooseVersion(tag['name']),
-          reverse=True)
-      latestTag = sortedTags[0]
+    sortedTags = sorted(
+        tags,
+        key=lambda tag: LooseVersion(tag['name']),
+        reverse=True)
+    latestTag = sortedTags[0]
 
     log.info("Found latest tag %s", latestTag['name'])
 
@@ -506,11 +489,11 @@ class GithubInterface(object):
     log = LOGGER.getChild("getReleaseNotes")
 
     # Check the latest tag if need be
-    if self.sinceLatestTag or self.sinceTag:
+    if self.sinceLatestTag:
       if self.useGithub:
-        self.startDate = self.getGithubLatestTagDate(self.sinceTag)
+        self.startDate = self.getGithubLatestTagDate()
       else:
-        self.startDate = self.getGitlabLatestTagDate(self.sinceTag)
+        self.startDate = self.getGitlabLatestTagDate()
       log.info("Starting from date %s", self.startDate)
 
     if self.useGithub:
