@@ -90,8 +90,13 @@ then
   # system_component is a space separated System (without the word System), and Component, without the 'Handler.py'.
   # For example "DataManagement TornadoFileCatalog"
 
-  find "/home/dirac/LocalRepo/ALTERNATIVE_MODULES/DIRAC" -name 'Tornado*Handler.py' | grep -v Configuration | sed -e 's/Handler.py//g' -e 's/System//g'| awk -F '/' '{print $(NF-2), $NF}' > tornadoServices
-  cfgProdFile="${SERVERINSTALLDIR}"/diracos/etc/Production.cfg
+  if [[ "${USE_PYTHON3:-}" == "Yes" ]]; then
+    find "/home/dirac/LocalRepo/ALTERNATIVE_MODULES/DIRAC" -name 'Tornado*Handler.py' | grep -v Configuration | sed -e 's/Handler.py//g' -e 's/System//g'| awk -F '/' '{print $(NF-2), $NF}' > tornadoServices
+    cfgProdFile="${SERVERINSTALLDIR}"/diracos/etc/Production.cfg
+  else
+    find "${SERVERINSTALLDIR}"/DIRAC/ -name 'Tornado*Handler.py' | grep -v Configuration | sed -e 's/Handler.py//g' -e 's/System//g'| awk -F '/' '{print $(NF-2), $NF}' > tornadoServices
+    cfgProdFile="${SERVERINSTALLDIR}"/etc/Production.cfg
+  fi
 
   while read -r system_component; do
     echo -e "*** $(date -u) **** Installing Tornado service ${system_component}"
