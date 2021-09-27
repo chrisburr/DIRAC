@@ -248,7 +248,7 @@ integration_tests:
 # This creates and deploy the tarball
 # It is triggered with a tag only
 create_tarball:
-  image: diracgrid/dirac-distribution:latest
+  image: registry.cern.ch/docker.io/diracgrid/dirac-distribution:latest
   before_script:
     # Fetch a Kerberos token
     - echo "${KRB_PASSWORD}" | kinit ${KRB_USERNAME}@CERN.CH
