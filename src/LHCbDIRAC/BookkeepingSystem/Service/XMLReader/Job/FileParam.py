@@ -17,18 +17,17 @@ __RCSID__ = "$Id$"
 
 
 class FileParam(object):
+    def __init__(self):
+        """initialize the class members."""
+        self.name = ""
+        self.value = ""
 
-  def __init__(self):
-    """initialize the class members."""
-    self.name = ""
-    self.value = ""
+    def __repr__(self):
+        """formats the output of print."""
+        result = "\nFileParam: \n"
+        result += self.name + " " + self.value + "\n"
+        return result
 
-  def __repr__(self):
-    """formats the output of print."""
-    result = '\nFileParam: \n'
-    result += self.name + ' ' + self.value + '\n'
-    return result
-
-  def writeToXML(self):
-    """creates an xml string."""
-    return '    <Parameter  Name="' + self.name + '"     Value="' + self.value + '"/>\n'
+    def writeToXML(self):
+        """creates an xml string."""
+        return '    <Parameter  Name="' + self.name + '"     Value="' + self.value + '"/>\n'

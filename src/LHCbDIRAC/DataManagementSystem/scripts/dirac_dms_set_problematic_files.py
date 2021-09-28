@@ -22,26 +22,33 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerSiteSwitches()
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerSiteSwitches()
 
-  Script.registerSwitch('', 'Reset', '   Reset files to OK')
-  Script.registerSwitch('', 'Full', '   Give full list of files')
-  Script.registerSwitch('', 'NoAction', '   No action taken, just give stats')
+    Script.registerSwitch("", "Reset", "   Reset files to OK")
+    Script.registerSwitch("", "Full", "   Give full list of files")
+    Script.registerSwitch("", "NoAction", "   No action taken, just give stats")
 
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s [option|cfgfile] [<LFN>] [<LFN>...]" % Script.scriptName,
+            ]
+        )
+    )
 
-  Script.parseCommandLine(ignoreErrors=False)
+    Script.parseCommandLine(ignoreErrors=False)
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeSetProblematicFiles
-  from DIRAC import exit
-  exit(executeSetProblematicFiles(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeSetProblematicFiles
+    from DIRAC import exit
+
+    exit(executeSetProblematicFiles(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

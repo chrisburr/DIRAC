@@ -22,7 +22,7 @@ from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.ConfigurationSystem.Client.Helpers import CSGlobals
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCStatsDBBase import ElasticMCStatsDBBase
 
-name = 'ElasticApplicationSummaryDB'
+name = "ElasticApplicationSummaryDB"
 
 mapping = {
     "properties": {
@@ -35,27 +35,24 @@ mapping = {
 
 
 class ElasticApplicationSummaryDB(ElasticMCStatsDBBase):
+    def __init__(self):
+        """Standard Constructor"""
 
-  def __init__(self):
-    """ Standard Constructor
-    """
+        section = getDatabaseSection("ProductionManagement", "ElasticApplicationSummaryDB")
+        indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
 
-    section = getDatabaseSection("ProductionManagement", "ElasticApplicationSummaryDB")
-    indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
-                                   CSGlobals.getSetup()).lower()
+        # Connecting to the ES cluster
+        super(ElasticApplicationSummaryDB, self).__init__(
+            name, "ProductionManagement/ElasticApplicationSummaryDB", indexPrefix
+        )
 
-    # Connecting to the ES cluster
-    super(ElasticApplicationSummaryDB, self).__init__(name,
-                                                      'ProductionManagement/ElasticApplicationSummaryDB',
-                                                      indexPrefix)
+        self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
+        # Verifying if the index is there, and if not create it
+        if not self.client.indices.exists(self.indexName):
+            result = self.createIndex(self.indexName, mapping, period=None)
+            if not result["OK"]:
+                self.log.error(result["Message"])
+                raise RuntimeError(result["Message"])
+            self.log.always("Index created:", self.indexName)
 
-    self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
-    # Verifying if the index is there, and if not create it
-    if not self.client.indices.exists(self.indexName):
-      result = self.createIndex(self.indexName, mapping, period=None)
-      if not result['OK']:
-        self.log.error(result['Message'])
-        raise RuntimeError(result['Message'])
-      self.log.always("Index created:", self.indexName)
-
-    self.dslSearch = self._Search(self.indexName)
+        self.dslSearch = self._Search(self.indexName)

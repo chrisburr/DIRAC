@@ -16,14 +16,15 @@ from __future__ import division
 from __future__ import print_function
 
 from DIRAC.Core.Base import Script
+
 Script.parseCommandLine()
 
 xmlFile = Script.getPositionalArgs()[0]
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-with open(xmlFile, 'r') as fd:
-  bkXML = fd.read()
+with open(xmlFile, "r") as fd:
+    bkXML = fd.read()
 
 res = BookkeepingClient().sendXMLBookkeepingReport(bkXML)
 print(res)

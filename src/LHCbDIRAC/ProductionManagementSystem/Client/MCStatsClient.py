@@ -17,39 +17,38 @@ from __future__ import print_function
 from DIRAC.Core.Base.Client import Client, createClient
 
 
-@createClient('ProductionManagement/MCStatsElasticDB')
+@createClient("ProductionManagement/MCStatsElasticDB")
 class MCStatsClient(Client):
-  """Client for MCStatsElasticDB
-  """
+    """Client for MCStatsElasticDB"""
 
-  def __init__(self, **kwargs):
-    """simple constructor."""
+    def __init__(self, **kwargs):
+        """simple constructor."""
 
-    super(MCStatsClient, self).__init__(**kwargs)
-    self.setServer('ProductionManagement/MCStatsElasticDB')
+        super(MCStatsClient, self).__init__(**kwargs)
+        self.setServer("ProductionManagement/MCStatsElasticDB")
 
-  def set(self, typeName, data):
-    """set some data in a certain type.
+    def set(self, typeName, data):
+        """set some data in a certain type.
 
-    :params str typeName: type name (e.g. 'gaussErrors')
-    :params dict data: dictionary inserted
+        :params str typeName: type name (e.g. 'gaussErrors')
+        :params dict data: dictionary inserted
 
-    :returns: S_OK/S_ERROR
-    """
-    return self._getRPC().set(typeName, data)
+        :returns: S_OK/S_ERROR
+        """
+        return self._getRPC().set(typeName, data)
 
-  def get(self, typeName, productionID):
-    """get per Job ID.
+    def get(self, typeName, productionID):
+        """get per Job ID.
 
-    :params str typeName: type name (e.g. 'gaussErrors')
-    :params int productionID: production ID
-    """
-    return self._getRPC().get(typeName, productionID)
+        :params str typeName: type name (e.g. 'gaussErrors')
+        :params int productionID: production ID
+        """
+        return self._getRPC().get(typeName, productionID)
 
-  def remove(self, typeName, productionID):
-    """remove data for productionID.
+    def remove(self, typeName, productionID):
+        """remove data for productionID.
 
-    :params str typeName: type name (e.g. 'gaussErrors')
-    :params int productionID: production ID
-    """
-    return self._getRPC().remove(typeName, productionID)
+        :params str typeName: type name (e.g. 'gaussErrors')
+        :params int productionID: production ID
+        """
+        return self._getRPC().remove(typeName, productionID)

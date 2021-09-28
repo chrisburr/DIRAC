@@ -10,7 +10,7 @@
 
 -- -------------------------------------------------------------------------------
 --  Schema definition for the TransformationDB database a generic
---  engine to define input data streams and support dynamic data 
+--  engine to define input data streams and support dynamic data
 --  grouping per unit of execution.
 
 SOURCE DIRAC/TransformationSystem/DB/TransformationDB.sql
@@ -64,7 +64,7 @@ CREATE TABLE BkQueriesNew (
 
 ALTER TABLE TransformationFiles ADD COLUMN (RunNumber INT(11) DEFAULT 0, Size BIGINT DEFAULT NULL, FileType VARCHAR(32) DEFAULT NULL, RAWAncestors INT(11) DEFAULT NULL) ;
 ALTER TABLE TransformationTasks ADD COLUMN RunNumber INT(11) DEFAULT 0;
- 
+
 DROP TABLE IF EXISTS TransformationRuns;
 CREATE TABLE TransformationRuns(
   TransformationID INTEGER NOT NULL,

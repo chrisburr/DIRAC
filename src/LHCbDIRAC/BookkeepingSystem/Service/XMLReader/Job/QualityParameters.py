@@ -17,16 +17,15 @@ __RCSID__ = "$Id$"
 
 
 class QualityParameters(object):
+    def __init__(self):
+        """initialize the class members."""
+        self.name = ""
+        self.value = ""
 
-  def __init__(self):
-    """initialize the class members."""
-    self.name = ""
-    self.value = ""
+    def __repr__(self):
+        """formats the output of the print command."""
+        return self.name + " " + self.value + "\n"
 
-  def __repr__(self):
-    """formats the output of the print command."""
-    return self.name + " " + self.value + "\n"
-
-  def writeToXML(self):
-    """creates an xml string."""
-    return '  <Parameter Name="' + str(self.name) + '" Value="' + str(self.value) + '"/>\n'
+    def writeToXML(self):
+        """creates an xml string."""
+        return '  <Parameter Name="' + str(self.name) + '" Value="' + str(self.value) + '"/>\n'

@@ -22,36 +22,38 @@ DEFAULT = "___"
 
 #############################################################################
 def _createIndentedString(string, indent):
-  """create string."""
-  string = string.strip('\n')
-  tokens = string.split("\n")
-  newstr = ""
-  for token in tokens[0:-1]:
-    newstr += indent + token + "\n"
-  newstr += indent + tokens[-1]
-  return newstr
+    """create string."""
+    string = string.strip("\n")
+    tokens = string.split("\n")
+    newstr = ""
+    for token in tokens[0:-1]:
+        newstr += indent + token + "\n"
+    newstr += indent + tokens[-1]
+    return newstr
+
 
 #############################################################################
 
 
 def prepend(string, indent=DEFAULT):
-  """add string."""
-  return _createIndentedString(string, indent)
+    """add string."""
+    return _createIndentedString(string, indent)
+
 
 #############################################################################
 
 
 def append(value, suffix):
-  """append...."""
-  lines = value.split('\n')
-  maxLine = 0
-  for line in lines:
-    length = len(line)
-    if length > maxLine:
-      maxLine = length
-  string = ''
-  formats = '%-' + str(maxLine) + string
-  for line in lines:
-    string += formats % line
-    string += ' ' + suffix + ' \n'
-  return string.strip('\n')
+    """append...."""
+    lines = value.split("\n")
+    maxLine = 0
+    for line in lines:
+        length = len(line)
+        if length > maxLine:
+            maxLine = length
+    string = ""
+    formats = "%-" + str(maxLine) + string
+    for line in lines:
+        string += formats % line
+        string += " " + suffix + " \n"
+    return string.strip("\n")

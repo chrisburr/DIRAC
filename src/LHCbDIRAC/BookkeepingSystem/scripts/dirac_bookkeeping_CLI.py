@@ -19,14 +19,15 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
-  Script.parseCommandLine(ignoreErrors=True)
+    from DIRAC.Core.Base import Script
 
-  from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingCLI import LHCbBookkeepingCLI
+    Script.parseCommandLine(ignoreErrors=True)
 
-  bk = LHCbBookkeepingCLI()
-  bk.cmdloop()
+    from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingCLI import LHCbBookkeepingCLI
+
+    bk = LHCbBookkeepingCLI()
+    bk.cmdloop()
 
 
 if __name__ == "__main__":
-  main()
+    main()

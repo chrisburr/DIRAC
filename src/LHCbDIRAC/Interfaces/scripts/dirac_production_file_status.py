@@ -20,55 +20,55 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
-  """usage.
+    """usage.
 
-  Prints script usage
-  """
-  from DIRAC.Core.Base import Script
+    Prints script usage
+    """
+    from DIRAC.Core.Base import Script
 
-  print('Usage: %s <LFN> [<LFN>] [--ProductionID=<ID>] [Try -h,--help for more information]' % Script.scriptName)
-  DIRAC.exit(2)
+    print("Usage: %s <LFN> [<LFN>] [--ProductionID=<ID>] [Try -h,--help for more information]" % Script.scriptName)
+    DIRAC.exit(2)
 
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
+    from DIRAC.Core.Base import Script
 
-  Script.registerSwitch(
-      "",
-      "ProductionID=",
-      "Restrict query to given production ID (default is to show status for all)",
-  )
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.registerSwitch(
+        "",
+        "ProductionID=",
+        "Restrict query to given production ID (default is to show status for all)",
+    )
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  prodID = ''
-  for switch in Script.getUnprocessedSwitches():
-    if switch[0].lower() == "productionid":
-      prodID = switch[1]
+    prodID = ""
+    for switch in Script.getUnprocessedSwitches():
+        if switch[0].lower() == "productionid":
+            prodID = switch[1]
 
-  args = Script.getPositionalArgs()
+    args = Script.getPositionalArgs()
 
-  if len(args) < 1:
-    usage()
+    if len(args) < 1:
+        usage()
 
-  if prodID:
-    try:
-      prodID = int(prodID)
-    except Exception as x:
-      print('ERROR ProductionID should be an integer')
-      DIRAC.exit(2)
+    if prodID:
+        try:
+            prodID = int(prodID)
+        except Exception as x:
+            print("ERROR ProductionID should be an integer")
+            DIRAC.exit(2)
 
-  diracProd = DiracProduction()
-  exitCode = 0
-  result = diracProd.checkFilesStatus(args, prodID, printOutput=False)
-  if not result['OK']:
-    print('ERROR %s' % (result['Message']))
-    exitCode = 2
+    diracProd = DiracProduction()
+    exitCode = 0
+    result = diracProd.checkFilesStatus(args, prodID, printOutput=False)
+    if not result["OK"]:
+        print("ERROR %s" % (result["Message"]))
+        exitCode = 2
 
-  DIRAC.exit(exitCode)
+    DIRAC.exit(exitCode)
 
 
 if __name__ == "__main__":
-  main()
+    main()

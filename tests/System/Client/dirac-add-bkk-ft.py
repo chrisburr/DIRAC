@@ -16,9 +16,11 @@ from __future__ import division
 from __future__ import print_function
 
 from DIRAC.Core.Base import Script
+
 Script.parseCommandLine()
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
 bk = BookkeepingClient()
 
 ftype, desc, version = Script.getPositionalArgs()

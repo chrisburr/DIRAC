@@ -24,15 +24,15 @@ __RCSID__ = "$Id$"
 from DIRAC.Core.Base.Client import Client, createClient
 
 
-@createClient('DataManagement/StorageUsage')
+@createClient("DataManagement/StorageUsage")
 class StorageUsageClient(Client):
-  """
-  .. class:: StorageUsageClient
-  """
+    """
+    .. class:: StorageUsageClient
+    """
 
-  def __init__(self, url=None, **kwargs):
-    """c'tor."""
-    super(StorageUsageClient, self).__init__(**kwargs)
-    if url:
-      self.setServer(url)
-    self.setServer('DataManagement/StorageUsage')
+    def __init__(self, url=None, **kwargs):
+        """c'tor."""
+        super(StorageUsageClient, self).__init__(**kwargs)
+        if url:
+            self.setServer(url)
+        self.setServer("DataManagement/StorageUsage")

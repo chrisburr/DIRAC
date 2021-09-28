@@ -12,6 +12,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from os.path import basename, dirname, realpath
@@ -27,18 +28,18 @@ from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from LHCbDIRAC.tests.Workflow import createJob
 
-gLogger.setLevel('DEBUG')
+gLogger.setLevel("DEBUG")
 
-cwd = realpath('.')
+cwd = realpath(".")
 
 
 def pad_test_file(in_name, out_fn):
-  test_fn = find_all(in_name, dirname(__file__), ".")[0]
-  with open(test_fn, 'rt') as fp:
-    test_data = fp.read()
-  test_data += str(time.time())
-  with open(out_fn, 'wt') as fp:
-    fp.write(test_data)
+    test_fn = find_all(in_name, dirname(__file__), ".")[0]
+    with open(test_fn, "rt") as fp:
+        test_data = fp.read()
+    test_data += str(time.time())
+    with open(out_fn, "wt") as fp:
+        fp.write(test_data)
 
 
 ########################################################################################
@@ -49,17 +50,26 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-T2s")
-helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
+helloJ.setInputSandbox([find_all("exe-script.py", dirname(__file__), ".")[0]])
 
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
 try:
-  tier1s = DMSHelpers().getTiers(tier=(0, 1))
+    tier1s = DMSHelpers().getTiers(tier=(0, 1))
 except AttributeError:
-  tier1s = ['LCG.CERN.cern', 'LCG.CNAF.it', 'LCG.GRIDKA.de', 'LCG.IN2P3.fr',
-            'LCG.NIKHEF.nl', 'LCG.PIC.es', 'LCG.RAL.uk', 'LCG.RRCKI.ru', 'LCG.SARA.nl']
-cernSite = [s for s in tier1s if '.CERN.' in s][0]
+    tier1s = [
+        "LCG.CERN.cern",
+        "LCG.CNAF.it",
+        "LCG.GRIDKA.de",
+        "LCG.IN2P3.fr",
+        "LCG.NIKHEF.nl",
+        "LCG.PIC.es",
+        "LCG.RAL.uk",
+        "LCG.RRCKI.ru",
+        "LCG.SARA.nl",
+    ]
+cernSite = [s for s in tier1s if ".CERN." in s][0]
 helloJ.setBannedSites(tier1s)
 result = dirac.submitJob(helloJ)
 gLogger.info("Hello world job: ", result)
@@ -72,7 +82,7 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-CERN")
-helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
+helloJ.setInputSandbox([find_all("exe-script.py", dirname(__file__), ".")[0]])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
@@ -88,11 +98,11 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-centos7")
-helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
+helloJ.setInputSandbox([find_all("exe-script.py", dirname(__file__), ".")[0]])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
-helloJ.setPlatform('x86_64-centos7')
+helloJ.setPlatform("x86_64-centos7")
 result = dirac.submitJob(helloJ)
 gLogger.info("Hello world job: ", result)
 
@@ -104,11 +114,11 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 helloJ.setName("helloWorld-test-slc6")
-helloJ.setInputSandbox([find_all('exe-script.py', dirname(__file__), ".")[0]])
+helloJ.setInputSandbox([find_all("exe-script.py", dirname(__file__), ".")[0]])
 helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
 helloJ.setCPUTime(17800)
-helloJ.setPlatform('x86_64-slc6')
+helloJ.setPlatform("x86_64-slc6")
 result = dirac.submitJob(helloJ)
 gLogger.info("Hello world job: ", result)
 
@@ -120,20 +130,22 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 with tempfile.NamedTemporaryFile() as tmp_file:
-  pad_test_file('testFileUpload.txt', tmp_file.name)
+    pad_test_file("testFileUpload.txt", tmp_file.name)
 
-  helloJ.setName("upload-Output-test")
-  helloJ.setInputSandbox([
-      find_all('exe-script.py', dirname(__file__), ".")[0],
-      tmp_file.name,
-  ])
-  helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
+    helloJ.setName("upload-Output-test")
+    helloJ.setInputSandbox(
+        [
+            find_all("exe-script.py", dirname(__file__), ".")[0],
+            tmp_file.name,
+        ]
+    )
+    helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
-  helloJ.setCPUTime(17800)
+    helloJ.setCPUTime(17800)
 
-  helloJ.setOutputData([basename(tmp_file.name)])
+    helloJ.setOutputData([basename(tmp_file.name)])
 
-  result = dirac.submitJob(helloJ)
+    result = dirac.submitJob(helloJ)
 gLogger.info("Hello world with output: ", result)
 
 ########################################################################################
@@ -144,20 +156,22 @@ helloJ = LHCbJob()
 dirac = DiracLHCb()
 
 with tempfile.NamedTemporaryFile() as tmp_file:
-  pad_test_file('testFileReplication.txt', tmp_file.name)
+    pad_test_file("testFileReplication.txt", tmp_file.name)
 
-  helloJ.setName("upload-Output-test-with-replication")
-  helloJ.setInputSandbox([
-      find_all('exe-script.py', dirname(__file__), ".")[0],
-      tmp_file.name,
-  ])
-  helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
+    helloJ.setName("upload-Output-test-with-replication")
+    helloJ.setInputSandbox(
+        [
+            find_all("exe-script.py", dirname(__file__), ".")[0],
+            tmp_file.name,
+        ]
+    )
+    helloJ.setExecutable("exe-script.py", "", "helloWorld.log")
 
-  helloJ.setCPUTime(17800)
+    helloJ.setCPUTime(17800)
 
-  helloJ.setOutputData([basename(tmp_file.name)], replicate='True')
+    helloJ.setOutputData([basename(tmp_file.name)], replicate="True")
 
-  result = dirac.submitJob(helloJ)
+    result = dirac.submitJob(helloJ)
 gLogger.info("Hello world with output and replication: ", result)
 
 ########################################################################################
@@ -167,8 +181,8 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only)")
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', dirname(__file__), ".")[0]])
-gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
+gaudirunJob.setInputSandbox([find_all("prodConf_Gauss_00012345_00067890_1.py", dirname(__file__), ".")[0]])
+gaudirunJob.setOutputSandbox("00012345_00067890_1.sim")
 
 optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
 optDec = "$DECFILESROOT/options/34112104.py;"
@@ -180,15 +194,19 @@ options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
 # gaudirunJob.addPackage('AppConfig', 'v3r179')
 # gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
 # gaudirunJob.addPackage('ProdConf', 'v1r9')
-gaudirunJob.setApplication('Gauss', 'v45r5', options,
-                           extraPackages='AppConfig.v3r179;Gen/DecFiles.v27r14p1;ProdConf.v1r9',
-                           systemConfig='x86_64-slc5-gcc43-opt')
+gaudirunJob.setApplication(
+    "Gauss",
+    "v45r5",
+    options,
+    extraPackages="AppConfig.v3r179;Gen/DecFiles.v27r14p1;ProdConf.v1r9",
+    systemConfig="x86_64-slc5-gcc43-opt",
+)
 
 gaudirunJob.setDIRACPlatform()
 gaudirunJob.setCPUTime(172800)
 
 result = dirac.submitJob(gaudirunJob)
-gLogger.info('Submission Result: ', result)
+gLogger.info("Submission Result: ", result)
 
 ########################################################################################
 
@@ -197,8 +215,8 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use TAG to run
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test-TAG-multicore")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', dirname(__file__), ".")[0]])
-gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
+gaudirunJob.setInputSandbox([find_all("prodConf_Gauss_00012345_00067890_1.py", dirname(__file__), ".")[0]])
+gaudirunJob.setOutputSandbox("00012345_00067890_1.sim")
 
 optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
 optDec = "$DECFILESROOT/options/34112104.py;"
@@ -210,15 +228,20 @@ options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
 # gaudirunJob.addPackage('AppConfig', 'v3r179')
 # gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
 # gaudirunJob.addPackage('ProdConf', 'v1r9')
-gaudirunJob.setApplication('Gauss', 'v45r5', options, extraPackages='AppConfig.v3r179;DecFiles.v27r14p1;ProdConf.v1r9',
-                           systemConfig='x86_64-slc5-gcc43-opt')
+gaudirunJob.setApplication(
+    "Gauss",
+    "v45r5",
+    options,
+    extraPackages="AppConfig.v3r179;DecFiles.v27r14p1;ProdConf.v1r9",
+    systemConfig="x86_64-slc5-gcc43-opt",
+)
 
 gaudirunJob.setDIRACPlatform()
 gaudirunJob.setCPUTime(172800)
-gaudirunJob.setTag(['MultiProcessor'])
+gaudirunJob.setTag(["MultiProcessor"])
 
 result = dirac.submitJob(gaudirunJob)
-gLogger.info('Submission Result: ', result)
+gLogger.info("Submission Result: ", result)
 
 ########################################################################################
 
@@ -227,8 +250,8 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 2 to 4 pro
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test-multicore-2to4")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067890_1.py', dirname(__file__), ".")[0]])
-gaudirunJob.setOutputSandbox('00012345_00067890_1.sim')
+gaudirunJob.setInputSandbox([find_all("prodConf_Gauss_00012345_00067890_1.py", dirname(__file__), ".")[0]])
+gaudirunJob.setOutputSandbox("00012345_00067890_1.sim")
 
 optGauss = "$APPCONFIGOPTS/Gauss/Sim08-Beam3500GeV-md100-2011-nu2.py;"
 optDec = "$DECFILESROOT/options/34112104.py;"
@@ -240,15 +263,20 @@ options = optGauss + optDec + optPythia + optOpts + optCompr + optPConf
 # gaudirunJob.addPackage('AppConfig', 'v3r179')
 # gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
 # gaudirunJob.addPackage('ProdConf', 'v1r9')
-gaudirunJob.setApplication('Gauss', 'v45r5', options, extraPackages='AppConfig.v3r179;DecFiles.v27r14p1;ProdConf.v1r9',
-                           systemConfig='x86_64-slc5-gcc43-opt')
+gaudirunJob.setApplication(
+    "Gauss",
+    "v45r5",
+    options,
+    extraPackages="AppConfig.v3r179;DecFiles.v27r14p1;ProdConf.v1r9",
+    systemConfig="x86_64-slc5-gcc43-opt",
+)
 
 gaudirunJob.setDIRACPlatform()
 gaudirunJob.setCPUTime(172800)
 gaudirunJob.setNumberOfProcessors(minNumberOfProcessors=2, maxNumberOfProcessors=4)
 
 result = dirac.submitJob(gaudirunJob)
-gLogger.info('Submission Result: ', result)
+gLogger.info("Submission Result: ", result)
 
 ########################################################################################
 
@@ -257,8 +285,8 @@ gLogger.info("\n Submitting gaudiRun job (Gauss only) that should use 8 processo
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Gauss-test-multicore-8")
-gaudirunJob.setInputSandbox([find_all('prodConf_Gauss_00012345_00067899_1.py', dirname(__file__), ".")[0]])
-gaudirunJob.setOutputSandbox('00012345_00067899_1.sim')
+gaudirunJob.setInputSandbox([find_all("prodConf_Gauss_00012345_00067899_1.py", dirname(__file__), ".")[0]])
+gaudirunJob.setOutputSandbox("00012345_00067899_1.sim")
 
 # lb-run --unset LD_LIBRARY_PATH --unset PYTHONPATH --unset XrdSecPROTOCOL
 # --siteroot=/cvmfs/lhcb.cern.ch/lib/ --allow-containers -c x86_64-centos7-gcc9-opt
@@ -287,16 +315,20 @@ options += "$APPCONFIGOPTS/Persistency/Compression-LZMA-4.py"
 # gaudirunJob.addPackage('AppConfig', 'v3r179')
 # gaudirunJob.addPackage('Gen/DecFiles', 'v27r14p1')
 # gaudirunJob.addPackage('ProdConf', 'v1r9')
-gaudirunJob.setApplication('Gauss', 'v54r3', options,
-                           extraPackages='AppConfig.v3r400;Gen/DecFiles.v30r42;ProdConf.v3r0',
-                           systemConfig='x86_64-centos7-gcc9-opt')
+gaudirunJob.setApplication(
+    "Gauss",
+    "v54r3",
+    options,
+    extraPackages="AppConfig.v3r400;Gen/DecFiles.v30r42;ProdConf.v3r0",
+    systemConfig="x86_64-centos7-gcc9-opt",
+)
 
 gaudirunJob.setDIRACPlatform()
 gaudirunJob.setCPUTime(172800)
 gaudirunJob.setNumberOfProcessors(numberOfProcessors=8)  # exact number
 
 result = dirac.submitJob(gaudirunJob)
-gLogger.info('Submission Result: ', result)
+gLogger.info("Submission Result: ", result)
 
 ########################################################################################
 
@@ -305,8 +337,8 @@ gLogger.info("\n Submitting gaudiRun job (Boole only)")
 gaudirunJob = LHCbJob()
 
 gaudirunJob.setName("gaudirun-Boole-test")
-gaudirunJob.setInputSandbox([find_all('prodConf_Boole_00012345_00067890_1.py', dirname(__file__), ".")[0]])
-gaudirunJob.setOutputSandbox('00012345_00067890_1.digi')
+gaudirunJob.setInputSandbox([find_all("prodConf_Boole_00012345_00067890_1.py", dirname(__file__), ".")[0]])
+gaudirunJob.setOutputSandbox("00012345_00067890_1.digi")
 
 opts = "$APPCONFIGOPTS/Boole/Default.py;"
 optDT = "$APPCONFIGOPTS/Boole/DataType-2011.py;"
@@ -316,16 +348,20 @@ optPConf = "prodConf_Boole_00012345_00067890_1.py"
 options = opts + optDT + optTCK + optComp + optPConf
 
 # gaudirunJob.addPackage( 'AppConfig', 'v3r171' )
-gaudirunJob.setApplication('Boole', 'v26r3', options,
-                           inputData='/lhcb/user/f/fstagni/test/12345/12345678/00012345_00067890_1.sim',
-                           extraPackages='AppConfig.v3r171;ProdConf.v1r9',
-                           systemConfig='x86_64-slc5-gcc43-opt')
+gaudirunJob.setApplication(
+    "Boole",
+    "v26r3",
+    options,
+    inputData="/lhcb/user/f/fstagni/test/12345/12345678/00012345_00067890_1.sim",
+    extraPackages="AppConfig.v3r171;ProdConf.v1r9",
+    systemConfig="x86_64-slc5-gcc43-opt",
+)
 
 gaudirunJob.setDIRACPlatform()
 gaudirunJob.setCPUTime(172800)
 
 result = dirac.submitJob(gaudirunJob)
-gLogger.info('Submission Result: ', result)
+gLogger.info("Submission Result: ", result)
 
 ########################################################################################
 
@@ -334,4 +370,4 @@ gLogger.info("This will generate a job that should become Completed, use the fai
 
 gaudirunJob = createJob(workspace=dirname(__file__))
 result = dirac.submitJob(gaudirunJob)
-gLogger.info('Submission Result: ', result)
+gLogger.info("Submission Result: ", result)

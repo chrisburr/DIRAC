@@ -21,50 +21,49 @@ __RCSID__ = "$Id$"
 
 
 class ReplicaReader(object):
+    @staticmethod
+    def readReplica(doc, filename):
+        """reads the replica information."""
+        gLogger.debug("Reading Replica from" + str(filename))
+        replica = Replica()
+        replica.name = filename  # full path
 
-  @staticmethod
-  def readReplica(doc, filename):
-    """reads the replica information."""
-    gLogger.debug("Reading Replica from" + str(filename))
-    replica = Replica()
-    replica.name = filename  # full path
+        replicaElements = doc.getElementsByTagName("Replica")
 
-    replicaElements = doc.getElementsByTagName("Replica")
+        for node in replicaElements:
+            param = ReplicaParam()
 
-    for node in replicaElements:
-      param = ReplicaParam()
+            outputfile = node.getAttributeNode("File")
+            if outputfile:
+                param.file = outputfile.value
+            else:
+                gLogger.warn("Missing the <file> tag in replica xml file")
 
-      outputfile = node.getAttributeNode('File')
-      if outputfile:
-        param.file = outputfile.value
-      else:
-        gLogger.warn("Missing the <file> tag in replica xml file")
+            name = node.getAttributeNode("Name")
+            if name:
+                param.name = name.value
+            else:
+                gLogger.warn("Missing the <name> tag in replica xml file")
 
-      name = node.getAttributeNode('Name')
-      if name:
-        param.name = name.value
-      else:
-        gLogger.warn("Missing the <name> tag in replica xml file")
+            location = node.getAttributeNode("Location")
+            if location:
+                param.location = location.value
+            else:
+                gLogger.warn("Missing the <location> tag in replica xml file")
 
-      location = node.getAttributeNode('Location')
-      if location:
-        param.location = location.value
-      else:
-        gLogger.warn("Missing the <location> tag in replica xml file")
+            se = node.getAttributeNode("SE")
+            if se:
+                param.se = se.value
+            else:
+                gLogger.warn("Missing the <SE> tag in replica xml file")
 
-      se = node.getAttributeNode('SE')
-      if se:
-        param.se = se.value
-      else:
-        gLogger.warn("Missing the <SE> tag in replica xml file")
+            action = node.getAttributeNode("Action")
+            if action:
+                param.action = action.value
+            else:
+                gLogger.warn("Missing the <Action> tag in replica xml file")
 
-      action = node.getAttributeNode('Action')
-      if action:
-        param.action = action.value
-      else:
-        gLogger.warn("Missing the <Action> tag in replica xml file")
+            replica.addParam(param)
+            gLogger.info("Replica Reading finished successfully")
 
-      replica.addParam(param)
-      gLogger.info("Replica Reading finished successfully")
-
-    return replica
+        return replica

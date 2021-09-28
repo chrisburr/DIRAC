@@ -21,40 +21,39 @@ bkDB = OracleBookkeepingDB()
 
 
 def wipeOutDB():
-  """ (carefully) wipe out the content of the DB
-  """
+    """(carefully) wipe out the content of the DB"""
 
-  if bkDB.dbHost in ['int12r', 'LHCB_DIRACBOOKKEEPING', 'LHCBR']:
-    print("STOOOOOP")
-    print("Why are you trying to run against %s?" % bkDB.dbHost)
-    sys.exit(1)
+    if bkDB.dbHost in ["int12r", "LHCB_DIRACBOOKKEEPING", "LHCBR"]:
+        print("STOOOOOP")
+        print("Why are you trying to run against %s?" % bkDB.dbHost)
+        sys.exit(1)
 
-  bkDB.dbW_.query("DELETE FROM newrunquality")
-  bkDB.dbW_.query("DELETE FROM productionoutputfiles")
-  bkDB.dbW_.query("DELETE FROM inputfiles")
-  bkDB.dbW_.query("DELETE FROM stepscontainer")
-  bkDB.dbW_.query("DELETE FROM runstatus")
-  bkDB.dbW_.query("DELETE FROM dataquality")
-  bkDB.dbW_.query("DELETE FROM filetypes")
-  bkDB.dbW_.query("DELETE FROM files")
-  bkDB.dbW_.query("DELETE FROM eventtypes")
-  bkDB.dbW_.query("DELETE FROM jobs")
-  bkDB.dbW_.query("DELETE FROM steps")
-  bkDB.dbW_.query("DELETE FROM productionscontainer")
-  bkDB.dbW_.query("DELETE FROM processing")
-  bkDB.dbW_.query("DELETE FROM simulationconditions")
-  bkDB.dbW_.query("DELETE FROM configurations")
-  bkDB.dbW_.query("DELETE FROM data_taking_conditions")
-  bkDB.dbW_.query("DELETE FROM newrunquality")
+    bkDB.dbW_.query("DELETE FROM newrunquality")
+    bkDB.dbW_.query("DELETE FROM productionoutputfiles")
+    bkDB.dbW_.query("DELETE FROM inputfiles")
+    bkDB.dbW_.query("DELETE FROM stepscontainer")
+    bkDB.dbW_.query("DELETE FROM runstatus")
+    bkDB.dbW_.query("DELETE FROM dataquality")
+    bkDB.dbW_.query("DELETE FROM filetypes")
+    bkDB.dbW_.query("DELETE FROM files")
+    bkDB.dbW_.query("DELETE FROM eventtypes")
+    bkDB.dbW_.query("DELETE FROM jobs")
+    bkDB.dbW_.query("DELETE FROM steps")
+    bkDB.dbW_.query("DELETE FROM productionscontainer")
+    bkDB.dbW_.query("DELETE FROM processing")
+    bkDB.dbW_.query("DELETE FROM simulationconditions")
+    bkDB.dbW_.query("DELETE FROM configurations")
+    bkDB.dbW_.query("DELETE FROM data_taking_conditions")
+    bkDB.dbW_.query("DELETE FROM newrunquality")
 
-  # still needed?
-  bkDB.dbW_.query("DELETE FROM applications")
-  bkDB.dbW_.query("DELETE FROM prodrunview")
-  bkDB.dbW_.query("DELETE FROM runtimeprojects")
-  bkDB.dbW_.query("DELETE FROM stepstmp")
-  bkDB.dbW_.query("DELETE FROM tags")
+    # still needed?
+    bkDB.dbW_.query("DELETE FROM applications")
+    bkDB.dbW_.query("DELETE FROM prodrunview")
+    bkDB.dbW_.query("DELETE FROM runtimeprojects")
+    bkDB.dbW_.query("DELETE FROM stepstmp")
+    bkDB.dbW_.query("DELETE FROM tags")
 
 
 def addBasicData():
-  bkDB.dbW_.query("INSERT INTO dataquality VALUES(1, 'OK')")
-  bkDB.addProcessing(['Real Data'])
+    bkDB.dbW_.query("INSERT INTO dataquality VALUES(1, 'OK')")
+    bkDB.addProcessing(["Real Data"])

@@ -32,88 +32,98 @@ If --FixIt is set, takes actions:
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def __getSEsFromOptions(dmScript):
-  from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
-  seList = dmScript.getOption('SEs', [])
-  sites = dmScript.getOption('Sites', [])
-  if sites:
-    siteSEs = []
-    dmsHelper = DMSHelpers()
-    for site in sites:
-      siteSEs += dmsHelper.getSEsForSite(site).get('Value', [])
-    if seList and siteSEs:
-      seList = list(set(seList) & set(siteSEs))
-    else:
-      seList += siteSEs
-  return seList
+    from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
+
+    seList = dmScript.getOption("SEs", [])
+    sites = dmScript.getOption("Sites", [])
+    if sites:
+        siteSEs = []
+        dmsHelper = DMSHelpers()
+        for site in sites:
+            siteSEs += dmsHelper.getSEsForSite(site).get("Value", [])
+        if seList and siteSEs:
+            seList = list(set(seList) & set(siteSEs))
+        else:
+            seList += siteSEs
+    return seList
 
 
 @DIRACScript()
 def main():
-  # Script initialization
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    # Script initialization
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [values]' % Script.scriptName, ]))
-  dmScript = DMScript()
-  dmScript.registerDMSwitches()
-  maxFiles = 20
-  Script.registerSwitch('', 'FixIt', '   Take action to fix the catalogs and storage')
-  Script.registerSwitch('', 'Replace', '   Replace bad or missing replicas (default=False)')
-  Script.registerSwitch('', 'NoBK', '   Do not check with BK')
-  Script.registerSwitch('', 'Verbose', '   Set logging mode to INFO')
-  Script.registerSwitch('', 'MaxFiles=', '   Set maximum number of files to be printed (default %d)' % maxFiles)
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] [values]" % Script.scriptName,
+            ]
+        )
+    )
+    dmScript = DMScript()
+    dmScript.registerDMSwitches()
+    maxFiles = 20
+    Script.registerSwitch("", "FixIt", "   Take action to fix the catalogs and storage")
+    Script.registerSwitch("", "Replace", "   Replace bad or missing replicas (default=False)")
+    Script.registerSwitch("", "NoBK", "   Do not check with BK")
+    Script.registerSwitch("", "Verbose", "   Set logging mode to INFO")
+    Script.registerSwitch("", "MaxFiles=", "   Set maximum number of files to be printed (default %d)" % maxFiles)
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from DIRAC import gLogger
+    from DIRAC import gLogger
 
-  fixIt = False
-  bkCheck = True
-  replace = False
-  verbose = False
-  for switch in Script.getUnprocessedSwitches():
-    if switch[0] == 'FixIt':
-      fixIt = True
-    elif switch[0] == 'NoBK':
-      bkCheck = False
-    elif switch[0] == 'Replace':
-      replace = True
-    elif switch[0] == 'Verbose':
-      verbose = True
-    elif switch[0] == 'MaxFiles':
-      try:
-        maxFiles = int(switch[1])
-      except Exception as e:
-        gLogger.exception("Invalid value for MaxFiles", lException=e)
-        pass
+    fixIt = False
+    bkCheck = True
+    replace = False
+    verbose = False
+    for switch in Script.getUnprocessedSwitches():
+        if switch[0] == "FixIt":
+            fixIt = True
+        elif switch[0] == "NoBK":
+            bkCheck = False
+        elif switch[0] == "Replace":
+            replace = True
+        elif switch[0] == "Verbose":
+            verbose = True
+        elif switch[0] == "MaxFiles":
+            try:
+                maxFiles = int(switch[1])
+            except Exception as e:
+                gLogger.exception("Invalid value for MaxFiles", lException=e)
+                pass
 
-  # imports
-  from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
-  if verbose:
-    gLogger.setLevel('INFO')
-  cc = ConsistencyChecks()
-  cc.directories = dmScript.getOption('Directory', [])
-  cc.lfns = dmScript.getOption('LFNs', []) + [lfn for arg in Script.getPositionalArgs() for lfn in arg.split(',')]
-  bkQuery = dmScript.getBKQuery(visible='All')
-  if bkQuery:
-    bkQuery.setOption('ReplicaFlag', 'All')
-    cc.bkQuery = bkQuery
+    # imports
+    from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
 
-  cc.seList = __getSEsFromOptions(dmScript)
-  from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckFC2SE
-  try:
-    doCheckFC2SE(cc, bkCheck=bkCheck, fixIt=fixIt, replace=replace, maxFiles=maxFiles)
-  except RuntimeError as e:
-    gLogger.fatal(str(e))
-  except Exception as e:
-    gLogger.exception('Exception', lException=e)
+    if verbose:
+        gLogger.setLevel("INFO")
+    cc = ConsistencyChecks()
+    cc.directories = dmScript.getOption("Directory", [])
+    cc.lfns = dmScript.getOption("LFNs", []) + [lfn for arg in Script.getPositionalArgs() for lfn in arg.split(",")]
+    bkQuery = dmScript.getBKQuery(visible="All")
+    if bkQuery:
+        bkQuery.setOption("ReplicaFlag", "All")
+        cc.bkQuery = bkQuery
+
+    cc.seList = __getSEsFromOptions(dmScript)
+    from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckFC2SE
+
+    try:
+        doCheckFC2SE(cc, bkCheck=bkCheck, fixIt=fixIt, replace=replace, maxFiles=maxFiles)
+    except RuntimeError as e:
+        gLogger.fatal(str(e))
+    except Exception as e:
+        gLogger.exception("Exception", lException=e)
 
 
 if __name__ == "__main__":
-  main()
+    main()

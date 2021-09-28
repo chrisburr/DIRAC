@@ -22,7 +22,7 @@ from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.ConfigurationSystem.Client.Helpers import CSGlobals
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCStatsDBBase import ElasticMCStatsDBBase
 
-name = 'ElasticPrMonDB'
+name = "ElasticPrMonDB"
 
 mapping = {
     "properties": {
@@ -44,7 +44,7 @@ mapping = {
                 "tx_packets": {"type": "float"},
                 "vmem": {"type": "float"},
                 "wchar": {"type": "float"},
-                "write_bytes": {"type": "float"}
+                "write_bytes": {"type": "float"},
             }
         },
         "Max": {
@@ -65,7 +65,7 @@ mapping = {
                 "write_bytes": {"type": "long"},
                 "stime": {"type": "integer"},
                 "utime": {"type": "integer"},
-                "wtime": {"type": "integer"}
+                "wtime": {"type": "integer"},
             }
         },
         "HW": {
@@ -76,42 +76,33 @@ mapping = {
                         "CoresPerSocket": {"type": "integer"},
                         "ModelName": {"type": "text"},
                         "Sockets": {"type": "integer"},
-                        "ThreadsPerCore": {"type": "integer"}
+                        "ThreadsPerCore": {"type": "integer"},
                     }
                 },
-                "mem": {
-                    "properties": {
-                        "MemTotal": {"type": "long"}
-                    }
-                }
+                "mem": {"properties": {"MemTotal": {"type": "long"}}},
             }
-        }
+        },
     }
 }
 
 
 class ElasticPrMonDB(ElasticMCStatsDBBase):
+    def __init__(self):
+        """Standard Constructor"""
 
-  def __init__(self):
-    """ Standard Constructor
-    """
+        section = getDatabaseSection("ProductionManagement", "ElasticPrMonDB")
+        indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
 
-    section = getDatabaseSection("ProductionManagement", "ElasticPrMonDB")
-    indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
-                                   CSGlobals.getSetup()).lower()
+        # Connecting to the ES cluster
+        super(ElasticPrMonDB, self).__init__(name, "ProductionManagement/ElasticPrMonDB", indexPrefix)
 
-    # Connecting to the ES cluster
-    super(ElasticPrMonDB, self).__init__(name,
-                                         'ProductionManagement/ElasticPrMonDB',
-                                         indexPrefix)
+        self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
+        # Verifying if the index is there, and if not create it
+        if not self.client.indices.exists(self.indexName):
+            result = self.createIndex(self.indexName, mapping, period=None)
+            if not result["OK"]:
+                self.log.error(result["Message"])
+                raise RuntimeError(result["Message"])
+            self.log.always("Index created:", self.indexName)
 
-    self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
-    # Verifying if the index is there, and if not create it
-    if not self.client.indices.exists(self.indexName):
-      result = self.createIndex(self.indexName, mapping, period=None)
-      if not result['OK']:
-        self.log.error(result['Message'])
-        raise RuntimeError(result['Message'])
-      self.log.always("Index created:", self.indexName)
-
-    self.dslSearch = self._Search(self.indexName)
+        self.dslSearch = self._Search(self.indexName)

@@ -22,6 +22,7 @@ from __future__ import print_function
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from .MCStatsSampleData import gauss_errors_1, boole_errors_1
@@ -41,43 +42,43 @@ mcStatsClient = MCStatsClient()
 
 def test_setAndGetandRemove():
 
-  # Set gauss errors
-  result = mcStatsClient.set('gaussErrors', gauss_errors_1)
-  assert result['OK'] is True, result['Message']
+    # Set gauss errors
+    result = mcStatsClient.set("gaussErrors", gauss_errors_1)
+    assert result["OK"] is True, result["Message"]
 
-  # Set boole errors
-  result = mcStatsClient.set('booleErrors', boole_errors_1)
-  assert result['OK'] is True
+    # Set boole errors
+    result = mcStatsClient.set("booleErrors", boole_errors_1)
+    assert result["OK"] is True
 
-  time.sleep(1)
+    time.sleep(1)
 
-  # Get gauss errors
-  result = mcStatsClient.get('gaussErrors', 4)
-  assert result['OK'] is True
-  assert result['Value'] == [gauss_errors_1]
+    # Get gauss errors
+    result = mcStatsClient.get("gaussErrors", 4)
+    assert result["OK"] is True
+    assert result["Value"] == [gauss_errors_1]
 
-  # Get boole errors
-  result = mcStatsClient.get('booleErrors', 4)
-  assert result['OK'] is True
-  assert result['Value'] == [boole_errors_1]
+    # Get boole errors
+    result = mcStatsClient.get("booleErrors", 4)
+    assert result["OK"] is True
+    assert result["Value"] == [boole_errors_1]
 
-  # Get false
-  result = mcStatsClient.get('false', 4)
-  assert result['OK'] is False
+    # Get false
+    result = mcStatsClient.get("false", 4)
+    assert result["OK"] is False
 
-  # Get non-existant
-  result = mcStatsClient.get('booleErrors', 5)
-  assert result['OK'] is True
-  assert result['Value'] == []
+    # Get non-existant
+    result = mcStatsClient.get("booleErrors", 5)
+    assert result["OK"] is True
+    assert result["Value"] == []
 
-  # Remove
-  mcStatsClient.remove('gaussErrors', 4)
-  time.sleep(1)
-  result = mcStatsClient.get('gaussErrors', 4)
-  assert result['OK'] is True
-  assert result['Value'] == []
-  mcStatsClient.remove('booleErrors', 4)
-  time.sleep(1)
-  result = mcStatsClient.get('booleErrors', 4)
-  assert result['OK'] is True
-  assert result['Value'] == []
+    # Remove
+    mcStatsClient.remove("gaussErrors", 4)
+    time.sleep(1)
+    result = mcStatsClient.get("gaussErrors", 4)
+    assert result["OK"] is True
+    assert result["Value"] == []
+    mcStatsClient.remove("booleErrors", 4)
+    time.sleep(1)
+    result = mcStatsClient.get("booleErrors", 4)
+    assert result["OK"] is True
+    assert result["Value"] == []

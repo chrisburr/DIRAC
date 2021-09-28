@@ -76,64 +76,62 @@ from DIRAC import gLogger
 
 
 def parse_args():
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--read-username', default='LHCB_DIRACBOOKKEEPING_INT_R',
-                      help='Read-only account username')
-  parser.add_argument('--write-username', default='LHCB_DIRACBOOKKEEPING_INT_W',
-                      help='Read-write account username')
-  parser.add_argument('-p', '--password', required=True,
-                      help='Password of the database accounts')
-  parser.add_argument('--host', default='int12r',
-                      help='Hostname of the bookkeeping database')
-  parser.add_argument('-d', '--debug', action='count', default=0)
-  args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--read-username", default="LHCB_DIRACBOOKKEEPING_INT_R", help="Read-only account username")
+    parser.add_argument("--write-username", default="LHCB_DIRACBOOKKEEPING_INT_W", help="Read-write account username")
+    parser.add_argument("-p", "--password", required=True, help="Password of the database accounts")
+    parser.add_argument("--host", default="int12r", help="Hostname of the bookkeeping database")
+    parser.add_argument("-d", "--debug", action="count", default=0)
+    args = parser.parse_args()
 
-  sys.argv = ['-' + 'd' * args.debug] if args.debug else []
-  Script.parseCommandLine()
-  set_configuration(args.read_username, args.write_username, args.password, args.host)
+    sys.argv = ["-" + "d" * args.debug] if args.debug else []
+    Script.parseCommandLine()
+    set_configuration(args.read_username, args.write_username, args.password, args.host)
 
 
 def set_configuration(read_username, write_username, password, host):
-  csAPI = CSAPI()
+    csAPI = CSAPI()
 
-  for sct in ['Systems/Bookkeeping',
-              'Systems/Bookkeeping/Production',
-              'Systems/Bookkeeping/Production/Databases',
-              'Systems/Bookkeeping/Production/Databases/BookkeepingDB',
-              'Operations',
-              'Operations/Defaults',
-              'Operations/Defaults/Services',
-              'Operations/Defaults/Services/Catalogs',
-              'Operations/Defaults/Services/Catalogs/BookkeepingDB',
-              'Operations/Defaults/Services/Catalogs/BookkeepingDB/Conditions']:
-    res = csAPI.createSection(sct)
-    if not res['OK']:
-      gLogger.error(res['Message'])
-      exit(1)
+    for sct in [
+        "Systems/Bookkeeping",
+        "Systems/Bookkeeping/Production",
+        "Systems/Bookkeeping/Production/Databases",
+        "Systems/Bookkeeping/Production/Databases/BookkeepingDB",
+        "Operations",
+        "Operations/Defaults",
+        "Operations/Defaults/Services",
+        "Operations/Defaults/Services/Catalogs",
+        "Operations/Defaults/Services/Catalogs/BookkeepingDB",
+        "Operations/Defaults/Services/Catalogs/BookkeepingDB/Conditions",
+    ]:
+        res = csAPI.createSection(sct)
+        if not res["OK"]:
+            gLogger.error(res["Message"])
+            exit(1)
 
-  csAPI.setOption('Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingUser', read_username)
-  csAPI.setOption('Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingServer', write_username)
-  csAPI.setOption('Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingPassword', password)
-  csAPI.setOption('Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingTNS', host)
+    csAPI.setOption("Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingUser", read_username)
+    csAPI.setOption("Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingServer", write_username)
+    csAPI.setOption("Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingPassword", password)
+    csAPI.setOption("Systems/Bookkeeping/Production/Databases/BookkeepingDB/LHCbDIRACBookkeepingTNS", host)
 
-  csAPI.setOption('Operations/Defaults/Services/Catalogs/BookkeepingDB/AccessType', 'Write')
-  csAPI.setOption('Operations/Defaults/Services/Catalogs/BookkeepingDB/Status', 'Active')
-  csAPI.setOption('Operations/Defaults/Services/Catalogs/BookkeepingDB/Conditions/WRITE',
-                  'Proxy=group.not_in(lhcb_user)')
+    csAPI.setOption("Operations/Defaults/Services/Catalogs/BookkeepingDB/AccessType", "Write")
+    csAPI.setOption("Operations/Defaults/Services/Catalogs/BookkeepingDB/Status", "Active")
+    csAPI.setOption(
+        "Operations/Defaults/Services/Catalogs/BookkeepingDB/Conditions/WRITE", "Proxy=group.not_in(lhcb_user)"
+    )
 
-  for sct in ['Resources/FileCatalogs',
-              'Resources/FileCatalogs/BookkeepingDB']:
-    res = csAPI.createSection(sct)
-    if not res['OK']:
-      print(res['Message'])
-      exit(1)
+    for sct in ["Resources/FileCatalogs", "Resources/FileCatalogs/BookkeepingDB"]:
+        res = csAPI.createSection(sct)
+        if not res["OK"]:
+            print(res["Message"])
+            exit(1)
 
-  csAPI.setOption('Resources/FileCatalogs/BookkeepingDB/AccessType', 'Write')
-  csAPI.setOption('Resources/FileCatalogs/BookkeepingDB/Status', 'Active')
-  csAPI.setOption('Resources/FileCatalogs/BookkeepingDB/CatalogURL', 'Bookkeeping/BookkeepingManager')
+    csAPI.setOption("Resources/FileCatalogs/BookkeepingDB/AccessType", "Write")
+    csAPI.setOption("Resources/FileCatalogs/BookkeepingDB/Status", "Active")
+    csAPI.setOption("Resources/FileCatalogs/BookkeepingDB/CatalogURL", "Bookkeeping/BookkeepingManager")
 
-  csAPI.commit()
+    csAPI.commit()
 
 
-if __name__ == '__main__':
-  parse_args()
+if __name__ == "__main__":
+    parse_args()

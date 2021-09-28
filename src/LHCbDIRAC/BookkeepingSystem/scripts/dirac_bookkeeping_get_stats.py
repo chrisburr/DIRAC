@@ -21,24 +21,31 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerBKSwitches()
-  dmScript.registerFileSwitches()
+    dmScript = DMScript()
+    dmScript.registerBKSwitches()
+    dmScript.registerFileSwitches()
 
-  Script.registerSwitch('', 'TriggerRate', '   For RAW files, returns the trigger rate')
-  Script.registerSwitch('', 'ListRuns', '   Give a list of runs (to be used with --Trigger)')
-  Script.registerSwitch('', 'ListFills', '   Give a list of fills (to be used with --Trigger)')
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile]' % Script.scriptName, ]))
+    Script.registerSwitch("", "TriggerRate", "   For RAW files, returns the trigger rate")
+    Script.registerSwitch("", "ListRuns", "   Give a list of runs (to be used with --Trigger)")
+    Script.registerSwitch("", "ListFills", "   Give a list of fills (to be used with --Trigger)")
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s [option|cfgfile]" % Script.scriptName,
+            ]
+        )
+    )
 
-  Script.parseCommandLine(ignoreErrors=False)
+    Script.parseCommandLine(ignoreErrors=False)
 
-  from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeGetStats
-  executeGetStats(dmScript)
+    from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeGetStats
+
+    executeGetStats(dmScript)
 
 
 if __name__ == "__main__":
-  main()
+    main()

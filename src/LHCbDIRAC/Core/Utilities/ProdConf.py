@@ -27,119 +27,122 @@ import re
 
 
 class ProdConf(object):
-  """Class for managing ProdConf objects."""
+    """Class for managing ProdConf objects."""
 
-  def __init__(self, fileName='prodConf.py', log=None):
-    """initialize a ProdConf object, setting some relevant info."""
+    def __init__(self, fileName="prodConf.py", log=None):
+        """initialize a ProdConf object, setting some relevant info."""
 
-    self.optionsDict = {'Application': 'string',
-                        'AppVersion': 'string',
-                        'OptionFormat': 'string',
-                        'InputFiles': 'list',
-                        'OutputFilePrefix': 'string',
-                        'OutputFileTypes': 'list',
-                        'XMLFileCatalog': 'string',
-                        'XMLSummaryFile': 'string',
-                        'HistogramFile': 'string',
-                        'DDDBTag': 'string',
-                        'CondDBTag': 'string',
-                        'DQTag': 'string',
-                        'NOfEvents': 'integer',
-                        'RunNumber': 'integer',
-                        'FirstEventNumber': 'integer',
-                        'TCK': 'string',
-                        'ProcessingPass': 'string'}
+        self.optionsDict = {
+            "Application": "string",
+            "AppVersion": "string",
+            "OptionFormat": "string",
+            "InputFiles": "list",
+            "OutputFilePrefix": "string",
+            "OutputFileTypes": "list",
+            "XMLFileCatalog": "string",
+            "XMLSummaryFile": "string",
+            "HistogramFile": "string",
+            "DDDBTag": "string",
+            "CondDBTag": "string",
+            "DQTag": "string",
+            "NOfEvents": "integer",
+            "RunNumber": "integer",
+            "FirstEventNumber": "integer",
+            "TCK": "string",
+            "ProcessingPass": "string",
+        }
 
-    if not log:
-      from DIRAC import gLogger
-      self.log = gLogger.getSubLogger('ProdConf')
-    else:
-      self.log = log
+        if not log:
+            from DIRAC import gLogger
 
-    self.fileName = fileName
+            self.log = gLogger.getSubLogger("ProdConf")
+        else:
+            self.log = log
 
-    if not os.path.exists(fileName):
-      self.log.verbose('Creating ProdConf file %s from scratch' % fileName)
-      with open(fileName, 'a'):
-        os.utime(fileName, None)
+        self.fileName = fileName
 
-    self.whatsIn = {}
-    self._getWhatsIn()
+        if not os.path.exists(fileName):
+            self.log.verbose("Creating ProdConf file %s from scratch" % fileName)
+            with open(fileName, "a"):
+                os.utime(fileName, None)
 
-  def _getWhatsIn(self):
-    """Get what's in, as options, and fill the dictionary."""
-
-    with open(self.fileName, 'r') as fopen:
-      fileString = fopen.read()
-
-    lines = re.split('\n+', fileString)
-    for line in lines:
-      for option, pcType in self.optionsDict.items():
-        if re.match('[ ]*' + option + '[a-z,A-Z,0-9.]*', line):
-          optionValues = re.split(option + '=+', line)
-          for optionValue in optionValues:
-            optionValue = optionValue.strip(' ')
-            if optionValue:
-              if pcType == 'list':
-                optionValueEls = optionValue.split('[')
-              else:
-                optionValueEls = optionValue.split(',')
-              for optionValueEl in optionValueEls:
-                if optionValueEl:
-                  value = optionValueEl.replace('"', '').replace(']', '').replace("'", '').strip(' ')
-                  if pcType == 'list':
-                    if value == ',':
-                      value = []
-                    else:
-                      value = [x.strip() for x in value.split(',')]
-                      value.remove('')
-                  elif pcType == 'integer':
-                    value = int(value)
-                  self.whatsIn[option] = value
-
-  def putOptionsIn(self, optionsDict, freshStart=False):
-    """Put options, specified in the optionsDict, in the options file."""
-
-    if freshStart:
-      try:
-        os.remove(self.fileName)
+        self.whatsIn = {}
         self._getWhatsIn()
-      except OSError:
-        pass
 
-    optsThatWillGoIn = self._buildOptions(optionsDict)
-    stringToPut = self._getOptionsString(optsThatWillGoIn)
-    self.log.debug("Going to write in %s" % self.fileName)
-    self.log.debug(stringToPut)
+    def _getWhatsIn(self):
+        """Get what's in, as options, and fill the dictionary."""
 
-    # Easier to re-write it completely
-    with open(self.fileName, 'w') as fopen:
-      fopen.write(stringToPut)
+        with open(self.fileName, "r") as fopen:
+            fileString = fopen.read()
 
-    self._getWhatsIn()
+        lines = re.split("\n+", fileString)
+        for line in lines:
+            for option, pcType in self.optionsDict.items():
+                if re.match("[ ]*" + option + "[a-z,A-Z,0-9.]*", line):
+                    optionValues = re.split(option + "=+", line)
+                    for optionValue in optionValues:
+                        optionValue = optionValue.strip(" ")
+                        if optionValue:
+                            if pcType == "list":
+                                optionValueEls = optionValue.split("[")
+                            else:
+                                optionValueEls = optionValue.split(",")
+                            for optionValueEl in optionValueEls:
+                                if optionValueEl:
+                                    value = optionValueEl.replace('"', "").replace("]", "").replace("'", "").strip(" ")
+                                    if pcType == "list":
+                                        if value == ",":
+                                            value = []
+                                        else:
+                                            value = [x.strip() for x in value.split(",")]
+                                            value.remove("")
+                                    elif pcType == "integer":
+                                        value = int(value)
+                                    self.whatsIn[option] = value
 
-  def _buildOptions(self, optionsDict):
-    """just build the options Dict."""
-    optsThatWillGoIn = optionsDict
-    for optAlreadyIn in self.whatsIn:
-      if optAlreadyIn in optsThatWillGoIn:
-        self.log.warn('Option %s of %s will be overwritten' % (optAlreadyIn, self.fileName))
-      else:
-        optsThatWillGoIn[optAlreadyIn] = self.whatsIn[optAlreadyIn]
+    def putOptionsIn(self, optionsDict, freshStart=False):
+        """Put options, specified in the optionsDict, in the options file."""
 
-    return optsThatWillGoIn
+        if freshStart:
+            try:
+                os.remove(self.fileName)
+                self._getWhatsIn()
+            except OSError:
+                pass
 
-  def _getOptionsString(self, optsThatWillGoIn):
-    """Build a string with the options that will go in."""
-    string = 'from ProdConf import ProdConf\n\n'
-    string = string + 'ProdConf(\n'
-    for opt, value in optsThatWillGoIn.items():
-      if self.optionsDict[opt] == 'list':
-        string = string + '  ' + opt + '=' + str(value) + ',' + '\n'
-      elif self.optionsDict[opt] == 'string':
-        string = string + '  ' + opt + "='" + value + "'," + '\n'
-      else:
-        string = string + '  ' + opt + "=" + str(value) + "," + '\n'
-    string = string + ')'
+        optsThatWillGoIn = self._buildOptions(optionsDict)
+        stringToPut = self._getOptionsString(optsThatWillGoIn)
+        self.log.debug("Going to write in %s" % self.fileName)
+        self.log.debug(stringToPut)
 
-    return string
+        # Easier to re-write it completely
+        with open(self.fileName, "w") as fopen:
+            fopen.write(stringToPut)
+
+        self._getWhatsIn()
+
+    def _buildOptions(self, optionsDict):
+        """just build the options Dict."""
+        optsThatWillGoIn = optionsDict
+        for optAlreadyIn in self.whatsIn:
+            if optAlreadyIn in optsThatWillGoIn:
+                self.log.warn("Option %s of %s will be overwritten" % (optAlreadyIn, self.fileName))
+            else:
+                optsThatWillGoIn[optAlreadyIn] = self.whatsIn[optAlreadyIn]
+
+        return optsThatWillGoIn
+
+    def _getOptionsString(self, optsThatWillGoIn):
+        """Build a string with the options that will go in."""
+        string = "from ProdConf import ProdConf\n\n"
+        string = string + "ProdConf(\n"
+        for opt, value in optsThatWillGoIn.items():
+            if self.optionsDict[opt] == "list":
+                string = string + "  " + opt + "=" + str(value) + "," + "\n"
+            elif self.optionsDict[opt] == "string":
+                string = string + "  " + opt + "='" + value + "'," + "\n"
+            else:
+                string = string + "  " + opt + "=" + str(value) + "," + "\n"
+        string = string + ")"
+
+        return string

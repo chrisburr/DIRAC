@@ -16,6 +16,7 @@ from __future__ import division
 from __future__ import print_function
 
 from DIRAC.Core.Base import Script
+
 Script.parseCommandLine()
 
 from LHCbDIRAC.Core.Utilities.File import makeGuid

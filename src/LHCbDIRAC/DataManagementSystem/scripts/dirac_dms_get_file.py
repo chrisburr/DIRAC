@@ -22,22 +22,29 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerNamespaceSwitches('download to (default = %s)' % os.path.realpath('.'))
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerNamespaceSwitches("download to (default = %s)" % os.path.realpath("."))
 
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [<LFN>] [<LFN>...] [SourceSE]' % Script.scriptName, ]))
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] [<LFN>] [<LFN>...] [SourceSE]" % Script.scriptName,
+            ]
+        )
+    )
 
-  Script.parseCommandLine(ignoreErrors=False)
+    Script.parseCommandLine(ignoreErrors=False)
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeGetFile
-  from DIRAC import exit
-  exit(executeGetFile(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeGetFile
+    from DIRAC import exit
+
+    exit(executeGetFile(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

@@ -208,4 +208,4 @@ it is useful to have some transformations always at hand where you can just add 
 
 As a reminder, to add files in these transformations::
 
-  dirac-transformation-add-files <transName> [--Term | --File <file> | --LFN <lfn>] 
+  dirac-transformation-add-files <transName> [--Term | --File <file> | --LFN <lfn>]

@@ -1916,7 +1916,7 @@ FOR c IN (
     f.filename,
     f.fileid,
     j.jobid
-  FROM 
+  FROM
     jobs j,
     files f,
     inputfiles i,

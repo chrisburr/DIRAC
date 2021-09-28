@@ -19,6 +19,7 @@ from __future__ import print_function
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticApplicationSummaryDB import ElasticApplicationSummaryDB

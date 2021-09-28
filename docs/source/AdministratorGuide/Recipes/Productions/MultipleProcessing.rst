@@ -13,7 +13,7 @@ Good to also stop the removal productions if any
 ========================================
 ::
 
-    grep ProcMultDesc CheckDescendantsResults_<STRIPPING>.txt | dirac-bookkeeping-get-file-descendants —Prod <STRIPPING> —All | dirac-transformation-debug <MERGING> 
+    grep ProcMultDesc CheckDescendantsResults_<STRIPPING>.txt | dirac-bookkeeping-get-file-descendants —Prod <STRIPPING> —All | dirac-transformation-debug <MERGING>
 
 Look at whether the multiple descendants have been merged, in which case they are set Processed in the final list. You can also see all files that are eventually already part of merging jobs (status Assigned).
 
@@ -44,7 +44,7 @@ This prints out how many files per run and at the end the list of affected runs�
 
     dirac-transformation-debug <MERGING> —Status Assigned —Run <list of runs>
 
-As long as you have files Assigned, better do nothing. 
+As long as you have files Assigned, better do nothing.
 if you are in a hurry, you may kill the corresponding jobs and proceed, but this may cause troubles…
 
 ----------------
@@ -142,7 +142,7 @@ returns no files!
 
     dirac-transformation-reset-files —File rdstToReprocess-<STRIPPING>.txt <STRIPPING>
 
-and then reset Problematic files you have saved as such 
+and then reset Problematic files you have saved as such
 
 ::
 
@@ -158,7 +158,7 @@ and then reset Problematic files you have saved as such
 
 From time to time better do a further check that all is OK as you may have also other errors like files in FC without BK flag, in which case you should removed them::
 
-    dirac-production-check-descendants —File rdstToReprocess-<STRIPPING>.txt <STRIPPING>    
+    dirac-production-check-descendants —File rdstToReprocess-<STRIPPING>.txt <STRIPPING>
 
 6. Restart productions
 ======================

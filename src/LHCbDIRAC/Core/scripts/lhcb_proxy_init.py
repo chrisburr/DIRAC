@@ -23,21 +23,21 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  if os.getenv('X509_CERT_DIR') is None:
-    sys.exit('the variable X509_CERT_DIR do not exist')
+    if os.getenv("X509_CERT_DIR") is None:
+        sys.exit("the variable X509_CERT_DIR do not exist")
 
-  if not os.path.isdir(os.environ['X509_CERT_DIR']):
-    sys.exit('the directory %s does not exist' % os.environ['X509_CERT_DIR'])
+    if not os.path.isdir(os.environ["X509_CERT_DIR"]):
+        sys.exit("the directory %s does not exist" % os.environ["X509_CERT_DIR"])
 
-  if os.getenv('X509_VOMS_DIR') is None:
-    sys.exit('the variable X509_VOMS_DIR do not exist')
+    if os.getenv("X509_VOMS_DIR") is None:
+        sys.exit("the variable X509_VOMS_DIR do not exist")
 
-  if not os.path.isdir(os.environ['X509_VOMS_DIR']):
-    sys.exit('the directory %s does not exist' % os.environ['X509_VOMS_DIR'])
+    if not os.path.isdir(os.environ["X509_VOMS_DIR"]):
+        sys.exit("the directory %s does not exist" % os.environ["X509_VOMS_DIR"])
 
-  out = os.system("dirac-proxy-init -o LogLevel=NOTICE --strict --rfc '%s'" % "' '".join(sys.argv[1:]))
-  sys.exit(int(out / 256))
+    out = os.system("dirac-proxy-init -o LogLevel=NOTICE --strict --rfc '%s'" % "' '".join(sys.argv[1:]))
+    sys.exit(int(out / 256))
 
 
 if __name__ == "__main__":
-  main()
+    main()
