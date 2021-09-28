@@ -38,7 +38,7 @@ class OracleBookkeepingDB(object):
   def __init__(self):
     """c'tor."""
     self.log = gLogger.getSubLogger('OracleBookkeepingDB')
-    self.cs_path = getDatabaseSection('Bookkeeping/BookkeepingDB')
+    self.cs_path = getDatabaseSection("Bookkeeping", "BookkeepingDB")
 
     self.dbHost = ''
     result = gConfig.getOption(self.cs_path + '/LHCbDIRACBookkeepingTNS')

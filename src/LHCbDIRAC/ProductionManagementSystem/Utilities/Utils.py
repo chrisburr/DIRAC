@@ -83,7 +83,7 @@ def informPeople(rec, oldstate, state, author, inform):
     return  # was no state change or resurrect
 
   reqId = rec['RequestID']
-  csS = PathFinder.getServiceSection('ProductionManagement/ProductionRequest')
+  csS = PathFinder.getServiceSection("ProductionManagement", "ProductionRequest")
   if not csS:
     gLogger.error('No ProductionRequest section in configuration')
     return

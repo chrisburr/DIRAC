@@ -181,7 +181,7 @@ class ProductionRequestHandler(RequestHandler):
   @staticmethod
   def __getTplFolder(tt):
 
-    csS = PathFinder.getServiceSection('ProductionManagement/ProductionRequest')
+    csS = PathFinder.getServiceSection("ProductionManagement", "ProductionRequest")
     if not csS:
       return S_ERROR("No ProductionRequest parameters in CS")
     tplFolder = gConfig.getValue('%s/templateFolder' % csS, '')

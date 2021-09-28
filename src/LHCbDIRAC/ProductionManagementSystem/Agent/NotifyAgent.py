@@ -69,7 +69,7 @@ class NotifyAgent(AgentModule):
 
     self.diracAdmin = DiracAdmin()
 
-    self.csS = PathFinder.getServiceSection('ProductionManagement/ProductionRequest')
+    self.csS = PathFinder.getServiceSection("ProductionManagement", "ProductionRequest")
 
     self.fromAddress = gConfig.getValue('%s/fromAddress' % self.csS, '')
     if not self.fromAddress:

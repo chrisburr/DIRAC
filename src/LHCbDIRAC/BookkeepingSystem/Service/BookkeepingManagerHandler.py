@@ -52,7 +52,7 @@ class BookkeepingManagerHandler(RequestHandler):
     cls.xmlReader = XMLFilesReaderManager()
     cls.__eventTypeCache = {}
 
-    bkkSection = getServiceSection("Bookkeeping/BookkeepingManager")
+    bkkSection = getServiceSection("Bookkeeping", "BookkeepingManager")
     if not bkkSection:
       cls.email = 'lhcb-bookkeeping@cern.ch'
       cls.forceExecution = False

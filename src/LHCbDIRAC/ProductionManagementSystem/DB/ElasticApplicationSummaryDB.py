@@ -40,7 +40,7 @@ class ElasticApplicationSummaryDB(ElasticMCStatsDBBase):
     """ Standard Constructor
     """
 
-    section = getDatabaseSection("ProductionManagement/ElasticApplicationSummaryDB")
+    section = getDatabaseSection("ProductionManagement", "ElasticApplicationSummaryDB")
     indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
                                    CSGlobals.getSetup()).lower()
 

@@ -48,7 +48,7 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
     """ Standard Constructor
     """
 
-    section = getDatabaseSection("ProductionManagement/ElasticMCGaussLogErrorsDB")
+    section = getDatabaseSection("ProductionManagement", "ElasticMCGaussLogErrorsDB")
     indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
                                    CSGlobals.getSetup()).lower()
 

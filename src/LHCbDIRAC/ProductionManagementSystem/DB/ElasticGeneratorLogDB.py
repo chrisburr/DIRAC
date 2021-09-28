@@ -40,7 +40,7 @@ class ElasticGeneratorLogDB(ElasticMCStatsDBBase):
     """ Standard Constructor
     """
 
-    section = getDatabaseSection("ProductionManagement/ElasticGeneratorLogDB")
+    section = getDatabaseSection("ProductionManagement", "ElasticGeneratorLogDB")
     indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
                                    CSGlobals.getSetup()).lower()
 
