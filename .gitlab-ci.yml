@@ -40,6 +40,19 @@ stages:
 
 ### test stage ###
 
+pre-commit:
+  image: registry.cern.ch/docker.io/library/python:3.9
+  stage: test
+  before_script:
+    - pip install pre-commit
+  script:
+    - pre-commit run --all-files
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  cache:
+    paths:
+      - ${PRE_COMMIT_HOME}
+
 # Common configuration between pytest, pylint, pycodestyle
 .test_setup: &test_setup
   before_script:
@@ -163,23 +176,6 @@ check_docs:
         echo "********************************************************************************"
         exit 1
       fi
-  only:
-    refs:
-      - branches
-    variables:
-      - $SWEEP != "true"
-
-# This ensures the license text is present
-# Based on: https://gitlab.cern.ch/lhcb/LHCb/blob/master/.gitlab-ci.yml#L14-18
-check-copyright:
-  stage: test
-  before_script:
-    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
-    - git fetch --all
-    - curl -o lb-check-copyright "https://gitlab.cern.ch/lhcb-core/LbDevTools/raw/master/LbDevTools/SourceTools.py?inline=false"
-  script:
-    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-    - python lb-check-copyright upstream/master --exclude '^tests/.*\.xml$' --exclude 'docs/source.conf.py'
   only:
     refs:
       - branches
