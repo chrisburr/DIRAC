@@ -44,7 +44,7 @@ class ElasticMCBooleLogErrorsDB(ElasticMCStatsDBBase):
     """ Standard Constructor
     """
 
-    section = getDatabaseSection("ProductionManagement/ElasticMCBooleLogErrorsDB")
+    section = getDatabaseSection("ProductionManagement", "ElasticMCBooleLogErrorsDB")
     indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
                                    CSGlobals.getSetup()).lower()
 

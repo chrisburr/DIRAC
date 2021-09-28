@@ -96,7 +96,7 @@ class ElasticPrMonDB(ElasticMCStatsDBBase):
     """ Standard Constructor
     """
 
-    section = getDatabaseSection("ProductionManagement/ElasticPrMonDB")
+    section = getDatabaseSection("ProductionManagement", "ElasticPrMonDB")
     indexPrefix = gConfig.getValue("%s/IndexPrefix" % section,
                                    CSGlobals.getSetup()).lower()
 
