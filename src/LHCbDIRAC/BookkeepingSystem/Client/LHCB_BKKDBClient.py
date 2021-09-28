@@ -69,8 +69,8 @@ class LHCB_BKKDBClient(BaseESClient):
         self, files, optionsFile="jobOptions.opts", savedType=None, catalog=None, savePfn=None, dataset=None
     ):
         """Gaudi card."""
-        return self.getManager().writeJobOptions(
-            files, optionsFile, savedType, catalog, savePfn, dataset  # pylint: disable=no-member
+        return self.getManager().writeJobOptions(  # pylint: disable=no-member
+            files, optionsFile, savedType, catalog, savePfn, dataset
         )
 
     #############################################################################
@@ -91,8 +91,8 @@ class LHCB_BKKDBClient(BaseESClient):
     #############################################################################
     def getLimitedFiles(self, selectionDict, sortDict, startItem, maxitems):
         """get files used by Web portal."""
-        return self.getManager().getLimitedFiles(
-            selectionDict, sortDict, startItem, maxitems  # pylint: disable=no-member
+        return self.getManager().getLimitedFiles(  # pylint: disable=no-member
+            selectionDict, sortDict, startItem, maxitems
         )
 
     #############################################################################
@@ -108,9 +108,9 @@ class LHCB_BKKDBClient(BaseESClient):
     #############################################################################
     def writePythonOrJobOptions(self, startItem, maxitems, path, optstype):
         """python job option."""
-        return self.getManager().writePythonOrJobOptions(
+        return self.getManager().writePythonOrJobOptions(  # pylint: disable=no-member
             startItem, maxitems, path, optstype
-        )  # pylint: disable=no-member
+        )
 
     #############################################################################
     def getLimitedInformations(self, startItem, maxitems, path):
