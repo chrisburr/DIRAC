@@ -21,28 +21,35 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  Script.registerSwitch('', 'All', 'Do not restrict to descendants with replicas')
-  Script.registerSwitch('', 'Full', 'Get full metadata information on descendants')
-  level = 1
-  Script.registerSwitch('', 'Depth=', 'Number of processing levels (default: %d)' % level)
-  Script.registerSwitch('', 'Production=', 'Restrict to descendants in a given production (at any depth)')
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile] ... [LFN|File] [Depth]' % Script.scriptName,
-      'Arguments:',
-      '  LFN:      Logical File Name',
-      '  File:     Name of the file with a list of LFNs',
-      '  Depth:    Number of levels to search (default: %d)' % level]))
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    Script.registerSwitch("", "All", "Do not restrict to descendants with replicas")
+    Script.registerSwitch("", "Full", "Get full metadata information on descendants")
+    level = 1
+    Script.registerSwitch("", "Depth=", "Number of processing levels (default: %d)" % level)
+    Script.registerSwitch("", "Production=", "Restrict to descendants in a given production (at any depth)")
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s [option|cfgfile] ... [LFN|File] [Depth]" % Script.scriptName,
+                "Arguments:",
+                "  LFN:      Logical File Name",
+                "  File:     Name of the file with a list of LFNs",
+                "  Depth:    Number of levels to search (default: %d)" % level,
+            ]
+        )
+    )
 
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFileDescendants
-  executeFileDescendants(dmScript, level)
+    from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFileDescendants
+
+    executeFileDescendants(dmScript, level)
 
 
 if __name__ == "__main__":
-  main()
+    main()

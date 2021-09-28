@@ -25,7 +25,7 @@ echo "Running Consistency Checks:"
 "dirac-dms-check-directory-integrity.py"
 
 "dirac-dms-check-bkk2fc.py"
-dirac-dms-check-bkk2fc 
+dirac-dms-check-bkk2fc
 "dirac-dms-check-fc2bkk.py"
 
 echo "dirac-dms-check-fc2se --Directory=${directory}"
@@ -57,4 +57,3 @@ echo ""
 echo "Cleanning Production ID: ${transID}"
 
 "Running: dirac-transformation-clean ${transID}"
-

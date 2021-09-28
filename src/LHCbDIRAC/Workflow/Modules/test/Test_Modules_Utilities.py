@@ -23,134 +23,159 @@ from mock import patch
 from DIRAC import gConfig, gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Helpers import Resources
 
-from LHCbDIRAC.Workflow.Modules.ModulesUtilities import lowerExtension, getEventsToProduce,\
-    getCPUNormalizationFactorAvg, getProductionParameterValue
+from LHCbDIRAC.Workflow.Modules.ModulesUtilities import (
+    lowerExtension,
+    getEventsToProduce,
+    getCPUNormalizationFactorAvg,
+    getProductionParameterValue,
+)
 
 
 class ModulesUtilitiesTestCase(unittest.TestCase):
-  """Base class for the ModulesUtilities test cases."""
+    """Base class for the ModulesUtilities test cases."""
 
-  def setUp(self):
+    def setUp(self):
 
-    gLogger.setLevel('DEBUG')
-    self.maxDiff = None
+        gLogger.setLevel("DEBUG")
+        self.maxDiff = None
 
-  def tearDown(self):
-    for fileProd in ['foo.txt', 'BAR.txt', 'FooBAR.ext.txt']:
-      try:
-        os.remove(fileProd)
-      except OSError:
-        continue
+    def tearDown(self):
+        for fileProd in ["foo.txt", "BAR.txt", "FooBAR.ext.txt"]:
+            try:
+                os.remove(fileProd)
+            except OSError:
+                continue
 
 
 #############################################################################
 # ModulesUtilities.py
 #############################################################################
 
+
 class ModulesUtilitiesSuccess(ModulesUtilitiesTestCase):
 
-  #################################################
+    #################################################
 
-  def test_lowerExtension(self):
+    def test_lowerExtension(self):
 
-    open('foo.tXt', 'w').close()
-    open('BAR.txt', 'w').close()
-    open('FooBAR.eXT.TXT', 'w').close()
+        open("foo.tXt", "w").close()
+        open("BAR.txt", "w").close()
+        open("FooBAR.eXT.TXT", "w").close()
 
-    lowerExtension()
+        lowerExtension()
 
-    self.assertTrue('foo.txt' in os.listdir('.'))
-    self.assertTrue('BAR.txt' in os.listdir('.'))
-    self.assertTrue('FooBAR.ext.txt' in os.listdir('.'))
+        self.assertTrue("foo.txt" in os.listdir("."))
+        self.assertTrue("BAR.txt" in os.listdir("."))
+        self.assertTrue("FooBAR.ext.txt" in os.listdir("."))
 
-  #################################################
+    #################################################
 
-  def test_getEventsToProduce(self):
+    def test_getEventsToProduce(self):
 
-    CPUe = 2.0
-    CPUTime = 1000000.0
-    CPUNormalizationFactor = 0.5
+        CPUe = 2.0
+        CPUTime = 1000000.0
+        CPUNormalizationFactor = 0.5
 
-    out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor)
-    outExp = 200000
-    self.assertEqual(out, outExp)
+        out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor)
+        outExp = 200000
+        self.assertEqual(out, outExp)
 
-    out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor, maxNumberOfEvents=1000)
-    outExp = 1000
-    self.assertEqual(out, outExp)
+        out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor, maxNumberOfEvents=1000)
+        outExp = 1000
+        self.assertEqual(out, outExp)
 
-    out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor, jobMaxCPUTime=100000)
-    outExp = 20000
-    self.assertEqual(out, outExp)
+        out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor, jobMaxCPUTime=100000)
+        outExp = 20000
+        self.assertEqual(out, outExp)
 
-    out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor, maxNumberOfEvents=1000, jobMaxCPUTime=100000)
-    outExp = 1000
-    self.assertEqual(out, outExp)
+        out = getEventsToProduce(CPUe, CPUTime, CPUNormalizationFactor, maxNumberOfEvents=1000, jobMaxCPUTime=100000)
+        outExp = 1000
+        self.assertEqual(out, outExp)
 
-  #################################################
+    #################################################
 
-  def test_getCPUNormalizationFactorAvg(self):
+    def test_getCPUNormalizationFactorAvg(self):
 
-    with patch.object(gConfig, 'getSections') as mockGetSections:  # @UndefinedVariable
-      with patch.object(Resources, 'getQueues') as mockGetQueues:  # @UndefinedVariable
+        with patch.object(gConfig, "getSections") as mockGetSections:  # @UndefinedVariable
+            with patch.object(Resources, "getQueues") as mockGetQueues:  # @UndefinedVariable
 
-        # gConfig.getSection error
-        mockGetSections.return_value = S_ERROR()
-        self.assertRaises(RuntimeError, getCPUNormalizationFactorAvg)
+                # gConfig.getSection error
+                mockGetSections.return_value = S_ERROR()
+                self.assertRaises(RuntimeError, getCPUNormalizationFactorAvg)
 
-        # Resources.getQueues error
-        mockGetSections.return_value = S_OK(['LCG.CERN.ch'])
-        mockGetQueues.return_value = S_ERROR()
-        self.assertRaises(RuntimeError, getCPUNormalizationFactorAvg)
+                # Resources.getQueues error
+                mockGetSections.return_value = S_OK(["LCG.CERN.ch"])
+                mockGetQueues.return_value = S_ERROR()
+                self.assertRaises(RuntimeError, getCPUNormalizationFactorAvg)
 
-        # no queues
-        mockGetQueues.return_value = S_OK({'LCG.CERN.ch': {}})
-        self.assertRaises(RuntimeError, getCPUNormalizationFactorAvg)
+                # no queues
+                mockGetQueues.return_value = S_OK({"LCG.CERN.ch": {}})
+                self.assertRaises(RuntimeError, getCPUNormalizationFactorAvg)
 
-        # success
-        mockGetQueues.return_value = S_OK({'LCG.CERN.ch': {
-            'ce201.cern.ch': {'CEType': 'CREAM',
-                              'OS': 'ScientificCERNSLC_Boron_5.5',
-                              'Pilot': 'True',
-                              'Queues': {'cream-lsf-grid_2nh_lhcb': {'MaxTotalJobs': '1000',
-                                                                     'MaxWaitingJobs': '20',
-                                                                     'SI00': '1000',
-                                                                     'maxCPUTime': '120'},
-                                         'cream-lsf-grid_lhcb': {'MaxTotalJobs': '1000',
-                                                                 'MaxWaitingJobs': '100',
-                                                                 'SI00': '1000',
-                                                                 'WaitingToRunningRatio': '0.2',
-                                                                 'maxCPUTime': '10080'}
-                                         },
-                                        'SI00': '5242',
-                                        'SubmissionMode': 'Direct',
-                                        'architecture': 'x86_64',
-                                        'wnTmpDir': '.'},
-            'ce202.cern.ch': {'CEType': 'CREAM',
-                              'OS': 'ScientificCERNSLC_Boron_5.8',
-                              'Pilot': 'True',
-                              'Queues': {'cream-lsf-grid_2nh_lhcb': {'MaxTotalJobs': '1000',
-                                                                     'MaxWaitingJobs': '20',
-                                                                     'SI00': '1000',
-                                                                     'maxCPUTime': '120'},
-                                         'cream-lsf-grid_lhcb': {'MaxTotalJobs': '1000',
-                                                                 'MaxWaitingJobs': '100',
-                                                                 'SI00': '1000',
-                                                                 'WaitingToRunningRatio': '0.2',
-                                                                 'maxCPUTime': '10080'}},
-                              'SI00': '5242',
-                              'SubmissionMode': 'Direct',
-                              'architecture': 'x86_64',
-                              'wnTmpDir': '.'}}})
-        out = getCPUNormalizationFactorAvg()
-        self.assertEqual(out, 4.0)
+                # success
+                mockGetQueues.return_value = S_OK(
+                    {
+                        "LCG.CERN.ch": {
+                            "ce201.cern.ch": {
+                                "CEType": "CREAM",
+                                "OS": "ScientificCERNSLC_Boron_5.5",
+                                "Pilot": "True",
+                                "Queues": {
+                                    "cream-lsf-grid_2nh_lhcb": {
+                                        "MaxTotalJobs": "1000",
+                                        "MaxWaitingJobs": "20",
+                                        "SI00": "1000",
+                                        "maxCPUTime": "120",
+                                    },
+                                    "cream-lsf-grid_lhcb": {
+                                        "MaxTotalJobs": "1000",
+                                        "MaxWaitingJobs": "100",
+                                        "SI00": "1000",
+                                        "WaitingToRunningRatio": "0.2",
+                                        "maxCPUTime": "10080",
+                                    },
+                                },
+                                "SI00": "5242",
+                                "SubmissionMode": "Direct",
+                                "architecture": "x86_64",
+                                "wnTmpDir": ".",
+                            },
+                            "ce202.cern.ch": {
+                                "CEType": "CREAM",
+                                "OS": "ScientificCERNSLC_Boron_5.8",
+                                "Pilot": "True",
+                                "Queues": {
+                                    "cream-lsf-grid_2nh_lhcb": {
+                                        "MaxTotalJobs": "1000",
+                                        "MaxWaitingJobs": "20",
+                                        "SI00": "1000",
+                                        "maxCPUTime": "120",
+                                    },
+                                    "cream-lsf-grid_lhcb": {
+                                        "MaxTotalJobs": "1000",
+                                        "MaxWaitingJobs": "100",
+                                        "SI00": "1000",
+                                        "WaitingToRunningRatio": "0.2",
+                                        "maxCPUTime": "10080",
+                                    },
+                                },
+                                "SI00": "5242",
+                                "SubmissionMode": "Direct",
+                                "architecture": "x86_64",
+                                "wnTmpDir": ".",
+                            },
+                        }
+                    }
+                )
+                out = getCPUNormalizationFactorAvg()
+                self.assertEqual(out, 4.0)
 
-  #################################################
+    #################################################
 
-  def test_getProductionParameterValue(self):
+    def test_getProductionParameterValue(self):
 
-    emptyXML = '<Workflow></Workflow>'
-    noValueProductionXML = '''
+        emptyXML = "<Workflow></Workflow>"
+        noValueProductionXML = """
       <Workflow>
         <origin></origin>
         <description><![CDATA[prodDescription]]></description>
@@ -162,8 +187,8 @@ class ModulesUtilitiesSuccess(ModulesUtilitiesTestCase):
           <value></value>
         </Parameter>
       </Workflow>
-    '''  # noqa
-    productionXML = '''
+    """  # noqa
+        productionXML = """
       <Workflow>
         <origin></origin>
         <description><![CDATA[prodDescription]]></description>
@@ -175,29 +200,29 @@ class ModulesUtilitiesSuccess(ModulesUtilitiesTestCase):
           <value><![CDATA[MCSimulation]]></value>
         </Parameter>
       </Workflow>
-    '''  # noqa
+    """  # noqa
 
-    parameterName = 'JobType'
+        parameterName = "JobType"
 
-    valueExp = 'MCSimulation'
+        valueExp = "MCSimulation"
 
-    value = getProductionParameterValue(emptyXML, parameterName)
-    self.assertEqual(value, None)
+        value = getProductionParameterValue(emptyXML, parameterName)
+        self.assertEqual(value, None)
 
-    value = getProductionParameterValue(noValueProductionXML, parameterName)
-    self.assertEqual(value, None)
+        value = getProductionParameterValue(noValueProductionXML, parameterName)
+        self.assertEqual(value, None)
 
-    value = getProductionParameterValue(productionXML, parameterName)
-    self.assertEqual(value, valueExp)
+        value = getProductionParameterValue(productionXML, parameterName)
+        self.assertEqual(value, valueExp)
 
 
 #############################################################################
 # Test Suite run
 #############################################################################
 
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(ModulesUtilitiesTestCase)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ModulesUtilitiesSuccess))
-  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+if __name__ == "__main__":
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(ModulesUtilitiesTestCase)
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ModulesUtilitiesSuccess))
+    testResult = unittest.TextTestRunner(verbosity=2).run(suite)
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

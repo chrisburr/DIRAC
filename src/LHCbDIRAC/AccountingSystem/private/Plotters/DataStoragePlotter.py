@@ -29,410 +29,417 @@ __RCSID__ = "$Id$"
 
 
 class DataStoragePlotter(BaseReporter):
-  """DataStoragePlotter as extension of BaseReporter."""
+    """DataStoragePlotter as extension of BaseReporter."""
 
-  _typeName = "DataStorage"
-  _typeKeyFields = [dF[0] for dF in DataStorage().definitionKeyFields]
+    _typeName = "DataStorage"
+    _typeKeyFields = [dF[0] for dF in DataStorage().definitionKeyFields]
 
-  # Catalog Space
+    # Catalog Space
 
-  _reportCatalogSpaceName = "LFN size"
+    _reportCatalogSpaceName = "LFN size"
 
-  def _reportCatalogSpace(self, reportRequest):
-    """Reports about the LFN size and the catalog space from the accounting.
+    def _reportCatalogSpace(self, reportRequest):
+        """Reports about the LFN size and the catalog space from the accounting.
 
-    :param reportRequest: <dict>
-      { 'grouping'       : 'EventType',
-        'groupingFields' : ( '%s', [ 'EventType' ] ),
-        'startTime'      : 1355663249.0,
-        'endTime'        : 1355749690.0,
-        'condDict'       : { 'EventType' : 'Full stream' }
-      }
+        :param reportRequest: <dict>
+          { 'grouping'       : 'EventType',
+            'groupingFields' : ( '%s', [ 'EventType' ] ),
+            'startTime'      : 1355663249.0,
+            'endTime'        : 1355749690.0,
+            'condDict'       : { 'EventType' : 'Full stream' }
+          }
 
-    returns S_OK / S_ERROR
-      { 'graphDataDict': { 'Full stream': { 1355616000L: 935.38852424691629,
-                                            1355702400L: 843.84448707482204 }
-                         },
-        'data'         : { 'Full stream': { 1355616000L: 935388.52424691629,
-                                            1355702400L: 843844.48707482207 }
-                         },
-        'unit'         : 'GB',
-        'granularity'  : 86400
-      }
-    """
+        returns S_OK / S_ERROR
+          { 'graphDataDict': { 'Full stream': { 1355616000L: 935.38852424691629,
+                                                1355702400L: 843.84448707482204 }
+                             },
+            'data'         : { 'Full stream': { 1355616000L: 935388.52424691629,
+                                                1355702400L: 843844.48707482207 }
+                             },
+            'unit'         : 'GB',
+            'granularity'  : 86400
+          }
+        """
 
-    if reportRequest['grouping'] == "StorageElement":
-      return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
+        if reportRequest["grouping"] == "StorageElement":
+            return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
 
-    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
+        selectString = self._getSelectStringForGrouping(reportRequest["groupingFields"])
 
-    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'LogicalSize', 'entriesInBucket']
-                    )
+        selectFields = (
+            selectString + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "LogicalSize", "entriesInBucket"],
+        )
 
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    accumMaxValue = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "bytes")
+        accumMaxValue = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "bytes")
 
-    # 3rd variable unused ( maxValue )
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        # 3rd variable unused ( maxValue )
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-  def _plotCatalogSpace(self, reportRequest, plotInfo, filename):
-    """Creates <filename>.png file containing information regarding the LFN
-    size and the catalog space.
+    def _plotCatalogSpace(self, reportRequest, plotInfo, filename):
+        """Creates <filename>.png file containing information regarding the LFN
+        size and the catalog space.
 
-    :param reportRequest: <dict>
-       { 'grouping'       : 'EventType',
-         'groupingFields' : ( '%s', [ 'EventType' ] ),
-         'startTime'      : 1355663249.0,
-         'endTime'        : 1355749690.0,
-         'condDict'       : { 'EventType' : 'Full stream' }
-       }
-    :param plotInfo: <dict> ( output of _reportCatalogSpace )
-       { 'graphDataDict' : { 'Full stream' : { 1355616000L: 4.9003546130956819,
-                                               1355702400L: 4.9050379437065059 }
-                           },
-         'data'          : { 'Full stream' : { 1355616000L: 4900354613.0956821,
-                                               1355702400L: 4905037943.7065058 }
-                           },
-         'unit'          : 'PB',
-         'granularity'   : 86400
+        :param reportRequest: <dict>
+           { 'grouping'       : 'EventType',
+             'groupingFields' : ( '%s', [ 'EventType' ] ),
+             'startTime'      : 1355663249.0,
+             'endTime'        : 1355749690.0,
+             'condDict'       : { 'EventType' : 'Full stream' }
+           }
+        :param plotInfo: <dict> ( output of _reportCatalogSpace )
+           { 'graphDataDict' : { 'Full stream' : { 1355616000L: 4.9003546130956819,
+                                                   1355702400L: 4.9050379437065059 }
+                               },
+             'data'          : { 'Full stream' : { 1355616000L: 4900354613.0956821,
+                                                   1355702400L: 4905037943.7065058 }
+                               },
+             'unit'          : 'PB',
+             'granularity'   : 86400
+            }
+        :param filename: <str>
+          '_plotCatalogSpace'
+
+        returns S_OK / S_ERROR
+           { 'plot': True, 'thumbnail': False }
+        """
+
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+        dataDict = plotInfo["graphDataDict"]
+
+        metadata = {
+            "title": "LFN space usage grouped by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
         }
-    :param filename: <str>
-      '_plotCatalogSpace'
 
-    returns S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }
-    """
+        dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+        return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-    dataDict = plotInfo['graphDataDict']
+    # .............................................................................
+    # Catalog Files
 
-    metadata = {'title': "LFN space usage grouped by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
+    _reportCatalogFilesName = "LFN files"
 
-    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
-    return self._generateStackedLinePlot(filename, dataDict, metadata)
+    def _reportCatalogFiles(self, reportRequest):
+        """Reports about the LFN files and the catalog files from the accounting.
 
-  # .............................................................................
-  # Catalog Files
+        :param reportRequest: <dict>
+          { 'grouping'       : 'EventType',
+            'groupingFields' : ( '%s', [ 'EventType' ] ),
+            'startTime'      : 1355663249.0,
+            'endTime'        : 1355749690.0,
+            'condDict'       : { 'EventType' : 'Full stream' }
+          }
 
-  _reportCatalogFilesName = "LFN files"
+        returns S_OK / S_ERROR
+          { 'graphDataDict' : { 'Full stream' : { 1355616000L : 420.47885754501203,
+                                                  1355702400L : 380.35170637810842 }
+                                                },
+            'data'          : { 'Full stream' : { 1355616000L : 420.47885754501203,
+                                                  1355702400L : 380.35170637810842 }
+                                                },
+            'unit'          : 'files',
+            'granularity'   : 86400
+          }
+        """
 
-  def _reportCatalogFiles(self, reportRequest):
-    """Reports about the LFN files and the catalog files from the accounting.
+        if reportRequest["grouping"] == "StorageElement":
+            return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
 
-    :param reportRequest: <dict>
-      { 'grouping'       : 'EventType',
-        'groupingFields' : ( '%s', [ 'EventType' ] ),
-        'startTime'      : 1355663249.0,
-        'endTime'        : 1355749690.0,
-        'condDict'       : { 'EventType' : 'Full stream' }
-      }
+        selectString = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectString + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "LogicalFiles", "entriesInBucket"],
+        )
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    returns S_OK / S_ERROR
-      { 'graphDataDict' : { 'Full stream' : { 1355616000L : 420.47885754501203,
-                                              1355702400L : 380.35170637810842 }
-                                            },
-        'data'          : { 'Full stream' : { 1355616000L : 420.47885754501203,
-                                              1355702400L : 380.35170637810842 }
-                                            },
-        'unit'          : 'files',
-        'granularity'   : 86400
-      }
-    """
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    if reportRequest['grouping'] == "StorageElement":
-      return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
+        accumMaxValue = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "files")
 
-    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'LogicalFiles', 'entriesInBucket'
-                                                          ]
-                    )
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
+        # 3rd variable unused ( maxValue )
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    accumMaxValue = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "files")
+    def _plotCatalogFiles(self, reportRequest, plotInfo, filename):
+        """Creates <filename>.png file containing information regarding the LFN
+        files and the catalog files.
 
-    # 3rd variable unused ( maxValue )
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        :param reportRequest: <dict>
+          { 'grouping'       : 'EventType',
+            'groupingFields' : ( '%s', [ 'EventType' ] ),
+            'startTime'      : 1355663249.0,
+            'endTime'        : 1355749690.0,
+            'condDict'       : { 'EventType' : 'Full stream' }
+          }
+        :param plotInfo: <dict> ( output of _reportCatalogFiles )
+          { 'graphDataDict' : { 'Full stream' : { 1355616000L : 420.47885754501203,
+                                                  1355702400L : 380.35170637810842 }
+                              },
+            'data'          : { 'Full stream' : { 1355616000L : 420.47885754501203,
+                                                  1355702400L : 380.35170637810842 }
+                              },
+            'unit'          : 'files',
+            'granularity'   : 86400
+          }
+        :param filename: <str>
+          '_plotCatalogFiles'
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+        returns S_OK / S_ERROR
+           { 'plot': True, 'thumbnail': False }
+        """
 
-  def _plotCatalogFiles(self, reportRequest, plotInfo, filename):
-    """Creates <filename>.png file containing information regarding the LFN
-    files and the catalog files.
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+        dataDict = plotInfo["graphDataDict"]
 
-    :param reportRequest: <dict>
-      { 'grouping'       : 'EventType',
-        'groupingFields' : ( '%s', [ 'EventType' ] ),
-        'startTime'      : 1355663249.0,
-        'endTime'        : 1355749690.0,
-        'condDict'       : { 'EventType' : 'Full stream' }
-      }
-    :param plotInfo: <dict> ( output of _reportCatalogFiles )
-      { 'graphDataDict' : { 'Full stream' : { 1355616000L : 420.47885754501203,
-                                              1355702400L : 380.35170637810842 }
-                          },
-        'data'          : { 'Full stream' : { 1355616000L : 420.47885754501203,
-                                              1355702400L : 380.35170637810842 }
-                          },
-        'unit'          : 'files',
-        'granularity'   : 86400
-      }
-    :param filename: <str>
-      '_plotCatalogFiles'
+        metadata = {
+            "title": "Number of LFNs by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
 
-    returns S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }
-    """
+        dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+        return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-    dataDict = plotInfo['graphDataDict']
+    # .............................................................................
+    # Physical Space
 
-    metadata = {'title': "Number of LFNs by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
+    _reportPhysicalSpaceName = "PFN size"
 
-    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
-    return self._generateStackedLinePlot(filename, dataDict, metadata)
+    def _reportPhysicalSpace(self, reportRequest):
+        """Reports about the PFN size and the physical space from the accounting.
 
-  # .............................................................................
-  # Physical Space
+        :param reportRequest: <dict>
+          { 'grouping'       : 'EventType',
+            'groupingFields' : ( '%s', [ 'EventType' ] ),
+            'startTime'      : 1355663249.0,
+            'endTime'        : 1355749690.0,
+            'condDict'       : { 'EventType' : 'Full stream' }
+          }
 
-  _reportPhysicalSpaceName = "PFN size"
+        returns S_OK / S_ERROR
+          { 'graphDataDict' : { 'Full stream' : { 1355616000L : 14.754501202,
+                                                  1355702400L : 15.237810842 }
+                              },
+            'data'          : { 'Full stream' : { 1355616000L : 14.754501202,
+                                                  1355702400L : 15.237810842 }
+                              },
+            'unit'          : 'MB',
+            'granularity'   : 86400
+          }
+        """
 
-  def _reportPhysicalSpace(self, reportRequest):
-    """Reports about the PFN size and the physical space from the accounting.
+        selectString = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectString + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "PhysicalSize", "entriesInBucket"],
+        )
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    :param reportRequest: <dict>
-      { 'grouping'       : 'EventType',
-        'groupingFields' : ( '%s', [ 'EventType' ] ),
-        'startTime'      : 1355663249.0,
-        'endTime'        : 1355749690.0,
-        'condDict'       : { 'EventType' : 'Full stream' }
-      }
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    returns S_OK / S_ERROR
-      { 'graphDataDict' : { 'Full stream' : { 1355616000L : 14.754501202,
-                                              1355702400L : 15.237810842 }
-                          },
-        'data'          : { 'Full stream' : { 1355616000L : 14.754501202,
-                                              1355702400L : 15.237810842 }
-                          },
-        'unit'          : 'MB',
-        'granularity'   : 86400
-      }
-    """
+        accumMaxValue = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "bytes")
 
-    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'PhysicalSize', 'entriesInBucket'
-                                                          ]
-                    )
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
+        # 3rd variable unused ( maxValue )
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    accumMaxValue = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "bytes")
+    def _plotPhysicalSpace(self, reportRequest, plotInfo, filename):
+        """Creates <filename>.png file containing information regarding the PFN
+        size and the physical space.
 
-    # 3rd variable unused ( maxValue )
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        :param reportRequest: <dict>
+          { 'grouping'       : 'EventType',
+            'groupingFields' : ( '%s', [ 'EventType' ] ),
+            'startTime'      : 1355663249.0,
+            'endTime'        : 1355749690.0,
+            'condDict'       : { 'EventType' : 'Full stream' }
+          }
+        :param plotInfo: <dict> ( output of _reportPhysicalSpace )
+          { 'graphDataDict' : { 'Full stream' : { 1355616000L : 14.754501202,
+                                                  1355702400L : 15.237810842 }
+                              },
+            'data'          : { 'Full stream' : { 1355616000L : 14.754501202,
+                                                  1355702400L : 15.237810842 }
+                              },
+            'unit'          : 'MB',
+            'granularity'   : 86400
+          }
+        :param filename: <str>
+          '_plotPhysicalSpace'
 
-    return S_OK({
-        'data': baseDataDict,
-        'graphDataDict': graphDataDict,
-        'granularity': granularity,
-        'unit': unitName
-    })
+        returns S_OK / S_ERROR
+           { 'plot': True, 'thumbnail': False }
+        """
 
-  def _plotPhysicalSpace(self, reportRequest, plotInfo, filename):
-    """Creates <filename>.png file containing information regarding the PFN
-    size and the physical space.
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+        dataDict = plotInfo["graphDataDict"]
 
-    :param reportRequest: <dict>
-      { 'grouping'       : 'EventType',
-        'groupingFields' : ( '%s', [ 'EventType' ] ),
-        'startTime'      : 1355663249.0,
-        'endTime'        : 1355749690.0,
-        'condDict'       : { 'EventType' : 'Full stream' }
-      }
-    :param plotInfo: <dict> ( output of _reportPhysicalSpace )
-      { 'graphDataDict' : { 'Full stream' : { 1355616000L : 14.754501202,
-                                              1355702400L : 15.237810842 }
-                          },
-        'data'          : { 'Full stream' : { 1355616000L : 14.754501202,
-                                              1355702400L : 15.237810842 }
-                          },
-        'unit'          : 'MB',
-        'granularity'   : 86400
-      }
-    :param filename: <str>
-      '_plotPhysicalSpace'
+        metadata = {
+            "title": "PFN space usage by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
 
-    returns S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }
-    """
+        dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+        return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-    dataDict = plotInfo['graphDataDict']
+    # .............................................................................
+    # Physical Files
 
-    metadata = {'title': "PFN space usage by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
+    _reportPhysicalFilesName = "PFN files"
 
-    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
-    return self._generateStackedLinePlot(filename, dataDict, metadata)
+    def _reportPhysicalFiles(self, reportRequest):
+        """Reports about the PFN files and the physical files from the accounting.
 
-  # .............................................................................
-  # Physical Files
+        :param reportRequest: <dict>
+           { 'grouping'       : 'EventType',
+             'groupingFields' : ( '%s', [ 'EventType' ] ),
+             'startTime'      : 1355663249.0,
+             'endTime'        : 1355749690.0,
+             'condDict'       : { 'EventType' : 'Full stream' }
+           }
 
-  _reportPhysicalFilesName = "PFN files"
+        returns S_OK / S_ERROR
+          { 'graphDataDict' : { 'Full stream' : { 1355616000L : 42.47885754501203,
+                                                  1355702400L : 38.35170637810842 }
+                              },
+            'data'          : { 'Full stream' : { 1355616000L : 42.47885754501203,
+                                                  1355702400L : 38.35170637810842 }
+                              },
+            'unit'          : 'files',
+            'granularity'   : 86400
+          }
+        """
 
-  def _reportPhysicalFiles(self, reportRequest):
-    """Reports about the PFN files and the physical files from the accounting.
+        selectString = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectString + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "PhysicalFiles", "entriesInBucket"],
+        )
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    :param reportRequest: <dict>
-       { 'grouping'       : 'EventType',
-         'groupingFields' : ( '%s', [ 'EventType' ] ),
-         'startTime'      : 1355663249.0,
-         'endTime'        : 1355749690.0,
-         'condDict'       : { 'EventType' : 'Full stream' }
-       }
+        accumMaxValue = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "files")
 
-    returns S_OK / S_ERROR
-      { 'graphDataDict' : { 'Full stream' : { 1355616000L : 42.47885754501203,
-                                              1355702400L : 38.35170637810842 }
-                          },
-        'data'          : { 'Full stream' : { 1355616000L : 42.47885754501203,
-                                              1355702400L : 38.35170637810842 }
-                          },
-        'unit'          : 'files',
-        'granularity'   : 86400
-      }
-    """
+        # 3rd variable unused ( maxValue )
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    selectString = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectString + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'PhysicalFiles', 'entriesInBucket'
-                                                          ]
-                    )
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    accumMaxValue = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, "files")
+    def _plotPhysicalFiles(self, reportRequest, plotInfo, filename):
+        """Creates <filename>.png file containing information regarding the PFN
+        files and the physical files.
 
-    # 3rd variable unused ( maxValue )
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        :param reportRequest: <dict>
+           { 'grouping'       : 'EventType',
+             'groupingFields' : ( '%s', [ 'EventType' ] ),
+             'startTime'      : 1355663249.0,
+             'endTime'        : 1355749690.0,
+             'condDict'       : { 'EventType' : 'Full stream' }
+           }
+        :param plotInfo: <dict> ( output of _reportPhysicalFiles )
+          { 'graphDataDict' : { 'Full stream' : { 1355616000L: 4.9003546130956819,
+                                                  1355702400L: 4.9050379437065059 }
+                              },
+            'data'          : { 'Full stream' : { 1355616000L: 4900354613.0956821,
+                                                  1355702400L: 4905037943.7065058 }
+                              },
+            'unit'          : 'PB',
+            'granularity'   : 86400
+          }
+        :param filename: <str>
+          '_plotPhysicalFiles'
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+        return S_OK / S_ERROR
+           { 'plot': True, 'thumbnail': False }
+        """
 
-  def _plotPhysicalFiles(self, reportRequest, plotInfo, filename):
-    """Creates <filename>.png file containing information regarding the PFN
-    files and the physical files.
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+        dataDict = plotInfo["graphDataDict"]
 
-    :param reportRequest: <dict>
-       { 'grouping'       : 'EventType',
-         'groupingFields' : ( '%s', [ 'EventType' ] ),
-         'startTime'      : 1355663249.0,
-         'endTime'        : 1355749690.0,
-         'condDict'       : { 'EventType' : 'Full stream' }
-       }
-    :param plotInfo: <dict> ( output of _reportPhysicalFiles )
-      { 'graphDataDict' : { 'Full stream' : { 1355616000L: 4.9003546130956819,
-                                              1355702400L: 4.9050379437065059 }
-                          },
-        'data'          : { 'Full stream' : { 1355616000L: 4900354613.0956821,
-                                              1355702400L: 4905037943.7065058 }
-                          },
-        'unit'          : 'PB',
-        'granularity'   : 86400
-      }
-    :param filename: <str>
-      '_plotPhysicalFiles'
+        metadata = {
+            "title": "Number of PFNs by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
 
-    return S_OK / S_ERROR
-       { 'plot': True, 'thumbnail': False }
-    """
-
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-    dataDict = plotInfo['graphDataDict']
-
-    metadata = {'title': "Number of PFNs by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
-
-    dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
-    return self._generateStackedLinePlot(filename, dataDict, metadata)
+        dataDict = self._fillWithZero(span, startTime, endTime, dataDict)
+        return self._generateStackedLinePlot(filename, dataDict, metadata)

@@ -27,88 +27,90 @@ from DIRAC.WorkloadManagementSystem.Client.InputDataResolution import InputDataR
 __RCSID__ = "$Id$"
 
 
-COMPONENT_NAME = 'LHCbInputDataResolution'
+COMPONENT_NAME = "LHCbInputDataResolution"
 CREATE_CATALOG = False
 
 
-class InputDataResolution (DIRACInputDataResolution):
-  """Define the Input Data Policy."""
+class InputDataResolution(DIRACInputDataResolution):
+    """Define the Input Data Policy."""
 
-  def __init__(self, argumentsDict, bkkClient=None):
-    """Standard constructor."""
-    super(InputDataResolution, self).__init__(argumentsDict)
+    def __init__(self, argumentsDict, bkkClient=None):
+        """Standard constructor."""
+        super(InputDataResolution, self).__init__(argumentsDict)
 
-    if not bkkClient:
-      from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-      self.bkkClient = BookkeepingClient()
-    else:
-      self.bkkClient = bkkClient
+        if not bkkClient:
+            from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-  #############################################################################
-
-  def execute(self):
-    """Given the arguments from the Job Wrapper, this function calls existing
-    utilities in DIRAC to resolve input data according to LHCb VO policy."""
-    result = super(InputDataResolution, self).execute()
-    if not result['OK'] or not result['Value'].get('Successful', {}):
-      return result
-    resolvedData = result['Value']['Successful']
-
-    resolvedData = self._addPfnType(resolvedData)
-    if not resolvedData['OK']:
-      return resolvedData
-    resolvedData = resolvedData['Value']
-
-    # TODO: Below is temporary behaviour to prepend mdf: to resolved TURL(s) for case when not a ROOT file
-    # This instructs the Gaudi applications to use root to access different file types e.g. for MDF.
-    # In the longer term this should be derived from file catalog metadata information.
-    # 24/08/2010 - updated hack to use "mdf:" after udpates from Markus
-    for lfn, mdataList in resolvedData.items():
-      if not isinstance(mdataList, list):
-        mdataList = [mdataList]
-      for mdata in mdataList:
-        if mdata['pfntype'] == 'MDF':
-          mdata['turl'] = 'mdf:' + mdata['turl']
-          self.log.info('Prepending mdf: to TURL for %s' % lfn)
-
-    catalogName = self.arguments['Configuration'].get('CatalogName', 'pool_xml_catalog.xml')
-
-    self.log.verbose('Catalog name will be: %s' % catalogName)
-    appCatalog = PoolXMLSlice(catalogName)
-    check = appCatalog.execute(resolvedData)
-    if not check['OK']:
-      return check
-    return result
-
-  #############################################################################
-
-  def _addPfnType(self, resolvedData):
-    """Add the pfn type to the lfn list in input."""
-
-    typeVersions = self.bkkClient.getFileTypeVersion(list(resolvedData))
-    if not typeVersions['OK']:
-      return typeVersions
-    typeVersions = typeVersions['Value']
-
-    for lfn, mdataList in resolvedData.items():
-
-      if not isinstance(mdataList, list):
-        mdataList = [mdataList]
-      if lfn not in typeVersions:
-        self.log.warn('The file %s do not exist in the BKK, assuming ROOT, unless it is a RAW (MDF)' % lfn)
-        if lfn.split('.')[-1].lower() == 'raw':
-          lfnType = 'MDF'
+            self.bkkClient = BookkeepingClient()
         else:
-          lfnType = 'ROOT'
-      else:
-        self.log.verbose('Adding PFN file type %s for %s' % (typeVersions[lfn], lfn))
-        lfnType = typeVersions[lfn]
+            self.bkkClient = bkkClient
 
-      for mdata in mdataList:
-        mdata['pfntype'] = lfnType
+    #############################################################################
 
-    return S_OK(resolvedData)
+    def execute(self):
+        """Given the arguments from the Job Wrapper, this function calls existing
+        utilities in DIRAC to resolve input data according to LHCb VO policy."""
+        result = super(InputDataResolution, self).execute()
+        if not result["OK"] or not result["Value"].get("Successful", {}):
+            return result
+        resolvedData = result["Value"]["Successful"]
 
-  #############################################################################
+        resolvedData = self._addPfnType(resolvedData)
+        if not resolvedData["OK"]:
+            return resolvedData
+        resolvedData = resolvedData["Value"]
+
+        # TODO: Below is temporary behaviour to prepend mdf: to resolved TURL(s) for case when not a ROOT file
+        # This instructs the Gaudi applications to use root to access different file types e.g. for MDF.
+        # In the longer term this should be derived from file catalog metadata information.
+        # 24/08/2010 - updated hack to use "mdf:" after udpates from Markus
+        for lfn, mdataList in resolvedData.items():
+            if not isinstance(mdataList, list):
+                mdataList = [mdataList]
+            for mdata in mdataList:
+                if mdata["pfntype"] == "MDF":
+                    mdata["turl"] = "mdf:" + mdata["turl"]
+                    self.log.info("Prepending mdf: to TURL for %s" % lfn)
+
+        catalogName = self.arguments["Configuration"].get("CatalogName", "pool_xml_catalog.xml")
+
+        self.log.verbose("Catalog name will be: %s" % catalogName)
+        appCatalog = PoolXMLSlice(catalogName)
+        check = appCatalog.execute(resolvedData)
+        if not check["OK"]:
+            return check
+        return result
+
+    #############################################################################
+
+    def _addPfnType(self, resolvedData):
+        """Add the pfn type to the lfn list in input."""
+
+        typeVersions = self.bkkClient.getFileTypeVersion(list(resolvedData))
+        if not typeVersions["OK"]:
+            return typeVersions
+        typeVersions = typeVersions["Value"]
+
+        for lfn, mdataList in resolvedData.items():
+
+            if not isinstance(mdataList, list):
+                mdataList = [mdataList]
+            if lfn not in typeVersions:
+                self.log.warn("The file %s do not exist in the BKK, assuming ROOT, unless it is a RAW (MDF)" % lfn)
+                if lfn.split(".")[-1].lower() == "raw":
+                    lfnType = "MDF"
+                else:
+                    lfnType = "ROOT"
+            else:
+                self.log.verbose("Adding PFN file type %s for %s" % (typeVersions[lfn], lfn))
+                lfnType = typeVersions[lfn]
+
+            for mdata in mdataList:
+                mdata["pfntype"] = lfnType
+
+        return S_OK(resolvedData)
+
+    #############################################################################
+
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

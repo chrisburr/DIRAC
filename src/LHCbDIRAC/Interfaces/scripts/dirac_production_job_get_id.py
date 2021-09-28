@@ -20,54 +20,56 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
-  """usage.
+    """usage.
 
-  Prints script usage
-  """
-  from DIRAC.Core.Base import Script
-  print('Usage: %s <WMS Job ID> [<WMS Job ID>]' % Script.scriptName)
-  DIRAC.exit(2)
+    Prints script usage
+    """
+    from DIRAC.Core.Base import Script
+
+    print("Usage: %s <WMS Job ID> [<WMS Job ID>]" % Script.scriptName)
+    DIRAC.exit(2)
 
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
-  Script.parseCommandLine(ignoreErrors=True)
+    from DIRAC.Core.Base import Script
 
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+    Script.parseCommandLine(ignoreErrors=True)
 
-  args = Script.getPositionalArgs()
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  if len(args) < 1:
-    usage()
+    args = Script.getPositionalArgs()
 
-  jobIDs = []
-  diracProd = DiracProduction()
-  try:
-    jobIDs = [int(jobID) for jobID in args]
-  except Exception as x:
-    print('ERROR WMS JobID(s) must be integers')
-    DIRAC.exit(2)
+    if len(args) < 1:
+        usage()
 
-  exitCode = 0
-  errorList = []
+    jobIDs = []
+    diracProd = DiracProduction()
+    try:
+        jobIDs = [int(jobID) for jobID in args]
+    except Exception as x:
+        print("ERROR WMS JobID(s) must be integers")
+        DIRAC.exit(2)
 
-  for job in jobIDs:
-    result = diracProd.getWMSProdJobID(job, printOutput=True)
-    if 'Message' in result:
-      errorList.append((job, result['Message']))
-      exitCode = 2
-    elif not result:
-      errorList.append((job, 'Null result for getWMSProdJobID() call'))
-      exitCode = 2
-    else:
-      exitCode = 0
+    exitCode = 0
+    errorList = []
 
-  for error in errorList:
-    print("ERROR %s: %s" % error)
+    for job in jobIDs:
+        result = diracProd.getWMSProdJobID(job, printOutput=True)
+        if "Message" in result:
+            errorList.append((job, result["Message"]))
+            exitCode = 2
+        elif not result:
+            errorList.append((job, "Null result for getWMSProdJobID() call"))
+            exitCode = 2
+        else:
+            exitCode = 0
 
-  DIRAC.exit(exitCode)
+    for error in errorList:
+        print("ERROR %s: %s" % error)
+
+    DIRAC.exit(exitCode)
 
 
 if __name__ == "__main__":
-  main()
+    main()

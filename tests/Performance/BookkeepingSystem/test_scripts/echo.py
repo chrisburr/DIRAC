@@ -20,27 +20,27 @@ from __future__ import print_function
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 
 class Transaction(object):
+    def __init__(self):
+        self.custom_timers = {}
 
-  def __init__(self):
-    self.custom_timers = {}
-
-  def run(self):
-    start_time = time.time()
-    retVal = BookkeepingClient().ping()
-    if not retVal['OK']:
-      print('ERROR', retVal['Message'])
-    end_time = time.time()
-    self.custom_timers['Bkk_ResponseTime'] = end_time - start_time
-    self.custom_timers['Bkk_Ping'] = end_time - start_time
+    def run(self):
+        start_time = time.time()
+        retVal = BookkeepingClient().ping()
+        if not retVal["OK"]:
+            print("ERROR", retVal["Message"])
+        end_time = time.time()
+        self.custom_timers["Bkk_ResponseTime"] = end_time - start_time
+        self.custom_timers["Bkk_Ping"] = end_time - start_time
 
 
-if __name__ == '__main__':
-  trans = Transaction()
-  trans.run()
-  print(trans.custom_timers)
+if __name__ == "__main__":
+    trans = Transaction()
+    trans.run()
+    print(trans.custom_timers)

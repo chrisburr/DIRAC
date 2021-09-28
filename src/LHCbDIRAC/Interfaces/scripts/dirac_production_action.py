@@ -22,73 +22,79 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
+    from DIRAC.Core.Base import Script
 
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s <Production ID> |<Production ID>' % Script.scriptName,
-      'Arguments:',
-      '  <Production ID>:      DIRAC Production Id']))
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s <Production ID> |<Production ID>" % Script.scriptName,
+                "Arguments:",
+                "  <Production ID>:      DIRAC Production Id",
+            ]
+        )
+    )
 
-  Script.registerSwitch('t', 'start', "Start the production")
-  Script.registerSwitch('p', 'stop', "Stop the production")
+    Script.registerSwitch("t", "start", "Start the production")
+    Script.registerSwitch("p", "stop", "Stop the production")
 
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.parseCommandLine(ignoreErrors=True)
 
-  args = Script.getPositionalArgs()
-  if len(args) < 1:
-    Script.showHelp(exitCode=2)
+    args = Script.getPositionalArgs()
+    if len(args) < 1:
+        Script.showHelp(exitCode=2)
 
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  Script.parseCommandLine(ignoreErrors=True)
-  args = Script.getPositionalArgs()
+    Script.parseCommandLine(ignoreErrors=True)
+    args = Script.getPositionalArgs()
 
-  diracProd = DiracProduction()
-  exitCode = 0
-  errorList = []
-  start = False
-  stop = False
-  action = ''
+    diracProd = DiracProduction()
+    exitCode = 0
+    errorList = []
+    start = False
+    stop = False
+    action = ""
 
-  switches = Script.getUnprocessedSwitches()
+    switches = Script.getUnprocessedSwitches()
 
-  for switch in switches:
-    opt = switch[0].lower()
+    for switch in switches:
+        opt = switch[0].lower()
 
-    if opt in ('t', 'start'):
-      start = True
-    if opt in ('p', 'stop'):
-      stop = True
+        if opt in ("t", "start"):
+            start = True
+        if opt in ("p", "stop"):
+            stop = True
 
-  if start and stop:
-    print("ERROR: decide if you want to start or stop ( not both ).")
-    DIRAC.exit(2)
-  elif not (start or stop):
-    print("ERROR: decide if you want to start or stop.")
-    DIRAC.exit(2)
-  elif start:
-    action = 'start'
-  elif stop:
-    action = 'stop'
+    if start and stop:
+        print("ERROR: decide if you want to start or stop ( not both ).")
+        DIRAC.exit(2)
+    elif not (start or stop):
+        print("ERROR: decide if you want to start or stop.")
+        DIRAC.exit(2)
+    elif start:
+        action = "start"
+    elif stop:
+        action = "stop"
 
-  for prodID in args:
+    for prodID in args:
 
-    result = diracProd.production(prodID, action, disableCheck=False)
-    if 'Message' in result:
-      errorList.append((prodID, result['Message']))
-      exitCode = 2
-    elif not result:
-      errorList.append((prodID, 'Null result for production() call'))
-      exitCode = 2
-    else:
-      exitCode = 0
+        result = diracProd.production(prodID, action, disableCheck=False)
+        if "Message" in result:
+            errorList.append((prodID, result["Message"]))
+            exitCode = 2
+        elif not result:
+            errorList.append((prodID, "Null result for production() call"))
+            exitCode = 2
+        else:
+            exitCode = 0
 
-  for error in errorList:
-    print("ERROR %s" % error)
+    for error in errorList:
+        print("ERROR %s" % error)
 
-  DIRAC.exit(exitCode)
+    DIRAC.exit(exitCode)
 
 
 if __name__ == "__main__":
-  main()
+    main()

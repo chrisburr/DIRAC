@@ -23,21 +23,20 @@ from LHCbDIRAC.Core.Utilities.ProductionData import preSubmissionLFNs
 
 
 class OutputDataPolicy(object):
-  """class to generate the output Data."""
+    """class to generate the output Data."""
 
-  def __init__(self, paramDict):
-    """Constructor."""
-    self.paramDict = paramDict
+    def __init__(self, paramDict):
+        """Constructor."""
+        self.paramDict = paramDict
 
-  def execute(self):
-    """main loop."""
-    jobDescription = self.paramDict['Job']
-    prodID = self.paramDict['TransformationID']
-    jobID = self.paramDict['TaskID']
+    def execute(self):
+        """main loop."""
+        jobDescription = self.paramDict["Job"]
+        prodID = self.paramDict["TransformationID"]
+        jobID = self.paramDict["TaskID"]
 
-    job = LHCbJob(jobDescription)
-    result = preSubmissionLFNs(job._getParameters(), job.workflow.createCode(),
-                               productionID=prodID, jobID=jobID)
-    if not result['OK']:
-      gLogger.error(result)
-    return result
+        job = LHCbJob(jobDescription)
+        result = preSubmissionLFNs(job._getParameters(), job.workflow.createCode(), productionID=prodID, jobID=jobID)
+        if not result["OK"]:
+            gLogger.error(result)
+        return result

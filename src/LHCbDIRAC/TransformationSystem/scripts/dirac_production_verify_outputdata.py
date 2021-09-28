@@ -20,30 +20,34 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base.Script import parseCommandLine
-  parseCommandLine()
+    from DIRAC.Core.Base.Script import parseCommandLine
 
-  import sys
-  if len(sys.argv) < 2:
-    print('Usage: dirac-production-verify-outputdata transID [transID] [transID]')
-    sys.exit()
-  else:
-    transIDs = [int(arg) for arg in sys.argv[1:]]
+    parseCommandLine()
 
-  from LHCbDIRAC.TransformationSystem.Agent.ValidateOutputDataAgent import ValidateOutputDataAgent
-  from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-  from DIRAC import gLogger
-  import DIRAC
+    import sys
 
-  agent = ValidateOutputDataAgent('Transformation/ValidateOutputDataAgent',
-                                  'Transformation/ValidateOutputDataAgent',
-                                  'dirac-production-verify-outputdata')
-  agent.initialize()
+    if len(sys.argv) < 2:
+        print("Usage: dirac-production-verify-outputdata transID [transID] [transID]")
+        sys.exit()
+    else:
+        transIDs = [int(arg) for arg in sys.argv[1:]]
 
-  client = TransformationClient()
-  for transID in transIDs:
-    agent.checkTransformationIntegrity(transID)
+    from LHCbDIRAC.TransformationSystem.Agent.ValidateOutputDataAgent import ValidateOutputDataAgent
+    from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+    from DIRAC import gLogger
+    import DIRAC
+
+    agent = ValidateOutputDataAgent(
+        "Transformation/ValidateOutputDataAgent",
+        "Transformation/ValidateOutputDataAgent",
+        "dirac-production-verify-outputdata",
+    )
+    agent.initialize()
+
+    client = TransformationClient()
+    for transID in transIDs:
+        agent.checkTransformationIntegrity(transID)
 
 
 if __name__ == "__main__":
-  main()
+    main()

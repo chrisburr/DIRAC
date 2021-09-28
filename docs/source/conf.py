@@ -44,23 +44,23 @@ import diracdoctools.cmd
 from diracdoctools import fakeEnvironment, environmentSetup, DIRAC_DOC_MOCK_LIST
 from diracdoctools.Utilities import setUpReadTheDocsEnvironment, mkdir
 
-logging.basicConfig(level=logging.INFO, format='%(name)s: %(levelname)8s: %(message)s')
-LOG = logging.getLogger('conf.py')
+logging.basicConfig(level=logging.INFO, format="%(name)s: %(levelname)8s: %(message)s")
+LOG = logging.getLogger("conf.py")
 
 
-LHCbDIRACRelease = os.environ.get('LHCbDIRACVERSION', 'integration')
-if os.environ.get('READTHEDOCS') == 'True':
-  LHCbDIRACRelease = os.path.basename(os.path.abspath("../../"))
-  if LHCbDIRACRelease.startswith("rel-"):
-    LHCbDIRACRelease = LHCbDIRACRelease[4:]
+LHCbDIRACRelease = os.environ.get("LHCbDIRACVERSION", "integration")
+if os.environ.get("READTHEDOCS") == "True":
+    LHCbDIRACRelease = os.path.basename(os.path.abspath("../../"))
+    if LHCbDIRACRelease.startswith("rel-"):
+        LHCbDIRACRelease = LHCbDIRACRelease[4:]
 
-LOG.info('LHCbDIRACVERSION is %r', LHCbDIRACRelease)
+LOG.info("LHCbDIRACVERSION is %r", LHCbDIRACRelease)
 
 
-LOG.info('Current location %r', os.getcwd())
-LOG.info('DiracDocTools location %r', diracdoctools.__file__)
-LOG.info('DiracDocTools location %r', diracdoctools.Utilities.__file__)
-LOG.info('DiracDocTools location %r', diracdoctools.cmd.__file__)
+LOG.info("Current location %r", os.getcwd())
+LOG.info("DiracDocTools location %r", diracdoctools.__file__)
+LOG.info("DiracDocTools location %r", diracdoctools.Utilities.__file__)
+LOG.info("DiracDocTools location %r", diracdoctools.cmd.__file__)
 
 
 # ...............................................................................
@@ -70,79 +70,84 @@ LOG.info('DiracDocTools location %r', diracdoctools.cmd.__file__)
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-if os.environ.get('READTHEDOCS') == 'True':
-  setUpReadTheDocsEnvironment(moduleName='LHCbDIRAC')
+if os.environ.get("READTHEDOCS") == "True":
+    setUpReadTheDocsEnvironment(moduleName="LHCbDIRAC")
 
-  # LHCbDIRACPath = os.path.abspath(os.path.join(os.getcwd(), '../..'))
-  # buildfolder = '_build'
-  # mkdir(os.path.abspath('../' + buildfolder))
-  # # We need to have the LHCbDIRAC module somewhere, or we cannot import it,
-  # # as readtheDocs clones the repo into something based on the branchname
-  # if not os.path.exists("../../LHCbDIRAC"):
-  #   LHCbDIRACLink = os.path.abspath(os.path.join(os.getcwd(), "../", buildfolder, "LHCbDIRAC"))
-  #   print "LHCbDIRACLink", LHCbDIRACLink
-  #   if not os.path.exists(LHCbDIRACLink):
-  #     RES = subprocess.check_output(["ln", "-s", LHCbDIRACPath, LHCbDIRACLink])
-  #   LHCbDIRACPath = os.path.abspath(os.path.join(LHCbDIRACLink, ".."))
+    # LHCbDIRACPath = os.path.abspath(os.path.join(os.getcwd(), '../..'))
+    # buildfolder = '_build'
+    # mkdir(os.path.abspath('../' + buildfolder))
+    # # We need to have the LHCbDIRAC module somewhere, or we cannot import it,
+    # # as readtheDocs clones the repo into something based on the branchname
+    # if not os.path.exists("../../LHCbDIRAC"):
+    #   LHCbDIRACLink = os.path.abspath(os.path.join(os.getcwd(), "../", buildfolder, "LHCbDIRAC"))
+    #   print "LHCbDIRACLink", LHCbDIRACLink
+    #   if not os.path.exists(LHCbDIRACLink):
+    #     RES = subprocess.check_output(["ln", "-s", LHCbDIRACPath, LHCbDIRACLink])
+    #   LHCbDIRACPath = os.path.abspath(os.path.join(LHCbDIRACLink, ".."))
 
-  # sys.path.insert(0, LHCbDIRACPath)
+    # sys.path.insert(0, LHCbDIRACPath)
 
-  # # CHRIS: we have to find DIRAC one way or the other...
-  # # Currentl just hard code boooo
-  # diracPath = os.path.join(LHCbDIRACPath, '..')
-  # sys.path.insert(1, diracPath)
+    # # CHRIS: we have to find DIRAC one way or the other...
+    # # Currentl just hard code boooo
+    # diracPath = os.path.join(LHCbDIRACPath, '..')
+    # sys.path.insert(1, diracPath)
 
-  # for path in sys.path:
-  #   os.environ['PYTHONPATH'] = os.environ.get('PYTHONPATH', '') + ":" + path
+    # for path in sys.path:
+    #   os.environ['PYTHONPATH'] = os.environ.get('PYTHONPATH', '') + ":" + path
 
-  # re-create the RST files for the command references
-  LOG.info('Building command reference')
-  from diracdoctools.cmd.commandReference import run as buildCommandReference
-  buildCommandReference(configFile='../docs.conf')
+    # re-create the RST files for the command references
+    LOG.info("Building command reference")
+    from diracdoctools.cmd.commandReference import run as buildCommandReference
 
-  # singlehtml build needs too much memory, so we need to create less code documentation
-  buildType = 'limited' if any('singlehtml' in arg for arg in sys.argv) else 'full'
-  LOG.info('Chosing build type: %r', buildType)
-  from diracdoctools.cmd.codeReference import run as buildCodeDoc
-  buildCodeDoc(configFile='../docs.conf', buildType=buildType)
+    buildCommandReference(configFile="../docs.conf")
 
-  # Update dirac.cfg
-  LOG.info('Concatenating dirac.cfg')
-  from diracdoctools.cmd.concatcfg import run as updateCompleteDiracCFG
-  updateCompleteDiracCFG(configFile='../docs.conf')
+    # singlehtml build needs too much memory, so we need to create less code documentation
+    buildType = "limited" if any("singlehtml" in arg for arg in sys.argv) else "full"
+    LOG.info("Chosing build type: %r", buildType)
+    from diracdoctools.cmd.codeReference import run as buildCodeDoc
+
+    buildCodeDoc(configFile="../docs.conf", buildType=buildType)
+
+    # Update dirac.cfg
+    LOG.info("Concatenating dirac.cfg")
+    from diracdoctools.cmd.concatcfg import run as updateCompleteDiracCFG
+
+    updateCompleteDiracCFG(configFile="../docs.conf")
 
 # -- General configuration -----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',
-              'sphinx.ext.intersphinx',
-              'sphinx.ext.napoleon',
-              'sphinx.ext.graphviz',
-              ]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.graphviz",
+]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'LHCbDIRAC'
-copyright = u'%s, LHCbDIRAC Project' % datetime.datetime.utcnow().year
+project = u"LHCbDIRAC"
+copyright = u"%s, LHCbDIRAC Project" % datetime.datetime.utcnow().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = ''
+version = ""
 # The full version, including alpha/beta/rc tags.
 release = LHCbDIRACRelease
 
@@ -154,7 +159,7 @@ release = LHCbDIRACRelease
 # non-false value, then it is used:
 # today = ''
 # Else, today_fmt is used as the format for a strftime call.
-today_fmt = '%H:%M %d/%m/%Y %Z'
+today_fmt = "%H:%M %d/%m/%Y %Z"
 
 # List of documents that shouldn't be included in the build.
 # unused_docs = []
@@ -162,7 +167,7 @@ today_fmt = '%H:%M %d/%m/%Y %Z'
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
 # ADRI: Ignore old stuff that is not included in the compilation
-exclude_trees = ['AdministratorGuide/Configuration/ConfigurationReference']
+exclude_trees = ["AdministratorGuide/Configuration/ConfigurationReference"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -179,7 +184,7 @@ exclude_trees = ['AdministratorGuide/Configuration/ConfigurationReference']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -189,7 +194,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-html_theme = 'default'
+html_theme = "default"
 
 # CHRIS REDO
 # html_style = 'dirac.css'
@@ -218,16 +223,16 @@ html_title = "LHCbDIRAC Documentation"
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = '_static/favicon.ico'
+html_favicon = "_static/favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-html_last_updated_fmt = '%d/%m/%Y'
+html_last_updated_fmt = "%d/%m/%Y"
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -261,7 +266,7 @@ html_last_updated_fmt = '%d/%m/%Y'
 # html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'LHCbDIRACDocsdoc'
+htmlhelp_basename = "LHCbDIRACDocsdoc"
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -275,8 +280,7 @@ htmlhelp_basename = 'LHCbDIRACDocsdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'LHCbDIRACDocs.tex', u'LHCbDIRAC Documentation',
-     u'LHCbDIRAC Project.', 'manual'),
+    ("index", "LHCbDIRACDocs.tex", u"LHCbDIRAC Documentation", u"LHCbDIRAC Project.", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -307,10 +311,10 @@ latex_documents = [
 #                        'elasticsearch_dsl', 'dateutil', 'PyQt4'
 #                        ]
 
-autodoc_mock_imports = DIRAC_DOC_MOCK_LIST + ['PyQt4', 'MySQLdb']
+autodoc_mock_imports = DIRAC_DOC_MOCK_LIST + ["PyQt4", "MySQLdb"]
 
 # link with the python standard library docs
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/2.7', None),
-    'DIRAC': ('https://dirac.readthedocs.io/en/latest/', None),
+    "python": ("https://docs.python.org/2.7", None),
+    "DIRAC": ("https://dirac.readthedocs.io/en/latest/", None),
 }

@@ -20,60 +20,63 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def __getTransformations(args):
-  from DIRAC.Core.Base import Script
-  if not len(args):
-    print("Specify transformation number...")
-    Script.showHelp()
-  else:
-    ids = args[0].split(",")
-    transList = []
-    for transID in ids:
-      r = transID.split(':')
-      if len(r) > 1:
-        for i in range(int(r[0]), int(r[1]) + 1):
-          transList.append(i)
-      else:
-        transList.append(int(r[0]))
-  return transList
+    from DIRAC.Core.Base import Script
+
+    if not len(args):
+        print("Specify transformation number...")
+        Script.showHelp()
+    else:
+        ids = args[0].split(",")
+        transList = []
+        for transID in ids:
+            r = transID.split(":")
+            if len(r) > 1:
+                for i in range(int(r[0]), int(r[1]) + 1):
+                    transList.append(i)
+            else:
+                transList.append(int(r[0]))
+    return transList
 
 
 def __getTask(transClient, transID, taskID):
-  res = transClient.getTransformationTasks({'TransformationID': transID, "TaskID": taskID})
-  if not res['OK'] or not res['Value']:
-    return None
-  return res['Value'][0]
+    res = transClient.getTransformationTasks({"TransformationID": transID, "TaskID": taskID})
+    if not res["OK"] or not res["Value"]:
+        return None
+    return res["Value"][0]
 
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
-  Script.parseCommandLine(ignoreErrors=True)
-  transList = __getTransformations(Script.getPositionalArgs())
+    from DIRAC.Core.Base import Script
 
-  from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-  from DIRAC import gLogger
-  transClient = TransformationClient()
+    Script.parseCommandLine(ignoreErrors=True)
+    transList = __getTransformations(Script.getPositionalArgs())
 
-  for transID in transList:
-    res = transClient.getTransformationFiles({'TransformationID': transID, 'Status': 'Assigned'})
-    if not res['OK']:
-      gLogger.fatal("Error getting transformation files for %d" % transID)
-      continue
-    targetStats = {}
-    taskDict = {}
-    for fileDict in res['Value']:
-      taskID = fileDict['TaskID']
-      taskDict[taskID] = taskDict.setdefault(taskID, 0) + 1
-    for taskID in taskDict:
-      task = __getTask(transClient, transID, taskID)
-      targetSE = task.get('TargetSE', None)
-      targetStats[targetSE][0] = targetStats.setdefault(targetSE, [0, 0])[0] + taskDict[taskID]
-      targetStats[targetSE][1] += 1
+    from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+    from DIRAC import gLogger
 
-    gLogger.always("Transformation %d: %d assigned files found" % (transID, len(res['Value'])))
-    for targetSE, (nfiles, ntasks) in targetStats.items():
-      gLogger.always("\t%s: %d files in %d tasks" % (targetSE, nfiles, ntasks))
+    transClient = TransformationClient()
+
+    for transID in transList:
+        res = transClient.getTransformationFiles({"TransformationID": transID, "Status": "Assigned"})
+        if not res["OK"]:
+            gLogger.fatal("Error getting transformation files for %d" % transID)
+            continue
+        targetStats = {}
+        taskDict = {}
+        for fileDict in res["Value"]:
+            taskID = fileDict["TaskID"]
+            taskDict[taskID] = taskDict.setdefault(taskID, 0) + 1
+        for taskID in taskDict:
+            task = __getTask(transClient, transID, taskID)
+            targetSE = task.get("TargetSE", None)
+            targetStats[targetSE][0] = targetStats.setdefault(targetSE, [0, 0])[0] + taskDict[taskID]
+            targetStats[targetSE][1] += 1
+
+        gLogger.always("Transformation %d: %d assigned files found" % (transID, len(res["Value"])))
+        for targetSE, (nfiles, ntasks) in targetStats.items():
+            gLogger.always("\t%s: %d files in %d tasks" % (targetSE, nfiles, ntasks))
 
 
 if __name__ == "__main__":
-  main()
+    main()

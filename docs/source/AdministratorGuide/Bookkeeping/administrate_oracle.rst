@@ -256,32 +256,32 @@ Debugging the produpdatejob in case of failure:
 - set serveroutput on
 - exec BKUTILITIES.updateProdOutputFiles();
 
-You will see the problematic production, which you will need to fix. For example: If the production is 22719, you can 
+You will see the problematic production, which you will need to fix. For example: If the production is 22719, you can
 use the following queries for debug:
 
 
 .. code-block:: sql
 
-  SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag 
-    FROM jobs j, files f WHERE 
-      j.jobid = f.jobid AND 
+  SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag
+    FROM jobs j, files f WHERE
+      j.jobid = f.jobid AND
       j.production=22719 and
       f.gotreplica IS NOT NULL and
       f.filetypeid NOT IN(9,17) GROUP BY j.production, J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag Order by f.gotreplica,f.visibilityflag asc;
-  
-  select * from files f, jobs j where 
-      j.jobid = f.jobid AND 
+
+  select * from files f, jobs j where
+      j.jobid = f.jobid AND
       j.production=22719 and
       f.gotreplica IS NOT NULL and
             f.eventtypeid is NULL and
       f.filetypeid NOT IN(9,17);
 
-  update files set eventtypeid=90000000 where fileid in (select f.fileid from files f, jobs j where  j.jobid = f.jobid AND 
+  update files set eventtypeid=90000000 where fileid in (select f.fileid from files f, jobs j where  j.jobid = f.jobid AND
   j.production=22719 and
   f.gotreplica IS NOT NULL and
   f.eventtypeid is NULL and
   f.filetypeid NOT IN(9,17));
-  
+
   commit;
 
 ===============================================
@@ -327,7 +327,7 @@ jobs table partitions
 
 The last partitions called `prodlast` and `runlast`. The maximum value of the `prodlast` partition is MAXVALUE. This may require to split, if we see performance degradation.
 This can happen if two many rows (`jobs`) belong to this partition. The recommended way to split the partition is to declare a down time, because when the partition split then the
-non partitioned indexes become invalid. The non partitioned indexes needs to be recreated, which will block writing to the DB. 
+non partitioned indexes become invalid. The non partitioned indexes needs to be recreated, which will block writing to the DB.
 The procedure for splitting the `prodlast` partition:
 
 .. code-block:: sql
@@ -347,14 +347,14 @@ which result is 83013
 .. code-block:: sql
 
   ALTER TABLE jobs SPLIT PARTITION prodlast AT (83013) INTO (PARTITION prod4, PARTITION prodlast);
-  
+
 Rebuild the non partitioned indexes:
 
 .. code-block:: sql
-   
-   ALTER INDEX SYS_C00302478 REBUILD; 
+
+   ALTER INDEX SYS_C00302478 REBUILD;
    ALTER INDEX JOB_NAME_UNIQUE REBUILD;
-   
+
 files table partitions
 ======================
 
@@ -377,4 +377,3 @@ Database monitoring
 ===================
 
 Various queries are available in the BookkeepingSystem/DB/monitoring.sql file. They can be used for discovering problems such as database locks, broken oracle jobs, sessions, used indexes, etc.
-

@@ -24,58 +24,58 @@ from LHCbDIRAC.ProductionManagementSystem.Agent.ProductionStatusAgent import Pro
 
 @pytest.fixture()
 def psa(monkeypatch):
-  monkeypatch.setattr(AgentModule, '__init__', lambda *a, **kw: None)
-  gDoRealUpdate = PSAModule.gDoRealUpdate
-  gDoRealTracking = PSAModule.gDoRealTracking
-  PSAModule.gDoRealUpdate = False
-  PSAModule.gDoRealTracking = False
-  psa = ProductionStatusAgent(
-      "ProductionManagement/ProductionStatusAgent",
-      "ProductionManagement/ProductionStatusAgent",
-  )
-  psa.log = DIRAC.gLogger
-  yield psa
-  PSAModule.gDoRealUpdate = gDoRealUpdate
-  PSAModule.gDoRealTracking = gDoRealTracking
+    monkeypatch.setattr(AgentModule, "__init__", lambda *a, **kw: None)
+    gDoRealUpdate = PSAModule.gDoRealUpdate
+    gDoRealTracking = PSAModule.gDoRealTracking
+    PSAModule.gDoRealUpdate = False
+    PSAModule.gDoRealTracking = False
+    psa = ProductionStatusAgent(
+        "ProductionManagement/ProductionStatusAgent",
+        "ProductionManagement/ProductionStatusAgent",
+    )
+    psa.log = DIRAC.gLogger
+    yield psa
+    PSAModule.gDoRealUpdate = gDoRealUpdate
+    PSAModule.gDoRealTracking = gDoRealTracking
 
 
 anaProdBase = {
     -86392: {
-        'type': 'AnalysisProduction',
-        'bkTotal': 900,
-        'isDone': False,
-        'isFinished': False,
-        'master': 0,
-        'prTotal': 475522154,
-        'prods': {
+        "type": "AnalysisProduction",
+        "bkTotal": 900,
+        "isDone": False,
+        "isFinished": False,
+        "master": 0,
+        "prTotal": 475522154,
+        "prods": {
             -139165: {
-                'Events': 0,
-                'Used': 0,
-                'filesMaxReset': 0,
-                'filesProcessed': 12387,
-                'filesTotal': 12387,
-                'filesUnused': 0,
-                'hasActiveInput': False,
-                'inputIDs': [-75559, -75557, -79436, -77434],
-                'isIdle': 'Yes',
-                'isProcIdle': 'Yes',
-                'isSimulation': False,
-                'state': 'Active'
+                "Events": 0,
+                "Used": 0,
+                "filesMaxReset": 0,
+                "filesProcessed": 12387,
+                "filesTotal": 12387,
+                "filesUnused": 0,
+                "hasActiveInput": False,
+                "inputIDs": [-75559, -75557, -79436, -77434],
+                "isIdle": "Yes",
+                "isProcIdle": "Yes",
+                "isSimulation": False,
+                "state": "Active",
             },
             -139166: {
-                'Events': 900,
-                'Used': 1,
-                'filesMaxReset': 0,
-                'filesProcessed': 900,
-                'filesTotal': 1275,
-                'filesUnused': 375,
-                'hasActiveInput': True,
-                'inputIDs': [-139165],
-                'isIdle': 'No',
-                'isProcIdle': 'No',
-                'isSimulation': False,
-                'state': 'Active'
-            }
+                "Events": 900,
+                "Used": 1,
+                "filesMaxReset": 0,
+                "filesProcessed": 900,
+                "filesTotal": 1275,
+                "filesUnused": 375,
+                "hasActiveInput": True,
+                "inputIDs": [-139165],
+                "isIdle": "No",
+                "isProcIdle": "No",
+                "isSimulation": False,
+                "state": "Active",
+            },
         },
     }
 }
@@ -86,38 +86,38 @@ statesTestCases += [
     (
         {
             -85397: {
-                'type': 'Simulation',
-                'master': -85318,
-                'bkTotal': 249822,
-                'prTotal': 250000,
-                'isDone': False,
-                'prods': {
+                "type": "Simulation",
+                "master": -85318,
+                "bkTotal": 249822,
+                "prTotal": 250000,
+                "isDone": False,
+                "prods": {
                     -138943: {
-                        'Events': 260179,
-                        'Used': 0,
-                        'state': 'Active',
-                        'isIdle': 'Yes',
-                        'isProcIdle': 'Yes',
-                        'isSimulation': True,
-                        'filesTotal': 0,
-                        'filesProcessed': 0,
-                        'filesUnused': 0,
-                        'filesMaxReset': 0
+                        "Events": 260179,
+                        "Used": 0,
+                        "state": "Active",
+                        "isIdle": "Yes",
+                        "isProcIdle": "Yes",
+                        "isSimulation": True,
+                        "filesTotal": 0,
+                        "filesProcessed": 0,
+                        "filesUnused": 0,
+                        "filesMaxReset": 0,
                     },
                     -138944: {
-                        'Events': 249822,
-                        'Used': 1,
-                        'state': 'Active',
-                        'isIdle': 'No',
-                        'isProcIdle': 'No',
-                        'isSimulation': False,
-                        'filesTotal': 1177,
-                        'filesProcessed': 1132,
-                        'filesUnused': 45,
-                        'filesMaxReset': 0
-                    }
+                        "Events": 249822,
+                        "Used": 1,
+                        "state": "Active",
+                        "isIdle": "No",
+                        "isProcIdle": "No",
+                        "isSimulation": False,
+                        "filesTotal": 1177,
+                        "filesProcessed": 1132,
+                        "filesUnused": 45,
+                        "filesMaxReset": 0,
+                    },
                 },
-                'isFinished': False,
+                "isFinished": False,
             }
         },
         {},
@@ -132,7 +132,7 @@ statesTestCases += [
 statesTestCases += [
     (
         deepcopy(anaProdBase),
-        {-139165: {'from': 'Active', 'to': 'Idle'}},
+        {-139165: {"from": "Active", "to": "Idle"}},
         [],
     )
 ]
@@ -140,7 +140,7 @@ statesTestCases += [
 statesTestCases += [
     (
         deepcopy(anaProdBase),
-        {-139165: {'from': 'Active', 'to': 'Idle'}},
+        {-139165: {"from": "Active", "to": "Idle"}},
         [],
     )
 ]
@@ -151,7 +151,7 @@ statesTestCases[-1][0][-86392]["prods"][-139165]["filesProcessed"] -= 1
 statesTestCases += [
     (
         deepcopy(anaProdBase),
-        {-139165: {'from': 'Idle', 'to': 'Completed'}},
+        {-139165: {"from": "Idle", "to": "Completed"}},
         [],
     )
 ]
@@ -166,7 +166,7 @@ statesTestCases[-1][0][-86392]["prods"][-139165]["filesProcessed"] -= 1
 statesTestCases += [
     (
         deepcopy(anaProdBase),
-        {-139166: {'from': 'Active', 'to': 'Flush'}},
+        {-139166: {"from": "Active", "to": "Flush"}},
         [],
     )
 ]
@@ -195,7 +195,7 @@ anaProdBaseFinished[-86392]["prods"][-139166]["filesProcessed"] = filesTotal
 statesTestCases += [
     (
         deepcopy(anaProdBaseFinished),
-        {-139166: {'from': 'Active', 'to': 'Idle'}},
+        {-139166: {"from": "Active", "to": "Idle"}},
         [],
     )
 ]
@@ -203,7 +203,7 @@ statesTestCases += [
 statesTestCases += [
     (
         deepcopy(anaProdBaseFinished),
-        {-139166: {'from': 'Idle', 'to': 'ValidatingOutput'}},
+        {-139166: {"from": "Idle", "to": "ValidatingOutput"}},
         [],
     )
 ]
@@ -215,7 +215,7 @@ statesTestCases[-1][0][-86392]["prods"][-139166]["state"] = "ValidatingOutput"
 statesTestCases += [
     (
         deepcopy(anaProdBaseFinished),
-        {-139166: {'from': 'ValidatedOutput', 'to': 'Completed'}},
+        {-139166: {"from": "ValidatedOutput", "to": "Completed"}},
         [],
     )
 ]
@@ -227,7 +227,7 @@ statesTestCases[-1][0][-86392]["prods"][-139166]["state"] = "Finished"
 statesTestCases += [
     (
         deepcopy(anaProdBaseFinished),
-        {-139166: {'from': 'Active', 'to': 'Idle'}},
+        {-139166: {"from": "Active", "to": "Idle"}},
         [],
     )
 ]
@@ -244,8 +244,8 @@ statesTestCases[-1][0][-86392]["prods"][-139166]["hasActiveInput"] = True
 
 @pytest.mark.parametrize("prSummary, expected_updatedT, expected_updatedPr", statesTestCases)
 def test_stateTransitions(psa, prSummary, expected_updatedT, expected_updatedPr):
-  psa.prSummary = prSummary
-  updatedT, updatedPr = {}, []
-  psa._applyProductionRequestsLogic(updatedT, updatedPr)
-  assert updatedT == expected_updatedT
-  assert updatedPr == expected_updatedPr
+    psa.prSummary = prSummary
+    updatedT, updatedPr = {}, []
+    psa._applyProductionRequestsLogic(updatedT, updatedPr)
+    assert updatedT == expected_updatedT
+    assert updatedPr == expected_updatedPr

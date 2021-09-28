@@ -25,20 +25,20 @@ from DIRAC.FrameworkSystem.DB.ProxyDB import ProxyDB as DIRACProxyDB
 
 
 class ProxyDB(DIRACProxyDB):
-  """Simple extension for just taking care of the message sent."""
+    """Simple extension for just taking care of the message sent."""
 
-  def _notifyProxyAboutToExpire(self, userDN, lTime):
-    result = Registry.getUsernameForDN(userDN)
-    if not result['OK']:
-      return False
-    userName = result['Value']
-    userEMail = Registry.getUserOption(userName, "Email", "")
-    if not userEMail:
-      gLogger.error("Could not discover user email", userName)
-      return False
-    daysLeft = int(lTime / 86400)
-    msgSubject = "Your proxy uploaded to LHCbDIRAC will expire in %d days" % daysLeft
-    msgBody = """\
+    def _notifyProxyAboutToExpire(self, userDN, lTime):
+        result = Registry.getUsernameForDN(userDN)
+        if not result["OK"]:
+            return False
+        userName = result["Value"]
+        userEMail = Registry.getUserOption(userName, "Email", "")
+        if not userEMail:
+            gLogger.error("Could not discover user email", userName)
+            return False
+        daysLeft = int(lTime / 86400)
+        msgSubject = "Your proxy uploaded to LHCbDIRAC will expire in %d days" % daysLeft
+        msgBody = """\
 Dear %s,
 
   The proxy you uploaded to LHCbDIRAC will expire in aproximately %d days. The proxy
@@ -56,10 +56,14 @@ Dear %s,
 
 Cheers,
  LHCbDIRAC's Proxy Manager
-""" % (userName, daysLeft, userDN)
-    fromAddr = self.getFromAddr()
-    result = self.__notifClient.sendMail(userEMail, msgSubject, msgBody, fromAddress=fromAddr)
-    if not result['OK']:
-      gLogger.error("Could not send email", result['Message'])
-      return False
-    return True
+""" % (
+            userName,
+            daysLeft,
+            userDN,
+        )
+        fromAddr = self.getFromAddr()
+        result = self.__notifClient.sendMail(userEMail, msgSubject, msgBody, fromAddress=fromAddr)
+        if not result["OK"]:
+            gLogger.error("Could not send email", result["Message"])
+            return False
+        return True

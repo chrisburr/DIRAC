@@ -18,4 +18,3 @@ Login to the database
 =====================
 
 How-To in `lbDevOps doc <https://lbdevops.web.cern.ch/lbdevops/DIRACInfrastructure.html#mysql-databases>`_.
-

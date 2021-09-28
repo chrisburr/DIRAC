@@ -27,10 +27,10 @@ testClass = moduleTested.OracleBookkeepingDB
 # self.moduleTested.OracleDB = mock_OracleDB
 
 mock_getDatabaseSection = mock.Mock()
-mock_getDatabaseSection.return_value = '/Systems/Bookkeeping/Development/Databases/BookkeepingDB'
+mock_getDatabaseSection.return_value = "/Systems/Bookkeeping/Development/Databases/BookkeepingDB"
 mock_getDatabaseSection = mock_getDatabaseSection
 mock_gConfig = mock.Mock(spec=gConfig)
-mock_gConfig.getOption.return_value = {'OK': True, 'Value': 'exp1'}
+mock_gConfig.getOption.return_value = {"OK": True, "Value": "exp1"}
 mock_gConfig = mock_gConfig.getOption
 
 moduleTested.getDatabaseSection = mock_getDatabaseSection
@@ -39,75 +39,74 @@ moduleTested.OracleDB = mock.MagicMock()
 
 
 def test_instantiate():
-  """tests that we can instantiate one object of the tested class."""
+    """tests that we can instantiate one object of the tested class."""
 
-  module = testClass()
-  assert module.__class__.__name__ == 'OracleBookkeepingDB'
+    module = testClass()
+    assert module.__class__.__name__ == "OracleBookkeepingDB"
 
 
 def test_buildRunNumbers():
-  """It test the method which used to build the conditions when runnumbers is
-  a list/number, and end run and start run is a number."""
-  client = testClass()
-  runnumbers = [1, 3, 4]
-  startRunID = None
-  endRunID = None
-  condition = ''
-  tables = ''
-  retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
-  assert retVal['OK'] is True
-  outVal = ' and prview.runnumber=j.runnumber  and  (  j.runnumber=1 or  j.runnumber=3 or  j.runnumber=4 ) '
-  assert retVal['Value'] == (outVal,
-                             ' ,prodrunview prview ,productionscontainer cont')
+    """It test the method which used to build the conditions when runnumbers is
+    a list/number, and end run and start run is a number."""
+    client = testClass()
+    runnumbers = [1, 3, 4]
+    startRunID = None
+    endRunID = None
+    condition = ""
+    tables = ""
+    retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    assert retVal["OK"] is True
+    outVal = " and prview.runnumber=j.runnumber  and  (  j.runnumber=1 or  j.runnumber=3 or  j.runnumber=4 ) "
+    assert retVal["Value"] == (outVal, " ,prodrunview prview ,productionscontainer cont")
 
-  startRunID = 1
-  retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
-  assert retVal['OK'] is True
-  assert retVal['Value'] == (outVal,
-                             ' ,prodrunview prview ,productionscontainer cont')
+    startRunID = 1
+    retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    assert retVal["OK"] is True
+    assert retVal["Value"] == (outVal, " ,prodrunview prview ,productionscontainer cont")
 
-  startRunID = None
-  endRunID = 1
-  retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
-  assert retVal['OK'] is True
-  assert retVal['Value'] == (outVal,
-                             ' ,prodrunview prview ,productionscontainer cont')
+    startRunID = None
+    endRunID = 1
+    retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+    assert retVal["OK"] is True
+    assert retVal["Value"] == (outVal, " ,prodrunview prview ,productionscontainer cont")
 
-  startRunID = 1
-  endRunID = 2
-  runnumbers = [33, 44]
-  retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
-  assert retVal['OK'] is True
-  outVal = ' and prview.runnumber=j.runnumber  '
-  outVal += 'and (j.runnumber>=1 and unnumber<=2 or  (  j.runnumber=33 or  j.runnumber=44 ))'
-  assert retVal['Value'] == (outVal, ' ,prodrunview prview ,productionscontainer cont')
-
-  for i in [[], None]:
-    runnumbers = i
     startRunID = 1
     endRunID = 2
+    runnumbers = [33, 44]
     retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
-    assert retVal['OK'] is True
-    assert retVal['Value'] == (' and j.runnumber>=1 and j.runnumber<=2', '')
+    assert retVal["OK"] is True
+    outVal = " and prview.runnumber=j.runnumber  "
+    outVal += "and (j.runnumber>=1 and unnumber<=2 or  (  j.runnumber=33 or  j.runnumber=44 ))"
+    assert retVal["Value"] == (outVal, " ,prodrunview prview ,productionscontainer cont")
+
+    for i in [[], None]:
+        runnumbers = i
+        startRunID = 1
+        endRunID = 2
+        retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
+        assert retVal["OK"] is True
+        assert retVal["Value"] == (" and j.runnumber>=1 and j.runnumber<=2", "")
 
 
 def test_buildConditions():
-  """it test the simulation/data taking condition string creation
-  procedure."""
-  client = testClass()
-  condition = ''
-  tables = ''
-  for i in [[], None, 'ALL']:
-    simdesc = i
-    daqdesc = 'BeamReal'
-    mock_db = mock.Mock(spec=OracleDB)
-    mock_db.query.return_value = {'OK': True, 'Value': [(1,)]}
-    client.dbR_ = mock_db
-    retVal = client._buildConditions(simdesc, daqdesc, condition, tables)
-    assert retVal['OK'] is True
-    assert retVal['Value'] == (
-        ' and cont.DAQPERIODID=1 and cont.DAQPERIODID is not null ',
-        ' ,productionscontainer cont ')
+    """it test the simulation/data taking condition string creation
+    procedure."""
+    client = testClass()
+    condition = ""
+    tables = ""
+    for i in [[], None, "ALL"]:
+        simdesc = i
+        daqdesc = "BeamReal"
+        mock_db = mock.Mock(spec=OracleDB)
+        mock_db.query.return_value = {"OK": True, "Value": [(1,)]}
+        client.dbR_ = mock_db
+        retVal = client._buildConditions(simdesc, daqdesc, condition, tables)
+        assert retVal["OK"] is True
+        assert retVal["Value"] == (
+            " and cont.DAQPERIODID=1 and cont.DAQPERIODID is not null ",
+            " ,productionscontainer cont ",
+        )
+
 
 #   ################################################################################
 #   def test_buildConfiguration(self):

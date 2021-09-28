@@ -20,54 +20,56 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
-  from DIRAC.Core.Base import Script
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-  print('Usage: %s <Command> <Production ID> |<Production ID>' % Script.scriptName)
-  commands = DiracProduction().getProductionCommands()['Value']
-  print("\nCommands include: %s" % ', '.join(commands))
-  print('\nDescription:\n')
-  for n, v in commands.items():
-    print('%s:' % n)
-    for i, j in v.items():
-      print('     %s = %s' % (i, j))
+    from DIRAC.Core.Base import Script
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  DIRAC.exit(2)
+    print("Usage: %s <Command> <Production ID> |<Production ID>" % Script.scriptName)
+    commands = DiracProduction().getProductionCommands()["Value"]
+    print("\nCommands include: %s" % ", ".join(commands))
+    print("\nDescription:\n")
+    for n, v in commands.items():
+        print("%s:" % n)
+        for i, j in v.items():
+            print("     %s = %s" % (i, j))
+
+    DIRAC.exit(2)
 
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
+    from DIRAC.Core.Base import Script
 
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.parseCommandLine(ignoreErrors=True)
 
-  args = Script.getPositionalArgs()
+    args = Script.getPositionalArgs()
 
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
-  diracProd = DiracProduction()
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  if len(args) < 2:
-    usage()
+    diracProd = DiracProduction()
 
-  exitCode = 0
-  errorList = []
-  command = args[0]
+    if len(args) < 2:
+        usage()
 
-  for prodID in args[1:]:
-    result = diracProd.production(prodID, command, disableCheck=False)
-    if 'Message' in result:
-      errorList.append((prodID, result['Message']))
-      exitCode = 2
-    elif not result:
-      errorList.append((prodID, 'Null result for getProduction() call'))
-      exitCode = 2
-    else:
-      exitCode = 0
+    exitCode = 0
+    errorList = []
+    command = args[0]
 
-  for error in errorList:
-    print("ERROR %s: %s" % error)
+    for prodID in args[1:]:
+        result = diracProd.production(prodID, command, disableCheck=False)
+        if "Message" in result:
+            errorList.append((prodID, result["Message"]))
+            exitCode = 2
+        elif not result:
+            errorList.append((prodID, "Null result for getProduction() call"))
+            exitCode = 2
+        else:
+            exitCode = 0
 
-  DIRAC.exit(exitCode)
+    for error in errorList:
+        print("ERROR %s: %s" % error)
+
+    DIRAC.exit(exitCode)
 
 
 if __name__ == "__main__":
-  main()
+    main()

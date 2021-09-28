@@ -21,10 +21,11 @@ __RCSID__ = "$Id$"
 
 
 class InputFile(File):
-  """InputFile class."""
-  #############################################################################
+    """InputFile class."""
 
-  def writeToXML(self):
-    """creates an xml string."""
-    result = '  <InputFile    Name="' + self.getFileName() + '"/>\n'
-    return result
+    #############################################################################
+
+    def writeToXML(self):
+        """creates an xml string."""
+        result = '  <InputFile    Name="' + self.getFileName() + '"/>\n'
+        return result

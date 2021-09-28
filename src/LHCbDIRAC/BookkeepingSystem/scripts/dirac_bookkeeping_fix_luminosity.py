@@ -21,26 +21,32 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerBKSwitches()
+    dmScript = DMScript()
+    dmScript.registerBKSwitches()
 
-  Script.registerSwitch('', 'DoIt', '   Fix the BK database (default No)')
-  Script.registerSwitch(
-      '',
-      'Force',
-      '   Force checking all descendants and not only those of files with bad lumi (default No)')
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile]' % Script.scriptName, ]))
+    Script.registerSwitch("", "DoIt", "   Fix the BK database (default No)")
+    Script.registerSwitch(
+        "", "Force", "   Force checking all descendants and not only those of files with bad lumi (default No)"
+    )
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s [option|cfgfile]" % Script.scriptName,
+            ]
+        )
+    )
 
-  Script.addDefaultOptionValue('LogLevel', 'error')
-  Script.parseCommandLine(ignoreErrors=False)
+    Script.addDefaultOptionValue("LogLevel", "error")
+    Script.parseCommandLine(ignoreErrors=False)
 
-  from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFixLuminosity
-  executeFixLuminosity(dmScript)
+    from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeFixLuminosity
+
+    executeFixLuminosity(dmScript)
 
 
 if __name__ == "__main__":
-  main()
+    main()

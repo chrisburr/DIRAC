@@ -9,7 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''Script to run Executable application'''
+"""Script to run Executable application"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -18,5 +18,5 @@ import os
 import sys
 
 # Main
-if __name__ == '__main__':
-  sys.exit(int(os.system('''echo Hello World''') / 256))
+if __name__ == "__main__":
+    sys.exit(int(os.system("""echo Hello World""") / 256))

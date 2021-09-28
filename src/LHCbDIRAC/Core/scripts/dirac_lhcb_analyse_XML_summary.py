@@ -22,41 +22,39 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
+    from DIRAC.Core.Base import Script
 
-  Script.registerSwitch("f:", "XMLSummary=", "Path to XML summary you wish to analyze (mandatory)")
+    Script.registerSwitch("f:", "XMLSummary=", "Path to XML summary you wish to analyze (mandatory)")
 
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile] ... CE' % Script.scriptName]))
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.setUsageMessage(__doc__ + "\n".join(["Usage:", "  %s [option|cfgfile] ... CE" % Script.scriptName]))
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from DIRAC import gLogger
-  from LHCbDIRAC.Core.Utilities.XMLSummaries import analyseXMLSummary
+    from DIRAC import gLogger
+    from LHCbDIRAC.Core.Utilities.XMLSummaries import analyseXMLSummary
 
-  args = Script.getPositionalArgs()
+    args = Script.getPositionalArgs()
 
-  logFile = ''
-  projectName = ''
+    logFile = ""
+    projectName = ""
 
-  # Start the script and perform checks
-  if args or not Script.getUnprocessedSwitches():
-    Script.showHelp()
+    # Start the script and perform checks
+    if args or not Script.getUnprocessedSwitches():
+        Script.showHelp()
 
-  for switch in Script.getUnprocessedSwitches():
-    if switch[0].lower() in ('f', 'XMLSummary'):
-      logFile = switch[1]
+    for switch in Script.getUnprocessedSwitches():
+        if switch[0].lower() in ("f", "XMLSummary"):
+            logFile = switch[1]
 
-  exitCode = 0
-  try:
-    analyseXMLSummary(logFile, projectName)
-  except Exception as x:
-    gLogger.exception('XML summary analysis failed with exception: "%s"' % x)
-    exitCode = 2
+    exitCode = 0
+    try:
+        analyseXMLSummary(logFile, projectName)
+    except Exception as x:
+        gLogger.exception('XML summary analysis failed with exception: "%s"' % x)
+        exitCode = 2
+        DIRAC.exit(exitCode)
+
     DIRAC.exit(exitCode)
-
-  DIRAC.exit(exitCode)
 
 
 if __name__ == "__main__":
-  main()
+    main()

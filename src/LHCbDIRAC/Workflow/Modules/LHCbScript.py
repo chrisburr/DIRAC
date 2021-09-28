@@ -24,41 +24,40 @@ from LHCbDIRAC.Core.Utilities.RunApplication import LbRunError
 
 
 class LHCbScript(Script):
-  """A simple extension to the DIRAC script module."""
+    """A simple extension to the DIRAC script module."""
 
-  def __init__(self):
-    """c'tor."""
-    self.log = gLogger.getSubLogger('LHCbScript')
-    super(LHCbScript, self).__init__(self.log)
+    def __init__(self):
+        """c'tor."""
+        self.log = gLogger.getSubLogger("LHCbScript")
+        super(LHCbScript, self).__init__(self.log)
 
-    self.systemConfig = 'ANY'
-    self.environment = {}
+        self.systemConfig = "ANY"
+        self.environment = {}
 
-  def _resolveInputVariables(self):
-    """By convention the workflow parameters are resolved here."""
+    def _resolveInputVariables(self):
+        """By convention the workflow parameters are resolved here."""
 
-    super(LHCbScript, self)._resolveInputVariables()
-    super(LHCbScript, self)._resolveInputStep()
+        super(LHCbScript, self)._resolveInputVariables()
+        super(LHCbScript, self)._resolveInputStep()
 
-    self.systemConfig = self.step_commons.get('SystemConfig', self.systemConfig)
+        self.systemConfig = self.step_commons.get("SystemConfig", self.systemConfig)
 
-  def _executeCommand(self):
-    """Executes the self.command (uses systemCall) with binary tag (CMTCONFIG)
-    requested (if not 'ANY')"""
+    def _executeCommand(self):
+        """Executes the self.command (uses systemCall) with binary tag (CMTCONFIG)
+        requested (if not 'ANY')"""
 
-    if self.systemConfig != 'ANY':
-      self.environment = os.environ
-      self.environment['CMTCONFIG'] = self.systemConfig
+        if self.systemConfig != "ANY":
+            self.environment = os.environ
+            self.environment["CMTCONFIG"] = self.systemConfig
 
-    super(LHCbScript, self)._executeCommand()
+        super(LHCbScript, self)._executeCommand()
 
-  def _exitWithError(self, status):
-    """Extended here for treating case of lb-run error codes (and executable
-    name)."""
-    # this is an lb-run specific error
-    if status & 0x40 and not status & 0x80:
-      self.log.error("Exit status is an lb-run specific error", '(%s)' % status)
-      raise LbRunError("Problem setting the environment: lb-run exited with status %d" % status,
-                       DErrno.EWMSRESC)
-    else:
-      super(LHCbScript, self)._exitWithError(status)
+    def _exitWithError(self, status):
+        """Extended here for treating case of lb-run error codes (and executable
+        name)."""
+        # this is an lb-run specific error
+        if status & 0x40 and not status & 0x80:
+            self.log.error("Exit status is an lb-run specific error", "(%s)" % status)
+            raise LbRunError("Problem setting the environment: lb-run exited with status %d" % status, DErrno.EWMSRESC)
+        else:
+            super(LHCbScript, self)._exitWithError(status)

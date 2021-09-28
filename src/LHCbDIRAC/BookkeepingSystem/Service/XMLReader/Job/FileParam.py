@@ -18,44 +18,45 @@ __RCSID__ = "$Id$"
 
 class FileParam:
 
-  """FileParam class."""
-  #############################################################################
+    """FileParam class."""
 
-  def __init__(self):
-    """initialize the class members."""
-    self.name_ = ""
-    self.value_ = ""
+    #############################################################################
 
-  #############################################################################
-  def setParamName(self, name):
-    """sets the file parameter."""
-    self.name_ = name
+    def __init__(self):
+        """initialize the class members."""
+        self.name_ = ""
+        self.value_ = ""
 
-  #############################################################################
-  def getParamName(self):
-    """returns the file parameter."""
-    return self.name_
+    #############################################################################
+    def setParamName(self, name):
+        """sets the file parameter."""
+        self.name_ = name
 
-  #############################################################################
-  def setParamValue(self, value):
-    """sets the value of the parameter."""
-    self.value_ = value
+    #############################################################################
+    def getParamName(self):
+        """returns the file parameter."""
+        return self.name_
 
-  #############################################################################
-  def getParamValue(self):
-    """returns the value of the parameter."""
-    return self.value_
+    #############################################################################
+    def setParamValue(self, value):
+        """sets the value of the parameter."""
+        self.value_ = value
 
-  #############################################################################
-  def __repr__(self):
-    """formats the output of print."""
-    result = '\nFileParam: \n'
-    result += self.name_ + ' ' + self.value_ + '\n'
-    return result
+    #############################################################################
+    def getParamValue(self):
+        """returns the value of the parameter."""
+        return self.value_
 
-  #############################################################################
-  def writeToXML(self):
-    """creates an xml string."""
-    return '    <Parameter  Name="' + self.getParamName() + '"     Value="' + self.getParamValue() + '"/>\n'
+    #############################################################################
+    def __repr__(self):
+        """formats the output of print."""
+        result = "\nFileParam: \n"
+        result += self.name_ + " " + self.value_ + "\n"
+        return result
 
-  #############################################################################
+    #############################################################################
+    def writeToXML(self):
+        """creates an xml string."""
+        return '    <Parameter  Name="' + self.getParamName() + '"     Value="' + self.getParamValue() + '"/>\n'
+
+    #############################################################################

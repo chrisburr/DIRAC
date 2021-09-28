@@ -20,41 +20,42 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
-  Script.parseCommandLine(ignoreErrors=True)
+    from DIRAC.Core.Base import Script
 
-  import DIRAC
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+    Script.parseCommandLine(ignoreErrors=True)
 
-  args = Script.getPositionalArgs()
+    import DIRAC
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  diracProd = DiracProduction()
+    args = Script.getPositionalArgs()
 
-  exitCode = 0
-  for prodID in args:
-    result = diracProd.getProductionProgress(prodID, printOutput=True)
-    if 'Message' in result:
-      print('Listing production summary failed with message:\n%s' % result['Message'])
-      exitCode = 2
-    elif not result:
-      print('Null result for getProduction() call', prodID)
-      exitCode = 2
-    else:
-      exitCode = 0
+    diracProd = DiracProduction()
 
-  if not args:
-    result = diracProd.getProductionProgress(printOutput=True)
-    if 'Message' in result:
-      print('Listing production summary failed with message:\n%s' % result['Message'])
-      exitCode = 2
-    elif not result:
-      print('Null result for getProduction() call')
-      exitCode = 2
-    else:
-      exitCode = 0
+    exitCode = 0
+    for prodID in args:
+        result = diracProd.getProductionProgress(prodID, printOutput=True)
+        if "Message" in result:
+            print("Listing production summary failed with message:\n%s" % result["Message"])
+            exitCode = 2
+        elif not result:
+            print("Null result for getProduction() call", prodID)
+            exitCode = 2
+        else:
+            exitCode = 0
 
-  DIRAC.exit(exitCode)
+    if not args:
+        result = diracProd.getProductionProgress(printOutput=True)
+        if "Message" in result:
+            print("Listing production summary failed with message:\n%s" % result["Message"])
+            exitCode = 2
+        elif not result:
+            print("Null result for getProduction() call")
+            exitCode = 2
+        else:
+            exitCode = 0
+
+    DIRAC.exit(exitCode)
 
 
 if __name__ == "__main__":
-  main()
+    main()

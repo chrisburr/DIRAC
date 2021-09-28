@@ -8,7 +8,7 @@ The installation requires two steps:
 
 #. Install the machine:
 
-The machine should be installed using the ``webportal`` puppet template. LHCbWepAppDIRAC is using ``Nginx`` for better performance, which is also puppetized. 
+The machine should be installed using the ``webportal`` puppet template. LHCbWepAppDIRAC is using ``Nginx`` for better performance, which is also puppetized.
 The main configuration file used to install ``Nginx`` can be found `in this gitlab repository <hhttps://gitlab.cern.ch/ai/it-puppet-hostgroup-volhcb/-/blob/master/code/manifests/diracvobox/webportal/nginx.pp>`_ .
 The ``site.conf`` configuration file is used for handling the user requests and pass to the ``Tornado`` based LHCbWebAppDIRAC component. The configuration file can be found in `this repository <https://gitlab.cern.ch/ai/it-puppet-module-dirac/-/blob/qa/code/templates/site.conf.erb>`_ .
 

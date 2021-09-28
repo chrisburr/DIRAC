@@ -22,361 +22,384 @@ __RCSID__ = "$Id$"
 
 
 class UserStoragePlotter(BaseReporter):
-  """UserStoragePlotter as extension of BaseReporter."""
+    """UserStoragePlotter as extension of BaseReporter."""
+
+    _typeName = "UserStorage"
+    _typeKeyFields = [dF[0] for dF in UserStorage().definitionKeyFields]
+
+    ##############################################################################
+    #
+    # Catalog Space
+    #
+
+    _reportCatalogSpaceName = "LFN size"
+
+    def _reportCatalogSpace(self, reportRequest):
+        """Reports about the LFN size and the catalog space from the accounting."""
+
+        if reportRequest["grouping"] == "StorageElement":
+            return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
+
+        _selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            _selectField + ", %s, %s, SUM(%s)/SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "LogicalSize", "entriesInBucket"],
+        )
+
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
+
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
+
+        accumMaxVal = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "bytes")
 
-  _typeName = "UserStorage"
-  _typeKeyFields = [dF[0] for dF in UserStorage().definitionKeyFields]
+        baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
+
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
+
+    def _plotCatalogSpace(self, reportRequest, plotInfo, filename):
+        """Plots about the LFN size and the catalog space."""
+
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+
+        metadata = {
+            "title": "User's LFN space usage by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
+
+        plotInfo["graphDataDict"] = self._fillWithZero(span, startTime, endTime, plotInfo["graphDataDict"])
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
+
+    ##############################################################################
+    #
+    # Catalog Files
+    #
+
+    _reportCatalogFilesName = "LFN files"
+
+    def _reportCatalogFiles(self, reportRequest):
+        """Reports about the LFN files and the catalog files from the
+        accounting."""
+
+        if reportRequest["grouping"] == "StorageElement":
+            return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
+
+        _selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            _selectField + ", %s, %s, SUM(%s)/SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "LogicalFiles", "entriesInBucket"],
+        )
+
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+
+        if not retVal["OK"]:
+            return retVal
 
-  ##############################################################################
-  #
-  # Catalog Space
-  #
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-  _reportCatalogSpaceName = "LFN size"
+        accumMaxVal = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "files")
 
-  def _reportCatalogSpace(self, reportRequest):
-    """Reports about the LFN size and the catalog space from the accounting."""
+        baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
 
-    if reportRequest['grouping'] == "StorageElement":
-      return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    _selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (_selectField + ", %s, %s, SUM(%s)/SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'LogicalSize', 'entriesInBucket'])
+    def _plotCatalogFiles(self, reportRequest, plotInfo, filename):
+        """Plots about the LFN files and the catalog files."""
+
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+
+        metadata = {
+            "title": "User's Number of LFNs by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
 
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
+        plotInfo["graphDataDict"] = self._fillWithZero(span, startTime, endTime, plotInfo["graphDataDict"])
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
 
-    accumMaxVal = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "bytes")
+    ##############################################################################
+    #
+    # Physical Space
+    #
 
-    baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
+    _reportPhysicalSpaceName = "PFN size"
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+    def _reportPhysicalSpace(self, reportRequest):
+        """Reports about the PFN size and the physical space from the
+        accounting."""
 
-  def _plotCatalogSpace(self, reportRequest, plotInfo, filename):
-    """Plots about the LFN size and the catalog space."""
+        _selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            _selectField + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "PhysicalSize", "entriesInBucket"],
+        )
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
 
-    metadata = {'title': "User's LFN space usage by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
+        if not retVal["OK"]:
+            return retVal
 
-    plotInfo['graphDataDict'] = self._fillWithZero(span, startTime, endTime, plotInfo['graphDataDict'])
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-  ##############################################################################
-  #
-  # Catalog Files
-  #
+        accumMaxVal = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "bytes")
 
-  _reportCatalogFilesName = "LFN files"
+        baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
 
-  def _reportCatalogFiles(self, reportRequest):
-    """Reports about the LFN files and the catalog files from the
-    accounting."""
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    if reportRequest['grouping'] == "StorageElement":
-      return S_ERROR("Grouping by storage element when requesting lfn info makes no sense")
+    def _plotPhysicalSpace(self, reportRequest, plotInfo, filename):
+        """Plots about the PFN size and the physical space."""
 
-    _selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (_selectField + ", %s, %s, SUM(%s)/SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'LogicalFiles', 'entriesInBucket'])
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
 
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
+        metadata = {
+            "title": "User's PFN space usage by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
 
-    if not retVal['OK']:
-      return retVal
+        plotInfo["graphDataDict"] = self._fillWithZero(span, startTime, endTime, plotInfo["graphDataDict"])
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
 
-    accumMaxVal = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "files")
+    ##############################################################################
+    #
+    # Physical Files
+    #
 
-    baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
+    _reportPhysicalFilesName = "PFN files"
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+    def _reportPhysicalFiles(self, reportRequest):
+        """Reports about the PFN files and the physical files from the
+        accounting."""
 
-  def _plotCatalogFiles(self, reportRequest, plotInfo, filename):
-    """Plots about the LFN files and the catalog files."""
+        _selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            _selectField + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "PhysicalFiles", "entriesInBucket"],
+        )
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
 
-    metadata = {'title': "User's Number of LFNs by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
+        if not retVal["OK"]:
+            return retVal
 
-    plotInfo['graphDataDict'] = self._fillWithZero(span, startTime, endTime, plotInfo['graphDataDict'])
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
+        accumMaxVal = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "files")
 
-  ##############################################################################
-  #
-  # Physical Space
-  #
+        baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
 
-  _reportPhysicalSpaceName = "PFN size"
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-  def _reportPhysicalSpace(self, reportRequest):
-    """Reports about the PFN size and the physical space from the
-    accounting."""
+    def _plotPhysicalFiles(self, reportRequest, plotInfo, filename):
+        """Plots about the PFN files and the physical files."""
 
-    _selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (_selectField + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'PhysicalSize', 'entriesInBucket'])
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
 
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
+        metadata = {
+            "title": "User's Number of PFNs by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
 
-    if not retVal['OK']:
-      return retVal
+        plotInfo["graphDataDict"] = self._fillWithZero(span, startTime, endTime, plotInfo["graphDataDict"])
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
 
-    accumMaxVal = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "bytes")
+    ##############################################################################
+    #
+    # PFN vs LFN File Multiplicity
+    #
 
-    baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
-
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
-
-  def _plotPhysicalSpace(self, reportRequest, plotInfo, filename):
-    """Plots about the PFN size and the physical space."""
-
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-
-    metadata = {'title': "User's PFN space usage by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
-
-    plotInfo['graphDataDict'] = self._fillWithZero(span, startTime, endTime, plotInfo['graphDataDict'])
-
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
-
-  ##############################################################################
-  #
-  # Physical Files
-  #
-
-  _reportPhysicalFilesName = "PFN files"
-
-  def _reportPhysicalFiles(self, reportRequest):
-    """Reports about the PFN files and the physical files from the
-    accounting."""
-
-    _selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (_selectField + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          'PhysicalFiles', 'entriesInBucket'])
-
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-
-    if not retVal['OK']:
-      return retVal
-
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
-
-    accumMaxVal = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxVal, "files")
-
-    baseDataDict, graphDataDict, __maxValue, unitName = suitableUnits
-
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
-
-  def _plotPhysicalFiles(self, reportRequest, plotInfo, filename):
-    """Plots about the PFN files and the physical files."""
-
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-
-    metadata = {'title': "User's Number of PFNs by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
-
-    plotInfo['graphDataDict'] = self._fillWithZero(span, startTime, endTime, plotInfo['graphDataDict'])
-
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
-
-  ##############################################################################
-  #
-  # PFN vs LFN File Multiplicity
-  #
-
-  _reportPFNvsLFNFileMultiplicityName = "PFN/LFN file ratio"
-
-  def _reportPFNvsLFNFileMultiplicity(self, reportRequest):
-    """Reports about the PFN/LFN file ratio from the accounting ( only grouped
-    by user )."""
-
-    if reportRequest['grouping'] == "User":
-      return S_ERROR("Grouping by user when requesting replicas/lfns makes no sense")
-
-    _logicalField = "LogicalFiles"
-    _physicalField = "PhysicalFiles"
-
-    return self.__multiplicityReport(reportRequest, _logicalField, _physicalField)
-
-  def _plotPFNvsLFNFileMultiplicity(self, reportRequest, plotInfo, filename):
-    """Plots about the PFN/LFN file ratio ( only grouped by user )."""
-
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-
-    metadata = {'title': "User's Ratio of PFN/LFN files by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
-
-    plotInfo['graphDataDict'] = self._fillWithZero(span, startTime, endTime, plotInfo['graphDataDict'])
-
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
-
-  ##############################################################################
-  #
-  # PFN vs LFN Size Multiplicity
-  #
-
-  _reportPFNvsLFNSizeMultiplicityName = "PFN/LFN size ratio"
-
-  def _reportPFNvsLFNSizeMultiplicity(self, reportRequest):
-    """Reports about the PFN/LFN size ratio from the accounting ( only grouped
-    by user )."""
-
-    if reportRequest['grouping'] == "User":
-      return S_ERROR("Grouping by user when requesting replicas/lfns makes no sense")
-
-    _logicalField = "LogicalSize"
-    _physicalField = "PhysicalSize"
-
-    return self.__multiplicityReport(reportRequest, _logicalField, _physicalField)
-
-  def _plotPFNvsLFNSizeMultiplicity(self, reportRequest, plotInfo, filename):
-    """Plots about the PFN/LFN size ratio ( only grouped by user )."""
-
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
-    span = plotInfo['granularity']
-
-    metadata = {'title': "User's Ratio of PFN/LFN space used by %s" % reportRequest['grouping'],
-                'starttime': startTime,
-                'endtime': endTime,
-                'span': span,
-                'ylabel': plotInfo['unit']}
-
-    plotInfo['graphDataDict'] = self._fillWithZero(span, startTime, endTime, plotInfo['graphDataDict'])
-
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
-
-  ##############################################################################
-  #
-  # Helpers
-  #
-
-  def __multiplicityReport(self, reportRequest, logicalField, physicalField):
-    """Calculates the ratio between PFN and LFN."""
-
-    # Step 1 get the total LFNs for each bucket
-    selectFields = ("%s, %s, %s, SUM(%s)/SUM(%s)",
-                    ['User', 'startTime', 'bucketLength', logicalField, 'entriesInBucket']
-                    )
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                ('%s', ['User']),
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
-    dataDict, _granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
-    bucketTotals = self._getBucketTotals(dataDict)
-
-    # Step 2 get the total PFNs
-    _selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (_selectField + ", %s, %s, SUM(%s/%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          physicalField, 'entriesInBucket'])
-
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
-
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
-    # Step 3 divide the PFNs by the total amount of LFNs
-    finalData = {}
-    for k in dataDict:
-      for bt in dataDict[k]:
-        if bt in bucketTotals:
-          if k not in finalData:
-            finalData[k] = {}
-          finalData[k][bt] = dataDict[k][bt] / bucketTotals[bt]
-
-    return S_OK({'data': finalData,
-                 'graphDataDict': finalData,
-                 'granularity': granularity,
-                 'unit': 'PFN / LFN'})
+    _reportPFNvsLFNFileMultiplicityName = "PFN/LFN file ratio"
+
+    def _reportPFNvsLFNFileMultiplicity(self, reportRequest):
+        """Reports about the PFN/LFN file ratio from the accounting ( only grouped
+        by user )."""
+
+        if reportRequest["grouping"] == "User":
+            return S_ERROR("Grouping by user when requesting replicas/lfns makes no sense")
+
+        _logicalField = "LogicalFiles"
+        _physicalField = "PhysicalFiles"
+
+        return self.__multiplicityReport(reportRequest, _logicalField, _physicalField)
+
+    def _plotPFNvsLFNFileMultiplicity(self, reportRequest, plotInfo, filename):
+        """Plots about the PFN/LFN file ratio ( only grouped by user )."""
+
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+
+        metadata = {
+            "title": "User's Ratio of PFN/LFN files by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
+
+        plotInfo["graphDataDict"] = self._fillWithZero(span, startTime, endTime, plotInfo["graphDataDict"])
+
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
+
+    ##############################################################################
+    #
+    # PFN vs LFN Size Multiplicity
+    #
+
+    _reportPFNvsLFNSizeMultiplicityName = "PFN/LFN size ratio"
+
+    def _reportPFNvsLFNSizeMultiplicity(self, reportRequest):
+        """Reports about the PFN/LFN size ratio from the accounting ( only grouped
+        by user )."""
+
+        if reportRequest["grouping"] == "User":
+            return S_ERROR("Grouping by user when requesting replicas/lfns makes no sense")
+
+        _logicalField = "LogicalSize"
+        _physicalField = "PhysicalSize"
+
+        return self.__multiplicityReport(reportRequest, _logicalField, _physicalField)
+
+    def _plotPFNvsLFNSizeMultiplicity(self, reportRequest, plotInfo, filename):
+        """Plots about the PFN/LFN size ratio ( only grouped by user )."""
+
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
+        span = plotInfo["granularity"]
+
+        metadata = {
+            "title": "User's Ratio of PFN/LFN space used by %s" % reportRequest["grouping"],
+            "starttime": startTime,
+            "endtime": endTime,
+            "span": span,
+            "ylabel": plotInfo["unit"],
+        }
+
+        plotInfo["graphDataDict"] = self._fillWithZero(span, startTime, endTime, plotInfo["graphDataDict"])
+
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
+
+    ##############################################################################
+    #
+    # Helpers
+    #
+
+    def __multiplicityReport(self, reportRequest, logicalField, physicalField):
+        """Calculates the ratio between PFN and LFN."""
+
+        # Step 1 get the total LFNs for each bucket
+        selectFields = (
+            "%s, %s, %s, SUM(%s)/SUM(%s)",
+            ["User", "startTime", "bucketLength", logicalField, "entriesInBucket"],
+        )
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            ("%s", ["User"]),
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
+        dataDict, _granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
+        bucketTotals = self._getBucketTotals(dataDict)
+
+        # Step 2 get the total PFNs
+        _selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            _selectField + ", %s, %s, SUM(%s/%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", physicalField, "entriesInBucket"],
+        )
+
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
+
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
+        # Step 3 divide the PFNs by the total amount of LFNs
+        finalData = {}
+        for k in dataDict:
+            for bt in dataDict[k]:
+                if bt in bucketTotals:
+                    if k not in finalData:
+                        finalData[k] = {}
+                    finalData[k][bt] = dataDict[k][bt] / bucketTotals[bt]
+
+        return S_OK({"data": finalData, "graphDataDict": finalData, "granularity": granularity, "unit": "PFN / LFN"})
