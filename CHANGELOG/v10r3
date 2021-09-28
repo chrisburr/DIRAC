@@ -1,3 +1,18 @@
+v10r3-pre4
+Based on DIRAC v7r3p4
+LHCbWebDIRAC v5r4-pre1
+LHCbDIRACOS v1r23
+*DataManagementSystem
+
+CHANGE: (!1090) LHCbFTS3Plugin remove hack not to transfer between CTA and Echo
+CHANGE: (!1090) use root to transfer between EOS and CTA
+
+*TransformationSystem
+
+CHANGE: (!1083) import WorkflowTasks from the new location
+
+
+
 v10r3-pre3
 Based on DIRAC v7r3p1
 LHCbWebDIRAC v5r4-pre1
