@@ -80,8 +80,9 @@ stages:
     # Find the latest compatible DIRAC release
     - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
     - echo "Found DIRAC branch $diracBranch"
+    # Query GitHub to find if the rel-vXrY branch exists, fall back to integration if it does not
     - |
-      if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
+      if ! curl --fail --no-progress-meter --head -L "https://codeload.github.com/DIRACGrid/DIRAC/zip/refs/heads/${diracBranch}" > /dev/null; then
         diracBranch="integration"
       fi
     - echo "diracBranch=${diracBranch}"
@@ -219,8 +220,9 @@ integration_tests:
     # Find the latest compatible DIRAC release
     - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
     - echo "Found DIRAC branch $diracBranch"
+    # Query GitHub to find if the rel-vXrY branch exists, fall back to integration if it does not
     - |
-      if ! curl --fail --no-progress-meter https://github.com/DIRACGrid/DIRAC/commit/${diracBranch}.patch > /dev/null; then
+      if ! curl --fail --no-progress-meter --head -L "https://codeload.github.com/DIRACGrid/DIRAC/zip/refs/heads/${diracBranch}" > /dev/null; then
         diracBranch="integration"
       fi
     - echo "diracBranch=${diracBranch}"
