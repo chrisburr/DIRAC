@@ -266,7 +266,8 @@ class SEUsageAgent(AgentModule):
                                 "but with NO replica! For the time being, insert it into "
                                 "problematicDirs table " % dirPath
                             )
-                            # TODO: we should decide what to do in this case. This might happen, but it is a problem at FC level...
+                            # TODO: we should decide what to do in this case.
+                            # This might happen, but it is a problem at FC level...
                             isRegistered = "NotRegisteredInFC"
                         else:  # got some replicas! let's see if there is one for this SE
                             associatedDiracSEs = self.spaceTokens[site][spaceToken]["DiracSEs"]
@@ -292,7 +293,7 @@ class SEUsageAgent(AgentModule):
                                         lfcFiles += int(res["Value"][lfn][se]["Files"])
                                         lfcSize += int(res["Value"][lfn][se]["Size"])
                                         self.log.info("==> the replica is registered in the FC with DiracSE= %s" % se)
-                                        # this is because in the same directory there can be files belonging to (e.g.) DST and M-DST
+                                        # this is because there can be DST and M-DST files in the same directory
                                         if not matchedSE:
                                             matchedSE = se
                                         else:

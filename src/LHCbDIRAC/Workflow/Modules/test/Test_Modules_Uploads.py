@@ -160,14 +160,15 @@ def test_execute(mocker, rmFiles):
                     "/lhcb/MC/2010/DST/00012345/0001/foo.txt",
                     "/lhcb/MC/2010/DST/00012345/0001/bar.txt",
                 ]
-                #          bkc_mock.getFileDescendants.return_value = {'OK': False,
-                #                                                           'rpcStub': ( ( 'Bookkeeping/BookkeepingManager',
-                #                                                                        {'skipCACheck': False,
-                #                                                                         'timeout': 3600} ),
-                #                                                                       'getFileDescendants', ( ['foo'], 9, 0, True ) ),
-                #                                                           'Value': {'Successful': {'foo.txt': ['baaar']},
-                #                                                                     'Failed': [],
-                #                                                                     'NotProcessed': []}}
+                # bkc_mock.getFileDescendants.return_value = {
+                #     'OK': False,
+                #     'rpcStub': (
+                #         ( 'Bookkeeping/BookkeepingManager',
+                #         {'skipCACheck': False,
+                #         'timeout': 3600} ),
+                #         'getFileDescendants', ( ['foo'], 9, 0, True ) ),
+                #     'Value': {'Successful': {'foo.txt': ['baaar']}, 'Failed': [], 'NotProcessed': []}
+                # }
                 fileDescendants = {"foo.txt": ["baaar"]}
                 assert (
                     uod.execute(
@@ -186,14 +187,14 @@ def test_execute(mocker, rmFiles):
                     is False
                 )
 
-                #          bkc_mock.getFileDescendants.return_value = {'OK': True,
-                #                                                           'rpcStub': ( ( 'Bookkeeping/BookkeepingManager',
-                #                                                                        {'skipCACheck': False,
-                #                                                                         'timeout': 3600} ),
-                #                                                                       'getFileDescendants', ( ['foo'], 9, 0, True ) ),
-                #                                                           'Value': {'Successful': {},
-                #                                                                     'Failed': [],
-                #                                                                     'NotProcessed': []}}
+                # bkc_mock.getFileDescendants.return_value = {
+                #     'OK': True,
+                #     'rpcStub': ( (
+                #         'Bookkeeping/BookkeepingManager',
+                #         {'skipCACheck': False, 'timeout': 3600} ),
+                #         'getFileDescendants', ( ['foo'], 9, 0, True ) ),
+                #     'Value': {'Successful': {}, 'Failed': [], 'NotProcessed': []},
+                # }
                 if wf_cs["Request"] == "":
                     continue
                 fileDescendants = {}

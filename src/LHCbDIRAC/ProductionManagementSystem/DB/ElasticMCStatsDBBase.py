@@ -36,8 +36,9 @@ class ElasticMCStatsDBBase(ElasticDB):
         """
 
         self.log.debug(
-            self.__class__.__name__, ".set(): inserting data in %s:%s" % (self.indexName, data)
-        )  # pylint: disable=no-member
+            self.__class__.__name__,
+            ".set(): inserting data in %s:%s" % (self.indexName, data),  # pylint: disable=no-member
+        )
 
         result = self.index(
             self.indexName,  # pylint: disable=no-member
