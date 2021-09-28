@@ -9,6 +9,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+from __future__ import print_function
+
 import argparse
 
 import pprint
@@ -46,7 +48,7 @@ def defaultFetch(dataDict):
   fields = {}
   for key, value in dataDict.items():
     if isinstance(value, dict):
-      # print "CHRIS %s"%dataDict
+      # print("CHRIS %s" % dataDict)
       continue
       fields.update(dict(("%s_%s" % (key, k1), v1) for k1, v1 in value.items()))
     else:
@@ -174,7 +176,7 @@ if __name__ == '__main__':
 
   args = parser.parse_args()
 
-  print args
+  print(args)
 
   with open(args.config, 'r') as configFile:
     config = json.load(configFile)
@@ -184,7 +186,7 @@ if __name__ == '__main__':
     for points, tags in collected_data:
       pprint.pprint(tags)
       pprint.pprint(points)
-      print '\n' * 2
+      print('\n' * 2)
   if args.influx:
     writeDataInInflux(collected_data,
                       host=config['host'],
