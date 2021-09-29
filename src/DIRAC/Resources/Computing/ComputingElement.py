@@ -203,17 +203,12 @@ class ComputingElement(object):
         self.batchSystem = result["Value"]
         return S_OK()
 
-    def loadParallelLibrary(self, parallelLibraryName, workingDirectory="."):
+    def loadParallelLibrary(self, parallelLibraryName):
         """Instantiate object representing the parallel library that will generate a script to wrap the executable
 
         :param str parallelLibraryName: name of the parallel library
         """
-        result = self._loadCEAttribute(
-            "ParallelLibrary",
-            parallelLibraryName,
-            "Resources.Computing.ParallelLibraries",
-            workingDirectory=workingDirectory,
-        )
+        result = self._loadCEAttribute("ParallelLibrary", parallelLibraryName, "Resources.Computing.ParallelLibraries")
         if not result["OK"]:
             return result
         self.parallelLibrary = result["Value"]
