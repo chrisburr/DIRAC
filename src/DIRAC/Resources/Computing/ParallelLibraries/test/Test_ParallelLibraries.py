@@ -18,6 +18,19 @@ executableContent = """
 echo "hello world"
 """
 
+expectedContent = """#!/bin/bash
+
+cat > srunExec.sh << EOFEXEC
+
+#!/bin/bash
+
+echo "hello world"
+
+EOFEXEC
+chmod 755 srunExec.sh
+srun -l -k srunExec.sh
+"""
+
 srunOutput = """
 1: line1
 1: line2
@@ -61,24 +74,24 @@ srunExpected = [srunExpected1, srunExpected2, srunExpected3]
 
 
 @pytest.fixture
-def generateParallelLibrary(parallelLibrary, parameters):
+def generateParallelLibrary(parallelLibrary):
     """Instantiate the requested Parallel Library"""
     # Instantiate an object from parallelLibrary class
     parallelLibraryPath = "DIRAC.Resources.Computing.ParallelLibraries.%s" % parallelLibrary
     plugin = __import__(parallelLibraryPath, globals(), locals(), [parallelLibrary])  # pylint: disable=unused-variable
     # Need to be reloaded to update the mock within the module, else, it will reuse the one when loaded the first time
     reload_module(plugin)
-    parallelLibraryStr = "plugin.%s(%s)" % (parallelLibrary, parameters)
+    parallelLibraryStr = "plugin.%s()" % (parallelLibrary)
     return eval(parallelLibraryStr)
 
 
 @pytest.mark.parametrize(
-    "parallelLibrary, parameters, expectedFile, expectedContent",
+    "parallelLibrary, expectedContent",
     [
-        ("Srun", "workingDirectory='.'", "./srunExec.sh", "srun"),
+        ("Srun", expectedContent),
     ],
 )
-def test_generateWrapper(generateParallelLibrary, parallelLibrary, parameters, expectedFile, expectedContent):
+def test_generateWrapper(generateParallelLibrary, parallelLibrary, expectedContent):
     """Test generateWrapper()"""
     parallelLibraryInstance = generateParallelLibrary
 
@@ -88,17 +101,9 @@ def test_generateWrapper(generateParallelLibrary, parallelLibrary, parameters, e
 
     res = parallelLibraryInstance.generateWrapper(executableFile)
     # Make sure a wrapper file has been generated and is executable
-    assert res == expectedFile
-    assert os.access(res, os.R_OK | os.X_OK)
-
-    with open(res, "r") as f:
-        wrapperContent = f.read()
-    # Make sure the wrapper contains important keywords and the executable filepath
-    assert expectedContent in wrapperContent
-    assert executableFile in wrapperContent
+    assert res == expectedContent
 
     os.remove(executableFile)
-    os.remove(res)
 
 
 @pytest.mark.parametrize(

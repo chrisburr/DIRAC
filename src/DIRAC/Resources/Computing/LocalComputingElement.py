@@ -108,7 +108,7 @@ class LocalComputingElement(ComputingElement):
 
         parallelLibraryName = self.ceParameters.get("ParallelLibrary")
         if parallelLibraryName:
-            result = self.loadParallelLibrary(parallelLibraryName, self.executableArea)
+            result = self.loadParallelLibrary(parallelLibraryName)
             if not result["OK"]:
                 self.log.error("Failed to load the parallel library plugin %s", parallelLibraryName)
                 return result
@@ -181,16 +181,11 @@ class LocalComputingElement(ComputingElement):
         return S_OK()
 
     def submitJob(self, executableFile, proxy=None, numberOfJobs=1):
-        copyExecutable = os.path.join(self.executableArea, os.path.basename(executableFile))
-        if self.parallelLibrary and executableFile != copyExecutable:
-            # Because we use a parallel library, the executable will become a dependency of the parallel library script
-            # Thus, it has to be defined in a specific area (executableArea) to be found and executed properly
-            # For this reason, we copy the executable from its location to executableArea
-            shutil.copy(executableFile, copyExecutable)
-            executableFile = copyExecutable
 
         if not os.access(executableFile, 5):
             os.chmod(executableFile, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+
+        intermediatesToDelete = []
 
         # if no proxy is supplied, the executable can be submitted directly
         # otherwise a wrapper script is needed to get the proxy to the execution node
@@ -203,12 +198,17 @@ class LocalComputingElement(ComputingElement):
             wrapperContent = bundleProxy(executableFile, proxy)
             name = writeScript(wrapperContent, os.getcwd())
             submitFile = name
+            intermediatesToDelete.append(submitFile)
         else:  # no proxy
             submitFile = executableFile
 
+        # Wrap the executable to be executed multiple times in parallel via a parallel library
         if self.parallelLibrary:
-            # Wrap the executable to be executed multiple times in parallel via a parallel library
-            submitFile = self.parallelLibrary.generateWrapper(submitFile)
+            self.log.verbose("Wrapping payload in a parallel library script")
+            wrapperContent = self.parallelLibrary.generateWrapper(submitFile)
+            name = writeScript(wrapperContent, os.getcwd())
+            submitFile = name
+            intermediatesToDelete.append(submitFile)
 
         jobStamps = []
         for _i in range(numberOfJobs):
@@ -229,8 +229,11 @@ class LocalComputingElement(ComputingElement):
             "NumberOfGPUs": self.numberOfGPUs,
         }
         resultSubmit = self.batchSystem.submitJob(**batchDict)
-        if proxy or self.parallelLibrary:
-            os.remove(submitFile)
+
+        # The removal of the original executable file is handled by the caller
+        # Wrappers generated before submitting the job have to be deleted here
+        for wrapperPath in intermediatesToDelete:
+            os.remove(wrapperPath)
 
         if resultSubmit["Status"] == 0:
             self.submittedJobs += len(resultSubmit["Jobs"])
