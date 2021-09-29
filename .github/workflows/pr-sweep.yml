@@ -1,0 +1,17 @@
+name: PR sweep
+
+on: [push]
+
+jobs:
+  pr-sweep:
+    runs-on: ubuntu-latest
+    concurrency: pr-sweep
+    if: github.repository == 'DIRACGrid-test/DIRAC'
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.PAT }}
+    - uses: aidasoft/pr-sweeper@v1
+      with:
+        github-pat: ${{ secrets.PAT }}
