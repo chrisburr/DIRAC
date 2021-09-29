@@ -587,6 +587,8 @@ class SSHComputingElement(ComputingElement):
         if not os.access(executableFile, 5):
             os.chmod(executableFile, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
 
+        intermediatesToDelete = []
+
         # if no proxy is supplied, the executable can be submitted directly
         # otherwise a wrapper script is needed to get the proxy to the execution node
         # The wrapper script makes debugging more complicated and thus it is
@@ -596,24 +598,27 @@ class SSHComputingElement(ComputingElement):
             wrapperContent = bundleProxy(executableFile, proxy)
             name = writeScript(wrapperContent, os.getcwd())
             submitFile = name
+            intermediatesToDelete.append(submitFile)
         else:  # no proxy
             submitFile = executableFile
 
-        inputs = []
         if self.parallelLibrary:
-            # In this case, the executable becomes an input of a parallel library script.
-            # It needs to be submitted along with the submitFile, which is a parallel library wrapper.
-            inputFile = os.path.join(self.executableArea, os.path.basename(submitFile))
-            inputs.append(inputFile)
-            submitFile = self.parallelLibrary.generateWrapper(inputFile)
+            self.log.verbose("Wrapping payload in a parallel library script")
+            wrapperContent = self.parallelLibrary.generateWrapper(submitFile)
+            name = writeScript(wrapperContent, os.getcwd())
+            submitFile = name
+            intermediatesToDelete.append(submitFile)
 
-        result = self._submitJobToHost(submitFile, numberOfJobs, inputs=inputs)
-        if proxy or self.parallelLibrary:
-            os.remove(submitFile)
+        result = self._submitJobToHost(submitFile, numberOfJobs)
+
+        # The removal of the original executable file is handled by the caller
+        # Wrappers generated before submitting the job have to be deleted here
+        for wrapperPath in intermediatesToDelete:
+            os.remove(wrapperPath)
 
         return result
 
-    def _submitJobToHost(self, executableFile, numberOfJobs, host=None, inputs=None):
+    def _submitJobToHost(self, executableFile, numberOfJobs, host=None):
         """Submit prepared executable to the given host"""
         ssh = SSH(host=host, parameters=self.ceParameters)
         # Copy the executable
@@ -621,14 +626,6 @@ class SSHComputingElement(ComputingElement):
         result = ssh.scpCall(30, executableFile, submitFile, postUploadCommand="chmod +x %s" % submitFile)
         if not result["OK"]:
             return result
-
-        # Copy the executable dependencies if any
-        if inputs:
-            for localInput in inputs:
-                remoteInput = os.path.join(self.executableArea, os.path.basename(localInput))
-                result = ssh.scpCall(30, localInput, remoteInput, postUploadCommand="chmod +x %s" % remoteInput)
-                if not result["OK"]:
-                    return result
 
         jobStamps = []
         for _i in range(numberOfJobs):
