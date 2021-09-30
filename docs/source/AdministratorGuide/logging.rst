@@ -75,11 +75,11 @@ The logs are then consumed by a logstash server (`lbdiraclogstash{01,02}.cern.ch
 Data storage
 ------------
 
-We are using Elasticsearch (ES) to store the data, which is provided by IT `CERN centralized ES service <https://cern.service-now.com/service-portal/service-element.do?name=Elasticsearch-Service>`_. 
+We are using Elasticsearch (ES) to store the data, which is provided by IT `CERN centralized ES service <https://cern.service-now.com/service-portal/service-element.do?name=Elasticsearch-Service>`_.
 The ES configuration can be found in `it-elasticsearch-project repositiry <https://gitlab.cern.ch/it-elasticsearch-project/endpoint-lhcb-dirac-logs-settings>`_.
 
 ------------------
 Data Visualization
------------------- 
+------------------
 
-Kibana is used to visualize the data, which is accessible `in this link <https://es-lhcb-dirac-logs.cern.ch/kibana>`_. To access the Kibana you have to be a member of lhcb-geoc egroup. There are predefined dash boards which you can access under Dash boards menu. 
+Kibana is used to visualize the data, which is accessible `in this link <https://es-lhcb-dirac-logs.cern.ch/kibana>`_. To access the Kibana you have to be a member of lhcb-geoc egroup. There are predefined dash boards which you can access under Dash boards menu.

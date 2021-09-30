@@ -33,47 +33,55 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  # Script initialization
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
-  from DIRAC import gLogger
+    # Script initialization
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from DIRAC import gLogger
 
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [values]' % Script.scriptName, ]))
-  dmScript = DMScript()
-  dmScript.registerBKSwitches()
-  dmScript.registerFileSwitches()
-  Script.registerSwitch('', 'FixIt', '   Take action to fix the catalogs')
-  Script.registerSwitch('', 'CheckAllFlags', '   Consider also files with replica flag NO')
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] [values]" % Script.scriptName,
+            ]
+        )
+    )
+    dmScript = DMScript()
+    dmScript.registerBKSwitches()
+    dmScript.registerFileSwitches()
+    Script.registerSwitch("", "FixIt", "   Take action to fix the catalogs")
+    Script.registerSwitch("", "CheckAllFlags", "   Consider also files with replica flag NO")
+    Script.parseCommandLine(ignoreErrors=True)
 
-  fixIt = False
-  checkAll = False
-  for opt, val in Script.getUnprocessedSwitches():
-    if opt == 'FixIt':
-      fixIt = True
-    elif opt == 'CheckAllFlags':
-      checkAll = True
+    fixIt = False
+    checkAll = False
+    for opt, val in Script.getUnprocessedSwitches():
+        if opt == "FixIt":
+            fixIt = True
+        elif opt == "CheckAllFlags":
+            checkAll = True
 
-  # imports
-  from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
-  gLogger.setLevel('INFO')
-  cc = ConsistencyChecks()
-  bkQuery = dmScript.getBKQuery(visible='All')
-  cc.bkQuery = bkQuery
-  cc.lfns = dmScript.getOption('LFNs', [])
-  productions = dmScript.getOption('Productions', [])
+    # imports
+    from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
 
-  from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckBK2FC
-  if productions:
-    for prod in productions:
-      cc.prod = prod
-      gLogger.always("Processing production %d" % cc.prod)
-      doCheckBK2FC(cc, checkAll, fixIt)
-      gLogger.always("Processed production %d" % cc.prod)
-  else:
-    doCheckBK2FC(cc, checkAll, fixIt)
+    gLogger.setLevel("INFO")
+    cc = ConsistencyChecks()
+    bkQuery = dmScript.getBKQuery(visible="All")
+    cc.bkQuery = bkQuery
+    cc.lfns = dmScript.getOption("LFNs", [])
+    productions = dmScript.getOption("Productions", [])
+
+    from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckBK2FC
+
+    if productions:
+        for prod in productions:
+            cc.prod = prod
+            gLogger.always("Processing production %d" % cc.prod)
+            doCheckBK2FC(cc, checkAll, fixIt)
+            gLogger.always("Processed production %d" % cc.prod)
+    else:
+        doCheckBK2FC(cc, checkAll, fixIt)
 
 
 if __name__ == "__main__":
-  main()
+    main()

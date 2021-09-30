@@ -19,6 +19,7 @@ from __future__ import print_function
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from .MCStatsSampleData import gauss_errors_1
@@ -32,47 +33,47 @@ db = ElasticMCGaussLogErrorsDB()
 
 def test_setandGetandRemove():
 
-  # Remove the index
-  result = db.deleteIndex(db.indexName)
-  assert result['OK'] is True
+    # Remove the index
+    result = db.deleteIndex(db.indexName)
+    assert result["OK"] is True
 
-  # Set
+    # Set
 
-  result = db.set(gauss_errors_1)
-  time.sleep(1)
-  assert result['OK'] is True
-  # Set data2
-  # result = db.set(data2)
-  # time.sleep(1)
-  # assert result['OK'] is True
+    result = db.set(gauss_errors_1)
+    time.sleep(1)
+    assert result["OK"] is True
+    # Set data2
+    # result = db.set(data2)
+    # time.sleep(1)
+    # assert result['OK'] is True
 
-  # # Data insertion is not instantaneous, so sleep is needed
-  # time.sleep(1)
+    # # Data insertion is not instantaneous, so sleep is needed
+    # time.sleep(1)
 
-  # Get
+    # Get
 
-  result = db.get(4)
-  assert result['OK'] is True
-  assert result['Value'] == [gauss_errors_1]
+    result = db.get(4)
+    assert result["OK"] is True
+    assert result["Value"] == [gauss_errors_1]
 
-  # result = db.get(id2)
-  # assert result['OK'] is True
-  # assert result['Value'] == data2
+    # result = db.get(id2)
+    # assert result['OK'] is True
+    # assert result['Value'] == data2
 
-  # Get empty
-  result = db.get(10)  # non-existing
-  assert result['OK'] is True
-  assert result['Value'] == []
+    # Get empty
+    result = db.get(10)  # non-existing
+    assert result["OK"] is True
+    assert result["Value"] == []
 
-  # Remove
-  result = db.remove(4)
-  assert result['OK'] is True
-  # Get again
-  time.sleep(1)
-  result = db.get(4)  # removed now
-  assert result['OK'] is True
-  assert result['Value'] == []
+    # Remove
+    result = db.remove(4)
+    assert result["OK"] is True
+    # Get again
+    time.sleep(1)
+    result = db.get(4)  # removed now
+    assert result["OK"] is True
+    assert result["Value"] == []
 
-  # Remove the index
-  result = db.deleteIndex(db.indexName)
-  assert result['OK'] is True
+    # Remove the index
+    result = db.deleteIndex(db.indexName)
+    assert result["OK"] is True

@@ -22,6 +22,7 @@ import sys
 import unittest
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
@@ -33,41 +34,41 @@ from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 
 
 class RegressionTestCase(IntegrationTest):
-  """ Base class for the Regression test cases
-  """
+    """Base class for the Regression test cases"""
 
-  def setUp(self):
-    super(RegressionTestCase, self).setUp()
+    def setUp(self):
+        super(RegressionTestCase, self).setUp()
 
-    self.diracLHCb = DiracLHCb()
+        self.diracLHCb = DiracLHCb()
 
 
 class MCSuccess(RegressionTestCase):
-  def test_Regression_Production(self):
+    def test_Regression_Production(self):
 
-    location40651 = find_all('40651.xml', '..', 'Regression')[0]
-    j_mc_40651 = LHCbJob(location40651)
-    j_mc_40651.setConfigArgs('pilot.cfg')
+        location40651 = find_all("40651.xml", "..", "Regression")[0]
+        j_mc_40651 = LHCbJob(location40651)
+        j_mc_40651.setConfigArgs("pilot.cfg")
 
-    res = j_mc_40651.runLocal(self.diracLHCb)
-    self.assertTrue(res['OK'])
+        res = j_mc_40651.runLocal(self.diracLHCb)
+        self.assertTrue(res["OK"])
 
-  def test_Regression_Production2(self):
+    def test_Regression_Production2(self):
 
-    location123456 = find_all('123456.xml', '..', 'Regression')[0]
-    j_mc_123456 = LHCbJob(location123456)
-    j_mc_123456.setConfigArgs('pilot.cfg')
+        location123456 = find_all("123456.xml", "..", "Regression")[0]
+        j_mc_123456 = LHCbJob(location123456)
+        j_mc_123456.setConfigArgs("pilot.cfg")
 
-    res = j_mc_123456.runLocal(self.diracLHCb)
-    self.assertTrue(res['OK'])
+        res = j_mc_123456.runLocal(self.diracLHCb)
+        self.assertTrue(res["OK"])
+
 
 #############################################################################
 # Test Suite run
 #############################################################################
 
 
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegressionTestCase)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCSuccess))
-  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
-  sys.exit(not testResult.wasSuccessful())
+if __name__ == "__main__":
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegressionTestCase)
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCSuccess))
+    testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+    sys.exit(not testResult.wasSuccessful())

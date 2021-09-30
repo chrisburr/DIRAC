@@ -21,21 +21,20 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import Script
 
-  Script.registerSwitch('', 'Runs=', 'Run range or list')
-  Script.registerSwitch('', 'ByRange', 'List by range rather than by item value')
-  Script.registerSwitch('', 'Force', 'Include runs even if no FULL stream is present')
-  Script.registerSwitch('', 'DQFlag=', 'Specify the DQ flag (default: all)')
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile] ... ' % Script.scriptName]))
+    Script.registerSwitch("", "Runs=", "Run range or list")
+    Script.registerSwitch("", "ByRange", "List by range rather than by item value")
+    Script.registerSwitch("", "Force", "Include runs even if no FULL stream is present")
+    Script.registerSwitch("", "DQFlag=", "Specify the DQ flag (default: all)")
+    Script.setUsageMessage(__doc__ + "\n".join(["Usage:", "  %s [option|cfgfile] ... " % Script.scriptName]))
 
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeRunInfo
-  executeRunInfo('Tck')
+    from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import executeRunInfo
+
+    executeRunInfo("Tck")
 
 
 if __name__ == "__main__":
-  main()
+    main()

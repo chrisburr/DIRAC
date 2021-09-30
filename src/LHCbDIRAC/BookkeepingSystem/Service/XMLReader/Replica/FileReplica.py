@@ -20,13 +20,13 @@ __RCSID__ = "$Id$"
 
 
 class FileReplica(Replica):
-  """FileReplica class."""
+    """FileReplica class."""
 
-  def writeToXML(self):
-    """creates an xml string."""
-    gLogger.debug("Job Replica XML writing!!!")
-    result = ''
-    for param in self.getaprams():
-      result += param.writeToXML()
+    def writeToXML(self):
+        """creates an xml string."""
+        gLogger.debug("Job Replica XML writing!!!")
+        result = ""
+        for param in self.getaprams():
+            result += param.writeToXML()
 
-    return result
+        return result

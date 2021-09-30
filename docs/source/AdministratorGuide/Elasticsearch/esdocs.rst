@@ -34,7 +34,7 @@ The above are all ES6 instances.
 Elasticsearch performance monitoring
 ------------------------------------
 
-IT/ES provides monitoring tool for monitoring ES instances. You can access `in the following link <https://es-perfmon-lhcb.cern.ch>`_ 
+IT/ES provides monitoring tool for monitoring ES instances. You can access `in the following link <https://es-perfmon-lhcb.cern.ch>`_
 (accessible from inside the CERN network).
 
 ------
@@ -44,7 +44,7 @@ Kibana
 Kibana is used for visualize the data. IT/ES provides a Kibana end point for each ES instance.
 You can access using https://instance/kibana for example: https://es-lhcb-monitoring.cern.ch/kibana
 
-All kibana interfaces are CERN internal web pages. If you are outside of the CERN network you need to follow 
+All kibana interfaces are CERN internal web pages. If you are outside of the CERN network you need to follow
 `these instructions <https://security.web.cern.ch/recommendations/en/ssh_browsing.shtml>`_.
 
 Note: You can access to kibana, if you are in one of the group: lhcb-dirac, lhcb-geoc, lhcb-gridshifters
@@ -60,7 +60,7 @@ searching lhcb. For example for the `logs <https://gitlab.cern.ch/it-elasticsear
 Curator
 -------
 
-Curator can be used for easily manage ES data. It can be used in different purpose. 
+Curator can be used for easily manage ES data. It can be used in different purpose.
 We are using it for deleting indexes that are older a certain date. To setup Curator you need to
 use the ES template repository (see Managing ES templates section.) and create `curator4.actions` file.
 For example: `deleting indexes older a certain period <https://gitlab.cern.ch/it-elasticsearch-project/endpoint-lhcb-dirac-logs-settings/raw/master/curator4.actions>`_.

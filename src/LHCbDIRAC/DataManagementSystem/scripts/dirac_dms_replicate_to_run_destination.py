@@ -22,29 +22,33 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerSiteSwitches()
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerSiteSwitches()
 
-  Script.registerSwitch('', 'RemoveSource', '   If set, the source replica(s) will be removed')
+    Script.registerSwitch("", "RemoveSource", "   If set, the source replica(s) will be removed")
 
-  Script.setUsageMessage(
-      '\n'.join(
-          [
-              __doc__,
-              'Usage:',
-              '  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] Dest[,Dest2[,...]] [Source [Cache]]' %
-              Script.scriptName,
-              'Arguments:',
-              '  Dest:     Valid DIRAC SE(s)']))
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] Dest[,Dest2[,...]] [Source [Cache]]"
+                % Script.scriptName,
+                "Arguments:",
+                "  Dest:     Valid DIRAC SE(s)",
+            ]
+        )
+    )
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeReplicateToRunDestination
-  from DIRAC import exit
-  exit(executeReplicateToRunDestination(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeReplicateToRunDestination
+    from DIRAC import exit
+
+    exit(executeReplicateToRunDestination(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

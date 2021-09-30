@@ -20,44 +20,46 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def usage():
-  """usage.
+    """usage.
 
-  Prints script usage
-  """
-  from DIRAC.Core.Base import Script
-  print('Usage: %s <Production ID> [<DIRAC Site>]' % Script.scriptName)
-  DIRAC.exit(2)
+    Prints script usage
+    """
+    from DIRAC.Core.Base import Script
+
+    print("Usage: %s <Production ID> [<DIRAC Site>]" % Script.scriptName)
+    DIRAC.exit(2)
 
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
-  Script.parseCommandLine(ignoreErrors=True)
+    from DIRAC.Core.Base import Script
 
-  from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
+    Script.parseCommandLine(ignoreErrors=True)
 
-  args = Script.getPositionalArgs()
+    from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
-  if len(args) < 1:
-    usage()
+    args = Script.getPositionalArgs()
 
-  diracProd = DiracProduction()
-  prodID = args[0]
+    if len(args) < 1:
+        usage()
 
-  site = None
-  if len(args) == 2:
-    site = args[1]
+    diracProd = DiracProduction()
+    prodID = args[0]
 
-  result = diracProd.getProductionSiteSummary(prodID, site, printOutput=True)
-  if result['OK']:
-    DIRAC.exit(0)
-  elif 'Message' in result:
-    print('Getting production site summary failed with message:\n%s' % result['Message'])
-    DIRAC.exit(2)
-  else:
-    print('Null result for getProductionSiteSummary() call')
-    DIRAC.exit(2)
+    site = None
+    if len(args) == 2:
+        site = args[1]
+
+    result = diracProd.getProductionSiteSummary(prodID, site, printOutput=True)
+    if result["OK"]:
+        DIRAC.exit(0)
+    elif "Message" in result:
+        print("Getting production site summary failed with message:\n%s" % result["Message"])
+        DIRAC.exit(2)
+    else:
+        print("Null result for getProductionSiteSummary() call")
+        DIRAC.exit(2)
 
 
 if __name__ == "__main__":
-  main()
+    main()

@@ -60,4 +60,3 @@ remove-LFN-from-SE.py
    lfns = [<list of LFNs>]
    #se.exists(lfns)
    #se.removeFile(lfns)
-

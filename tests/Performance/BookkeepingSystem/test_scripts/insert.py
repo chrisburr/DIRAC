@@ -21,19 +21,20 @@ import time
 import datetime
 
 from DIRAC.Core.Base import Script
+
 Script.parseCommandLine(ignoreErrors=True)
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
 cl = BookkeepingClient()
 
 
 class Transaction(object):
-
-  def __init__(self):
-    self.custom_timers = {}
-    self.production = 2
-    self.file1 = "/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_1_%rndfile%.sim"
-    self.xmlStep1 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+    def __init__(self):
+        self.custom_timers = {}
+        self.production = 2
+        self.file1 = "/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_1_%rndfile%.sim"
+        self.xmlStep1 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                       <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                       <TypedParameter Name="CPUTIME" Type="Info" Value="36196.1"/>
@@ -77,8 +78,8 @@ class Transaction(object):
                       </SimulationCondition>
                 </Job>
              """
-    self.file2 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_2_%rndfile%.digi"
-    self.xmlStep2 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file2 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_2_%rndfile%.digi"
+        self.xmlStep2 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="234.52"/>
@@ -120,8 +121,8 @@ class Transaction(object):
                     </OutputFile>
                     </Job>
                     """
-    self.file3 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_3_%rndfile%.digi"
-    self.xmlStep3 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file3 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_3_%rndfile%.digi"
+        self.xmlStep3 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="521.94"/>
@@ -163,8 +164,8 @@ class Transaction(object):
                     </OutputFile>
                     </Job>
                     """
-    self.file4 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_4_%rndfile%.digi"
-    self.xmlStep4 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file4 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_4_%rndfile%.digi"
+        self.xmlStep4 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="677.39"/>
@@ -206,8 +207,8 @@ class Transaction(object):
                     </OutputFile>
                     </Job>
                     """
-    self.file5 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_5_%rndfile%.digi"
-    self.xmlStep5 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file5 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_5_%rndfile%.digi"
+        self.xmlStep5 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="494.27"/>
@@ -249,8 +250,8 @@ class Transaction(object):
                     </OutputFile>
                     </Job>
                     """
-    self.file6 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_6_%rndfile%.digi"
-    self.xmlStep6 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file6 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_6_%rndfile%.digi"
+        self.xmlStep6 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="518.02"/>
@@ -292,8 +293,8 @@ class Transaction(object):
                     </OutputFile>
                     </Job>
                     """
-    self.file7 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_7_%rndfile%.digi"
-    self.xmlStep7 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file7 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_7_%rndfile%.digi"
+        self.xmlStep7 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="641.7"/>
@@ -335,8 +336,8 @@ class Transaction(object):
                     </OutputFile>
                     </Job>
                     """
-    self.file8 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_8_%rndfile%.digi"
-    self.xmlStep8 = """<?xml version="1.0" encoding="ISO-8859-1"?>
+        self.file8 = "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_8_%rndfile%.digi"
+        self.xmlStep8 = """<?xml version="1.0" encoding="ISO-8859-1"?>
                     <!DOCTYPE Job SYSTEM "book.dtd">
                     <Job ConfigName="MC" ConfigVersion="2012" Date="%jDate%" Time="%jTime%">
                     <TypedParameter Name="CPUTIME" Type="Info" Value="472.93"/>
@@ -379,162 +380,162 @@ class Transaction(object):
                     </Job>
                     """
 
-  def __prepareXML(self):
-    steps = []
-    jobStart = datetime.datetime.now()
-    jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)
-    currentTime = datetime.datetime.now()
+    def __prepareXML(self):
+        steps = []
+        jobStart = datetime.datetime.now()
+        jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)
+        currentTime = datetime.datetime.now()
 
-    seq = "%d" % random.randint(0, 9000000)
-    outputfile1 = self.file1.replace('%rndfile%', seq)
-    logfile1 = outputfile1.replace(".sim", ".log")
-    step1 = self.xmlStep1.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step1 = step1.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step1 = step1.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step1 = step1.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step1 = step1.replace("%jobname%", "00056438_00001025_1_%s" % seq)
-    step1 = step1.replace("%jProduction%", str(self.production))
-    step1 = step1.replace("%outputfile1%", outputfile1)
-    step1 = step1.replace("%logfile1%", logfile1)
-    step1 = step1.replace("%jStepid%", "130404")
-    steps.append(step1)
+        seq = "%d" % random.randint(0, 9000000)
+        outputfile1 = self.file1.replace("%rndfile%", seq)
+        logfile1 = outputfile1.replace(".sim", ".log")
+        step1 = self.xmlStep1.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step1 = step1.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step1 = step1.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step1 = step1.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step1 = step1.replace("%jobname%", "00056438_00001025_1_%s" % seq)
+        step1 = step1.replace("%jProduction%", str(self.production))
+        step1 = step1.replace("%outputfile1%", outputfile1)
+        step1 = step1.replace("%logfile1%", logfile1)
+        step1 = step1.replace("%jStepid%", "130404")
+        steps.append(step1)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile2 = self.file2.replace('%rndfile%', seq)
-    logfile2 = outputfile2.replace(".digi", ".log")
-    step2 = self.xmlStep2.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step2 = step2.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step2 = step2.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step2 = step2.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step2 = step2.replace("%jobname%", "00056438_00001025_2_%s" % seq)
-    step2 = step2.replace("%jProduction%", str(self.production))
-    step2 = step2.replace("%inputfile1%", outputfile1)
-    step2 = step2.replace("%outputfile2%", outputfile2)
-    step2 = step2.replace("%logfile2%", logfile2)
-    step2 = step2.replace("%jStepid%", "130405")
-    steps.append(step2)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile2 = self.file2.replace("%rndfile%", seq)
+        logfile2 = outputfile2.replace(".digi", ".log")
+        step2 = self.xmlStep2.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step2 = step2.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step2 = step2.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step2 = step2.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step2 = step2.replace("%jobname%", "00056438_00001025_2_%s" % seq)
+        step2 = step2.replace("%jProduction%", str(self.production))
+        step2 = step2.replace("%inputfile1%", outputfile1)
+        step2 = step2.replace("%outputfile2%", outputfile2)
+        step2 = step2.replace("%logfile2%", logfile2)
+        step2 = step2.replace("%jStepid%", "130405")
+        steps.append(step2)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile3 = self.file3.replace('%rndfile%', seq)
-    logfile3 = outputfile3.replace(".digi", ".log")
-    step3 = self.xmlStep3.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step3 = step3.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step3 = step3.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step3 = step3.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step3 = step3.replace("%jobname%", "00056438_00001025_3_%s" % seq)
-    step3 = step3.replace("%jProduction%", str(self.production))
-    step3 = step3.replace("%inputfile2%", outputfile2)
-    step3 = step3.replace("%outputfile3%", outputfile3)
-    step3 = step3.replace("%logfile3%", logfile3)
-    step3 = step3.replace("%jStepid%", "130406")
-    steps.append(step3)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile3 = self.file3.replace("%rndfile%", seq)
+        logfile3 = outputfile3.replace(".digi", ".log")
+        step3 = self.xmlStep3.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step3 = step3.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step3 = step3.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step3 = step3.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step3 = step3.replace("%jobname%", "00056438_00001025_3_%s" % seq)
+        step3 = step3.replace("%jProduction%", str(self.production))
+        step3 = step3.replace("%inputfile2%", outputfile2)
+        step3 = step3.replace("%outputfile3%", outputfile3)
+        step3 = step3.replace("%logfile3%", logfile3)
+        step3 = step3.replace("%jStepid%", "130406")
+        steps.append(step3)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile4 = self.file4.replace('%rndfile%', seq)
-    logfile4 = outputfile4.replace(".digi", ".log")
-    step4 = self.xmlStep4.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step4 = step4.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step4 = step4.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step4 = step4.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step4 = step4.replace("%jobname%", "00056438_00001025_4_%s" % seq)
-    step4 = step4.replace("%jProduction%", str(self.production))
-    step4 = step4.replace("%inputfile3%", outputfile3)
-    step4 = step4.replace("%outputfile4%", outputfile4)
-    step4 = step4.replace("%logfile4%", logfile4)
-    step4 = step4.replace("%jStepid%", "130407")
-    steps.append(step4)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile4 = self.file4.replace("%rndfile%", seq)
+        logfile4 = outputfile4.replace(".digi", ".log")
+        step4 = self.xmlStep4.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step4 = step4.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step4 = step4.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step4 = step4.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step4 = step4.replace("%jobname%", "00056438_00001025_4_%s" % seq)
+        step4 = step4.replace("%jProduction%", str(self.production))
+        step4 = step4.replace("%inputfile3%", outputfile3)
+        step4 = step4.replace("%outputfile4%", outputfile4)
+        step4 = step4.replace("%logfile4%", logfile4)
+        step4 = step4.replace("%jStepid%", "130407")
+        steps.append(step4)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile5 = self.file5.replace('%rndfile%', seq)
-    logfile5 = outputfile5.replace(".digi", ".log")
-    step5 = self.xmlStep5.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step5 = step5.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step5 = step5.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step5 = step5.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step5 = step5.replace("%inputfile4%", outputfile4)
-    step5 = step5.replace("%outputfile5%", outputfile5)
-    step5 = step5.replace("%logfile5%", logfile5)
-    step5 = step5.replace("%jobname%", "00056438_00001025_5_%s" % seq)
-    step5 = step5.replace("%jProduction%", str(self.production))
-    step5 = step5.replace("%jStepid%", "130408")
-    steps.append(step5)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile5 = self.file5.replace("%rndfile%", seq)
+        logfile5 = outputfile5.replace(".digi", ".log")
+        step5 = self.xmlStep5.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step5 = step5.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step5 = step5.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step5 = step5.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step5 = step5.replace("%inputfile4%", outputfile4)
+        step5 = step5.replace("%outputfile5%", outputfile5)
+        step5 = step5.replace("%logfile5%", logfile5)
+        step5 = step5.replace("%jobname%", "00056438_00001025_5_%s" % seq)
+        step5 = step5.replace("%jProduction%", str(self.production))
+        step5 = step5.replace("%jStepid%", "130408")
+        steps.append(step5)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile6 = self.file6.replace('%rndfile%', seq)
-    logfile6 = outputfile6.replace(".digi", ".log")
-    step6 = self.xmlStep6.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step6 = step6.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step6 = step6.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step6 = step6.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step6 = step6.replace("%jobname%", "00056438_00001025_6_%s" % seq)
-    step6 = step6.replace("%jProduction%", str(self.production))
-    step6 = step6.replace("%inputfile5%", outputfile5)
-    step6 = step6.replace("%outputfile6%", outputfile6)
-    step6 = step6.replace("%logfile6%", logfile6)
-    step6 = step6.replace("%jStepid%", "130409")
-    steps.append(step6)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile6 = self.file6.replace("%rndfile%", seq)
+        logfile6 = outputfile6.replace(".digi", ".log")
+        step6 = self.xmlStep6.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step6 = step6.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step6 = step6.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step6 = step6.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step6 = step6.replace("%jobname%", "00056438_00001025_6_%s" % seq)
+        step6 = step6.replace("%jProduction%", str(self.production))
+        step6 = step6.replace("%inputfile5%", outputfile5)
+        step6 = step6.replace("%outputfile6%", outputfile6)
+        step6 = step6.replace("%logfile6%", logfile6)
+        step6 = step6.replace("%jStepid%", "130409")
+        steps.append(step6)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile7 = self.file7.replace('%rndfile%', seq)
-    logfile7 = outputfile7.replace(".digi", ".log")
-    step7 = self.xmlStep7.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step7 = step7.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step7 = step7.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step7 = step7.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step7 = step7.replace("%jobname%", "00056438_00001025_7_%s" % seq)
-    step7 = step7.replace("%jProduction%", str(self.production))
-    step7 = step7.replace("%inputfile6%", outputfile6)
-    step7 = step7.replace("%outputfile7%", outputfile7)
-    step7 = step7.replace("%logfile7%", logfile7)
-    step7 = step7.replace("%jStepid%", "130410")
-    steps.append(step7)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile7 = self.file7.replace("%rndfile%", seq)
+        logfile7 = outputfile7.replace(".digi", ".log")
+        step7 = self.xmlStep7.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step7 = step7.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step7 = step7.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step7 = step7.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step7 = step7.replace("%jobname%", "00056438_00001025_7_%s" % seq)
+        step7 = step7.replace("%jProduction%", str(self.production))
+        step7 = step7.replace("%inputfile6%", outputfile6)
+        step7 = step7.replace("%outputfile7%", outputfile7)
+        step7 = step7.replace("%logfile7%", logfile7)
+        step7 = step7.replace("%jStepid%", "130410")
+        steps.append(step7)
 
-    seq = "%d" % random.randint(0, 9000000)
-    currentTime = datetime.datetime.now()
-    outputfile8 = self.file8.replace('%rndfile%', seq)
-    logfile8 = outputfile8.replace(".digi", ".log")
-    step8 = self.xmlStep8.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-    step8 = step8.replace("%jTime%", currentTime.strftime('%H:%M'))
-    step8 = step8.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-    step8 = step8.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-    step8 = step8.replace("%jobname%", "00056438_00001025_8_%s" % seq)
-    step8 = step8.replace("%jProduction%", str(self.production))
-    step8 = step8.replace("%inputfile7%", outputfile7)
-    step8 = step8.replace("%outputfile8%", outputfile8)
-    step8 = step8.replace("%logfile8%", logfile8)
-    step8 = step8.replace("%jStepid%", "130411")
-    steps.append(step8)
+        seq = "%d" % random.randint(0, 9000000)
+        currentTime = datetime.datetime.now()
+        outputfile8 = self.file8.replace("%rndfile%", seq)
+        logfile8 = outputfile8.replace(".digi", ".log")
+        step8 = self.xmlStep8.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+        step8 = step8.replace("%jTime%", currentTime.strftime("%H:%M"))
+        step8 = step8.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+        step8 = step8.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+        step8 = step8.replace("%jobname%", "00056438_00001025_8_%s" % seq)
+        step8 = step8.replace("%jProduction%", str(self.production))
+        step8 = step8.replace("%inputfile7%", outputfile7)
+        step8 = step8.replace("%outputfile8%", outputfile8)
+        step8 = step8.replace("%logfile8%", logfile8)
+        step8 = step8.replace("%jStepid%", "130411")
+        steps.append(step8)
 
-    return steps
+        return steps
 
-  def run(self):
-    steps = self.__prepareXML()
-    ostart_time = time.time()
-    i = 0
-    self.custom_timers['Bkk_ERROR'] = 0
-    for step in steps:
-      i += 1
-      start_time = time.time()
-      retVal = cl.sendXMLBookkeepingReport(step)
-      if not retVal['OK']:
-        self.custom_timers['Bkk_ERROR'] = self.custom_timers['Bkk_ERROR'] + 1
-        print(retVal['Message'])
-        return retVal
-      end_time = time.time()
-      self.custom_timers['Bkk_Step%d' % i] = end_time - start_time
+    def run(self):
+        steps = self.__prepareXML()
+        ostart_time = time.time()
+        i = 0
+        self.custom_timers["Bkk_ERROR"] = 0
+        for step in steps:
+            i += 1
+            start_time = time.time()
+            retVal = cl.sendXMLBookkeepingReport(step)
+            if not retVal["OK"]:
+                self.custom_timers["Bkk_ERROR"] = self.custom_timers["Bkk_ERROR"] + 1
+                print(retVal["Message"])
+                return retVal
+            end_time = time.time()
+            self.custom_timers["Bkk_Step%d" % i] = end_time - start_time
 
-    oend_time = time.time()
+        oend_time = time.time()
 
-    self.custom_timers['Bkk_ResponseTime'] = oend_time - ostart_time
+        self.custom_timers["Bkk_ResponseTime"] = oend_time - ostart_time
 
 
-if __name__ == '__main__':
-  trans = Transaction()
-  trans.run()
-  print(trans.custom_timers)
+if __name__ == "__main__":
+    trans = Transaction()
+    trans.run()
+    print(trans.custom_timers)

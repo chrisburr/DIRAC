@@ -23,84 +23,82 @@ from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import 
 
 __RCSID__ = "$Id$"
 
-AGENT_NAME = 'ProductionManagement/RequestTrackingAgent'
+AGENT_NAME = "ProductionManagement/RequestTrackingAgent"
 
 
 class RequestTrackingAgent(AgentModule):
+    def __init__(self, *args, **kwargs):
+        """c'tor."""
+        AgentModule.__init__(self, *args, **kwargs)
 
-  def __init__(self, *args, **kwargs):
-    """c'tor."""
-    AgentModule.__init__(self, *args, **kwargs)
+        self.bkClient = None
+        self.prodReq = None
 
-    self.bkClient = None
-    self.prodReq = None
+    def initialize(self):
+        """Just initializing the clients."""
+        self.bkClient = BookkeepingClient()
+        self.prodReq = ProductionRequestClient()
 
-  def initialize(self):
-    """Just initializing the clients."""
-    self.bkClient = BookkeepingClient()
-    self.prodReq = ProductionRequestClient()
+        return S_OK()
 
-    return S_OK()
-
-  def execute(self):
-    """The RequestTrackingAgent execution method."""
-    result = self.prodReq.getTrackedInput()
-    update = []
-    if result['OK']:
-      gLogger.verbose("Requests tracked: %s" % (','.join([str(req['RequestID']) for req in result['Value']])))
-      for request in result['Value']:
-        result = self.bkInputNumberOfEvents(request)
-        if result['OK']:
-          update.append({'RequestID': request['RequestID'],
-                         'RealNumberOfEvents': result['Value']})
+    def execute(self):
+        """The RequestTrackingAgent execution method."""
+        result = self.prodReq.getTrackedInput()
+        update = []
+        if result["OK"]:
+            gLogger.verbose("Requests tracked: %s" % (",".join([str(req["RequestID"]) for req in result["Value"]])))
+            for request in result["Value"]:
+                result = self.bkInputNumberOfEvents(request)
+                if result["OK"]:
+                    update.append({"RequestID": request["RequestID"], "RealNumberOfEvents": result["Value"]})
+                else:
+                    gLogger.error("Input of %s is not updated: %s" % (str(request["RequestID"]), result["Message"]))
         else:
-          gLogger.error('Input of %s is not updated: %s' %
-                        (str(request['RequestID']), result['Message']))
-    else:
-      gLogger.error('Request service: %s' % result['Message'])
-    if update:
-      result = self.prodReq.updateTrackedInput(update)
-      if not result['OK']:
-        gLogger.error(result['Message'])
+            gLogger.error("Request service: %s" % result["Message"])
+        if update:
+            result = self.prodReq.updateTrackedInput(update)
+            if not result["OK"]:
+                gLogger.error(result["Message"])
 
-    return S_OK('Request Tracking information updated')
+        return S_OK("Request Tracking information updated")
 
-  def bkInputNumberOfEvents(self, request):
-    """Extremely dirty way..."""
-    dq = request.get('inDataQualityFlag', 'ALL')
-    if dq != 'ALL':
-      dq = [str(idq) for idq in dq.replace(' ', '').split(',')]
-    try:
-      condition = {'ProcessingPass': str(request.get('inProPass', '')).strip(),
-                   'FileType': [str(ift) for ift in request.get('inFileType', '').replace(' ', '').split(',')],
-                   'EventType': str(request.get('EventType', '')).replace(' ', ''),
-                   'ConfigName': str(request.get('configName', '')).replace(' ', ''),
-                   'ConfigVersion': str(request.get('configVersion', '')).replace(' ', ''),
-                   'DataQualityFlag': dq
-                   }
-    except KeyError as ke:
-      gLogger.error("%s is incomplete: %s" % (request['RequestID'], repr(ke)))
-      return S_ERROR(repr(ke))
+    def bkInputNumberOfEvents(self, request):
+        """Extremely dirty way..."""
+        dq = request.get("inDataQualityFlag", "ALL")
+        if dq != "ALL":
+            dq = [str(idq) for idq in dq.replace(" ", "").split(",")]
+        try:
+            condition = {
+                "ProcessingPass": str(request.get("inProPass", "")).strip(),
+                "FileType": [str(ift) for ift in request.get("inFileType", "").replace(" ", "").split(",")],
+                "EventType": str(request.get("EventType", "")).replace(" ", ""),
+                "ConfigName": str(request.get("configName", "")).replace(" ", ""),
+                "ConfigVersion": str(request.get("configVersion", "")).replace(" ", ""),
+                "DataQualityFlag": dq,
+            }
+        except KeyError as ke:
+            gLogger.error("%s is incomplete: %s" % (request["RequestID"], repr(ke)))
+            return S_ERROR(repr(ke))
 
-    if 'condType' in request and request['condType'] == 'Run':
-      condition['DataTakingConditions'] = str(request['SimCondition'])
-    else:
-      condition['SimulationConditions'] = str(request['SimCondition'])
-    if str(request['inProductionID']) not in ('0', 'ALL'):
-      condition['Production'] = [int(x) for x in str(request['inProductionID']).split(',')]
-    if 'inTCKs' in request and str(request['inTCKs']) != '':
-      condition['TCK'] = [str(x) for x in str(request['inTCKs']).split(',')]
-    condition['NbOfEvents'] = True
+        if "condType" in request and request["condType"] == "Run":
+            condition["DataTakingConditions"] = str(request["SimCondition"])
+        else:
+            condition["SimulationConditions"] = str(request["SimCondition"])
+        if str(request["inProductionID"]) not in ("0", "ALL"):
+            condition["Production"] = [int(x) for x in str(request["inProductionID"]).split(",")]
+        if "inTCKs" in request and str(request["inTCKs"]) != "":
+            condition["TCK"] = [str(x) for x in str(request["inTCKs"]).split(",")]
+        condition["NbOfEvents"] = True
 
-    gLogger.verbose("Requesting: ", str(condition))
-    result = self.bkClient.getFiles(condition)
-    if not result['OK']:
-      gLogger.error("Error requesting files from BK", result['Message'])
-      return result
-    if not result['Value'][0]:
-      return S_OK(0)
-    try:
-      sum_nr = int(result['Value'][0])
-    except ValueError as e:
-      return S_ERROR("Can not convert result from BK call: %s" % str(e))
-    return S_OK(sum_nr)
+        gLogger.verbose("Requesting: ", str(condition))
+        result = self.bkClient.getFiles(condition)
+        if not result["OK"]:
+            gLogger.error("Error requesting files from BK", result["Message"])
+            return result
+        if not result["Value"][0]:
+            return S_OK(0)
+        try:
+            sum_nr = int(result["Value"][0])
+        except ValueError as e:
+            return S_ERROR("Can not convert result from BK call: %s" % str(e))
+        return S_OK(sum_nr)

@@ -27,7 +27,7 @@ a full explanation of actions can be found in [this KB](https://cern.service-now
 Issue Tracking
 ==============
 
-Issue tracking for the project is [LHCbDIRAC JIRA](https://its.cern.ch/jira/browse/LHCBDIRAC). 
+Issue tracking for the project is [LHCbDIRAC JIRA](https://its.cern.ch/jira/browse/LHCBDIRAC).
 
 
 Code quality

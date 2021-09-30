@@ -102,4 +102,3 @@ Developer tools
 
 You are free to choose the editor or IDE you prefer. If you don't already have a preference the best starting point is `Visual Studio Code <https://code.visualstudio.com/download>`_ which is a very popular modern editor. It has many advanced features, plugins and excellent support for developing remotely via SSH.
 Some other commonly used programs are `vim <http://www.vim.org/>`_, `Emacs <www.gnu.org/s/emacs/>`_, `Sublime <https://www.sublimetext.com/3>`_ with the *Anaconda* package and `PyCharm (IntelliJIDEA) <https://www.jetbrains.com/pycharm/>`_ .
-

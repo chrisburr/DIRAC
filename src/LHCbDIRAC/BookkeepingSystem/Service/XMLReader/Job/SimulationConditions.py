@@ -19,30 +19,31 @@ __RCSID__ = "$Id$"
 
 
 class SimulationConditions:
-  """SimulationConditions class."""
-  #############################################################################
+    """SimulationConditions class."""
 
-  def __init__(self):
-    """initialize the class member."""
-    self.parameters_ = {}
+    #############################################################################
 
-  #############################################################################
-  def addParam(self, name, value):
-    """adds a parameter into the dictionary."""
-    self.parameters_[name] = value
+    def __init__(self):
+        """initialize the class member."""
+        self.parameters_ = {}
 
-  #############################################################################
-  def getParams(self):
-    """returns the parameters."""
-    return self.parameters_
+    #############################################################################
+    def addParam(self, name, value):
+        """adds a parameter into the dictionary."""
+        self.parameters_[name] = value
 
-  #############################################################################
-  def writeToXML(self):
-    """creates the xml string."""
-    gLogger.info("Write Simulation conditions to XML!!")
-    result = '<SimulationCondition>\n'
-    for name, value in self.getParams().items():
-      result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
-    result += '</SimulationCondition>\n'
+    #############################################################################
+    def getParams(self):
+        """returns the parameters."""
+        return self.parameters_
 
-    return result
+    #############################################################################
+    def writeToXML(self):
+        """creates the xml string."""
+        gLogger.info("Write Simulation conditions to XML!!")
+        result = "<SimulationCondition>\n"
+        for name, value in self.getParams().items():
+            result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
+        result += "</SimulationCondition>\n"
+
+        return result

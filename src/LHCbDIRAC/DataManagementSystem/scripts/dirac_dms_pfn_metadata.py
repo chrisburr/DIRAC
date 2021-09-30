@@ -23,26 +23,33 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerSiteSwitches()
-  Script.registerSwitch('', 'Check', '   Checks the PFN metadata vs LFN metadata')
-  Script.registerSwitch('', 'Exists', '   Only reports if the file exists (and checks the checksum)')
-  Script.registerSwitch('', 'Summary', '   Only prints a summary on existing files')
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... [URL[,URL2[,URL3...]]] SE[ SE2...]' % Script.scriptName,
-                                    'Arguments:',
-                                    '  URL:      Logical/Physical File Name or file containing URLs',
-                                    '  SE:       Valid DIRAC SE']))
-  Script.parseCommandLine(ignoreErrors=True)
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerSiteSwitches()
+    Script.registerSwitch("", "Check", "   Checks the PFN metadata vs LFN metadata")
+    Script.registerSwitch("", "Exists", "   Only reports if the file exists (and checks the checksum)")
+    Script.registerSwitch("", "Summary", "   Only prints a summary on existing files")
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] ... [URL[,URL2[,URL3...]]] SE[ SE2...]" % Script.scriptName,
+                "Arguments:",
+                "  URL:      Logical/Physical File Name or file containing URLs",
+                "  SE:       Valid DIRAC SE",
+            ]
+        )
+    )
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executePfnMetadata
-  from DIRAC import exit
-  exit(executePfnMetadata(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executePfnMetadata
+    from DIRAC import exit
+
+    exit(executePfnMetadata(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

@@ -17,72 +17,73 @@ __RCSID__ = "$Id$"
 
 
 class Quality:
-  """Quality class."""
-  #############################################################################
+    """Quality class."""
 
-  def __init__(self):
-    """initialize the class members."""
-    self.group_ = ""
-    self.flag_ = ""
-    self.qualityID_ = -1
-    self.params_ = []
+    #############################################################################
 
-  #############################################################################
-  def setGroup(self, name):
-    """sets the group."""
-    self.group_ = name
+    def __init__(self):
+        """initialize the class members."""
+        self.group_ = ""
+        self.flag_ = ""
+        self.qualityID_ = -1
+        self.params_ = []
 
-  #############################################################################
-  def getGroup(self):
-    """returns the group."""
-    return self.group_
+    #############################################################################
+    def setGroup(self, name):
+        """sets the group."""
+        self.group_ = name
 
-  #############################################################################
-  def setFlag(self, flag):
-    """sets the data quality flag."""
-    self.flag_ = flag
+    #############################################################################
+    def getGroup(self):
+        """returns the group."""
+        return self.group_
 
-  #############################################################################
-  def getFlag(self):
-    """returns the data quality flag."""
-    return self.flag_
+    #############################################################################
+    def setFlag(self, flag):
+        """sets the data quality flag."""
+        self.flag_ = flag
 
-  #############################################################################
-  def addParam(self, param):
-    """adds a param."""
-    self.params_ += [param]
+    #############################################################################
+    def getFlag(self):
+        """returns the data quality flag."""
+        return self.flag_
 
-  #############################################################################
-  def getParams(self):
-    """returns the params."""
-    return self.params_
+    #############################################################################
+    def addParam(self, param):
+        """adds a param."""
+        self.params_ += [param]
 
-  #############################################################################
-  def setQualityID(self, qualityid):
-    """sets the quality identifier."""
-    self.qualityID_ = qualityid
+    #############################################################################
+    def getParams(self):
+        """returns the params."""
+        return self.params_
 
-  #############################################################################
-  def getQualityID(self):
-    """returns the quality identifier."""
-    return self.qualityID_
+    #############################################################################
+    def setQualityID(self, qualityid):
+        """sets the quality identifier."""
+        self.qualityID_ = qualityid
 
-  #############################################################################
-  def __repr__(self):
-    """formats the output of the print."""
-    result = "Quality: "
-    result += self.group_ + " " + self.flag_ + "\n"
+    #############################################################################
+    def getQualityID(self):
+        """returns the quality identifier."""
+        return self.qualityID_
 
-    for param in self.params_:
-      result += str(param)
+    #############################################################################
+    def __repr__(self):
+        """formats the output of the print."""
+        result = "Quality: "
+        result += self.group_ + " " + self.flag_ + "\n"
 
-    result += "\n"
-    return result
+        for param in self.params_:
+            result += str(param)
 
-  #############################################################################
-  def writeToXML(self):
-    """creates an XML string."""
-    result = '<Quality Group="' + self.getGroup() + '" Flag="' + self.getFlag() + '"/>\n'
-    return result
+        result += "\n"
+        return result
 
-  #############################################################################
+    #############################################################################
+    def writeToXML(self):
+        """creates an XML string."""
+        result = '<Quality Group="' + self.getGroup() + '" Flag="' + self.getFlag() + '"/>\n'
+        return result
+
+    #############################################################################

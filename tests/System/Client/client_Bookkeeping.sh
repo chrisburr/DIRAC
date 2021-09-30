@@ -160,7 +160,7 @@ fi;
 
 for file in ${files}; do
   # Names of files
-  
+
 #  files=$filesName${fileNames[$n-1]}.init
   xmlName=bookkeeping_${file%.*}.xml
 

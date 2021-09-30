@@ -22,26 +22,30 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerSiteSwitches()
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  Script.setUsageMessage(
-      '\n'.join(
-          [
-              __doc__,
-              'Usage:',
-              '  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] [--SE] Dest[,Dest2[,...]] ' %
-              Script.scriptName,
-              'Arguments:',
-              '  Dest:     Valid DIRAC SE(s)']))
-  Script.parseCommandLine(ignoreErrors=True)
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerSiteSwitches()
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRegisterBK2FC
-  from DIRAC import exit
-  exit(executeRegisterBK2FC(dmScript))
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] ...  [LFN1[,LFN2,[...]]] [--SE] Dest[,Dest2[,...]] " % Script.scriptName,
+                "Arguments:",
+                "  Dest:     Valid DIRAC SE(s)",
+            ]
+        )
+    )
+    Script.parseCommandLine(ignoreErrors=True)
+
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRegisterBK2FC
+    from DIRAC import exit
+
+    exit(executeRegisterBK2FC(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

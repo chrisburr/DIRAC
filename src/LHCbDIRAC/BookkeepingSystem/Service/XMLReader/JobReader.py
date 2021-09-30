@@ -32,275 +32,276 @@ __RCSID__ = "$Id$"
 
 
 class JobReader(object):
-  """JobReader class."""
-  #############################################################################
+    """JobReader class."""
 
-  def __init__(self):
-    pass
+    #############################################################################
 
-  #############################################################################
-  def readJob(self, doc, fileName):
-    """reads and stores the job elements from the file."""
-    job = Job()
-    job.setFileName(fileName)
-    gLogger.debug("Reading job from" + str(fileName) + "XML!")
+    def __init__(self):
+        pass
 
-    self.__readJobConfigurations(doc, job)
-    self.__readJobOptions(doc, job)
-    self.__readJobTypeParameters(doc, job)
-    self.__readJobInputFiles(doc, job)
-    self.__readJobOutputFiles(doc, job)
-    self.__readJobSimulationConditions(doc, job)
-    self.__readJobDataTakingConditions(doc, job)
+    #############################################################################
+    def readJob(self, doc, fileName):
+        """reads and stores the job elements from the file."""
+        job = Job()
+        job.setFileName(fileName)
+        gLogger.debug("Reading job from" + str(fileName) + "XML!")
 
-    gLogger.debug("Job reading finished succesfully!")
-    return job
+        self.__readJobConfigurations(doc, job)
+        self.__readJobOptions(doc, job)
+        self.__readJobTypeParameters(doc, job)
+        self.__readJobInputFiles(doc, job)
+        self.__readJobOutputFiles(doc, job)
+        self.__readJobSimulationConditions(doc, job)
+        self.__readJobDataTakingConditions(doc, job)
 
-  #############################################################################
-  @staticmethod
-  def __readJobConfigurations(doc, job):
-    """reads and stores the job configurations."""
+        gLogger.debug("Job reading finished succesfully!")
+        return job
 
-    conf = JobConfiguration()
-    jobElements = doc.getElementsByTagName('Job')
-    for node in jobElements:
+    #############################################################################
+    @staticmethod
+    def __readJobConfigurations(doc, job):
+        """reads and stores the job configurations."""
 
-      name = node.getAttributeNode('ConfigName')
-      if name is not None:
-        conf.setConfigName(name.value)
-      else:
-        gLogger.error("<ConfigName> XML tag is missing!!")
+        conf = JobConfiguration()
+        jobElements = doc.getElementsByTagName("Job")
+        for node in jobElements:
 
-      version = node.getAttributeNode('ConfigVersion')
-      if version is not None:
-        conf.setConfigVersion(version.value)
-      else:
-        gLogger.error("<ConfigVersion> XML tag is missing!!")
+            name = node.getAttributeNode("ConfigName")
+            if name is not None:
+                conf.setConfigName(name.value)
+            else:
+                gLogger.error("<ConfigName> XML tag is missing!!")
 
-      date = node.getAttributeNode('Date')
-      if date is not None:
-        conf.setDate(date.value)
-      else:
-        gLogger.error("<Date> XML tag is missing!!")
+            version = node.getAttributeNode("ConfigVersion")
+            if version is not None:
+                conf.setConfigVersion(version.value)
+            else:
+                gLogger.error("<ConfigVersion> XML tag is missing!!")
 
-      time = node.getAttributeNode('Time')
-      if time is not None:
-        conf.setTime(time.value)
-      else:
-        gLogger.error("<Time> XML tag is missing!!")
+            date = node.getAttributeNode("Date")
+            if date is not None:
+                conf.setDate(date.value)
+            else:
+                gLogger.error("<Date> XML tag is missing!!")
 
-    job.setJobConfiguration(conf)
+            time = node.getAttributeNode("Time")
+            if time is not None:
+                conf.setTime(time.value)
+            else:
+                gLogger.error("<Time> XML tag is missing!!")
 
-  #############################################################################
-  @staticmethod
-  def __readJobOptions(doc, job):
-    """reads and stores the job option."""
-    jobOptions = doc.getElementsByTagName('JobOption')
-    for node in jobOptions:
-      options = JobOption()
-      recipient = node.getAttributeNode('Recipient')
-      if recipient is not None:
-        options.setRecipient(recipient.value)
-      else:
-        gLogger.warn("<Recipinet> jobOption XML tag is missing!!")
+        job.setJobConfiguration(conf)
 
-      name = node.getAttributeNode('Name')
-      if name is not None:
-        options.setName(name.value)
-      else:
-        gLogger.warn("<Name> JobOption XML tag is missing!!")
+    #############################################################################
+    @staticmethod
+    def __readJobOptions(doc, job):
+        """reads and stores the job option."""
+        jobOptions = doc.getElementsByTagName("JobOption")
+        for node in jobOptions:
+            options = JobOption()
+            recipient = node.getAttributeNode("Recipient")
+            if recipient is not None:
+                options.setRecipient(recipient.value)
+            else:
+                gLogger.warn("<Recipinet> jobOption XML tag is missing!!")
 
-      value = node.getAttributeNode('Value')
-      if value is not None:
-        options.setValue(value.value)
-      else:
-        gLogger.warn("<Value> JobOption XML tag is missing!!")
+            name = node.getAttributeNode("Name")
+            if name is not None:
+                options.setName(name.value)
+            else:
+                gLogger.warn("<Name> JobOption XML tag is missing!!")
 
-      job.addJobOptions(options)
+            value = node.getAttributeNode("Value")
+            if value is not None:
+                options.setValue(value.value)
+            else:
+                gLogger.warn("<Value> JobOption XML tag is missing!!")
 
-  #############################################################################
-  @staticmethod
-  def __readJobTypeParameters(doc, job):
-    """reads and stores the job parameters."""
+            job.addJobOptions(options)
 
-    jobTypeParameters = doc.getElementsByTagName('TypedParameter')
+    #############################################################################
+    @staticmethod
+    def __readJobTypeParameters(doc, job):
+        """reads and stores the job parameters."""
 
-    for node in jobTypeParameters:
-      parameters = JobParameters()
-      name = node.getAttributeNode('Name')
-      if name is not None:
-        parameters.setName(name.value)
-      else:
-        gLogger.warn("<Name> TypedParameter XML tag is missing!!")
+        jobTypeParameters = doc.getElementsByTagName("TypedParameter")
 
-      value = node.getAttributeNode('Value')
-      if value is not None:
-        parameters.setValue(value.value)
-      else:
-        gLogger.warn("<Value> TypedParameter XML tag is missing!!")
+        for node in jobTypeParameters:
+            parameters = JobParameters()
+            name = node.getAttributeNode("Name")
+            if name is not None:
+                parameters.setName(name.value)
+            else:
+                gLogger.warn("<Name> TypedParameter XML tag is missing!!")
 
-      nodetype = node.getAttributeNode('Type')
-      if nodetype is not None:
-        parameters.setType(nodetype.value)
-      else:
-        gLogger.warn("<Type> TypedParameter XML tag is missing!!")
+            value = node.getAttributeNode("Value")
+            if value is not None:
+                parameters.setValue(value.value)
+            else:
+                gLogger.warn("<Value> TypedParameter XML tag is missing!!")
 
-      job.addJobParams(parameters)
+            nodetype = node.getAttributeNode("Type")
+            if nodetype is not None:
+                parameters.setType(nodetype.value)
+            else:
+                gLogger.warn("<Type> TypedParameter XML tag is missing!!")
 
-  ########################################################################
-  @staticmethod
-  def __readJobInputFiles(doc, job):
-    """reads and stores the input files of a job."""
-    jobInputFile = doc.getElementsByTagName('InputFile')
-    for node in jobInputFile:
-      inputFile = InputFile()
-      inputFileName = node.getAttributeNode('Name')
-      if inputFileName is not None:
-        inputFile.setFileName(inputFileName.value)
-      else:
-        gLogger.error("<Name> InputFile XML tag is missing!!")
+            job.addJobParams(parameters)
 
-      job.addJobInputFiles(inputFile)
+    ########################################################################
+    @staticmethod
+    def __readJobInputFiles(doc, job):
+        """reads and stores the input files of a job."""
+        jobInputFile = doc.getElementsByTagName("InputFile")
+        for node in jobInputFile:
+            inputFile = InputFile()
+            inputFileName = node.getAttributeNode("Name")
+            if inputFileName is not None:
+                inputFile.setFileName(inputFileName.value)
+            else:
+                gLogger.error("<Name> InputFile XML tag is missing!!")
 
-  ########################################################################
-  def __readJobOutputFiles(self, doc, job):
-    """reads the jobs output files."""
-    jobOutputFiles = doc.getElementsByTagName('OutputFile')
-    for node in jobOutputFiles:
-      outputFile = File()
+            job.addJobInputFiles(inputFile)
 
-      name = node.getAttributeNode('Name')
-      if name is not None:
-        outputFile.setFileName(name.value)
-      else:
-        gLogger.error("<Name> Outputfile XML tag is missing!!")
+    ########################################################################
+    def __readJobOutputFiles(self, doc, job):
+        """reads the jobs output files."""
+        jobOutputFiles = doc.getElementsByTagName("OutputFile")
+        for node in jobOutputFiles:
+            outputFile = File()
 
-      typeName = node.getAttributeNode('TypeName')
-      if typeName is not None:
-        outputFile.setFileType(typeName.value)
-      else:
-        gLogger.error("<Type> outputfile XML tag is missing!!")
+            name = node.getAttributeNode("Name")
+            if name is not None:
+                outputFile.setFileName(name.value)
+            else:
+                gLogger.error("<Name> Outputfile XML tag is missing!!")
 
-      version = node.getAttributeNode('TypeVersion')
-      if version is not None:
-        outputFile.setFileVersion(version.value)
-      else:
-        gLogger.error("<Version> outputfile XML tag is missing!!")
+            typeName = node.getAttributeNode("TypeName")
+            if typeName is not None:
+                outputFile.setFileType(typeName.value)
+            else:
+                gLogger.error("<Type> outputfile XML tag is missing!!")
 
-      fileparams = node.getElementsByTagName('Parameter')
-      for param in fileparams:
-        outputFileParams = FileParam()
+            version = node.getAttributeNode("TypeVersion")
+            if version is not None:
+                outputFile.setFileVersion(version.value)
+            else:
+                gLogger.error("<Version> outputfile XML tag is missing!!")
 
-        name = param.getAttributeNode('Name')
-        if name is not None:
-          outputFileParams.setParamName(name.value)
+            fileparams = node.getElementsByTagName("Parameter")
+            for param in fileparams:
+                outputFileParams = FileParam()
+
+                name = param.getAttributeNode("Name")
+                if name is not None:
+                    outputFileParams.setParamName(name.value)
+                else:
+                    gLogger.error("<Name> outputfile Parameter XML tag is missing!!")
+
+                value = param.getAttributeNode("Value")
+                if value is not None:
+                    outputFileParams.setParamValue(value.value)
+                else:
+                    gLogger.error("<Value> outputfile Parameter XML tag is missing!!")
+
+                outputFile.addFileParam(outputFileParams)
+            self.__readFilereplica(doc, outputFile)
+            self.__readDataquality(node, outputFile)
+            job.addJobOutputFiles(outputFile)
+
+    ########################################################################
+    @staticmethod
+    def __readFilereplica(doc, outputFile):
+        """It creates the replica object and adds to the output file."""
+        replicas = doc.getElementsByTagName("Replica")  # I have to check doc ? no node? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        for replica in replicas:
+            rep = FileReplica()
+            param = ReplicaParam()
+            name = replica.getAttributeNode("Name")
+            location = replica.getAttributeNode("Location")
+            if name is not None:
+                param.setName(name.value)
+            if location is not None:
+                param.setLocation(location.value)
+                rep.addParam(param)
+            outputFile.addReplicas(rep)
+
+    ########################################################################
+    @staticmethod
+    def __readDataquality(node, outputFile):
+        """It reads the data quality information of a given file."""
+        qualities = node.getElementsByTagName("Quality")
+        for quality in qualities:
+            fileQuality = Quality()
+            group = quality.getAttributeNode("Group")
+            if group is None:
+                fileQuality.setGroup(group.value)
+            else:
+                gLogger.warn("<Group> Quality XML tag is missing!!")
+
+            flag = quality.getAttributeNode("Flag")
+            if flag is not None:
+                fileQuality.setFlag(flag.value)
+            else:
+                gLogger.warn("<Flag> Quality XML tag is missing!!")
+
+            parameters = quality.getElementsByTagName("Parameter")
+            for param in parameters:
+                qualityParameters = QualityParameters()
+                name = param.getAttributeNode("Name")
+                if name is not None:
+                    qualityParameters.setName(name.value)
+                else:
+                    gLogger.warn("<Name> Quality XML tag is missing!!")
+
+                value = param.getAttributeNode("Value")
+                if value is not None:
+                    qualityParameters.setValue(value.value)
+                else:
+                    gLogger.warn("<Value> Quality XML tag is missing!!")
+
+                fileQuality.addParam(qualityParameters)
+
+            outputFile.addQuality(fileQuality)
+
+    ########################################################################
+    @staticmethod
+    def __readJobSimulationConditions(doc, job):
+        """reads and stores the job simulation condition."""
+        gLogger.debug("Read Simulation Conditions")
+        simcond = doc.getElementsByTagName("SimulationCondition")
+        if len(simcond) != 1:
+            gLogger.debug("Too many Simulation conditions:", str(simcond))
         else:
-          gLogger.error("<Name> outputfile Parameter XML tag is missing!!")
+            simParam = SimulationConditions()
+            node = simcond[0]
+            parameters = node.getElementsByTagName("Parameter")
+            for param in parameters:
+                name = param.getAttributeNode("Name")
+                value = param.getAttributeNode("Value")
+                if name is None or value is None:
+                    gLogger.warn("<Name>  or <Value> simulation XML tag is missing!!")
+                else:
+                    simParam.addParam(name.value, value.value)
+                    job.addSimulationCond(simParam)
 
-        value = param.getAttributeNode('Value')
-        if value is not None:
-          outputFileParams.setParamValue(value.value)
+    ########################################################################
+    @staticmethod
+    def __readJobDataTakingConditions(doc, job):
+        """reads and stores the job data taking conditions."""
+        gLogger.debug("Read DataTaking Conditions")
+        daqcond = doc.getElementsByTagName("DataTakingConditions")
+        if len(daqcond) != 1:
+            gLogger.debug("Too many DataTaking conditions:", str(daqcond))
         else:
-          gLogger.error("<Value> outputfile Parameter XML tag is missing!!")
-
-        outputFile.addFileParam(outputFileParams)
-      self.__readFilereplica(doc, outputFile)
-      self.__readDataquality(node, outputFile)
-      job.addJobOutputFiles(outputFile)
-
-  ########################################################################
-  @staticmethod
-  def __readFilereplica(doc, outputFile):
-    """It creates the replica object and adds to the output file."""
-    replicas = doc.getElementsByTagName('Replica')  # I have to check doc ? no node? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for replica in replicas:
-      rep = FileReplica()
-      param = ReplicaParam()
-      name = replica.getAttributeNode("Name")
-      location = replica.getAttributeNode("Location")
-      if name is not None:
-        param.setName(name.value)
-      if location is not None:
-        param.setLocation(location.value)
-        rep.addParam(param)
-      outputFile.addReplicas(rep)
-
-  ########################################################################
-  @staticmethod
-  def __readDataquality(node, outputFile):
-    """It reads the data quality information of a given file."""
-    qualities = node.getElementsByTagName("Quality")
-    for quality in qualities:
-      fileQuality = Quality()
-      group = quality.getAttributeNode("Group")
-      if group is None:
-        fileQuality.setGroup(group.value)
-      else:
-        gLogger.warn("<Group> Quality XML tag is missing!!")
-
-      flag = quality.getAttributeNode("Flag")
-      if flag is not None:
-        fileQuality.setFlag(flag.value)
-      else:
-        gLogger.warn("<Flag> Quality XML tag is missing!!")
-
-      parameters = quality.getElementsByTagName("Parameter")
-      for param in parameters:
-        qualityParameters = QualityParameters()
-        name = param.getAttributeNode("Name")
-        if name is not None:
-          qualityParameters.setName(name.value)
-        else:
-          gLogger.warn("<Name> Quality XML tag is missing!!")
-
-        value = param.getAttributeNode("Value")
-        if value is not None:
-          qualityParameters.setValue(value.value)
-        else:
-          gLogger.warn("<Value> Quality XML tag is missing!!")
-
-        fileQuality.addParam(qualityParameters)
-
-      outputFile.addQuality(fileQuality)
-
-  ########################################################################
-  @staticmethod
-  def __readJobSimulationConditions(doc, job):
-    """reads and stores the job simulation condition."""
-    gLogger.debug("Read Simulation Conditions")
-    simcond = doc.getElementsByTagName('SimulationCondition')
-    if len(simcond) != 1:
-      gLogger.debug("Too many Simulation conditions:", str(simcond))
-    else:
-      simParam = SimulationConditions()
-      node = simcond[0]
-      parameters = node.getElementsByTagName('Parameter')
-      for param in parameters:
-        name = param.getAttributeNode('Name')
-        value = param.getAttributeNode("Value")
-        if name is None or value is None:
-          gLogger.warn("<Name>  or <Value> simulation XML tag is missing!!")
-        else:
-          simParam.addParam(name.value, value.value)
-          job.addSimulationCond(simParam)
-
-  ########################################################################
-  @staticmethod
-  def __readJobDataTakingConditions(doc, job):
-    """reads and stores the job data taking conditions."""
-    gLogger.debug("Read DataTaking Conditions")
-    daqcond = doc.getElementsByTagName('DataTakingConditions')
-    if len(daqcond) != 1:
-      gLogger.debug("Too many DataTaking conditions:", str(daqcond))
-    else:
-      daqParam = DataTakingConditions()
-      node = daqcond[0]
-      parameters = node.getElementsByTagName('Parameter')
-      for param in parameters:
-        name = param.getAttributeNode('Name')
-        value = param.getAttributeNode("Value")
-        if name is None or value is None:
-          gLogger.warn("<Name>  or <Value> DataTakingConditions XML tag is missing!!")
-        else:
-          daqParam.addParam(name.value, value.value)
-          job.addDataTakingCond(daqParam)
+            daqParam = DataTakingConditions()
+            node = daqcond[0]
+            parameters = node.getElementsByTagName("Parameter")
+            for param in parameters:
+                name = param.getAttributeNode("Name")
+                value = param.getAttributeNode("Value")
+                if name is None or value is None:
+                    gLogger.warn("<Name>  or <Value> DataTakingConditions XML tag is missing!!")
+                else:
+                    daqParam.addParam(name.value, value.value)
+                    job.addDataTakingCond(daqParam)
