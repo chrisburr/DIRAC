@@ -17,20 +17,26 @@ __RCSID__ = "$Id$"
 
 
 class JobParameters(object):
+    def __init__(self):
+        """initialize the class members."""
+        self.name = ""
+        self.value = ""
+        self.type = ""
 
-  def __init__(self):
-    """initialize the class members."""
-    self.name = ""
-    self.value = ""
-    self.type = ""
+    def __repr__(self):
+        """formats the output of the print."""
+        result = self.name + "  " + self.value + "  " + self.type + "\n"
+        return result
 
-  def __repr__(self):
-    """formats the output of the print."""
-    result = self.name + '  ' + self.value + '  ' + self.type + '\n'
-    return result
-
-  def writeToXML(self):
-    """creates an xml string."""
-    result = '  <TypedParameter Name="' + str(self.name) + \
-        '" Value="' + str(self.value) + '" Type="' + str(self.type) + '"/>\n'
-    return result
+    def writeToXML(self):
+        """creates an xml string."""
+        result = (
+            '  <TypedParameter Name="'
+            + str(self.name)
+            + '" Value="'
+            + str(self.value)
+            + '" Type="'
+            + str(self.type)
+            + '"/>\n'
+        )
+        return result

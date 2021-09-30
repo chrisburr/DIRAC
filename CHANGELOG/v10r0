@@ -501,7 +501,7 @@ v9r4p14
 use DIRAC v6r22p20
 
 * Add docs about Clinic/Hospital
-* Fix dirac-transformation-debug 
+* Fix dirac-transformation-debug
 
 
 v9r4p13
@@ -1334,7 +1334,7 @@ use DIRAC v6r20p7
 * update of docs and config template
 * fixes on types_getJobParameter and commitRegisters URL
 * BOINC: stricter TLS options
-* CI: use curl instead of wget 
+* CI: use curl instead of wget
 * CI: added lhcbDiracReplace function
 * CI: don't use SSL for ES
 * CI: added some stuff to ignore
@@ -3072,7 +3072,7 @@ Use DIRAC v6r14p31
 
 [v8r2p44]
 Use DIRAC v6r14p31
-* remove static methods of the BKK XMLFilesReaderManager.py 
+* remove static methods of the BKK XMLFilesReaderManager.py
 
 
 [v8r2p43]

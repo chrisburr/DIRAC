@@ -15,14 +15,14 @@ from ProdConf import ProdConf
 
 ProdConf(
     NOfEvents=16,
-    DDDBTag='dddb-20190223',
-    AppVersion='v53r1',
-    XMLSummaryFile='summaryGauss_00012345_00067899_1.xml',
-    Application='Gauss',
-    OutputFilePrefix='00012345_00067899_1',
+    DDDBTag="dddb-20190223",
+    AppVersion="v53r1",
+    XMLSummaryFile="summaryGauss_00012345_00067899_1.xml",
+    Application="Gauss",
+    OutputFilePrefix="00012345_00067899_1",
     RunNumber=2308595,
-    XMLFileCatalog='pool_xml_catalog.xml',
+    XMLFileCatalog="pool_xml_catalog.xml",
     FirstEventNumber=518801,
-    CondDBTag='sim-20180530-vc-mu100',
-    OutputFileTypes=['sim'],
+    CondDBTag="sim-20180530-vc-mu100",
+    OutputFileTypes=["sim"],
 )

@@ -27,13 +27,13 @@ order by s.sid,t.piece;
 
 -- which database object is being locked (can be index, table, etc.)
 select
-  object_name, 
-  object_type, 
-  session_id, 
+  object_name,
+  object_type,
+  session_id,
   type,         -- Type or system/user lock
   lmode,        -- lock mode in which session holds lock
-  request, 
-  block, 
+  request,
+  block,
   ctime         -- Time since current mode was granted
 from
   v$locked_object, all_objects, v$lock
@@ -44,14 +44,14 @@ where
 order by
   session_id, ctime desc, object_name;
 
--- queries which are taking very long (which are still running): 
-SELECT sid, to_char(start_time,'hh24:mi:ss') stime, 
-message,( sofar/totalwork)* 100 percent 
+-- queries which are taking very long (which are still running):
+SELECT sid, to_char(start_time,'hh24:mi:ss') stime,
+message,( sofar/totalwork)* 100 percent
 FROM v$session_longops
 WHERE sofar/totalwork < 1;
 
 -- active query running in the backround.
-select s.username,s.sid,s.serial#,s.last_call_et/60 mins_running,q.sql_text from v$session s 
+select s.username,s.sid,s.serial#,s.last_call_et/60 mins_running,q.sql_text from v$session s
 join v$sqltext_with_newlines q
 on s.sql_address = q.address
  where status='ACTIVE'
@@ -72,7 +72,7 @@ drop table t1;
 create table t1 as select
    o.object_name    object_name,
    o.object_type    object_type,
-   
+
    count(1)         num_blocks
 from
    dba_objects  o,
@@ -112,17 +112,17 @@ order by
    num_blocks desc;
 
 ----start-- It is same as the previous one, but this does not take into account the
---- database objects which are belonging to the system 
+--- database objects which are belonging to the system
 --******************************************************************
 --   Contents of Data Buffers
 --******************************************************************
 set pages 999
 set lines 92
- 
+
 ttitle 'Contents of Data Buffers'
- 
+
 drop table t1;
- 
+
 create table t1 as
 select
    o.owner          owner,
@@ -139,7 +139,7 @@ and
    o.owner not in ('SYS','SYSTEM')
 and
    bh.status != 'free'
-and 
+and
   owner='LHCB_DIRACBOOKKEEPING'
 group by
    o.owner,
@@ -149,7 +149,7 @@ group by
 order by
    count(distinct file# || block#) desc
 ;
- 
+
 column c0 heading "Owner"                                    format a12
 column c1 heading "Object|Name"                              format a30
 column c2 heading "Object|Type"                              format a8
@@ -193,7 +193,7 @@ order by
 --- database blocks read from differebt cache
  SELECT name, value
 FROM V$SYSSTAT
-WHERE name IN ('db block gets from cache', 'consistent gets from cache', 
+WHERE name IN ('db block gets from cache', 'consistent gets from cache',
 'physical reads cache');
 
 --- How much do we read from cache
@@ -212,7 +212,7 @@ FROM v$SYSSTAT;
 SELECT A.value + B.value  "logical_reads",
        C.value            "phys_reads",
        D.value            "phy_writes",
-       ROUND(100 * ((A.value+B.value)-C.value) / (A.value+B.value))  
+       ROUND(100 * ((A.value+B.value)-C.value) / (A.value+B.value))
          "BUFFER HIT RATIO"
 FROM V$SYSSTAT A, V$SYSSTAT B, V$SYSSTAT C, V$SYSSTAT D
 WHERE
@@ -222,11 +222,11 @@ AND
 AND
    C.statistic# = 39
 AND
-   D.statistic# = 40; 
+   D.statistic# = 40;
 
---- V$DB_CACHE_ADVICE contains rows that predict the number of physical reads for the cache size corresponding to each row. 
- 
-column c1   heading 'Cache Size (meg)'   format 999,999,999,999  
+--- V$DB_CACHE_ADVICE contains rows that predict the number of physical reads for the cache size corresponding to each row.
+
+column c1   heading 'Cache Size (meg)'   format 999,999,999,999
  select
    size_for_estimate          c1,
    buffers_for_estimate       c2,
@@ -243,16 +243,16 @@ and
    advice_status = 'ON';
 
 --size of the database
-   
+
 select sum(bytes)/1024/1024/1024/1024 size_in_TB from dba_data_files WHERE TABLESPACE_NAME like 'LHCB_DIRAC%';
 select FILE_NAME, TABLESPACE_NAME, BLOCKS, ONLINE_STATUS, bytes/1024/1024/1024 size_in_GB from dba_data_files WHERE TABLESPACE_NAME like 'LHCB_DIRAC%';
 
 -- all database jobs
 select * from all_jobs;
 
---- it dispalys the execution plan 
+--- it dispalys the execution plan
 select * from table(dbms_xplan.display_cursor(format=>'allstats last +cost'));
- 
+
 --- When the statistics are created
 select DBMS_STATS.GET_STATS_HISTORY_AVAILABILITY  from dual;
 
@@ -313,7 +313,7 @@ exec dbms_stats.restore_table_stats('LHCB_DIRACBOOKKEEPING_INT','JOBS',sysdate-1
 -- show the history of operations
 select end_time,end_time-start_time,operation,target,notes,status
 from DBA_OPTSTAT_OPERATIONS where target in ('LHCB_DIRACBOOKKEEPING.PRODUCTIONSCONTAINER','LHCB_DIRACBOOKKEEPING_INT.JOBS') and end_time>sysdate-1;
------ END !!!!!! 
+----- END !!!!!!
 
 --- database name
 select name from v$database;

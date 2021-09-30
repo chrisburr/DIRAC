@@ -20,6 +20,7 @@ If --FixBK is set and no replica flag, set replica flag in the BK
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
@@ -27,66 +28,75 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  # Script initialization
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
-  import DIRAC
+    # Script initialization
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    import DIRAC
 
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [values]' % Script.scriptName, ]))
-  dmScript = DMScript()
-  dmScript.registerNamespaceSwitches()  # Directory
-  dmScript.registerFileSwitches()  # File, LFNs
-  dmScript.registerBKSwitches()
-  Script.registerSwitch('', 'FixBK', '   Take action to fix the BK')
-  Script.registerSwitch('', 'FixFC', '   Take action to fix the FC')
-  Script.registerSwitch('', 'NoFC2SE', "   Don't execute an FC2SE check")
-  Script.registerSwitch('', 'AffectedRuns', '   List the runs affected by the encountered problem')
-  Script.parseCommandLine(ignoreErrors=True)
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] [values]" % Script.scriptName,
+            ]
+        )
+    )
+    dmScript = DMScript()
+    dmScript.registerNamespaceSwitches()  # Directory
+    dmScript.registerFileSwitches()  # File, LFNs
+    dmScript.registerBKSwitches()
+    Script.registerSwitch("", "FixBK", "   Take action to fix the BK")
+    Script.registerSwitch("", "FixFC", "   Take action to fix the FC")
+    Script.registerSwitch("", "NoFC2SE", "   Don't execute an FC2SE check")
+    Script.registerSwitch("", "AffectedRuns", "   List the runs affected by the encountered problem")
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from DIRAC import gLogger
-  fixBK = False
-  fixFC = False
-  checkFC2SE = True
-  listAffectedRuns = False
-  for switch in Script.getUnprocessedSwitches():
-    if switch[0] == 'FixFC':
-      fixFC = True
-    if switch[0] == 'FixBK':
-      fixBK = True
-    elif switch[0] == 'AffectedRuns':
-      listAffectedRuns = True
-    elif switch[0] == 'NoFC2SE':
-      checkFC2SE = False
+    from DIRAC import gLogger
 
-  if fixFC and fixBK:
-    gLogger.notice("Can't fix both FC and BK, please choose")
-    DIRAC.exit(0)
-  # imports
-  from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
-  cc = ConsistencyChecks()
-  cc.directories = dmScript.getOption('Directory', [])
-  cc.lfns = dmScript.getOption('LFNs', []) + [lfn for arg in Script.getPositionalArgs() for lfn in arg.split(',')]
-  productions = dmScript.getOption('Productions', [])
-  runs = dmScript.getOption('Runs', [])
+    fixBK = False
+    fixFC = False
+    checkFC2SE = True
+    listAffectedRuns = False
+    for switch in Script.getUnprocessedSwitches():
+        if switch[0] == "FixFC":
+            fixFC = True
+        if switch[0] == "FixBK":
+            fixBK = True
+        elif switch[0] == "AffectedRuns":
+            listAffectedRuns = True
+        elif switch[0] == "NoFC2SE":
+            checkFC2SE = False
 
-  from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckFC2BK
-  if productions and not runs:
-    fileType = dmScript.getOption('FileType', [])
-    if fileType:
-      cc.fileType = fileType
-    for prod in productions:
-      cc.prod = prod
-      gLogger.always("Processing production %d" % cc.prod)
-      doCheckFC2BK(cc, fixFC, fixBK, listAffectedRuns)
-      gLogger.always("Processed production %d" % cc.prod)
-  else:
-    bkQuery = dmScript.getBKQuery(visible='All')
-    if bkQuery:
-      bkQuery.setOption('ReplicaFlag', 'All')
-      cc.bkQuery = bkQuery
-    doCheckFC2BK(cc, fixFC=fixFC, fixBK=fixBK, listAffectedRuns=listAffectedRuns, checkFC2SE=checkFC2SE)
+    if fixFC and fixBK:
+        gLogger.notice("Can't fix both FC and BK, please choose")
+        DIRAC.exit(0)
+    # imports
+    from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
+
+    cc = ConsistencyChecks()
+    cc.directories = dmScript.getOption("Directory", [])
+    cc.lfns = dmScript.getOption("LFNs", []) + [lfn for arg in Script.getPositionalArgs() for lfn in arg.split(",")]
+    productions = dmScript.getOption("Productions", [])
+    runs = dmScript.getOption("Runs", [])
+
+    from LHCbDIRAC.DataManagementSystem.Client.CheckExecutors import doCheckFC2BK
+
+    if productions and not runs:
+        fileType = dmScript.getOption("FileType", [])
+        if fileType:
+            cc.fileType = fileType
+        for prod in productions:
+            cc.prod = prod
+            gLogger.always("Processing production %d" % cc.prod)
+            doCheckFC2BK(cc, fixFC, fixBK, listAffectedRuns)
+            gLogger.always("Processed production %d" % cc.prod)
+    else:
+        bkQuery = dmScript.getBKQuery(visible="All")
+        if bkQuery:
+            bkQuery.setOption("ReplicaFlag", "All")
+            cc.bkQuery = bkQuery
+        doCheckFC2BK(cc, fixFC=fixFC, fixBK=fixBK, listAffectedRuns=listAffectedRuns, checkFC2SE=checkFC2SE)
 
 
 if __name__ == "__main__":
-  main()
+    main()

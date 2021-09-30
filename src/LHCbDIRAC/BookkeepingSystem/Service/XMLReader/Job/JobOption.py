@@ -17,12 +17,12 @@ __RCSID__ = "$Id$"
 
 
 class JobOption(object):
-  def __init__(self):
-    """initialize the class members."""
-    self.recipient = ""
-    self.name = ""
-    self.value = ""
+    def __init__(self):
+        """initialize the class members."""
+        self.recipient = ""
+        self.name = ""
+        self.value = ""
 
-  def __repr__(self):
-    """formats the output of the print."""
-    return '\nJobOption: \n' + self.name + ' ' + self.value + ' ' + self.recipient
+    def __repr__(self):
+        """formats the output of the print."""
+        return "\nJobOption: \n" + self.name + " " + self.value + " " + self.recipient

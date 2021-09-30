@@ -25,114 +25,134 @@ from LHCbDIRAC.AccountingSystem.Client.Types.JobStep import JobStep
 
 
 class StepAccounting(ModuleBase):
-  """StepAccounting class."""
+    """StepAccounting class."""
 
-  def __init__(self, bkClient=None, dm=None):
+    def __init__(self, bkClient=None, dm=None):
 
-    self.log = gLogger.getSubLogger("StepAccounting")
-    super(StepAccounting, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
+        self.log = gLogger.getSubLogger("StepAccounting")
+        super(StepAccounting, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-    self.dsc = None
-    self.stepStat = None
+        self.dsc = None
+        self.stepStat = None
 
-    self.version = __RCSID__
+        self.version = __RCSID__
 
-  ########################################################################
+    ########################################################################
 
-  def _resolveInputVariables(self, dsc=None):
-    """By convention all workflow parameters are resolved here."""
+    def _resolveInputVariables(self, dsc=None):
+        """By convention all workflow parameters are resolved here."""
 
-    super(StepAccounting, self)._resolveInputVariables()
-    super(StepAccounting, self)._resolveInputStep()
+        super(StepAccounting, self)._resolveInputVariables()
+        super(StepAccounting, self)._resolveInputStep()
 
-    if dsc is not None:
-      self.dsc = dsc
-    else:
-      self.dsc = self.workflow_commons['AccountingReport']
+        if dsc is not None:
+            self.dsc = dsc
+        else:
+            self.dsc = self.workflow_commons["AccountingReport"]
 
-    if self.stepStatus['OK']:
-      self.stepStat = 'Done'
-    else:
-      self.stepStat = 'Failed'
+        if self.stepStatus["OK"]:
+            self.stepStat = "Done"
+        else:
+            self.stepStat = "Failed"
 
-  ########################################################################
+    ########################################################################
 
-  def execute(self, production_id=None, prod_job_id=None, wms_job_id=None,
-              workflowStatus=None, stepStatus=None,
-              wf_commons=None, step_commons=None,
-              step_number=None, step_id=None,
-              js=None, xf_o=None, dsc=None):
+    def execute(
+        self,
+        production_id=None,
+        prod_job_id=None,
+        wms_job_id=None,
+        workflowStatus=None,
+        stepStatus=None,
+        wf_commons=None,
+        step_commons=None,
+        step_number=None,
+        step_id=None,
+        js=None,
+        xf_o=None,
+        dsc=None,
+    ):
 
-    try:
-      super(StepAccounting, self).execute(self.version, production_id, prod_job_id, wms_job_id,
-                                          workflowStatus, stepStatus,
-                                          wf_commons, step_commons, step_number, step_id)
-
-      # Check if the step is worth accounting
-      if 'applicationName' not in self.step_commons:
-        self.log.info('Not an application step: it will not be accounted')
-        return S_OK()
-
-      ########################################################################
-      # Timing
-      execTime, cpuTime = getStepCPUTimes(self.step_commons)
-      normCPU = cpuTime
-      cpuNormFactor = gConfig.getValue("/LocalSite/CPUNormalizationFactor", 0.0)
-      if cpuNormFactor:
-        normCPU = cpuTime * cpuNormFactor
-
-      if not js:
-        jobStep = JobStep()
-      else:
-        jobStep = js
-
-      if not xf_o:
         try:
-          xf_o = self.step_commons['XMLSummary_o']
-        except KeyError:
-          self.log.error('XML Summary object could not be found (not produced?), skipping the report')
-          return S_OK()
+            super(StepAccounting, self).execute(
+                self.version,
+                production_id,
+                prod_job_id,
+                wms_job_id,
+                workflowStatus,
+                stepStatus,
+                wf_commons,
+                step_commons,
+                step_number,
+                step_id,
+            )
 
-      self._resolveInputVariables(dsc)
+            # Check if the step is worth accounting
+            if "applicationName" not in self.step_commons:
+                self.log.info("Not an application step: it will not be accounted")
+                return S_OK()
 
-      now = Time.dateTime()
-      jobStep.setStartTime(now)
-      jobStep.setEndTime(now)
+            ########################################################################
+            # Timing
+            execTime, cpuTime = getStepCPUTimes(self.step_commons)
+            normCPU = cpuTime
+            cpuNormFactor = gConfig.getValue("/LocalSite/CPUNormalizationFactor", 0.0)
+            if cpuNormFactor:
+                normCPU = cpuTime * cpuNormFactor
 
-      dataDict = {'JobGroup': str(self.production_id),
-                  'RunNumber': self.runNumber,
-                  'EventType': self.eventType,
-                  'ProcessingType': self.stepProcPass,  # this is the processing pass of the step
-                  'ProcessingStep': self.BKstepID,  # the step ID
-                  'Site': self.siteName,
-                  'FinalStepState': self.stepStat,
+            if not js:
+                jobStep = JobStep()
+            else:
+                jobStep = js
 
-                  'CPUTime': cpuTime,
-                  'NormCPUTime': normCPU,
-                  'ExecTime': execTime * self.numberOfProcessors,
-                  'InputData': sum(xf_o.inputFileStats.values()),
-                  'OutputData': sum(xf_o.outputFileStats.values()),
-                  'InputEvents': xf_o.inputEventsTotal,
-                  'OutputEvents': xf_o.outputEventsTotal}
+            if not xf_o:
+                try:
+                    xf_o = self.step_commons["XMLSummary_o"]
+                except KeyError:
+                    self.log.error("XML Summary object could not be found (not produced?), skipping the report")
+                    return S_OK()
 
-      jobStep.setValuesFromDict(dataDict)
+            self._resolveInputVariables(dsc)
 
-      res = jobStep.checkValues()
-      if not res['OK']:
-        self.log.error('Values for StepAccounting are wrong', res['Message'], dataDict)
-        return S_ERROR('Values for StepAccounting are wrong')
+            now = Time.dateTime()
+            jobStep.setStartTime(now)
+            jobStep.setEndTime(now)
 
-      if not self._enableModule():
-        self.log.info('Not enabled, would have accounted for %s' % dataDict)
-        return S_OK()
+            dataDict = {
+                "JobGroup": str(self.production_id),
+                "RunNumber": self.runNumber,
+                "EventType": self.eventType,
+                "ProcessingType": self.stepProcPass,  # this is the processing pass of the step
+                "ProcessingStep": self.BKstepID,  # the step ID
+                "Site": self.siteName,
+                "FinalStepState": self.stepStat,
+                "CPUTime": cpuTime,
+                "NormCPUTime": normCPU,
+                "ExecTime": execTime * self.numberOfProcessors,
+                "InputData": sum(xf_o.inputFileStats.values()),
+                "OutputData": sum(xf_o.outputFileStats.values()),
+                "InputEvents": xf_o.inputEventsTotal,
+                "OutputEvents": xf_o.outputEventsTotal,
+            }
 
-      self.dsc.addRegister(jobStep)
+            jobStep.setValuesFromDict(dataDict)
 
-      return S_OK()
+            res = jobStep.checkValues()
+            if not res["OK"]:
+                self.log.error("Values for StepAccounting are wrong", res["Message"], dataDict)
+                return S_ERROR("Values for StepAccounting are wrong")
 
-    except Exception as e:  # pylint:disable=broad-except
-      self.log.exception("Failure in StepAccounting execute module", lException=e)
-      return S_ERROR(str(e))
+            if not self._enableModule():
+                self.log.info("Not enabled, would have accounted for %s" % dataDict)
+                return S_OK()
 
-    finally:
-      super(StepAccounting, self).finalize(self.version)
+            self.dsc.addRegister(jobStep)
+
+            return S_OK()
+
+        except Exception as e:  # pylint:disable=broad-except
+            self.log.exception("Failure in StepAccounting execute module", lException=e)
+            return S_ERROR(str(e))
+
+        finally:
+            super(StepAccounting, self).finalize(self.version)

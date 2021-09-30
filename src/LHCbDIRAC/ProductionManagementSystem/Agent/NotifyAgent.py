@@ -29,32 +29,32 @@ from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
 from DIRAC.ConfigurationSystem.Client import PathFinder
 from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import _getMemberMails
 
-__RCSID__ = '$Id$'
+__RCSID__ = "$Id$"
 
-AGENT_NAME = 'ProductionManagement/NotifyAgent'
+AGENT_NAME = "ProductionManagement/NotifyAgent"
 
 
 class NotifyAgent(AgentModule):
+    def __init__(self, *args, **kwargs):
 
-  def __init__(self, *args, **kwargs):
+        super(NotifyAgent, self).__init__(*args, **kwargs)
 
-    super(NotifyAgent, self).__init__(*args, **kwargs)
+        self.diracAdmin = None
+        self.csS = None
+        self.fromAddress = None
 
-    self.diracAdmin = None
-    self.csS = None
-    self.fromAddress = None
+        if "DIRAC" in os.environ:
+            self.cacheFile = os.path.join(os.getenv("DIRAC"), "work/ProductionManagement/cache.db")
+        else:
+            self.cacheFile = os.path.realpath("cache.db")
 
-    if 'DIRAC' in os.environ:
-      self.cacheFile = os.path.join(os.getenv('DIRAC'), 'work/ProductionManagement/cache.db')
-    else:
-      self.cacheFile = os.path.realpath('cache.db')
+    def initialize(self):
+        """NotifyAgent initialization."""
 
-  def initialize(self):
-    """NotifyAgent initialization."""
-
-    try:
-      with sqlite3.connect(self.cacheFile) as conn:
-        conn.execute('''CREATE TABLE IF NOT EXISTS ProductionManagementCache(
+        try:
+            with sqlite3.connect(self.cacheFile) as conn:
+                conn.execute(
+                    """CREATE TABLE IF NOT EXISTS ProductionManagementCache(
                       reqId VARCHAR(64) NOT NULL DEFAULT "",
                       reqType VARCHAR(64) NOT NULL DEFAULT "",
                       reqWG VARCHAR(64) NOT NULL DEFAULT "",
@@ -63,39 +63,40 @@ class NotifyAgent(AgentModule):
                       ProPath VARCHAR(64) NOT NULL DEFAULT "",
                       thegroup VARCHAR(64) NOT NULL DEFAULT "",
                       reqInform VARCHAR(64) NOT NULL DEFAULT ""
-                     );''')
-    except sqlite3.OperationalError:
-      self.log.error('Email cache database is locked')
+                     );"""
+                )
+        except sqlite3.OperationalError:
+            self.log.error("Email cache database is locked")
 
-    self.diracAdmin = DiracAdmin()
+        self.diracAdmin = DiracAdmin()
 
-    self.csS = PathFinder.getServiceSection("ProductionManagement", "ProductionRequest")
+        self.csS = PathFinder.getServiceSection("ProductionManagement", "ProductionRequest")
 
-    self.fromAddress = gConfig.getValue('%s/fromAddress' % self.csS, '')
-    if not self.fromAddress:
-      self.log.info('No fromAddress is defined, a default value will be used instead')
-      self.fromAddress = 'vladimir.romanovsky@cern.ch'
+        self.fromAddress = gConfig.getValue("%s/fromAddress" % self.csS, "")
+        if not self.fromAddress:
+            self.log.info("No fromAddress is defined, a default value will be used instead")
+            self.fromAddress = "vladimir.romanovsky@cern.ch"
 
-    return S_OK()
-
-  def execute(self):
-
-    if not os.path.isfile(self.cacheFile):
-      self.log.error(self.cacheFile + " does not exist.")
-      return S_OK()
-
-    with sqlite3.connect(self.cacheFile) as conn:
-      if not self.csS:
-        self.log.error('No ProductionRequest section in configuration')
         return S_OK()
-      self._executeForProductionManagementSystem(conn)
-      self._executeForProductionStatusAgent(conn)
 
-    return S_OK()
+    def execute(self):
 
-  def _executeForProductionManagementSystem(self, conn):
-    """This is for the ProductionManagementSystem's Utilities"""
-    aggregated_body = """\
+        if not os.path.isfile(self.cacheFile):
+            self.log.error(self.cacheFile + " does not exist.")
+            return S_OK()
+
+        with sqlite3.connect(self.cacheFile) as conn:
+            if not self.csS:
+                self.log.error("No ProductionRequest section in configuration")
+                return S_OK()
+            self._executeForProductionManagementSystem(conn)
+            self._executeForProductionStatusAgent(conn)
+
+        return S_OK()
+
+    def _executeForProductionManagementSystem(self, conn):
+        """This is for the ProductionManagementSystem's Utilities"""
+        aggregated_body = """\
           <!DOCTYPE html>
           <html>
           <head>
@@ -111,56 +112,88 @@ class NotifyAgent(AgentModule):
           <body>
           """
 
-    result = conn.execute(
-        "SELECT DISTINCT thegroup, reqName, reqWG, reqInform, reqType from ProductionManagementCache;")
-    for thegroup, reqName, reqWG, reqInform, reqType in result:
-      link = "https://lhcb-portal-dirac.cern.ch/DIRAC/s:" + PathFinder.getDIRACSetup() + "/g:" + thegroup + \
-             "/?view=tabs&url_state=1|*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:"
+        result = conn.execute(
+            "SELECT DISTINCT thegroup, reqName, reqWG, reqInform, reqType from ProductionManagementCache;"
+        )
+        for thegroup, reqName, reqWG, reqInform, reqType in result:
+            link = (
+                "https://lhcb-portal-dirac.cern.ch/DIRAC/s:"
+                + PathFinder.getDIRACSetup()
+                + "/g:"
+                + thegroup
+                + "/?view=tabs&url_state=1|*LHCbDIRAC.ProductionRequestManager.classes.ProductionRequestManager:"
+            )
 
-      aggregated_body = ""
-      html_elements = ""
+            aggregated_body = ""
+            html_elements = ""
 
-      # Skip if group is empty
-      if not thegroup:
-        continue
-      # Only ask people to act on MC requests
-      if reqType != 'Simulation':
-        continue
+            # Skip if group is empty
+            if not thegroup:
+                continue
+            # Only ask people to act on MC requests
+            if reqType != "Simulation":
+                continue
 
-      if thegroup == 'lhcb_bk':
-        header = "New Productions are requested and they have customized Simulation Conditions. " \
-                 "As member of <span style='color:green'>" + thegroup + "</span> group, you are asked either to " \
-                 "register new Simulation conditions or to reject the requests. In case some other member of the " \
-                 "group has already done that, please ignore this mail.\n"
+            if thegroup == "lhcb_bk":
+                header = (
+                    "New Productions are requested and they have customized Simulation Conditions. "
+                    "As member of <span style='color:green'>" + thegroup + "</span> group, you are asked either to "
+                    "register new Simulation conditions or to reject the requests. In case some other member of the "
+                    "group has already done that, please ignore this mail.\n"
+                )
 
-      elif thegroup == 'lhcb_ppg':
-        header = "New Productions are requested. As member of <span style='color:green'>" + thegroup + "</span> " \
-                 "group, you are asked either to sign or to reject it. In case some other member of the group has " \
-                 "already done that, please ignore this mail.\n"
-      else:
-        header = "As member of <span style='color:green'>" + \
-                 thegroup + "</span> group, your are asked to review the below requests.\n"
+            elif thegroup == "lhcb_ppg":
+                header = (
+                    "New Productions are requested. As member of <span style='color:green'>" + thegroup + "</span> "
+                    "group, you are asked either to sign or to reject it. In case some other member of the group has "
+                    "already done that, please ignore this mail.\n"
+                )
+            else:
+                header = (
+                    "As member of <span style='color:green'>"
+                    + thegroup
+                    + "</span> group, your are asked to review the below requests.\n"
+                )
 
-      cursor = conn.execute(
-          "SELECT reqId, reqType, reqWG, reqName, SimCondition, ProPath from ProductionManagementCache "
-          "WHERE thegroup = ? and reqName=? and reqWG=? and reqType=? ", (thegroup, reqName, reqWG, reqType))
+            cursor = conn.execute(
+                "SELECT reqId, reqType, reqWG, reqName, SimCondition, ProPath from ProductionManagementCache "
+                "WHERE thegroup = ? and reqName=? and reqWG=? and reqType=? ",
+                (thegroup, reqName, reqWG, reqType),
+            )
 
-      for row_reqId, row_reqType, row_reqWG, row_reqName, row_SimCondition, row_ProPath in cursor:
-        html_elements += "<tr>" + \
-                         "<td>" + row_reqId + "</td>" + \
-                         "<td>" + row_reqName + "</td>" + \
-                         "<td>" + row_reqType + "</td>" + \
-                         "<td>" + row_reqWG + "</td>" + \
-                         "<td>" + row_SimCondition if row_SimCondition else '' + "</td>" + \
-                         "<td>" + row_ProPath if row_ProPath else '' + "</td>" + \
-                         "<td class='link'><a href='" + link + "' target='_blank'> Link </a></td>" + \
-                         "</tr>"
+            for row_reqId, row_reqType, row_reqWG, row_reqName, row_SimCondition, row_ProPath in cursor:
+                html_elements += (
+                    "<tr>"
+                    + "<td>"
+                    + row_reqId
+                    + "</td>"
+                    + "<td>"
+                    + row_reqName
+                    + "</td>"
+                    + "<td>"
+                    + row_reqType
+                    + "</td>"
+                    + "<td>"
+                    + row_reqWG
+                    + "</td>"
+                    + "<td>"
+                    + row_SimCondition
+                    if row_SimCondition
+                    else "" + "</td>" + "<td>" + row_ProPath
+                    if row_ProPath
+                    else ""
+                    + "</td>"
+                    + "<td class='link'><a href='"
+                    + link
+                    + "' target='_blank'> Link </a></td>"
+                    + "</tr>"
+                )
 
-      # If there are no requests to display, don't bother sending emails
-      if not html_elements:
-        continue
+            # If there are no requests to display, don't bother sending emails
+            if not html_elements:
+                continue
 
-      aggregated_body += """\
+            aggregated_body += """\
         <p>{header}</p>
         <table>
           <tr>
@@ -176,31 +209,37 @@ class NotifyAgent(AgentModule):
         </table>
       </body>
       </html>
-      """.format(header=header, html_elements=html_elements)
+      """.format(
+                header=header, html_elements=html_elements
+            )
 
-      if reqInform:
-        for emailaddress in reqInform.split(','):
-          res = self.diracAdmin.sendMail(emailaddress,
-                                         "Notifications for production requests - Group %s; %s; %s" % (thegroup,
-                                                                                                       reqWG,
-                                                                                                       reqName),
-                                         aggregated_body, self.fromAddress, html=True)
+            if reqInform:
+                for emailaddress in reqInform.split(","):
+                    res = self.diracAdmin.sendMail(
+                        emailaddress,
+                        "Notifications for production requests - Group %s; %s; %s" % (thegroup, reqWG, reqName),
+                        aggregated_body,
+                        self.fromAddress,
+                        html=True,
+                    )
 
-      for people in _getMemberMails(thegroup):
-        res = self.diracAdmin.sendMail(people,
-                                       "Notifications for production requests - Group %s; %s; %s" % (thegroup,
-                                                                                                     reqWG,
-                                                                                                     reqName),
-                                       aggregated_body, self.fromAddress, html=True)
+            for people in _getMemberMails(thegroup):
+                res = self.diracAdmin.sendMail(
+                    people,
+                    "Notifications for production requests - Group %s; %s; %s" % (thegroup, reqWG, reqName),
+                    aggregated_body,
+                    self.fromAddress,
+                    html=True,
+                )
 
-        if res['OK']:
-          conn.execute("DELETE FROM ProductionManagementCache;")
-        else:
-          self.log.error("_inform_people: can't send email: %s" % res['Message'])
+                if res["OK"]:
+                    conn.execute("DELETE FROM ProductionManagementCache;")
+                else:
+                    self.log.error("_inform_people: can't send email: %s" % res["Message"])
 
-  def _executeForProductionStatusAgent(self, conn):
-    """This is for the ProductionStatusAgent"""
-    aggregated_body = """\
+    def _executeForProductionStatusAgent(self, conn):
+        """This is for the ProductionStatusAgent"""
+        aggregated_body = """\
           <!DOCTYPE html>
           <html>
           <head>
@@ -217,22 +256,36 @@ class NotifyAgent(AgentModule):
           <body>
           """
 
-    cursor = conn.execute("SELECT production, from_status, to_status, time from ProductionStatusAgentCache;")
+        cursor = conn.execute("SELECT production, from_status, to_status, time from ProductionStatusAgentCache;")
 
-    # Check if the results are non-empty
-    if cursor.rowcount == 0:
-      return
+        # Check if the results are non-empty
+        if cursor.rowcount == 0:
+            return
 
-    html_elements = ""
-    for production, from_status, to_status, time in cursor:
-      html_elements += "<tr>" + \
-                       "<td>" + production + "</td>" + \
-                       "<td class='" + from_status + "'>" + from_status + "</td>" + \
-                       "<td class='" + to_status + "'>" + to_status + "</td>" + \
-                       "<td>" + time + "</td>" + \
-                       "</tr>"
+        html_elements = ""
+        for production, from_status, to_status, time in cursor:
+            html_elements += (
+                "<tr>"
+                + "<td>"
+                + production
+                + "</td>"
+                + "<td class='"
+                + from_status
+                + "'>"
+                + from_status
+                + "</td>"
+                + "<td class='"
+                + to_status
+                + "'>"
+                + to_status
+                + "</td>"
+                + "<td>"
+                + time
+                + "</td>"
+                + "</tr>"
+            )
 
-    aggregated_body += """\
+        aggregated_body += """\
       <p class="setup">Transformations updated</p>
       <table>
         <tr>
@@ -243,20 +296,19 @@ class NotifyAgent(AgentModule):
         </tr>
         {html_elements}
       </table>
-    """.format(html_elements=html_elements)
+    """.format(
+            html_elements=html_elements
+        )
 
-    cursor = conn.execute("SELECT prod_requests, time from ProductionStatusAgentReqCache;")
+        cursor = conn.execute("SELECT prod_requests, time from ProductionStatusAgentReqCache;")
 
-    # Check if the results are non-empty
-    html_elements = ""
-    for prod_requests, time in cursor:
-      html_elements += "<tr>" + \
-                       "<td>" + prod_requests + "</td>" + \
-                       "<td>" + time + "</td>" + \
-                       "</tr>"
+        # Check if the results are non-empty
+        html_elements = ""
+        for prod_requests, time in cursor:
+            html_elements += "<tr>" + "<td>" + prod_requests + "</td>" + "<td>" + time + "</td>" + "</tr>"
 
-    if html_elements:
-      aggregated_body += """\
+        if html_elements:
+            aggregated_body += """\
         <br />
         <p class="setup">Production Requests updated to Done status</p>
         <table>
@@ -268,23 +320,31 @@ class NotifyAgent(AgentModule):
         </table>
       </body>
       </html>
-      """.format(html_elements=html_elements)
+      """.format(
+                html_elements=html_elements
+            )
 
-    aggregated_body += """\
+        aggregated_body += """\
       </body>
       </html>
       """
 
-    res = self.diracAdmin.sendMail('vladimir.romanovsky@cern.ch', "Transformation Status Updates", aggregated_body,
-                                   'vladimir.romanovsky@cern.ch', html=True)
+        res = self.diracAdmin.sendMail(
+            "vladimir.romanovsky@cern.ch",
+            "Transformation Status Updates",
+            aggregated_body,
+            "vladimir.romanovsky@cern.ch",
+            html=True,
+        )
 
-    if res['OK']:
-      conn.execute("DELETE FROM ProductionStatusAgentCache;")
-      conn.execute("VACUUM;")
-      conn.execute("DELETE FROM ProductionStatusAgentReqCache;")
-      conn.execute("VACUUM;")
-    else:
-      self.log.error("Can't send email: %s" % res['Message'])
-      return S_OK()
+        if res["OK"]:
+            conn.execute("DELETE FROM ProductionStatusAgentCache;")
+            conn.execute("VACUUM;")
+            conn.execute("DELETE FROM ProductionStatusAgentReqCache;")
+            conn.execute("VACUUM;")
+        else:
+            self.log.error("Can't send email: %s" % res["Message"])
+            return S_OK()
+
 
 ################################################################################

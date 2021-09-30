@@ -16,11 +16,11 @@ import shutil
 
 
 def cleanTestDir():
-  for fileIn in os.listdir('.'):
-    if 'Local' in fileIn and os.path.isdir(fileIn):
-      shutil.rmtree(fileIn)
-  for fileToRemove in ['std.out', 'std.err', 'aLogFileForTest.txt', 'exe-script.py.log', 'ls.log']:
-    try:
-      os.remove(fileToRemove)
-    except OSError:
-      continue
+    for fileIn in os.listdir("."):
+        if "Local" in fileIn and os.path.isdir(fileIn):
+            shutil.rmtree(fileIn)
+    for fileToRemove in ["std.out", "std.err", "aLogFileForTest.txt", "exe-script.py.log", "ls.log"]:
+        try:
+            os.remove(fileToRemove)
+        except OSError:
+            continue

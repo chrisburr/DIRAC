@@ -19,21 +19,21 @@ __RCSID__ = "$Id$"
 
 
 class Storage(BaseAccountingType):
-  """Storage as extension of BaseAccountingType."""
+    """Storage as extension of BaseAccountingType."""
 
-  def __init__(self):
+    def __init__(self):
 
-    super(Storage, self).__init__()
+        super(Storage, self).__init__()
 
-    self.definitionKeyFields = [('StorageElement', "VARCHAR(32)"),
-                                ('Directory', "VARCHAR(32)")
-                                ]
-    self.definitionAccountingFields = [('LogicalSize', 'BIGINT UNSIGNED'),
-                                       ('LogicalFiles', 'BIGINT UNSIGNED'),
-                                       ('PhysicalSize', 'BIGINT UNSIGNED'),
-                                       ('PhysicalFiles', 'BIGINT UNSIGNED')
-                                       ]
-    self.bucketsLength = [(86400 * 30 * 6, 86400),  # <6m = 1d
-                          (31104000, 604800),  # >6m = 1w
-                          ]
-    self.checkType()
+        self.definitionKeyFields = [("StorageElement", "VARCHAR(32)"), ("Directory", "VARCHAR(32)")]
+        self.definitionAccountingFields = [
+            ("LogicalSize", "BIGINT UNSIGNED"),
+            ("LogicalFiles", "BIGINT UNSIGNED"),
+            ("PhysicalSize", "BIGINT UNSIGNED"),
+            ("PhysicalFiles", "BIGINT UNSIGNED"),
+        ]
+        self.bucketsLength = [
+            (86400 * 30 * 6, 86400),  # <6m = 1d
+            (31104000, 604800),  # >6m = 1w
+        ]
+        self.checkType()

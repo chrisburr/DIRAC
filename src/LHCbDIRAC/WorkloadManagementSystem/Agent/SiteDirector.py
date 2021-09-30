@@ -23,24 +23,24 @@ from DIRAC.WorkloadManagementSystem.Agent.SiteDirector import SiteDirector as DI
 
 
 class SiteDirector(DIRACSiteDirector):
-  """Simple extension of the DIRAC site director to send LHCb specific pilots
-  (with a custom list of commands)"""
+    """Simple extension of the DIRAC site director to send LHCb specific pilots
+    (with a custom list of commands)"""
 
-  def beginExecution(self):
-    """just simple redefinition."""
-    res = DIRACSiteDirector.beginExecution(self)
-    if not res['OK']:
-      return res
+    def beginExecution(self):
+        """just simple redefinition."""
+        res = DIRACSiteDirector.beginExecution(self)
+        if not res["OK"]:
+            return res
 
-    self.lbRunOnly = self.am_getOption('lbRunOnly', False)
+        self.lbRunOnly = self.am_getOption("lbRunOnly", False)
 
-    return S_OK()
+        return S_OK()
 
-  def _getPilotOptions(self, queue):
-    """Adding LHCb specific options."""
-    pilotOptions = super(SiteDirector, self)._getPilotOptions(queue)
+    def _getPilotOptions(self, queue):
+        """Adding LHCb specific options."""
+        pilotOptions = super(SiteDirector, self)._getPilotOptions(queue)
 
-    if self.lbRunOnly:
-      pilotOptions.append('-o lbRunOnly')
+        if self.lbRunOnly:
+            pilotOptions.append("-o lbRunOnly")
 
-    return pilotOptions
+        return pilotOptions

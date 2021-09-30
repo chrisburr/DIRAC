@@ -23,45 +23,45 @@ from DIRAC.Core.Utilities.File import makeGuid as DIRACMakeGUID
 
 
 def getRootFileGUIDs(fileList):
-  """Retrieve a list of GUIDs for a list of files."""
-  guids = {'Successful': {}, 'Failed': {}}
-  for fileName in fileList:
-    res = getRootFileGUID(fileName)
-    if res['OK']:
-      gLogger.verbose('GUID from ROOT', '%s' % res['Value'])
-      guids['Successful'][fileName] = res['Value']
-    else:
-      guids['Failed'][fileName] = res['Message']
-  return S_OK(guids)
+    """Retrieve a list of GUIDs for a list of files."""
+    guids = {"Successful": {}, "Failed": {}}
+    for fileName in fileList:
+        res = getRootFileGUID(fileName)
+        if res["OK"]:
+            gLogger.verbose("GUID from ROOT", "%s" % res["Value"])
+            guids["Successful"][fileName] = res["Value"]
+        else:
+            guids["Failed"][fileName] = res["Message"]
+    return S_OK(guids)
 
 
 def getRootFileGUID(fileName):
-  """Function to retrieve a file GUID using uproot."""
-  try:
-    f = uproot.open(fileName)
-    branch = f['Refs']['Params']
-    for item in branch.array():
-      if item.startswith('FID='):
-        return S_OK(item.split('=')[1])
-    return S_ERROR('GUID not found')
-  except Exception as e:
-    errorMsg = 'Error extracting GUID: %s' % e
-    return S_ERROR(errorMsg)
+    """Function to retrieve a file GUID using uproot."""
+    try:
+        f = uproot.open(fileName)
+        branch = f["Refs"]["Params"]
+        for item in branch.array():
+            if item.startswith("FID="):
+                return S_OK(item.split("=")[1])
+        return S_ERROR("GUID not found")
+    except Exception as e:
+        errorMsg = "Error extracting GUID: %s" % e
+        return S_ERROR(errorMsg)
 
 
 def makeGuid(fileNames):
-  """Function to retrieve a file GUID using uproot."""
-  if isinstance(fileNames, six.string_types):
-    fileNames = [fileNames]
+    """Function to retrieve a file GUID using uproot."""
+    if isinstance(fileNames, six.string_types):
+        fileNames = [fileNames]
 
-  fileGUIDs = {}
-  for fileName in fileNames:
-    res = getRootFileGUID(fileName)
-    if res['OK']:
-      gLogger.verbose('GUID from ROOT', '%s' % res['Value'])
-      fileGUIDs[fileName] = res['Value']
-    else:
-      gLogger.info('Could not obtain GUID from file through Gaudi, using standard DIRAC method')
-      fileGUIDs[fileName] = DIRACMakeGUID(fileName)
+    fileGUIDs = {}
+    for fileName in fileNames:
+        res = getRootFileGUID(fileName)
+        if res["OK"]:
+            gLogger.verbose("GUID from ROOT", "%s" % res["Value"])
+            fileGUIDs[fileName] = res["Value"]
+        else:
+            gLogger.info("Could not obtain GUID from file through Gaudi, using standard DIRAC method")
+            fileGUIDs[fileName] = DIRACMakeGUID(fileName)
 
-  return fileGUIDs
+    return fileGUIDs

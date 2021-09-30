@@ -22,24 +22,29 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerBKSwitches()
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerBKSwitches()
 
-  Script.registerSwitch("", "Force", " use this option for force the removal of files without ARCHIVE")
-  Script.setUsageMessage('\n'.join([
-      __doc__,
-      'Usage:',
-      '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]' % Script.scriptName,
-  ]))
-  Script.parseCommandLine()
+    Script.registerSwitch("", "Force", " use this option for force the removal of files without ARCHIVE")
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]" % Script.scriptName,
+            ]
+        )
+    )
+    Script.parseCommandLine()
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveReplicas
-  from DIRAC import exit
-  exit(executeRemoveReplicas(dmScript, allDisk=True))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveReplicas
+    from DIRAC import exit
+
+    exit(executeRemoveReplicas(dmScript, allDisk=True))
 
 
 if __name__ == "__main__":
-  main()
+    main()

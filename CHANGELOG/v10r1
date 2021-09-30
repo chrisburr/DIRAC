@@ -336,6 +336,3 @@ use LHCbWebDIRAC v5r2-pre1
 * Replace pickle with JSON in production/transformation data
 * Test dumping production infomation with JSON as well as pickle
 * Re-enable data management tests
-
-
-

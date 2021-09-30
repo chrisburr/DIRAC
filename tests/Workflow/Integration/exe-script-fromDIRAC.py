@@ -9,7 +9,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-'''Script to run Executable application'''
+"""Script to run Executable application"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -27,9 +27,11 @@ gLogger.always("Hello hello!")
 
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from DIRAC import gConfig
-setup = gConfig.getValue('/DIRAC/Setup')
+
+setup = gConfig.getValue("/DIRAC/Setup")
 
 gLogger.always("I am running on setup %s" % setup)

@@ -19,12 +19,12 @@ __RCSID__ = "$Id$"
 
 
 class FileReplica(Replica):
-  """FileReplica class."""
+    """FileReplica class."""
 
-  def writeToXML(self):
-    """creates an xml string."""
-    result = ''
-    for param in self.params:
-      result += param.writeToXML()
+    def writeToXML(self):
+        """creates an xml string."""
+        result = ""
+        for param in self.params:
+            result += param.writeToXML()
 
-    return result
+        return result

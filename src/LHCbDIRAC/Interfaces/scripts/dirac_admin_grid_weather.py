@@ -20,14 +20,15 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
+    from DIRAC.Core.Base import Script
 
-  Script.setUsageMessage("Gives an overview of the grid resources status")
-  Script.parseCommandLine()
+    Script.setUsageMessage("Gives an overview of the grid resources status")
+    Script.parseCommandLine()
 
-  from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
-  DiracLHCb().gridWeather(printOutput=True)
+    from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
+
+    DiracLHCb().gridWeather(printOutput=True)
 
 
 if __name__ == "__main__":
-  main()
+    main()

@@ -23,67 +23,73 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 
 def printProds(title, prods):
-  typeDict = {}
-  for prod, prodType in prods.items():
-    typeDict.setdefault(prodType, []).append(prod)
-  gLogger.notice(title)
-  for prodType, prodList in typeDict.items():
-    gLogger.notice('(%s): %s' % (prodType, ','.join([str(prod) for prod in sorted(prodList)])))
+    typeDict = {}
+    for prod, prodType in prods.items():
+        typeDict.setdefault(prodType, []).append(prod)
+    gLogger.notice(title)
+    for prodType, prodList in typeDict.items():
+        gLogger.notice("(%s): %s" % (prodType, ",".join([str(prod) for prod in sorted(prodList)])))
 
 
 def execute(dmScript):
-  from DIRAC.Core.Base import Script
-  from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+    from DIRAC.Core.Base import Script
+    from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
-  tr = TransformationClient()
+    tr = TransformationClient()
 
-  for switch in Script.getUnprocessedSwitches():
-    pass
+    for switch in Script.getUnprocessedSwitches():
+        pass
 
-  bkQuery = dmScript.getBKQuery()
-  if not bkQuery:
-    gLogger.notice("No BKQuery given...")
-    exit(1)
+    bkQuery = dmScript.getBKQuery()
+    if not bkQuery:
+        gLogger.notice("No BKQuery given...")
+        exit(1)
 
-  startTime = time.time()
-  prods = bkQuery.getBKProductions()  # visible = 'All' )
+    startTime = time.time()
+    prods = bkQuery.getBKProductions()  # visible = 'All' )
 
-  parents = {}
-  productions = {}
-  for prod in prods:
-    ptype = tr.getTransformation(prod).get('Value', {}).get('Type', 'Unknown')
-    productions[prod] = ptype
-    parent = tr.getBookkeepingQuery(prod).get('Value', {}).get('ProductionID', '')
-    while isinstance(parent, six.integer_types):
-      ptype = tr.getTransformation(parent).get('Value', {}).get('Type', 'Unknown')
-      parents[parent] = ptype
-      parent = tr.getBookkeepingQuery(parent).get('Value', {}).get('ProductionID', '')
+    parents = {}
+    productions = {}
+    for prod in prods:
+        ptype = tr.getTransformation(prod).get("Value", {}).get("Type", "Unknown")
+        productions[prod] = ptype
+        parent = tr.getBookkeepingQuery(prod).get("Value", {}).get("ProductionID", "")
+        while isinstance(parent, six.integer_types):
+            ptype = tr.getTransformation(parent).get("Value", {}).get("Type", "Unknown")
+            parents[parent] = ptype
+            parent = tr.getBookkeepingQuery(parent).get("Value", {}).get("ProductionID", "")
 
-  gLogger.notice("For BK path %s:" % bkQuery.getPath())
-  if not prods:
-    gLogger.notice('No productions found!')
-  else:
-    printProds('Productions found', productions)
-    if parents:
-      printProds('Parent productions', parents)
+    gLogger.notice("For BK path %s:" % bkQuery.getPath())
+    if not prods:
+        gLogger.notice("No productions found!")
+    else:
+        printProds("Productions found", productions)
+        if parents:
+            printProds("Parent productions", parents)
 
-  gLogger.notice('Completed in %.1f seconds' % (time.time() - startTime))
+    gLogger.notice("Completed in %.1f seconds" % (time.time() - startTime))
 
 
 @DIRACScript()
 def main():
-  from DIRAC.Core.Base import Script
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+    from DIRAC.Core.Base import Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
-  dmScript = DMScript()
-  dmScript.registerBKSwitches()
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile]' % Script.scriptName, ]))
+    dmScript = DMScript()
+    dmScript.registerBKSwitches()
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s [option|cfgfile]" % Script.scriptName,
+            ]
+        )
+    )
 
-  Script.parseCommandLine(ignoreErrors=False)
-  execute(dmScript)
+    Script.parseCommandLine(ignoreErrors=False)
+    execute(dmScript)
 
 
 if __name__ == "__main__":
-  main()
+    main()

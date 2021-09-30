@@ -24,30 +24,36 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerSiteSwitches()
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerSiteSwitches()
 
-  Script.registerSwitch("n", "NoFC", " use this option to force the removal from storage of replicas not in FC")
-  Script.registerSwitch(
-      '',
-      'ReduceReplicas=',
-      '  specify the number of replicas you want to keep (default SE: Tier1-USER)')
-  Script.registerSwitch("", "Force", " use this option for force the removal of replicas even if last one")
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]' % Script.scriptName,
-                                    'Arguments:',
-                                    '  LFN:      Logical File Name or file containing LFNs',
-                                    '  SE:       Valid DIRAC SE']))
-  Script.parseCommandLine()
+    Script.registerSwitch("n", "NoFC", " use this option to force the removal from storage of replicas not in FC")
+    Script.registerSwitch(
+        "", "ReduceReplicas=", "  specify the number of replicas you want to keep (default SE: Tier1-USER)"
+    )
+    Script.registerSwitch("", "Force", " use this option for force the removal of replicas even if last one")
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]] SE[,SE2...]" % Script.scriptName,
+                "Arguments:",
+                "  LFN:      Logical File Name or file containing LFNs",
+                "  SE:       Valid DIRAC SE",
+            ]
+        )
+    )
+    Script.parseCommandLine()
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveReplicas
-  from DIRAC import exit
-  exit(executeRemoveReplicas(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveReplicas
+    from DIRAC import exit
+
+    exit(executeRemoveReplicas(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

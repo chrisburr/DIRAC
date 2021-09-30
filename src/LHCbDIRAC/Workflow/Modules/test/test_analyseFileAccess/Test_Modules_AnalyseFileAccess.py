@@ -29,37 +29,37 @@ from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
 from LHCbDIRAC.Workflow.Modules.AnalyseFileAccess import AnalyseFileAccess
 
 testdir = os.path.dirname(__file__)
-poolFile = os.path.join(testdir, 'pool_xml_catalog.xml')
-summaryFile = os.path.join(testdir, 'summary.xml')
+poolFile = os.path.join(testdir, "pool_xml_catalog.xml")
+summaryFile = os.path.join(testdir, "summary.xml")
 
 
 @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
 def test_analyseFileAccess(mockRequestValidator):
-  """Analyze the file accesses from a pool xml catalog and the xml summary."""
+    """Analyze the file accesses from a pool xml catalog and the xml summary."""
 
-  xmlCatalog = PoolXMLCatalog(xmlfile=poolFile)
-  xmlSummary = XMLSummary(summaryFile)
+    xmlCatalog = PoolXMLCatalog(xmlfile=poolFile)
+    xmlSummary = XMLSummary(summaryFile)
 
-  fileAccessAnalyzer = AnalyseFileAccess()
-  accessAttempts = fileAccessAnalyzer._checkFileAccess(xmlCatalog, xmlSummary)
+    fileAccessAnalyzer = AnalyseFileAccess()
+    accessAttempts = fileAccessAnalyzer._checkFileAccess(xmlCatalog, xmlSummary)
 
-  # Count how many successes
-  accessPerSE = defaultdict(lambda: defaultdict(int))
+    # Count how many successes
+    accessPerSE = defaultdict(lambda: defaultdict(int))
 
-  for se, success in accessAttempts:
-    accessPerSE[se][success] += 1
+    for se, success in accessAttempts:
+        accessPerSE[se][success] += 1
 
-  # 'NEVERUSED-DST' should not have any counter
-  assert 'NEVERUSED-DST' not in accessPerSE
+    # 'NEVERUSED-DST' should not have any counter
+    assert "NEVERUSED-DST" not in accessPerSE
 
-  # GOOD-DST should have 2 good reads and no bad
-  assert False not in accessPerSE['GOOD-DST']
-  assert accessPerSE['GOOD-DST'][True] == 2
+    # GOOD-DST should have 2 good reads and no bad
+    assert False not in accessPerSE["GOOD-DST"]
+    assert accessPerSE["GOOD-DST"][True] == 2
 
-  # BAD-DST should have 2 bad reads and no good
-  assert True not in accessPerSE['BAD-DST']
-  assert accessPerSE['BAD-DST'][False] == 2
+    # BAD-DST should have 2 bad reads and no good
+    assert True not in accessPerSE["BAD-DST"]
+    assert accessPerSE["BAD-DST"][False] == 2
 
-  # OTHERBAD-DST should have no good read and 1 bad read
-  assert True not in accessPerSE['OTHERBAD-DST']
-  assert accessPerSE['OTHERBAD-DST'][False] == 1
+    # OTHERBAD-DST should have no good read and 1 bad read
+    assert True not in accessPerSE["OTHERBAD-DST"]
+    assert accessPerSE["OTHERBAD-DST"][False] == 1

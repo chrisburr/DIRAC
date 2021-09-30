@@ -19,7 +19,8 @@ from xml.dom.minidom import parseString
 # sut
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.JobReader import JobReader
 
-xmlString = """<?xml version="1.0" encoding="ISO-8859-1"?>
+xmlString = (
+    """<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE Job SYSTEM "book.dtd">
 <Job ConfigName="test" ConfigVersion="Jenkins" Date="%jDate%" Time="%jTime%">
   <TypedParameter Name="CPUTIME" Type="Info" Value="111222"/>
@@ -51,11 +52,11 @@ xmlString = """<?xml version="1.0" encoding="ISO-8859-1"?>
           <Parameter Name="MD5Sum" Value="ae647981ea419cc9f8e8fa0a2d6bfd3d"/>
           <Parameter Name="Guid" Value="546014C4-55C6-E611-8E94-02163E00F6B2"/>
   </OutputFile>
-  <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log" """ +\
-    """TypeName="LOG" TypeVersion="1">
+  <OutputFile Name="/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log" """
+    + """TypeName="LOG" TypeVersion="1">
           <Parameter Name="FileSize" Value="319867"/>
-          <Replica Location="Web" Name="http://lhcb-logs.cern.ch/""" +\
-    """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log"/>
+          <Replica Location="Web" Name="http://lhcb-logs.cern.ch/"""
+    + """storage/lhcb/MC/2012/LOG/00056438/0000/00001025/Gauss_00056438_00001025_test_1.log"/>
           <Parameter Name="MD5Sum" Value="e4574c9083d1163d43ba6ac033cbd769"/>
           <Parameter Name="Guid" Value="E4574C90-83D1-163D-43BA-6AC033CBD769"/>
   </OutputFile>
@@ -64,27 +65,28 @@ xmlString = """<?xml version="1.0" encoding="ISO-8859-1"?>
   </SimulationCondition>
 </Job>
 """
+)
 
 
 def test_JobReader():
 
-  currentTime = datetime.datetime.now()
-  jobStart = jobEnd = datetime.datetime.now()
-  jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)
-  xml = xmlString.replace("%jDate%", currentTime.strftime('%Y-%m-%d'))
-  xml = xml.replace("%jTime%", currentTime.strftime('%H:%M'))
-  xml = xml.replace("%jStart%", jobStart.strftime('%Y-%m-%d %H:%M'))
-  xml = xml.replace("%jEnd%", jobEnd.strftime('%Y-%m-%d %H:%M'))
-  doc = parseString(xml)
+    currentTime = datetime.datetime.now()
+    jobStart = jobEnd = datetime.datetime.now()
+    jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)
+    xml = xmlString.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
+    xml = xml.replace("%jTime%", currentTime.strftime("%H:%M"))
+    xml = xml.replace("%jStart%", jobStart.strftime("%Y-%m-%d %H:%M"))
+    xml = xml.replace("%jEnd%", jobEnd.strftime("%Y-%m-%d %H:%M"))
+    doc = parseString(xml)
 
-  job = JobReader().readJob(doc, "IN Memory")
-  assert job.configuration.configName == 'test'
-  assert job.configuration.configVersion == 'Jenkins'
-  assert len(job.outputFiles) == 2
-  assert job.outputFiles[0].name == '/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim'
-  assert job.outputFiles[0].type == 'SIM'
-  assert job.outputFiles[0].params[1].value == '411'
-  assert len(job.parameters) == 22
-  assert job.parameters[0].name == 'CPUTIME'
-  assert job.parameters[0].value == '111222'
-  assert job.simulationCondition.parameters['SimDescription'] == 'Beam4000GeV-2012-MagUp-Nu2.5-Pythia8'
+    job = JobReader().readJob(doc, "IN Memory")
+    assert job.configuration.configName == "test"
+    assert job.configuration.configVersion == "Jenkins"
+    assert len(job.outputFiles) == 2
+    assert job.outputFiles[0].name == "/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim"
+    assert job.outputFiles[0].type == "SIM"
+    assert job.outputFiles[0].params[1].value == "411"
+    assert len(job.parameters) == 22
+    assert job.parameters[0].name == "CPUTIME"
+    assert job.parameters[0].value == "111222"
+    assert job.simulationCondition.parameters["SimDescription"] == "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8"

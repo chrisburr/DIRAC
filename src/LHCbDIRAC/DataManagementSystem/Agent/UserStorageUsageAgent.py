@@ -29,18 +29,18 @@ __RCSID__ = "$Id$"
 
 
 class UserStorageUsageAgent(StorageUsageAgent):
-  """
-  .. class:: UserStorageUsageAgent
-
-  """
-
-  def removeEmptyDir(self, dirPath):
-    """remove empty directories, but skip home.
-
-    :param self: self reference
-    :param str dirPath: directory to remove
     """
-    # Do not remove user's home dir
-    if len(List.fromChar(dirPath, "/")) > 4:
-      return StorageUsageAgent.removeEmptyDir(self, dirPath)
-    return S_OK()
+    .. class:: UserStorageUsageAgent
+
+    """
+
+    def removeEmptyDir(self, dirPath):
+        """remove empty directories, but skip home.
+
+        :param self: self reference
+        :param str dirPath: directory to remove
+        """
+        # Do not remove user's home dir
+        if len(List.fromChar(dirPath, "/")) > 4:
+            return StorageUsageAgent.removeEmptyDir(self, dirPath)
+        return S_OK()

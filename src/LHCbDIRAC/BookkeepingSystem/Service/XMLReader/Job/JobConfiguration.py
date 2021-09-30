@@ -17,26 +17,32 @@ __RCSID__ = "$Id$"
 
 
 class JobConfiguration(object):
+    def __init__(self):
+        """initialize the class members."""
+        self.configName = ""  # None
+        self.configVersion = ""  # None
+        self.date = ""  # None
+        self.time = ""  # None
 
-  def __init__(self):
-    """initialize the class members."""
-    self.configName = ""  # None
-    self.configVersion = ""  # None
-    self.date = ""  # None
-    self.time = ""  # None
+    def __repr__(self):
+        """formats the output of the print."""
+        result = "JobConfiguration: \n"
+        result += "ConfigName:" + self.configName + "\n"
+        result += "ConfigVersion:" + self.configVersion + "\n"
+        result += "Date and Time:" + self.date + " " + self.time
+        return result
 
-  def __repr__(self):
-    """formats the output of the print."""
-    result = 'JobConfiguration: \n'
-    result += 'ConfigName:' + self.configName + '\n'
-    result += 'ConfigVersion:' + self.configVersion + '\n'
-    result += 'Date and Time:' + self.date + ' ' + self.time
-    return result
-
-  def writeToXML(self):
-    """creates an xml string."""
-    result = '<Job ConfigName="' + self.configName + \
-        '" ConfigVersion="' + self.configVersion + \
-        '" Date="' + self.date + \
-        '" Time="' + self.time + '">\n'
-    return result
+    def writeToXML(self):
+        """creates an xml string."""
+        result = (
+            '<Job ConfigName="'
+            + self.configName
+            + '" ConfigVersion="'
+            + self.configVersion
+            + '" Date="'
+            + self.date
+            + '" Time="'
+            + self.time
+            + '">\n'
+        )
+        return result

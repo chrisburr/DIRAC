@@ -19,40 +19,41 @@ __RCSID__ = "$Id$"
 
 
 class Replica(object):
-  """Replica class."""
+    """Replica class."""
 
-  #############################################################################
-  def __init__(self):
-    """initialize the class members."""
-    self.params = []
-    self.name = ""
+    #############################################################################
+    def __init__(self):
+        """initialize the class members."""
+        self.params = []
+        self.name = ""
 
-  #############################################################################
-  def addParam(self, param):
-    """sets the parameters."""
-    self.params += [param]
+    #############################################################################
+    def addParam(self, param):
+        """sets the parameters."""
+        self.params += [param]
 
-  #############################################################################
-  def __repr__(self):
-    """It idents the print output."""
-    result = "\nReplica: "
-    result += self.name + "\n"
-    for param in self.params:
-      result += str(param)
+    #############################################################################
+    def __repr__(self):
+        """It idents the print output."""
+        result = "\nReplica: "
+        result += self.name + "\n"
+        for param in self.params:
+            result += str(param)
 
-    return result
+        return result
 
-  #############################################################################
-  def writeToXML(self):
-    """writs an XML file."""
-    gLogger.debug("Replica XML writing!!!")
-    result = """<?xml version="1.0" encoding="UTF-8"?>
+    #############################################################################
+    def writeToXML(self):
+        """writs an XML file."""
+        gLogger.debug("Replica XML writing!!!")
+        result = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Replicas SYSTEM "book.dtd">
 <Replicas>
 """
-    for param in self.params:
-      result += param.writeToXML(False)
+        for param in self.params:
+            result += param.writeToXML(False)
 
-    result += '</Replicas>'
-    return result
-  #############################################################################
+        result += "</Replicas>"
+        return result
+
+    #############################################################################

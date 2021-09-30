@@ -22,6 +22,7 @@ import sys
 import unittest
 
 from DIRAC.Core.Base.Script import parseCommandLine
+
 parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
@@ -33,32 +34,31 @@ from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 
 
 class RegressionTestCase(IntegrationTest):
-  """ Base class for the Regression test cases
-  """
+    """Base class for the Regression test cases"""
 
-  def setUp(self):
-    super(RegressionTestCase, self).setUp()
+    def setUp(self):
+        super(RegressionTestCase, self).setUp()
 
-    self.diracLHCb = DiracLHCb()
+        self.diracLHCb = DiracLHCb()
 
 
 class MCRecoSuccess(RegressionTestCase):
-  def test_Regression_Production(self):
+    def test_Regression_Production(self):
 
-    location = find_all('104074.xml', '..', 'Regression')[0]
-    j_mcReco = LHCbJob(location)
-    j_mcReco.setConfigArgs('pilot.cfg')
+        location = find_all("104074.xml", "..", "Regression")[0]
+        j_mcReco = LHCbJob(location)
+        j_mcReco.setConfigArgs("pilot.cfg")
 
-    res = j_mcReco.runLocal(self.diracLHCb)
-    self.assertTrue(res['OK'])
+        res = j_mcReco.runLocal(self.diracLHCb)
+        self.assertTrue(res["OK"])
 
 
 #############################################################################
 # Test Suite run
 #############################################################################
 
-if __name__ == '__main__':
-  suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegressionTestCase)
-  suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCRecoSuccess))
-  testResult = unittest.TextTestRunner(verbosity=2).run(suite)
-  sys.exit(not testResult.wasSuccessful())
+if __name__ == "__main__":
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(RegressionTestCase)
+    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(MCRecoSuccess))
+    testResult = unittest.TextTestRunner(verbosity=2).run(suite)
+    sys.exit(not testResult.wasSuccessful())

@@ -26,698 +26,717 @@ __RCSID__ = "$Id$"
 
 
 class JobStepPlotter(BaseReporter):
-  """JobStepPlotter as an extension of BaseReporter."""
+    """JobStepPlotter as an extension of BaseReporter."""
+
+    _typeName = "JobStep"
+    _typeKeyFields = [dF[0] for dF in JobStep().definitionKeyFields]
 
-  _typeName = "JobStep"
-  _typeKeyFields = [dF[0] for dF in JobStep().definitionKeyFields]
+    # .............................................................................
+    # CPU Efficiency
 
-  # .............................................................................
-  # CPU Efficiency
+    _reportCPUEfficiencyName = "CPU efficiency"
 
-  _reportCPUEfficiencyName = "CPU efficiency"
+    def _reportCPUEfficiency(self, reportRequest):
 
-  def _reportCPUEfficiency(self, reportRequest):
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectField + ", %s, %s, SUM(%s), SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", "CPUTime", "ExecTime"],
+        )
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", %s, %s, SUM(%s), SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength', 'CPUTime', 'ExecTime'])
+        retVal = self._getTimedData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {
+                "checkNone": True,
+                "convertToGranularity": "sum",
+                "calculateProportionalGauges": False,
+                "consolidationFunction": self._efficiencyConsolidation,
+            },
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getTimedData(reportRequest['startTime'],
-                                reportRequest['endTime'],
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'checkNone': True,
-                                 'convertToGranularity': 'sum',
-                                 'calculateProportionalGauges': False,
-                                 'consolidationFunction': self._efficiencyConsolidation})
-    if not retVal['OK']:
-      return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
+        if len(dataDict) > 1:
+            # Get the total for the plot
+            selectFields = ("'Total', %s, %s, SUM(%s),SUM(%s)", ["startTime", "bucketLength", "CPUTime", "ExecTime"])
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
-    if len(dataDict) > 1:
-      # Get the total for the plot
-      selectFields = ("'Total', %s, %s, SUM(%s),SUM(%s)",
-                      ['startTime', 'bucketLength', 'CPUTime', 'ExecTime']
-                      )
+            retVal = self._getTimedData(
+                reportRequest["startTime"],
+                reportRequest["endTime"],
+                selectFields,
+                reportRequest["condDict"],
+                reportRequest["groupingFields"],
+                {
+                    "scheckNone": True,
+                    "convertToGranularity": "sum",
+                    "calculateProportionalGauges": False,
+                    "consolidationFunction": self._efficiencyConsolidation,
+                },
+            )
+            if not retVal["OK"]:
+                return retVal
+            totalDict = retVal["Value"][0]
+            self.stripDataField(totalDict, 0)
+            for key in totalDict:
+                dataDict[key] = totalDict[key]
 
-      retVal = self._getTimedData(reportRequest['startTime'],
-                                  reportRequest['endTime'],
-                                  selectFields,
-                                  reportRequest['condDict'],
-                                  reportRequest['groupingFields'],
-                                  {'scheckNone': True,
-                                   'convertToGranularity': 'sum',
-                                   'calculateProportionalGauges': False,
-                                   'consolidationFunction': self._efficiencyConsolidation})
-      if not retVal['OK']:
-        return retVal
-      totalDict = retVal['Value'][0]
-      self.stripDataField(totalDict, 0)
-      for key in totalDict:
-        dataDict[key] = totalDict[key]
+        return S_OK({"data": dataDict, "granularity": granularity})
 
-    return S_OK({'data': dataDict,
-                 'granularity': granularity})
+    def _plotCPUEfficiency(self, reportRequest, plotInfo, filename):
 
-  def _plotCPUEfficiency(self, reportRequest, plotInfo, filename):
+        metadata = {
+            "title": "CPU efficiency by %s" % reportRequest["grouping"],
+            "starttime": reportRequest["startTime"],
+            "endtime": reportRequest["endTime"],
+            "span": plotInfo["granularity"],
+        }
 
-    metadata = {'title': 'CPU efficiency by %s' % reportRequest['grouping'],
-                'starttime': reportRequest['startTime'],
-                'endtime': reportRequest['endTime'],
-                'span': plotInfo['granularity']}
+        return self._generateQualityPlot(filename, plotInfo["data"], metadata)
 
-    return self._generateQualityPlot(filename, plotInfo['data'], metadata)
+    # .............................................................................
+    # CPU Usage
 
-  # .............................................................................
-  # CPU Usage
+    _reportCPUUsageName = "CPU time"
 
-  _reportCPUUsageName = "CPU time"
+    def _reportCPUUsage(self, reportRequest):
 
-  def _reportCPUUsage(self, reportRequest):
+        field = "CPUTime"
+        unit = "time"
 
-    field = 'CPUTime'
-    unit = 'time'
+        return self.__reportNormPlot(reportRequest, field, unit)
 
-    return self.__reportNormPlot(reportRequest, field, unit)
+    def _plotCPUUsage(self, reportRequest, plotInfo, filename):
 
-  def _plotCPUUsage(self, reportRequest, plotInfo, filename):
+        title = "CPU usage"
 
-    title = 'CPU usage'
+        return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
 
-    return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Pie CPU Time
 
-  # .............................................................................
-  # Pie CPU Time
+    _reportPieCPUTimeName = "Pie plot of CPU time"
 
-  _reportPieCPUTimeName = 'Pie plot of CPU time'
+    def _reportPieCPUTime(self, reportRequest):
 
-  def _reportPieCPUTime(self, reportRequest):
+        return self.__reportPiePlot(reportRequest, "CPUTime")
 
-    return self.__reportPiePlot(reportRequest, 'CPUTime')
+    def _plotPieCPUTime(self, reportRequest, plotInfo, filename):
 
-  def _plotPieCPUTime(self, reportRequest, plotInfo, filename):
+        title = "CPU time"
+        label = "CPUTime"
 
-    title = 'CPU time'
-    label = 'CPUTime'
+        return self.__plotPie(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotPie(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Cumulative CPU Time
 
-  # .............................................................................
-  # Cumulative CPU Time
+    _reportCumulativeCPUTimeName = "Cumulative CPU time"
 
-  _reportCumulativeCPUTimeName = "Cumulative CPU time"
+    def _reportCumulativeCPUTime(self, reportRequest):
 
-  def _reportCumulativeCPUTime(self, reportRequest):
+        field = "CPUTime"
+        unit = "time"
 
-    field = 'CPUTime'
-    unit = 'time'
+        return self.__reportCumulativePlot(reportRequest, field, unit)
 
-    return self.__reportCumulativePlot(reportRequest, field, unit)
+    def _plotCumulativeCPUTime(self, reportRequest, plotInfo, filename):
 
-  def _plotCumulativeCPUTime(self, reportRequest, plotInfo, filename):
+        title = "Cumulative CPU time"
 
-    title = 'Cumulative CPU time'
+        return self.__plotCumulative(reportRequest, plotInfo, filename, title)
 
-    return self.__plotCumulative(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Norm CPU Time
 
-  # .............................................................................
-  # Norm CPU Time
+    _reportNormCPUTimeName = "NormCPU time"
 
-  _reportNormCPUTimeName = "NormCPU time"
+    def _reportNormCPUTime(self, reportRequest):
 
-  def _reportNormCPUTime(self, reportRequest):
+        field = "NormCPUTime"
+        unit = "time"
 
-    field = 'NormCPUTime'
-    unit = 'time'
+        return self.__reportNormPlot(reportRequest, field, unit)
 
-    return self.__reportNormPlot(reportRequest, field, unit)
+    def _plotNormCPUTime(self, reportRequest, plotInfo, filename):
 
-  def _plotNormCPUTime(self, reportRequest, plotInfo, filename):
+        title = "Normalized CPU"
 
-    title = 'Normalized CPU'
+        return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
 
-    return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Cumulative Norm CPU Time
 
-  # .............................................................................
-  # Cumulative Norm CPU Time
+    _reportCumulativeNormCPUTimeName = "Cumulative normalized CPU time"
 
-  _reportCumulativeNormCPUTimeName = "Cumulative normalized CPU time"
+    def _reportCumulativeNormCPUTime(self, reportRequest):
 
-  def _reportCumulativeNormCPUTime(self, reportRequest):
+        field = "NormCPUTime"
+        unit = "time"
 
-    field = 'NormCPUTime'
-    unit = 'time'
+        return self.__reportCumulativePlot(reportRequest, field, unit)
 
-    return self.__reportCumulativePlot(reportRequest, field, unit)
+    def _plotCumulativeNormCPUTime(self, reportRequest, plotInfo, filename):
 
-  def _plotCumulativeNormCPUTime(self, reportRequest, plotInfo, filename):
+        title = "Cumulative Normalized CPU time"
 
-    title = 'Cumulative Normalized CPU time'
+        return self.__plotCumulative(reportRequest, plotInfo, filename, title)
 
-    return self.__plotCumulative(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Pie Norm CPU Time
 
-  # .............................................................................
-  # Pie Norm CPU Time
+    _reportPieNormCPUTimeName = "Pie plot of NormCPU time"
 
-  _reportPieNormCPUTimeName = 'Pie plot of NormCPU time'
+    def _reportPieNormCPUTime(self, reportRequest):
 
-  def _reportPieNormCPUTime(self, reportRequest):
+        return self.__reportPiePlot(reportRequest, "NormCPUTime")
 
-    return self.__reportPiePlot(reportRequest, 'NormCPUTime')
+    def _plotPieNormCPUTime(self, reportRequest, plotInfo, filename):
 
-  def _plotPieNormCPUTime(self, reportRequest, plotInfo, filename):
+        title = "Average Normalized CPU time"
+        label = "NormCPUTime"
 
-    title = 'Average Normalized CPU time'
-    label = 'NormCPUTime'
+        return self.__plotPie(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotPie(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Input Data
 
-  # .............................................................................
-  # Input Data
+    _reportInputDataName = "Input Data"
 
-  _reportInputDataName = "Input Data"
+    def _reportInputData(self, reportRequest):
 
-  def _reportInputData(self, reportRequest):
+        field = "InputData"
+        unit = "files"
 
-    field = 'InputData'
-    unit = 'files'
+        return self.__reportNormPlot(reportRequest, field, unit)
 
-    return self.__reportNormPlot(reportRequest, field, unit)
+    def _plotInputData(self, reportRequest, plotInfo, filename):
 
-  def _plotInputData(self, reportRequest, plotInfo, filename):
+        title = "Input data"
 
-    title = 'Input data'
+        return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
 
-    return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Cumulative Input Data
 
-  # .............................................................................
-  # Cumulative Input Data
+    _reportCumulativeInputDataName = "Cumulative Input Data"
 
-  _reportCumulativeInputDataName = "Cumulative Input Data"
+    def _reportCumulativeInputData(self, reportRequest):
 
-  def _reportCumulativeInputData(self, reportRequest):
+        field = "InputData"
+        unit = "files"
 
-    field = 'InputData'
-    unit = 'files'
+        return self.__reportCumulativePlot(reportRequest, field, unit)
 
-    return self.__reportCumulativePlot(reportRequest, field, unit)
+    def _plotCumulativeInputData(self, reportRequest, plotInfo, filename):
 
-  def _plotCumulativeInputData(self, reportRequest, plotInfo, filename):
+        title = "Cumulative Input Data"
 
-    title = 'Cumulative Input Data'
+        return self.__plotCumulative(reportRequest, plotInfo, filename, title)
 
-    return self.__plotCumulative(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Pie Input Data
 
-  # .............................................................................
-  # Pie Input Data
+    _reportPieInputDataName = "Pie plot of Input Data"
 
-  _reportPieInputDataName = 'Pie plot of Input Data'
+    def _reportPieInputData(self, reportRequest):
 
-  def _reportPieInputData(self, reportRequest):
+        return self.__reportPiePlot(reportRequest, "InputData")
 
-    return self.__reportPiePlot(reportRequest, 'InputData')
+    def _plotPieInputData(self, reportRequest, plotInfo, filename):
 
-  def _plotPieInputData(self, reportRequest, plotInfo, filename):
+        title = "Pie plot of Input data"
+        label = "InputData"
 
-    title = 'Pie plot of Input data'
-    label = 'InputData'
+        return self.__plotPie(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotPie(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Output Data
 
-  # .............................................................................
-  # Output Data
+    _reportOutputDataName = "Output Data"
 
-  _reportOutputDataName = "Output Data"
+    def _reportOutputData(self, reportRequest):
 
-  def _reportOutputData(self, reportRequest):
+        field = "OutputData"
+        units = "files"
 
-    field = 'OutputData'
-    units = 'files'
+        return self.__reportNormPlot(reportRequest, field, units)
 
-    return self.__reportNormPlot(reportRequest, field, units)
+    def _plotOutputData(self, reportRequest, plotInfo, filename):
 
-  def _plotOutputData(self, reportRequest, plotInfo, filename):
+        title = "Output data"
 
-    title = 'Output data'
+        return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
 
-    return self.__plotNormPlot(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Cumulative Output Data
 
-  # .............................................................................
-  # Cumulative Output Data
+    _reportCumulativeOutputDataName = "Cumulative OutputData"
 
-  _reportCumulativeOutputDataName = "Cumulative OutputData"
+    def _reportCumulativeOutputData(self, reportRequest):
 
-  def _reportCumulativeOutputData(self, reportRequest):
+        field = "OutputData"
+        unit = "files"
 
-    field = 'OutputData'
-    unit = 'files'
+        return self.__reportCumulativePlot(reportRequest, field, unit)
 
-    return self.__reportCumulativePlot(reportRequest, field, unit)
+    def _plotCumulativeOutputData(self, reportRequest, plotInfo, filename):
 
-  def _plotCumulativeOutputData(self, reportRequest, plotInfo, filename):
+        title = "Cumulative Output Data"
 
-    title = 'Cumulative Output Data'
+        return self.__plotCumulative(reportRequest, plotInfo, filename, title)
 
-    return self.__plotCumulative(reportRequest, plotInfo, filename, title)
+    # .............................................................................
+    # Pie Output Data
 
-  # .............................................................................
-  # Pie Output Data
+    _reportPieOutputDataName = "Pie plot of Output Data"
 
-  _reportPieOutputDataName = 'Pie plot of Output Data'
+    def _reportPieOutputData(self, reportRequest):
 
-  def _reportPieOutputData(self, reportRequest):
+        return self.__reportPiePlot(reportRequest, "OutputData")
 
-    return self.__reportPiePlot(reportRequest, 'OutputData')
+    def _plotPieOutputData(self, reportRequest, plotInfo, filename):
 
-  def _plotPieOutputData(self, reportRequest, plotInfo, filename):
+        title = "Pie plot of  Output data"
+        label = "OutputData"
 
-    title = 'Pie plot of  Output data'
-    label = 'OutputData'
+        return self.__plotPie(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotPie(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Input Events
 
-  # .............................................................................
-  # Input Events
+    _reportInputEventsName = "Input Events"
 
-  _reportInputEventsName = "Input Events"
+    def _reportInputEvents(self, reportRequest):
+        return self.__reportNumberOfField(reportRequest, "InputEvents")
 
-  def _reportInputEvents(self, reportRequest):
-    return self.__reportNumberOfField(reportRequest, 'InputEvents')
+    def _plotInputEvents(self, reportRequest, plotInfo, filename):
 
-  def _plotInputEvents(self, reportRequest, plotInfo, filename):
+        title = "InputEvents"
+        label = "Input Events"
 
-    title = 'InputEvents'
-    label = 'Input Events'
+        return self.__plotNumberOfField(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotNumberOfField(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Cumulative Input Events
 
-  # .............................................................................
-  # Cumulative Input Events
+    _reportCumulativeInputEventsName = "Cumulative Input Events"
 
-  _reportCumulativeInputEventsName = "Cumulative Input Events"
+    def _reportCumulativeInputEvents(self, reportRequest):
+        return self.__reportCumulativeNumberOfField(reportRequest, "InputEvents")
 
-  def _reportCumulativeInputEvents(self, reportRequest):
-    return self.__reportCumulativeNumberOfField(reportRequest, 'InputEvents')
+    def _plotCumulativeInputEvents(self, reportRequest, plotInfo, filename):
 
-  def _plotCumulativeInputEvents(self, reportRequest, plotInfo, filename):
+        title = "Cumulative Input Events "
+        label = "Input Events"
 
-    title = 'Cumulative Input Events '
-    label = 'Input Events'
+        return self.__plotCumulativeNumberOfField(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotCumulativeNumberOfField(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Pie Input Events
 
-  # .............................................................................
-  # Pie Input Events
+    _reportPieInputEventsName = "Pie plot of Input Events"
 
-  _reportPieInputEventsName = 'Pie plot of Input Events'
+    def _reportPieInputEvents(self, reportRequest):
+        return self.__reportPiePlot(reportRequest, "InputEvents")
 
-  def _reportPieInputEvents(self, reportRequest):
-    return self.__reportPiePlot(reportRequest, 'InputEvents')
+    def _plotPieInputEvents(self, reportRequest, plotInfo, filename):
 
-  def _plotPieInputEvents(self, reportRequest, plotInfo, filename):
+        title = "Pie plot of Input Events"
+        label = "InputEvents"
 
-    title = 'Pie plot of Input Events'
-    label = 'InputEvents'
+        return self.__plotPie(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotPie(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Output Events
 
-  # .............................................................................
-  # Output Events
+    _reportOutputEventsName = "Output Events"
 
-  _reportOutputEventsName = "Output Events"
+    def _reportOutputEvents(self, reportRequest):
+        return self.__reportNumberOfField(reportRequest, "OutputEvents")
 
-  def _reportOutputEvents(self, reportRequest):
-    return self.__reportNumberOfField(reportRequest, 'OutputEvents')
+    def _plotOutputEvents(self, reportRequest, plotInfo, filename):
 
-  def _plotOutputEvents(self, reportRequest, plotInfo, filename):
+        title = "OutputEvents"
+        label = "Output Events"
 
-    title = 'OutputEvents'
-    label = 'Output Events'
+        return self.__plotNumberOfField(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotNumberOfField(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Cumulative Output Events
 
-  # .............................................................................
-  # Cumulative Output Events
+    _reportCumulativeOutputEventsName = "Cumulative Output Events"
 
-  _reportCumulativeOutputEventsName = "Cumulative Output Events"
+    def _reportCumulativeOutputEvents(self, reportRequest):
+        return self.__reportCumulativeNumberOfField(reportRequest, "OutputEvents")
 
-  def _reportCumulativeOutputEvents(self, reportRequest):
-    return self.__reportCumulativeNumberOfField(reportRequest, 'OutputEvents')
+    def _plotCumulativeOutputEvents(self, reportRequest, plotInfo, filename):
 
-  def _plotCumulativeOutputEvents(self, reportRequest, plotInfo, filename):
+        title = "Cumulative Output Events "
+        label = "Output Events"
 
-    title = 'Cumulative Output Events '
-    label = 'Output Events'
+        return self.__plotCumulativeNumberOfField(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotCumulativeNumberOfField(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Pie Output Events
 
-  # .............................................................................
-  # Pie Output Events
+    _reportPieOutputEventsName = "Pie plot of Output Events"
 
-  _reportPieOutputEventsName = 'Pie plot of Output Events'
+    def _reportPieOutputEvents(self, reportRequest):
+        return self.__reportPiePlot(reportRequest, "OutputEvents")
 
-  def _reportPieOutputEvents(self, reportRequest):
-    return self.__reportPiePlot(reportRequest, 'OutputEvents')
+    def _plotPieOutputEvents(self, reportRequest, plotInfo, filename):
 
-  def _plotPieOutputEvents(self, reportRequest, plotInfo, filename):
+        title = "Pie plot of Output Events"
+        label = "OutputEvents"
 
-    title = 'Pie plot of Output Events'
-    label = 'OutputEvents'
+        return self.__plotPie(reportRequest, plotInfo, filename, title, label)
 
-    return self.__plotPie(reportRequest, plotInfo, filename, title, label)
+    # .............................................................................
+    # Input Events Per Output Events
 
-  # .............................................................................
-  # Input Events Per Output Events
+    _reportInputEventsPerOutputEventsName = "Input/Output Events"
 
-  _reportInputEventsPerOutputEventsName = 'Input/Output Events'
+    def _reportInputEventsPerOutputEvents(self, reportRequest):
+        return self.__report2D(reportRequest, "InputEvents", "OutputEvents")
 
-  def _reportInputEventsPerOutputEvents(self, reportRequest):
-    return self.__report2D(reportRequest, 'InputEvents', 'OutputEvents')
+    def _plotInputEventsPerOutputEvents(self, reportRequest, plotInfo, filename):
+        return self.__plot2D(reportRequest, plotInfo, filename, "Input/Output Events")
 
-  def _plotInputEventsPerOutputEvents(self, reportRequest, plotInfo, filename):
-    return self.__plot2D(reportRequest, plotInfo, filename, "Input/Output Events")
+    # .............................................................................
+    # CPU Time Per Output Events
 
-  # .............................................................................
-  # CPU Time Per Output Events
+    _reportCPUTimePerOutputEventsName = "CPUTime/Output Events"
 
-  _reportCPUTimePerOutputEventsName = 'CPUTime/Output Events'
+    def _reportCPUTimePerOutputEvents(self, reportRequest):
+        return self.__report2D(reportRequest, "CPUTime", "OutputEvents")
 
-  def _reportCPUTimePerOutputEvents(self, reportRequest):
-    return self.__report2D(reportRequest, 'CPUTime', 'OutputEvents')
+    def _plotCPUTimePerOutputEvents(self, reportRequest, plotInfo, filename):
+        return self.__plot2D(reportRequest, plotInfo, filename, "CPUTime/Output Events")
 
-  def _plotCPUTimePerOutputEvents(self, reportRequest, plotInfo, filename):
-    return self.__plot2D(reportRequest, plotInfo, filename, "CPUTime/Output Events")
+    # .............................................................................
+    # CPU Time Per Input Events
 
-  # .............................................................................
-  # CPU Time Per Input Events
+    _reportCPUTimePerInputEventsName = "CPUTime/Input Events"
 
-  _reportCPUTimePerInputEventsName = 'CPUTime/Input Events'
+    def _reportCPUTimePerInputEvents(self, reportRequest):
+        return self.__report2D(reportRequest, "CPUTime", "InputEvents")
 
-  def _reportCPUTimePerInputEvents(self, reportRequest):
-    return self.__report2D(reportRequest, 'CPUTime', 'InputEvents')
+    def _plotCPUTimePerInputEvents(self, reportRequest, plotInfo, filename):
+        return self.__plot2D(reportRequest, plotInfo, filename, "CPUTime/Input Events")
 
-  def _plotCPUTimePerInputEvents(self, reportRequest, plotInfo, filename):
-    return self.__plot2D(reportRequest, plotInfo, filename, "CPUTime/Input Events")
+    # .............................................................................
+    # HELPER methods
 
-  # .............................................................................
-  # HELPER methods
+    def __reportNormPlot(self, reportRequest, field, unit):
 
-  def __reportNormPlot(self, reportRequest, field, unit):
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectField + ", %s, %s, SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", field],
+        )
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", %s, %s, SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength', field]
-                    )
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
+        retVal = self._getTimedData(
+            startTime, endTime, selectFields, reportRequest["condDict"], reportRequest["groupingFields"], {}
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getTimedData(startTime,
-                                endTime,
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {})
-    if not retVal['OK']:
-      return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        # 2nd element ( maxValue ) not used
+        dataDict, __ = self._divideByFactor(dataDict, granularity)
+        dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
 
-    # 2nd element ( maxValue ) not used
-    dataDict, __ = self._divideByFactor(dataDict, granularity)
-    dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
+        accumMaxVal = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableRateUnit(dataDict, accumMaxVal, unit)
 
-    accumMaxVal = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableRateUnit(dataDict, accumMaxVal, unit)
+        # 3rd element ( maxValue ) not used
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    # 3rd element ( maxValue ) not used
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+    def __plotNormPlot(self, reportRequest, plotInfo, filename, title):
 
-  def __plotNormPlot(self, reportRequest, plotInfo, filename, title):
+        metadata = {
+            "title": "%s by %s" % (title, reportRequest["grouping"]),
+            "starttime": reportRequest["startTime"],
+            "endtime": reportRequest["endTime"],
+            "span": plotInfo["granularity"],
+            "ylabel": plotInfo["unit"],
+        }
 
-    metadata = {'title': '%s by %s' % (title, reportRequest['grouping']),
-                'starttime': reportRequest['startTime'],
-                'endtime': reportRequest['endTime'],
-                'span': plotInfo['granularity'],
-                'ylabel': plotInfo['unit']}
+        return self._generateStackedLinePlot(filename, plotInfo["graphDataDict"], metadata)
 
-    return self._generateStackedLinePlot(filename, plotInfo['graphDataDict'], metadata)
+    def __reportPiePlot(self, reportRequest, field):
+        # selectFields = (self._getSelectStringForGrouping(reportRequest[ 'groupingFields' ]) + ", SUM(%s/%s)",
+        #                 reportRequest[ 'groupingFields' ][1] + [ field, 'entriesInBucket'
+        #                               ]
+        #               )
 
-  def __reportPiePlot(self, reportRequest, field):
-    # selectFields = (self._getSelectStringForGrouping(reportRequest[ 'groupingFields' ]) + ", SUM(%s/%s)",
-    #                 reportRequest[ 'groupingFields' ][1] + [ field, 'entriesInBucket'
-    #                               ]
-    #               )
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (selectField + ", SUM(%s)", reportRequest["groupingFields"][1] + [field])
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", SUM(%s)",
-                    reportRequest['groupingFields'][1] + [field])
+        retVal = self._getSummaryData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {},
+        )
+        if not retVal["OK"]:
+            return retVal
+        dataDict = retVal["Value"]
+        # bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
+        # numBins = len(bins)
+        # for key in dataDict:
+        #   dataDict[ key ] = float(dataDict[ key ] / numBins)
+        return S_OK({"data": dataDict})
 
-    retVal = self._getSummaryData(reportRequest['startTime'],
-                                  reportRequest['endTime'],
-                                  selectFields,
-                                  reportRequest['condDict'],
-                                  reportRequest['groupingFields'],
-                                  {})
-    if not retVal['OK']:
-      return retVal
-    dataDict = retVal['Value']
-    # bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
-    # numBins = len(bins)
-    # for key in dataDict:
-    #   dataDict[ key ] = float(dataDict[ key ] / numBins)
-    return S_OK({'data': dataDict})
+    def __plotPie(self, reportRequest, plotInfo, filename, title, label):
+        metadata = {
+            "title": "%s by %s" % (title, reportRequest["grouping"]),
+            "ylabel": label,
+            "starttime": reportRequest["startTime"],
+            "endtime": reportRequest["endTime"],
+        }
+        return self._generatePiePlot(filename, plotInfo["data"], metadata)
 
-  def __plotPie(self, reportRequest, plotInfo, filename, title, label):
-    metadata = {'title': '%s by %s' % (title, reportRequest['grouping']),
-                'ylabel': label,
-                'starttime': reportRequest['startTime'],
-                'endtime': reportRequest['endTime']}
-    return self._generatePiePlot(filename, plotInfo['data'], metadata)
+    def __reportCumulativePlot(self, reportRequest, field, unit):
 
-  def __reportCumulativePlot(self, reportRequest, field, unit):
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectField + ", %s, %s, SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", field],
+        )
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", %s, %s, SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength', field]
-                    )
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
+        retVal = self._getTimedData(
+            startTime, endTime, selectFields, reportRequest["condDict"], reportRequest["groupingFields"], {}
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getTimedData(startTime,
-                                endTime,
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {})
-    if not retVal['OK']:
-      return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
+        dataDict = self._accumulate(granularity, startTime, endTime, dataDict)
 
-    dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
-    dataDict = self._accumulate(granularity, startTime, endTime, dataDict)
+        accumMaxValue = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, unit)
 
-    accumMaxValue = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableUnit(dataDict, accumMaxValue, unit)
+        # 3rd element ( maxValue ) unused
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    # 3rd element ( maxValue ) unused
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+    def __plotCumulative(self, reportRequest, plotInfo, filename, title):
 
-  def __plotCumulative(self, reportRequest, plotInfo, filename, title):
+        metadata = {
+            "title": "%s by %s" % (title, reportRequest["grouping"]),
+            "starttime": reportRequest["startTime"],
+            "endtime": reportRequest["endTime"],
+            "span": plotInfo["granularity"],
+            "ylabel": plotInfo["unit"],
+            "sort_labels": "last_value",
+        }
 
-    metadata = {'title': '%s by %s' % (title, reportRequest['grouping']),
-                'starttime': reportRequest['startTime'],
-                'endtime': reportRequest['endTime'],
-                'span': plotInfo['granularity'],
-                'ylabel': plotInfo['unit'],
-                'sort_labels': 'last_value'}
+        return self._generateCumulativePlot(filename, plotInfo["graphDataDict"], metadata)
 
-    return self._generateCumulativePlot(filename, plotInfo['graphDataDict'], metadata)
+    def __reportNumberOfField(self, reportRequest, field):
 
-  def __reportNumberOfField(self, reportRequest, field):
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectField + ", %s, %s, SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", field],
+        )
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", %s, %s, SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength', field])
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
+        retVal = self._getTimedData(
+            startTime, endTime, selectFields, reportRequest["condDict"], reportRequest["groupingFields"], {}
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getTimedData(startTime,
-                                endTime,
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {})
-    if not retVal['OK']:
-      return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        # 2nd element ( maxValue ) unused
+        dataDict, __ = self._divideByFactor(dataDict, granularity)
+        dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
 
-    # 2nd element ( maxValue ) unused
-    dataDict, __ = self._divideByFactor(dataDict, granularity)
-    dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
+        accumMaxValue = self._getAccumulationMaxValue(dataDict)
+        suitableUnits = self._findSuitableRateUnit(dataDict, accumMaxValue, "files")
 
-    accumMaxValue = self._getAccumulationMaxValue(dataDict)
-    suitableUnits = self._findSuitableRateUnit(dataDict, accumMaxValue, "files")
+        # 3rd element ( maxValue ) unused
+        baseDataDict, graphDataDict, __, unitName = suitableUnits
 
-    # 3rd element ( maxValue ) unused
-    baseDataDict, graphDataDict, __, unitName = suitableUnits
+        return S_OK(
+            {"data": baseDataDict, "graphDataDict": graphDataDict, "granularity": granularity, "unit": unitName}
+        )
 
-    return S_OK({'data': baseDataDict,
-                 'graphDataDict': graphDataDict,
-                 'granularity': granularity,
-                 'unit': unitName})
+    def __plotNumberOfField(self, reportRequest, plotInfo, filename, title, label):
 
-  def __plotNumberOfField(self, reportRequest, plotInfo, filename, title, label):
+        startEpoch = reportRequest["startTime"]
+        endEpoch = reportRequest["endTime"]
+        granularity = plotInfo["granularity"]
+        dataDict = plotInfo["data"]
 
-    startEpoch = reportRequest['startTime']
-    endEpoch = reportRequest['endTime']
-    granularity = plotInfo['granularity']
-    dataDict = plotInfo['data']
+        metadata = {
+            "title": "%s  by %s" % (title, reportRequest["grouping"]),
+            "starttime": startEpoch,
+            "endtime": endEpoch,
+            "span": granularity,
+            "skipEdgeColor": True,
+            "ylabel": label,
+        }
 
-    metadata = {'title': '%s  by %s' % (title, reportRequest['grouping']),
-                'starttime': startEpoch,
-                'endtime': endEpoch,
-                'span': granularity,
-                'skipEdgeColor': True,
-                'ylabel': label}
+        dataDict = self._fillWithZero(granularity, startEpoch, endEpoch, dataDict)
+        return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-    dataDict = self._fillWithZero(granularity, startEpoch, endEpoch, dataDict)
-    return self._generateStackedLinePlot(filename, dataDict, metadata)
+    def __reportCumulativeNumberOfField(self, reportRequest, field):
 
-  def __reportCumulativeNumberOfField(self, reportRequest, field):
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectField + ", %s, %s, SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", field],
+        )
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", %s, %s, SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength', field]
-                    )
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
+        retVal = self._getTimedData(
+            startTime,
+            endTime,
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"convertToGranularity": "average", "checkNone": True},
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getTimedData(startTime,
-                                endTime,
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'convertToGranularity': 'average', 'checkNone': True})
-    if not retVal['OK']:
-      return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
+        dataDict = self._accumulate(granularity, startTime, endTime, dataDict)
 
-    dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
-    dataDict = self._accumulate(granularity, startTime, endTime, dataDict)
+        return S_OK({"data": dataDict, "granularity": granularity})
 
-    return S_OK({'data': dataDict,
-                 'granularity': granularity})
+    def __plotCumulativeNumberOfField(self, reportRequest, plotInfo, filename, title, label):
 
-  def __plotCumulativeNumberOfField(self, reportRequest, plotInfo, filename, title, label):
+        startEpoch = reportRequest["startTime"]
+        endEpoch = reportRequest["endTime"]
+        granularity = plotInfo["granularity"]
+        dataDict = plotInfo["data"]
 
-    startEpoch = reportRequest['startTime']
-    endEpoch = reportRequest['endTime']
-    granularity = plotInfo['granularity']
-    dataDict = plotInfo['data']
+        metadata = {
+            "title": "%s  by %s" % (title, reportRequest["grouping"]),
+            "starttime": startEpoch,
+            "endtime": endEpoch,
+            "span": granularity,
+            "skipEdgeColor": True,
+            "ylabel": label,
+        }
 
-    metadata = {'title': '%s  by %s' % (title, reportRequest['grouping']),
-                'starttime': startEpoch,
-                'endtime': endEpoch,
-                'span': granularity,
-                'skipEdgeColor': True,
-                'ylabel': label}
+        dataDict = self._fillWithZero(granularity, startEpoch, endEpoch, dataDict)
+        return self._generateStackedLinePlot(filename, dataDict, metadata)
 
-    dataDict = self._fillWithZero(granularity, startEpoch, endEpoch, dataDict)
-    return self._generateStackedLinePlot(filename, dataDict, metadata)
+    # FIXME: smells like unused
+    def __reportAverageNumberOfField(self, reportRequest, field):
+        # selectFields = (self._getSelectStringForGrouping(reportRequest[ 'groupingFields' ]) + ",SUM(%s/%s)",
+        #                 reportRequest[ 'groupingFields' ][1] + [Field, 'entriesInBucket'
+        #                               ]
+        #               )
 
-  # FIXME: smells like unused
-  def __reportAverageNumberOfField(self, reportRequest, field):
-    # selectFields = (self._getSelectStringForGrouping(reportRequest[ 'groupingFields' ]) + ",SUM(%s/%s)",
-    #                 reportRequest[ 'groupingFields' ][1] + [Field, 'entriesInBucket'
-    #                               ]
-    #               )
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (selectField + ",SUM(%s)", reportRequest["groupingFields"][1] + [field])
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ",SUM(%s)",
-                    reportRequest['groupingFields'][1] + [field])
+        retVal = self._getSummaryData(
+            reportRequest["startTime"],
+            reportRequest["endTime"],
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {},
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getSummaryData(reportRequest['startTime'],
-                                  reportRequest['endTime'],
-                                  selectFields,
-                                  reportRequest['condDict'],
-                                  reportRequest['groupingFields'],
-                                  {})
-    if not retVal['OK']:
-      return retVal
+        dataDict = retVal["Value"]
+        # bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
+        # numBins = len(bins)
+        # for key in dataDict:
+        #  dataDict[ key ] = float(dataDict[ key ] / numBins)
+        return S_OK({"data": dataDict})
 
-    dataDict = retVal['Value']
-    # bins = self._getBins(self._typeName, reportRequest[ 'startTime' ], reportRequest[ 'endTime' ])
-    # numBins = len(bins)
-    # for key in dataDict:
-    #  dataDict[ key ] = float(dataDict[ key ] / numBins)
-    return S_OK({'data': dataDict})
+    # FIXME: smells like unused
+    def __plotAverageNumberOfField(self, reportRequest, plotInfo, filename, title, label):
 
-  # FIXME: smells like unused
-  def __plotAverageNumberOfField(self, reportRequest, plotInfo, filename, title, label):
+        metadata = {
+            "title": "%s by %s" % (title, reportRequest["grouping"]),
+            "ylabel": label,
+            "starttime": reportRequest["startTime"],
+            "endtime": reportRequest["endTime"],
+        }
+        return self._generatePiePlot(filename, plotInfo["data"], metadata)
 
-    metadata = {'title': '%s by %s' % (title, reportRequest['grouping']),
-                'ylabel': label,
-                'starttime': reportRequest['startTime'],
-                'endtime': reportRequest['endTime']}
-    return self._generatePiePlot(filename, plotInfo['data'], metadata)
+    def __report2D(self, reportRequest, field1, field2):
 
-  def __report2D(self, reportRequest, field1, field2):
+        selectField = self._getSelectStringForGrouping(reportRequest["groupingFields"])
+        selectFields = (
+            selectField + ", %s, %s, SUM(%s), SUM(%s)",
+            reportRequest["groupingFields"][1] + ["startTime", "bucketLength", field1, field2],
+        )
 
-    selectField = self._getSelectStringForGrouping(reportRequest['groupingFields'])
-    selectFields = (selectField + ", %s, %s, SUM(%s), SUM(%s)",
-                    reportRequest['groupingFields'][1] + ['startTime', 'bucketLength',
-                                                          field1, field2])
+        startTime = reportRequest["startTime"]
+        endTime = reportRequest["endTime"]
 
-    startTime = reportRequest['startTime']
-    endTime = reportRequest['endTime']
+        retVal = self._getTimedData(
+            startTime,
+            endTime,
+            selectFields,
+            reportRequest["condDict"],
+            reportRequest["groupingFields"],
+            {"checkNone": True, "convertToGranularity": "sum", "calculateProportionalGauges": True},
+        )
+        if not retVal["OK"]:
+            return retVal
 
-    retVal = self._getTimedData(startTime,
-                                endTime,
-                                selectFields,
-                                reportRequest['condDict'],
-                                reportRequest['groupingFields'],
-                                {'checkNone': True,
-                                 'convertToGranularity': 'sum',
-                                 'calculateProportionalGauges': True})
-    if not retVal['OK']:
-      return retVal
+        dataDict, granularity = retVal["Value"]
+        self.stripDataField(dataDict, 0)
 
-    dataDict, granularity = retVal['Value']
-    self.stripDataField(dataDict, 0)
+        dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
+        return S_OK({"data": dataDict, "granularity": granularity})
 
-    dataDict = self._fillWithZero(granularity, startTime, endTime, dataDict)
-    return S_OK({'data': dataDict,
-                 'granularity': granularity})
+    def __plot2D(self, reportRequest, plotInfo, filename, label):
 
-  def __plot2D(self, reportRequest, plotInfo, filename, label):
+        metadata = {
+            "title": "Jobs by %s" % reportRequest["grouping"],
+            "starttime": reportRequest["startTime"],
+            "endtime": reportRequest["endTime"],
+            "span": plotInfo["granularity"],
+            "ylabel": label,
+        }
 
-    metadata = {'title': 'Jobs by %s' % reportRequest['grouping'],
-                'starttime': reportRequest['startTime'],
-                'endtime': reportRequest['endTime'],
-                'span': plotInfo['granularity'],
-                'ylabel': label}
-
-    return self._generateTimedStackedBarPlot(filename, plotInfo['data'], metadata)
+        return self._generateTimedStackedBarPlot(filename, plotInfo["data"], metadata)

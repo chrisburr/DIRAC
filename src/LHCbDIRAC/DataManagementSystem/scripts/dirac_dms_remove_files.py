@@ -22,26 +22,32 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerBKSwitches()
-  dmScript.registerFileSwitches()
+    dmScript = DMScript()
+    dmScript.registerBKSwitches()
+    dmScript.registerFileSwitches()
 
-  Script.registerSwitch(
-      '',
-      'IncludeProcessedFiles',
-      '  Forced to set Removed the files in status Processed (default:not reset)')
-  Script.setUsageMessage('\n'.join([__doc__,
-                                    'Usage:',
-                                    '  %s [option|cfgfile] [<LFN>] [<LFN>...]' % Script.scriptName, ]))
+    Script.registerSwitch(
+        "", "IncludeProcessedFiles", "  Forced to set Removed the files in status Processed (default:not reset)"
+    )
+    Script.setUsageMessage(
+        "\n".join(
+            [
+                __doc__,
+                "Usage:",
+                "  %s [option|cfgfile] [<LFN>] [<LFN>...]" % Script.scriptName,
+            ]
+        )
+    )
 
-  Script.parseCommandLine()
+    Script.parseCommandLine()
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveFiles
-  from DIRAC import exit
-  exit(executeRemoveFiles(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeRemoveFiles
+    from DIRAC import exit
+
+    exit(executeRemoveFiles(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

@@ -18,16 +18,16 @@ from DIRAC.Core.Base.Client import Client, createClient
 __RCSID__ = "$Id$"
 
 
-@createClient('ProductionManagement/ProductionRequest')
+@createClient("ProductionManagement/ProductionRequest")
 class ProductionRequestClient(Client):
-  """This class expose the methods of the Production Request Service."""
+    """This class expose the methods of the Production Request Service."""
 
-  def __init__(self, url=None, **kwargs):
-    """c'tor.
+    def __init__(self, url=None, **kwargs):
+        """c'tor.
 
-    :param str url: can specify a specific URL
-    """
-    super(ProductionRequestClient, self).__init__(**kwargs)
-    self.setServer('ProductionManagement/ProductionRequest')
-    if url:
-      self.setServer(url)
+        :param str url: can specify a specific URL
+        """
+        super(ProductionRequestClient, self).__init__(**kwargs)
+        self.setServer("ProductionManagement/ProductionRequest")
+        if url:
+            self.setServer(url)

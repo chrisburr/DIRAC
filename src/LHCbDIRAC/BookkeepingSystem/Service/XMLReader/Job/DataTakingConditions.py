@@ -19,18 +19,18 @@ __RCSID__ = "$Id$"
 
 
 class DataTakingConditions(object):
-  """DataTakingConditions class."""
+    """DataTakingConditions class."""
 
-  def __init__(self):
-    """initialize the class memeber."""
-    self.parameters = {}
+    def __init__(self):
+        """initialize the class memeber."""
+        self.parameters = {}
 
-  def writeToXML(self):
-    """creates an xml string."""
-    gLogger.info("Write DataTaking conditions to XML!!")
-    result = '<DataTakingConditions>\n'
-    for name, value in self.parameters.items():
-      result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
-    result += '</DataTakingConditions>\n'
+    def writeToXML(self):
+        """creates an xml string."""
+        gLogger.info("Write DataTaking conditions to XML!!")
+        result = "<DataTakingConditions>\n"
+        for name, value in self.parameters.items():
+            result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
+        result += "</DataTakingConditions>\n"
 
-    return result
+        return result

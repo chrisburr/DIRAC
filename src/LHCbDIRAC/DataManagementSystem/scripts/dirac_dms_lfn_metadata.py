@@ -21,22 +21,29 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-  from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
 
-  dmScript = DMScript()
-  dmScript.registerFileSwitches()
-  dmScript.registerSiteSwitches()
-  Script.setUsageMessage(__doc__ + '\n'.join([
-      'Usage:',
-      '  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]]' % Script.scriptName,
-      'Arguments:',
-      '  LFN:      Logical File Name or file containing LFNs']))
-  Script.parseCommandLine(ignoreErrors=True)
+    dmScript = DMScript()
+    dmScript.registerFileSwitches()
+    dmScript.registerSiteSwitches()
+    Script.setUsageMessage(
+        __doc__
+        + "\n".join(
+            [
+                "Usage:",
+                "  %s [option|cfgfile] ... [LFN[,LFN2[,LFN3...]]]" % Script.scriptName,
+                "Arguments:",
+                "  LFN:      Logical File Name or file containing LFNs",
+            ]
+        )
+    )
+    Script.parseCommandLine(ignoreErrors=True)
 
-  from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeLfnMetadata
-  from DIRAC import exit
-  exit(executeLfnMetadata(dmScript))
+    from LHCbDIRAC.DataManagementSystem.Client.ScriptExecutors import executeLfnMetadata
+    from DIRAC import exit
+
+    exit(executeLfnMetadata(dmScript))
 
 
 if __name__ == "__main__":
-  main()
+    main()

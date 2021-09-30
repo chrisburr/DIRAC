@@ -19,18 +19,18 @@ __RCSID__ = "$Id$"
 
 
 class SimulationConditions(object):
-  """SimulationConditions class."""
+    """SimulationConditions class."""
 
-  def __init__(self):
-    """initialize the class member."""
-    self.parameters = {}
+    def __init__(self):
+        """initialize the class member."""
+        self.parameters = {}
 
-  def writeToXML(self):
-    """creates the xml string."""
-    gLogger.info("Write Simulation conditions to XML!!")
-    result = '<SimulationCondition>\n'
-    for name, value in self.parameters.items():
-      result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
-    result += '</SimulationCondition>\n'
+    def writeToXML(self):
+        """creates the xml string."""
+        gLogger.info("Write Simulation conditions to XML!!")
+        result = "<SimulationCondition>\n"
+        for name, value in self.parameters.items():
+            result += '    <Parameter Name="' + name + '"   Value="' + value + '"/>\n'
+        result += "</SimulationCondition>\n"
 
-    return result
+        return result

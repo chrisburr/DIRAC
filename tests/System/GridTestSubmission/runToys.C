@@ -9,6 +9,6 @@
 * or submit itself to any jurisdiction.                                       *
 \*****************************************************************************/
 void runToys()
-{ 
+{
   gROOT->ProcessLine(".! ./run Settings/GeneralSettings.txt 1");
 }

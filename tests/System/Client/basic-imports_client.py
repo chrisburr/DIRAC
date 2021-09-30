@@ -14,6 +14,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 # pylint: disable=unused-import,import-error
 
 import pyparsing
@@ -21,6 +22,7 @@ import XRootD
 import gfal2
 import stomp
 import requests
+
 # import futures
 import certifi
 import fts3
@@ -32,11 +34,11 @@ from distutils.spawn import find_executable
 
 
 if six.PY3:
-  cmds = ['voms-proxy-init', 'voms-proxy-info']
+    cmds = ["voms-proxy-init", "voms-proxy-info"]
 else:
-  cmds = ['voms-proxy-init2', 'voms-proxy-info2']
+    cmds = ["voms-proxy-init2", "voms-proxy-info2"]
 
 for cmd in cmds:
-  res = find_executable(cmd)
-  if not res:
-    raise RuntimeError()
+    res = find_executable(cmd)
+    if not res:
+        raise RuntimeError()
