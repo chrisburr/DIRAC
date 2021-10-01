@@ -12,7 +12,7 @@ jobs:
       with:
         fetch-depth: 0
         token: ${{ secrets.PAT }}
-    - uses: aidasoft/pr-sweeper@v1
+    - uses: DIRACGrid/pr-sweeper@main
       with:
         github-pat: ${{ secrets.PAT }}
-        project-name: chrisburr/DIRAC
+        pr-project-name: chrisburr/DIRAC
