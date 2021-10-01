@@ -16,8 +16,6 @@ DIRAC provides a complete solution to one or more user community requiring acces
 
 DIRAC has been started by the `LHCb collaboration <https://lhcb.web.cern.ch/lhcb/>`_ who still maintains it. It is now used by several communities (AKA VO=Virtual Organizations) for their distributed computing workflows.
 
-DIRAC is written in python 2.7.13 and transitioning to python 3.
-
 Status master branch (stable):
 
 .. image:: https://github.com/DIRACGrid/DIRAC/workflows/Basic%20tests/badge.svg?branch=rel-v7r1
