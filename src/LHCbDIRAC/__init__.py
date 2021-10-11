@@ -41,10 +41,10 @@ if six.PY3:
     except DistributionNotFound:
         # package is not installed
         version = "Unknown"
-else:
-    majorVersion = 10
-    minorVersion = 2
-    patchLevel = 13
+  majorVersion = 10
+  minorVersion = 2
+  patchLevel = 14
+  preVersion = 0
     preVersion = 0
 
     version = "v%sr%s" % (majorVersion, minorVersion)
