@@ -117,12 +117,12 @@ with open("series.txt", "a") as fser:
 # change the __init__.py
 # Currently master and devel have different layout
 if not preRelease:
-    lineReplace("src/LHCbDIRAC/__init__.py", 43, "  majorVersion = %s" % version[0])
-    lineReplace("src/LHCbDIRAC/__init__.py", 44, "  minorVersion = %s" % version[1])
-    lineReplace("src/LHCbDIRAC/__init__.py", 45, "  patchLevel = %s" % version[2])
-    lineReplace("src/LHCbDIRAC/__init__.py", 46, "  preVersion = %s" % 0)
+    lineReplace("src/LHCbDIRAC/__init__.py", 45, "    majorVersion = %s" % version[0])
+    lineReplace("src/LHCbDIRAC/__init__.py", 46, "    minorVersion = %s" % version[1])
+    lineReplace("src/LHCbDIRAC/__init__.py", 47, "    patchLevel = %s" % version[2])
+    lineReplace("src/LHCbDIRAC/__init__.py", 48, "    preVersion = %s" % 0)
 else:
-    lineReplace("src/LHCbDIRAC/__init__.py", 43, "  majorVersion = %s" % version[0])
-    lineReplace("src/LHCbDIRAC/__init__.py", 44, "  minorVersion = %s" % version[1])
-    lineReplace("src/LHCbDIRAC/__init__.py", 45, "  patchLevel = %s" % 0)
-    lineReplace("src/LHCbDIRAC/__init__.py", 46, "  preVersion = %s" % version[3])
+    lineReplace("src/LHCbDIRAC/__init__.py", 45, "    majorVersion = %s" % version[0])
+    lineReplace("src/LHCbDIRAC/__init__.py", 46, "    minorVersion = %s" % version[1])
+    lineReplace("src/LHCbDIRAC/__init__.py", 47, "    patchLevel = %s" % 0)
+    lineReplace("src/LHCbDIRAC/__init__.py", 48, "    preVersion = %s" % version[3])

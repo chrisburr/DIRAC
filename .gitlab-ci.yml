@@ -109,6 +109,7 @@ pre-commit:
     - pip install .[server]
     - cd ../LHCbDIRAC
     - pip install .[server]
+    - pip install pycodestyle
 
 # This runs pylint and fails if there are errors
 run_pylint:
