@@ -1,3 +1,13 @@
+v10r2p15
+Based on DIRAC v7r2p30
+LHCbWebDIRAC v5r3p1
+LHCbDIRACOS v1r23
+*Docs
+
+FIX: (!1096) indent to 4 in createReleaseFiles
+
+
+
 v10r2p14
 Based on DIRAC v7r2p30
 LHCbWebDIRAC v5r3p1
