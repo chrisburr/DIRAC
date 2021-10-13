@@ -249,14 +249,13 @@ class MCSimulationTestingAgent(AgentModule):
             self.log.error("There are no successful tasks")
             return S_ERROR("There are no successful tasks")
 
-        events = 0
         CPUeJobTotal = 0.0
         for job in successful.values():
             cpuJob = 0
             for bkJob in job:
                 if bkJob["ApplicationName"] in ["Gauss", "Boole", "Moore", "Brunel", "DaVinci"]:
-                    if not events:
-                        events = bkJob["NumberOfEvents"]
+                    if bkJob["ApplicationName"] == "Gauss":
+                        events = bkJob["NumberOfEvents"]  # This must be there
                     timeInSeconds = bkJob["CPUTIME"]
                     cpuJob += timeInSeconds * bkJob["WNCPUHS06"]
             CPUeJob = cpuJob / events
