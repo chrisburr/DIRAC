@@ -76,7 +76,7 @@ class BookkeepingManagerHandler(RequestHandler):
         retVal = self.xmlReader.readXMLfromString(xml)
         if not retVal["OK"]:
             self.log.error("Issue reading XML", retVal["Message"])
-        if retVal["Value"] == "":
+        elif retVal["Value"] == "":
             return S_OK("The send bookkeeping finished successfully!")
         return retVal
 
