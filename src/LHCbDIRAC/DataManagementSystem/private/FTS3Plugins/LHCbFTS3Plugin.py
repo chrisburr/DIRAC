@@ -77,3 +77,17 @@ class LHCbFTS3Plugin(DefaultFTS3Plugin):
 
     #   randSource = random.choice(list(allowedReplicaSource))  # one has to convert to list
     #   return randSource
+
+    def inferFTSActivity(self, ftsOperation, rmsRequest, rmsOperation):
+        """
+        Tries to infer the FTS Activity
+        """
+
+        ### Data Challenge activity
+        # All the tests with data challenges are done
+        # on SE with '-DC-' in their name
+        targetSEs = rmsOperation.targetSEList
+        if any("-DC-" in se for se in targetSEs):
+            return "Data Challenge"
+
+        return super(LHCbFTS3Plugin, self).inferFTSActivity(ftsOperation, rmsRequest, rmsOperation)
