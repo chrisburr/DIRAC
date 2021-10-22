@@ -30,7 +30,7 @@ else
   fi
 
   git clone ${DIRAC_BRANCH} ${DIRAC_REPO} /opt/dirac/DIRAC_alt
-  ln -s /opt/dirac/DIRAC_alt /opt/dirac/DIRAC
+  ln -s /opt/dirac/DIRAC_alt/src/DIRAC /opt/dirac/DIRAC
 fi
 
 
@@ -50,7 +50,7 @@ else
 
   git clone ${LHCB_DIRAC_BRANCH} ${LHCB_DIRAC_REPO} /opt/dirac/LHCbDIRAC_alt
   # The code is contained in a subfolder of LHCbDIRAC !
-  ln -s /opt/dirac/LHCbDIRAC_alt/LHCbDIRAC /opt/dirac/LHCbDIRAC
+  ln -s /opt/dirac/LHCbDIRAC_alt/src/LHCbDIRAC /opt/dirac/LHCbDIRAC
 fi
 
 # Lookup in the environment for variables starting with
@@ -67,5 +67,7 @@ do
   ALL_CFG_FILES+="--cfg ${!cfgFile} ";
 done
 
+# By default, DIRAC_CMD would be dirac-service
+# but it may be set to tornado-start-all
 
-exec dirac-service ${ALL_CFG_FILES} -ddd $DIRAC_COMPONENT
+exec ${DIRAC_CMD:-dirac-service} ${ALL_CFG_FILES} -ddd $DIRAC_COMPONENT
