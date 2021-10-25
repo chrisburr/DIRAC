@@ -23,8 +23,6 @@ def test_lbRunCommand():
     """Testing lb-run command (for setting the environment)"""
     ra = RunApplication()
     ra.extraPackages = [("package1", "v1r0"), ("package2", "v2r0"), ("package3", "")]
-    ra.runTimeProject = "aRunTimeProject"
-    ra.runTimeProjectVersion = "v1r1"
     ra.opsH = MagicMock()
     ra.opsH.getValue.return_value = ["lcg1", "lcg2"]
     ra.prodConf = True

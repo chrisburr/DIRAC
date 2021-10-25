@@ -43,8 +43,6 @@ class GaudiApplication(ModuleBase):
 
         self.systemConfig = ""
         self.stdError = ""
-        self.runTimeProjectName = ""
-        self.runTimeProjectVersion = ""
         self.inputDataType = "MDF"
         self.stepInputData = []  # to be resolved
         self.poolXMLCatName = "pool_xml_catalog.xml"
@@ -108,19 +106,7 @@ class GaudiApplication(ModuleBase):
             # Resolve options files
             commandOptions = []
             if self.optionsFile and self.optionsFile != "None":
-                for fileopt in self.optionsFile.split(";"):
-                    if os.path.exists("%s/%s" % (os.getcwd(), os.path.basename(fileopt))):
-                        commandOptions.append(fileopt)
-                    # Otherwise take the one from the application options directory
-                    elif re.search(r"\$", fileopt):
-                        self.log.info("Found options file containing environment variable: %s" % fileopt)
-                        commandOptions.append(fileopt)
-                    else:
-                        self.log.error(
-                            'Cannot process options: "%s" not found via environment variable or in local directory'
-                            % (fileopt)
-                        )
-
+                commandOptions += self.optionsFile.split(";")
             self.log.info("Final options files: %s" % (", ".join(commandOptions)))
 
             runNumberGauss = 0
@@ -148,14 +134,11 @@ class GaudiApplication(ModuleBase):
                 )
 
             # Simple check for slow processors: auto increase of Event Timeout
+            eventTimeout = None
             cpuNormalization = int(gConfig.getValue("/LocalSite/CPUNormalizationFactor", 10))
             if cpuNormalization < 10:
-                options = "from Configurables import StalledEventMonitor;"
-                options += "StalledEventMonitor(EventTimeout=%s)" % str(int(3600 * 10 / cpuNormalization))
-                if "StalledEventMonitor" not in self.extraOptionsLine:
-                    self.extraOptionsLine += options
+                eventTimeout = int(3600 * 10 / cpuNormalization)
 
-            prodConfFileName = ""
             if self.optionsLine or self.jobType.lower() == "user":
                 # Prepare standard project run time options
                 generatedOpts = "gaudi_extra_options.py"
@@ -187,32 +170,16 @@ class GaudiApplication(ModuleBase):
                     options.write(projectOpts)
                 commandOptions.append(generatedOpts)
 
-            else:
-                prodConfFileName = self.createProdConfFile(
-                    stepOutputTypes, histogram, runNumberGauss, firstEventNumberGauss
-                )
-
             # How to run the application
-            ra = RunApplication()
-            # lb-run stuff
-            ra.applicationName = self.applicationName
-            ra.applicationVersion = self.applicationVersion
-            ra.usePrmon = self.usePrmon
-            ra.systemConfig = self.systemConfig
-            ra.extraPackages = self.extraPackages
-            ra.runTimeProject = self.runTimeProjectName
-            ra.runTimeProjectVersion = self.runTimeProjectVersion
-            # actual stuff to run
-            ra.command = self.executable
-            ra.extraOptionsLine = self.extraOptionsLine
-            ra.commandOptions = commandOptions
-            ra.numberOfProcessors = self.numberOfProcessors
-            ra.prodConfFileName = prodConfFileName
-            if self.applicationLog:
-                ra.applicationLog = self.applicationLog
-            ra.stdError = self.stdError
-            # env
-            ra.jobID = self.jobID
+            ra = RunApplication(
+                self,
+                commandOptions,
+                stepOutputTypes,
+                histogram,
+                runNumberGauss,
+                firstEventNumberGauss,
+                eventTimeout,
+            )
 
             # Now really running
             try:

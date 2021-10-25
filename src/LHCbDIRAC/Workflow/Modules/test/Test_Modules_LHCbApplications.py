@@ -35,8 +35,6 @@ from LHCbDIRAC.Workflow.Modules.mock_Commons import (
     wf_commons,
 )
 
-from LHCbDIRAC.Workflow.Modules.GaudiApplicationScript import GaudiApplicationScript
-from LHCbDIRAC.Workflow.Modules.RootApplication import RootApplication
 from LHCbDIRAC.Workflow.Modules.LHCbScript import LHCbScript
 from LHCbDIRAC.Workflow.Modules.ErrorLogging import ErrorLogging
 
@@ -63,30 +61,6 @@ class ModulesApplicationsTestCase(unittest.TestCase):
                 os.remove(fileProd)
             except OSError:
                 continue
-
-
-#############################################################################
-# GaudiApplicationScript.py
-#############################################################################
-
-
-class GaudiApplicationScriptSuccess(ModulesApplicationsTestCase):
-    @patch("LHCbDIRAC.Workflow.Modules.GaudiApplicationScript.RunApplication", side_effect=MagicMock())
-    @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
-    def test_execute(self, _patch, _patched):
-
-        gas = GaudiApplicationScript(bkClient=bkc_mock, dm=dm_mock)
-        gas.jobType = "user"
-
-        # no errors, no input data
-        for wf_cs in copy.deepcopy(wf_commons):
-            for s_cs in step_commons:
-                s_cs["script"] = "cat"
-                self.assertTrue(
-                    gas.execute(
-                        prod_id, prod_job_id, wms_job_id, workflowStatus, stepStatus, wf_cs, s_cs, step_number, step_id
-                    )["OK"]
-                )
 
 
 #############################################################################
@@ -151,35 +125,6 @@ class LHCbScriptFailure(ModulesApplicationsTestCase):
 
 
 #############################################################################
-# RootApplication.py
-#############################################################################
-
-
-class RootApplicationSuccess(ModulesApplicationsTestCase):
-    @patch("LHCbDIRAC.Workflow.Modules.RootApplication.RunApplication", side_effect=MagicMock())
-    @patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
-    def test_execute(self, _patch, _patched):
-
-        with open("someApp", "w") as fd:
-            fd.write("pippo")
-
-        ra = RootApplication(bkClient=bkc_mock, dm=dm_mock)
-        ra.applicationName = "aRoot.py"
-        ra.applicationVersion = "v1r1"
-        ra.rootType = "py"
-        ra.jobType = "user"
-
-        # no errors, no input data
-        for wf_cs in copy.deepcopy(wf_commons):
-            for s_cs in step_commons:
-                self.assertTrue(
-                    ra.execute(
-                        prod_id, prod_job_id, wms_job_id, workflowStatus, stepStatus, wf_cs, s_cs, step_number, step_id
-                    )["OK"]
-                )
-
-
-#############################################################################
 # ErrorLogging.py
 #############################################################################
 
@@ -203,9 +148,7 @@ class ErrorLoggingSuccess(ModulesApplicationsTestCase):
 
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(ModulesApplicationsTestCase)
-    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(GaudiApplicationScriptSuccess))
     suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LHCbScriptSuccess))
     suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LHCbScriptFailure))
-    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(RootApplicationSuccess))
     suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ErrorLoggingSuccess))
     testResult = unittest.TextTestRunner(verbosity=2).run(suite)

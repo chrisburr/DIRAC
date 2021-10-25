@@ -290,28 +290,6 @@ class GaudirunSuccess(UserJobTestCase):
         self.assertTrue(True)  # res['OK'])
 
 
-# class GaudiScriptSuccess( UserJobTestCase ):
-#   # FIXME: this, doens't work!
-#   def test_Integration_User( self ):
-#
-#     lhcbJob = LHCbJob()
-#
-#     lhcbJob.setName( "gaudiScript-test" )
-#     script = find_all( 'gaudi-script.py', '.', '/tests/WorkflowIntegration' )[0]
-#     pConfFile = find_all( 'prodConf_Gauss_00012345_00067890_1.py', '..', '/tests/Workflow/Integration' )[0]
-#     lhcbJob.setInputSandbox( [pConfFile, script] )
-#
-#     lhcbJob.setApplicationScript( 'Gauss', 'v45r3', script,
-#                                   extraPackages = 'AppConfig.v3r171;ProdConf.v1r9' )
-#
-#     lhcbJob.setLogLevel( 'DEBUG' )
-#     lhcbJob.setDIRACPlatform()
-#     res = lhcbJob.runLocal( self.dLHCb )
-#     self.assertTrue( res['OK'] )
-
-###############################################################################################
-
-
 class UserJobsFailingLocalSuccess(FailingUserJobTestCase):
     def test_Integration_User_Failing(self):
         """This job will fail everything that can fail"""

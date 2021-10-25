@@ -280,7 +280,9 @@ class UploadLogFile(ModuleBase):
             "*.sh",
             "*.info",
             "*.err",
+            # TODO: Remove once the prodConf migration is done
             "prodConf*.py",
+            "prodConf*.json",
         ]  # '*.root',
         if self.logExtensions:
             self.log.debug("Using list of log extensions from CS:\n%s" % (", ".join(self.logExtensions)))
