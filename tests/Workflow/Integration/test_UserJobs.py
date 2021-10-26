@@ -106,6 +106,7 @@ def test_GaudirunSuccess_mc(diracLHCb, userJob):
     assert res["OK"], res
 
 
+@pytest.mark.slow
 def test_GaudirunSuccess_mc_MP(diracLHCb, userJob):
     """A MC production job, run as a user job in multiprocessor"""
 

@@ -58,6 +58,7 @@ def test_MergeHISTO(diracLHCb):
     assert res["OK"], res
 
 
+@pytest.mark.slow
 def test_MCReco(diracLHCb):
     from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
@@ -70,6 +71,7 @@ def test_MCReco(diracLHCb):
     assert res["OK"], res
 
 
+@pytest.mark.slow
 def test_MCSuccess(diracLHCb):
     from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 

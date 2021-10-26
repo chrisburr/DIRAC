@@ -8,14 +8,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""Regression tests for LHCbDIRAC productions and user jobs
-
-Should be ran using::
-
-    pytest tests/Workflow/Regression/JobRegressionTests.py --forked -n auto --basetemp=$PWD/test-tmp
-"""
+"""Tests for production MC jobs"""
+import pytest
 
 
+@pytest.mark.slow
 def test_Production_MCSuccess(diracLHCb):
     from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequest import ProductionRequest
     from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
@@ -72,6 +69,7 @@ def test_Production_MCSuccess(diracLHCb):
     assert res["OK"], res
 
 
+@pytest.mark.slow
 def test_Production_MCSuccess_MP(diracLHCb):
     from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequest import ProductionRequest
     from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction

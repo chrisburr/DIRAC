@@ -119,7 +119,9 @@ run_pylint:
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
-    - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
+    - |
+      find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -and -not -name "RunApplication.py" \
+        -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +
 
 run_pylint_py3:
   extends: .test_setup_py3

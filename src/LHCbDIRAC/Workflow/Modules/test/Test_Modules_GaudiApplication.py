@@ -13,11 +13,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import six
+
 import copy
 import os
 
 from mock import MagicMock
 import pytest
+
+pytestmark = pytest.mark.skipif(six.PY2, reason="This test only supports Python 3")
 
 from DIRAC.DataManagementSystem.Client.test.mock_DM import dm_mock
 from LHCbDIRAC.BookkeepingSystem.Client.test.mock_BookkeepingClient import bkc_mock
@@ -33,9 +37,6 @@ from LHCbDIRAC.Workflow.Modules.mock_Commons import (
     wf_commons,
 )
 
-# sut
-from LHCbDIRAC.Workflow.Modules.GaudiApplication import GaudiApplication
-
 
 @pytest.fixture
 def rmFiles():
@@ -47,7 +48,9 @@ def rmFiles():
 
 
 def test_execute(mocker, rmFiles):
-    mocker.patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.RunApplication", side_effect=MagicMock())
+    from LHCbDIRAC.Workflow.Modules.GaudiApplication import GaudiApplication
+
+    mocker.patch("LHCbDIRAC.Core.Utilities.RunApplication.RunApplication", side_effect=MagicMock())
     mocker.patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.ModuleBase._manageAppOutput", side_effect=MagicMock())
     mocker.patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.gConfig", side_effect=MagicMock())
     mocker.patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())

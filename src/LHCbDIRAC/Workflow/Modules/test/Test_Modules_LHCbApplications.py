@@ -19,6 +19,11 @@ import os
 
 from mock import MagicMock, patch
 
+import six
+import pytest
+
+pytestmark = pytest.mark.skipif(six.PY2, reason="This test only supports Python 3")
+
 from DIRAC import gLogger
 
 from DIRAC.DataManagementSystem.Client.test.mock_DM import dm_mock
@@ -35,7 +40,6 @@ from LHCbDIRAC.Workflow.Modules.mock_Commons import (
     wf_commons,
 )
 
-from LHCbDIRAC.Workflow.Modules.LHCbScript import LHCbScript
 from LHCbDIRAC.Workflow.Modules.ErrorLogging import ErrorLogging
 
 
@@ -70,6 +74,7 @@ class ModulesApplicationsTestCase(unittest.TestCase):
 
 class LHCbScriptSuccess(ModulesApplicationsTestCase):
     def test_execute(self):
+        from LHCbDIRAC.Workflow.Modules.LHCbScript import LHCbScript
 
         lhcbScript = LHCbScript()
 
@@ -99,6 +104,7 @@ class LHCbScriptSuccess(ModulesApplicationsTestCase):
 
 class LHCbScriptFailure(ModulesApplicationsTestCase):
     def test_execute(self):
+        from LHCbDIRAC.Workflow.Modules.LHCbScript import LHCbScript
 
         lhcbScript = LHCbScript()
 

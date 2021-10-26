@@ -19,16 +19,12 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-import re
 import os
-import subprocess
-import shlex
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities import DErrno
 
 from LHCbDIRAC.Core.Utilities.ProductionOptions import getDataOptions, getModuleOptions
-from LHCbDIRAC.Core.Utilities.RunApplication import RunApplication, LbRunError, LHCbApplicationError, LHCbDIRACError
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
 
@@ -76,6 +72,13 @@ class GaudiApplication(ModuleBase):
         module used for each and every job of productions. It can also be
         used by users.
         """
+        # pylint doesn't like this as it's now Python 3 only
+        from LHCbDIRAC.Core.Utilities.RunApplication import (  # pylint: disable=import-error,no-name-in-module
+            RunApplication,
+            LbRunError,
+            LHCbApplicationError,
+            LHCbDIRACError,
+        )
 
         try:
             super(GaudiApplication, self).execute(
@@ -182,30 +185,8 @@ class GaudiApplication(ModuleBase):
             )
 
             # Now really running
-            try:
-                self.setApplicationStatus("%s step %s" % (self.applicationName, self.step_number))
-                ra.run()  # This would trigger an exception in case of failure, or application status != 0
-            except LHCbApplicationError as appError:
-                # Running gdb in case of core dump
-                if "core" in [fileProduced.split(".")[0] for fileProduced in os.listdir(".")]:
-                    # getting the environment where the application executed
-                    app = ra.applicationName + "/" + ra.applicationVersion
-                    envCommand = ra.lbrunCommand.split(app)[0] + " --py -A " + app
-
-                    try:
-                        # The following may raise CalledProcessError if the application is not lb-run native.
-                        lhcbApplicationEnv = eval(subprocess.check_output(shlex.split(envCommand)))
-
-                        # now running the GDB command
-                        gdbCommand = "gdb python core.* >> %s_Step%s_coredump.log" % (
-                            self.applicationName,
-                            self.step_number,
-                        )
-                        rg = RunApplication()
-                        rg._runApp(gdbCommand, lhcbApplicationEnv)
-                    except subprocess.CalledProcessError:
-                        self.log.warn("Could not run gdb as the application is not lb-run native")
-                raise appError
+            self.setApplicationStatus("%s step %s" % (self.applicationName, self.step_number))
+            ra.run()  # This would trigger an exception in case of failure, or application status != 0
 
             self.log.info("Going to manage %s output" % self.applicationName)
             self._manageAppOutput(stepOutputs)
