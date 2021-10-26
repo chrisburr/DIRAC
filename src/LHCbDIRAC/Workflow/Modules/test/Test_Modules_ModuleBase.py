@@ -445,18 +445,3 @@ def test_getFileMetadata(mocker):
             assert result == expectedResult
             os.remove("foo_1.txt")
             os.remove("bar_2.py")
-
-
-allCombinations = product(list(workflow_commons), step_commons)
-
-
-@pytest.mark.parametrize("wf_c, s_cs", allCombinations)
-def test_createProdConfFile(mocker, wf_c, s_cs):
-    mocker.patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
-    mb = ModuleBase(bkClientIn=bkc_mock, dm=dm_mock)
-    mb.workflow_commons = wf_c
-    mb.step_commons = s_cs
-    mb._resolveInputVariables()
-    mb._resolveInputStep()
-    res = mb.createProdConfFile(["DST", "GAUSSHIST"], True, 123, 1)
-    print(res)

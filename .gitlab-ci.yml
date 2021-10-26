@@ -140,15 +140,6 @@ run_pytest_py3:
     - DIRAC_DEPRECATED_FAIL=True pytest src/LHCbDIRAC
 
 # This runs pycodestyle
-run_pycodestyle:
-  <<: *test_setup
-  script:
-    - lhcbDiracBranch=$(python -c "s = open('src/LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
-    - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
-    - git fetch --no-tags GL
-    - git branch -avv
-    - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
-
 pycodestyle_py3:
   extends: .test_setup_py3
   script:

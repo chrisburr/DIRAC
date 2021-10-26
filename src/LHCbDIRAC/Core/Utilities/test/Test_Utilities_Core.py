@@ -37,7 +37,6 @@ from LHCbDIRAC.Core.Utilities.ProductionData import (
     constructUserLFNs,
 )
 from LHCbDIRAC.Core.Utilities.InputDataResolution import InputDataResolution
-from LHCbDIRAC.Core.Utilities.ProdConf import ProdConf
 from LHCbDIRAC.Core.Utilities.GangaDataFile import GangaDataFile
 from LHCbDIRAC.Core.Utilities.NagiosConnector import NagiosConnector
 
@@ -49,152 +48,15 @@ class UtilitiesTestCase(unittest.TestCase):
     """Base class for the Utilities test cases."""
 
     def setUp(self):
-
         self.IDR = InputDataResolution({}, bkc_mock)
-        self.pc = ProdConf()
-
         gLogger.setLevel("DEBUG")
 
     def tearDown(self):
-        for fileProd in ["prodConf.py", "data.py", "gaudi_extra_options.py"]:
+        for fileProd in ["data.py", "gaudi_extra_options.py"]:
             try:
                 os.remove(fileProd)
             except OSError:
                 continue
-
-
-#################################################
-
-
-class ProdConfSuccess(UtilitiesTestCase):
-    def test__buildOptions(self):
-        ret = self.pc._buildOptions({"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-        self.assertEqual(ret, {"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-
-        self.pc.whatsIn = {"AppVersion": "v30r0"}
-        ret = self.pc._buildOptions({"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-        self.assertEqual(ret, {"Application": "DaVinci", "InputFiles": ["foo", "bar"], "AppVersion": "v30r0"})
-
-        ret = self.pc._buildOptions({"AppVersion": "v31r0", "InputFiles": ["foo", "bar"]})
-        self.assertEqual(ret, {"InputFiles": ["foo", "bar"], "AppVersion": "v31r0"})
-
-    def test__getOptionsString(self):
-        ret = self.pc._getOptionsString({"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-        self.assertEqual(
-            ret, "from ProdConf import ProdConf\n\nProdConf(\n  Application='DaVinci',\n  InputFiles=['foo', 'bar'],\n)"
-        )
-
-    def test_complete(self):
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-        self.assertEqual(pc1.whatsIn, {})
-        pc1.putOptionsIn({"Application": "DaVinci"})
-        self.assertEqual(pc1.whatsIn, {"Application": "DaVinci"})
-
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-        pc1.putOptionsIn({"InputFiles": ["foo", "bar"]})
-        self.assertEqual(pc1.whatsIn, {"InputFiles": ["foo", "bar"]})
-
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-        pc1.putOptionsIn({"RunNumber": 12345})
-        self.assertEqual(pc1.whatsIn, {"RunNumber": 12345})
-        fopen = open("prodConf.py", "r")
-        fileString = fopen.read()
-        fopen.close()
-        string = "from ProdConf import ProdConf\n\nProdConf(\n  RunNumber=12345,\n)"
-        self.assertEqual(string, fileString)
-
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-        pc1.putOptionsIn({"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-        self.assertEqual(pc1.whatsIn, {"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-        pc1.putOptionsIn({"Application": "DaVinci"})
-        self.assertEqual(pc1.whatsIn, {"Application": "DaVinci"})
-        pc1.putOptionsIn({"Application": "LHCb"})
-        self.assertEqual(pc1.whatsIn, {"Application": "LHCb"})
-
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-        pc1.putOptionsIn({"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-        self.assertEqual(pc1.whatsIn, {"Application": "DaVinci", "InputFiles": ["foo", "bar"]})
-        pc1.putOptionsIn({"Application": "LHCb"})
-        self.assertEqual(pc1.whatsIn, {"Application": "LHCb", "InputFiles": ["foo", "bar"]})
-        pc1.putOptionsIn({"RunNumber": 12345})
-        self.assertEqual(pc1.whatsIn, {"Application": "LHCb", "InputFiles": ["foo", "bar"], "RunNumber": 12345})
-
-        try:
-            os.remove("prodConf.py")
-        except OSError:
-            pass
-        pc1 = ProdConf()
-
-        pc1.putOptionsIn({"Application": "DaVinci", "InputFiles": ["foo", "bar"], "AppVersion": "v30r0"})
-        self.assertEqual(pc1.whatsIn, {"Application": "DaVinci", "InputFiles": ["foo", "bar"], "AppVersion": "v30r0"})
-        fopen = open("prodConf.py", "r")
-        fileString = fopen.read()
-        fopen.close()
-        string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='DaVinci',\n  "
-        string += "InputFiles=['foo', 'bar'],\n  AppVersion='v30r0',\n)"
-        self.assertEqual(string, fileString)
-
-        pc1.putOptionsIn({"Application": "LHCb"})
-        self.assertEqual(pc1.whatsIn, {"Application": "LHCb", "InputFiles": ["foo", "bar"], "AppVersion": "v30r0"})
-        fopen = open("prodConf.py", "r")
-        fileString = fopen.read()
-        fopen.close()
-        string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='LHCb',\n  "
-        string += "InputFiles=['foo', 'bar'],\n  AppVersion='v30r0',\n)"
-        self.assertEqual(string, fileString)
-
-        pc1.putOptionsIn({"InputFiles": ["pippo", "pluto"]})
-        self.assertEqual(pc1.whatsIn, {"Application": "LHCb", "InputFiles": ["pippo", "pluto"], "AppVersion": "v30r0"})
-        fopen = open("prodConf.py", "r")
-        fileString = fopen.read()
-        fopen.close()
-        string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='LHCb',\n  "
-        string += "InputFiles=['pippo', 'pluto'],\n  AppVersion='v30r0',\n)"
-        self.assertEqual(set(string.split()), set(fileString.split()))
-
-        pc1.putOptionsIn({"InputFiles": []})
-        self.assertEqual(pc1.whatsIn, {"Application": "LHCb", "InputFiles": [], "AppVersion": "v30r0"})
-        fopen = open("prodConf.py", "r")
-        fileString = fopen.read()
-        fopen.close()
-        string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='LHCb',\n  "
-        string += "InputFiles=[],\n  AppVersion='v30r0',\n)"
-        self.assertEqual(set(string.split()), set(fileString.split()))
-
-        pc1.putOptionsIn({"Application": "", "RunNumber": 12345})
-        self.assertEqual(pc1.whatsIn, {"Application": "", "InputFiles": [], "AppVersion": "v30r0", "RunNumber": 12345})
-        fopen = open("prodConf.py", "r")
-        fileString = fopen.read()
-        fopen.close()
-        string = "from ProdConf import ProdConf\n\nProdConf(\n  Application='',\n  "
-        string += "InputFiles=[],\n  AppVersion='v30r0',\n  RunNumber=12345,\n)"
-        self.assertEqual(set(string.split()), set(fileString.split()))
 
 
 #################################################
@@ -655,7 +517,6 @@ class NagiosConnectorSuccess(UtilitiesTestCase):
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(UtilitiesTestCase)
     suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ProductionDataSuccess))
-    suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ProdConfSuccess))
     suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(InputDataResolutionSuccess))
     suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(NagiosConnectorSuccess))
     testResult = unittest.TextTestRunner(verbosity=2).run(suite)
