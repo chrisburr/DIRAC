@@ -191,7 +191,7 @@ class RunApplication(object):
             if filename:
                 log = open(filename, "at")
             while line := await stream.readline():
-                line = line.decode(errors="namereplace")
+                line = line.decode(errors="backslashreplace")
                 lines += [line]
                 if "INFO Evt" in line or "Reading Event record" in line:
                     # These ones will appear in the std.out log too
