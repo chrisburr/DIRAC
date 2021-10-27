@@ -397,7 +397,7 @@ class DiracLHCb(Dirac):
             dqFlag = check["Value"]
             query["DataQuality"] = dqFlag
 
-        for key, val in query.items():
+        for key, val in list(query.items()):
             if isinstance(val, six.string_types) and val.lower() == "all":
                 query.pop(key)
         result = self.bkQuery(query)
