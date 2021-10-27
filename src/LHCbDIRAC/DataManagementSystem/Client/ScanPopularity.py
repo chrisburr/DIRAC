@@ -137,9 +137,12 @@ def cacheDirectories(directories):
         for lfns in breakListIntoChunks(lfnsFromBK, chunkSize):
             for trial in range(10, -1, -1):
                 res = bkClient.getDirectoryMetadata(lfns)
-                if not res["OK"] and not trial:
-                    gLogger.fatal("\nError getting BK metadata", res["Message"])
-                    DIRAC.exit(1)
+                if not res["OK"]:
+                    if not trial:
+                        gLogger.fatal("\nError getting BK metadata", res["Message"])
+                        DIRAC.exit(1)
+                    else:
+                        gLogger.warn("Error getting BK metadata, retrying", res["Message"])
                 else:
                     break
             success.update(res["Value"].get("Successful", {}))
@@ -194,9 +197,12 @@ def cacheDirectories(directories):
         for dirLfn in dirSet:
             for trial in range(10, -1, -1):
                 res = suClient.getDirectorySummaryPerSE(dirLfn)
-                if not res["OK"] and not trial:
-                    gLogger.fatal("Error getting storage usage per SE %s" % dirLfn, res["Message"])
-                    DIRAC.exit(1)
+                if not res["OK"]:
+                    if not trial:
+                        gLogger.fatal("Error getting storage usage per SE", "%s %s" % (dirLfn, res["Message"]))
+                        DIRAC.exit(1)
+                    else:
+                        gLogger.warn("Error getting storage usage per SE, retrying", "%s %s" % (dirLfn, res["Message"]))
                 else:
                     break
             info = physicalStorageUsage.setdefault(dirLfn, {})
