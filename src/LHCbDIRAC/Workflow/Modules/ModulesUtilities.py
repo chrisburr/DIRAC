@@ -145,8 +145,8 @@ def getEventsToProduce(CPUe, CPUTime=None, CPUNormalizationFactor=None, maxNumbe
     gLogger.verbose("Without limits, we can produce %d events" % eventsToProduce)
 
     gLogger.info("We can produce %d events" % eventsToProduce)
-    willProduce = int(eventsToProduce * 0.8)
-    gLogger.info("But we take a conservative approach, so 80%% of those: %d" % willProduce)
+    willProduce = int(eventsToProduce * 0.75)
+    gLogger.info("But we take a conservative approach, so 75%% of those: %d" % willProduce)
 
     if maxNumberOfEvents:
         gLogger.verbose("Limit for MaxNumberOfEvents: %d" % maxNumberOfEvents)
