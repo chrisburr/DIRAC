@@ -500,25 +500,6 @@ def booleJobWithConf():
 
 
 @executeWithUserProxy
-def gaudiApplicationScriptJob():
-
-    job = baseToAllJobs("gaudiApplicationScriptJob", jobClass)
-    inp1 = [find_all("_input_sandbox_1324_master.tgz", wdir, "tests/System/GridTestSubmission")[0]]
-    inp2 = [find_all("runToys.C", wdir, "tests/System/GridTestSubmission")[0]]
-    inp3 = [find_all("script_wrapper.py", wdir, "tests/System/GridTestSubmission")[0]]
-    job.setInputSandbox(inp1 + inp2 + inp3)
-    executable = find_all("script_wrapper.py", wdir, "tests/System/GridTestSubmission/script_wrapper.py")[
-        0
-    ]  # pylint: disable=no-member
-    job.setApplicationScript("root", "6.06.02", executable, systemConfig="x86_64-slc6-gcc49-opt")
-    job.setOutputSandbox("FitResultsToyData*.root")
-    # job.setDIRACPlatform()  # pylint: disable=no-member
-    job.setCPUTime(172800)
-    res = endOfAllJobs(job)
-    return res
-
-
-@executeWithUserProxy
 def wrongJob():
 
     print("\n Submitting gaudiRun job (Gauss only) that will use a configuration file that contains wrong info")
