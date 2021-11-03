@@ -102,10 +102,14 @@ pre-commit:
     # Checkout the latest compatible DIRAC release
     - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
+    # Now take the code from the release
     - diracTag=$(git describe --tags --long --match '*[0-9]*' --exclude 'v[0-9]r*' --exclude 'v[0-9][0-9]r*' | cut -d '-' -f 1)
     - echo "diracTag=${diracTag}"
     - git checkout "${diracTag}"
     # Create the environment and install DIRAC+LHCbDIRAC
+    # We take the environment from the branch and not the release
+    # to not depend on a release to change the dependencies.
+    - git checkout ${diracBranch} -- environment-py3.yml
     - mamba env create --file environment-py3.yml --name test-env
     - conda activate test-env
     - pip install .[server]
