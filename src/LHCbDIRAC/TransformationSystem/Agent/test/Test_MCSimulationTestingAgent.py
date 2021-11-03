@@ -288,7 +288,7 @@ class MCSimulationTestingAgentTestCase(unittest.TestCase):
         CPUe_xml = self.test_workflow = s1
         s2 = """<Parameter name="maxNumberOfEvents" type="string" linked_module="" linked_parameter="" """
         s2 += """in="True" out="False" description="Maximum number of events to produce (Gauss)">"""
-        s2 += """<value><![CDATA[160000]]></value></Parameter>\n"""
+        s2 += """<value><![CDATA[150000]]></value></Parameter>\n"""
         max_e_xml = self.test_workflow = s2
         res = self.agent._updateWorkflow(self.transID, CPUe, MCCpu)
         self.assertTrue(res["OK"])

@@ -291,7 +291,7 @@ class MCExtensionAgentTestCase(unittest.TestCase):
         eventsNeeded = 1000000
 
         productionIDExp = 24614
-        numberOfTasksExp = 30
+        numberOfTasksExp = 32
 
         ret = self.agent._extendProduction(production, extensionFactor, eventsNeeded)
         self.assertTrue(ret["OK"])
