@@ -1,3 +1,34 @@
+v10r2p16
+Based on DIRAC v7r2p33
+LHCbWebDIRAC v5r3p2
+LHCbDIRACOS v1r23
+*Tests
+
+CHANGE: (!1109) test_setup_py3 uses DIRAC branch instead of release
+
+*Worfklow
+
+FIX: (!1108) being a bit more conservative (75% instead of 80%) when calculating how many events to produce
+
+*DataManagementSystem
+
+FIX: (!1107) ScanPopularity, do not exit after first attempt to contact a service
+NEW: (!1099) infer the "Data Challenge" activity in the LHCbFTS3Plugin
+
+*Interface
+
+FIX: (!1106) avoid changing the dict while looping in DiracLHCb.bkQueryProduction
+
+*CI
+
+CHANGE: (!1102) allow to run tornado services with the docker container
+
+*TransformationSystem
+
+FIX: (!1098) MCSimulationTestingAgent: fix: getting the number of events produced from the Gauss job
+
+
+
 v10r2p15
 Based on DIRAC v7r2p30
 LHCbWebDIRAC v5r3p1
