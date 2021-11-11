@@ -940,8 +940,15 @@ class TransformationDebug(object):
                         gLogger.notice("\tActive associated FTS jobs:")
                         for job in fts3Jobs:
                             gLogger.notice(
-                                "\t\t%s@%s (%s, completed at %s %%)"
-                                % (job.ftsGUID, job.ftsServer, job.status, job.completeness)
+                                "\t\t%s/fts3/ftsmon/#/job/%s (%s, completed at %s %%)"
+                                % (
+                                    job.ftsServer.replace(
+                                        ":8446", ":8449"
+                                    ),  # Submission port is 8446, web port is 8449
+                                    job.ftsGUID,
+                                    job.status,
+                                    job.completeness,
+                                )
                             )
                 except ImportError as e:
                     gLogger.notice("\tNo FTS information:", repr(e))
