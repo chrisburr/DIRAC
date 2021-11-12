@@ -952,10 +952,7 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
                                             lfnMetadata[field],
                                             pfnMetadata[field],
                                         )
-                                if len(seList) > 1:
-                                    metadata["Successful"][url][se]["MatchLFN"] = ok if ok else diff
-                                else:
-                                    metadata["Successful"][url]["MatchLFN"] = ok if ok else diff
+                                metadata["Successful"][url][se]["MatchLFN"] = ok if ok else diff
                             else:
                                 metadata["Successful"][url]["MatchLFN"] = "No LFN metadata"
                     for url in seMetadata["Failed"]:
