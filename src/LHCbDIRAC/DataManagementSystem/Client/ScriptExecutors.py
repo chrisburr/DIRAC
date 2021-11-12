@@ -966,7 +966,6 @@ def printPfnMetadata(lfnList, seList, check=False, exists=False, summary=False):
         return printDMResult(S_OK(metadata), empty="File not at SE")
     else:
         nFiles = 0
-        from collections import defaultdict
 
         failed = {}
         success = {}
