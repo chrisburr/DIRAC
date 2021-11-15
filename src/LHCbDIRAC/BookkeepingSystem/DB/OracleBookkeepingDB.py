@@ -44,28 +44,28 @@ class OracleBookkeepingDB(object):
         self.dbHost = ""
         result = gConfig.getOption(self.cs_path + "/LHCbDIRACBookkeepingTNS")
         if not result["OK"]:
-            self.log.error("Failed to get the configuration parameters: Host")
+            self.log.error("Failed to get the configuration parameters: LHCbDIRACBookkeepingTNS")
             return
         self.dbHost = result["Value"]
 
         self.dbUser = ""
         result = gConfig.getOption(self.cs_path + "/LHCbDIRACBookkeepingUser")
         if not result["OK"]:
-            self.log.error("Failed to get the configuration parameters: User")
+            self.log.error("Failed to get the configuration parameters: LHCbDIRACBookkeepingUser")
             return
         self.dbUser = result["Value"]
 
         self.dbPass = ""
         result = gConfig.getOption(self.cs_path + "/LHCbDIRACBookkeepingPassword")
         if not result["OK"]:
-            self.log.error("Failed to get the configuration parameters: User")
+            self.log.error("Failed to get the configuration parameters: LHCbDIRACBookkeepingPassword")
             return
         self.dbPass = result["Value"]
 
         self.dbServer = ""
         result = gConfig.getOption(self.cs_path + "/LHCbDIRACBookkeepingServer")
         if not result["OK"]:
-            self.log.error("Failed to get the configuration parameters: User")
+            self.log.error("Failed to get the configuration parameters: LHCbDIRACBookkeepingServer")
             return
         self.dbServer = result["Value"]
 
@@ -3712,12 +3712,11 @@ and files.qualityid= dataquality.qualityid"
         """
 
         if configName not in [default, None, ""] and configVersion not in [default, None, ""]:
-            if "productionscontainer" not in tables.lower():
-                tables += " ,productionscontainer cont"
             if "configurations" not in tables.lower():
                 tables += " ,configurations c "
-            condition += " and c.configurationid=cont.configurationid  and c.configname='%s' " % (configName)
-            condition += " and c.configversion='%s' " % (configVersion)
+            condition += " AND c.configurationid=j.configurationid"
+            condition += " AND c.configname='%s'" % configName
+            condition += " AND c.configversion='%s' " % configVersion
 
         return condition, tables
 
