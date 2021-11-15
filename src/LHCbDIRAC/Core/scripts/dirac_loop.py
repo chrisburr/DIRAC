@@ -97,6 +97,7 @@ def main():
     Script.registerSwitch("", "NoMerge", "If set, do not merge arguments if BK paths")
     Script.registerSwitch("", "Items=", "Alternative way of passing list of arguments")
     Script.registerSwitch("", "NoParse", "Consider the full lines are arguments and not only the first word")
+    Script.registerSwitch("", "Path", "Look for a path in the lines")
     Script.registerSwitch("", "Terse", "Do not print the command executed")
     Script.setUsageMessage("\n".join([__doc__]))
     Script.parseCommandLine(ignoreErrors=True)
@@ -106,6 +107,7 @@ def main():
     noParse = False
     terse = False
     arguments = []
+    path = False
     for switch, val in Script.getUnprocessedSwitches():
         if switch == "NoMerge":
             noMerge = True
@@ -115,6 +117,8 @@ def main():
             arguments = val.split(",")
         elif switch == "Terse":
             terse = True
+        elif switch == "Path":
+            path = True
 
     if len(args) < 1:
         Script.showHelp(exitCode=1)
@@ -133,6 +137,16 @@ def main():
     for arg in arguments:
         if not arg.strip():
             continue
+        if path:
+            # Look for a path in the line
+            # "Real Data" is an exception in BK path (i.e. with space in it)... BKQuery understands without a space
+            #    hence for simplicity here, remove the space to allow split() to work ;-)
+            words = arg.replace("Real Data", "RealData").split()
+            arg = None
+            for word in words:
+                if word.startswith(("/", '"/', "'/")) or ":/" in word:
+                    arg = word
+                    break
         # If the argument is between quotes, take what is between the quotes
         if arg[0] == "'":
             arg = arg.split("'")[1]
@@ -142,10 +156,11 @@ def main():
             # Consider the whole line is the argument
             pass
         else:
-            # Take the firt word
+            # Take the first word
             arg = arg.strip().split()[0]
         # Escape any space left
-        argList.append(arg.replace(" ", r"\ "))
+        if arg:
+            argList.append(arg.replace(" ", r"\ "))
 
     for arg in reduceArgs(noMerge, argList):
         if arg:

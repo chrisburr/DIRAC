@@ -22,10 +22,10 @@ import gzip
 import ssl
 import tarfile
 import tempfile
-import six
 
 from collections import defaultdict
 from fnmatch import fnmatch
+import six
 from six.moves.urllib.request import FancyURLopener
 
 import DIRAC
@@ -63,11 +63,11 @@ def _checkReplicasForProblematic(lfns, replicas, nbReplicasProblematic, problema
         # Problematic files, let's see why
         realSEs = [se for se in replicas.get(lfn, []) if not se.endswith("-ARCHIVE")]
         nbSEs = len(realSEs)
-        nbReplicasProblematic[nbSEs] = nbReplicasProblematic.setdefault(nbSEs, 0) + 1
+        nbReplicasProblematic[nbSEs] += 1
         if not nbSEs:
-            problematicReplicas.setdefault(None, []).append(lfn)
+            problematicReplicas[None].append(lfn)
         for se in realSEs:
-            problematicReplicas.setdefault(se, []).append(lfn)
+            problematicReplicas[se].append(lfn)
 
 
 def _genericLfn(lfn, lfnList):
@@ -398,7 +398,7 @@ class TransformationDebug(object):
             selectDict["LFN"] = lfnList
         if seList:
             selectDict["UsedSE"] = seList
-        taskFiles = {}
+        taskFiles = defaultdict(set)
         if taskList:
             # First get fileID per task as the task may no longer be in the TransformationFiles table
             for taskID in taskList:
@@ -408,9 +408,9 @@ class TransformationDebug(object):
                 if res["OK"]:
                     # Keep track of which file corresponds to which task
                     if res["Value"]["FileID"]:
-                        fileID = res["Value"]["FileID"][0]
-                        taskFiles.setdefault(fileID, []).append(taskID)
-                        selectDict.setdefault("FileID", []).append(fileID)
+                        for fileID in res["Value"]["FileID"]:
+                            taskFiles[fileID].add(taskID)
+                            selectDict.setdefault("FileID", []).append(fileID)
                 else:
                     gLogger.error("Error getting Transformation tasks:", res["Message"])
                     return []
@@ -620,9 +620,9 @@ class TransformationDebug(object):
             fixedFiles = 0
             res = self.bkClient.getFileMetadata(filesToFix)
             if res["OK"]:
-                runFiles = {}
+                runFiles = defaultdict(list)
                 for lfn, metadata in res["Value"]["Successful"].items():  # can be an iterator
-                    runFiles.setdefault(metadata["RunNumber"], []).append(lfn)
+                    runFiles[metadata["RunNumber"]].append(lfn)
                 for run in runFiles:
                     if not run:
                         gLogger.notice(
@@ -745,21 +745,21 @@ class TransformationDebug(object):
         seStat["Total"] += 1
         completed = True
         if not rep:
-            seStat[None] = seStat.setdefault(None, 0) + 1
+            seStat[None] += 1
         if not listSEs:
             listSEs = ["Some"]
         for se in listSEs:
             if self.transType == "Replication":
                 if se == "Some" or se not in rep:
-                    seStat[se] = seStat.setdefault(se, 0) + 1
+                    seStat[se] += 1
                     completed = False
             elif self.transType == "Removal":
                 if se == "Some" or se in rep:
-                    seStat[se] = seStat.setdefault(se, 0) + 1
+                    seStat[se] += 1
                     completed = False
             else:
                 if se not in rep:
-                    seStat[se] = seStat.setdefault(se, 0) + 1
+                    seStat[se] += 1
         return completed
 
     def __getRequestName(self, requestID):
@@ -871,9 +871,9 @@ class TransformationDebug(object):
         res = self.reqClient.getRequestFileStatus(requestID, lfnsInTask)
         if res["OK"]:
             reqFiles = res["Value"]
-            statFiles = {}
+            statFiles = defaultdict(int)
             for stat in reqFiles.values():
-                statFiles[stat] = statFiles.setdefault(stat, 0) + 1
+                statFiles[stat] += 1
             for stat in sorted(statFiles):
                 gLogger.notice("\t%s: %d files" % (stat, statFiles[stat]))
             # If all files failed, set the request as failed
@@ -940,8 +940,15 @@ class TransformationDebug(object):
                         gLogger.notice("\tActive associated FTS jobs:")
                         for job in fts3Jobs:
                             gLogger.notice(
-                                "\t\t%s@%s (%s, completed at %s %%)"
-                                % (job.ftsGUID, job.ftsServer, job.status, job.completeness)
+                                "\t\t%s/fts3/ftsmon/#/job/%s (%s, completed at %s %%)"
+                                % (
+                                    job.ftsServer.replace(
+                                        ":8446", ":8449"
+                                    ),  # Submission port is 8446, web port is 8449
+                                    job.ftsGUID,
+                                    job.status,
+                                    job.completeness,
+                                )
                             )
                 except ImportError as e:
                     gLogger.notice("\tNo FTS information:", repr(e))
@@ -975,9 +982,9 @@ class TransformationDebug(object):
                     subReqDict = {}
                     subReqStr = ""
                     conj = ""
-                    for i in range(len(params)):
-                        subReqDict.update({params[i]: rec[i]})
-                        subReqStr += conj + params[i] + ": " + rec[i]
+                    for i, param in enumerate(params):
+                        subReqDict.update({param: rec[i]})
+                        subReqStr += conj + param + ": " + rec[i]
                         conj = ", "
 
                     if subReqDict["Status"] == "Assigned" and subReqDict["LastUpdateTime"] < str(assignedReqLimit):
@@ -1005,7 +1012,7 @@ class TransformationDebug(object):
         from DIRAC.Core.Utilities.Adler import compareAdler
 
         gLogger.notice("\nStatistics for Problematic files in FC:")
-        existingReplicas = {}
+        existingReplicas = defaultdict(list)
         lfns = set()
         lfnsInFC = set()
         for nb in sorted(nbReplicasProblematic):
@@ -1013,7 +1020,7 @@ class TransformationDebug(object):
         # level = gLogger.getLevel()
         # gLogger.setLevel( 'FATAL' )
         lfnCheckSum = {}
-        badChecksum = {}
+        badChecksum = defaultdict(list)
         error = {}
         for se in problematicReplicas:
             lfns.update(problematicReplicas[se])
@@ -1028,19 +1035,19 @@ class TransformationDebug(object):
                 res = self.dataManager.getReplicaMetadata(problematicReplicas[se], se)
                 if res["OK"]:
                     for lfn in res["Value"]["Successful"]:
-                        existingReplicas.setdefault(lfn, []).append(se)
+                        existingReplicas[lfn].append(se)
                         # Compare checksums
                         checkSum = res["Value"]["Successful"][lfn]["Checksum"]
                         if not checkSum or not compareAdler(checkSum, lfnCheckSum[lfn]):
-                            badChecksum.setdefault(lfn, []).append(se)
+                            badChecksum[lfn].append(se)
                 else:
                     error[se] = res["Message"]
         nbProblematic = len(lfns) - len(existingReplicas)
-        nbExistingReplicas = {}
+        nbExistingReplicas = defaultdict(int)
         for lfn in existingReplicas:
             nbReplicas = len(existingReplicas[lfn])
-            nbExistingReplicas[nbReplicas] = nbExistingReplicas.setdefault(nbReplicas, 0) + 1
-        nonExistingReplicas = {}
+            nbExistingReplicas[nbReplicas] += 1
+        nonExistingReplicas = defaultdict(list)
         if error:
             gLogger.notice("Could not get information for some problematic files from SEs:")
             for se, err in error.items():  # can be an iterator
@@ -1066,7 +1073,7 @@ class TransformationDebug(object):
                 ]
                 str2Msg = ""
                 if len(lfns):
-                    nonExistingReplicas.setdefault(se, []).extend(lfns)
+                    nonExistingReplicas[se].extend(lfns)
                     if not self.fixIt:
                         str2Msg = " Use --FixIt to remove them"
                     else:
@@ -1126,10 +1133,10 @@ class TransformationDebug(object):
                 if filesToRemove:
                     self.__removeFiles(filesToRemove)
                 if replicasToRemove:
-                    seFiles = {}
+                    seFiles = defaultdict(list)
                     for lfn in replicasToRemove:
                         for se in replicasToRemove[lfn]:
-                            seFiles.setdefault(se, []).append(lfn)
+                            seFiles[se].append(lfn)
                     for se in seFiles:
                         res = self.dataManager.removeReplica(se, seFiles[se])
                         if not res["OK"]:
@@ -1140,7 +1147,7 @@ class TransformationDebug(object):
             gLogger.notice("All existing replicas have a good checksum")
         if self.fixIt and nonExistingReplicas:
             nRemoved = 0
-            failures = {}
+            failures = defaultdict(list)
             # If SE == None, the file is not in the FC
             notInFC = nonExistingReplicas.get(None)
             if notInFC:
@@ -1161,7 +1168,7 @@ class TransformationDebug(object):
                         gLogger.notice("Failed to remove %d replicas at %s" % (len(failed), se))
                         gLogger.notice("\n".join(sorted(failed)))
                         for lfn in failed:
-                            failures.setdefault(failed[lfn], []).append(lfn)
+                            failures[failed[lfn]].append(lfn)
                     nRemoved += len(res["Value"]["Successful"])
             if nRemoved:
                 gLogger.notice("Successfully removed %s replicas from FC" % nRemoved)
@@ -1184,10 +1191,10 @@ class TransformationDebug(object):
         if not res["OK"]:
             gLogger.notice("Error getting %d files in the TS" % len(lfns), res["Message"])
             return (None, None)
-        transFiles = {}
+        transFiles = defaultdict(list)
         removed = 0
         for fd in res["Value"]:
-            transFiles.setdefault(fd["TransformationID"], []).append(fd["LFN"])
+            transFiles[fd["TransformationID"]].append(fd["LFN"])
         for transID, lfns in transFiles.items():  # can be an iterator
             res = self.transClient.setFileStatusForTransformation(transID, "Removed", lfns, force=True)
             if not res["OK"]:
@@ -1317,8 +1324,8 @@ class TransformationDebug(object):
         """
         if not self.monitoring:
             self.monitoring = JobMonitoringClient()
-        failedLfns = {}
-        idrLfns = {}
+        failedLfns = defaultdict(list)
+        idrLfns = defaultdict(list)
         jobLogURL = {}
         jobSites = {}
         jobCPU = {}
@@ -1385,7 +1392,7 @@ class TransformationDebug(object):
                                 res["Value"]["DownloadInputData"].split("Failed to download")[1].split(":")[1].split()
                             )
                             for lfn in lfns:
-                                idrLfns.setdefault(lfn, []).append(job1)
+                                idrLfns[lfn].append(job1)
                 elif minorStatus in ("Job stalled: pilot not running", "Watchdog identified this job as stalled"):
                     lastLine = ""
                     # Now get last lines
@@ -1449,7 +1456,7 @@ class TransformationDebug(object):
                                     exitStatus = exitedJobs[job].split("status ")
                                     if len(exitStatus) == 2:
                                         reason = "(exit code %s) was " % exitStatus[1] + reason
-                                failedLfns.setdefault((lfn, reason), []).append(job)
+                                failedLfns[(lfn, reason)].append(job)
                         else:
                             gLogger.notice("No common error was found in all XML summary files")
                     exitedJobs = {}
@@ -1552,13 +1559,13 @@ class TransformationDebug(object):
                 paramValues = [evtType]
             else:
                 paramValues = sorted(set(meta[param] for meta in res["Value"]["Successful"].values() if param in meta))
-        ancestors = {}
+        ancestors = defaultdict(list)
         # print "*** Param values", ','.join( paramValues )
         for paramValue in paramValues:
             try:
                 nbAnc = self.pluginUtil.getRAWAncestorsForRun(runID, param, paramValue)
                 # print '*** For %s = %s: %d ancestors' % ( param, paramValue, nbAnc )
-                ancestors.setdefault(nbAnc, []).append(paramValue)
+                ancestors[nbAnc].append(paramValue)
             except Exception as e:  # pylint: disable=broad-except
                 gLogger.exception("Exception calling pluginUtilities:", lException=e)
         prStr = ""
@@ -1648,7 +1655,7 @@ class TransformationDebug(object):
             gLogger.notice("Error getting waiting tasks:", res["Message"])
             return
         tasks = res["Value"]
-        taskStatuses = {}
+        taskStatuses = defaultdict(list)
         gLogger.notice("Found %d waiting tasks" % len(tasks))
         for task in tasks:
             fileDicts = self.transClient.getTransformationFiles(
@@ -1665,7 +1672,7 @@ class TransformationDebug(object):
                 else:
                     status = None
             if status:
-                taskStatuses.setdefault(status, []).append((task["TaskID"], int(task["ExternalID"])))
+                taskStatuses[status].append((task["TaskID"], int(task["ExternalID"])))
         if not taskStatuses:
             gLogger.notice("All tasks look OK")
             return
@@ -1791,9 +1798,8 @@ class TransformationDebug(object):
                 checkSubmittedTasks = True
                 byTasks = True
             elif opt == "Jobs":
-                jobList = [int(job) for job in val.split(",") if job.isdigit()]
-                byTasks = True
-                byFiles = True
+                # in TransformationTasks job is a string
+                jobList = [job for job in val.split(",") if job.isdigit()]
             elif opt == "ExceptActiveRunsFromProduction":
                 exceptProd = int(val)
 
@@ -1815,15 +1821,47 @@ class TransformationDebug(object):
         improperJobs = []
         # gLogger.setLevel( 'INFO' )
 
-        transSep = ""
-        if jobList:
-            res = self.transClient.getTransformationTasks({"ExternalID": jobList})
+        # If looking for MaxReset files, and no transformation is specified, get the list
+        if status in (["MaxReset"], ["Problematic"]) and not transList:
+            res = self.transClient.getTransformationFiles({"Status": status})
             if not res["OK"]:
-                gLogger.notice("Error getting jobs:", res["Message"])
-            else:
-                transList = {}
-                for task in res["Value"]:
-                    transList.setdefault(task["TransformationID"], []).append(task["TaskID"])
+                gLogger.notice("Failed getting MaxReset files", res["Message"])
+                DIRAC.exit(1)
+            transList = getTransformations([",".join(set(str(fd["TransformationID"]) for fd in res["Value"]))])
+            if transList:
+                gLogger.notice(
+                    "Transformations to be debugged", ": %s\n" % ",".join(str(trans) for trans in sorted(transList))
+                )
+
+        # Get list of transformations from the list of jobs
+        if jobList:
+            # Check first which JobGroup jobs come from
+            transJobs = defaultdict(list)
+            badJobs = []
+            if not self.monitoring:
+                self.monitoring = JobMonitoringClient()
+            for job in jobList:
+                trans = self.monitoring.getJobAttribute(int(job), "JobGroup").get("Value")
+                if trans.isdigit() and (not transList or int(trans) in transList):
+                    transJobs[int(trans)].append(job)
+                else:
+                    badJobs.append(job)
+            if badJobs:
+                gLogger.notice("Jobs are not production jobs", ",".join(badJobs))
+            transList = defaultdict(list)
+            for trans, jobs in transJobs.items():
+                res = self.transClient.getTransformationTasks({"TransformationID": trans, "ExternalID": jobs})
+                if not res["OK"]:
+                    gLogger.notice("Error getting jobs:", res["Message"])
+                else:
+                    for task in res["Value"]:
+                        transList[trans].append(task["TaskID"])
+            if transList:
+                gLogger.notice(
+                    "Transformations to be debugged", ": %s\n" % ",".join(str(trans) for trans in sorted(transList))
+                )
+
+        # Get list of transformations that have tasks in status Submitted
         if checkSubmittedTasks:
             res = self.transClient.getTransformationTasks({"ExternalStatus": "Submitted", "ExternalID": "0"})
             if not res["OK"]:
@@ -1831,16 +1869,23 @@ class TransformationDebug(object):
             elif not res["Value"]:
                 gLogger.notice("No tasks submitted with no task ID")
             else:
-                transList = {}
+                transList = defaultdict(list)
                 for task in res["Value"]:
-                    transList.setdefault(task["TransformationID"], []).append(task["TaskID"])
-        for transID in transList:
+                    transList[task["TransformationID"]].append(task["TaskID"])
+
+        # At this point we should have a list of transformations, othewise stop
+        if not transList:
+            gLogger.notice("No valid transformation found...")
+            DIRAC.exit(0)
+
+        transSep = ""
+        for transID in sorted(transList):
             self.transID = transID
             if isinstance(transList, dict):
                 taskList = transList[transID]
-            problematicReplicas = {}
+            problematicReplicas = defaultdict(list)
             failedFiles = []
-            nbReplicasProblematic = {}
+            nbReplicasProblematic = defaultdict(int)
             taskType, queryFileTypes = self.__getTransformationInfo(transSep)
             if taskType is None:
                 continue
@@ -1910,7 +1955,7 @@ class TransformationDebug(object):
                             "Runs %s excluded: they have non-processed files in production %d"
                             % (",".join([str(r) for r in exceptRuns]), exceptProd)
                         )
-            seStat = {"Total": 0}
+            seStat = defaultdict(int)
             allFiles = []
             toBeKicked = 0
 
@@ -1926,7 +1971,7 @@ class TransformationDebug(object):
                     self.__getFilesForRun(
                         runID=runID, status=status, lfnList=lfnList, seList=seList, taskList=taskList
                     ),
-                    key=lambda d: (d["TaskID"], d["LFN"]),
+                    key=lambda d: (d["TaskID"] if d["TaskID"] is not None else 0, d["LFN"]),
                 )
                 if jobList and allTasks:
                     taskList = []
@@ -1947,7 +1992,7 @@ class TransformationDebug(object):
                     continue
 
                 # Run display
-                if (byRuns and runID) or verbose:
+                if byRuns and runID:
                     files, processed = self.__filesProcessed(runID)
                     if runID:
                         prString = "Run: %d" % runID
@@ -1985,6 +2030,9 @@ class TransformationDebug(object):
                         gLogger.notice("Run %d is already flushed" % runID)
 
                 prString = "%d files found" % len(transFilesList)
+                nbUniqueFiles = len(set(t["LFN"] for t in transFilesList))
+                if nbUniqueFiles != len(transFilesList):
+                    prString += " (%d unique LFNs)" % nbUniqueFiles
                 if status:
                     prString += " with status %s" % status
                 if runID:
@@ -1995,10 +2043,10 @@ class TransformationDebug(object):
                 filesWithRunZero = []
                 filesWithNoRunTable = []
                 problematicFiles = []
-                taskDict = {}
+                taskDict = defaultdict(list)
                 for fileDict in transFilesList:
                     if not allTasks:
-                        taskDict.setdefault(fileDict["TaskID"], []).append(fileDict["LFN"])
+                        taskDict[fileDict["TaskID"]].append(fileDict["LFN"])
                         if "Problematic" in status and not fileDict["TaskID"]:
                             problematicFiles.append(fileDict["LFN"])
                     else:
@@ -2012,7 +2060,7 @@ class TransformationDebug(object):
                             gLogger.notice("Error when getting tasks for file %s" % fileDict["LFN"])
                         else:
                             for taskID in res["Value"]["TaskID"]:
-                                taskDict.setdefault(taskID, []).append(fileDict["LFN"])
+                                taskDict[taskID].append(fileDict["LFN"])
                     fileRun = fileDict.get("RunNumber")
                     fileLfn = fileDict["LFN"]
                     if byFiles:
@@ -2052,15 +2100,15 @@ class TransformationDebug(object):
 
                 ####################
                 # Now loop on all tasks
-                jobsForLfn = {}
+                jobsForLfn = defaultdict(list)
                 if verbose:
                     gLogger.notice("Tasks:", ",".join(str(taskID) for taskID in sorted(taskDict)))
                 if allTasks:
                     # Sort tasks by LFNs in order to print them together
-                    lfnTask = {}
+                    lfnTask = defaultdict(list)
                     for taskID in sorted(taskDict):
                         for lfn in taskDict[taskID]:
-                            lfnTask.setdefault(lfn, []).append(taskID)
+                            lfnTask[lfn].append(taskID)
                     sortedTasks = []
                     for lfn in sorted(lfnTask):
                         for taskID in lfnTask[lfn]:
@@ -2086,7 +2134,8 @@ class TransformationDebug(object):
                         lfns = set(lfnsInTask if lfnsInTask else [""]) & set(
                             fileDict["LFN"] for fileDict in transFilesList
                         )
-                        jobsForLfn.setdefault(",".join(sorted(lfns)), []).append(job)
+                        if not jobList or job in jobList:
+                            jobsForLfn[",".join(sorted(lfns))].append(job)
                         if not byFiles and not byTasks:
                             continue
                     nfiles = len(lfnsInTask)
