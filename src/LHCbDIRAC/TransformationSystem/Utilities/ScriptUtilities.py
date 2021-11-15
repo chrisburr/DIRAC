@@ -34,7 +34,7 @@ def _getTransformationID(transName):
         result = trClient.getTransformation(testName)
         if not result["OK"]:
             # Transformation doesn't exist
-            return None
+            break
         status = result["Value"]["Status"]
         # If the status is still compatible, accept
         if status in ("Active", "Idle", "New", "Stopped", "Completed"):
@@ -42,7 +42,7 @@ def _getTransformationID(transName):
         # If transformationID was given, return error
         if isinstance(transName, six.integer_types) or transName.isdigit():
             gLogger.error("Transformation in incorrect status", "%s, status %s" % (str(testName), status))
-            return None
+            return False
         # Transformation name given, try out adding an index
         testName = "%s-%d" % (transName, ind)
     return None
@@ -52,10 +52,7 @@ def getTransformations(args):
     """Parse the arguments of the script and generates a list of
     transformations."""
     transList = []
-    if not len(args):
-        print("Specify transformation number...")
-        Script.showHelp()
-    else:
+    if len(args):
         ids = args[0].split(",")
         try:
             for transID in ids:
@@ -67,9 +64,9 @@ def getTransformations(args):
                             transList.append(tid)
                 else:
                     tid = _getTransformationID(rr[0])
-                    if tid is not None:
+                    if tid:
                         transList.append(tid)
-                    else:
+                    elif tid is None:
                         gLogger.error("Transformation not found", rr[0])
         except Exception as e:
             gLogger.exception("Invalid transformation", lException=e)
