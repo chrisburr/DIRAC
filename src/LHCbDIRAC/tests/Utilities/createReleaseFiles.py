@@ -14,10 +14,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import sys
-import re
 import fileinput
-import json
 from diraccfg import parseVersion, CFG
 
 
@@ -49,12 +46,12 @@ LAST_LHCbDIRACOS = res["Releases"][LATEST_RELEASE]["DIRACOS"].split(":", 1)[-1]
 LAST_LHCbWebDIRAC = res["Releases"][LATEST_RELEASE]["Modules"].split(":", 2)[-1]
 
 # Read env variables defined by user or use version from previous release
-DIRAC = os.getenv("DIRAC", LAST_DIRAC)
-LHCbDIRACOS = os.getenv("LHCbDIRACOS", LAST_LHCbDIRACOS)
-LHCbWebDIRAC = os.getenv("LHCbWebDIRAC", LAST_LHCbWebDIRAC)
+DIRAC = os.getenv("DIRAC") or LAST_DIRAC
+LHCbDIRACOS = os.getenv("LHCbDIRACOS") or LAST_LHCbDIRACOS
+LHCbWebDIRAC = os.getenv("LHCbWebDIRAC") or LAST_LHCbWebDIRAC
 
 # Check if user specified version for next release
-NEXT_RELEASE = os.environ.get("NEXT_RELEASE")
+NEXT_RELEASE = os.environ.get("LHCbDIRAC") or None
 
 # If the user did not specify a release increment the current version by 1
 version = None
@@ -66,25 +63,25 @@ if not NEXT_RELEASE:
     if version[3] is None:
         # Increment patch version for 1
         version = (version[0], version[1], version[2] + 1, version[3])
-        versionString = "v%sr%sp%s" % (version[0], version[1], version[2])
-        versionStringPy3 = "v%s.%s.%s" % (version[0], version[1], version[2])
-        preRelease = False
-        print("Automatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
     else:
         # Increment pre version for 1
         version = (version[0], version[1], version[2], version[3] + 1)
-        versionString = "v%sr%s-pre%s" % (version[0], version[1], version[3])
-        versionStringPy3 = "v%s.%s.0a%s" % (version[0], version[1], version[3])
-        preRelease = True
-        print("Automatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
+    print("Automatically increment current release %s to %s" % (LATEST_RELEASE, version))
 else:
     # Use the version specified by NEXT_RELEASE
     version = parseVersion(NEXT_RELEASE)
     print("Preparing files for release %s" % NEXT_RELEASE)
-    if version[3] is None:
-        preRelease = False
-    else:
-        preRelease = True
+
+if version[3] is None:
+    versionString = "v%sr%sp%s" % (version[0], version[1], version[2])
+    versionStringPy3 = "v%s.%s.%s" % (version[0], version[1], version[2])
+    preRelease = False
+    print("Automatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
+else:
+    versionString = "v%sr%s-pre%s" % (version[0], version[1], version[3])
+    versionStringPy3 = "v%s.%s.0a%s" % (version[0], version[1], version[3])
+    preRelease = True
+    print("Automatically increment current release %s to %s" % (LATEST_RELEASE, versionString))
 
 # Construct the new releases section
 newCFG = (
@@ -116,13 +113,14 @@ with open("series.txt", "a") as fser:
 
 # change the __init__.py
 # Currently master and devel have different layout
+# WARNING: This line numbers are zero indexed!!!! Use text-editor-line-number - 1!
 if not preRelease:
-    lineReplace("src/LHCbDIRAC/__init__.py", 45, "    majorVersion = %s" % version[0])
-    lineReplace("src/LHCbDIRAC/__init__.py", 46, "    minorVersion = %s" % version[1])
-    lineReplace("src/LHCbDIRAC/__init__.py", 47, "    patchLevel = %s" % version[2])
-    lineReplace("src/LHCbDIRAC/__init__.py", 48, "    preVersion = %s" % 0)
+    lineReplace("src/LHCbDIRAC/__init__.py", 44, "    majorVersion = %s" % version[0])
+    lineReplace("src/LHCbDIRAC/__init__.py", 45, "    minorVersion = %s" % version[1])
+    lineReplace("src/LHCbDIRAC/__init__.py", 46, "    patchLevel = %s" % version[2])
+    lineReplace("src/LHCbDIRAC/__init__.py", 47, "    preVersion = %s" % 0)
 else:
-    lineReplace("src/LHCbDIRAC/__init__.py", 45, "    majorVersion = %s" % version[0])
-    lineReplace("src/LHCbDIRAC/__init__.py", 46, "    minorVersion = %s" % version[1])
-    lineReplace("src/LHCbDIRAC/__init__.py", 47, "    patchLevel = %s" % 0)
-    lineReplace("src/LHCbDIRAC/__init__.py", 48, "    preVersion = %s" % version[3])
+    lineReplace("src/LHCbDIRAC/__init__.py", 44, "    majorVersion = %s" % version[0])
+    lineReplace("src/LHCbDIRAC/__init__.py", 45, "    minorVersion = %s" % version[1])
+    lineReplace("src/LHCbDIRAC/__init__.py", 46, "    patchLevel = %s" % 0)
+    lineReplace("src/LHCbDIRAC/__init__.py", 47, "    preVersion = %s" % version[3])
