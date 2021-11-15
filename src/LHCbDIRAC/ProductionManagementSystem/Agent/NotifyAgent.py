@@ -239,6 +239,7 @@ class NotifyAgent(AgentModule):
 
     def _executeForProductionStatusAgent(self, conn):
         """This is for the ProductionStatusAgent"""
+
         aggregated_body = """\
           <!DOCTYPE html>
           <html>
@@ -260,7 +261,7 @@ class NotifyAgent(AgentModule):
 
         # Check if the results are non-empty
         if cursor.rowcount == 0:
-            return
+            return S_OK()
 
         html_elements = ""
         for production, from_status, to_status, time in cursor:
@@ -284,8 +285,8 @@ class NotifyAgent(AgentModule):
                 + "</td>"
                 + "</tr>"
             )
-
-        aggregated_body += """\
+        if html_elements:
+            aggregated_body += """\
       <p class="setup">Transformations updated</p>
       <table>
         <tr>
@@ -296,13 +297,16 @@ class NotifyAgent(AgentModule):
         </tr>
         {html_elements}
       </table>
-    """.format(
-            html_elements=html_elements
-        )
+        """.format(
+                html_elements=html_elements
+            )
 
         cursor = conn.execute("SELECT prod_requests, time from ProductionStatusAgentReqCache;")
 
         # Check if the results are non-empty
+        if cursor.rowcount == 0:
+            return S_OK()
+
         html_elements = ""
         for prod_requests, time in cursor:
             html_elements += "<tr>" + "<td>" + prod_requests + "</td>" + "<td>" + time + "</td>" + "</tr>"
@@ -337,14 +341,11 @@ class NotifyAgent(AgentModule):
             html=True,
         )
 
-        if res["OK"]:
-            conn.execute("DELETE FROM ProductionStatusAgentCache;")
-            conn.execute("VACUUM;")
-            conn.execute("DELETE FROM ProductionStatusAgentReqCache;")
-            conn.execute("VACUUM;")
-        else:
+        if not res["OK"]:
             self.log.error("Can't send email: %s" % res["Message"])
             return S_OK()
 
-
-################################################################################
+        conn.execute("DELETE FROM ProductionStatusAgentCache;")
+        conn.execute("VACUUM;")
+        conn.execute("DELETE FROM ProductionStatusAgentReqCache;")
+        conn.execute("VACUUM;")
