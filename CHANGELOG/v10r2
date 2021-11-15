@@ -1,3 +1,35 @@
+v10r2p17
+Based on DIRAC v7r3p9
+LHCbWebDIRAC v5r4
+LHCbDIRACOS v1r23
+Thank you for writing the text to appear in the release notes. It will show up
+exactly as it appears between the two bold lines
+Please follow the template:
+
+*DMScript
+
+FIX: (!1122) fix exit code if `'Failed'` items in method result. To solve issue https://github.com/DIRACGrid/DIRAC/issues/5580
+
+*TransformationDebug
+
+FIX: (!1118) option `--Job` was creating an infinite DB query if no transformation ID was provided. This is now fixed
+FIX: (!1118) problem in py3 with sorting None objects
+CHANGE: (!1118) Use `defaultDict` whenever possible instead of `setdefault()`
+
+*dirac-loop
+
+CHANGE: (!1118) add option `--Path` to extract paths (BK paths or LFNs) from text
+
+*ProductionManagementSystem
+
+FIX: (!1116) NotifyAgent: only send mails if there's something to send
+
+*Bookkeeping
+
+FIX: (!1115) fixed construction of getFiles query
+
+
+
 v10r2p16
 Based on DIRAC v7r2p33
 LHCbWebDIRAC v5r3p2
