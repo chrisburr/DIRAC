@@ -73,6 +73,8 @@ def printDMResult(result, shift=4, empty="Empty directory", script=None, depth=9
     try:
         if result["OK"]:
             __printDictionary(result["Value"], offset=offset, shift=shift, empty=empty, depth=depth)
+            if result["Value"].get("Failed"):
+                return 1
             return 0
         gLogger.notice("Error in %s :" % script, result["Message"])
         return 2
