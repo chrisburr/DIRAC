@@ -26,9 +26,6 @@ stages:
   - test
   #  build images
   - images
-  # deploy the coverage results
-  - coverage
-  - coverageDfs
   # If there's a new tag, build the docker images, and also deploy on CVMFS
   - upload_pypi
   - deploy_release
@@ -55,31 +52,29 @@ pre-commit:
 
 # Common configuration between pytest, pylint, pycodestyle
 .test_setup: &test_setup
+  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
   before_script:
-    - yum install -y epel-release
-    - yum install -y openssl mysql mysql-libs mysql-devel make ncurses-devel libcurl-devel xz-devel jq swig
     - export PYCURL_SSL_LIBRARY=openssl
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21'
-    - pip install diraccfg virtualenv
+    - eval "$(python -m conda shell.bash hook)"
+    - conda create --yes --name py2 python=2.7
+    - conda activate py2
+    - conda install --yes diraccfg git jq
+    - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     # diracTAG is the DIRAC tag on top of which the latest LHCbDIRAC release is built in releases.cfg
     - lhcbdiracTag=$(cd src && python -c "from LHCbDIRAC import version; print(version)")
+    - echo "Using LHCbDIRAC tag $lhcbdiracTag"
     - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    # Clone the latest LHCbDIRAC
+    # Clone the DIRAC version
     - echo "Using DIRAC tag $diracTAG"
     - git clone https://github.com/DIRACGrid/DIRAC.git
     - cd DIRAC
     - git checkout $diracTAG
     - cd ..
-    # Create a virtual environment in which to run the tests
-    - virtualenv DIRAC_VENV
-    - source DIRAC_VENV/bin/activate
-     # last version supporting python 2
-    - pip install 'setuptools<45'
-    - pip install --upgrade 'pip<21' 'setuptools_scm<6'
-    - pip install -r DIRAC/requirements.txt
-    - pip install LbEnv LbPlatformUtils uproot backports.lzma lz4 cx_Oracle==7.3 xmltodict
+    - conda deactivate
+    # Now creating the environment for running the tests
+    - conda env create -f DIRAC/environment.yml
+    - conda activate dirac-development
+    - conda install LbEnv LbPlatformUtils uproot backports.lzma lz4 uproot cx_Oracle==7.3 xmltodict
 
   stage: test
   only:
@@ -90,16 +85,24 @@ pre-commit:
 
 .test_setup_py3:
   stage: test
-  image: registry.cern.ch/docker.io/condaforge/miniforge3:latest
+  image: registry.cern.ch/docker.io/condaforge/mambaforge:latest
   before_script:
     - eval "$(python -m conda shell.bash hook)"
-    - conda install --yes mamba diraccfg git jq
+    - mamba install --yes diraccfg git jq curl
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
-    # Checkout the latest compatible DIRAC release
-    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+@rel-v\1r\2@g')
+    # Find the latest compatible DIRAC release
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
+    - echo "Found DIRAC branch $diracBranch"
+    # Query GitHub to find if the rel-vXrY branch exists, fall back to integration if it does not
+    - |
+      if ! curl --fail --no-progress-meter --head -L "https://codeload.github.com/DIRACGrid/DIRAC/zip/refs/heads/${diracBranch}" > /dev/null; then
+        diracBranch="integration"
+      fi
     - echo "diracBranch=${diracBranch}"
+    # Checkout the latest compatible DIRAC release
     - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
+    # Now take the code from the release
     - diracTag=$(git describe --tags --long --match '*[0-9]*' --exclude 'v[0-9]r*' --exclude 'v[0-9][0-9]r*' | cut -d '-' -f 1)
     - echo "diracTag=${diracTag}"
     - git checkout "${diracTag}"
@@ -120,24 +123,22 @@ run_pylint:
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
-    - 'find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +'
+    - |
+      find . -name "*.py" -and -not -name "NotForJenkins_Test_BKK_DB_OracleBookkeepingDB.py" -and -not -name "RunApplication.py" \
+        -exec pylint -E --rcfile=$CI_PROJECT_DIR/DIRAC/.pylintrc --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --extension-pkg-whitelist=GSI,numpy {} +
 
 run_pylint_py3:
   extends: .test_setup_py3
   script:
     - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
 
-# This runs pytest and generates the coverage report
+# This runs pytest
 run_pytest:
   <<: *test_setup
   script:
     - export PYTHONPATH=$(pwd)/DIRAC/src/
     - cd src/LHCbDIRAC
     - DIRAC_DEPRECATED_FAIL=True pytest . --cov=. --cov-report term-missing --cov-report html --junitxml=pytests.xml
-  coverage: '/\d+\%\s*$/'
-  artifacts:
-    paths:
-      - src/LHCbDIRAC/htmlcov/
 
 run_pytest_py3:
   extends: .test_setup_py3
@@ -145,15 +146,6 @@ run_pytest_py3:
     - DIRAC_DEPRECATED_FAIL=True pytest src/LHCbDIRAC
 
 # This runs pycodestyle
-run_pycodestyle:
-  <<: *test_setup
-  script:
-    - lhcbDiracBranch=$(python -c "s = open('src/LHCbDIRAC/releases.cfg').read(); s = s[s.index(' v'):]; s = s.split('\n')[0].strip(); print(s)" | grep -qE '(pre|v0r)'; if [ $? -eq 0 ]; then echo "devel"; else echo "master"; fi)
-    - git remote add GL https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git
-    - git fetch --no-tags GL
-    - git branch -avv
-    - git diff -U0 GL/${lhcbDiracBranch}...HEAD | pycodestyle --diff
-
 pycodestyle_py3:
   extends: .test_setup_py3
   script:
@@ -204,18 +196,32 @@ integration_tests:
       allow_failure: true
     - if: '$LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD != null && $CI_MERGE_REQUEST_ID == null && $SWEEP != "true"'
       allow_failure: false
+  parallel:
+    matrix:
+      - TEST_COMMAND:
+          # FIXME: --release-var here is a hack to prevent the Python 2 CI from getting confused
+          # It's hopefully good enough for the time we care about Py2
+          - python3 ./integration_tests.py create "SERVER_DIRACOSVER=LHCb:master" CLIENT_USE_PYTHON3=Yes --release-var "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
+          - python3 ./integration_tests.py create "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" USE_PYTHON3=Yes --extra-module LHCbDIRAC=../LHCbDIRAC
   before_script:
     # Install dependencies
-    - apk add docker py3-pip python3 bash git docker-compose jq
+    - apk add docker py3-pip python3 bash git docker-compose jq curl
     - pip3 install typer pyyaml gitpython diraccfg
-    # Clone DIRAC
+    # Find the latest LHCbDIRAC release
     - git remote add upstream https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git && git fetch upstream
     - lhcbdiracTag=$(git describe --tags --match 'v[0-9][0-9]r*' --abbrev=0)
     - echo "lhcbdiracTag=${lhcbdiracTag}"
-    - diracTAG=$(diraccfg as-json src/LHCbDIRAC/releases.cfg | jq -r ".Releases.\"${lhcbdiracTag}\".Depends" | cut -d ':' -f2)
-    - diracTAG=rel-$(echo ${diracTAG} | cut -d 'p' -f 1)
-    - echo "diracTAG=${diracTAG}"
-    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracTAG}" ../DIRAC
+    # Find the latest compatible DIRAC release
+    - diracBranch=$(grep 'DIRAC ~=' setup.cfg | sed -E 's@.+~= *([0-9])+\.([0-9]+)\.[0-9]+(a[0-9]+)?@rel-v\1r\2@g')
+    - echo "Found DIRAC branch $diracBranch"
+    # Query GitHub to find if the rel-vXrY branch exists, fall back to integration if it does not
+    - |
+      if ! curl --fail --no-progress-meter --head -L "https://codeload.github.com/DIRACGrid/DIRAC/zip/refs/heads/${diracBranch}" > /dev/null; then
+        diracBranch="integration"
+      fi
+    - echo "diracBranch=${diracBranch}"
+    # Checkout the latest compatible DIRAC release
+    - git clone https://github.com/DIRACGrid/DIRAC.git -b "${diracBranch}" ../DIRAC
     - cd ../DIRAC
     # Login to the GitLab container registry for access to Oracle
     - |
@@ -229,53 +235,9 @@ integration_tests:
       fi
     - echo "${LHCB_BOOKKEEPING_DB_IMAGE_PASSWORD}" | docker login --username gitlab+deploy-token-794 --password-stdin https://gitlab-registry.cern.ch
   script:
-    - python3 ./integration_tests.py create "DIRACOSVER=LHCb:master" "LHCBDIRAC_RELEASE=${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
-
-### coverage stage ###
-
-# This job MUST be call pages as per https://docs.gitlab.com/ce/ci/yaml/README.html#pages
-pages:
-  stage: coverage
-  dependencies:
-    - run_pytest
-  script:
-    - TARGET_DIR="public/${CI_COMMIT_REF_NAME}"
-    - if [ ! -d "$TARGET_DIR" ]; then mkdir -p $TARGET_DIR; fi
-    - echo "Copying into $TARGET_DIR"
-    - mv src/LHCbDIRAC/htmlcov/* $TARGET_DIR
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
-  only:
-    refs:
-      - master@lhcb-dirac/LHCbDIRAC
-      - devel@lhcb-dirac/LHCbDIRAC
-    variables:
-      - $SWEEP != "true"
-
-# Deploy the pages generated to DFS
-dfsdeploy:
-  # Executed during the deploy stage
-  stage: coverageDfs
-  # # Only when the master branch is pushed
-  only:
-    refs:
-      - master@lhcb-dirac/LHCbDIRAC
-      - devel@lhcb-dirac/LHCbDIRAC
-    variables:
-      - $SWEEP != "true"
-  # Custom docker image providing the needed tools to deploy in DFS
-  image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
-  script:
-  # Script that performs the deploy to DFS. Makes use of the variables defined in the project
-  # It will not sync the generated content with the folder in DFS (risk of deleting DFS management files)
-  # It will just override the contents of DFS or copy new files
-  - deploy-dfs
-  # do not run any globally defined before_script or after_script for this step
-  before_script: []
-  after_script: []
-
+    - echo $TEST_COMMAND
+    - eval echo $TEST_COMMAND
+    - eval $TEST_COMMAND
 
 # ### release stage ###
 

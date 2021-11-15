@@ -46,7 +46,7 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
     def __init__(self):
         """Standard Constructor"""
 
-        section = getDatabaseSection("ProductionManagement/ElasticMCGaussLogErrorsDB")
+        section = getDatabaseSection("ProductionManagement", "ElasticMCGaussLogErrorsDB")
         indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
 
         # Connecting to the ES cluster

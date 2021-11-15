@@ -20,8 +20,6 @@ from DIRAC import gLogger
 from DIRAC.Core.Utilities import DErrno
 from DIRAC.Workflow.Modules.Script import Script
 
-from LHCbDIRAC.Core.Utilities.RunApplication import LbRunError
-
 
 class LHCbScript(Script):
     """A simple extension to the DIRAC script module."""
@@ -55,6 +53,9 @@ class LHCbScript(Script):
     def _exitWithError(self, status):
         """Extended here for treating case of lb-run error codes (and executable
         name)."""
+        # pylint doesn't like this as it's now Python 3 only
+        from LHCbDIRAC.Core.Utilities.RunApplication import LbRunError  # pylint: disable=import-error,no-name-in-module
+
         # this is an lb-run specific error
         if status & 0x40 and not status & 0x80:
             self.log.error("Exit status is an lb-run specific error", "(%s)" % status)

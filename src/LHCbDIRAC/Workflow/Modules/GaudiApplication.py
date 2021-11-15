@@ -19,16 +19,12 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
-import re
 import os
-import subprocess
-import shlex
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities import DErrno
 
 from LHCbDIRAC.Core.Utilities.ProductionOptions import getDataOptions, getModuleOptions
-from LHCbDIRAC.Core.Utilities.RunApplication import RunApplication, LbRunError, LHCbApplicationError, LHCbDIRACError
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
 
@@ -43,8 +39,6 @@ class GaudiApplication(ModuleBase):
 
         self.systemConfig = ""
         self.stdError = ""
-        self.runTimeProjectName = ""
-        self.runTimeProjectVersion = ""
         self.inputDataType = "MDF"
         self.stepInputData = []  # to be resolved
         self.poolXMLCatName = "pool_xml_catalog.xml"
@@ -78,6 +72,13 @@ class GaudiApplication(ModuleBase):
         module used for each and every job of productions. It can also be
         used by users.
         """
+        # pylint doesn't like this as it's now Python 3 only
+        from LHCbDIRAC.Core.Utilities.RunApplication import (  # pylint: disable=import-error,no-name-in-module
+            RunApplication,
+            LbRunError,
+            LHCbApplicationError,
+            LHCbDIRACError,
+        )
 
         try:
             super(GaudiApplication, self).execute(
@@ -108,19 +109,7 @@ class GaudiApplication(ModuleBase):
             # Resolve options files
             commandOptions = []
             if self.optionsFile and self.optionsFile != "None":
-                for fileopt in self.optionsFile.split(";"):
-                    if os.path.exists("%s/%s" % (os.getcwd(), os.path.basename(fileopt))):
-                        commandOptions.append(fileopt)
-                    # Otherwise take the one from the application options directory
-                    elif re.search(r"\$", fileopt):
-                        self.log.info("Found options file containing environment variable: %s" % fileopt)
-                        commandOptions.append(fileopt)
-                    else:
-                        self.log.error(
-                            'Cannot process options: "%s" not found via environment variable or in local directory'
-                            % (fileopt)
-                        )
-
+                commandOptions += self.optionsFile.split(";")
             self.log.info("Final options files: %s" % (", ".join(commandOptions)))
 
             runNumberGauss = 0
@@ -148,14 +137,11 @@ class GaudiApplication(ModuleBase):
                 )
 
             # Simple check for slow processors: auto increase of Event Timeout
+            eventTimeout = None
             cpuNormalization = int(gConfig.getValue("/LocalSite/CPUNormalizationFactor", 10))
             if cpuNormalization < 10:
-                options = "from Configurables import StalledEventMonitor;"
-                options += "StalledEventMonitor(EventTimeout=%s)" % str(int(3600 * 10 / cpuNormalization))
-                if "StalledEventMonitor" not in self.extraOptionsLine:
-                    self.extraOptionsLine += options
+                eventTimeout = int(3600 * 10 / cpuNormalization)
 
-            prodConfFileName = ""
             if self.optionsLine or self.jobType.lower() == "user":
                 # Prepare standard project run time options
                 generatedOpts = "gaudi_extra_options.py"
@@ -187,58 +173,20 @@ class GaudiApplication(ModuleBase):
                     options.write(projectOpts)
                 commandOptions.append(generatedOpts)
 
-            else:
-                prodConfFileName = self.createProdConfFile(
-                    stepOutputTypes, histogram, runNumberGauss, firstEventNumberGauss
-                )
-
             # How to run the application
-            ra = RunApplication()
-            # lb-run stuff
-            ra.applicationName = self.applicationName
-            ra.applicationVersion = self.applicationVersion
-            ra.usePrmon = self.usePrmon
-            ra.systemConfig = self.systemConfig
-            ra.extraPackages = self.extraPackages
-            ra.runTimeProject = self.runTimeProjectName
-            ra.runTimeProjectVersion = self.runTimeProjectVersion
-            # actual stuff to run
-            ra.command = self.executable
-            ra.extraOptionsLine = self.extraOptionsLine
-            ra.commandOptions = commandOptions
-            ra.numberOfProcessors = self.numberOfProcessors
-            ra.prodConfFileName = prodConfFileName
-            if self.applicationLog:
-                ra.applicationLog = self.applicationLog
-            ra.stdError = self.stdError
-            # env
-            ra.jobID = self.jobID
+            ra = RunApplication(
+                self,
+                commandOptions,
+                stepOutputTypes,
+                histogram,
+                runNumberGauss,
+                firstEventNumberGauss,
+                eventTimeout,
+            )
 
             # Now really running
-            try:
-                self.setApplicationStatus("%s step %s" % (self.applicationName, self.step_number))
-                ra.run()  # This would trigger an exception in case of failure, or application status != 0
-            except LHCbApplicationError as appError:
-                # Running gdb in case of core dump
-                if "core" in [fileProduced.split(".")[0] for fileProduced in os.listdir(".")]:
-                    # getting the environment where the application executed
-                    app = ra.applicationName + "/" + ra.applicationVersion
-                    envCommand = ra.lbrunCommand.split(app)[0] + " --py -A " + app
-
-                    try:
-                        # The following may raise CalledProcessError if the application is not lb-run native.
-                        lhcbApplicationEnv = eval(subprocess.check_output(shlex.split(envCommand)))
-
-                        # now running the GDB command
-                        gdbCommand = "gdb python core.* >> %s_Step%s_coredump.log" % (
-                            self.applicationName,
-                            self.step_number,
-                        )
-                        rg = RunApplication()
-                        rg._runApp(gdbCommand, lhcbApplicationEnv)
-                    except subprocess.CalledProcessError:
-                        self.log.warn("Could not run gdb as the application is not lb-run native")
-                raise appError
+            self.setApplicationStatus("%s step %s" % (self.applicationName, self.step_number))
+            ra.run()  # This would trigger an exception in case of failure, or application status != 0
 
             self.log.info("Going to manage %s output" % self.applicationName)
             self._manageAppOutput(stepOutputs)

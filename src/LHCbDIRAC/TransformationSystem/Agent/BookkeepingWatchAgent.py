@@ -102,7 +102,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
         self.bkClient = BookkeepingClient()
 
         try:
-            with open(self.pickleFile, "r") as pf:
+            with open(self.pickleFile, "rb") as pf:
                 self.timeLog = pickle.load(pf)
                 self.fullTimeLog = pickle.load(pf)
                 self.bkQueries = pickle.load(pf)
@@ -127,7 +127,7 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
         """dump the log in the pickle file."""
         if self.pickleFile:
             try:
-                with open(self.pickleFile, "w") as pf:
+                with open(self.pickleFile, "wb") as pf:
                     pickle.dump(self.timeLog, pf)
                     pickle.dump(self.fullTimeLog, pf)
                     pickle.dump(self.bkQueries, pf)

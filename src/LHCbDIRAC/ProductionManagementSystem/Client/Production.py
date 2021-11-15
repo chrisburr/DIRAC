@@ -276,8 +276,6 @@ class Production(object):
                 ["inputDataType", "string", "", "InputDataType"],
                 ["applicationName", "string", "", "ApplicationName"],
                 ["applicationVersion", "string", "", "ApplicationVersion"],
-                ["runTimeProjectName", "string", "", "runTimeProjectName"],
-                ["runTimeProjectVersion", "string", "", "runTimeProjectVersion"],
                 ["applicationType", "string", "", "ApplicationType"],
                 ["optionsFile", "string", "", "OptionsFile"],
                 ["extraOptionsLine", "string", "", "extraOptionsLines"],

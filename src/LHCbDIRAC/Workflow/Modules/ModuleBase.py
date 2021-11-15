@@ -37,8 +37,7 @@ from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.Core.Utilities.ProductionData import getLogPath, constructProductionLFNs
-from LHCbDIRAC.Core.Utilities.ProdConf import ProdConf
-from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getEventsToProduce, getNumberOfProcessorsToUse
+from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getNumberOfProcessorsToUse
 
 
 class ModuleBase(object):
@@ -129,8 +128,6 @@ class ModuleBase(object):
         self.persistency = ""
         self.processingPass = None
         self.runNumber = "Unknown"
-        self.runTimeProjectName = None
-        self.runTimeProjectVersion = None
         self.simDescription = ""
         self.siteName = None
         self.stepName = None
@@ -410,10 +407,6 @@ class ModuleBase(object):
         self.optionsLine = self.step_commons.get("optionsLine", self.optionsLine)
 
         self.extraOptionsLine = self.step_commons.get("extraOptionsLine", self.extraOptionsLine)
-
-        if "runTimeProjectName" in self.step_commons:
-            self.runTimeProjectName = self.step_commons["runTimeProjectName"]
-            self.runTimeProjectVersion = self.step_commons["runTimeProjectVersion"]
 
         if "extraPackages" in self.step_commons:
             self.extraPackages = self.step_commons["extraPackages"]
@@ -1077,103 +1070,6 @@ class ModuleBase(object):
         res = self.request.addOperation(regFile)
         if not res["OK"]:
             raise RuntimeError(res["Message"])
-
-    #############################################################################
-
-    def createProdConfFile(self, stepOutputTypes, histogram, runNumberGauss, firstEventNumberGauss):
-        """Utility that creates a ProdConf file, used mostly as input for gaudirun
-        jobs."""
-        # Creating ProdConf file
-        prodConfFileName = "prodConf_%s_%s_%s_%s.py" % (
-            self.applicationName,
-            self.production_id,
-            self.prod_job_id,
-            self.step_number,
-        )
-        optionsDict = {}
-
-        optionsDict["Application"] = self.applicationName
-
-        optionsDict["AppVersion"] = self.applicationVersion
-
-        if self.optionsFormat:
-            optionsDict["OptionFormat"] = self.optionsFormat
-
-        if self.stepInputData:
-            optionsDict["InputFiles"] = ["LFN:" + sid for sid in self.stepInputData]
-        else:
-            if self.applicationName.lower() != "gauss":
-                raise RuntimeError("No MC, but no input data")
-
-        if self.outputFilePrefix:
-            optionsDict["OutputFilePrefix"] = self.outputFilePrefix
-
-        optionsDict["OutputFileTypes"] = stepOutputTypes
-
-        optionsDict["XMLSummaryFile"] = self.XMLSummary
-
-        optionsDict["XMLFileCatalog"] = self.poolXMLCatName
-
-        if histogram:
-            optionsDict["HistogramFile"] = self.histoName
-
-        if self.DDDBTag:
-            if self.DDDBTag.lower() == "online":
-                try:
-                    optionsDict["DDDBTag"] = self.onlineDDDBTag
-                    self.log.debug("Set the online DDDB tag")
-                except NameError as e:
-                    self.log.error("Could not find online DDDb Tag", e)
-                    raise RuntimeError("Could not find online DDDb Tag")
-            else:
-                optionsDict["DDDBTag"] = self.DDDBTag
-
-        if self.condDBTag:
-            if self.condDBTag.lower() == "online":
-                optionsDict["CondDBTag"] = self.onlineCondDBTag
-                self.log.debug("Set the online CondDB tag")
-            else:
-                optionsDict["CondDBTag"] = self.condDBTag
-
-        if self.dqTag:
-            optionsDict["DQTag"] = self.dqTag
-
-        if self.applicationName.lower() == "gauss":
-            if self.CPUe and self.maxNumberOfEvents and self.numberOfEvents <= 0:
-                # Here we set maxCPUTime to 24 hours, which seems reasonable
-                eventsToProduce = getEventsToProduce(
-                    self.CPUe, maxNumberOfEvents=self.maxNumberOfEvents, jobMaxCPUTime=86400
-                )
-            else:
-                eventsToProduce = self.numberOfEvents
-        else:
-            eventsToProduce = self.numberOfEvents
-        optionsDict["NOfEvents"] = eventsToProduce
-
-        if runNumberGauss:
-            optionsDict["RunNumber"] = runNumberGauss
-
-        if self.runNumber:
-            if self.runNumber not in ("Unknown", "Multiple"):
-                optionsDict["RunNumber"] = self.runNumber
-
-        if firstEventNumberGauss:
-            optionsDict["FirstEventNumber"] = firstEventNumberGauss
-
-        # TCK: can't have both set!
-        if self.TCK and self.mcTCK:
-            raise RuntimeError("%s step: TCK set in step, and should't be!" % self.applicationName)
-        if self.TCK or self.mcTCK:
-            optionsDict["TCK"] = self.TCK if self.TCK else self.mcTCK
-
-        if self.processingPass:
-            optionsDict["ProcessingPass"] = self.processingPass
-
-        prodConfFile = ProdConf(prodConfFileName)
-        self.log.debug(optionsDict)
-        prodConfFile.putOptionsIn(optionsDict)
-
-        return prodConfFileName
 
     #############################################################################
 

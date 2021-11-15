@@ -38,7 +38,7 @@ class ElasticApplicationSummaryDB(ElasticMCStatsDBBase):
     def __init__(self):
         """Standard Constructor"""
 
-        section = getDatabaseSection("ProductionManagement/ElasticApplicationSummaryDB")
+        section = getDatabaseSection("ProductionManagement", "ElasticApplicationSummaryDB")
         indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
 
         # Connecting to the ES cluster

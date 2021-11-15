@@ -29,12 +29,7 @@ from LHCbDIRAC.Interfaces.API.LHCbJob import LHCbJob
 
 
 # With a script that returns 0
-try:
-    scriptSHLocation = find_all("script-OK.sh", rootPath, "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
-except IndexError:  # we are in Jenkins
-    scriptSHLocation = find_all("exe-script.py", os.environ["WORKSPACE"], "/DIRAC/WorkloadManagementSystem/JobWrapper")[
-        0
-    ]
+scriptSHLocation = find_all("script-OK.sh", "..", "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
 
 j = LHCbJob()
 j.setExecutable("sh %s" % scriptSHLocation, modulesNameList=["LHCbScript"])
@@ -51,10 +46,7 @@ with open(jobXMLFile, "w+") as fd:
 
 
 # # With a script that returns 111
-try:
-    scriptSHLocation = find_all("script.sh", rootPath, "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
-except IndexError:  # we are in Jenkins
-    scriptSHLocation = find_all("script.sh", os.environ["WORKSPACE"], "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
+scriptSHLocation = find_all("script.sh", "..", "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
 
 j = LHCbJob()
 j.setExecutable("sh %s" % scriptSHLocation, modulesNameList=["LHCbScript"])
@@ -71,12 +63,7 @@ with open(jobXMLFile, "w+") as fd:
 
 
 # # With a script that returns 1502
-try:
-    scriptSHLocation = find_all("script-RESC.sh", rootPath, "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
-except IndexError:  # we are in Jenkins
-    scriptSHLocation = find_all(
-        "script-RESC.sh", os.environ["WORKSPACE"], "/DIRAC/WorkloadManagementSystem/JobWrapper"
-    )[0]
+scriptSHLocation = find_all("script-RESC.sh", "..", "/DIRAC/WorkloadManagementSystem/JobWrapper")[0]
 
 j = LHCbJob()
 j.setExecutable("sh %s" % scriptSHLocation)

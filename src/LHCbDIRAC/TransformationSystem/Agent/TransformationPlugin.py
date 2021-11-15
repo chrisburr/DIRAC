@@ -44,17 +44,7 @@ from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import PluginUtili
 class TransformationPlugin(DIRACTransformationPlugin):
     """Extension of DIRAC TransformationPlugin - instantiated by the TransformationAgent"""
 
-    def __init__(
-        self,
-        plugin,
-        transClient=None,
-        dataManager=None,
-        bkClient=None,
-        rmClient=None,
-        fc=None,
-        debug=False,
-        transInThread=None,
-    ):
+    def __init__(self, plugin, transClient=None, dataManager=None, bkClient=None, rmClient=None, fc=None, debug=False):
         """The clients can be passed in."""
         super(TransformationPlugin, self).__init__(plugin, transClient=transClient, dataManager=dataManager, fc=fc)
 
@@ -92,7 +82,6 @@ class TransformationPlugin(DIRACTransformationPlugin):
             bkClient=self.bkClient,
             rmClient=self.rmClient,
             debug=debug,
-            transInThread=transInThread if transInThread else {},
         )
         self.setDebug(self.util.getPluginParam("Debug", False))
 

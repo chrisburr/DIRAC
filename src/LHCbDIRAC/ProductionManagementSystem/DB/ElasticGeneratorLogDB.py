@@ -38,7 +38,7 @@ class ElasticGeneratorLogDB(ElasticMCStatsDBBase):
     def __init__(self):
         """Standard Constructor"""
 
-        section = getDatabaseSection("ProductionManagement/ElasticGeneratorLogDB")
+        section = getDatabaseSection("ProductionManagement", "ElasticGeneratorLogDB")
         indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
 
         # Connecting to the ES cluster

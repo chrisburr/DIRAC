@@ -52,7 +52,7 @@ class BookkeepingManagerHandler(RequestHandler):
         cls.xmlReader = XMLFilesReaderManager()
         cls.__eventTypeCache = {}
 
-        bkkSection = getServiceSection("Bookkeeping/BookkeepingManager")
+        bkkSection = getServiceSection("Bookkeeping", "BookkeepingManager")
         if not bkkSection:
             cls.email = "lhcb-bookkeeping@cern.ch"
             cls.forceExecution = False
@@ -73,18 +73,12 @@ class BookkeepingManagerHandler(RequestHandler):
 
         :param str xml: bookkeeping report
         """
-        try:
-            retVal = self.xmlReader.readXMLfromString(xml)
-            if not retVal["OK"]:
-                self.log.error("Issue reading XML", retVal["Message"])
-                return retVal
-            if retVal["Value"] == "":
-                return S_OK("The send bookkeeping finished successfully!")
-            return retVal
-        except Exception as x:
-            errorMsg = "XML processing error"
-            self.log.exception(errorMsg, lException=x)
-            return S_ERROR(errorMsg)
+        retVal = self.xmlReader.readXMLfromString(xml)
+        if not retVal["OK"]:
+            self.log.error("Issue reading XML", retVal["Message"])
+        elif retVal["Value"] == "":
+            return S_OK("The send bookkeeping finished successfully!")
+        return retVal
 
     #############################################################################
     types_getAvailableSteps = [dict]

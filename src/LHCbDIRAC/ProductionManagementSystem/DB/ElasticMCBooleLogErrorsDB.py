@@ -42,7 +42,7 @@ class ElasticMCBooleLogErrorsDB(ElasticMCStatsDBBase):
     def __init__(self):
         """Standard Constructor"""
 
-        section = getDatabaseSection("ProductionManagement/ElasticMCBooleLogErrorsDB")
+        section = getDatabaseSection("ProductionManagement", "ElasticMCBooleLogErrorsDB")
         indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
 
         # Connecting to the ES cluster

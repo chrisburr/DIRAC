@@ -71,7 +71,6 @@ class PluginUtilities(DIRACPluginUtilities):
         bkClient=None,
         rmClient=None,
         debug=False,
-        transInThread=None,
         transID=None,
     ):
         """c'tor."""
@@ -89,13 +88,7 @@ class PluginUtilities(DIRACPluginUtilities):
             self.rmClient = rmClient
 
         super(PluginUtilities, self).__init__(
-            plugin=plugin,
-            transClient=self.transClient,
-            dataManager=dataManager,
-            fc=fc,
-            debug=debug,
-            transInThread=transInThread,
-            transID=transID,
+            plugin=plugin, transClient=self.transClient, dataManager=dataManager, fc=fc, debug=debug, transID=transID
         )
 
         self.freeSpace = {}
