@@ -144,7 +144,7 @@ def main():
             words = arg.replace("Real Data", "RealData").split()
             arg = None
             for word in words:
-                if word.startswith("/", '"/', "'/") or ":/" in word:
+                if word.startswith(("/", '"/', "'/")) or ":/" in word:
                     arg = word
                     break
         # If the argument is between quotes, take what is between the quotes
