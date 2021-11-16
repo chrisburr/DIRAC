@@ -12,7 +12,21 @@
 # It performs some operations with an account.
 # Its credentials are stored as secret variable KRB_PASSWORD and KRB_USERNAME
 variables:
-    DEPLOY_REPO: "lhcb-core/cvmfs-deploy/deploy-lhcbdirac.git"
+  DEPLOY_REPO:
+    value: "lhcb-core/cvmfs-deploy/deploy-lhcbdirac.git"
+  LHCbDIRAC:
+    value: ''
+    description: 'The version to use when making a release (defaults to patch/pre + 1)'
+  DIRAC:
+    value: ''
+    description: 'Version of DIRAC that should be depended on when making a release'
+  LHCbDIRACOS:
+    value: ''
+    description: 'Version of LHCbDIRACOS that should be depended on when making a release'
+  LHCbWebDIRAC:
+    value: ''
+    description: 'Version of LHCbWebDIRAC that should be depended on when making a release'
+
 
 # Image used for most of the jobs, unless specified
 image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
