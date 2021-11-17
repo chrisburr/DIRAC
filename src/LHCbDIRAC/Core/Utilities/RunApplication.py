@@ -193,9 +193,9 @@ class RunApplication(object):
             while line := await stream.readline():
                 line = line.decode(errors="backslashreplace")
                 lines += [line]
-                if "INFO Evt" in line or "Reading Event record" in line:
+                if "INFO Evt" in line or "Reading Event record" in line or "lb-run" in line:
                     # These ones will appear in the std.out log too
-                    print(line)
+                    print(line.rstrip())
                 if filename:
                     log.write(line)
         finally:
