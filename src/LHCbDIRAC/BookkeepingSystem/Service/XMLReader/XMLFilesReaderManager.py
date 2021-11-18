@@ -217,13 +217,13 @@ class XMLFilesReaderManager(object):
                                 tcks += [i[1]]
 
                     if len(runnumbers) > 1:
-                        self.log.warn("More than 1 run", "[%s]" % ",".join(str(r) for r in runnumbers))
+                        self.log.debug("More than 1 run", "[%s]" % ",".join(str(r) for r in runnumbers))
                         runnumber = None
                     else:
                         runnumber = runnumbers[0]
 
                     if len(tcks) > 1:
-                        self.log.warn("More than 1 TCK", "[%s]" % ",".join(tcks))
+                        self.log.debug("More than 1 TCK", "[%s]" % ",".join(tcks))
                         tck = -2
                     else:
                         tck = tcks[0]
