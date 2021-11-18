@@ -3712,11 +3712,12 @@ and files.qualityid= dataquality.qualityid"
         """
 
         if configName not in [default, None, ""] and configVersion not in [default, None, ""]:
+            if "productionscontainer" not in tables.lower():
+                tables += " ,productionscontainer cont"
             if "configurations" not in tables.lower():
                 tables += " ,configurations c "
-            condition += " AND c.configurationid=j.configurationid"
-            condition += " AND c.configname='%s'" % configName
-            condition += " AND c.configversion='%s' " % configVersion
+            condition += " and c.configurationid=cont.configurationid  and c.configname='%s' " % (configName)
+            condition += " and c.configversion='%s' " % (configVersion)
 
         return condition, tables
 
