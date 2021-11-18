@@ -254,8 +254,8 @@ class LHCbBookkeepingManager(BaseESManager):
                 level += 1
                 try:
                     int(i)
-                except ValueError as ex:
-                    gLogger.debug(str(self.__class__) + "__getLevel" + str(ex))
+                except ValueError:
+                    pass
                 else:
                     if start:
                         end = True
@@ -280,8 +280,8 @@ class LHCbBookkeepingManager(BaseESManager):
                 level += 1
                 try:
                     int(i)
-                except ValueError as ex:
-                    gLogger.warn(str(self.__class__) + "__getRunLevel" + str(ex))
+                except ValueError:
+                    pass
                 else:
                     if start:
                         end = True
@@ -307,8 +307,7 @@ class LHCbBookkeepingManager(BaseESManager):
                 level += 1
                 try:
                     int(i)
-                except ValueError as ex:
-                    gLogger.warn(str(self.__class__) + "__getEvtLevel" + str(ex))
+                except ValueError:
                     if start and i in self.__filetypes:
                         end = True
                 else:
