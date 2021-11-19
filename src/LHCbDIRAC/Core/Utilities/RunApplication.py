@@ -73,6 +73,9 @@ class RunApplication(object):
         if gaudiAppModule.TCK and gaudiAppModule.mcTCK:
             raise RuntimeError("%s step: TCK set in step, and should't be!" % self.applicationName)
 
+        # HACK: Workaround for https://lblogbook.cern.ch/Operations/34916
+        commandOptions = [c.strip() for c in commandOptions]
+
         # Initialise the prodInfo object
         prodInfo = {
             "spec_version": 1,
