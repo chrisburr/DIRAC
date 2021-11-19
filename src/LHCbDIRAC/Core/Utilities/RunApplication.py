@@ -52,6 +52,7 @@ class RunApplication(object):
         self.log = gLogger.getSubLogger("RunApplication")
 
         self.applicationName = gaudiAppModule.applicationName
+        self.applicationVersion = gaudiAppModule.applicationVersion
         self.prmonPath = "/cvmfs/lhcb.cern.ch/lib/experimental/prmon/bin/prmon"
         self.usePrmon = gaudiAppModule.usePrmon
 
@@ -168,6 +169,9 @@ class RunApplication(object):
         if returncode != 0:
             self.log.error("lb-run or its application exited with status %d" % returncode)
             self.log.error(stderr)
+            raise LHCbApplicationError(
+                f"{self.applicationName} {self.applicationVersion} exited with status {returncode}"
+            )
 
         return S_OK((returncode, stdout, stderr))
 
