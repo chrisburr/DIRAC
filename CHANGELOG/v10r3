@@ -1,3 +1,22 @@
+v10r3p2
+Based on DIRAC v7r3p10
+LHCbWebDIRAC v5r4
+LHCbDIRACOS v1r23
+FIX: (!1132) Raise an LHCbApplicationError if LbProdrun exits with an bad returncode
+FIX: (!1132) Add workaround for options paths with whitespace (https://lblogbook.cern.ch/Operations/34916)
+
+*Bookkeeping
+
+FIX: (!1130) Remove "More than 1 run/TCK" warnings as it is normal when running Analysis/WG productions
+FIX: (!1130) Partially revert !1115 as it breaks the bookkeeping browser
+FIX: (!1128) cast runnumbers to string in processJob before logging
+
+*WorkloadManagement
+
+FIX: (!1126) Remove trailing whitespace and show lb-run command in std.out
+
+
+
 v10r3p1
 Based on DIRAC v7r3p9
 LHCbWebDIRAC v5r4
