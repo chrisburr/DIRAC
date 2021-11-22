@@ -211,51 +211,40 @@ for checking and updating the pilot version. Note that you'll need a proxy that 
 This script will make sure that the pilot version is update BOTH in the CS and in the json file used by pilots started in the vacuum.
 
 
-5. Making a major releases
-==========================
-Making a major release is a manual intervention, especially as in the CI it is on many places expected that a tag exists.
-
-Updating LHCbWebApp
-```````````````````
-You merge devel to master (procedure described below) and update the version in ``__init__.py``, you commit and tag and push back to repo.
-At this stage the CI will inevitably fail, as the full release is not yet present. Don't worry you will re-trigger the CI once the complete release is done and verify that the release is OK.
-
-Updating LHCbDIRAC
-``````````````````
-You merge devel to master (procedure described below) and update the version in ``src/LHCbDIRAC/__init__.py`` you add to ``src/LHCbDIRAC/releases.cfg`` the desired version with tags of dependencies and you also add a new entry in ``CHANGELOG/vXrY``. You commit and push the tag. When the tag pipeline will create the tar ball for the release you can re-trigger the webapp pipeline and test that it works with the CI. This manual intervention is only needed when you do major releases (merging devel to master), for subsequent patch releases use the pipeline job ``make_tag``.
-
-
 .. _devel_to_master:
 
-Basic instruction how to merge the devel branch into master (NOT for PATCH release)
-```````````````````````````````````````````````````````````````````````````````````
+5. Making a major releases
+==========================
 
-Our developer model is to keep only two branches: master and devel. When we make a major release, we have to merge devel to master.
-Before the merging,  create a new branch based on master using the web interface of GitLab.
-This is for safety: save the in a new branch, named e.g. "v9r1" the last commit done for "v9r1" branch.
+Making a major release is a manual intervention, especially as in the CI it is on many places expected that a tag exists.
 
-After, you can merge devel to master (the following does it in a new directory, for safety)::
+The procedure is the same for LHCbWebDIRAC and LHCbDIRAC: you basically want ``devel`` to become the new ``master``. In order to do so::
 
-    mkdir $(date +20%y%m%d) && cd $(date +20%y%m%d)
-    git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbDIRAC.git
-    cd LHCbDIRAC
-    git remote rename origin upstream
-    git fetch upstream
-    git checkout -b newMaster upstream/master
-    git merge upstream/devel
-    git push upstream newMaster:master
+  # Start from the master branch
+  git checkout upstream/master
 
-After when you merged devel to master, the 2 branches will be strictly equivalent.
-You can make the tag for the new release starting from the master branch. You have to
-merge devel to master for LHCbWebDIRAC as well::
+  # Create a commit that has two parents (master and devel) to preserve the history
+  # but only take the files of the parents (i.e. no changes to the files)
+  # and do not create the commit just yet
+  # (https://www.atlassian.com/git/tutorials/using-branches/merge-strategy)
+  git merge -s ours --no-commit upstream/devel
 
-    mkdir $(date +20%y%m%d) && cd $(date +20%y%m%d)
-    git clone ssh://git@gitlab.cern.ch:7999/lhcb-dirac/LHCbWebDIRAC.git
-    cd LHCbWebDIRAC/
-    git remote rename origin upstream
-    git fetch upstream
-    git checkout -b newMaster upstream/master
-    git merge upstream/devel
-    git push upstream newMaster:master
+  # Remove all the files present
+  git rm -r .
 
-When it is ready you can create the final tag for the new release.
+  # Checkout all the files that are in the devel branch (notice the dot at the end)
+  git checkout upstream/devel .
+
+  # finish the merging
+  git merge --continue
+
+  # push back
+  git push upstream/master
+
+You can then trigger the release pipeline normally. Beware though: the version needs a patch number, so you have to call it for example ``v10r3p0`` (as opposed to ``v10r3``). This is because of assumptions in the release scripts that are too annoying to fix for something that will anyway soon disappear...
+
+Note about the git procedure
+````````````````````````````
+
+Ultimately, the aim is that ``devel`` becomes our new ``master``. However, bluntly doing this would resoled in conflicts for everybody that has a clone of the LHCbDIRAC repo. Thus, this idea of doing a merge with the ``-s ours`` strategy. This allows to create a commit that has as parent both ``master`` and ``devel``, and avoid any forced push.
+The rest of the procedure (``rm/checkout``) is to make sure that we do not keep files that were meant to be in ``master`` only.
