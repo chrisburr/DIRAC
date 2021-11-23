@@ -284,7 +284,7 @@ class OracleDB(object):
         return retDict
 
     def executeStoredFunctions(self, packageName, returnType, parameters=None, conn=False):
-        """executs a stored function."""
+        """executes a stored function."""
         if parameters is None:
             parameters = []
         retDict = self.__getConnection(conn=conn)

@@ -259,25 +259,18 @@ class XMLFilesReaderManager(object):
                             self.log.debug("Production:", "%s" % prod)
 
                         retVal = self.bkClient_.getProductionProcessingPassID(prod)
-                        if retVal["OK"]:
-                            proc = retVal["Value"]
+                        if not retVal["OK"]:
+                            return retVal
 
-                            retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, proc)
-                            if retVal["OK"]:
-                                dqvalue = retVal["Value"]
-                            else:
-                                dqvalue = None
-                                message = (
-                                    "The rundataquality table does not contain run=%d proc_id=%s. Consequently, "
-                                    "the Dq flag is inherited from the ancestor file!"
-                                ) % (runnumber, proc)
-                                self.log.warn(message)
-                        else:
-                            dqvalue = None
+                        retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, retVal["Value"])
+                        if not retVal["OK"]:
+                            return retVal
+                        dqvalue = retVal["Value"]  # dqvalue can be None, if run/procid is not in newrunquality table
+
+                        if not dqvalue:
                             self.log.warn(
-                                "Bkk can not set the quality flag because the processing \
-              pass is missing for % d production (run number: %d )!"
-                                % (int(prod), int(runnumber))
+                                "Could not find run quality",
+                                "for %d production (run number: %d)" % (int(prod), int(runnumber)),
                             )
 
         inputfiles = job.inputFiles
@@ -381,22 +374,19 @@ class XMLFilesReaderManager(object):
                         self.log.warn("Unable to delete job", str(job.jobID) + res["Message"])
                     return S_ERROR(errorMessage[0])
 
-                # we may using HLT2 output to flag the runs as a consequence we may flagged the
-                # runs before they registered to the bookkeeping.
-                # we can flag a run using the newrunquality table
+                # we may be using HLT2 output to flag the runs: as a consequence we may have already flagged the run
                 retVal = self.bkClient_.getProductionProcessingPassID(-1 * int(runnumber))
-                if retVal["OK"]:
-                    retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, retVal["Value"])
-                    if retVal["OK"]:
-                        dqvalue = retVal["Value"]
-                        self.log.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
-                    else:
-                        # The report will be entered to the db.
-                        self.log.warn(retVal["Message"])
-                else:
-                    self.log.error(retVal["Message"])
+                if not retVal["OK"]:
+                    return retVal
+                retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, retVal["Value"])
+                if not retVal["OK"]:
+                    return retVal
+                if retVal["OK"] and retVal["Value"]:  # override what is found in the ancestors
+                    dqvalue = retVal["Value"]
+                    self.log.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
+
             else:
-                # we reconstruct multiple runs
+                # we ran on multiple runs
                 self.log.warn("Run number can not determined for production:", job.getParam("Production").value)
 
         inputFiles = job.inputFiles
