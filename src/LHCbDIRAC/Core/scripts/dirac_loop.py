@@ -195,7 +195,7 @@ def main():
                 if not terse:
                     gLogger.notice("======= %s =========" % cmd)
                 try:
-                    output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True).decode()
+                    output = subprocess.check_output(cmd.encode(), stderr=subprocess.STDOUT, shell=True).decode()
                     gLogger.notice(output[:-1] if terse else output)
                 except subprocess.CalledProcessError as e:
                     gLogger.error("Error calling command, return code %d\n" % e.returncode, e.output)
