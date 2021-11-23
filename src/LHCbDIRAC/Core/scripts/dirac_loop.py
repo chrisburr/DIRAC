@@ -30,6 +30,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import tempfile
 import subprocess
 from collections import defaultdict
 
@@ -91,7 +92,7 @@ def reduceArgs(noMerge, arguments, maxList=20):
 
 @DIRACScript()
 def main():
-    from DIRAC import gLogger
+    from DIRAC import gLogger, exit
     from DIRAC.Core.Base import Script
 
     Script.registerSwitch("", "NoMerge", "If set, do not merge arguments if BK paths")
@@ -99,6 +100,8 @@ def main():
     Script.registerSwitch("", "NoParse", "Consider the full lines are arguments and not only the first word")
     Script.registerSwitch("", "Path", "Look for a path in the lines")
     Script.registerSwitch("", "Terse", "Do not print the command executed")
+    Script.registerSwitch("", "Last", "Execute with same items as previous call")
+    Script.registerSwitch("", "ShowLast", "Show last items used")
     Script.setUsageMessage("\n".join([__doc__]))
     Script.parseCommandLine(ignoreErrors=True)
     args = Script.getPositionalArgs()
@@ -108,6 +111,9 @@ def main():
     terse = False
     arguments = []
     path = False
+    last = False
+    showLast = False
+    lastFile = os.path.join(tempfile.gettempdir(), "%d.lastLoops" % os.getppid())
     for switch, val in Script.getUnprocessedSwitches():
         if switch == "NoMerge":
             noMerge = True
@@ -119,6 +125,11 @@ def main():
             terse = True
         elif switch == "Path":
             path = True
+        elif switch == "Last":
+            last = True
+        elif switch == "ShowLast":
+            showLast = True
+            last = True
 
     if len(args) < 1:
         Script.showHelp(exitCode=1)
@@ -126,10 +137,15 @@ def main():
     if not arguments:
         if os.path.exists(args[0]):
             oFile = args.pop(0)
+        elif last:
+            oFile = lastFile
         else:
             oFile = "/dev/stdin"
         with open(oFile, "r") as fd:
-            arguments = fd.read().split("\n")[:-1]
+            arguments = fd.read().split("\n")
+        if showLast:
+            gLogger.notice("Last items used:", "\n" + "\n".join(arguments))
+            exit(0)
 
     commands = args
 
@@ -162,19 +178,24 @@ def main():
         if arg:
             argList.append(arg.replace(" ", r"\ "))
 
+    # Persitify items for later use
+    if not last and argList:
+        with open(lastFile, "wt") as tmpFile:
+            tmpFile.write("\n".join(argList))
+
     for arg in reduceArgs(noMerge, argList):
         if arg:
             for command in commands:
                 if "@arg@" in command:
-                    c = command.replace("@arg@", arg, 1) if "dirac-loop" in command else command.replace("@arg@", arg)
+                    cmd = command.replace("@arg@", arg, 1) if "dirac-loop" in command else command.replace("@arg@", arg)
                 elif command[-1] in ('"', "'"):
-                    c = command + arg.replace(r"\ ", " ") + command[-1]
+                    cmd = command + arg.replace(r"\ ", " ") + command[-1]
                 else:
-                    c = command + " " + arg
+                    cmd = command + " " + arg
                 if not terse:
-                    gLogger.notice("======= %s =========" % c)
+                    gLogger.notice("======= %s =========" % cmd)
                 try:
-                    output = subprocess.check_output(c, stderr=subprocess.STDOUT, shell=True)
+                    output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True).decode()
                     gLogger.notice(output[:-1] if terse else output)
                 except subprocess.CalledProcessError as e:
                     gLogger.error("Error calling command, return code %d\n" % e.returncode, e.output)
