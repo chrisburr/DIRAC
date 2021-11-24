@@ -656,8 +656,8 @@ class TransformationDebug(object):
         :param status: (list of) status
         :type status: list or string
         """
-        if "MissingLFC" in status or "MissingInFC" in status:
-            lfns = [fileDict["LFN"] for fileDict in transFilesList]
+        lfns = [fileDict["LFN"] for fileDict in transFilesList if fileDict["Status"] == "MissingInFC"]
+        if lfns:
             res = self.dataManager.getReplicas(lfns)
             if res["OK"]:
                 replicas = res["Value"]["Successful"]
@@ -2219,9 +2219,7 @@ class TransformationDebug(object):
                     found = True
                 if not found:
                     gLogger.notice("... None ...")
-            elif self.transType == "Removal" and (
-                not status or not ("MissingLFC" in status or "MissingInFC" in status)
-            ):
+            elif self.transType == "Removal" and (not status or "MissingInFC" not in status):
                 gLogger.notice("All files have been successfully removed!")
 
             # All files?
