@@ -2046,7 +2046,8 @@ class TransformationDebug(object):
                 taskDict = defaultdict(list)
                 for fileDict in transFilesList:
                     if not allTasks:
-                        taskDict[fileDict["TaskID"]].append(fileDict["LFN"])
+                        taskID = fileDict["TaskID"] if fileDict["TaskID"] is not None else 0
+                        taskDict[taskID].append(fileDict["LFN"])
                         if "Problematic" in status and not fileDict["TaskID"]:
                             problematicFiles.append(fileDict["LFN"])
                     else:
@@ -2060,6 +2061,8 @@ class TransformationDebug(object):
                             gLogger.notice("Error when getting tasks for file %s" % fileDict["LFN"])
                         else:
                             for taskID in res["Value"]["TaskID"]:
+                                if taskID is None:
+                                    taskID = 0
                                 taskDict[taskID].append(fileDict["LFN"])
                     fileRun = fileDict.get("RunNumber")
                     fileLfn = fileDict["LFN"]
