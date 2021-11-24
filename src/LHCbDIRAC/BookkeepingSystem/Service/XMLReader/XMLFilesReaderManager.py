@@ -52,8 +52,6 @@ class XMLFilesReaderManager(object):
     def __init__(self):
         """initialize the member of class."""
         self.bkClient_ = OracleBookkeepingDB()
-        self.fileTypeCache = {}
-
         self.log = gLogger.getSubLogger("XMLFilesReaderManager")
 
     #############################################################################
@@ -117,14 +115,15 @@ class XMLFilesReaderManager(object):
                 inputFile.fileID = int(result["Value"]["Successful"][inputFile.name]["FileId"])
 
         dqvalue = None
+        fileTypeCache = {}
         for outputfile in job.outputFiles:
 
             typeName = outputfile.type
             typeVersion = outputfile.version
             cachedTypeNameVersion = typeName + "<<" + typeVersion
-            if cachedTypeNameVersion in self.fileTypeCache:
+            if cachedTypeNameVersion in fileTypeCache:
                 self.log.debug(cachedTypeNameVersion + " in the cache!")
-                typeID = self.fileTypeCache[cachedTypeNameVersion]
+                typeID = fileTypeCache[cachedTypeNameVersion]
                 outputfile.typeID = typeID
             else:
                 result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
@@ -135,7 +134,7 @@ class XMLFilesReaderManager(object):
                 self.log.debug(cachedTypeNameVersion + " added to the cache!")
                 typeID = int(result["Value"])
                 outputfile.typeID = typeID
-                self.fileTypeCache[cachedTypeNameVersion] = typeID
+                fileTypeCache[cachedTypeNameVersion] = typeID
 
             if (
                 job.getParam("JobType") and job.getParam("JobType").value == "DQHISTOMERGING"
@@ -199,45 +198,25 @@ class XMLFilesReaderManager(object):
             infiles = job.inputFiles
             if not job.exists("RunNumber") and infiles:
                 tck = -2
-                runnumbers = []
-                tcks = []
+                runnumbers = set()
+                tcks = set()
                 for i in infiles:
                     fileName = i.name
                     retVal = self.bkClient_.getRunNbAndTck(fileName)
-
                     if not retVal["OK"]:
                         return retVal
-                    if len(retVal["Value"]) > 0:
+                    if len(retVal["Value"]):
                         self.log.debug("RunTCK:", "%s" % retVal["Value"])
 
                         for i in retVal["Value"]:
-                            if i[0] not in runnumbers:
-                                runnumbers += [i[0]]
-                            if i[1] not in tcks:
-                                tcks += [i[1]]
+                            runnumbers.add([i[0]])
+                            tcks.add([i[1]])
 
                     if len(runnumbers) > 1:
                         self.log.debug("More than 1 run", "[%s]" % ",".join(str(r) for r in runnumbers))
-                        runnumber = None
                     else:
-                        runnumber = runnumbers[0]
-
-                    if len(tcks) > 1:
-                        self.log.debug("More than 1 TCK", "[%s]" % ",".join(tcks))
-                        tck = -2
-                    else:
-                        tck = tcks[0]
-
-                    self.log.debug("The output files of the job inherits the following run:", runnumber)
-                    self.log.debug("The output files of the job inherits the following TCK:", tck)
-
-                    if not job.exists("Tck"):
-                        newJobParams = JobParameters()
-                        newJobParams.name = "Tck"
-                        newJobParams.value = tck
-                        job.addJobParams(newJobParams)
-
-                    if runnumber:
+                        runnumber = runnumbers.pop()
+                        self.log.debug("The output files of the job inherits the following run:", runnumber)
                         prod = None
                         newJobParams = JobParameters()
                         newJobParams.name = "RunNumber"
@@ -266,12 +245,24 @@ class XMLFilesReaderManager(object):
                         if not retVal["OK"]:
                             return retVal
                         dqvalue = retVal["Value"]  # dqvalue can be None, if run/procid is not in newrunquality table
-
                         if not dqvalue:
                             self.log.warn(
                                 "Could not find run quality",
                                 "for %d production (run number: %d)" % (int(prod), int(runnumber)),
                             )
+
+                    if len(tcks) > 1:
+                        self.log.debug("More than 1 TCK", "[%s]" % ",".join(tcks))
+                        tck = -2
+                    else:
+                        tck = tcks.pop()
+                        self.log.debug("The output files of the job inherits the following TCK:", tck)
+
+                    if not job.exists("Tck"):
+                        newJobParams = JobParameters()
+                        newJobParams.name = "Tck"
+                        newJobParams.value = tck
+                        job.addJobParams(newJobParams)
 
         inputfiles = job.inputFiles
 
@@ -381,7 +372,7 @@ class XMLFilesReaderManager(object):
                 retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, retVal["Value"])
                 if not retVal["OK"]:
                     return retVal
-                if retVal["OK"] and retVal["Value"]:  # override what is found in the ancestors
+                if retVal["Value"]:  # if not "None", override what is found in the ancestors
                     dqvalue = retVal["Value"]
                     self.log.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
 
@@ -413,7 +404,7 @@ class XMLFilesReaderManager(object):
                 newFileParams.name = "QualityId"
                 newFileParams.value = dqvalue
                 outputfile.addFileParam(newFileParams)
-            if not job.exists("RunNumber"):  # if it is MC
+            elif not job.exists("RunNumber"):  # if it is MC
                 newFileParams = FileParam()
                 newFileParams.name = "QualityId"
                 newFileParams.value = "OK"
@@ -424,7 +415,7 @@ class XMLFilesReaderManager(object):
                 vFileParams.name = "VisibilityFlag"
                 vFileParams.value = outputFileTypes[ftype]
                 outputfile.addFileParam(vFileParams)
-                self.log.debug("The visibility flag is:" + outputFileTypes[ftype])
+                self.log.debug("The visibility flag is", outputFileTypes[ftype])
 
             result = self.__insertOutputFiles(job, outputfile)
             if not result["OK"]:
@@ -447,14 +438,12 @@ class XMLFilesReaderManager(object):
             replicas = outputfile.replicas
             for replica in replicas:
                 params = replica.params
-                for (
-                    param
-                ) in params:  # just one param exist in params list, because JobReader only one param add to Replica
+                for param in params:
+                    # just one param exist in params list, because JobReader only one param add to Replica
                     name = param.name
-                result = self.bkClient_.updateReplicaRow(outputfile.fileID, "No")  # , name, location)
+                result = self.bkClient_.updateReplicaRow(outputfile.fileID, "No")
                 if not result["OK"]:
-                    errorMessage = "Unable to create Replica %s !" % (str(name))
-                    return S_ERROR(errorMessage)
+                    return S_ERROR("Unable to create Replica %s !" % (str(name)))
 
         self.log.debug("End Processing!")
 
