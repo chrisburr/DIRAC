@@ -459,18 +459,25 @@ return null;
 end;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-FUNCTION getproductionprocessingpassid(
-  prod NUMBER) RETURN NUMBER IS
-RESULT Number;
-ecode number(38);
-thisproc constant varchar2(50) := 'trap_errmesg';
+FUNCTION getproductionprocessingpassid (
+    prod NUMBER
+) RETURN NUMBER IS
+    result   NUMBER;
+    ecode    NUMBER(38);
+    thisproc CONSTANT VARCHAR2(50) := 'trap_errmesg';
 BEGIN
-  SELECT DISTINCT processingid INTO RESULT
-  FROM productionscontainer prod
-  WHERE prod.production = prod;
-  RETURN RESULT;
-  EXCEPTION WHEN others THEN
-  ecode := sqlerrm;
+    SELECT DISTINCT
+        processingid
+    INTO result
+    FROM
+        productionscontainer prod
+    WHERE
+        prod.production = prod;
+
+    RETURN result;
+EXCEPTION
+    WHEN OTHERS THEN
+        ecode := sqlerrm;
 END;
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -567,23 +574,30 @@ END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FUNCTION getqflagbyrunandprocid (
-  rnumber NUMBER,
-  procid NUMBER)
-RETURN VARCHAR2 IS RESULT varchar2(256);
-ecode number(38);
+    rnumber NUMBER,
+    procid  NUMBER
+) RETURN VARCHAR2 IS
+    result VARCHAR2(256);
+    ecode  NUMBER(38);
 BEGIN
-  RESULT:= -1;
-  SELECT d.dataqualityflag INTO RESULT
-  FROM dataquality d, newrunquality r
-  WHERE r.runnumber = rnumber
-    AND r.processingid = procid
-    AND d.qualityid = r.qualityid;
-  RETURN RESULT;
-  EXCEPTION
-  WHEN no_data_found THEN
-    return NULL;
-  WHEN others THEN
-    ecode := sqlerrm;
+    result := -1;
+    SELECT
+        d.dataqualityflag
+    INTO result
+    FROM
+        dataquality   d,
+        newrunquality r
+    WHERE
+            r.runnumber = rnumber
+        AND r.processingid = procid
+        AND d.qualityid = r.qualityid;
+
+    RETURN result;
+EXCEPTION
+    WHEN no_data_found THEN
+        RETURN NULL;
+    WHEN OTHERS THEN
+        ecode := sqlerrm;
 END;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
