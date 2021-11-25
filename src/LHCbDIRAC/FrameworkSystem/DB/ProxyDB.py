@@ -41,7 +41,7 @@ class ProxyDB(DIRACProxyDB):
         msgBody = """\
 Dear %s,
 
-  The proxy you uploaded to LHCbDIRAC will expire in aproximately %d days. The proxy
+  The proxy you uploaded to LHCbDIRAC will expire in approximately %d days. The proxy
   information is:
 
   DN:    %s
@@ -61,7 +61,7 @@ Cheers,
             daysLeft,
             userDN,
         )
-        fromAddr = self.getFromAddr()
+        fromAddr = self._mailFrom
         result = self.__notifClient.sendMail(userEMail, msgSubject, msgBody, fromAddress=fromAddr)
         if not result["OK"]:
             gLogger.error("Could not send email", result["Message"])
