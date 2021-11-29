@@ -1,3 +1,38 @@
+v10r3p3
+Based on DIRAC v7r3p11
+LHCbWebDIRAC v5r4p2
+LHCbDIRACOS v1r23
+*FrameworkSystem
+
+CHANGE: (!1140) take proxy expiry notification email sender address from the service configuration
+
+*Bookkeeping
+
+FIX: (!1139) only override the DQflag if something sensible is found
+
+*dirac-loop
+
+CHANGE: (!1138) add a `--Last` and `--ShowLast` option to reuse the previous set of items or show them
+FIX: (!1138) decode the subprocess output
+
+*storage-summary
+
+FIX: (!1138) set the default top directory as it seems it doesn't work if not specified now
+
+*TransformationDebug
+
+FIX: (!1138) avoid exception when sorting taskIDs and one is `None`
+
+*StorageUsageAgent
+
+FIX: (!1138) fix exception due to dictionary iteration while removing items
+
+*Core
+
+CHANGE: (!1137) Revert hack for removing whitespace from options filenames
+
+
+
 v10r3p2
 Based on DIRAC v7r3p10
 LHCbWebDIRAC v5r4
