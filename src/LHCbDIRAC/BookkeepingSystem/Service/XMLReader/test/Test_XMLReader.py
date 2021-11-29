@@ -14,10 +14,20 @@ from __future__ import division
 from __future__ import print_function
 
 import datetime
+import pytest
 from xml.dom.minidom import parseString
+from mock import MagicMock
+
+mockBKDB = MagicMock()
+mockBKDB.return_value = None
+
+from DIRAC import gLogger
+
+gLogger.setLevel("DEBUG")
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.JobReader import JobReader
+from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import XMLFilesReaderManager
 
 xmlString = (
     """<?xml version="1.0" encoding="ISO-8859-1"?>
@@ -90,3 +100,54 @@ def test_JobReader():
     assert job.parameters[0].name == "CPUTIME"
     assert job.parameters[0].value == "111222"
     assert job.simulationCondition.parameters["SimDescription"] == "Beam4000GeV-2012-MagUp-Nu2.5-Pythia8"
+
+
+@pytest.mark.parametrize(
+    "inputfiles, getRunNbAndTckRV, expected",
+    [
+        ([], {"OK": True}, {"OK": True, "Value": (set(), set())}),
+        (["aa"], {"OK": True, "Value": [(None, "None")]}, {"OK": True, "Value": (set(), set())}),
+        (["aa"], {"OK": False, "Message": "bof"}, {"OK": False, "Message": "bof"}),
+        (["aa", "bb"], {"OK": True, "Value": [(123, "None")]}, {"OK": True, "Value": ({123}, set())}),
+        (["aa", "bb"], {"OK": True, "Value": [(123, "x123")]}, {"OK": True, "Value": ({123}, {"x123"})}),
+    ],
+)
+def test__getRunNumbersAndTCKs(mocker, inputfiles, getRunNbAndTckRV, expected):
+    mocker.patch(
+        "LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager.OracleBookkeepingDB.__init__",
+        side_effect=mockBKDB,
+    )
+    xfrm = XMLFilesReaderManager()
+    xfrm.bkClient_ = MagicMock()
+    xfrm.bkClient_.getRunNbAndTck.return_value = getRunNbAndTckRV
+
+    res = xfrm._getRunNumbersAndTCKs(inputfiles)
+    assert res == expected
+
+
+@pytest.mark.parametrize(
+    "prod, runNumber, getProductionProcessingPassID_RV, getRunAndProcessingPassDataQuality_RV, expected",
+    [
+        (None, None, {"OK": True}, {"OK": True}, {"OK": True, "Value": None}),
+        (None, 123, {"OK": True, "Value": None}, {"OK": True}, {"OK": True, "Value": None}),
+        (None, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": None}, {"OK": True, "Value": None}),
+        (None, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": "OK"}, {"OK": True, "Value": "OK"}),
+        (None, 123, {"OK": False, "Message": "NOK"}, {"OK": True, "Value": "OK"}, {"OK": False, "Message": "NOK"}),
+        (None, 123, {"OK": True, "Value": "OK"}, {"OK": False, "Message": "NOK"}, {"OK": False, "Message": "NOK"}),
+        (321, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": "UNCHECKED"}, {"OK": True, "Value": "UNCHECKED"}),
+    ],
+)
+def test__getDataQuality(
+    mocker, prod, runNumber, getProductionProcessingPassID_RV, getRunAndProcessingPassDataQuality_RV, expected
+):
+    mocker.patch(
+        "LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager.OracleBookkeepingDB.__init__",
+        side_effect=mockBKDB,
+    )
+    xfrm = XMLFilesReaderManager()
+    xfrm.bkClient_ = MagicMock()
+    xfrm.bkClient_.getProductionProcessingPassID.return_value = getProductionProcessingPassID_RV
+    xfrm.bkClient_.getRunAndProcessingPassDataQuality.return_value = getRunAndProcessingPassDataQuality_RV
+
+    res = xfrm._getDataQuality(prod, runNumber)
+    assert res == expected

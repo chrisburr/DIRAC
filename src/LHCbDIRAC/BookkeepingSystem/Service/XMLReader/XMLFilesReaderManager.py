@@ -16,6 +16,7 @@ from __future__ import print_function
 from xml.parsers.expat import ExpatError
 from xml.dom.minidom import parse, parseString
 from DIRAC import gLogger, S_OK, S_ERROR
+from DIRAC.Core.Utilities.ReturnValues import convertToReturnValue, returnValueOrRaise
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.FileParam import FileParam
@@ -52,8 +53,6 @@ class XMLFilesReaderManager(object):
     def __init__(self):
         """initialize the member of class."""
         self.bkClient_ = OracleBookkeepingDB()
-        self.fileTypeCache = {}
-
         self.log = gLogger.getSubLogger("XMLFilesReaderManager")
 
     #############################################################################
@@ -116,15 +115,15 @@ class XMLFilesReaderManager(object):
             for inputFile in job.inputFiles:
                 inputFile.fileID = int(result["Value"]["Successful"][inputFile.name]["FileId"])
 
-        dqvalue = None
+        fileTypeCache = {}
         for outputfile in job.outputFiles:
 
             typeName = outputfile.type
             typeVersion = outputfile.version
             cachedTypeNameVersion = typeName + "<<" + typeVersion
-            if cachedTypeNameVersion in self.fileTypeCache:
+            if cachedTypeNameVersion in fileTypeCache:
                 self.log.debug(cachedTypeNameVersion + " in the cache!")
-                typeID = self.fileTypeCache[cachedTypeNameVersion]
+                typeID = fileTypeCache[cachedTypeNameVersion]
                 outputfile.typeID = typeID
             else:
                 result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
@@ -135,7 +134,7 @@ class XMLFilesReaderManager(object):
                 self.log.debug(cachedTypeNameVersion + " added to the cache!")
                 typeID = int(result["Value"])
                 outputfile.typeID = typeID
-                self.fileTypeCache[cachedTypeNameVersion] = typeID
+                fileTypeCache[cachedTypeNameVersion] = typeID
 
             if (
                 job.getParam("JobType") and job.getParam("JobType").value == "DQHISTOMERGING"
@@ -162,7 +161,7 @@ class XMLFilesReaderManager(object):
                         return S_ERROR("The event type %s is missing!" % (str(param.value)))
                     evtExists = True
 
-            if not evtExists and outputfile.type not in ["LOG"]:
+            if not evtExists and outputfile.type != "LOG":
                 inputFiles = job.inputFiles
 
                 if inputFiles:
@@ -196,91 +195,67 @@ class XMLFilesReaderManager(object):
                 else:
                     return S_ERROR("It can not fill the EventTypeId because there is no input files!")
 
-            infiles = job.inputFiles
-            if not job.exists("RunNumber") and infiles:
-                tck = -2
-                runnumbers = []
-                tcks = []
-                for i in infiles:
-                    fileName = i.name
-                    retVal = self.bkClient_.getRunNbAndTck(fileName)
+        dqvalue = None
+        infiles = job.inputFiles
+        if not job.exists("RunNumber") and infiles:  # case of, e.g., MCReconstruction
+            # Discover the run(s) and TCK(s) of the input files
+            # One goal is to discover which dataquality to use
 
+            res = self._getRunNumbersAndTCKs([jif.name for jif in job.inputFiles])
+            if not res["OK"]:  # pylint: disable=invalid-sequence-index
+                return res
+            runNumbers, tcks = res["Value"]  # pylint: disable=invalid-sequence-index
+
+            if len(runNumbers) > 1:
+                self.log.debug("More than 1 run", ",".join(str(r) for r in runNumbers))
+            elif len(runNumbers) == 1:
+                runNumber = runNumbers.pop()
+                self.log.debug("The output files of the job might inherit run", runNumber)
+                newJobParams = JobParameters()
+                newJobParams.name = "RunNumber"
+                newJobParams.value = str(runNumber)
+                job.addJobParams(newJobParams)
+
+                if job.getParam("JobType") and job.getParam("JobType").value == "DQHISTOMERGING":
+                    self.log.debug("DQ merging!")
+                    retVal = self.bkClient_.getJobInfo(job.inputFiles[0].name)
                     if not retVal["OK"]:
                         return retVal
-                    if len(retVal["Value"]) > 0:
-                        self.log.debug("RunTCK:", "%s" % retVal["Value"])
+                    prod = retVal["Value"][0][18]
+                    newJobParams = JobParameters()
+                    newJobParams.name = "Production"
+                    newJobParams.value = str(prod)
+                    job.addJobParams(newJobParams)
+                    self.log.debug("Production inherited from input", prod)
+                else:
+                    prod = job.getParam("Production").value
+                    self.log.debug("Production:", "%s" % prod)
 
-                        for i in retVal["Value"]:
-                            if i[0] not in runnumbers:
-                                runnumbers += [i[0]]
-                            if i[1] not in tcks:
-                                tcks += [i[1]]
+                retVal = self.bkClient_.getProductionProcessingPassID(prod)
+                if not retVal["OK"]:
+                    return retVal
 
-                    if len(runnumbers) > 1:
-                        self.log.debug("More than 1 run", "[%s]" % ",".join(str(r) for r in runnumbers))
-                        runnumber = None
-                    else:
-                        runnumber = runnumbers[0]
+                res = self._getDataQuality(prod, runNumber)
+                if not res["OK"]:
+                    return res
+                dqvalue = res["Value"]
+                if not dqvalue:  # dqvalue can be None, if run/procid is not in newrunquality table
+                    self.log.warn(
+                        "Could not find run quality",
+                        "for %d production (run number: %d)" % (int(prod), int(runNumber)),
+                    )
 
-                    if len(tcks) > 1:
-                        self.log.debug("More than 1 TCK", "[%s]" % ",".join(tcks))
-                        tck = -2
-                    else:
-                        tck = tcks[0]
-
-                    self.log.debug("The output files of the job inherits the following run:", runnumber)
-                    self.log.debug("The output files of the job inherits the following TCK:", tck)
-
-                    if not job.exists("Tck"):
-                        newJobParams = JobParameters()
-                        newJobParams.name = "Tck"
-                        newJobParams.value = tck
-                        job.addJobParams(newJobParams)
-
-                    if runnumber:
-                        prod = None
-                        newJobParams = JobParameters()
-                        newJobParams.name = "RunNumber"
-                        newJobParams.value = str(runnumber)
-                        job.addJobParams(newJobParams)
-
-                        if job.getParam("JobType") and job.getParam("JobType").value == "DQHISTOMERGING":
-                            self.log.debug("DQ merging!")
-                            retVal = self.bkClient_.getJobInfo(fileName)
-                            if retVal["OK"]:
-                                prod = retVal["Value"][0][18]
-                                newJobParams = JobParameters()
-                                newJobParams.name = "Production"
-                                newJobParams.value = str(prod)
-                                job.addJobParams(newJobParams)
-                                self.log.debug("Production inherited from input:", "%s" % prod)
-                        else:
-                            prod = job.getParam("Production").value
-                            self.log.debug("Production:", "%s" % prod)
-
-                        retVal = self.bkClient_.getProductionProcessingPassID(prod)
-                        if retVal["OK"]:
-                            proc = retVal["Value"]
-
-                            retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, proc)
-                            if retVal["OK"]:
-                                dqvalue = retVal["Value"]
-                            else:
-                                dqvalue = None
-                                message = (
-                                    "The rundataquality table does not contain run=%d proc_id=%s. Consequently, "
-                                    "the Dq flag is inherited from the ancestor file!"
-                                ) % (runnumber, proc)
-                                self.log.warn(message)
-                        else:
-                            dqvalue = None
-                            self.log.warn(
-                                "Bkk can not set the quality flag because the processing \
-              pass is missing for % d production (run number: %d )!"
-                                % (int(prod), int(runnumber))
-                            )
-
-        inputfiles = job.inputFiles
+            if len(tcks) > 1:
+                self.log.debug("More than 1 TCK", "[%s]" % ",".join(tcks))
+                tck = -2
+            elif len(tcks) == 1:
+                tck = tcks.pop()
+                self.log.debug("The output files of the job inherits the following TCK:", tck)
+                if not job.exists("Tck"):
+                    newJobParams = JobParameters()
+                    newJobParams.name = "Tck"
+                    newJobParams.value = tck
+                    job.addJobParams(newJobParams)
 
         sumEventInputStat = 0
         sumEvtStat = 0
@@ -288,6 +263,8 @@ class XMLFilesReaderManager(object):
 
         if job.exists("JobType"):
             job.removeParam("JobType")
+
+        inputfiles = job.inputFiles
 
         # This must be replaced by a single call!!!!
         # ## It is not urgent as we do not have a huge load on the database
@@ -365,7 +342,7 @@ class XMLFilesReaderManager(object):
 
         job.jobID = int(result["Value"])
 
-        if job.exists("RunNumber"):
+        if job.exists("RunNumber"):  # case of, e.g., real data processing
             try:
                 runnumber = int(job.getParam("RunNumber").value)
             except ValueError:
@@ -381,22 +358,16 @@ class XMLFilesReaderManager(object):
                         self.log.warn("Unable to delete job", str(job.jobID) + res["Message"])
                     return S_ERROR(errorMessage[0])
 
-                # we may using HLT2 output to flag the runs as a consequence we may flagged the
-                # runs before they registered to the bookkeeping.
-                # we can flag a run using the newrunquality table
-                retVal = self.bkClient_.getProductionProcessingPassID(-1 * int(runnumber))
-                if retVal["OK"]:
-                    retVal = self.bkClient_.getRunAndProcessingPassDataQuality(runnumber, retVal["Value"])
-                    if retVal["OK"]:
-                        dqvalue = retVal["Value"]
-                        self.log.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
-                    else:
-                        # The report will be entered to the db.
-                        self.log.warn(retVal["Message"])
-                else:
-                    self.log.error(retVal["Message"])
+                # we may be using HLT2 output to flag the runs: as a consequence we may have already flagged the run
+                retVal = self._getDataQuality(runNumber=runnumber)
+                if not retVal["OK"]:
+                    return retVal
+                if retVal["Value"]:  # if not "None", override what is found in the ancestors
+                    dqvalue = retVal["Value"]
+                    self.log.verbose("The run data quality flag for", "run %d is %s" % (runnumber, dqvalue))
+
             else:
-                # we reconstruct multiple runs
+                # we ran on multiple runs
                 self.log.warn("Run number can not determined for production:", job.getParam("Production").value)
 
         inputFiles = job.inputFiles
@@ -423,7 +394,7 @@ class XMLFilesReaderManager(object):
                 newFileParams.name = "QualityId"
                 newFileParams.value = dqvalue
                 outputfile.addFileParam(newFileParams)
-            if not job.exists("RunNumber"):  # if it is MC
+            elif not job.exists("RunNumber"):  # if it is MC
                 newFileParams = FileParam()
                 newFileParams.name = "QualityId"
                 newFileParams.value = "OK"
@@ -434,7 +405,7 @@ class XMLFilesReaderManager(object):
                 vFileParams.name = "VisibilityFlag"
                 vFileParams.value = outputFileTypes[ftype]
                 outputfile.addFileParam(vFileParams)
-                self.log.debug("The visibility flag is:" + outputFileTypes[ftype])
+                self.log.debug("The visibility flag is", outputFileTypes[ftype])
 
             result = self.__insertOutputFiles(job, outputfile)
             if not result["OK"]:
@@ -457,18 +428,38 @@ class XMLFilesReaderManager(object):
             replicas = outputfile.replicas
             for replica in replicas:
                 params = replica.params
-                for (
-                    param
-                ) in params:  # just one param exist in params list, because JobReader only one param add to Replica
+                for param in params:
+                    # just one param exist in params list, because JobReader only one param add to Replica
                     name = param.name
-                result = self.bkClient_.updateReplicaRow(outputfile.fileID, "No")  # , name, location)
+                result = self.bkClient_.updateReplicaRow(outputfile.fileID, "No")
                 if not result["OK"]:
-                    errorMessage = "Unable to create Replica %s !" % (str(name))
-                    return S_ERROR(errorMessage)
+                    return S_ERROR("Unable to create Replica %s !" % (str(name)))
 
         self.log.debug("End Processing!")
 
         return S_OK()
+
+    @convertToReturnValue
+    def _getRunNumbersAndTCKs(self, fileList):
+        """Utility to get run numbers and TCKs of a list of files"""
+        runnumbers = set()
+        tcks = set()
+        for lfn in fileList:
+            for runtck in returnValueOrRaise(self.bkClient_.getRunNbAndTck(lfn)):
+                if runtck[0]:
+                    runnumbers.add(runtck[0])
+                if runtck[1] and runtck[1] != "None":
+                    tcks.add(runtck[1])
+        return (runnumbers, tcks)
+
+    @convertToReturnValue
+    def _getDataQuality(self, prod=None, runNumber=None):
+        if not runNumber:
+            return None
+        procID = returnValueOrRaise(self.bkClient_.getProductionProcessingPassID(prod or runNumber * -1))
+        if not procID:
+            return None
+        return returnValueOrRaise(self.bkClient_.getRunAndProcessingPassDataQuality(runNumber, procID))
 
     def __insertJob(self, job):
         """Inserts the job to the database."""
@@ -476,7 +467,7 @@ class XMLFilesReaderManager(object):
 
         production = None
 
-        condParams = job.dataTakingCondition
+        condParams = job.dataTakingCondition  # real data
         if condParams:
             datataking = condParams.parameters
             config = job.configuration
@@ -657,8 +648,7 @@ class XMLFilesReaderManager(object):
         """insert the files produced by a job."""
         attrList = {"FileName": outputfile.name, "FileTypeId": outputfile.typeID, "JobId": job.jobID}
 
-        fileParams = outputfile.params
-        for param in fileParams:
+        for param in outputfile.params:
             attrList[str(param.name)] = param.value
         return self.bkClient_.insertOutputFile(attrList)
 

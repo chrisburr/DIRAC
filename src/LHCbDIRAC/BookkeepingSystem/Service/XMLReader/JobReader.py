@@ -264,11 +264,14 @@ class JobReader(object):
         """reads and stores the job simulation condition."""
         gLogger.debug("Read Simulation Conditions")
         simcond = doc.getElementsByTagName("SimulationCondition")
-        if len(simcond) != 1:
+        if not simcond:
+            gLogger.debug("No Simulation Conditions:")
+        elif len(simcond) > 1:
             gLogger.debug("Too many Simulation conditions:", str(simcond))
         else:
             simParam = SimulationConditions()
             node = simcond[0]
+            gLogger.debug("Found Simulation conditions:", str(node))
             parameters = node.getElementsByTagName("Parameter")
             for param in parameters:
                 name = param.getAttributeNode("Name")
@@ -285,11 +288,14 @@ class JobReader(object):
         """reads and stores the job data taking conditions."""
         gLogger.debug("Read DataTaking Conditions")
         daqcond = doc.getElementsByTagName("DataTakingConditions")
-        if len(daqcond) != 1:
-            gLogger.debug("Too many DataTaking conditions:", str(daqcond))
+        if not daqcond:
+            gLogger.debug("No Real DataTaking Conditions")
+        elif len(daqcond) > 1:
+            gLogger.debug("Too many Real DataTaking conditions:", str(daqcond))
         else:
             daqParam = DataTakingConditions()
             node = daqcond[0]
+            gLogger.debug("Found Real DataTaking conditions:", str(node))
             parameters = node.getElementsByTagName("Parameter")
             for param in parameters:
                 name = param.getAttributeNode("Name")
