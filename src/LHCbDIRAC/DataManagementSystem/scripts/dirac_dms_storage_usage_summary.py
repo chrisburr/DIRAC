@@ -345,7 +345,7 @@ def execute(unit, minimum, depth):
     # print bkQuery
     fileTypes = dmScript.getOption("FileType", [])
     if not dirs:
-        dirs = [""]
+        dirs = ["/lhcb/"]
         bkQuery = dmScript.getBKQuery()
         if bkQuery:
             bkQuery = dmScript.getBKQuery(visible="All")

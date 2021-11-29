@@ -426,7 +426,7 @@ class StorageUsageAgent(AgentModule):
                             dirUsage[se]["Size"] -= seUsage[se]["Size"]
         for error in errorReason:
             self.log.error("Failed to get directory info", "- %s for:\n\t%s" % (error, "\n\t".join(errorReason[error])))
-        for se, usage in dirUsage.items():
+        for se, usage in list(dirUsage.items()):
             # Both info should be 0 or #0
             if not usage["Files"] and not usage["Size"]:
                 dirUsage.pop(se)

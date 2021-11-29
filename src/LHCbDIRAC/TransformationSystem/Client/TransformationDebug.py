@@ -656,8 +656,8 @@ class TransformationDebug(object):
         :param status: (list of) status
         :type status: list or string
         """
-        if "MissingLFC" in status or "MissingInFC" in status:
-            lfns = [fileDict["LFN"] for fileDict in transFilesList]
+        lfns = [fileDict["LFN"] for fileDict in transFilesList if fileDict["Status"] == "MissingInFC"]
+        if lfns:
             res = self.dataManager.getReplicas(lfns)
             if res["OK"]:
                 replicas = res["Value"]["Successful"]
@@ -2046,7 +2046,8 @@ class TransformationDebug(object):
                 taskDict = defaultdict(list)
                 for fileDict in transFilesList:
                     if not allTasks:
-                        taskDict[fileDict["TaskID"]].append(fileDict["LFN"])
+                        taskID = fileDict["TaskID"] if fileDict["TaskID"] is not None else 0
+                        taskDict[taskID].append(fileDict["LFN"])
                         if "Problematic" in status and not fileDict["TaskID"]:
                             problematicFiles.append(fileDict["LFN"])
                     else:
@@ -2060,6 +2061,8 @@ class TransformationDebug(object):
                             gLogger.notice("Error when getting tasks for file %s" % fileDict["LFN"])
                         else:
                             for taskID in res["Value"]["TaskID"]:
+                                if taskID is None:
+                                    taskID = 0
                                 taskDict[taskID].append(fileDict["LFN"])
                     fileRun = fileDict.get("RunNumber")
                     fileLfn = fileDict["LFN"]
@@ -2216,9 +2219,7 @@ class TransformationDebug(object):
                     found = True
                 if not found:
                     gLogger.notice("... None ...")
-            elif self.transType == "Removal" and (
-                not status or not ("MissingLFC" in status or "MissingInFC" in status)
-            ):
+            elif self.transType == "Removal" and (not status or "MissingInFC" not in status):
                 gLogger.notice("All files have been successfully removed!")
 
             # All files?
