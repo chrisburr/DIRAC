@@ -111,7 +111,7 @@ class SSLTransport(BaseTransport):
         """
         self.__timeout = timeout
 
-    def initAsClient(self):
+    def initAsClient(self, localAddress=None):
         """Prepare this client socket for use."""
         if self.serverMode():
             raise RuntimeError("SSLTransport is in server mode.")
@@ -129,6 +129,9 @@ class SSLTransport(BaseTransport):
 
             try:
                 self.oSocket = SSL.Connection(self.__ctx, family=family)
+
+                if localAddress:
+                    self.oSocket.bind(localAddress)
 
                 # First set a short connection timeout, that will trigger
                 # during blocking operations (read/write) use to

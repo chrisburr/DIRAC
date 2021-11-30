@@ -50,13 +50,20 @@ class MessageClient(BaseClient):
     def connected(self):
         return self.__trid
 
+    @property
+    def localAddress(self):
+        if not self.connected:
+            return None
+        return self.__transport.getLocalAddress()
+
     def connect(self, **extraParams):
+        localAddress = extraParams.pop("addressForLocalSocket", None)
         if extraParams:
             self.__connectExtraParams = extraParams
         if self.__trid:
             return S_ERROR("Already connected")
         try:
-            trid, transport = self.__checkResult(self._connect())
+            trid, transport = self.__checkResult(self._connect(localAddress=localAddress))
             self.__checkResult(self._proposeAction(transport, ("Connection", "new")))
             self.__checkResult(transport.sendData(S_OK([self.__uniqueName, self.__connectExtraParams])))
             self.__checkResult(transport.receiveData())

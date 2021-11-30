@@ -443,7 +443,7 @@ and this is thread %s
             gLogger.error("DISET client thread safety error", msgTxt)
             # raise Exception( msgTxt )
 
-    def _connect(self):
+    def _connect(self, localAddress=None):
         """Establish the connection.
         It uses the URL discovered in __discoverURL.
         In case the connection cannot be established, __discoverURL
@@ -479,7 +479,7 @@ and this is thread %s
             transport = gProtocolDict[self.__URLTuple[0]]["transport"](self.__URLTuple[1:3], **self.kwargs)
             # the socket timeout is the default value which is 1.
             # later we increase to 5
-            retVal = transport.initAsClient()
+            retVal = transport.initAsClient(localAddress=localAddress)
             # We try at most __nbOfRetry each URLs
             if not retVal["OK"]:
                 gLogger.warn("Issue getting socket:", "%s : %s : %s" % (transport, self.__URLTuple, retVal["Message"]))
@@ -519,7 +519,7 @@ and this is thread %s
                     # rediscover the URL
                     self.__discoverURL()
                     # try to reconnect
-                    return self._connect()
+                    return self._connect(localAddress=localAddress)
                 else:
                     return retVal
         except Exception as e:

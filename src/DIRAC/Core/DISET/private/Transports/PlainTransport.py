@@ -19,12 +19,15 @@ from DIRAC.Core.Utilities.ReturnValues import S_ERROR, S_OK
 
 
 class PlainTransport(BaseTransport):
-    def initAsClient(self):
+    def initAsClient(self, localAddress=None):
         timeout = None
         if "timeout" in self.extraArgsDict:
             timeout = self.extraArgsDict["timeout"]
         try:
-            self.oSocket = socket.create_connection(self.stServerAddress, timeout)
+            connectionArgs = self.stServerAddress, timeout
+            if localAddress:
+                connectionArgs = connectionArgs + (localAddress,)
+            self.oSocket = socket.create_connection(*connectionArgs)
         except socket.error as e:
             if e.args[0] != 115:
                 return S_ERROR("Can't connect: %s" % str(e))

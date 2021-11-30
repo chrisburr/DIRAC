@@ -92,6 +92,7 @@ class ExecutorReactor(object):
             if result["OK"]:
                 self.__aliveLock.alive()
                 gLogger.info("Connected to %s" % self.__mindName)
+                self.__localAddress = self.__msgClient.localAddress
             return result
 
         def __disconnected(self, msgClient):
@@ -99,13 +100,19 @@ class ExecutorReactor(object):
             while True:
                 gLogger.notice("Trying to reconnect to %s" % self.__mindName)
                 result = self.__msgClient.connect(
-                    executorTypes=list(self.__modules), maxTasks=self.__maxTasks, extraArgs=self.__extraArgs
+                    executorTypes=list(self.__modules),
+                    maxTasks=self.__maxTasks,
+                    extraArgs=self.__extraArgs,
+                    addressForLocalSocket=self.__localAddress,
                 )
 
                 if result["OK"]:
                     if retryCount >= self.__reconnectRetries:
                         self.__aliveLock.alive()
                     gLogger.notice("Reconnected to %s" % self.__mindName)
+                    localAddress = self.__msgClient.localAddress
+                    if localAddress is not None:
+                        self.__localAddress = localAddress
                     return S_OK()
                 retryCount += 1
                 if retryCount == self.__reconnectRetries:
