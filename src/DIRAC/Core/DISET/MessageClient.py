@@ -58,7 +58,9 @@ class MessageClient(BaseClient):
         # Avoid acquiring the lock if it's clear we already have a connection
         if self.__trid:
             return S_ERROR("Already connected")
+        gLogger.notice("CBURR", "Acquiring MessageClient.__connectionLock %s" % threading.current_thread().ident)
         self.__connectionLock.acquire()
+        gLogger.notice("CBURR", "Acquired MessageClient.__connectionLock %s" % threading.current_thread().ident)
         try:
             if self.__trid:
                 return S_ERROR("Already connected")
@@ -80,6 +82,7 @@ class MessageClient(BaseClient):
         except self.MSGException as e:
             return S_ERROR(str(e))
         finally:
+            gLogger.notice("CBURR", "Releasing MessageClient.__connectionLock %s" % threading.current_thread().ident)
             self.__connectionLock.release()
         return S_OK()
 
