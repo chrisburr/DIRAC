@@ -17,7 +17,7 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-    from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script
+    from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script, Setter
 
     pluginScript = PluginScript()
     pluginScript.registerPluginSwitches()
@@ -40,6 +40,13 @@ def main():
     )
     Script.registerSwitch("", "CheckMCReplication", "   List all MC replication transformations that are obsolete")
     Script.registerSwitch("", "ListProcessingPasses", "   Only lists the processing passes")
+
+    Script.registerSwitch(
+        "",
+        "BodyPlugin=",
+        "   BodyPlugin to use for the transformation",
+    )
+    Script.registerSwitch("", "TransBody=", "   Body to use for the transformation")
 
     Script.setUsageMessage(
         __doc__
