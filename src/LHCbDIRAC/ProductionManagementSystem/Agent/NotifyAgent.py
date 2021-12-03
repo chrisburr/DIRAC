@@ -343,6 +343,9 @@ class NotifyAgent(AgentModule):
             return S_OK()
 
         conn.execute("DELETE FROM ProductionStatusAgentCache;")
+        conn.commit()
         conn.execute("VACUUM;")
+
         conn.execute("DELETE FROM ProductionStatusAgentReqCache;")
+        conn.commit()
         conn.execute("VACUUM;")
