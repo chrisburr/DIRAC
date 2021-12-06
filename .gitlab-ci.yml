@@ -192,8 +192,6 @@ build_docker_image:
       - tags@lhcb-dirac/LHCbDIRAC
     variables:
       - $SWEEP != "true"
-  except:
-    - /^v[0-9]+\.[0-9]+.+$/
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]

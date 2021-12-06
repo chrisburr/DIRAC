@@ -12,45 +12,34 @@
 
 # Entry point of docker to setup the DIRAC environment before executing the command
 
-source /opt/dirac/bashrc
+source /opt/dirac/diracosrc
 
 
-if [[ -z ${DIRAC_REPO} ]]; then
+if [[ -z ${DIRAC_REPO:-} ]]; then
   echo "No alternative DIRAC repository specified";
 else
   echo "Using alternative DIRAC repository ${DIRAC_REPO}";
-  mv /opt/dirac/DIRAC /opt/dirac/DIRAC.orig
-
-  if [[ -z ${DIRAC_BRANCH} ]];
-  then
+  if [[ -z ${DIRAC_BRANCH:-} ]]; then
     echo "Using default branch";
+    pip install "git+${DIRAC_REPO}"
   else
     echo "Using specific branch ${DIRAC_BRANCH}";
-    DIRAC_BRANCH="-b ${DIRAC_BRANCH}";
+    pip install "git+${DIRAC_REPO}@${DIRAC_BRANCH}"
   fi
-
-  git clone ${DIRAC_BRANCH} ${DIRAC_REPO} /opt/dirac/DIRAC_alt
-  ln -s /opt/dirac/DIRAC_alt/src/DIRAC /opt/dirac/DIRAC
 fi
 
 
-if [[ -z ${LHCB_DIRAC_REPO} ]]; then
+if [[ -z ${LHCB_DIRAC_REPO:-} ]]; then
   echo "No alternative LHCbDIRAC repository specified";
 else
   echo "Using alternative LHCbDIRAC repository $LHCB_DIRAC_REPO";
-  mv /opt/dirac/LHCbDIRAC /opt/dirac/LHCbDIRAC.orig
-
-  if [[  -z ${LHCB_DIRAC_BRANCH} ]];
-  then
+  if [[  -z ${LHCB_DIRAC_BRANCH:-} ]]; then
     echo "Using default branch";
+    pip install "git+${LHCB_DIRAC_REPO}"
   else
     echo "Using specific branch ${LHCB_DIRAC_BRANCH}";
-    LHCB_DIRAC_BRANCH="-b ${LHCB_DIRAC_BRANCH}";
+    pip install "git+${LHCB_DIRAC_REPO}@${LHCB_DIRAC_BRANCH}"
   fi
-
-  git clone ${LHCB_DIRAC_BRANCH} ${LHCB_DIRAC_REPO} /opt/dirac/LHCbDIRAC_alt
-  # The code is contained in a subfolder of LHCbDIRAC !
-  ln -s /opt/dirac/LHCbDIRAC_alt/src/LHCbDIRAC /opt/dirac/LHCbDIRAC
 fi
 
 # Lookup in the environment for variables starting with
@@ -61,8 +50,7 @@ fi
 # Note 3: the ``-V`` is to have a version sort (e.g. DIRAC_CFG_3 < DIRAC_CFG_10)
 
 ALL_CFG_FILES=""
-for cfgFile in $(sort -V <( tr -s ' ' '\n' <<< "${!DIRAC_CFG_@}" ));
-do
+for cfgFile in $(sort -V <( tr -s ' ' '\n' <<< "${!DIRAC_CFG_@}" )); do
   echo "Found configuration file $cfgFile : ${!cfgFile}";
   ALL_CFG_FILES+="--cfg ${!cfgFile} ";
 done
