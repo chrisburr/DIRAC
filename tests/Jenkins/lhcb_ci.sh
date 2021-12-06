@@ -33,110 +33,24 @@ readonly INSTALL_CFG_FILE="${TESTCODE}/LHCbDIRAC/tests/Jenkins/install.cfg"
 #
 # findRelease for LHCbDIRAC:
 #
-#   If the environment variable "LHCBDIRAC_RELEASE" exists, and set, we use the specified release.
-#   If the environment variable "LHCBDIRACBRANCH" exists, and set, we use the specified "branch", otherwise we take the last one.
-#
-#   It reads from releases.cfg and picks the latest version
-#   which is written to {project,dirac,lhcbdirac}.version
+#   Legacy hack to prevent DIRAC's CI scripts from looking for a releases.cfg file
 #
 #.............................................................................
 
 findRelease(){
   echo '[findRelease]'
 
-  # store the current branch
-  currentBranch=$(git --git-dir="${TESTCODE}/LHCbDIRAC/.git" rev-parse --abbrev-ref HEAD)
-
-  if [[ "${currentBranch}" = 'devel' ]]; then
-    echo 'we were already on devel, no need to change'
-    # get the releases.cfg file
-    cp "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" "${TESTCODE}"/
-  else
-    # TODO: This needs to be changed...
-    (cd "${TESTCODE}/LHCbDIRAC"
-     git remote add "ci-upstream" "https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC.git" || true
-     git remote -v
-     git fetch --all || true
-     git show "remotes/ci-upstream/devel:src/LHCbDIRAC/releases.cfg" > "${TESTCODE}/releases.cfg")
+  if [[ ! -n "${LHCBDIRAC_RELEASE}" ]]; then
+    echo '==> LHCBDIRAC_RELEASE not set but required'
+    exit 1
   fi
-
-  # Match project ( LHCbDIRAC ) version from releases.cfg
-  # Example releases.cfg
-  # v7r15-pre2
-  # {
-  #   Modules = LHCbDIRAC:v7r15-pre2, LHCbWebDIRAC:v3r3p5
-  #   Depends = DIRAC:v6r10-pre12
-  #   LcgVer = 2013-09-24
-  # }
-
-  if [[ -n "${LHCBDIRAC_RELEASE}" ]]; then
-    echo '==> Specified release'
-    echo "${LHCBDIRAC_RELEASE}"
-    projectVersion="${LHCBDIRAC_RELEASE}"
-  else
-    if [[ -n "${LHCBDIRACBRANCH}" ]]; then
-      echo "==> Looking for LHCBDIRAC branch ${LHCBDIRACBRANCH}"
-    else
-      echo '==> Running on last one'
-    fi
-
-    # If I don't specify a LHCBDIRACBRANCH, it will get the latest "production" release
-    # First, try to find if we are on a production tag
-    if [[ -n "${LHCBDIRACBRANCH}" ]]; then
-      projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | grep "${LHCBDIRACBRANCH}" | head -1 | sed 's/ //g')
-    else
-      projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*p[[:digit:]]*' | head -1 | sed 's/ //g')
-    fi
-
-    # The special case is when there's no 'p'... (e.g. version v8r3)
-    if [[ ! "$projectVersion" ]]; then
-      if [[ -n "${LHCBDIRACBRANCH}" ]]
-      then
-        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]' | grep "${LHCBDIRACBRANCH}" | head -1 | sed 's/ //g')
-      else
-        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]' | head -1 | sed 's/ //g')
-      fi
-    fi
-
-    # In case there are no production tags for the branch, look for pre-releases in that branch
-    if [[ ! "$projectVersion" ]]; then
-      if [[ -n "${LHCBDIRACBRANCH}" ]]; then
-        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | grep ${LHCBDIRACBRANCH} | head -1 | sed 's/ //g')
-      else
-        projectVersion=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep '[^:]v[[:digit:]]*r[[:digit:]]*'-pre'' | head -1 | sed 's/ //g')
-      fi
-    fi
-
-  fi
+  projectVersion="${LHCBDIRAC_RELEASE}"
 
   # TODO: This should be made to fail to due set -u and -o pipefail
   if [[ ! "${projectVersion}" ]]; then
     echo "Failed to set projectVersion" >&2
     exit 1
   fi
-
-  echo PROJECT:"${projectVersion}" && echo "${projectVersion}" > project.version
-
-  # projectVersionLine : line number where v7r15-pre2 is
-  projectVersionLine=$(cat "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg" | grep -n "${projectVersion}" | cut -d ':' -f 1 | head -1)
-  # start := line number after "{"
-  start=$((projectVersionLine+2))
-  # end   := line number after "}"
-  end=$((start+2))
-  # versions :=
-  #   Modules = LHCbDIRAC:v7r15-pre2, LHCbWebDIRAC:v3r3p5
-  #   Depends = DIRAC:v6r10-pre12
-  #   LcgVer = 2013-09-24
-  versions=$(sed -n "$start,$end p" "${TESTCODE}/LHCbDIRAC/src/LHCbDIRAC/releases.cfg")
-
-  # Extract DIRAC version
-  diracVersion=$(echo "$versions" | tr ' ' '\n' | grep "^DIRAC:v*[^,]" | sed 's/,//g' | cut -d ':' -f2)
-  # Extract LHCbDIRAC version
-  lhcbdiracVersion=$(echo "$versions" | tr ' ' '\n' | grep "^LHCbDIRAC:v*" | sed 's/,//g' | cut -d ':' -f2)
-
-  # PrintOuts
-  echo "==> DIRAC:${diracVersion}" && echo "${diracVersion}" > dirac.version
-  echo "==> LHCbDIRAC:${lhcbdiracVersion}" && echo "${lhcbdiracVersion}" > lhcbdirac.version
 }
 
 
