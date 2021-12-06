@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import os
 import sqlite3
+import DIRAC
 from DIRAC import gConfig, S_OK
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
@@ -42,11 +43,7 @@ class NotifyAgent(AgentModule):
         self.diracAdmin = None
         self.csS = None
         self.fromAddress = None
-
-        if "DIRAC" in os.environ:
-            self.cacheFile = os.path.join(os.getenv("DIRAC"), "work/ProductionManagement/cache.db")
-        else:
-            self.cacheFile = os.path.realpath("cache.db")
+        self.cacheFile = os.path.join(DIRAC.rootPath, "work/ProductionManagement/cache.db")
 
     def initialize(self):
         """NotifyAgent initialization."""
@@ -346,6 +343,9 @@ class NotifyAgent(AgentModule):
             return S_OK()
 
         conn.execute("DELETE FROM ProductionStatusAgentCache;")
+        conn.commit()
         conn.execute("VACUUM;")
+
         conn.execute("DELETE FROM ProductionStatusAgentReqCache;")
+        conn.commit()
         conn.execute("VACUUM;")

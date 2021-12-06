@@ -42,8 +42,8 @@ import os
 import sqlite3
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, wait
-from itertools import chain
 
+import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.Core.Utilities.Time import timeThis
@@ -117,11 +117,7 @@ class ProductionStatusAgent(AgentModule):
         )
 
         self.notify = True
-
-        if "DIRAC" in os.environ:
-            self.cacheFile = os.path.join(os.getenv("DIRAC"), "work/ProductionManagement/cache.db")
-        else:
-            self.cacheFile = os.path.realpath("cache.db")
+        self.cacheFile = os.path.join(DIRAC.rootPath, "work/ProductionManagement/cache.db")
 
         # For processing transformations, it can happen that there are some Unused files
         # with which no tasks can be created. The number of such files can be different depending

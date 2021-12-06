@@ -15,6 +15,8 @@ from __future__ import print_function
 
 import os
 import sqlite3
+
+import DIRAC
 from DIRAC import gConfig, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Registry import getUserOption, getUsersInGroup
 from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
@@ -36,11 +38,7 @@ def _getMemberMails(group):
 
 
 def _aggregate(reqId, reqType, reqWG, reqName, SimCondition, ProPath, groups, informPeoples):
-
-    if "DIRAC" in os.environ:
-        cacheFile = os.path.join(os.getenv("DIRAC"), "work/ProductionManagement/cache.db")
-    else:
-        cacheFile = os.path.realpath("cache.db")
+    cacheFile = os.path.join(DIRAC.rootPath, "work/ProductionManagement/cache.db")
 
     with sqlite3.connect(cacheFile) as conn:
 
