@@ -20,6 +20,7 @@ __RCSID__ = "$Id$"
 import os
 import re
 import tempfile
+import subprocess
 import six
 
 from DIRAC import gLogger, gConfig, S_OK, S_ERROR
@@ -271,35 +272,33 @@ class ProductionRequestHandler(RequestHandler):
         if not result["OK"]:
             return result
         proxyFile = result["Value"]
+        filesToClean = [proxyFile]
 
         try:
-            f = tempfile.mkstemp()
-            os.write(f[0], workflow)
-            os.close(f[0])
-            fs = tempfile.mkstemp()
-            os.write(fs[0], script)
-            os.close(fs[0])
-        except OSError as msg:
-            gLogger.error("In temporary files creation: " + str(msg))
-            os.remove(proxyFile)
-            return S_ERROR(str(msg))
-        setenv = "source /opt/dirac/bashrc"
-        proxy = "X509_USER_PROXY=%s" % proxyFile
-        cmd = "python %s %s" % (fs[1], f[1])
-        try:
-            res = shellCall(1800, ["/bin/bash -c '%s;%s %s'" % (setenv, proxy, cmd)])
-            if res["OK"]:
-                result = S_OK(str(res["Value"][1]) + str(res["Value"][2]))
-            else:
-                gLogger.error(res["Message"])
-                result = res
-        except Exception as msg:  # pylint: disable=broad-except
-            gLogger.error("During execution: " + str(msg))
-            result = S_ERROR("Failed to execute: %s" % str(msg))
-        os.remove(f[1])
-        os.remove(fs[1])
-        os.remove(proxyFile)
-        return result
+            with tempfile.NamedTemporaryFile(mode="w+t", delete=False) as workflowFile:
+                filesToClean += [workflowFile.name]
+                workflowFile.write(workflow)
+            with tempfile.NamedTemporaryFile(mode="w+t", delete=False) as scriptFile:
+                filesToClean += [scriptFile.name]
+                scriptFile.write(script)
+
+            result = subprocess.run(
+                ["python", scriptFile.name, workflowFile.name],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=1800,
+                env=os.environ | {"X509_USER_PROXY": proxyFile},
+            )
+            if result.returncode == 0:
+                return S_OK(result.stdout + result.stderr)
+        finally:
+            for filename in filesToClean:
+                os.remove(filename)
+
+        message = f"Command exited with: {result.returncode}\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        gLogger.error("Failed to execProductionScript", message)
+        return S_ERROR(message)
 
     types_execWizardScript = [six.string_types, dict]
 
