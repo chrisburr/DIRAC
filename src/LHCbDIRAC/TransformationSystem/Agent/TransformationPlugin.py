@@ -567,7 +567,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
         # Get the list of runs in the same order as runNumbers
         runList = sorted(
             (run for run in transRuns if run["RunNumber"] in runNumbers),
-            cmp=(lambda d1, d2: runNumbers.index(d1["RunNumber"]) - runNumbers.index(d2["RunNumber"])),
+            key=lambda x: runNumbers.index(x["RunNumber"]),
         )
         if nRunsLeft:
             self.util.logInfo(
