@@ -997,7 +997,7 @@ class DiracLHCb(Dirac):
         for files in siteLfns.values():
             # Now get bunches of files,
             # Sort in decreasing size
-            files.sort(cmp=(lambda f1, f2: fileSizes[f2] - fileSizes[f1]))
+            files.sort(key=fileSizes.__getitem__)
             while files:
                 # print [( lfn, fileSizes[lfn] ) for lfn in files]
                 group = []

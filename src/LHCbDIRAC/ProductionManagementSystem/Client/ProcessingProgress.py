@@ -328,7 +328,7 @@ class ProcessingProgress(object):
                 recoRunRanges[prod] = [0, 0]
         # Sort productions by runs
         try:
-            recoList.sort(cmp=(lambda p1, p2: int(recoRunRanges[p1][0] - recoRunRanges[p2][1])))
+            recoList.sort(lambda x: int(recoRunRanges[x][0]))
         except BaseException:
             print("Exception in sorting productions:")
             for p in recoList:
@@ -357,7 +357,7 @@ class ProcessingProgress(object):
             else:
                 _msgTuple = (str(bkQuery.getFileTypeList()), prod, str(prodBKDict))
                 gLogger.verbose("Could not find production or filetype %s in BKquery of production %d (%s)" % _msgTuple)
-        mergeList.sort(cmp=(lambda p1, p2: int(mergeStripProds[p1][0]) - int(mergeStripProds[p2][0])))
+        mergeList.sort(key=lambda x: int(mergeStripProds[x][0]))
         gLogger.verbose("Merging productions found: %s" % str(mergeList))
 
         # get list of stripping productions (from merging)
@@ -370,7 +370,7 @@ class ProcessingProgress(object):
                 stripRunRanges[prod] = [0, 0]
         # Sort productions by runs
         try:
-            stripList.sort(cmp=(lambda p1, p2: int(stripRunRanges[p1][0] - stripRunRanges[p2][1])))
+            stripList.sort(lambda x: int(stripRunRanges[x][0]))
         except Exception:
             print("Error when sorting stripping productions:")
             for prodStrip in stripList:
