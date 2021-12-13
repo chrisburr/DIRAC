@@ -458,7 +458,7 @@ build-wheel-and-maybe-deploy-to-pypi:
     - twine check --strict dist/*
     # If this is a tag upload the distributions to PyPI
     - |
-      if [ -z ${CI_COMMIT_TAG:-} ]; then
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then
         if [ -z "$TWINE_PASSWORD" ] ; then echo "Set TWINE_PASSWORD in CI variables"; exit 1; fi
         twine upload -u __token__ dist/*
       fi
