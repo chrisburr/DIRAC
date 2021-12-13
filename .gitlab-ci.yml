@@ -408,6 +408,8 @@ make_tag (set VERSION to override):
     - echo Release series is $SERIES
     # insert new release notes into the changelog
     - echo "[$VERSION]" > newNotes.txt
+    # Ensure CHANGELOG/$SERIES exists
+    - touch CHANGELOG/$SERIES
     - cat notes.txt CHANGELOG/$SERIES >> newNotes.txt && mv newNotes.txt CHANGELOG/$SERIES
     # show all the changes we have done
     - git diff
