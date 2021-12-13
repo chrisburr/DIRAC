@@ -84,7 +84,7 @@ def main():
             gLogger.fatal("Error getting runs for transformation %s" % transID, res["Message"])
             DIRAC.exit(1)
         runs = res["Value"]
-        runs.sort(cmp=(lambda r1, r2: int(r1["RunNumber"] - r2["RunNumber"])))
+        runs.sort(key=lambda x: int(x["RunNumber"]))
 
         if not runList:
             if active:

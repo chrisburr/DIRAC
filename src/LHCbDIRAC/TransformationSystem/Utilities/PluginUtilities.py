@@ -996,7 +996,7 @@ get from BK"
             if not self.cacheFile:
                 self.cacheFile = cacheFile
             try:
-                with open(cacheFile, "r") as cacheFile_o:
+                with open(cacheFile, "rb") as cacheFile_o:
                     self.cachedLFNAncestors = pickle.load(cacheFile_o)
                     # Do not cache between cycles, only cache temporarily, but keep same structure in file, i.e. fake load
                     _cachedNbRAWFiles = pickle.load(cacheFile_o)
@@ -1062,7 +1062,7 @@ get from BK"
 
         if self.cacheFile:
             try:
-                with open(self.cacheFile, "w") as cacheFile_o:
+                with open(self.cacheFile, "wb") as cacheFile_o:
                     pickle.dump(self.cachedLFNAncestors, cacheFile_o)
                     pickle.dump(self.cachedNbRAWFiles, cacheFile_o)
                     pickle.dump(self.cachedLFNSize, cacheFile_o)
