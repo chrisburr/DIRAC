@@ -1,3 +1,20 @@
+[v10.3.4]
+*Core
+
+CHANGE: (!1151) Python 2.7 is no longer supported
+
+*TransformationSystem
+
+FIX: (!1150) Issues with ByRun plugin found when running stripping validation
+
+*ProductionManagement
+
+FIX: (!1149) Calling ProductionManagement.execProductionScript with Python 3
+FIX: (!1147) Commit transaction before vacuuming in NotifyAgent
+FIX: (!1147) Finding path to cache.db in Python 3 based installations
+
+
+
 v10r3p3
 Based on DIRAC v7r3p11
 LHCbWebDIRAC v5r4p2
