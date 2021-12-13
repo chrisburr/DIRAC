@@ -448,17 +448,17 @@ MR_SWEEP:
   script:
     - python /sweep_MR.py -p ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} -b origin/${CI_COMMIT_REF_NAME} -t ${SWEEP_TOKEN} -s "${SWEEP_SINCE}" -u "${SWEEP_UNTIL}" --repository-root ${PWD}
 
-deploy-to-pypi:
+build-wheel-and-maybe-deploy-to-pypi:
   stage: upload_pypi
-  only:
-    - tags@lhcb-dirac/LHCbDIRAC
-  except:
-    - /^v[0-9]+r[0-9]+.+$/
   image: registry.cern.ch/docker.io/library/python:3.9
   before_script:
     - pip install twine wheel setuptools-scm[toml]
   script:
-    - python setup.py sdist
-    - python setup.py bdist_wheel
-    - if [ -z "$TWINE_PASSWORD" ] ; then echo "Set TWINE_PASSWORD in CI variables" ; exit 1 ; fi
-    - twine upload -u __token__ dist/*
+    - python -m build
+    - twine check --strict dist/*
+    # If this is a tag upload the distributions to PyPI
+    - |
+      if [ -z ${CI_COMMIT_TAG:-} ]; then
+        if [ -z "$TWINE_PASSWORD" ] ; then echo "Set TWINE_PASSWORD in CI variables"; exit 1; fi
+        twine upload -u __token__ dist/*
+      fi
