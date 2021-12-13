@@ -32,7 +32,9 @@ ENTRYPOINT [ "/opt/dirac/dockerEntrypoint.sh" ]
 ARG LHCB_DIRAC_VERSION
 
 RUN \
-    curl -L -o dirac-install https://raw.githubusercontent.com/DIRACGrid/management/master/dirac-install.py \
-    && chmod +x dirac-install \
-    && ./dirac-install -r ${LHCB_DIRAC_VERSION} -l LHCb -e LHCb -t server -i 27 \
-    && rm -rf /opt/dirac/.installCache
+    cd /tmp && \
+    curl -LO https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-x86_64.sh && \
+    bash DIRACOS-Linux-x86_64.sh -u -p /opt/dirac && \
+    source /opt/dirac/diracosrc && \
+    pip install "LHCbDIRAC==${LHCB_DIRAC_VERSION}" && \
+    rm -rf DIRACOS-Linux-x86_64.sh
