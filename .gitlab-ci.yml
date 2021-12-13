@@ -452,7 +452,7 @@ build-wheel-and-maybe-deploy-to-pypi:
   stage: upload_pypi
   image: registry.cern.ch/docker.io/library/python:3.9
   before_script:
-    - pip install twine wheel setuptools-scm[toml]
+    - pip install build twine wheel setuptools-scm[toml]
   script:
     - python -m build
     - twine check --strict dist/*
