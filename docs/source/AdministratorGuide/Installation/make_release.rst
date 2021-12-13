@@ -32,11 +32,11 @@ The release manager of LHCbDIRAC has the triple role of:
 Unless otherwise specified, (patch) releases of LHCbDIRAC are usually done "on top" of the latest production release of DIRAC.
 The following of this guide assumes the above is true.
 
-Creating a release of LHCbDIRAC means creating a tarball that contains the release code. This is done in 3 steps:
+Releases of LHCbDIRAC are stored on the `Python Package Index (PyPI) <https://pypi.org/>`__ and created in 3 steps:
 
 1. Merging "Merge Requests"
 2. Propagating to the devel branch (for patches)
-3. Creating the release tarball, add uploading it to the LHCb web service
+3. Creating a tag in Git and uploading it to the . This is typically handled by a manually triggered CI job.
 
 
 Merging "Merge Requests"
@@ -112,31 +112,31 @@ Create/Trigger release
 ``````````````````````
 
 To create a release you go to the pipelines https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/-/pipelines and go the last pipeline of the branch you want to tag.
-At the end of the pipeline there is a manual trigger job with name `make_tag`, you clic on it and you will get the following windows
+At the end of the pipeline there is a manual trigger job with name `make_tag`, you click on it and you will get the following windows
 
 .. image:: trigger.png
   :width: 500
   :alt: trigger jobs
 
-As key you can specify the versions you want your release to be based upon. If you don't specify any version only the LHCbDIRAC patch version will be increased for +1.
-After you have set the proper values press trigger this manual action. This will create the release for you and creating the release tarball, and uploading it to the LHCb web service
+If you don't specify any version (with `VERSION`) only the LHCbDIRAC patch/alpha/beta/rc version will be increased for +1.
+This will create the release notes and tag.
 
 Automatic procedure
 ```````````````````
 
-When a new git tag is pushed to the repository, a gitlab-ci job takes care of testing, creating the tarball, uploading it to the web service, and to build the docker image. You can check it in the pipeline page of the repository (https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines).
+When a new git tag is pushed to the repository, a gitlab-ci job takes care of testing, creating the sdist/bdist, uploading it to PyPI, and to build the docker image.
+You can check it in the pipeline page of the repository (https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines).
 
-It may happen that the pipeline fails. There are various reasons for that, but normally, it is just a timeout on the runner side, so just restart the job from the pipeline web interface. If it repeatedly fails building the tarball, try the manual procedure described bellow to understand.
+It may happen that the pipeline fails.
+Often it is just a glitch on the runner side, if so just restart the job from the pipeline web interface.
 **If any of the pipelines fails, don't try to do a release manually but rather investigate why.**
 
 
-2. Making basic verifications
-=============================
+2. Make an LHCbWebDIRAC release (if required)
+=============================================
 
-Once the tarball is done and uploaded, the release manager is asked to make basic verifications,
-to see if the release has been correctly created. Within GitLab-CI, at https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/pipelines we run unit and integrations tests.
-Please check that the pipeline for the tag passes before proceeding further.
-
+LHCbWebDIRAC releases are made by simply checking the last CI pipeline was successful and then creating a tag using the GitLab web interface.
+GitLab CI should then test and upload this tag to PyPI.
 
 3. Advertise the new release
 ============================
@@ -145,7 +145,6 @@ Before you start the release you must write an Elog entry 1 hour before you star
 You have to select Production and Release tick boxes.
 
 When the intervention is over you must notify the users (reply to the Elog message).
-
 
 4. Deploying the release
 ========================
@@ -174,19 +173,16 @@ Server
 Method 1 (preferred): inside the tag pipeline
 `````````````````````````````````````````````
 The CI pipeline associate the tag pipeline has a manual job ``update_instance`` which you have to trigger. This will automatically apply the release to all machines that that constitute the respective instance.
-In the case of normal tags this is the production instance and in the case of ``-pre`` tag this is the certification instance.
+In the case of normal tags this is the production instance and in the case of alpha/beta/release candidate tag this is the certification instance.
 The update is based on the dirac command ``dirac-admin-update-instance``. The same job will also update the pilot version via ``dirac-admin-update-pilot``.
-
 
 Method 2: web portal
 ````````````````````
 
-
 Using the web portal:
   * You cannot do all the machines at once. Select a bunch of them (between 5 and 10). Fill in the version number and click update.
-  * Repeate until you have them all.
+  * Repeat until you have them all.
   * Start again selecting them by block, but this time, click on "restart" to restart the components.
-
 
 Method 3: interactive via sysadmin cli
 ``````````````````````````````````````
@@ -195,7 +191,7 @@ To install it on the VOBOXes from lxplus::
 
   lhcb-proxy-init -g lhcb_admin
   dirac-admin-sysadmin-cli --host lbvoboxXYZ.cern.ch
-  > update LHCbDIRAC v9r3p3
+  > update LHCbDIRAC v10.4.2
   > restart *
 
 Pilot
@@ -203,7 +199,7 @@ Pilot
 
 Update the pilot version from the CS, keeping 2 pilot versions, for example:
 
-   /Operation/LHCb-Production/Pilot/Version = v9r3p3, v9r3p2
+   /Operation/LHCb-Production/Pilot/Version = v10.4.2, v10.4.1
 
 The newer version should be the first in the list
 
@@ -213,10 +209,15 @@ This script will make sure that the pilot version is update BOTH in the CS and i
 
 .. _devel_to_master:
 
-5. Making a major releases
+1. Making a major releases
 ==========================
 
-Making a major release is a manual intervention, especially as in the CI it is on many places expected that a tag exists.
+Making a major release requires manual intervention to update the package dependencies by editing the `setup.cfg` files of each package.
+
+* We typically constrain LHCb(Web)DIRAC to a specific minor release series
+* LHCbDIRAC has the dependency on DIRAC
+* LHCbWebDIRAC has the dependency on LHCbDIRAC
+* To update LHCbWebDIRAC this there will need to be a compatible (pre)release of LHCbDIRAC available first
 
 The procedure is the same for LHCbWebDIRAC and LHCbDIRAC: you basically want ``devel`` to become the new ``master``. In order to do so::
 
@@ -241,10 +242,12 @@ The procedure is the same for LHCbWebDIRAC and LHCbDIRAC: you basically want ``d
   # push back
   git push upstream/master
 
-You can then trigger the release pipeline normally. Beware though: the version needs a patch number, so you have to call it for example ``v10r3p0`` (as opposed to ``v10r3``). This is because of assumptions in the release scripts that are too annoying to fix for something that will anyway soon disappear...
+You can then trigger the release pipeline normally, specifying a version such as ``v10.4.0``.
 
 Note about the git procedure
 ````````````````````````````
 
-Ultimately, the aim is that ``devel`` becomes our new ``master``. However, bluntly doing this would resoled in conflicts for everybody that has a clone of the LHCbDIRAC repo. Thus, this idea of doing a merge with the ``-s ours`` strategy. This allows to create a commit that has as parent both ``master`` and ``devel``, and avoid any forced push.
+Ultimately, the aim is that ``devel`` becomes our new ``master``.
+However, bluntly doing this would resoled in conflicts for everybody that has a clone of the LHCbDIRAC repo.
+Thus, this idea of doing a merge with the ``-s ours`` strategy. This allows to create a commit that has as parent both ``master`` and ``devel``, and avoid any forced push.
 The rest of the procedure (``rm/checkout``) is to make sure that we do not keep files that were meant to be in ``master`` only.
