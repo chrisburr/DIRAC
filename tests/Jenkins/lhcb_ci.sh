@@ -65,7 +65,7 @@ findRelease(){
 diracServices(){
   echo '==> [diracServices]'
 
-  services=$(cat services | cut -d '.' -f 1 | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
+  services=$(cat services | cut -d '.' -f 1 | grep -v Tornado | grep -Ev '(PilotsLogging|FTSManagerHandler|StorageElementHandler|^ConfigurationSystem|Plotting|RAWIntegrity|RunDBInterface|ComponentMonitoring|WMSSecureGW)' | sed -e 's/System / /g' -e 's/Handler//g' -e 's/ /\//g')
 
   for serv in ${services}
   do
