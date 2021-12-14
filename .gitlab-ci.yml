@@ -146,6 +146,7 @@ integration_tests:
     matrix:
       - TEST_COMMAND:
           - python3 ./integration_tests.py create "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" USE_PYTHON3=Yes --extra-module LHCbDIRAC=../LHCbDIRAC
+          - python3 ./integration_tests.py create "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" USE_PYTHON3=Yes TEST_HTTPS=Yes --extra-module LHCbDIRAC=../LHCbDIRAC
   before_script:
     # Install dependencies
     - apk add docker py3-pip python3 bash git docker-compose jq curl
