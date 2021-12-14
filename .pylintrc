@@ -144,6 +144,9 @@ generated-members=REQUEST,acl_users,aq_parent
 # subprocess32 is disabled due to https://github.com/PyCQA/astroid/issues/911
 ignored-modules = MySQLdb,numpy,six.moves.urllib,subprocess32,rucio
 
+# List of decorators that change the signature of a decorated function.
+signature-mutators=inject_session
+
 [VARIABLES]
 
 # Tells whether we should check for unused import in __init__ files.
