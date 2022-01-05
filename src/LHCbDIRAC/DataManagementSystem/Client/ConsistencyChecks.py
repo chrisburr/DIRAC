@@ -262,6 +262,8 @@ class ConsistencyChecks(DiracConsistencyChecks):
         """get the replicas using the standard DataManager.getReplicas()"""
         present = set()
         notPresent = set()
+        if not lfns:
+            return [], []
         lfns = set(lfns)
 
         chunkSize = 100
