@@ -119,7 +119,7 @@ def main():
 
     # Flag the run realData first
 
-    res = bkClient.setRunAndProcessingPassDataQuality(run, realData, flag)
+    res = bkClient.setRunAndProcessingPassDataQuality(irun, realData, flag)
 
     if not res["OK"]:
         print(res["Message"])
@@ -129,7 +129,7 @@ def main():
 
     # Now the reconstruction and stripping processing passes
     for thisPass in recoPasses:
-        res = bkClient.setRunAndProcessingPassDataQuality(run, thisPass, flag)
+        res = bkClient.setRunAndProcessingPassDataQuality(irun, thisPass, flag)
 
         if not res["OK"]:
             print(res["Message"])
