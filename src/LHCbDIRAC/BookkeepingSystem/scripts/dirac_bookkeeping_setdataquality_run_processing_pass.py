@@ -73,7 +73,7 @@ def main():
     processing = args[0].replace("/RealData", realData)
     if processing == "":
         processing = realData
-    run = args[1]
+    run = int(args[1])
     flag = args[2]
 
     # gLogger.error('Please wait for the OK from Stefan before actually flagging')
@@ -90,14 +90,13 @@ def main():
     #
     # Make sure it is a known processing pass
     #
-    irun = int(run)
 
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
     bkClient = BookkeepingClient()
-    res = bkClient.getRunInformations(irun)
+    res = bkClient.getRunInformations(run)
     if not res["OK"]:
-        gLogger.error("Cannot load the information for run %s" % (run))
+        gLogger.error("Cannot load the information for run %d" % run)
         gLogger.error(res["Message"])
         DIRAC.exit(2)
 
@@ -119,23 +118,23 @@ def main():
 
     # Flag the run realData first
 
-    res = bkClient.setRunAndProcessingPassDataQuality(irun, realData, flag)
+    res = bkClient.setRunAndProcessingPassDataQuality(run, realData, flag)
 
     if not res["OK"]:
         print(res["Message"])
         DIRAC.exit(2)
     else:
-        print("Run %s RAW files flagged %s" % (run, flag))
+        print("Run %d RAW files flagged %s" % (run, flag))
 
     # Now the reconstruction and stripping processing passes
     for thisPass in recoPasses:
-        res = bkClient.setRunAndProcessingPassDataQuality(irun, thisPass, flag)
+        res = bkClient.setRunAndProcessingPassDataQuality(run, thisPass, flag)
 
         if not res["OK"]:
             print(res["Message"])
             DIRAC.exit(2)
         else:
-            print("Run %s Processing Pass %s flagged %s" % (run, thisPass, flag))
+            print("Run %d Processing Pass %s flagged %s" % (run, thisPass, flag))
 
     DIRAC.exit(0)
 
