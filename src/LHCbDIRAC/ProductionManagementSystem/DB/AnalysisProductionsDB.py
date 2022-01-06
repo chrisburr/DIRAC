@@ -28,7 +28,14 @@ from DIRAC.ConfigurationSystem.Client.Utilities import getDBParameters
 from DIRAC.Core.Base.DIRACDB import DIRACDB
 from DIRAC.Core.Utilities.ReturnValues import returnValueOrRaise
 
-from .AnalysisProductionsObjects import Base, AnalysisSample as AP, AutoTag, Tag, Request, User
+from LHCbDIRAC.ProductionManagementSystem.DB.AnalysisProductionsObjects import (
+    Base,
+    AnalysisSample as AP,
+    AutoTag,
+    Tag,
+    Request,
+    User,
+)
 
 
 def inject_session(func):

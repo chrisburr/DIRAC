@@ -26,7 +26,7 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from tqdm import tqdm
 
-from ..DB.AnalysisProductionsDB import AnalysisProductionsDB
+from LHCbDIRAC.ProductionManagementSystem.DB.AnalysisProductionsDB import AnalysisProductionsDB
 
 optDate = (type(None), datetime)
 optString = (type(None), str)

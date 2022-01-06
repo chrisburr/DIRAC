@@ -13,12 +13,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-__RCSID__ = "$Id$"
-
-try:
-    from enum import Enum, auto
-except ImportError:
-    from enum34 import Enum, auto
+from enum import Enum
 
 
 class APStates(str, Enum):
