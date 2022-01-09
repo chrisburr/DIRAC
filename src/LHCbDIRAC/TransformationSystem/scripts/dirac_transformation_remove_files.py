@@ -17,30 +17,7 @@ from __future__ import print_function
 __RCSID__ = "$Id$"
 
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
-
-
-def __getTransformations(args):
-    from DIRAC.Core.Base import Script
-    from DIRAC import gLogger
-
-    transList = []
-    if not len(args):
-        print("Specify transformation number...")
-        Script.showHelp()
-    else:
-        ids = args[0].split(",")
-        try:
-            for transID in ids:
-                r = transID.split(":")
-                if len(r) > 1:
-                    for i in range(int(r[0]), int(r[1]) + 1):
-                        transList.append(i)
-                else:
-                    transList.append(int(r[0]))
-        except Exception as e:
-            gLogger.exception("Invalid transformation", lException=e)
-            transList = []
-    return transList
+from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
 
 @DIRACScript()
@@ -60,15 +37,13 @@ def main():
             [
                 __doc__,
                 "Usage:",
+                "Set files as Removed in a (set of) transformations",
                 "  %s [option|cfgfile] ..." % Script.scriptName,
             ]
         )
     )
 
-    runInfo = True
-    userGroup = None
-
-    transList = __getTransformations(Script.getPositionalArgs())
+    transList = getTransformations(Script.getPositionalArgs())
     if not transList:
         DIRAC.exit(1)
 

@@ -28,15 +28,14 @@ def main():
 
     import DIRAC
     from LHCbDIRAC.TransformationSystem.Agent.TransformationCleaningAgent import TransformationCleaningAgent
+    from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
     if len(sys.argv) < 2:
         print("Usage: dirac-transformation-archive transID [transID] [transID]")
         DIRAC.exit(1)
     else:
-        try:
-            transIDs = [int(arg) for arg in sys.argv[1:]]
-        except BaseException:
-            print("Invalid list of transformations")
+        transIDs = getTransformations(sys.argv[1:])
+        if not transIDs:
             DIRAC.exit(1)
 
     agent = TransformationCleaningAgent(

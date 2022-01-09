@@ -60,6 +60,8 @@ def main():
     Script.parseCommandLine(ignoreErrors=True)
 
     from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+    from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
+
     from DIRAC import gLogger
 
     tr = TransformationClient()
@@ -74,7 +76,7 @@ def main():
     if "body" not in infoList and "Body" in requestedInfo:
         requestedInfo.remove("Body")
 
-    transIDs = Script.getPositionalArgs()
+    transIDs = getTransformations(Script.getPositionalArgs())
 
     for transID in transIDs:
         try:
