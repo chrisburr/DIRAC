@@ -620,10 +620,9 @@ class BKQuery:
                     lfnsExcept = set()
                 if lfnsExcept:
                     gLogger.warn(
-                        "***** WARNING ***** Found %d files in BK query that will be \
-          excluded (file type in %s)!"
-                        % (len(lfnsExcept), str(exceptFiles))
+                        "***** WARNING ***** Found %d files in BK query that will be excluded!" % len(lfnsExcept)
                     )
+                    gLogger.verbose("Exclusion file types", str(exceptFiles))
                     gLogger.warn("                    If creating a transformation, set '--FileType ALL'")
                     lfns = lfns - lfnsExcept
                 else:
