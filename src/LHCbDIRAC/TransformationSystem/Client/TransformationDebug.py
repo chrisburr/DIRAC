@@ -138,9 +138,8 @@ def _getLog(urlBase, logFile, debug=False):
                     if debug:
                         print("File read")
                     break
-            except IOError as e:
-                if debug:
-                    print("Exception opening %s: %s" % (url, repr(e)))
+            except (IOError, ValueError) as e:
+                print("Exception opening %s: %s" % (url, repr(e)))
                 break
             finally:
                 if fd:
@@ -1481,7 +1480,7 @@ class TransformationDebug(object):
             gLogger.notice("\nSummary of failures due to: Application Exited with non-zero status")
             lfnDict = {}
             partial = "Partial (last event "
-            for (lfn, reason), jobs in failedLfns.items():
+            for (lfn, reason), jobs in list(failedLfns.items()):
                 if partial not in reason:
                     continue
                 failedLfns.pop((lfn, reason))
