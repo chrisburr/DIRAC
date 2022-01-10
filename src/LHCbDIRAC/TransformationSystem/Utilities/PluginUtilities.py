@@ -985,12 +985,19 @@ get from BK"
 
         # Now try and get the cached information
         tmpDir = os.environ.get("TMPDIR", "/tmp")
-        cacheFiles = ((workDirectory, ("TransPluginCache")), (tmpDir, ("dirac", "TransPluginCache")))
+        cacheFiles = (
+            (workDirectory, ("TransPluginCache",)),
+            (
+                tmpDir,
+                (
+                    "dirac",
+                    "TransPluginCache",
+                ),
+            ),
+        )
         for (cacheFile, prefixes) in cacheFiles:
             if not cacheFile:
                 continue
-            if isinstance(prefixes, str):
-                prefixes = [prefixes]
             for node in prefixes:
                 cacheFile = os.path.join(cacheFile, node)
                 mkDir(cacheFile)
@@ -1491,6 +1498,16 @@ get from BK"
 
     def getPendingTasks(self, transType):
         """Get the number of tasks/files not yet running for each TargetSE as a dictionary"""
+
+        # First check the cycling period
+        now = datetime.datetime.utcnow()
+        period = self.getPluginParam("Period", 6)
+        if self.lastCall and (now - self.lastCall) < datetime.timedelta(hours=period):
+            self.logInfo("Skip this loop (less than %s hours since last call)" % period)
+            return S_OK(None)
+        self.lastCall = now
+        self.writeCacheFile()
+
         res = self.transClient.getTransformations({"Type": transType, "Status": "Active"})
         if not res["OK"]:
             return res

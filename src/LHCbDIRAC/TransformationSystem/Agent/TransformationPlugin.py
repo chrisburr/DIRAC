@@ -24,7 +24,6 @@ from collections import defaultdict
 import time
 import random
 import sys
-from collections import defaultdict
 import six
 
 from DIRAC import S_OK, S_ERROR
@@ -518,6 +517,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
             se for se in resolveSEGroup(self.util.getPluginParam("FromSEs", [])) if StorageElement(se).status()["Read"]
         )
         maxTime = self.util.getPluginParam("MaxTimeAllowed", 0)
+        # Read the cached information from disk
+        self.util.readCacheFile(self.workDirectory)
         # Is throttling on pending tasks requested?
         throttleLimit = self.util.getPluginParam("ThrottlePendingTasks", 0)
         if throttleLimit:
@@ -526,6 +527,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
             if not res["OK"]:
                 self.util.logError("Error getting number of pending tasks", res["Message"])
                 return res
+            if res["Value"] is None:
+                return S_OK([])
             self.pendingTasksPerSE = res["Value"]
             # If throttling is requested, remove some files
             self.util.throttleFiles(fromSEs, self.pendingTasksPerSE, throttleLimit)
@@ -538,8 +541,6 @@ class TransformationPlugin(DIRACTransformationPlugin):
         addAncestors = self.util.getPluginParam(
             "UseAncestors", bool(self.params["Type"] == "DataStripping") and fileType != "FULL.DST"
         )
-        # Read the cached information from disk
-        self.util.readCacheFile(self.workDirectory)
 
         # Group files by run number and value of parameter "param"
         self.util.logInfo("Grouping %d files by runs %s " % (len(self.transFiles), "and %s" % param if param else ""))
@@ -1317,6 +1318,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
         if replicas is None:
             replicas = self.transReplicas
 
+        # Read the cached information from disk
+        self.util.readCacheFile(self.workDirectory)
         # Is throttling on pending transfers requested?
         throttleLimit = self.util.getPluginParam("ThrottlePendingTasks", 0)
         if throttleLimit and not self.pendingTasksPerSE:
@@ -1325,6 +1328,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
             if not res["OK"]:
                 self.util.logError("Error getting number of pending tasks", res["Message"])
                 return res
+            if res["Value"] is None:
+                return S_OK([])
             # Set them as data members as the method can be called in a loop
             self.pendingTasksPerSE = res["Value"]
 
@@ -1660,6 +1665,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
             return S_OK([])
         destSEs = set(maxFilesAtSE)
 
+        # Read the cached information from disk
+        self.util.readCacheFile(self.workDirectory)
         # Is throttling on pending transfers requested?
         throttleLimit = self.util.getPluginParam("ThrottlePendingTasks", 0)
         if throttleLimit:
@@ -1668,6 +1675,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
             if not res["OK"]:
                 self.util.logError("Error getting number of pending tasks", res["Message"])
                 return res
+            if res["Value"] is None:
+                return S_OK([])
             self.self.pendingTasksPerSE = res["Value"]
 
         overflowSEs = set(resolveSEGroup(self.util.getPluginParam("OverflowSEs", [])))
