@@ -1864,13 +1864,17 @@ def executeAddFile():
             exitCode = 3
             gLogger.error("Error: failed to upload %s to %s" % (localFile, lfnDict["SE"]), res["Message"])
         else:
-            if lfn in res["Value"]["Successful"]:
+            success = res["Value"]["Successful"].get(lfn, [])
+            if success and not ({"put", "register"} - set(success)):
                 gLogger.notice(
-                    "Successfully uploaded %s to %s (%.1f seconds)"
-                    % (localFile, lfnDict["SE"], res["Value"]["Successful"][lfn]["put"])
+                    "Successfully uploaded/registered %s to %s (%.1f/%.1f seconds)"
+                    % (localFile, lfnDict["SE"], success["put"], success["register"])
                 )
             else:
-                gLogger.error("Error: failed to upload %s to %s" % (lfn, lfnDict["SE"]), res["Value"]["Failed"][lfn])
+                gLogger.error(
+                    "Error: failed to upload file",
+                    "%s to %s:\n\t %s" % (lfn, lfnDict["SE"], res["Value"]["Failed"][lfn]),
+                )
         if remoteFile:
             os.remove(localFile)
 
