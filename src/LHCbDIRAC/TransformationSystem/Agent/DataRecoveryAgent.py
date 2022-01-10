@@ -32,12 +32,6 @@ For files in MaxReset and Assigned:
   o if there is no replica flag can proceed with file removal from LFC / storage (can be disabled by flag)
 - Mark the recovered input file status as 'Unused' in the ProductionDB if they were not in MaxReset
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import datetime
 
 from DIRAC import S_OK
@@ -214,12 +208,14 @@ class DataRecoveryAgent(AgentModule):
                 )
 
             if filesWithDescendants:
-                # FIXME: we should mark these files with another status such that they are not considered again and again
-                # In addition a notification should be sent to the production managers
                 self.transLogger.warn(
                     "\t!!!!!!!! Transformation has descendants for files that are not marked as processed !!!!!!!!"
                 )
                 self.transLogger.warn("\tFiles with descendants:", ",".join(filesWithDescendants))
+                self.transLogger.info("\tUpdating %d files to '%s'" % (len(filesWithDescendants), "Processed"))
+                result = self.__updateFileStatus(transformation, filesWithDescendants, "Processed")
+                if not result["OK"]:
+                    self.transLogger.error("\tRecovered files were not updated", result["Message"])
 
         return S_OK()
 
