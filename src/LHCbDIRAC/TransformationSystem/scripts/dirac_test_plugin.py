@@ -72,10 +72,16 @@ class FakeClient(object):
             "RAL-RAW",
             "RRCKI-RAW",
         ]
-        counters = []
-        for se in possibleTargets:
-            counters.append(({"UsedSE": se}, 0))
+        counters = [({"UsedSE": se}, 0) for se in possibleTargets]
         return DIRAC.S_OK(counters)
+
+    def getTransformations(self, cond):
+        res = self.transClient.getTransformations(cond)
+        if res["OK"]:
+            res["Value"].append({"TransformationID": self.transID})
+            if self.asIfProd and self.asIfProd not in [t["TransformationID"] for t in res["Value"]]:
+                res["Value"].append({"TransformationID": self.asIfProd})
+        return res
 
     def getBookkeepingQuery(self, transID):
         if transID == self.transID and self.asIfProd:
@@ -282,7 +288,6 @@ def main():
 
     from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
     from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
-    from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
     from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import getRemovalPlugins, getReplicationPlugins
     from DIRAC import gLogger
 

@@ -8,6 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+
 """TransformationPlugin is a class wrapping the supported LHCb transformation
 plugins."""
 from __future__ import absolute_import
@@ -19,11 +20,12 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
+from collections import defaultdict
 import time
 import random
 import sys
-import six
 from collections import defaultdict
+import six
 
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Utilities.List import breakListIntoChunks, randomize
@@ -87,6 +89,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
 
         self.processingShares = ({}, {})
         self._alreadyProcessedLFNs = {}
+        self.pendingTasksPerSE = {}
+        self.throttledFilesPerSE = defaultdict(int)
 
     def voidMethod(self, _id, invalidateCache=False):
         return
@@ -514,6 +518,19 @@ class TransformationPlugin(DIRACTransformationPlugin):
             se for se in resolveSEGroup(self.util.getPluginParam("FromSEs", [])) if StorageElement(se).status()["Read"]
         )
         maxTime = self.util.getPluginParam("MaxTimeAllowed", 0)
+        # Is throttling on pending tasks requested?
+        throttleLimit = self.util.getPluginParam("ThrottlePendingTasks", 0)
+        if throttleLimit:
+            # Get the number of not yet running jobs for this trans type at each SE
+            res = self.util.getPendingTasks(self.params["Type"])
+            if not res["OK"]:
+                self.util.logError("Error getting number of pending tasks", res["Message"])
+                return res
+            self.pendingTasksPerSE = res["Value"]
+            # If throttling is requested, remove some files
+            self.util.throttleFiles(fromSEs, self.pendingTasksPerSE, throttleLimit)
+            if not self.transFiles:
+                return S_OK([])
 
         # Check if ancestors are required: this flag defaults to True for DataStripping transformations
         lfn = list(self.transReplicas)[0]
@@ -542,41 +559,13 @@ class TransformationPlugin(DIRACTransformationPlugin):
         inputData = self.transReplicas.copy()
         setInputData = set(inputData)
         runEvtType = {}
-        # Restart where we finished last time and wrap to beginning
-        lastRun = self.util.getCachedLastRun()
-        runNumbers = sorted(run["RunNumber"] for run in transRuns if run["RunNumber"] > lastRun) + sorted(
-            run["RunNumber"] for run in transRuns if run["RunNumber"] <= lastRun
-        )
-        # Find out how many files we have currently Unused per run
-        res = self.transClient.getTransformationFilesCount(
-            self.transID, "RunNumber", {"Status": "Unused", "RunNumber": runNumbers}
-        )
-        if not res["OK"]:
-            self.util.logError("Error getting file counts per run", res["Message"])
+
+        # Get the list of runs as we may have a reduced list
+        res = self.util.getRunList(transRuns, runFileDict)
+        if not res["OK"] or not res["Value"]:
             return res
-        unusedFilesPerRun = res["Value"]
-        # Check that the total number of files we got for that run is equal to the number of Unused files
-        nRunsLeft = len(runNumbers)
-        for runID in list(runNumbers):
-            runFiles = sum(len(lfns) for lfns in runFileDict[runID].values())  # can be an iterator
-            if runFiles != unusedFilesPerRun.get(runID, 0):
-                runNumbers.remove(runID)
-        if nRunsLeft != len(runNumbers):
-            self.util.logWarn("Removed %d runs with less files than Unused" % (nRunsLeft - len(runNumbers)))
-            nRunsLeft = len(runNumbers)
-        # Get the list of runs in the same order as runNumbers
-        runList = sorted(
-            (run for run in transRuns if run["RunNumber"] in runNumbers),
-            key=lambda x: runNumbers.index(x["RunNumber"]),
-        )
-        if nRunsLeft:
-            self.util.logInfo(
-                "Processing %d runs between runs %d and %d, starting at run %d"
-                % (nRunsLeft, min(runNumbers), max(runNumbers), runNumbers[0])
-            )
-        else:
-            self.util.logInfo("No runs to process, exit")
-            return S_OK([])
+        runList = res["Value"]
+        nRunsLeft = len(runList)
         #
         # # # # # # # Loop on all selected runs # # # # # # #
         #
@@ -617,12 +606,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
                 )
                 runFlush = requireFlush
                 if runFlush:
-                    # Determine which event type is used, in order to get the corresponding number of RAW files
-                    if not runEvtType.get(paramValue):
-                        lfn = paramDict[paramValue][0]
-                        runEvtType[paramValue] = self.util.getMetadataFromTSorBK(lfn, "EventType")[lfn]
-                        self.util.logDebug("Event type%s: %s" % (paramStr, str(runEvtType[paramValue])))
-                    evtType = runEvtType[paramValue]
+                    evtType = self.util.getEventType(paramDict[paramValue][0], runEvtType, paramValue)
+                    self.util.logDebug("Event type%s: %s" % (paramStr, evtType))
                     if not evtType:
                         runFlush = False
                 runParamReplicas = {}
@@ -652,85 +637,23 @@ class TransformationPlugin(DIRACTransformationPlugin):
                     self._removeProcessedFiles()
                 # Backward compatibility for calling helper plugin
                 self.data = self.transReplicas
-                status = runStatus
-                if status != "Flush" and runFlush:
-                    # If all files in that run have been processed and received, flush
-                    # Get the number of RAW files in that run
-                    if not forceFlush:
-                        retried = False
-                        ancestorRawFiles = self.util.getRAWAncestorsForRun(runID, param, paramValue)
-                        self.util.logVerbose("Obtained %d ancestor RAW files" % ancestorRawFiles)
-                        while True:
-                            rawFiles = self.util.getNbRAWInRun(runID, evtType)
-                            if not retried and rawFiles and ancestorRawFiles > rawFiles:
-                                # In case there are more ancestors than RAW files
-                                # we may have to refresh the number of RAW files: try once
-                                self.util.cachedNbRAWFiles[runID][evtType] = 0
-                                retried = True
-                            else:
-                                runProcessed = ancestorRawFiles == rawFiles
-                                break
-                    else:
-                        runProcessed = False
-                    if forceFlush or runProcessed:
-                        if runProcessed:
-                            # The whole run was processed by the parent production and we received all files
-                            self.util.logInfo(
-                                "All RAW files (%d) ready for run %d%s- Flushing run" % (rawFiles, runID, paramStr)
-                            )
-                        status = "Flush"
-                        runStatus = status
-                        self.transClient.setTransformationRunStatus(self.transID, runID, "Flush")
-                    elif rawFiles:
-                        self.util.logVerbose(
-                            "Only %d ancestor RAW files (of %d) available for run %d"
-                            % (ancestorRawFiles, rawFiles, runID)
-                        )
+                # If flush is requested, check for it
+                if runFlush and runStatus != "Flush":
+                    runStatus = self.util.checkRunForFlush(
+                        runID, runStatus, forceFlush, param, paramValue, paramStr, evtType
+                    )
                 if runStatus == "Flush":
                     flushed.append((paramValue, len(self.transReplicas)))
-                # Now calling the helper plugin... Set status to a fake value
-                self.params["Status"] = status
+                # Now calling the helper plugin for that run... Set status to the run status
+                self.params["Status"] = runStatus
                 res = eval("self._%s()" % plugin)  # pylint: disable=eval-used
-                # Resetting status
-                self.params["Status"] = transStatus
                 if not res["OK"]:
                     return res
-                tasks = res["Value"]
-                if fromSEs:
-                    # The files and if needed its ancestors have to be in a set of SEs
-                    # This is used to force processing from disk replicas
-                    missingAncestors = 0
-                    okDict = {}
-                    # Group the LFNs by (set of) SEs in order to speed up the check for ancestors
-                    nbTasks = len(tasks)
-                    for task in tasks:
-                        # Restrict target SEs to those in fromSEs
-                        okSEs = fromSEs.intersection(task[0].split(","))
-                        if okSEs:
-                            okDict.setdefault(tuple(okSEs), []).append(task[1])
-                    # Create the real tasks now
-                    tasks = []
-                    for okSEs, taskLfns in okDict.items():  # can be an iterator
-                        if addAncestors:
-                            # taskLfns is modified by this method: lfns are eventually removed
-                            missing = self.util.checkAncestorsAtSE(taskLfns, fromSEs)
-                            if missing:
-                                missingAncestors += missing
-                        # Now create the list of tasks
-                        tasks += [(",".join(sorted(okSEs)), lfnList) for lfnList in taskLfns if lfnList]
-                    # Log if files are not at the required SEs
-                    if missingAncestors:
-                        missingAtSEs = True
-                        self.util.logInfo(
-                            "%d files have been removed from tasks as ancestors were not present at required SEs"
-                            % missingAncestors
-                        )
-                    if nbTasks != len(tasks):
-                        missingAtSEs = True
-                        self.util.logInfo(
-                            "%d tasks could not be created for run %d as files are not at required SEs"
-                            % (nbTasks - len(tasks), runID)
-                        )
+                # Resetting status
+                self.params["Status"] = transStatus
+                # Check that files (and ancestors) are at fromSEs if requested
+                tasks, missing = self.util.checkTasksFromSEs(runID, res["Value"], addAncestors, fromSEs)
+                missingAtSEs |= missing
                 self.util.logInfo("Created %d tasks for run %d%s" % (len(tasks), runID, paramStr))
                 allTasks.extend(tasks)
                 taskLfns = set(lfn for task in tasks for lfn in task[1])
@@ -1350,6 +1273,8 @@ class TransformationPlugin(DIRACTransformationPlugin):
                                 self.util.logError(
                                     "Failed to set target SEs to run %d as %s" % (runID, runTargets), res["Message"]
                                 )
+        if self.throttledFilesPerSE:
+            self.util.logInfo("Throttled removal of files", str(dict(self.throttledFilesPerSE)))
         return S_OK(tasks)
 
     def _RemoveDatasetFromDisk(self):
@@ -1391,6 +1316,17 @@ class TransformationPlugin(DIRACTransformationPlugin):
         minKeep = abs(minKeep)
         if replicas is None:
             replicas = self.transReplicas
+
+        # Is throttling on pending transfers requested?
+        throttleLimit = self.util.getPluginParam("ThrottlePendingTasks", 0)
+        if throttleLimit and not self.pendingTasksPerSE:
+            # Get the number of not yet running jobs for this trans type at each SE
+            res = self.util.getPendingTasks(self.params["Type"])
+            if not res["OK"]:
+                self.util.logError("Error getting number of pending tasks", res["Message"])
+                return res
+            # Set them as data members as the method can be called in a loop
+            self.pendingTasksPerSE = res["Value"]
 
         storageElementGroups = {}
         notInKeepSEs = []
@@ -1452,8 +1388,22 @@ class TransformationPlugin(DIRACTransformationPlugin):
                     continue
 
             if targetSEs:
-                stringTargetSEs = ",".join(targetSEs)
-                storageElementGroups.setdefault(stringTargetSEs, []).extend(lfns)
+                toRemove = len(lfns)
+                # Throttle if needed
+                if throttleLimit:
+                    for se in targetSEs:
+                        toRemove = min(toRemove, max(0, throttleLimit - self.pendingTasksPerSE[se]))
+                        if toRemove != len(lfns):
+                            self.util.logVerbose("Throttle files", "for %s" % se)
+                            self.throttledFilesPerSE[se] += len(lfns) - toRemove
+                            break
+                if toRemove:
+                    stringTargetSEs = ",".join(targetSEs)
+                    storageElementGroups.setdefault(stringTargetSEs, []).extend(lfns[:toRemove])
+                    # Count files as pending
+                    if throttleLimit:
+                        for se in targetSEs:
+                            self.pendingTasksPerSE[se] += toRemove
             else:
                 self.util.logInfo("Found %s files that don't need any replica deletion, set Processed" % len(lfns))
                 self.transClient.setFileStatusForTransformation(self.transID, "Processed", lfns)
@@ -1463,6 +1413,13 @@ class TransformationPlugin(DIRACTransformationPlugin):
                 "Found %d files not in at least one keepSE, no removal done, set Problematic" % len(notInKeepSEs)
             )
             self.transClient.setFileStatusForTransformation(self.transID, "Problematic", notInKeepSEs)
+
+        if (
+            throttleLimit
+            and self.throttledFilesPerSE
+            and self.plugin not in ("ReduceReplicasKeepDestination", "RemoveReplicasKeepDestination")
+        ):
+            self.util.logInfo("Throttled removal of files", str(dict(self.throttledFilesPerSE)))
 
         if self.pluginCallback:
             self.pluginCallback(self.transID, invalidateCache=True)
@@ -1702,6 +1659,17 @@ class TransformationPlugin(DIRACTransformationPlugin):
         if watermark is None:
             return S_OK([])
         destSEs = set(maxFilesAtSE)
+
+        # Is throttling on pending transfers requested?
+        throttleLimit = self.util.getPluginParam("ThrottlePendingTasks", 0)
+        if throttleLimit:
+            # Get the number of not yet running jobs for this trans type at each SE
+            res = self.util.getPendingTasks(self.params["Type"])
+            if not res["OK"]:
+                self.util.logError("Error getting number of pending tasks", res["Message"])
+                return res
+            self.self.pendingTasksPerSE = res["Value"]
+
         overflowSEs = set(resolveSEGroup(self.util.getPluginParam("OverflowSEs", [])))
         storageElementGroups = {}
 
@@ -1756,13 +1724,23 @@ class TransformationPlugin(DIRACTransformationPlugin):
                         # Select a single SE out of candidates; in most cases there is one only
                         candidateSE = candidateSEs[0]
                         maxToReplicate = maxFilesAtSE.get(candidateSE, sys.maxsize)
+                        reason = "(Max files reached)"
+                        # If throttling is requested, limit the number of files
+                        if throttleLimit:
+                            # Limit the number of files to replicate
+                            maxToReplicate = min(len(lfns), max(0, throttleLimit - self.pendingTasksPerSE[candidateSE]))
+                            reason = "(Throttling)"
                         if maxToReplicate < len(lfns):
                             self.util.logInfo(
-                                "Limit number of files for %s to %d (out of %d)"
-                                % (candidateSE, maxToReplicate, len(lfns))
+                                "Limit number of files %s for %s to %d (out of %d)"
+                                % (reason, candidateSE, maxToReplicate, len(lfns))
                             )
                         else:
+                            maxToReplicate = len(lfns)
                             self.util.logVerbose("Number of files for %s: %d" % (candidateSE, len(lfns)))
+                        # Count new files at candidateSE
+                        if throttleLimit:
+                            self.pendingTasksPerSE[candidateSE] += maxToReplicate
                         storageElementGroups.setdefault(candidateSE, []).extend(lfns[:maxToReplicate])
             else:
                 self.util.logWarn("Could not find a local SE for %d files, set them Problematic" % len(lfns))
