@@ -1521,7 +1521,7 @@ get from BK"
         else:
             # For WMS productions, count the number of tasks not yet Running
             transTable = "Tasks"
-            cond["ExternalStatus"] = ["Waiting", "Received", "Checking", "Created", "Submitted"]
+            cond["ExternalStatus"] = ["Waiting", "Received", "Checking", "Created", "Staging", "Submitted"]
             item = "TargetSE"
         self.logVerbose(
             "Get number of %s by %s" % (transTable, item), "for %s transformations %s" % (transType, str(transList))
