@@ -1,3 +1,11 @@
+[v10.4.6]
+*CI
+
+CHANGE: (!1165) Deploy job compatible with python3 versions
+CHANGE: (!1165) pre-commit more permissive with python3 versions
+
+
+
 [v10.4.5]
 Very minor changes, except an important fix for setting the DQ flag as it was crashing
 
