@@ -1538,7 +1538,17 @@ get from BK"
         return S_OK(pendingTasksPerSE)
 
     def throttleFiles(self, candidateSEs, pendingTasksPerSE, throttleLimit):
-        """Remove all files in excess to throttleLimit at SEs"""
+        """
+        Remove all files in excess to throttleLimit at SEs
+
+        I have tested this new throttling feature extensively with a set of real files and the dirac-test-plugin script.
+
+        It will be useful in the following circumstances:
+
+        Staging: one can put a large run range and let the system create requests by batches of e.g. 5000 files per SE
+        Stripping: similarly one can launch productions with a whole range and set the throttling limit to 5000
+        Large removals from disk: in order to not overload the RMS, one can create removals by few 1000's per SE
+        """
         removedFiles = defaultdict(int)
         self.logVerbose("Throttle files", "to %d per SE for SEs %s" % (throttleLimit, sorted(candidateSEs)))
         acceptedRuns = set()
