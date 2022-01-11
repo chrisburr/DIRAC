@@ -10,13 +10,8 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Adds a parameter to an existing transformation"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
-__RCSID__ = "$Id$"
-
-from DIRAC import gLogger, exit as dExit
+from DIRAC import gLogger
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 

@@ -10,11 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Set Data Quality Flag for the given run."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-__RCSID__ = "$Id$"
 
 import DIRAC
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
