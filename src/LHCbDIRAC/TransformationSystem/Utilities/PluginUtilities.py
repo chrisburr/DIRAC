@@ -1661,7 +1661,7 @@ get from BK"
             return S_OK([])
         return S_OK(runList)
 
-    def checkTasksFromSEs(self, runID, tasks, addAncestors, fromSEs):
+    def selectTasksFromSEs(self, runID, tasks, addAncestors, fromSEs):
         """
         Check that files (and ancestors) in tasks are at required SEs
         Update tasks list accordingly, and return it as well as a flag indicating if some were removed

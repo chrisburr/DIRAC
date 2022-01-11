@@ -653,7 +653,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                 # Resetting status
                 self.params["Status"] = transStatus
                 # Check that files (and ancestors) are at fromSEs if requested
-                tasks, missing = self.util.checkTasksFromSEs(runID, res["Value"], addAncestors, fromSEs)
+                tasks, missing = self.util.selectTasksFromSEs(runID, res["Value"], addAncestors, fromSEs)
                 missingAtSEs |= missing
                 self.util.logInfo("Created %d tasks for run %d%s" % (len(tasks), runID, paramStr))
                 allTasks.extend(tasks)
