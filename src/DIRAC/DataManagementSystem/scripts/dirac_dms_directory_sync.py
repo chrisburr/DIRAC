@@ -496,6 +496,8 @@ def run(parameters, delete, nthreads):
 
 @Script()
 def main():
+    global listOfFailedFiles
+
     Script.registerSwitch("D", "sync", "Make target directory identical to source")
     Script.registerSwitch("j:", "parallel=", "Multithreaded download and upload")
     # Registering arguments will automatically add their description to the help menu
