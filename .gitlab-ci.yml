@@ -265,7 +265,13 @@ deploy_on_cvmfs:
     - echo "$BOT_USERKEY_PEM" | tr -d '\r' > ~/.globus/userkey.pem
     - chmod 400 ~/.globus/userkey.pem
     - chmod 644  ~/.globus/usercert.pem
-    - INSTANCE=$(echo ${CI_COMMIT_TAG} | grep -qE '^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$'; if [ $? -eq 0 ]; then echo "lhcb.cern.ch"; else echo "lhcbdev.cern.ch"; fi)
+    - |
+      pat="([0-9\.]+)((a|b|rc)([0-9]+))"
+      if [[ "${CI_COMMIT_TAG}" =~ $pat ]]; then
+        INSTANCE="lhcbdev.cern.ch"
+      else
+        INSTANCE="lhcb.cern.ch"
+      fi
     - echo "Using LHCbDIRAC installation from /cvmfs/${INSTANCE}/lhcbdirac/"
     - source /cvmfs/${INSTANCE}/lhcbdirac/lhcbdirac
     - echo $BOT_CERT_PASSPHRASE | lhcb-proxy-init -g lhcb_admin -p
@@ -276,7 +282,7 @@ update_instance:
   stage: update
   script:
     - |
-      if [ ! -L "/cvmfs/${INSTANCE}/lhcbdirac/${CI_COMMIT_TAG}" ]; then
+      if [ ! -L "/cvmfs/${INSTANCE}/lhcbdirac/${CI_COMMIT_TAG}-x86_64" ]; then
        echo "New version not found in CVMFS"
        exit 1
       fi
