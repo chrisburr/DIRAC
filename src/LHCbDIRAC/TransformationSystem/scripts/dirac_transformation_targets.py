@@ -11,6 +11,7 @@
 ###############################################################################
 """Gets all Assigned files in a transformation and reports by target SE."""
 
+from collections import defaultdict
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 

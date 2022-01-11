@@ -1677,7 +1677,7 @@ class TransformationPlugin(DIRACTransformationPlugin):
                 return res
             if res["Value"] is None:
                 return S_OK([])
-            self.self.pendingTasksPerSE = res["Value"]
+            self.pendingTasksPerSE = res["Value"]
 
         overflowSEs = set(resolveSEGroup(self.util.getPluginParam("OverflowSEs", [])))
         storageElementGroups = {}
