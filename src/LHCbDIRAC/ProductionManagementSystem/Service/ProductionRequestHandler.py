@@ -17,14 +17,13 @@ from __future__ import print_function
 
 __RCSID__ = "$Id$"
 
+import importlib.resources
 import os
-import re
-import tempfile
 import subprocess
 import six
+import tempfile
 
-from DIRAC import gLogger, gConfig, S_OK, S_ERROR
-from DIRAC.ConfigurationSystem.Client import PathFinder
+from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.FrameworkSystem.Client.ProxyManagerClient import gProxyManager
 from DIRAC.Core.Utilities.Subprocess import shellCall
@@ -183,82 +182,41 @@ class ProductionRequestHandler(RequestHandler):
         """Return all the production progress."""
         return self.productionRequestDB.getAllProductionProgress()
 
-    @staticmethod
-    def __getTplFolder(tt):
-
-        csS = PathFinder.getServiceSection("ProductionManagement", "ProductionRequest")
-        if not csS:
-            return S_ERROR("No ProductionRequest parameters in CS")
-        tplFolder = gConfig.getValue("%s/templateFolder" % csS, "")
-        if not tplFolder:
-            return S_ERROR("No templateFolder in ProductionRequest parameters in CS")
-        if not os.path.exists(tplFolder) or not os.path.isdir(tplFolder):
-            return S_ERROR("Template Folder %s doesn't exist" % tplFolder)
-        return S_OK(tplFolder)
-
-    def __getTemplate(self, tt, name):
-        ret = self.__getTplFolder(tt)
-        if not ret["OK"]:
-            return ret
-        tplFolder = ret["Value"]
-        if not os.path.exists(os.path.join(tplFolder, name)):
-            return S_ERROR("Template %s doesn't exist" % name)
-        try:
-            with open(os.path.join(tplFolder, name)) as f:
-                body = f.read()
-        except OSError as e:
-            return S_ERROR("Can't read template", str(e))
-        return S_OK(body)
-
-    def __productionTemplateList(self, tt):
+    def __productionTemplatePaths(self):
         """Return production template list (file based)"""
-        ret = self.__getTplFolder(tt)
-        if not ret["OK"]:
-            return ret
-        tplFolder = ret["Value"]
-        tpls = [x for x in os.listdir(tplFolder) if os.path.isfile(os.path.join(tplFolder, x))]
-        results = []
-        for tpl in tpls:
-            if tpl[-1] == "~":
+        tplFolder = importlib.resources.files("LHCbDIRAC.ProductionManagementSystem") / "Templates"
+        for path in tplFolder.iterdir():
+            if not path.is_file() or path.name[-1] in [".", "~"]:
                 continue
-            result = self.__getTemplate(tt, tpl)
-            if not result["OK"]:
-                return result
-            body = result["Value"]
-            rcsid = re.search('__RCSID__ = "([^$]*)"', body)
-            ptime = ""
-            author = ""
-            ver = ""
-            if rcsid:
-                # the following line tries to extract author, publishing time, and version
-                rcsid = re.match(r"([^ ]+) \((.*)\) (.*)", rcsid.group(1))
-                if rcsid:
-                    ptime = rcsid.group(2)
-                    author = rcsid.group(3)
-                    ver = rcsid.group(1)
-                    tpl = {
-                        "AuthorGroup": "",
-                        "Author": author,
-                        "PublishingTime": ptime,
-                        "LongDescription": "",
-                        "WFName": tpl,
-                        "AuthorDN": "",
-                        "WFParent": "",
-                        "Description": ver,
-                    }
-                    results.append(tpl)
-        return S_OK(results)
+            yield path
 
     types_getProductionTemplateList = []
 
     def export_getProductionTemplateList(self):
         """Return production template list (file based)"""
-        return self.__productionTemplateList("template")
+        templates = [
+            {
+                "AuthorGroup": "",
+                "Author": "",
+                "PublishingTime": "",
+                "LongDescription": "",
+                "WFName": path.name,
+                "AuthorDN": "",
+                "WFParent": "",
+                "Description": "",
+            }
+            for path in self.__productionTemplatePaths()
+        ]
+        return S_OK(templates)
 
     types_getProductionTemplate = [six.string_types]
 
     def export_getProductionTemplate(self, name):
-        return self.__getTemplate("template", name)
+        for path in self.__productionTemplatePaths():
+            if path.name == name:
+                return S_OK(path.read_text())
+        else:
+            return S_ERROR(f"Template {name!r} doesn't exist")
 
     types_execProductionScript = [six.string_types, six.string_types]
 
