@@ -41,7 +41,7 @@ from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequest import Produc
 
 __RCSID__ = "$Id$"
 
-gLogger = gLogger.getSubLogger("MCSimulation_run.py")
+gLogger = gLogger.getSubLogger("MCSimulation_simplified_run.py")
 currentSetup = gConfig.getValue("DIRAC/Setup")
 
 pr = ProductionRequest()
