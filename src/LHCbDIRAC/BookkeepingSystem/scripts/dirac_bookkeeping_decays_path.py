@@ -14,13 +14,6 @@
 @author Vanya BELYAEV Ivan.Belyaev@itep.ru
         Federico Stagni fstagni@cern.ch
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
-import six
 import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
@@ -55,10 +48,9 @@ def main():
     if not res["OK"]:
         gLogger.error("Could not retrieve production summary for event %s" % eventType, res["Message"])
         DIRAC.exit(1)
-    prods = res["Value"]
 
     # # get production-IDs
-    prodIDs = [p["Production"] for p in prods]
+    prodIDs = [p["Production"] for p in res["Value"]]
 
     # # loop over all productions
     for prodID in sorted(prodIDs):
@@ -69,7 +61,7 @@ def main():
             continue
         prodInfo = res["Value"]
         steps = prodInfo["Steps"]
-        if isinstance(steps, six.string_types):
+        if isinstance(steps, str):
             continue
         files = prodInfo["Number of files"]
         events = prodInfo["Number of events"]
@@ -80,7 +72,7 @@ def main():
         evts = 0
         ftype = None
         for i in events:
-            if i[0] in ["GAUSSHIST", "LOG", "SIM", "DIGI"]:
+            if i[0] in ["GAUSSHIST", "LOG", "SIM", "DIGI", "RAW"]:
                 continue
             evts += i[1]
             if not ftype:
@@ -88,7 +80,7 @@ def main():
 
         nfiles = 0
         for f in files:
-            if f[1] in ["GAUSSHIST", "LOG", "SIM", "DIGI"]:
+            if f[1] in ["GAUSSHIST", "LOG", "SIM", "DIGI", "RAW"]:
                 continue
             if f[1] != ftype:
                 continue
