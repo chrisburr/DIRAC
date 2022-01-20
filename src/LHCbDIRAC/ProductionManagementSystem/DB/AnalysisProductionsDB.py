@@ -128,6 +128,9 @@ class AnalysisProductionsDB(DIRACDB):
                     raise ValueError(f"Transformation is already known {transform['id']}")
                 # TODO: Validate the transform object
                 request.extra_info["transformations"].append(transform)
+                # By default SQLAlchemy doesn't detect changes in JSON columns when using the ORM
+                # Ideally this should be fixed in the database definition but flagging manually is
+                # good enough for now
                 flag_modified(request, "extra_info")
         if transforms:
             raise ValueError(f"Did not find requests for IDs: {list(transforms)}")

@@ -24,8 +24,6 @@ from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
-from tqdm import tqdm
-
 from LHCbDIRAC.ProductionManagementSystem.DB.AnalysisProductionsDB import AnalysisProductionsDB
 
 optDate = (type(None), datetime)
@@ -87,14 +85,12 @@ class TornadoAnalysisProductionsHandler(TornadoService):
         return list(self._db.getKnownAutoTags())
 
     # types_registerRequest = [list]
-    # auth_registerRequest = [PRODUCTION_MANAGEMENT]
-
+    # auth should be PRODUCTION_MANAGEMENT!
     # @convertToReturnValue
     # def export_registerRequest(self, requests):
     #     return self._db.registerRequest(requests)
 
     types_registerTransformations = [dict]
-    auth_registerTransformations = [PRODUCTION_MANAGEMENT]
 
     @convertToReturnValue
     def export_registerTransformations(self, transforms):
@@ -102,7 +98,6 @@ class TornadoAnalysisProductionsHandler(TornadoService):
         return self._db.registerTransformations(transforms)
 
     types_registerRequests = [list]
-    auth_registerRequests = [PRODUCTION_MANAGEMENT]
 
     @convertToReturnValue
     def export_registerRequests(self, requests):
@@ -111,14 +106,12 @@ class TornadoAnalysisProductionsHandler(TornadoService):
         return _queryToResults(results, with_lfns=False, with_pfns=False, with_transformations=False)
 
     # types_registerSamples = [list]
-    # auth_registerSamples = [PRODUCTION_MANAGEMENT]
-    #
+    # auth should be PRODUCTION_MANAGEMENT!
     # @convertToReturnValue
     # def export_registerSamples(self, samples):
     #   """See :meth:`~.AnalysisProductionsClient.registerSamples`"""
 
     types_archiveSamples = [list]
-    auth_archiveSamples = [PRODUCTION_MANAGEMENT]
 
     @convertToReturnValue
     def export_archiveSamples(self, sample_ids):
@@ -126,7 +119,6 @@ class TornadoAnalysisProductionsHandler(TornadoService):
         return self._db.archiveSamples(sample_ids)
 
     types_setState = [dict]
-    auth_setState = [PRODUCTION_MANAGEMENT]
 
     @convertToReturnValue
     def export_setState(self, newState):
@@ -205,7 +197,7 @@ def _getOutputLFNs(pID2tID):
         futures = {}
         for tID in [tID for tIDs in pID2tID.values() for tID, used in tIDs.items() if used]:
             futures[pool.submit(BookkeepingClient().getProductionFiles, tID, "ALL", "ALL")] = tID
-        for future in tqdm(as_completed(futures), total=len(futures)):
+        for future in as_completed(futures):
             tID = futures[future]
             lfnMetadata = returnValueOrRaise(future.result())
             lfns[tID] = {lfn: meta for lfn, meta in lfnMetadata.items() if meta["GotReplica"].lower().startswith("y")}
