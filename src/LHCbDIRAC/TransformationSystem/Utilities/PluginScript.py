@@ -71,8 +71,22 @@ class PluginScript(DMScript):
             "CleanTransformations": "   (only for DestroyDataset) clean transformations from the files being destroyed",
             "Debug": "   Sets a debug flag in the plugin",
             "UseRunDestination": "   for RAWReplication plugin, use the already defined run destination as storage",
+            "ThrottlePendingTasks=": "   throttle the number of Waiting jobs at each TargetSE",
         }
         self.setters = {}
+
+    def registerPluginSEParameters(self):
+        for param in self.seParameters:
+            param += "="
+            self.setters[param] = Setter(self, param)
+            Script.registerSwitch(
+                "", param, "   List of SEs for the corresponding parameter of the plugin", self.setters[param].setOption
+            )
+
+    def registerPluginAdditionalParameters(self):
+        for option in self.additionalParameters:
+            self.setters[option] = Setter(self, option)
+            Script.registerSwitch("", option, self.additionalParameters[option], self.setters[option].setOption)
 
     def registerPluginSwitches(self):
         """Set of switches used by TS plugins."""
@@ -82,16 +96,8 @@ class PluginScript(DMScript):
             self.setters[option] = Setter(self, option)
             Script.registerSwitch("", option, self.pluginParameters[option], self.setters[option].setOption)
 
-        for param in self.seParameters:
-            param += "="
-            self.setters[param] = Setter(self, param)
-            Script.registerSwitch(
-                "", param, "   List of SEs for the corresponding parameter of the plugin", self.setters[param].setOption
-            )
-
-        for option in self.additionalParameters:
-            self.setters[option] = Setter(self, option)
-            Script.registerSwitch("", option, self.additionalParameters[option], self.setters[option].setOption)
+        self.registerPluginSEParameters()
+        self.registerPluginAdditionalParameters()
 
     def getPluginParameters(self):
         """Get  parameters used by TS plugins."""

@@ -8,10 +8,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
+
 """Utilities for scripts dealing with transformations."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from collections import defaultdict
 import os
 import datetime
 import random
@@ -983,12 +982,19 @@ get from BK"
 
         # Now try and get the cached information
         tmpDir = os.environ.get("TMPDIR", "/tmp")
-        cacheFiles = ((workDirectory, ("TransPluginCache")), (tmpDir, ("dirac", "TransPluginCache")))
+        cacheFiles = (
+            (workDirectory, ("TransPluginCache",)),
+            (
+                tmpDir,
+                (
+                    "dirac",
+                    "TransPluginCache",
+                ),
+            ),
+        )
         for (cacheFile, prefixes) in cacheFiles:
             if not cacheFile:
                 continue
-            if isinstance(prefixes, str):
-                prefixes = [prefixes]
             for node in prefixes:
                 cacheFile = os.path.join(cacheFile, node)
                 mkDir(cacheFile)
@@ -1487,8 +1493,225 @@ get from BK"
         retCode = os.system(cmd)
         return not bool(retCode)
 
+    def getPendingTasks(self, transType):
+        """Get the number of tasks/files not yet running for each TargetSE as a dictionary"""
 
+        # First check the cycling period
+        now = datetime.datetime.utcnow()
+        period = self.getPluginParam("Period", 6)
+        if self.lastCall and (now - self.lastCall) < datetime.timedelta(hours=period):
+            self.logInfo("Skip this loop (less than %s hours since last call)" % period)
+            return S_OK(None)
+        self.lastCall = now
+        self.writeCacheFile()
+
+        res = self.transClient.getTransformations({"Type": transType, "Status": "Active"})
+        if not res["OK"]:
+            return res
+        transList = [td["TransformationID"] for td in res["Value"]]
+        cond = {"TransformationID": transList}
+        if transType in ("Replication", "Removal"):
+            # For DMS transformations, count number of Assigned files
+            transTable = "Files"
+            cond["Status"] = "Assigned"
+            item = "UsedSE"
+        else:
+            # For WMS productions, count the number of tasks not yet Running
+            transTable = "Tasks"
+            cond["ExternalStatus"] = ["Waiting", "Received", "Checking", "Created", "Staging", "Submitted"]
+            item = "TargetSE"
+        self.logVerbose(
+            "Get number of %s by %s" % (transTable, item), "for %s transformations %s" % (transType, str(transList))
+        )
+        res = self.transClient.getCounters("Transformation%s" % transTable, [item], cond)
+        if not res["OK"]:
+            return res
+        # Count number of pending tasks as TargetSE can be multiple
+        pendingTasksPerSE = defaultdict(int)
+        for dd, count in res["Value"]:
+            for se in dd[item].split(","):
+                pendingTasksPerSE[se] += count
+        self.logVerbose("Pending tasks at TargetSEs", str(dict(pendingTasksPerSE)))
+        return S_OK(pendingTasksPerSE)
+
+    def throttleFiles(self, candidateSEs, pendingTasksPerSE, throttleLimit):
+        """
+        Remove all files in excess to throttleLimit at SEs
+
+        I have tested this new throttling feature extensively with a set of real files and the dirac-test-plugin script.
+
+        It will be useful in the following circumstances:
+
+        Staging: one can put a large run range and let the system create requests by batches of e.g. 5000 files per SE
+        Stripping: similarly one can launch productions with a whole range and set the throttling limit to 5000
+        Large removals from disk: in order to not overload the RMS, one can create removals by few 1000's per SE
+        """
+        removedFiles = defaultdict(int)
+        self.logVerbose("Throttle files", "to %d per SE for SEs %s" % (throttleLimit, sorted(candidateSEs)))
+        acceptedRuns = set()
+        suppressedRuns = set()
+        # Loop on files, sorted by run number
+        for fileDict in sorted(self.transFiles, key=lambda x: x["RunNumber"]):
+            lfn = fileDict["LFN"]
+            run = fileDict["RunNumber"]
+            # If no replica, forget (should not happen)
+            if lfn not in self.transReplicas:
+                self.transFiles.remove(fileDict)
+                continue
+            setSEs = set(self.transReplicas[lfn]) & candidateSEs if candidateSEs else set(self.transReplicas[lfn])
+            # If run is already suppressed, or no replica left, suppress it all
+            if run in suppressedRuns or not setSEs:
+                self.transReplicas.pop(lfn)
+                self.transFiles.remove(fileDict)
+                for se in setSEs:
+                    removedFiles[se] += 1
+                continue
+
+            # We accept whole runs, even if SE already "full"
+            if run not in acceptedRuns:
+                # Remove files that are at an SE already busy over threshold
+                for se in setSEs & set(pendingTasksPerSE):
+                    if pendingTasksPerSE[se] >= throttleLimit:
+                        self.transReplicas.pop(lfn)
+                        self.transFiles.remove(fileDict)
+                        suppressedRuns.add(run)
+                        removedFiles[se] += 1
+                        break
+            # If the file is still there, count it as Pending
+            if lfn in self.transReplicas:
+                acceptedRuns.add(run)
+                for se in setSEs:
+                    pendingTasksPerSE[se] += 1
+        self.logVerbose("Throttled files per TargetSE", str(dict(removedFiles)))
+        if acceptedRuns or suppressedRuns:
+            self.logVerbose("Throttled %d runs" % len(suppressedRuns), ", accepted %d runs" % len(acceptedRuns))
+
+    def checkRunForFlush(self, runID, runStatus, forceFlush, param, paramValue, paramStr, evtType):
+        """
+        Check if a run has to be flushed (if not already)
+        """
+        # If all files in that run have been processed and received, flush
+        # Get the number of RAW files in that run
+        if not forceFlush:
+            retried = False
+            ancestorRawFiles = self.getRAWAncestorsForRun(runID, param, paramValue)
+            self.logVerbose("Obtained %d ancestor RAW files" % ancestorRawFiles)
+            while True:
+                rawFiles = self.getNbRAWInRun(runID, evtType)
+                if not retried and rawFiles and ancestorRawFiles > rawFiles:
+                    # In case there are more ancestors than RAW files
+                    # we may have to refresh the number of RAW files: try once
+                    self.cachedNbRAWFiles[runID][evtType] = 0
+                    retried = True
+                else:
+                    runProcessed = ancestorRawFiles == rawFiles
+                    break
+        else:
+            runProcessed = False
+        if forceFlush or runProcessed:
+            if runProcessed:
+                # The whole run was processed by the parent production and we received all files
+                self.logInfo("All RAW files (%d) ready for run %d%s- Flushing run" % (rawFiles, runID, paramStr))
+            runStatus = "Flush"
+            self.transClient.setTransformationRunStatus(self.transID, runID, "Flush")
+        elif rawFiles:
+            self.logVerbose(
+                "Only %d ancestor RAW files (of %d) available for run %d" % (ancestorRawFiles, rawFiles, runID)
+            )
+        return runStatus
+
+    def getRunList(self, transRuns, runFileDict):
+        # Restart where we finished last time and wrap to beginning
+        lastRun = self.getCachedLastRun()
+        runNumbers = sorted(run["RunNumber"] for run in transRuns if run["RunNumber"] > lastRun) + sorted(
+            run["RunNumber"] for run in transRuns if run["RunNumber"] <= lastRun
+        )
+        # Find out how many files we have currently Unused per run
+        res = self.transClient.getTransformationFilesCount(
+            self.transID, "RunNumber", {"Status": "Unused", "RunNumber": runNumbers}
+        )
+        if not res["OK"]:
+            self.logError("Error getting file counts per run", res["Message"])
+            return res
+        unusedFilesPerRun = res["Value"]
+        # Check that the total number of files we got for that run is equal to the number of Unused files
+        nRunsLeft = len(runNumbers)
+        for runID in list(runNumbers):
+            runFiles = sum(len(lfns) for lfns in runFileDict[runID].values())  # can be an iterator
+            if runFiles != unusedFilesPerRun.get(runID, 0):
+                runNumbers.remove(runID)
+        if nRunsLeft != len(runNumbers):
+            self.logWarn("Removed %d runs with less files than Unused" % (nRunsLeft - len(runNumbers)))
+            nRunsLeft = len(runNumbers)
+        # Get the list of runs in the same order as runNumbers
+        runList = sorted(
+            (run for run in transRuns if run["RunNumber"] in runNumbers),
+            key=lambda x: runNumbers.index(x["RunNumber"]),
+        )
+        if nRunsLeft:
+            self.logInfo(
+                "Processing %d runs between runs %d and %d, starting at run %d"
+                % (nRunsLeft, min(runNumbers), max(runNumbers), runNumbers[0])
+            )
+        else:
+            self.logInfo("No runs to process, exit")
+            return S_OK([])
+        return S_OK(runList)
+
+    def selectTasksFromSEs(self, runID, tasks, addAncestors, fromSEs):
+        """
+        Check that files (and ancestors) in tasks are at required SEs
+        Update tasks list accordingly, and return it as well as a flag indicating if some were removed
+        """
+        missingAtSEs = False
+        if fromSEs:
+            # The files and if needed its ancestors have to be in a set of SEs
+            # This is used to force processing from disk replicas
+            missingAncestors = 0
+            okDict = {}
+            # Group the LFNs by (set of) SEs in order to speed up the check for ancestors
+            nbTasks = len(tasks)
+            for task in tasks:
+                # Restrict target SEs to those in fromSEs
+                okSEs = fromSEs.intersection(task[0].split(","))
+                if okSEs:
+                    okDict.setdefault(tuple(okSEs), []).append(task[1])
+            # Create the real tasks now
+            tasks = []
+            for okSEs, taskLfns in okDict.items():  # can be an iterator
+                if addAncestors:
+                    # taskLfns is modified by this method: lfns are eventually removed
+                    missing = self.checkAncestorsAtSE(taskLfns, fromSEs)
+                    if missing:
+                        missingAncestors += missing
+                # Now create the list of tasks
+                tasks += [(",".join(sorted(okSEs)), lfnList) for lfnList in taskLfns if lfnList]
+            # Log if files are not at the required SEs
+            if missingAncestors:
+                missingAtSEs = True
+                self.logInfo(
+                    "%d files have been removed from tasks as ancestors were not present at required SEs"
+                    % missingAncestors
+                )
+            if nbTasks != len(tasks):
+                missingAtSEs = True
+                self.logInfo(
+                    "%d tasks could not be created for run %d as files are not at required SEs"
+                    % (nbTasks - len(tasks), runID)
+                )
+        return tasks, missingAtSEs
+
+    def getEventType(self, lfn, runEvtType, paramValue):
+        """Get and cache event type for a file"""
+        # Determine which event type is used, in order to get the corresponding number of RAW files
+        if not runEvtType.get(paramValue):
+            runEvtType[paramValue] = self.getMetadataFromTSorBK(lfn, "EventType")[lfn]
+        return runEvtType[paramValue]
+
+
+##################################################################
 # Set of utility functions used by LHCbDirac transformation system
+##################################################################
 
 
 def getRemovalPlugins():

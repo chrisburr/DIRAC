@@ -10,11 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get the storage usage summary for the given directories."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-__RCSID__ = "$Id$"
 
 import DIRAC
 from DIRAC.Core.Base import Script

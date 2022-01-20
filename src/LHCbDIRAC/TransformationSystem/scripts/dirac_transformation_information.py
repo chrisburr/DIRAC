@@ -11,9 +11,6 @@
 ###############################################################################
 """This script allows to print information about a (list of)
 transformations."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
@@ -60,6 +57,8 @@ def main():
     Script.parseCommandLine(ignoreErrors=True)
 
     from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
+    from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
+
     from DIRAC import gLogger
 
     tr = TransformationClient()
@@ -74,7 +73,7 @@ def main():
     if "body" not in infoList and "Body" in requestedInfo:
         requestedInfo.remove("Body")
 
-    transIDs = Script.getPositionalArgs()
+    transIDs = getTransformations(Script.getPositionalArgs())
 
     for transID in transIDs:
         try:
