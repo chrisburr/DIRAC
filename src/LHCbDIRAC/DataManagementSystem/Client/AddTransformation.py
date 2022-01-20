@@ -61,6 +61,43 @@ def _checkMCReplication(bkPaths):
     return obsoleteTrans
 
 
+def getTransformationName(transName, unique):
+    """
+    Get a transformation name from a base name
+    If unique is requested, return None if already exists
+    """
+    tName = transName
+    trial = 0
+    transClient = TransformationClient()
+    while True:
+        # Check if there is already a transformation with that name
+        res = transClient.getTransformation(tName)
+        if res["OK"]:
+            # Transformation already exists
+            if unique:
+                # If unique is required and the transformation is not in a final status, give up
+                if res["Value"]["Status"] not in (
+                    "Archived",
+                    "Cleaned",
+                    "Cleaning",
+                    "Deleted",
+                    "TransformationCleaned",
+                ):
+                    tName = None
+                    gLogger.notice(
+                        "Transformation %s already exists with ID %d, status %s"
+                        % (transName, res["Value"]["TransformationID"], res["Value"]["Status"])
+                    )
+                    break
+            trial += 1
+            # Check again with new name
+            tName = transName + "-" + str(trial)
+        else:
+            # Transformation doesn't exist, OK
+            break
+    return tName
+
+
 def executeAddTransformation(pluginScript):
     """Method for actually adding a DM transformation It takes its options and
     argument values from pluginScript."""
@@ -317,37 +354,9 @@ def executeAddTransformation(pluginScript):
             gLogger.fatal("Didn't manage to find a name for this transformation, check options")
             DIRAC.exit(1)
         # Find a name for this transformation (transName remains the base name)
-        tName = transName
-        giveUp = False
-        trial = 0
-        while True:
-            # Check if there is already a transformation with that name
-            res = tr.getTransformation(tName)
-            if res["OK"]:
-                # Transformation already exists
-                if unique:
-                    # If unique is required and the transformation is not in a final status, give up
-                    if res["Value"]["Status"] not in (
-                        "Archived",
-                        "Cleaned",
-                        "Cleaning",
-                        "Deleted",
-                        "TransformationCleaned",
-                    ):
-                        giveUp = True
-                        gLogger.notice(
-                            "Transformation %s already exists with ID %d, status %s"
-                            % (transName, res["Value"]["TransformationID"], res["Value"]["Status"])
-                        )
-                        break
-                trial += 1
-                # Check again with new name
-                tName = transName + "-" + str(trial)
-            else:
-                # Transformation doesn't exist, OK
-                break
+        tName = getTransformationName(transName, unique)
         # If needed, skip this BK query
-        if giveUp:
+        if tName is None:
             continue
 
         transformation.setTransformationName(tName)
