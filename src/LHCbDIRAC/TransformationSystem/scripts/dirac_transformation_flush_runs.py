@@ -11,9 +11,6 @@
 ###############################################################################
 """In a transformation, flush a list of runs or runs that are flushed in the
 transformation used in BKQuery."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import DIRAC
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
@@ -23,6 +20,7 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 def main():
     from DIRAC import gLogger
     from DIRAC.Core.Base import Script
+    from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
     Script.registerSwitch("", "Runs=", "   list of runs to flush (comma separated, ranges r1:r2)")
     Script.registerSwitch("", "NoAction", "   No action taken, just give stats")
@@ -38,7 +36,6 @@ def main():
     )
     Script.parseCommandLine()
 
-    args = Script.getPositionalArgs()
     action = True
     runList = []
     active = False
@@ -60,25 +57,14 @@ def main():
             except Exception as x:
                 gLogger.exception("Bad run parameter", lException=x)
 
-    if len(args) != 1:
-        gLogger.fatal("Specify transformation number...")
-        Script.showHelp(exitCode=1)
-    else:
-        ids = args[0].split(",")
-        idList = []
-        for id in ids:
-            r = id.split(":")
-            if len(r) > 1:
-                for i in range(int(r[0]), int(r[1]) + 1):
-                    idList.append(i)
-            else:
-                idList.append(int(r[0]))
-
+    transList = getTransformations(Script.getPositionalArgs())
+    if not transList:
+        DIRAC.exit(1)
     from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
     transClient = TransformationClient()
 
-    for transID in idList:
+    for transID in transList:
         res = transClient.getTransformationRuns({"TransformationID": transID})
         if not res["OK"]:
             gLogger.fatal("Error getting runs for transformation %s" % transID, res["Message"])

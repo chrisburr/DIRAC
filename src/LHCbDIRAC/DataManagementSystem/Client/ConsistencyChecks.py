@@ -1160,9 +1160,12 @@ class ConsistencyChecks(DiracConsistencyChecks):
             progressBar.endLoop()
 
         # Reduce the set of files to those at requested SEs if specified
+        otherReplicas = []
         if self._seList:
             notAtSE = []
             for lfn, ses in replicas.items():
+                if set(ses) - self._seList:
+                    otherReplicas.append(lfn)
                 replicas[lfn] = set(ses) & self._seList
                 if not replicas[lfn]:
                     notAtSE.append(lfn)
@@ -1251,7 +1254,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
         for lfn in replicas:
             # get the lfn checksum from the LFC
             replicaDict = replicas[lfn]
-            oneGoodReplica = False
+            oneGoodReplica = False if lfn not in otherReplicas else True
             allGoodReplicas = True
             lfcChecksum = csDict[lfn].pop("LFCChecksum")
             for se in replicaDict:
