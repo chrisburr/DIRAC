@@ -14,6 +14,12 @@
 # A convenient way to run all the LHCbDIRAC integration tests for servers
 #-------------------------------------------------------------------------------
 
+# Create the lhcb_prmgr group
+dirac-proxy-init -g dirac_admin -C "${WORKSPACE}/ServerInstallDIR/user/client.pem" -K "${WORKSPACE}/ServerInstallDIR/user/client.key" "${DEBUG}" |& tee -a "${SERVER_TEST_OUTPUT}"
+dirac-admin-add-group -G lhcb_prmgr -U adminusername -P ProductionManagement -P NormalUser -P JobSharing -P JobAdministrator -P SiteManager -P Operator -P LimitedDelegation |& tee -a "${SERVER_TEST_OUTPUT}"
+dirac-restart-component Tornado Tornado -ddd
+# Restore the original proxy group
+dirac-proxy-init -g prod -C "${WORKSPACE}/ServerInstallDIR/user/client.pem" -K "${WORKSPACE}/ServerInstallDIR/user/client.key" "${DEBUG}" |& tee -a "${SERVER_TEST_OUTPUT}"
 
 echo -e '****************************************'
 echo -e '********** LHCb server tests ***********\n'

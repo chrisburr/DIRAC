@@ -33,3 +33,13 @@ python "${THIS_DIR}/TransformationSystem/Test_ClientTransformation.py" |& tee -a
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb WMS TESTS ****\n"
 "${THIS_DIR}/WorkloadManagementSystem/Test_dirac-jobexecLHCb.sh" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+
+#-------------------------------------------------------------------------------#
+if [ "${TEST_HTTPS:-}" = "Yes" ]; then
+    echo -e "*** $(date -u) **** Analysis Productions TESTS ****\n"
+    # TODO: It would probably be nicer to set the proxy using a fixture in pytest
+    dirac-proxy-init -g lhcb_prmgr -C /home/dirac/.globus/client.pem -K /home/dirac/.globus/client.key
+    pytest "${THIS_DIR}/ProductionManagementSystem/Test_AnalysisProductions.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+else
+    echo -e "*** $(date -u) **** Skipping HTTPS-only tests ****\n"
+fi

@@ -83,7 +83,7 @@ pre-commit:
 run_pylint:
   extends: .test_setup
   script:
-    - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
+    - pylint -E src/ tests/
 
 run_pytest:
   extends: .test_setup
@@ -143,6 +143,7 @@ integration_tests:
     matrix:
       - TEST_COMMAND:
           - python3 ./integration_tests.py create "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" --extra-module LHCbDIRAC=../LHCbDIRAC
+          - python3 ./integration_tests.py create "LHCBDIRAC_RELEASE=$${lhcbdiracTag}" TEST_HTTPS=Yes --extra-module LHCbDIRAC=../LHCbDIRAC
   before_script:
     # Install dependencies
     - apk add docker py3-pip python3 bash git docker-compose jq curl
