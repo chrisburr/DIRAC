@@ -182,12 +182,12 @@ class RunApplication(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        await asyncio.gather(
+        stdout, stderr, _ = await asyncio.gather(
             self._handleOutput(proc.stdout, self.applicationLog),
             self._handleOutput(proc.stderr, self.stdError),
             proc.wait(),
         )
-        return (proc.returncode, proc.stdout, proc.stderr)
+        return (proc.returncode, stdout, stderr)
 
     async def _handleOutput(self, stream, filename):
         lines = []
