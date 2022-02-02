@@ -1,3 +1,40 @@
+[v10.4.7]
+Please follow the template:
+
+*Dashboards
+
+NEW: (!1173) Added a new WMSDashboard for LHCbDIRAC
+
+*Core
+
+FIX: (!1172) Return stdout/stderr in RunApplication._runApp
+
+*Bookkeeping
+
+FIX: (!1168) fix dirac_bookkeeping_decays_path to run on real data
+
+*ProductionManagement
+
+FIX: (!1167) Getting production request submission templates
+NEW: (!1158) AnalysisProductions service for keeping metadata about Analysis Productions
+
+*TransformationSystem
+
+NEW: (!1164) When running large productions or large DMS transformations, The production or data manager has to continuously monitor the status of the transformations and increment e.g. the end run of the data range in order to keep a reasonable number of Waiting jobs or running replication requests. This new feature allows with a new `TransformationPlugin` parameter `ThrottlePendingTasks` to limit the number of pending tasks targeting a given storage element (i.e. as source for jobs or as destination for replications or removals).In order to not overload the TS, one should set the `Period` parameter to a reasonable value. By default if `ThrottlePendingTasks` is set, there is a minimum period of 6 hours between each running of the plugin but this can be altered using the script below...
+CHANGE: (!1164) factorize some of the checks that were done in `TransformationPlugin` to move them to `PluginUtilities` to improve readability / maintainability(?)
+NEW: (!1164) new script `dirac-transformation-add-parameter` allows to add a parameter to an existing transformation
+FIX: (!1164) in several scripts use the `getTransformations()` method for parsing (list) of transformations passed as arguments
+
+*DataManagementSystem
+
+FIX: (!1164) fix `dirac-dms-add-file` as no registration error was reported
+
+*All
+
+FIX: (!1164) remove many `from __future__ import ` in scripts (not all!)
+
+
+
 [v10.4.6]
 *CI
 
