@@ -12,7 +12,6 @@
 
 For more information see :py:mod:`.AnalysisProductionsClient`.
 """
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from itertools import chain
 
@@ -192,15 +191,14 @@ def _queryToResults(results, with_lfns, with_pfns, with_transformations):
 
 def _getOutputLFNs(pID2tID):
     sLog.info("Getting output LFNs")
+    retVal = BookkeepingClient().getProductionFilesBulk(
+        [tID for tIDs in pID2tID.values() for tID, used in tIDs.items() if used],
+        "ALL",
+        "ALL",
+    )
     lfns = {}
-    with ThreadPoolExecutor(20) as pool:
-        futures = {}
-        for tID in [tID for tIDs in pID2tID.values() for tID, used in tIDs.items() if used]:
-            futures[pool.submit(BookkeepingClient().getProductionFiles, tID, "ALL", "ALL")] = tID
-        for future in as_completed(futures):
-            tID = futures[future]
-            lfnMetadata = returnValueOrRaise(future.result())
-            lfns[tID] = {lfn: meta for lfn, meta in lfnMetadata.items() if meta["GotReplica"].lower().startswith("y")}
+    for tID, lfnMetadata in convertToReturnValue(retVal).items():
+        lfns[tID] = {lfn: meta for lfn, meta in lfnMetadata.items() if meta["GotReplica"].lower().startswith("y")}
     return lfns
 
 
