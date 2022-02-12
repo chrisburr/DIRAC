@@ -174,12 +174,21 @@ class OracleDB(object):
         except Exception as x:
             return self._except("_connect", x, "Could not connect to DB.")
 
-    def query(self, cmd, conn=False):
+    def query(self, cmd, conn=False, params=[], kwparams={}):
         """execute Oracle query command return S_OK structure with fetchall result
         as tuple it returns an empty tuple if no matching rows are found return
-        S_ERROR upon error."""
+        S_ERROR upon error.
 
-        self.logger.debug("query:", cmd)
+        Use of params and kwparams to pass bind variabes is strongly encouraged
+        to prevent SQL injection and improve performance. See the cx_Oracle
+        documentation for more information.
+
+        :param str cmd: the SQL string to be executed
+        :param conn: the connection to use, optional
+        :param list params: positional bind variables to pass to cx_Oracle.Cursor.execute
+        :param dict kwparams: named bind variables to pass to cx_Oracle.Cursor.execute
+        """
+        self.logger.debug("query:", f"{cmd!r} {params!r} {kwparams!r}")
 
         retDict = self.__getConnection(conn=conn)
         if not retDict["OK"]:
@@ -189,21 +198,22 @@ class OracleDB(object):
         try:
             cursor = connection.cursor()
             cursor.arraysize = maxArraysize
-            if cursor.execute(cmd):
+            if cursor.execute(cmd, *params, **kwparams):
                 res = cursor.fetchall()
             else:
                 res = ()
 
             # Log the result limiting it to just 10 records
             if len(res) < 10:
-                self.logger.debug("query:", res)
+                self.logger.debug("query: Records returned", res)
             else:
-                self.logger.debug("query: Total %d records returned" % len(res))
-                self.logger.debug("query: %s ..." % str(res[:10]))
+                self.logger.debug(
+                    "query: First 10 records returned out of",
+                    f"{len(res)}: {res[:10]} ...",
+                )
 
             retDict = S_OK(res)
         except Exception as x:
-
             self.logger.debug("query:", cmd)
             retDict = self._except("query", x, "Execution failed.")
             self.logger.debug("Start Rollback transaction")
