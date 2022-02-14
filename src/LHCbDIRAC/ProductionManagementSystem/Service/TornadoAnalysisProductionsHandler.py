@@ -96,6 +96,14 @@ class TornadoAnalysisProductionsHandler(TornadoService):
         """See :meth:`~.AnalysisProductionsClient.registerTransformations`"""
         return self._db.registerTransformations(transforms)
 
+    types_deregisterTransformations = [dict]
+
+    @convertToReturnValue
+    def export_deregisterTransformations(self, tIDs):
+        """See :meth:`~.AnalysisProductionsClient.deregisterTransformations`"""
+        tIDs = {int(k): v for k, v in tIDs.items()}
+        return self._db.deregisterTransformations(tIDs)
+
     types_registerRequests = [list]
 
     @convertToReturnValue

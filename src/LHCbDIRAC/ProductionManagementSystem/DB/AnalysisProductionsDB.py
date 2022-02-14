@@ -135,6 +135,25 @@ class AnalysisProductionsDB(DIRACDB):
         if transforms:
             raise ValueError(f"Did not find requests for IDs: {list(transforms)}")
 
+    @inject_session
+    def deregisterTransformations(self, tIDs: dict[int, list[int]], *, session: Session):
+        """See :meth:`~.AnalysisProductionsClient.registerTransformations`"""
+        if not tIDs:
+            raise ValueError("No transform IDs passed")
+        tIDs = deepcopy(tIDs)
+        query = session.query(Request).filter(Request.request_id.in_(tIDs))
+        for request in query:
+            for tID in tIDs.pop(request.request_id):
+                for i, transform in enumerate(request.extra_info["transformations"]):
+                    if transform["id"] == tID:
+                        request.extra_info["transformations"].pop(i)
+                        break
+                else:
+                    raise ValueError(f"Transformation {tID} is not known")
+                flag_modified(request, "extra_info")
+        if tIDs:
+            raise ValueError(f"Did not find requests for IDs: {list(tIDs)}")
+
     def registerRequests(self, requests: list[dict]):
         request_ids = {r["request_id"] for r in requests}
         with self.session as session:
