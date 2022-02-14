@@ -21,7 +21,7 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-    import DIRAC.Core.Base.Script as Script
+    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()
