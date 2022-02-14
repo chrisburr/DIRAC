@@ -94,6 +94,7 @@ class TornadoAnalysisProductionsHandler(TornadoService):
     @convertToReturnValue
     def export_registerTransformations(self, transforms):
         """See :meth:`~.AnalysisProductionsClient.registerTransformations`"""
+        transforms = {int(k): v for k, v in transforms.items()}
         return self._db.registerTransformations(transforms)
 
     types_deregisterTransformations = [dict]
@@ -205,8 +206,8 @@ def _getOutputLFNs(pID2tID):
         "ALL",
     )
     lfns = {}
-    for tID, lfnMetadata in convertToReturnValue(retVal).items():
-        lfns[tID] = {lfn: meta for lfn, meta in lfnMetadata.items() if meta["GotReplica"].lower().startswith("y")}
+    for tID, lfnMetadata in returnValueOrRaise(retVal).items():
+        lfns[int(tID)] = {lfn: meta for lfn, meta in lfnMetadata.items() if meta["GotReplica"].lower().startswith("y")}
     return lfns
 
 
