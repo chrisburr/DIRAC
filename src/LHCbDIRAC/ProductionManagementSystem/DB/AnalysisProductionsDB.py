@@ -56,6 +56,8 @@ def inject_session(func):
 
 
 class AnalysisProductionsDB(DIRACDB):
+    __engineCache = {}
+
     def __init__(self, *, url=None):
         self.fullname = self.__class__.__name__
         super().__init__()
@@ -65,10 +67,13 @@ class AnalysisProductionsDB(DIRACDB):
         self.setURL(url)
 
     def setURL(self, url):
-        self.engine = create_engine(
-            url, pool_recycle=3600, echo_pool=True, echo=self.log.getLevel() == "DEBUG", future=True
-        )
-        Base.metadata.create_all(self.engine)
+        if url not in self.__engineCache or ":memory:" in url:
+            engine = create_engine(
+                url, pool_recycle=3600, echo_pool=True, echo=self.log.getLevel() == "DEBUG", future=True
+            )
+            Base.metadata.create_all(engine)
+            self.__engineCache[url] = engine
+        self.engine = self.__engineCache[url]
 
     @property
     @contextmanager
