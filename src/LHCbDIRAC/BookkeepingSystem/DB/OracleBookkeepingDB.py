@@ -1708,6 +1708,58 @@ class OracleBookkeepingDB(object):
         return result
 
     #############################################################################
+    def getProductionFilesBulk(self, prods, ftype, gotreplica=default):
+        """For retrieving the list of LFNs for a given production.
+
+        :param list prods: production numbers
+        :param str ftype: file type
+        :param str gotreplica: replica flag
+        :return: dictionary of production number to the list of files
+        """
+        command = (
+            "select "
+            "    jobs.production, "
+            "    files.filename, "
+            "    files.gotreplica, "
+            "    files.filesize, "
+            "    files.guid, "
+            "    filetypes.name, "
+            "    files.visibilityflag "
+            "from "
+            "    jobs "
+            "    INNER JOIN files on files.jobid = jobs.jobid "
+            "    INNER JOIN filetypes on filetypes.filetypeid = files.filetypeid "
+            "where "
+            "    jobs.production in (%s)"
+        )
+        kwparams = {}
+        if gotreplica != default:
+            kwparams["gotreplica"] = str(gotreplica)
+            command += " and files.gotreplica = :gotreplica"
+        if ftype != default:
+            kwparams["ftype"] = ftype
+            command += " and filetypes.name = :ftype"
+
+        value = {str(p): {} for p in prods}
+        for prodChunk in breakListIntoChunks(prods, 100):
+            res = self.dbR_.query(
+                # Ensure each element is a valid int to avoid SQL injection attacks
+                command % ",".join(str(int(p)) for p in prodChunk),
+                kwparams=kwparams,
+            )
+            if not res["OK"]:
+                return S_ERROR(res["Message"])
+            for production, filename, gotreplica, filesize, guid, filetype, visibilityflag in res["Value"]:
+                value[str(production)][filename] = {
+                    "GotReplica": gotreplica,
+                    "FileSize": filesize,
+                    "GUID": guid,
+                    "FileType": filetype,
+                    "Visible": visibilityflag,
+                }
+        return S_OK(value)
+
+    #############################################################################
     def getRunFiles(self, runid):
         """Retrieving list of LFNs for a given run.
 
