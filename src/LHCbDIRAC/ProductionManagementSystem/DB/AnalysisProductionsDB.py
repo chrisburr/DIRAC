@@ -56,6 +56,8 @@ def inject_session(func):
 
 
 class AnalysisProductionsDB(DIRACDB):
+    __engineCache = {}
+
     def __init__(self, *, url=None):
         self.fullname = self.__class__.__name__
         super().__init__()
@@ -65,10 +67,13 @@ class AnalysisProductionsDB(DIRACDB):
         self.setURL(url)
 
     def setURL(self, url):
-        self.engine = create_engine(
-            url, pool_recycle=3600, echo_pool=True, echo=self.log.getLevel() == "DEBUG", future=True
-        )
-        Base.metadata.create_all(self.engine)
+        if url not in self.__engineCache or ":memory:" in url:
+            engine = create_engine(
+                url, pool_recycle=3600, echo_pool=True, echo=self.log.getLevel() == "DEBUG", future=True
+            )
+            Base.metadata.create_all(engine)
+            self.__engineCache[url] = engine
+        self.engine = self.__engineCache[url]
 
     @property
     @contextmanager
@@ -134,6 +139,25 @@ class AnalysisProductionsDB(DIRACDB):
                 flag_modified(request, "extra_info")
         if transforms:
             raise ValueError(f"Did not find requests for IDs: {list(transforms)}")
+
+    @inject_session
+    def deregisterTransformations(self, tIDs: dict[int, list[int]], *, session: Session):
+        """See :meth:`~.AnalysisProductionsClient.registerTransformations`"""
+        if not tIDs:
+            raise ValueError("No transform IDs passed")
+        tIDs = deepcopy(tIDs)
+        query = session.query(Request).filter(Request.request_id.in_(tIDs))
+        for request in query:
+            for tID in tIDs.pop(request.request_id):
+                for i, transform in enumerate(request.extra_info["transformations"]):
+                    if transform["id"] == tID:
+                        request.extra_info["transformations"].pop(i)
+                        break
+                else:
+                    raise ValueError(f"Transformation {tID} is not known")
+                flag_modified(request, "extra_info")
+        if tIDs:
+            raise ValueError(f"Did not find requests for IDs: {list(tIDs)}")
 
     def registerRequests(self, requests: list[dict]):
         request_ids = {r["request_id"] for r in requests}
