@@ -1,3 +1,22 @@
+[v10.4.8]
+*tests
+
+FIX: (!1181) remove a space in test_UserJobs
+
+*Bookkeeping
+
+NEW: (!1178) Support using bind variabes when querying oracle databases
+NEW: (!1178) Add `getProductionFilesBulk` method
+
+*ProductionManagement
+
+NEW: (!1178) Add APSyncAgent for populating AnalysisProductionsDB
+NEW: (!1178) Support removing transformations for the AnalysisProductionsDB cache
+FIX: (!1178) Dictionaries with integer keys in AnalysisProductions
+FIX: (!1178) Don't create an AnalysisProductionsDB engine for each RPC call
+
+
+
 [v10.4.7]
 Please follow the template:
 
