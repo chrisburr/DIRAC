@@ -83,7 +83,7 @@ pre-commit:
 run_pylint:
   extends: .test_setup
   script:
-    - pylint -E --rcfile=../DIRAC/.pylintrc src/ tests/
+    - pylint -E src/ tests/
 
 run_pytest:
   extends: .test_setup
