@@ -21,6 +21,8 @@ import shlex
 import subprocess
 
 from DIRAC import gLogger, S_OK
+from DIRAC.Core.Utilities import DErrno
+from DIRAC.WorkloadManagementSystem.Utilities.RemoteRunner import RemoteRunner
 from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getEventsToProduce
 
 
@@ -177,19 +179,35 @@ class RunApplication(object):
         if self.applicationName == "Gauss" and self.usePrmon:
             command = [self.prmonPath, "--json-summary", "./prmon_Gauss.json", "--"] + command
         self.log.notice("Running command", shlex.join(command))
-        proc = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        stdout, stderr, _ = await asyncio.gather(
-            self._handleOutput(proc.stdout, self.applicationLog),
-            self._handleOutput(proc.stderr, self.stdError),
-            proc.wait(),
-        )
-        return (proc.returncode, stdout, stderr)
+
+        remoteRunner = RemoteRunner()
+        if remoteRunner.is_remote_execution():
+            outputDict = remoteRunner.execute(shlex.join(command))
+            if outputDict["OK"]:
+                returncode, stdout, stderr = outputDict["Value"]
+                self._handleRemoteOutput(stdout, self.applicationLog)
+                self._handleRemoteOutput(stderr, self.stdError)
+            else:
+                # Sometimes Errno has not been purposely defined and is equal to 0
+                returncode = outputDict["Errno"] if outputDict["Errno"] != 0 else DErrno.ERESGEN
+                stdout = ""
+                stderr = outputDict["Message"]
+        else:
+            proc = await asyncio.create_subprocess_exec(
+                *command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            stdout, stderr, _ = await asyncio.gather(
+                self._handleOutput(proc.stdout, self.applicationLog),
+                self._handleOutput(proc.stderr, self.stdError),
+                proc.wait(),
+            )
+            returncode = proc.returncode
+        return (returncode, stdout, stderr)
 
     async def _handleOutput(self, stream, filename):
+        """Process the output of a current local execution"""
         lines = []
         try:
             if filename:
@@ -197,12 +215,24 @@ class RunApplication(object):
             while line := await stream.readline():
                 line = line.decode(errors="backslashreplace")
                 lines += [line]
-                if "INFO Evt" in line or "Reading Event record" in line or "lb-run" in line:
-                    # These ones will appear in the std.out log too
-                    print(line.rstrip())
+                self._handleLine(line)
                 if filename:
                     log.write(line)
         finally:
             if filename:
                 log.close()
         return "".join(lines)
+
+    def _handleRemoteOutput(self, lines, filename):
+        """Process the output of a remote execution"""
+        if filename:
+            with open(filename, "at") as log:
+                log.write(lines)
+        for line in lines.split("\n"):
+            self._handleLine(line)
+
+    def _handleLine(self, line):
+        """Print a given line to the standard output if related to an event"""
+        if "INFO Evt" in line or "Reading Event record" in line or "lb-run" in line:
+            # These ones will appear in the std.out log too
+            print(line.rstrip())
