@@ -21,9 +21,6 @@ Givn input files, it will create something like::
 
   FileCatalog().Catalogs = ["xmlcatalog_file:pool_xml_catalog.xml"]
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import six
 

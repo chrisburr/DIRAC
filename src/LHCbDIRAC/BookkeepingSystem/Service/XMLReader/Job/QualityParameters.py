@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """stores the data quality informations."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 
 class QualityParameters(object):

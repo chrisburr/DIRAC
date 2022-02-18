@@ -10,9 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Use dirac-proxy-init to get a proxy."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import sys
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript

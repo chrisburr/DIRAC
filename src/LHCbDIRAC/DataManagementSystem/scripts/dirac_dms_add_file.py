@@ -10,9 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Upload a file to the grid storage and register it in the File Catalog."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 

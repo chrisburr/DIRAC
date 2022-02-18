@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Interacts with pool xml catalog."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
 from DIRAC.Resources.Catalog.PoolXMLFile import _getPoolCatalogs
 

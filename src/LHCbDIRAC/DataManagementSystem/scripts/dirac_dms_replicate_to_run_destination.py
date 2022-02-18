@@ -11,9 +11,6 @@
 ###############################################################################
 """Replicate a (list of) existing LFN(s) to Ses defined by the run
 destination."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 

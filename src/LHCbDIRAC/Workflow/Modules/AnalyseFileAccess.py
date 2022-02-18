@@ -11,9 +11,6 @@
 """ Analyse XMLSummary module and PoolCatalog in order to monitor the files access
     We send data to the accounting (Site -> SE : fail/success)
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from collections import defaultdict
 
 import LHCbDIRAC

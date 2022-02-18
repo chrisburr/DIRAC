@@ -12,9 +12,6 @@
 """Check existence of a (list of) LHCb LFNs/PFNs given a valid DIRAC SE (or for
 all replicas) Only the LFN contained in the PFN is considered, unlike the DIRAC
 similar script."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 

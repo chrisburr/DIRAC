@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """interpret the data taking conditions."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 #############################################################################
 
 

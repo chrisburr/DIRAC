@@ -10,9 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Retrieve files for a given run."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import DIRAC
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 

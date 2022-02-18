@@ -13,9 +13,6 @@
 
     This is the module used for each and every job of productions. It can also be used by users.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
