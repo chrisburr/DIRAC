@@ -37,8 +37,6 @@ from DIRAC.Resources.Storage.StorageElement import StorageElement
 from LHCbDIRAC.DataManagementSystem.DB.RAWIntegrityDB import RAWIntegrityDB
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "DataManagement/RAWIntegrityAgent"
 
 

@@ -22,8 +22,6 @@ from DIRAC.AccountingSystem.private.Plotters.BaseReporter import BaseReporter
 
 from LHCbDIRAC.AccountingSystem.Client.Types.JobStep import JobStep
 
-__RCSID__ = "$Id$"
-
 
 class JobStepPlotter(BaseReporter):
     """JobStepPlotter as an extension of BaseReporter."""

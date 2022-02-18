@@ -18,9 +18,6 @@ import json
 import datetime
 
 
-__RCSID__ = "$Id$"
-
-
 class JSONDateTimeEncoder(json.JSONEncoder):
     """encoder of datetime objects."""
 

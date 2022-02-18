@@ -26,8 +26,6 @@ from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
 from LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB import StorageUsageDB
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "DataManagement/UserStorageQuotaAgent"
 
 

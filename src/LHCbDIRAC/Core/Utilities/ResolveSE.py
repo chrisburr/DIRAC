@@ -20,8 +20,6 @@ from DIRAC import gLogger, gConfig
 from DIRAC.Core.Utilities.SiteSEMapping import getSEsForSite
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 
-__RCSID__ = "$Id$"
-
 
 def _setLocalFirst(seList, localSEs):
     """return a shuffled list of SEs from seList, localSEs being first."""

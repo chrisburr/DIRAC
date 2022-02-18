@@ -42,8 +42,6 @@ from DIRAC.Interfaces.API.Dirac import Dirac
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
 from LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB import StorageUsageDB
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "DataManagement/SEUsageAgent"
 
 

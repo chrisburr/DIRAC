@@ -16,8 +16,6 @@ import unittest
 
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import enoughParams, _ONE, _TWO
 
-__RCSID__ = "$Id$"
-
 
 class UtilitiesTestCase(unittest.TestCase):
     def test_enoughParams(self):

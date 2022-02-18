@@ -18,8 +18,6 @@ from DIRAC.AccountingSystem.private.Plotters.BaseReporter import BaseReporter
 
 from LHCbDIRAC.AccountingSystem.Client.Types.UserStorage import UserStorage
 
-__RCSID__ = "$Id$"
-
 
 class UserStoragePlotter(BaseReporter):
     """UserStoragePlotter as extension of BaseReporter."""

@@ -29,8 +29,6 @@ from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-__RCSID__ = "$Id$"
-
 
 def __printDictionary(dictionary, offset=0, shift=0, empty="Empty directory", depth=9999):
     """Dictionary pretty printing."""

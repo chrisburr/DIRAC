@@ -23,9 +23,6 @@ from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient import LHCB_BKKDBClient
 
-__RCSID__ = "$Id$"
-
-
 #############################################################################
 class LHCbBookkeepingCLI(cmd.Cmd):
     """class."""

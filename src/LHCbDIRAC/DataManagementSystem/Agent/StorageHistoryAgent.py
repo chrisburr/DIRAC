@@ -37,8 +37,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 from LHCbDIRAC.DataManagementSystem.Client.DataUsageClient import DataUsageClient
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
 
-__RCSID__ = "$Id$"
-
 
 def _standardDirectory(dirPath):
     """Add a "/" at the end of the directory name if not present"""

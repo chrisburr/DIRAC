@@ -27,8 +27,6 @@ from LHCbDIRAC.Core.Utilities.ProductionData import constructUserLFNs
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Core.Utilities.ResolveSE import getDestinationSEList
 
-__RCSID__ = "$Id$"
-
 
 class UserJobFinalization(ModuleBase):
     """Finalization of user jobs."""

@@ -29,10 +29,6 @@ from .Utilities import wipeOutDB, addBasicData
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-
-__RCSID__ = "$Id$"
-
-
 #############################################################################
 # Test data
 

@@ -25,8 +25,6 @@ import six
 from DIRAC import S_ERROR
 from DIRAC.Core.Base.Client import Client, createClient
 
-__RCSID__ = "$Id$"
-
 
 @createClient("DataManagement/DataUsage")
 class DataUsageClient(Client):

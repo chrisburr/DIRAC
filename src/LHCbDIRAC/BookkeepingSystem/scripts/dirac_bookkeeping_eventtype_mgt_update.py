@@ -18,9 +18,6 @@ DESCRIPTION="<description>", PRIMARY="<primary description>"
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import re
 import DIRAC
 from DIRAC import gLogger

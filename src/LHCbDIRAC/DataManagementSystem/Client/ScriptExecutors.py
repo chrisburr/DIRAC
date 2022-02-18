@@ -38,8 +38,6 @@ from LHCbDIRAC.DataManagementSystem.Client.DMScript import printDMResult, Progre
 from LHCbDIRAC.BookkeepingSystem.Client.ScriptExecutors import scaleSize
 from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import getProcessingPasses
 
-__RCSID__ = "$Id$"
-
 
 def __checkSEs(args, expand=True):
     """Finds StorageElements in a list of arguments and returns them separate

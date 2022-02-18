@@ -17,8 +17,6 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.Replica import Replic
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.ReplicaParam import ReplicaParam
 from DIRAC import gLogger
 
-__RCSID__ = "$Id$"
-
 
 class ReplicaReader(object):
     @staticmethod

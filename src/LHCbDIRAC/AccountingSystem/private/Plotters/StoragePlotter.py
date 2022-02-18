@@ -22,8 +22,6 @@ from DIRAC.AccountingSystem.private.Plotters.BaseReporter import BaseReporter
 
 from LHCbDIRAC.AccountingSystem.Client.Types.Storage import Storage
 
-__RCSID__ = "$Id$"
-
 # FIXME: refactor _reportMethods
 # FIXME: refactor _plotMethods
 

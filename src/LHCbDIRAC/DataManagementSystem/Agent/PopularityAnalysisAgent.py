@@ -35,8 +35,6 @@ from DIRAC.Core.Utilities.Mail import Mail
 
 from LHCbDIRAC.DataManagementSystem.Client.ScanPopularity import scanPopularity
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "DataManagement/PopularityAnalysisAgent"
 
 

@@ -16,8 +16,6 @@ from __future__ import print_function
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.ResourceStatusSystem.PolicySystem.StateMachine import State, StateMachine
 
-__RCSID__ = "$Id$"
-
 
 class LHCbStateMachine(StateMachine):
     """Just redefining one method."""

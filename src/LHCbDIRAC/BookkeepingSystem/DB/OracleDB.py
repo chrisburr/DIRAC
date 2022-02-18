@@ -60,10 +60,6 @@ Returns S_OK with connection in Value or S_ERROR
 the calling method is responsible for closing this connection once it is no
 longer needed.
 """
-
-__RCSID__ = "$Id$"
-
-
 # FIXME: use Connection Pooling
 # https://cx-oracle.readthedocs.io/en/latest/user_guide/connection_handling.html#connection-pooling
 

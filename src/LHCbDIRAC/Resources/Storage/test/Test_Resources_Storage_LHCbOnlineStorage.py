@@ -18,8 +18,6 @@ import unittest
 
 import LHCbDIRAC.Resources.Storage.LHCbOnlineStorage as moduleTested
 
-__RCSID__ = "$Id$"
-
 ################################################################################
 
 

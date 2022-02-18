@@ -18,8 +18,6 @@ import six
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
-__RCSID__ = "$Id$"
-
 
 def chown(directories, user=None, group=None, mode=None, recursive=False, ndirs=None, fcClient=None):
     """This method may change the user, group or mode of a directory and apply it

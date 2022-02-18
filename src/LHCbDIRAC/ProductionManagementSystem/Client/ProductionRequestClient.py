@@ -15,8 +15,6 @@ from __future__ import print_function
 
 from DIRAC.Core.Base.Client import Client, createClient
 
-__RCSID__ = "$Id$"
-
 
 @createClient("ProductionManagement/ProductionRequest")
 class ProductionRequestClient(Client):
