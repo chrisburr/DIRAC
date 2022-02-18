@@ -27,6 +27,7 @@ from DIRAC.RequestManagementSystem.Client.Operation import Operation
 from DIRAC.RequestManagementSystem.Client.File import File
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 
+import LHCbDIRAC
 from LHCbDIRAC.Core.Utilities.ResolveSE import getDestinationSEList
 from LHCbDIRAC.Core.Utilities.ProductionData import constructProductionLFNs
 from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import getFileDescendants
@@ -45,7 +46,7 @@ class UploadOutputData(ModuleBase):
         self.log = gLogger.getSubLogger("UploadOutputData")
         super(UploadOutputData, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
         self.commandTimeOut = 10 * 60
         self.jobID = ""
         self.existingCatalogs = []

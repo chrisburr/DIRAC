@@ -14,12 +14,11 @@ from __future__ import division
 from __future__ import print_function
 import os
 
+import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
-
 from DIRAC.Resources.Catalog.PoolXMLFile import getGUID
 from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
-
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Core.Utilities.ProductionData import constructProductionLFNs
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
@@ -34,7 +33,7 @@ class AnalyseXMLSummary(ModuleBase):
         self.log = gLogger.getSubLogger("AnalyseXMLSummary")
         super(AnalyseXMLSummary, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
         self.nc = NotificationClient()
         self.XMLSummary = ""
         self.XMLSummary_o = None

@@ -45,7 +45,7 @@ class BookkeepingReport(ModuleBase):
 
         super(BookkeepingReport, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
 
         self.simDescription = "NoSimConditions"
         self.eventType = ""

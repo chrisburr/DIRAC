@@ -16,6 +16,7 @@ from __future__ import division
 from __future__ import print_function
 from collections import defaultdict
 
+import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.AccountingSystem.Client.Types.DataOperation import DataOperation
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
@@ -32,7 +33,7 @@ class AnalyseFileAccess(ModuleBase):
         self.log = gLogger.getSubLogger("AnalyseFileAccess")
         super(AnalyseFileAccess, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
         self.XMLSummary = ""
         self.XMLSummary_o = None
         self.poolXMLCatName = ""
