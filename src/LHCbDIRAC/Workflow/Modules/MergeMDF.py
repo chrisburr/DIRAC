@@ -19,9 +19,8 @@ from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Utilities.Subprocess import systemCall
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
 
+import LHCbDIRAC
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
-
-__RCSID__ = "$Id$"
 
 
 class MergeMDF(ModuleBase):
@@ -33,7 +32,7 @@ class MergeMDF(ModuleBase):
         self.log = gLogger.getSubLogger("MergeMDF")
         super(MergeMDF, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
 
         self.outputLFN = ""
         # List all input parameters here

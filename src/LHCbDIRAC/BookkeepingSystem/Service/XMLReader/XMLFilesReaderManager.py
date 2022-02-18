@@ -42,8 +42,6 @@ from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import (
     Context,
 )
 
-__RCSID__ = "$Id$"
-
 
 class XMLFilesReaderManager(object):
     """XMLFilesReaderManager class."""

@@ -16,14 +16,12 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities import DErrno
 
+import LHCbDIRAC
 from LHCbDIRAC.Core.Utilities.ProductionOptions import getDataOptions, getModuleOptions
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
@@ -82,7 +80,7 @@ class GaudiApplication(ModuleBase):
 
         try:
             super(GaudiApplication, self).execute(
-                __RCSID__,
+                LHCbDIRAC.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -210,4 +208,4 @@ class GaudiApplication(ModuleBase):
             self.setApplicationStatus("Error in GaudiApplication module")
             return S_ERROR(str(exc))
         finally:
-            super(GaudiApplication, self).finalize(__RCSID__)
+            super(GaudiApplication, self).finalize(LHCbDIRAC.version)

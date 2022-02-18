@@ -30,8 +30,6 @@ from DIRAC.Core.DISET.RequestHandler import RequestHandler
 # from LHCbDIRAC
 from LHCbDIRAC.DataManagementSystem.DB.RAWIntegrityDB import RAWIntegrityDB
 
-__RCSID__ = "$Id$"
-
 # global instance of the RAWIntegrityDB
 gRAWIntegrityDB = False
 

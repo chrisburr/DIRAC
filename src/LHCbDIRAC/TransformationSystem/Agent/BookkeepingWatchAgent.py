@@ -37,9 +37,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
 AGENT_NAME = "Transformation/BookkeepingWatchAgent"
-
-__RCSID__ = "$Id$"
-
 gSynchro = Synchronizer()
 
 

@@ -20,8 +20,6 @@ from six.moves import reload_module
 from DIRAC import gLogger
 import LHCbDIRAC.Resources.Catalog.RAWIntegrityClient as moduleTested
 
-__RCSID__ = "$Id$"
-
 ################################################################################
 
 

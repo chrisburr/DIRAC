@@ -16,8 +16,6 @@ from __future__ import print_function
 import unittest
 import LHCbDIRAC.BookkeepingSystem.Client.BaseESManager as moduleTested
 
-__RCSID__ = "$Id$"
-
 
 class BaseESManager_TestCase(unittest.TestCase):
     def setUp(self):

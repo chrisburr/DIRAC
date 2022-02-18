@@ -15,8 +15,6 @@ from __future__ import print_function
 
 from DIRAC.AccountingSystem.Client.Types.BaseAccountingType import BaseAccountingType
 
-__RCSID__ = "$Id$"
-
 
 class Popularity(BaseAccountingType):
     """Popularity as extension of BaseAccountingType."""

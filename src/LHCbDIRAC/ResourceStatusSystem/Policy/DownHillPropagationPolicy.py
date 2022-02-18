@@ -19,8 +19,6 @@ from __future__ import print_function
 
 from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
 
-__RCSID__ = "$Id$"
-
 # ..............................................................................
 #
 #

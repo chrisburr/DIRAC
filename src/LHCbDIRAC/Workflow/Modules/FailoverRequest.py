@@ -20,9 +20,8 @@ from __future__ import print_function
 
 from DIRAC import S_OK, S_ERROR, gLogger
 
+import LHCbDIRAC
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
-
-__RCSID__ = "$Id$"
 
 
 class FailoverRequest(ModuleBase):
@@ -35,7 +34,7 @@ class FailoverRequest(ModuleBase):
         self.log = gLogger.getSubLogger("FailoverRequest")
         super(FailoverRequest, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
 
     #############################################################################
 

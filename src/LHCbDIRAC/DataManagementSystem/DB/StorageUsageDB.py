@@ -26,8 +26,6 @@ import os
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 
-__RCSID__ = "$Id$"
-
 
 def _standardDirectory(dirPath):
     """This adds a / at the end of the path if not there"""

@@ -32,7 +32,6 @@ from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 
-__RCSID__ = "$Id$"
 AGENT_NAME = "ResourceStatus/NagiosTopologyAgent"
 
 

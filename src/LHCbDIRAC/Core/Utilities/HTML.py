@@ -15,9 +15,6 @@ License: CeCILL (open-source GPL compatible), see source code for details.
 __version__ = "0.04"
 __date__ = "2009-07-28"
 __author__ = "Philippe Lagadec"
-
-__RCSID__ = "$Id$"
-
 # -- LICENSE ------------------------------------------------------------------
 
 # Copyright Philippe Lagadec - see http://www.decalage.info/contact for contact info

@@ -19,9 +19,6 @@ import LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB as moduleTested
 from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 
-__RCSID__ = "$Id$"
-
-
 # mock_OracleDB = mock.Mock(spec=OracleDB)
 testClass = moduleTested.OracleBookkeepingDB
 # self.moduleTested.OracleDB = mock_OracleDB

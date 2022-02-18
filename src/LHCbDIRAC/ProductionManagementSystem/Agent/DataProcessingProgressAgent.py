@@ -25,8 +25,6 @@ from DIRAC.Core.Base.AgentModule import AgentModule
 from LHCbDIRAC.ProductionManagementSystem.Client.ProcessingProgress import ProcessingProgress, HTMLProgressTable
 from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "ProductionManagement/DataProcessingProgressAgent"
 
 

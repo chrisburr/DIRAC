@@ -16,8 +16,6 @@ from __future__ import print_function
 from DIRAC.ResourceStatusSystem.PolicySystem.StateMachine import State
 from LHCbDIRAC.ProductionManagementSystem.Utilities.StateMachine import LHCbStateMachine
 
-__RCSID__ = "$Id$"
-
 
 class TransformationFilesStateMachine(LHCbStateMachine):
     """Implementation of the state machine for the TransformationFiles."""

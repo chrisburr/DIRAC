@@ -27,8 +27,6 @@ from DIRAC.DataManagementSystem.Client.DataIntegrityClient import DataIntegrityC
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import ConsistencyChecks
 
-__RCSID__ = "$Id$"
-
 
 class DataIntegrityClient(DIRACDataIntegrityClient):
     def __init__(self):

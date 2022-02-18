@@ -21,8 +21,6 @@ from DIRAC.Resources.Catalog.FileCatalogClientBase import FileCatalogClientBase
 from DIRAC.Resources.Catalog.Utilities import checkCatalogArguments
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-__RCSID__ = "$Id$"
-
 
 class BookkeepingDBClient(FileCatalogClientBase):
     """File catalog client for bookkeeping DB."""

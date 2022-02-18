@@ -30,8 +30,6 @@ from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
 from DIRAC.ConfigurationSystem.Client import PathFinder
 from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import _getMemberMails
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "ProductionManagement/NotifyAgent"
 
 

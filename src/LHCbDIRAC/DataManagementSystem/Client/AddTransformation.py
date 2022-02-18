@@ -13,9 +13,6 @@ Transformation."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 import json
 from collections import defaultdict

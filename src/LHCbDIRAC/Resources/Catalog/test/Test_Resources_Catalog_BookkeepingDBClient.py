@@ -23,8 +23,6 @@ import six
 from DIRAC import gLogger
 import LHCbDIRAC.Resources.Catalog.BookkeepingDBClient as moduleTested
 
-__RCSID__ = "$Id$"
-
 ################################################################################
 
 

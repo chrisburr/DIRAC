@@ -15,8 +15,6 @@ from __future__ import print_function
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.Replica import Replica
 
-__RCSID__ = "$Id$"
-
 
 class FileReplica(Replica):
     """FileReplica class."""

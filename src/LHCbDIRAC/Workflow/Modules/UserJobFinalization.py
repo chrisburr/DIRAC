@@ -23,11 +23,10 @@ from DIRAC.Core.Utilities.File import getGlobbedFiles
 from DIRAC.DataManagementSystem.Client.FailoverTransfer import FailoverTransfer
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 
+import LHCbDIRAC
 from LHCbDIRAC.Core.Utilities.ProductionData import constructUserLFNs
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Core.Utilities.ResolveSE import getDestinationSEList
-
-__RCSID__ = "$Id$"
 
 
 class UserJobFinalization(ModuleBase):
@@ -40,7 +39,7 @@ class UserJobFinalization(ModuleBase):
         self.log = gLogger.getSubLogger("UserJobFinalization")
         super(UserJobFinalization, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
         self.enable = True
         self.defaultOutputSE = resolveSEGroup(gConfig.getValue("/Resources/StorageElementGroups/Tier1-USER", []))
         self.failoverSEs = resolveSEGroup(gConfig.getValue("/Resources/StorageElementGroups/Tier1-Failover", []))

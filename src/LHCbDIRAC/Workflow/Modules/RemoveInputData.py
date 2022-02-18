@@ -17,8 +17,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-__RCSID__ = "$Id$"
-
+import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.RequestManagementSystem.Client.Operation import Operation
 from DIRAC.RequestManagementSystem.Client.File import File
@@ -35,7 +34,7 @@ class RemoveInputData(ModuleBase):
         self.log = gLogger.getSubLogger("RemoveInputData")
         super(RemoveInputData, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
 
         # List all parameters here
         self.inputDataList = []

@@ -34,9 +34,6 @@ The following switches and options are provided.
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 from datetime import datetime
 import sys
 

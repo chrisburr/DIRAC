@@ -17,9 +17,6 @@ from __future__ import print_function
 
 # pylint: disable=too-many-lines
 # pylint: disable=missing-docstring
-
-__RCSID__ = "$Id$"
-
 from collections import defaultdict
 import time
 import random

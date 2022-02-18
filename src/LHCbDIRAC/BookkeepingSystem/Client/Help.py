@@ -14,8 +14,6 @@ from __future__ import division
 from __future__ import print_function
 from DIRAC import gLogger, S_OK
 
-__RCSID__ = "$Id$"
-
 
 class Help(object):
     """Class for help."""

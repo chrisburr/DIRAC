@@ -28,8 +28,6 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.Quality import Quality
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.QualityParameters import QualityParameters
 from DIRAC import gLogger
 
-__RCSID__ = "$Id$"
-
 
 class JobReader(object):
     """JobReader class."""

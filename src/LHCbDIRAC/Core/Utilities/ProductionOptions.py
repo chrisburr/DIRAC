@@ -17,10 +17,6 @@ also provides lists of options files for test jobs.
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
-
 import re
 from DIRAC import S_OK, gLogger
 
