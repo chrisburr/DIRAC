@@ -37,8 +37,6 @@ from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
-__RCSID__ = "$Id$"
-
 
 @createClient("Bookkeeping/BookkeepingManager")
 class BookkeepingClient(Client):

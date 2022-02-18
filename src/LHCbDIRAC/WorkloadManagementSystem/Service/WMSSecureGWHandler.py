@@ -35,8 +35,6 @@ from DIRAC.WorkloadManagementSystem.Client.JobManagerClient import JobManagerCli
 from DIRAC.WorkloadManagementSystem.Client.PilotManagerClient import PilotManagerClient
 from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 
-__RCSID__ = "$Id$"
-
 # pylint: disable=no-self-use
 
 

@@ -23,8 +23,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 from LHCbDIRAC.BookkeepingSystem.Client import objects
 from LHCbDIRAC.BookkeepingSystem.Client.Help import Help
 
-__RCSID__ = "$Id$"
-
 INTERNAL_PATH_SEPARATOR = "/"
 
 #############################################################################

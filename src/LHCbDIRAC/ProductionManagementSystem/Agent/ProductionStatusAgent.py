@@ -76,8 +76,6 @@ KNOWN_TASK_STATES = [
     "Waiting",
 ]
 
-__RCSID__ = "$Id$"
-
 
 class ProductionStatusAgent(AgentModule):
     """Usual DIRAC agent."""

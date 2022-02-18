@@ -21,8 +21,6 @@ from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
 
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
-__RCSID__ = "$Id$"
-
 
 class MergeMDF(ModuleBase):
     """To be used in normal workflows."""

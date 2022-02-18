@@ -16,8 +16,6 @@ from __future__ import print_function
 from LHCbDIRAC.BookkeepingSystem.Client.BaseESClient import BaseESClient
 from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingManager import LHCbBookkeepingManager
 
-__RCSID__ = "$Id$"
-
 
 class LHCB_BKKDBClient(BaseESClient):
     """Client which used to browse the Entities."""

@@ -13,9 +13,6 @@ defined in the production workflow."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 import random
 import glob

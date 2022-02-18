@@ -21,8 +21,6 @@ from DIRAC.Core.Base.AgentModule import AgentModule
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "ProductionManagement/RequestTrackingAgent"
 
 

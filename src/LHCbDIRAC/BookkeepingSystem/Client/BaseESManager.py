@@ -19,9 +19,6 @@ import os
 from DIRAC import gLogger, S_OK, S_ERROR
 
 
-__RCSID__ = "$Id$"
-
-
 class BaseESManager(object):
     """Base Entity manager class."""
 

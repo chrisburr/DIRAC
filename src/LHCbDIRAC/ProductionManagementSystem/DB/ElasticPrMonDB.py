@@ -13,10 +13,6 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-
-__RCSID__ = "$Id$"
-
 from DIRAC import gConfig
 from DIRAC.ConfigurationSystem.Client.PathFinder import getDatabaseSection
 from DIRAC.ConfigurationSystem.Client.Helpers import CSGlobals

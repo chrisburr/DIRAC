@@ -14,4 +14,3 @@ from __future__ import print_function
 
 ############################################################
 """LHCbDIRAC.DataManagementSystem package."""
-__RCSID__ = "$Id$"

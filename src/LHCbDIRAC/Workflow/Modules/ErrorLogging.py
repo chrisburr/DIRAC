@@ -18,9 +18,6 @@ suite any failures will not be propagated to the workflow.
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger

@@ -18,9 +18,6 @@ from __future__ import print_function
 
 import xml.dom.minidom
 
-__RCSID__ = "$Id$"
-
-
 ################################################################################
 
 

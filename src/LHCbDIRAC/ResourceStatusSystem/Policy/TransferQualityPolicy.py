@@ -20,8 +20,6 @@ from __future__ import print_function
 from DIRAC import S_OK
 from DIRAC.ResourceStatusSystem.PolicySystem.PolicyBase import PolicyBase
 
-__RCSID__ = "$Id$"
-
 
 class TransferQualityPolicy(PolicyBase):
     """The TransferQualityPolicy class is a policy class to check the transfer

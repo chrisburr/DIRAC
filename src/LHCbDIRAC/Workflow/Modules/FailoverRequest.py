@@ -22,8 +22,6 @@ from DIRAC import S_OK, S_ERROR, gLogger
 
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
-__RCSID__ = "$Id$"
-
 
 class FailoverRequest(ModuleBase):
 

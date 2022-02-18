@@ -15,8 +15,6 @@ from __future__ import print_function
 
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.File import File
 
-__RCSID__ = "$Id$"
-
 
 class InputFile(File):
     """InputFile class."""

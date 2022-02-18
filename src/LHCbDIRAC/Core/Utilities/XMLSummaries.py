@@ -23,8 +23,6 @@ import xmltodict
 from DIRAC import gLogger
 from LHCbDIRAC.Core.Utilities.XMLTreeParser import XMLTreeParser
 
-__RCSID__ = "$Id$"
-
 
 def xmltojsonCat1(lCategory1):
     """returns a Category1 dictionary

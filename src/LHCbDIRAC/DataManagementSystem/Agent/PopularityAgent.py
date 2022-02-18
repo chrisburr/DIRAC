@@ -38,8 +38,6 @@ from LHCbDIRAC.DataManagementSystem.Client.DataUsageClient import DataUsageClien
 from LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB import StorageUsageDB
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-__RCSID__ = "$Id$"
-
 AGENT_NAME = "DataManagement/PopularityAgent"
 
 

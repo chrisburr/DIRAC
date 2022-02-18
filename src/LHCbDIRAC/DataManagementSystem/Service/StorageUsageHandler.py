@@ -29,8 +29,6 @@ from DIRAC.Core.DISET.RequestHandler import RequestHandler
 # from LHCbDIRAC
 from LHCbDIRAC.DataManagementSystem.DB.StorageUsageDB import StorageUsageDB
 
-__RCSID__ = "$Id$"
-
 gStorageUsageDB = False
 
 

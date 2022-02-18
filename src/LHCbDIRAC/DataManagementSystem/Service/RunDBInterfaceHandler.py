@@ -29,8 +29,6 @@ import six
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 
-__RCSID__ = "$Id$"
-
 allRunFields = [
     "runID",
     "fillID",

@@ -27,8 +27,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient import LHCB_BKKDBClient
 bkClient = BookkeepingClient()
 jobEventInputStat = {}
 
-__RCSID__ = "$Id$"
-
 
 def executeFileMetadata(dmScript):
     """Get a list of LFNs, their BK metadata and print it out.
