@@ -22,8 +22,6 @@ from DIRAC.Resources.Storage.StorageBase import StorageBase
 from DIRAC.Resources.Storage.Utilities import checkArgumentFormat
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-__RCSID__ = "$Id$"
-
 
 class LHCbOnlineStorage(StorageBase):
     """Plugin to talk to the xmlrpc of the datamover."""

@@ -39,8 +39,6 @@ Script.parseCommandLine()
 from DIRAC import gConfig, gLogger, exit as DIRACexit
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequest import ProductionRequest
 
-__RCSID__ = "$Id$"
-
 gLogger = gLogger.getSubLogger("MCSimulation_simplified_run.py")
 currentSetup = gConfig.getValue("DIRAC/Setup")
 

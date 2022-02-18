@@ -38,8 +38,6 @@ from DIRAC.Core.Base.DB import DB
 
 from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import informPeople
 
-__RCSID__ = "$Id$"
-
 
 class ProductionRequestDB(DB):
     """DB class for ProductionManagement/ProductionRequestDB."""

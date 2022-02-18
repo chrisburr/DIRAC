@@ -13,9 +13,6 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 from collections import defaultdict
 import os
 import re
@@ -47,8 +44,6 @@ class BookkeepingReport(ModuleBase):
         self.log = gLogger.getSubLogger("BookkeepingReport")
 
         super(BookkeepingReport, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-
-        self.version = __RCSID__
 
         self.simDescription = "NoSimConditions"
         self.eventType = ""
@@ -84,7 +79,6 @@ class BookkeepingReport(ModuleBase):
         try:
 
             super(BookkeepingReport, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -118,7 +112,7 @@ class BookkeepingReport(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(BookkeepingReport, self).finalize(self.version)
+            super(BookkeepingReport, self).finalize()
 
     ################################################################################
     # AUXILIAR FUNCTIONS

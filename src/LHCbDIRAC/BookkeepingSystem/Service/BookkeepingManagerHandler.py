@@ -28,8 +28,6 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.XMLFilesReaderManager import 
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.BookkeepingSystem.DB.Utilities import checkEnoughBKArguments
 
-__RCSID__ = "$Id$"
-
 # pylint: disable=invalid-name
 
 

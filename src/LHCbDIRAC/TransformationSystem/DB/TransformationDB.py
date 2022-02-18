@@ -18,9 +18,6 @@ more specific data processing databases
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import threading
 import copy
 import re

@@ -25,8 +25,6 @@ from DIRAC import S_OK
 from LHCbDIRAC.DataManagementSystem.Agent.StorageUsageAgent import StorageUsageAgent
 from DIRAC.Core.Utilities import List
 
-__RCSID__ = "$Id$"
-
 
 class UserStorageUsageAgent(StorageUsageAgent):
     """

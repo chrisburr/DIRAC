@@ -14,9 +14,6 @@ from __future__ import division
 from __future__ import print_function
 
 # pylint: disable=missing-docstring, invalid-name, protected-access
-
-__RCSID__ = "$Id$"
-
 import importlib
 from itertools import product
 

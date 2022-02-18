@@ -39,8 +39,6 @@ Script.parseCommandLine()
 from DIRAC import gConfig, gLogger, exit as DIRACexit
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequest import ProductionRequest
 
-__RCSID__ = "$Id$"
-
 #
 # Link compression level to the output file visibility. If any file types is visible, the corresponding
 # step takes the maximum compression level

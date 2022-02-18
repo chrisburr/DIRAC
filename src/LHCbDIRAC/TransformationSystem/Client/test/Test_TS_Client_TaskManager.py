@@ -17,8 +17,6 @@ import unittest
 
 import LHCbDIRAC.TransformationSystem.Client.TaskManager as moduleTested
 
-__RCSID__ = "$Id$"
-
 ################################################################################
 
 

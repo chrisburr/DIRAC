@@ -26,9 +26,6 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 from DIRAC.Core.Utilities.Subprocess import systemCall
 
 
-__RCSID__ = "$Id$"
-
-
 def __getLfnsFromFile(optFiles, gaudiVerbose):
     with tempfile.NamedTemporaryFile(mode="rt", suffix=".py") as tmpFile:
         runOpts = ""

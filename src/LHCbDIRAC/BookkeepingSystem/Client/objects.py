@@ -19,9 +19,6 @@ from DIRAC import gLogger
 from LHCbDIRAC.BookkeepingSystem.Client import IndentMaker
 
 
-__RCSID__ = "$Id$"
-
-
 class odict(UserDict):
     """user defined dictionary."""
 

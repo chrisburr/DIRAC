@@ -13,9 +13,6 @@ workflow step, in particular prepares and sends the step accounting data."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
 from DIRAC.Core.Utilities import Time
 from DIRAC.Workflow.Utilities.Utils import getStepCPUTimes
@@ -34,8 +31,6 @@ class StepAccounting(ModuleBase):
 
         self.dsc = None
         self.stepStat = None
-
-        self.version = __RCSID__
 
     ########################################################################
 
@@ -75,7 +70,6 @@ class StepAccounting(ModuleBase):
 
         try:
             super(StepAccounting, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -155,4 +149,4 @@ class StepAccounting(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(StepAccounting, self).finalize(self.version)
+            super(StepAccounting, self).finalize()

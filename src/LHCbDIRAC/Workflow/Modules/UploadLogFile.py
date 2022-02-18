@@ -13,9 +13,6 @@ directory."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 import shutil
 import glob
@@ -48,8 +45,6 @@ class UploadLogFile(ModuleBase):
 
         self.log = gLogger.getSubLogger("UploadLogFile")
         super(UploadLogFile, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-
-        self.version = __RCSID__
 
         self.logSE = self.opsH.getValue("LogStorage/LogSE", "LogSE")
         self.logSizeLimit = self.opsH.getValue("LogFiles/SizeLimit", 1 * 1024 * 1024)
@@ -98,7 +93,6 @@ class UploadLogFile(ModuleBase):
         try:
 
             super(UploadLogFile, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -219,7 +213,7 @@ class UploadLogFile(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(UploadLogFile, self).finalize(self.version)
+            super(UploadLogFile, self).finalize()
 
     #############################################################################
 

@@ -16,9 +16,6 @@ from __future__ import print_function
 from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager
 
 
-__RCSID__ = "$Id$"
-
-
 class BaseESClient(object):
     """Basic client."""
 

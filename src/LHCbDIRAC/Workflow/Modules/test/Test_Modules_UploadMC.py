@@ -14,9 +14,6 @@ from __future__ import division
 from __future__ import print_function
 
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
-
-__RCSID__ = "$Id$"
-
 from itertools import product
 
 from mock import MagicMock

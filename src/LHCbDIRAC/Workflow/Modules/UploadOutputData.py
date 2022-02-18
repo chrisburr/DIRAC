@@ -13,9 +13,6 @@ defined in the production workflow."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 import random
 import glob
@@ -48,7 +45,6 @@ class UploadOutputData(ModuleBase):
         self.log = gLogger.getSubLogger("UploadOutputData")
         super(UploadOutputData, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
         self.commandTimeOut = 10 * 60
         self.jobID = ""
         self.existingCatalogs = []
@@ -123,7 +119,6 @@ class UploadOutputData(ModuleBase):
         try:
 
             super(UploadOutputData, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -402,7 +397,7 @@ class UploadOutputData(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(UploadOutputData, self).finalize(self.version)
+            super(UploadOutputData, self).finalize()
 
     #############################################################################
 

@@ -18,9 +18,6 @@ suite any failures will not be propagated to the workflow.
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger
@@ -39,7 +36,6 @@ class ErrorLogging(ModuleBase):
         self.log = gLogger.getSubLogger("ErrorLogging")
         super(ErrorLogging, self).__init__(self.log)
 
-        self.version = __RCSID__
         # Internal parameters
         self.errorLogNameHTML = ""
         self.errorLogNamejson = ""
@@ -76,7 +72,6 @@ class ErrorLogging(ModuleBase):
         try:
 
             super(ErrorLogging, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -144,4 +139,4 @@ class ErrorLogging(ModuleBase):
             return S_ERROR("Error in ErrorLogging module")
 
         finally:
-            super(ErrorLogging, self).finalize(self.version)
+            super(ErrorLogging, self).finalize()

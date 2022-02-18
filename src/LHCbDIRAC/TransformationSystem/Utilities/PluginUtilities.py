@@ -37,8 +37,6 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import ProgressBar
 from LHCbDIRAC.DataManagementSystem.Client.StorageUsageClient import StorageUsageClient
 
-__RCSID__ = "$Id$"
-
 
 def _stripNumDirectory(dirName):
     """Method to remove numeric directory form a directory path."""

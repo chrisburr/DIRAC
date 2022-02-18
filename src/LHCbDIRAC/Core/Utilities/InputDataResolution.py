@@ -24,9 +24,6 @@ from DIRAC import S_OK
 from DIRAC.WorkloadManagementSystem.Client.PoolXMLSlice import PoolXMLSlice
 from DIRAC.WorkloadManagementSystem.Client.InputDataResolution import InputDataResolution as DIRACInputDataResolution
 
-__RCSID__ = "$Id$"
-
-
 COMPONENT_NAME = "LHCbInputDataResolution"
 CREATE_CATALOG = False
 

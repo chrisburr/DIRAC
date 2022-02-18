@@ -52,9 +52,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.test.mock_BookkeepingClient import bkc_m
 from LHCbDIRAC.Workflow.Modules.AnalyseXMLSummary import AnalyseXMLSummary
 
 
-__RCSID__ = "$Id$"
-
-
 class ModulesTestCase(unittest.TestCase):
     """Base class for the Modules test cases."""
 

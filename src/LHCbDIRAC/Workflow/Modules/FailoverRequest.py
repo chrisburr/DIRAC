@@ -22,8 +22,6 @@ from DIRAC import S_OK, S_ERROR, gLogger
 
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
-__RCSID__ = "$Id$"
-
 
 class FailoverRequest(ModuleBase):
 
@@ -34,8 +32,6 @@ class FailoverRequest(ModuleBase):
 
         self.log = gLogger.getSubLogger("FailoverRequest")
         super(FailoverRequest, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-
-        self.version = __RCSID__
 
     #############################################################################
 
@@ -63,7 +59,6 @@ class FailoverRequest(ModuleBase):
         try:
 
             super(FailoverRequest, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -148,7 +143,7 @@ class FailoverRequest(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(FailoverRequest, self).finalize(self.version)
+            super(FailoverRequest, self).finalize()
 
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

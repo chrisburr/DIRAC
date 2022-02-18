@@ -25,8 +25,6 @@ from DIRAC.Core.Utilities.List import breakListIntoChunks
 from DIRAC.Core.Utilities.Decorators import deprecated
 from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB
 
-__RCSID__ = "$Id$"
-
 global default
 default = "ALL"
 

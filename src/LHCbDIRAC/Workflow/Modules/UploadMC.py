@@ -12,15 +12,13 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 import io
 import json
 
 import six
 from DIRAC import S_OK, S_ERROR, gLogger
+
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
@@ -35,8 +33,6 @@ class UploadMC(ModuleBase):
 
         self.log = gLogger.getSubLogger("UploadMC")
         super(UploadMC, self).__init__(self.log)
-
-        self.version = __RCSID__
 
     def _resolveInputVariables(self):
         """standard method for resolving the input variables."""
@@ -71,7 +67,6 @@ class UploadMC(ModuleBase):
         try:
 
             super(UploadMC, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -275,4 +270,4 @@ class UploadMC(ModuleBase):
             return S_ERROR(repr(e))
 
         finally:
-            super(UploadMC, self).finalize(self.version)
+            super(UploadMC, self).finalize()

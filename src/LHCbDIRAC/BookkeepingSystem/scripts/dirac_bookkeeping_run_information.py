@@ -13,9 +13,6 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import DIRAC
 from DIRAC import gLogger, S_OK
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript

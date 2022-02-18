@@ -22,8 +22,6 @@ from DIRAC.ConfigurationSystem.Client.Helpers.Registry import getUserOption, get
 from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
 from DIRAC.ConfigurationSystem.Client import PathFinder
 
-__RCSID__ = "$Id$"
-
 
 def _getMemberMails(group):
     """get members mails."""

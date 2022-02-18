@@ -31,10 +31,6 @@ from .Utilities import wipeOutDB
 # # sut
 from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
-
-__RCSID__ = "$Id$"
-
-
 #############################################################################
 # Test data
 

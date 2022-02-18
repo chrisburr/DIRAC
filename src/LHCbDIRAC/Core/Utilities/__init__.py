@@ -18,5 +18,3 @@ from __future__ import print_function
 
 This contains the LHCb specific Core Utilities.
 """
-
-__RCSID__ = "$Id$"

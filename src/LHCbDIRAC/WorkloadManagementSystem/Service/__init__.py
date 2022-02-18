@@ -13,5 +13,3 @@ from __future__ import division
 from __future__ import print_function
 
 """LHCbDIRAC.WorkloadManagementSystem.Service package."""
-
-__RCSID__ = "$Id$"

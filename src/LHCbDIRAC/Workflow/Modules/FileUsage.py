@@ -13,9 +13,6 @@ defined in the user workflow."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-__RCSID__ = "$Id$"
-
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
@@ -33,7 +30,6 @@ class FileUsage(ModuleBase):
         """Module initialization."""
         self.log = gLogger.getSubLogger("FileUsage")
         super(FileUsage, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-        self.version = __RCSID__
         self.dataUsageClient = DataUsageClient()
 
     #############################################################################
@@ -75,7 +71,6 @@ class FileUsage(ModuleBase):
         try:
 
             super(FileUsage, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -113,7 +108,7 @@ class FileUsage(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(FileUsage, self).finalize(self.version)
+            super(FileUsage, self).finalize()
 
     #############################################################################
 

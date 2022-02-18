@@ -28,8 +28,6 @@ import stomp
 from DIRAC import gLogger, gConfig
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
-__RCSID__ = "$Id$"
-
 
 class NagiosConnector(object):
     """Bundles functions in the stomp library for sending SAMJob-Results to SAM-

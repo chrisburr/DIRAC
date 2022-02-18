@@ -31,8 +31,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClie
 from LHCbDIRAC.Core.Utilities.HTML import Table, TableCell, TableRow
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
-__RCSID__ = "$Id$"
-
 
 class HTMLProgressTable(object):
     def __init__(self, processingPass):

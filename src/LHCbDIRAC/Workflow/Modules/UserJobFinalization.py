@@ -27,8 +27,6 @@ from LHCbDIRAC.Core.Utilities.ProductionData import constructUserLFNs
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Core.Utilities.ResolveSE import getDestinationSEList
 
-__RCSID__ = "$Id$"
-
 
 class UserJobFinalization(ModuleBase):
     """Finalization of user jobs."""
@@ -40,7 +38,6 @@ class UserJobFinalization(ModuleBase):
         self.log = gLogger.getSubLogger("UserJobFinalization")
         super(UserJobFinalization, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
         self.enable = True
         self.defaultOutputSE = resolveSEGroup(gConfig.getValue("/Resources/StorageElementGroups/Tier1-USER", []))
         self.failoverSEs = resolveSEGroup(gConfig.getValue("/Resources/StorageElementGroups/Tier1-Failover", []))
@@ -104,7 +101,6 @@ class UserJobFinalization(ModuleBase):
         try:
 
             super(UserJobFinalization, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -330,7 +326,7 @@ class UserJobFinalization(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(UserJobFinalization, self).finalize(self.version)
+            super(UserJobFinalization, self).finalize()
 
     #############################################################################
 

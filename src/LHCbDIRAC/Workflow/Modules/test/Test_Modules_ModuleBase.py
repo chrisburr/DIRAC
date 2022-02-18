@@ -14,9 +14,6 @@ from __future__ import division
 from __future__ import print_function
 
 # pylint: disable=protected-access, missing-docstring, invalid-name
-
-__RCSID__ = "$Id$"
-
 import os
 from itertools import product
 from mock import MagicMock
@@ -47,7 +44,6 @@ def test__enableModule(mocker):
     mocker.patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
     mb = ModuleBase(bkClientIn=bkc_mock, dm=dm_mock)
     mb.execute(
-        version,
         prod_id,
         prod_job_id,
         wms_job_id,
