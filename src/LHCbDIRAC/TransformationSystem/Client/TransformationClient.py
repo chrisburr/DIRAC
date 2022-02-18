@@ -17,6 +17,7 @@ from __future__ import division
 from __future__ import print_function
 
 from DIRAC import S_OK, gLogger
+from DIRAC.Core.Utilities.JEncode import strToIntDict
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient as DIRACTransformationClient
 from LHCbDIRAC.ProductionManagementSystem.Utilities.StateMachine import ProductionsStateMachine
@@ -91,6 +92,12 @@ class TransformationClient(DIRACTransformationClient):
                 gLogger.error("Failed to publish BKQuery for transformation", "%s %s" % (transID, res["Message"]))
                 return res
         return S_OK(transID)
+
+    def getDestinationForRun(self, runIDs):
+        retVal = self._getRPC().getDestinationForRun(runIDs)
+        if not retVal["OK"]:
+            return retVal
+        return S_OK(strToIntDict(retVal["Value"]))
 
     def _applyTransformationStatusStateMachine(self, transIDAsDict, dictOfProposedstatus, force):
         """Performs a state machine check for productions when asked to change the

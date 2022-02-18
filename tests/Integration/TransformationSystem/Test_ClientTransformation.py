@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import sys
 import unittest
+import random
 
 from DIRAC.Core.Base.Script import parseCommandLine
 
@@ -42,15 +43,16 @@ class TestClientTransformationTestCase(unittest.TestCase):
 class LHCbTransformationClientChain(TestClientTransformationTestCase):
     def test_addAndRemove(self):
         # add
+        transName = f"transName{random.randint(0, 100_000)}"
         res = self.transClient.addTransformation(
-            "transName", "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
+            transName, "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
         )
         self.assertTrue(res["OK"])
         transID = res["Value"]
 
         # try to add again (this should fail)
         res = self.transClient.addTransformation(
-            "transName", "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
+            transName, "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
         )
         self.assertFalse(res["OK"])
 
@@ -70,8 +72,10 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase):
         self.assertFalse(res["OK"])
 
     def test_addTasksAndFiles(self):
+        transName = f"transName{random.randint(0, 100_000)}"
+
         res = self.transClient.addTransformation(
-            "transName", "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
+            transName, "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
         )
         self.assertTrue(res["OK"])
         transID = res["Value"]
@@ -118,7 +122,7 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase):
         # now adding a new Transformation with new tasks, and introducing a mix of insertion,
         # to test that the trigger works as it should
         res = self.transClient.addTransformation(
-            "transName-new", "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
+            f"{transName}-new", "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
         )
         transIDNew = res["Value"]
         # add tasks - no lfns
@@ -184,7 +188,7 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase):
     def test_LHCbOnly(self):
         # add
         res = self.transClient.addTransformation(
-            "transNameLHCb",
+            f"transNameLHCb{random.randint(0, 100_000)}",
             "description",
             "longDescription",
             "MCSimulation",
@@ -315,7 +319,13 @@ class LHCbTransformationClientChain(TestClientTransformationTestCase):
         """Here because the state machine of LHCbDIRAC is different"""
 
         res = self.transClient.addTransformation(
-            "transName", "description", "longDescription", "MCSimulation", "Standard", "Manual", ""
+            f"transName{random.randint(0, 100_000)}",
+            "description",
+            "longDescription",
+            "MCSimulation",
+            "Standard",
+            "Manual",
+            "",
         )
         transID = res["Value"]
 
