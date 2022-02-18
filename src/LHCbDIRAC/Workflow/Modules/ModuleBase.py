@@ -32,6 +32,7 @@ from DIRAC.RequestManagementSystem.Client.File import File
 from DIRAC.RequestManagementSystem.private.RequestValidator import RequestValidator
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 
+import LHCbDIRAC
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.Core.Utilities.ProductionData import getLogPath, constructProductionLFNs
 from LHCbDIRAC.Workflow.Modules.ModulesUtilities import getNumberOfProcessorsToUse
@@ -137,7 +138,6 @@ class ModuleBase(object):
 
     def execute(
         self,
-        version=None,
         production_id=None,
         prod_job_id=None,
         wms_job_id=None,
@@ -149,9 +149,7 @@ class ModuleBase(object):
         step_id=None,
     ):
         """Function called by all super classes."""
-
-        if version:
-            self.log.info("===== Executing " + version + " ===== ")
+        self.log.info(f"===== Executing {LHCbDIRAC.version} ===== ")
 
         self.log.verbose("Executing directory for job is %s" % os.getcwd())
 
@@ -197,11 +195,8 @@ class ModuleBase(object):
 
     #############################################################################
 
-    def finalize(self, version=None):
-        """Just finalizing."""
-
-        if version:
-            self.log.info("===== Terminating " + version + " ===== ")
+    def finalize(self):
+        self.log.info(f"===== Terminating {LHCbDIRAC.version} ===== ")
 
     #############################################################################
 

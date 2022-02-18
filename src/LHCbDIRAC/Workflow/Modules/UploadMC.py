@@ -19,7 +19,6 @@ import json
 import six
 from DIRAC import S_OK, S_ERROR, gLogger
 
-import LHCbDIRAC
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary
@@ -34,8 +33,6 @@ class UploadMC(ModuleBase):
 
         self.log = gLogger.getSubLogger("UploadMC")
         super(UploadMC, self).__init__(self.log)
-
-        self.version = LHCbDIRAC.version
 
     def _resolveInputVariables(self):
         """standard method for resolving the input variables."""
@@ -70,7 +67,6 @@ class UploadMC(ModuleBase):
         try:
 
             super(UploadMC, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -274,4 +270,4 @@ class UploadMC(ModuleBase):
             return S_ERROR(repr(e))
 
         finally:
-            super(UploadMC, self).finalize(self.version)
+            super(UploadMC, self).finalize()

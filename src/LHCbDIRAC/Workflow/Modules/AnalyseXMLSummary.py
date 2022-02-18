@@ -14,7 +14,6 @@ from __future__ import division
 from __future__ import print_function
 import os
 
-import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Resources.Catalog.PoolXMLFile import getGUID
 from DIRAC.FrameworkSystem.Client.NotificationClient import NotificationClient
@@ -33,7 +32,6 @@ class AnalyseXMLSummary(ModuleBase):
         self.log = gLogger.getSubLogger("AnalyseXMLSummary")
         super(AnalyseXMLSummary, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = LHCbDIRAC.version
         self.nc = NotificationClient()
         self.XMLSummary = ""
         self.XMLSummary_o = None
@@ -66,7 +64,6 @@ class AnalyseXMLSummary(ModuleBase):
 
         try:
             super(AnalyseXMLSummary, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -119,7 +116,7 @@ class AnalyseXMLSummary(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(AnalyseXMLSummary, self).finalize(self.version)
+            super(AnalyseXMLSummary, self).finalize()
 
     def _basicSuccess(self):
         """Treats basic success, meaning the outputs and the status of the XML

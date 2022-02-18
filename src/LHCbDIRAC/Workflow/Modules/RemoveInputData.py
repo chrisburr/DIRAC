@@ -17,7 +17,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.RequestManagementSystem.Client.Operation import Operation
 from DIRAC.RequestManagementSystem.Client.File import File
@@ -33,8 +32,6 @@ class RemoveInputData(ModuleBase):
 
         self.log = gLogger.getSubLogger("RemoveInputData")
         super(RemoveInputData, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-
-        self.version = LHCbDIRAC.version
 
         # List all parameters here
         self.inputDataList = []
@@ -65,7 +62,6 @@ class RemoveInputData(ModuleBase):
         try:
 
             super(RemoveInputData, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -120,7 +116,7 @@ class RemoveInputData(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(RemoveInputData, self).finalize(self.version)
+            super(RemoveInputData, self).finalize()
 
     #############################################################################
 

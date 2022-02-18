@@ -45,8 +45,6 @@ class BookkeepingReport(ModuleBase):
 
         super(BookkeepingReport, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = LHCbDIRAC.version
-
         self.simDescription = "NoSimConditions"
         self.eventType = ""
         self.poolXMLCatName = ""
@@ -81,7 +79,6 @@ class BookkeepingReport(ModuleBase):
         try:
 
             super(BookkeepingReport, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -115,7 +112,7 @@ class BookkeepingReport(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(BookkeepingReport, self).finalize(self.version)
+            super(BookkeepingReport, self).finalize()
 
     ################################################################################
     # AUXILIAR FUNCTIONS

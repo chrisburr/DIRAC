@@ -22,7 +22,6 @@ import os
 
 from DIRAC import S_OK, S_ERROR, gLogger
 
-import LHCbDIRAC
 import LHCbDIRAC.Core.Utilities.LogErr as LogErr
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
@@ -37,7 +36,6 @@ class ErrorLogging(ModuleBase):
         self.log = gLogger.getSubLogger("ErrorLogging")
         super(ErrorLogging, self).__init__(self.log)
 
-        self.version = LHCbDIRAC.version
         # Internal parameters
         self.errorLogNameHTML = ""
         self.errorLogNamejson = ""
@@ -74,7 +72,6 @@ class ErrorLogging(ModuleBase):
         try:
 
             super(ErrorLogging, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -142,4 +139,4 @@ class ErrorLogging(ModuleBase):
             return S_ERROR("Error in ErrorLogging module")
 
         finally:
-            super(ErrorLogging, self).finalize(self.version)
+            super(ErrorLogging, self).finalize()

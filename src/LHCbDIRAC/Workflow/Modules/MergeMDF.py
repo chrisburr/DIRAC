@@ -32,8 +32,6 @@ class MergeMDF(ModuleBase):
         self.log = gLogger.getSubLogger("MergeMDF")
         super(MergeMDF, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = LHCbDIRAC.version
-
         self.outputLFN = ""
         # List all input parameters here
         self.stepInputData = []
@@ -66,7 +64,6 @@ class MergeMDF(ModuleBase):
         try:
 
             super(MergeMDF, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -84,7 +81,7 @@ class MergeMDF(ModuleBase):
 
             stepOutputs, stepOutputTypes, _histogram = self._determineOutputs()
 
-            logLines = ["#" * len(self.version), self.version, "#" * len(self.version)]
+            logLines = ["#" * len(LHCbDIRAC.version), LHCbDIRAC.version, "#" * len(LHCbDIRAC.version)]
 
             localInputs = [str(list(poolCat.getPfnsByLfn(x)["Replicas"].values())[0]) for x in self.stepInputData]
             inputs = " ".join(localInputs)
@@ -132,7 +129,7 @@ class MergeMDF(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(MergeMDF, self).finalize(self.version)
+            super(MergeMDF, self).finalize()
 
 
 # EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#EOF#

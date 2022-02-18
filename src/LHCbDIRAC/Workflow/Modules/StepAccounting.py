@@ -17,7 +17,6 @@ from DIRAC import S_OK, S_ERROR, gConfig, gLogger
 from DIRAC.Core.Utilities import Time
 from DIRAC.Workflow.Utilities.Utils import getStepCPUTimes
 
-import LHCbDIRAC
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.AccountingSystem.Client.Types.JobStep import JobStep
 
@@ -32,8 +31,6 @@ class StepAccounting(ModuleBase):
 
         self.dsc = None
         self.stepStat = None
-
-        self.version = LHCbDIRAC.version
 
     ########################################################################
 
@@ -73,7 +70,6 @@ class StepAccounting(ModuleBase):
 
         try:
             super(StepAccounting, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -153,4 +149,4 @@ class StepAccounting(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(StepAccounting, self).finalize(self.version)
+            super(StepAccounting, self).finalize()

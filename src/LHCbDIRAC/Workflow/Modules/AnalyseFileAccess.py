@@ -16,7 +16,6 @@ from __future__ import division
 from __future__ import print_function
 from collections import defaultdict
 
-import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.AccountingSystem.Client.Types.DataOperation import DataOperation
 from DIRAC.Resources.Catalog.PoolXMLCatalog import PoolXMLCatalog
@@ -33,7 +32,6 @@ class AnalyseFileAccess(ModuleBase):
         self.log = gLogger.getSubLogger("AnalyseFileAccess")
         super(AnalyseFileAccess, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = LHCbDIRAC.version
         self.XMLSummary = ""
         self.XMLSummary_o = None
         self.poolXMLCatName = ""
@@ -69,7 +67,6 @@ class AnalyseFileAccess(ModuleBase):
 
         try:
             super(AnalyseFileAccess, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -110,7 +107,7 @@ class AnalyseFileAccess(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(AnalyseFileAccess, self).finalize(self.version)
+            super(AnalyseFileAccess, self).finalize()
 
     @staticmethod
     def _checkFileAccess(xmlCatalog, xmlSummary):

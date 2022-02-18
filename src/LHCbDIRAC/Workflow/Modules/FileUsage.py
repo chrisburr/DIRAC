@@ -15,7 +15,6 @@ from __future__ import division
 from __future__ import print_function
 import os
 
-import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities import DEncode
 from DIRAC.RequestManagementSystem.Client.Request import Operation
@@ -31,7 +30,6 @@ class FileUsage(ModuleBase):
         """Module initialization."""
         self.log = gLogger.getSubLogger("FileUsage")
         super(FileUsage, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-        self.version = LHCbDIRAC.version
         self.dataUsageClient = DataUsageClient()
 
     #############################################################################
@@ -73,7 +71,6 @@ class FileUsage(ModuleBase):
         try:
 
             super(FileUsage, self).execute(
-                self.version,
                 production_id,
                 prod_job_id,
                 wms_job_id,
@@ -111,7 +108,7 @@ class FileUsage(ModuleBase):
             return S_ERROR(str(e))
 
         finally:
-            super(FileUsage, self).finalize(self.version)
+            super(FileUsage, self).finalize()
 
     #############################################################################
 

@@ -44,7 +44,6 @@ def test__enableModule(mocker):
     mocker.patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())
     mb = ModuleBase(bkClientIn=bkc_mock, dm=dm_mock)
     mb.execute(
-        version,
         prod_id,
         prod_job_id,
         wms_job_id,
