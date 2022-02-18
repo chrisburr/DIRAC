@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Utility for invoking running LHCb applications."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import asyncio
 import json
 import shlex

@@ -15,9 +15,6 @@ step_commons dictionary can be utilized.
 Since not all projects are instrumented to work with the AppConfig error
 suite any failures will not be propagated to the workflow.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger

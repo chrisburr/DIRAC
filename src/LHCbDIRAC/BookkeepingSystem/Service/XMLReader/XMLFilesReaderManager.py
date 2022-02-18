@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """It interprets the XML reports and make a job, file, or replica object."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from xml.parsers.expat import ExpatError
 from xml.dom.minidom import parse, parseString
 from DIRAC import gLogger, S_OK, S_ERROR

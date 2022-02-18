@@ -14,9 +14,6 @@ are awating migration.
 It offers a simple interface to add files, get files and modify their
 status.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import six
 
 from DIRAC import gLogger, S_OK, S_ERROR

@@ -16,10 +16,6 @@
 :synopsis: UserStorageUsageAgent simply inherits the StorageUsage agent
   and loops over the /lhcb/user directory, removing empty ones.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # # imports
 from DIRAC import S_OK
 from LHCbDIRAC.DataManagementSystem.Agent.StorageUsageAgent import StorageUsageAgent

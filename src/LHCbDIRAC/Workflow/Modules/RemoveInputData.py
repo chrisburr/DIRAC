@@ -13,10 +13,6 @@
 Initially written for use after merged outputs have been successfully
 uploaded to an SE.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.RequestManagementSystem.Client.Operation import Operation

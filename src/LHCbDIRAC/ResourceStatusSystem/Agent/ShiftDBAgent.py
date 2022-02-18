@@ -13,10 +13,6 @@
 ShiftDBAgent.__bases__:
   DIRAC.Core.Base.AgentModule.AgentModule
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # FIXME: should add a "DryRun" option to run in certification setup
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.error import URLError

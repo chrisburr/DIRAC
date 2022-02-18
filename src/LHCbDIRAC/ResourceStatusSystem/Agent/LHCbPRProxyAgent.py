@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """LHCbDIRAC/ResourceStatusSystem/Agent/LHCbPRProxyAgent.py."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # First, pythonic stuff
 import os
 import stat

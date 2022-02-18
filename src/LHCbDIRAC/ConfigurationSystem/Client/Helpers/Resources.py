@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """LHCbDIRAC's Resources helper."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import json
 import ssl
 

@@ -17,7 +17,6 @@
   Retrieve parameters associated to the given DIRAC job
 """
 
-from __future__ import print_function
 import DIRAC
 
 from DIRAC import gLogger, S_OK

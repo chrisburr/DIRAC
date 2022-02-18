@@ -10,10 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Gets a list of files from BK and checks if they have common ancestors."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import time
 from DIRAC import gLogger
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript

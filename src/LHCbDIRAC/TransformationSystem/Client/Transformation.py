@@ -10,9 +10,6 @@
 ###############################################################################
 """Client module to deal with transformations, but mostly dedicated to
 DataManipulation (e.g.: replications)"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.TransformationSystem.Client.Transformation import Transformation as DIRACTransformation
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup

@@ -13,9 +13,6 @@
 Ideally, we would not need this code at all, and the message sent should
 just be loaded from somewhere else.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from DIRAC import gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
 from DIRAC.FrameworkSystem.DB.ProxyDB import ProxyDB as DIRACProxyDB

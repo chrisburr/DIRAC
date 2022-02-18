@@ -18,9 +18,6 @@ files and runs the job
 Usage:
   dirac-production-runjoblocal (job ID) (Data imput mode) -  No parenthesis
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import sys
 import os
 import shutil

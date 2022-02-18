@@ -14,11 +14,6 @@ MCStatsElasticDBClient > MCStatsElasticDBHandler > MCStatsElasticDBs (several of
 
 It assumes the server is running and that ES is present and running
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
