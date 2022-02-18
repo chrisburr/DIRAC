@@ -237,12 +237,45 @@ def test_registerTransformations(apdb):
     apdb.registerTransformations({1234: [TRANSFORMS_1b]})
     assert apdb.getProductions()[0]["transformations"] == [TRANSFORMS_1a, TRANSFORMS_1b]
 
+    apdb.deregisterTransformations({1234: [TRANSFORMS_1a["id"]]})
+    assert apdb.getProductions()[0]["transformations"] == [TRANSFORMS_1b]
+
 
 def test_registerTransformationsError(apdb):
     """Ensure that nothing is changed if an invalid request ID is passed."""
     apdb.registerRequests([REQUEST_1, REQUEST_2, REQUEST_3])
     with pytest.raises(ValueError, match=r"Did not find requests for IDs: \[99999\]"):
         apdb.registerTransformations({987: [TRANSFORMS_1a], 99999: [TRANSFORMS_1a], 988: [TRANSFORMS_1a]})
+    for prod in apdb.getProductions():
+        assert prod["transformations"] == [], prod
+
+
+def test_deregisterTransformationsError(apdb):
+    """Ensure that nothing is changed if an invalid request ID is passed."""
+    apdb.registerRequests([REQUEST_2, REQUEST_3])
+    apdb.registerTransformations({987: [TRANSFORMS_1a], 988: [TRANSFORMS_1a]})
+    with pytest.raises(ValueError, match=r"Did not find requests for IDs: \[99999\]"):
+        apdb.deregisterTransformations(
+            {987: [TRANSFORMS_1a["id"]], 99999: [TRANSFORMS_1a["id"]], 988: [TRANSFORMS_1a["id"]]}
+        )
+    for prod in apdb.getProductions():
+        assert prod["transformations"] == [TRANSFORMS_1a], prod
+
+
+def test_deregisterTransformationsError2(apdb):
+    """Ensure that nothing is changed if an invalid request ID is passed."""
+    apdb.registerRequests([REQUEST_1, REQUEST_2, REQUEST_3])
+    apdb.registerTransformations({1234: [TRANSFORMS_1a], 987: [TRANSFORMS_1a], 988: [TRANSFORMS_1a]})
+    with pytest.raises(ValueError, match=r"Transformation 47 is not known"):
+        apdb.deregisterTransformations(
+            {1234: [TRANSFORMS_1a["id"]], 987: [TRANSFORMS_1a["id"], 47], 988: [TRANSFORMS_1a["id"]]}
+        )
+    for prod in apdb.getProductions():
+        assert prod["transformations"] == [TRANSFORMS_1a], prod
+
+    apdb.deregisterTransformations(
+        {1234: [TRANSFORMS_1a["id"]], 987: [TRANSFORMS_1a["id"]], 988: [TRANSFORMS_1a["id"]]}
+    )
     for prod in apdb.getProductions():
         assert prod["transformations"] == [], prod
 

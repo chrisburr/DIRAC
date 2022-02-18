@@ -916,6 +916,15 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionFiles(prod, fileType, replica)
 
     #############################################################################
+    types_getProductionFilesBulk = [list, six.string_types]
+
+    @classmethod
+    def export_getProductionFilesBulk(cls, prods, fileType, replica=default):
+        """It returns files and their metadata for list of productions, file type
+        and replica."""
+        return cls.bkkDB.getProductionFilesBulk(prods, fileType, replica)
+
+    #############################################################################
     types_getAvailableRunNumbers = []
 
     def export_getAvailableRunNumbers(self):

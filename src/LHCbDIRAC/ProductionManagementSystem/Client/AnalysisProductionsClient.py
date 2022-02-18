@@ -204,6 +204,14 @@ class AnalysisProductionsClient(Client):
         """
         return self.executeRPC(transformations, call="registerTransformations")
 
+    def deregisterTransformations(self, tIDs: dict[int, list[int]]):
+        """Deregister the some transformations associated with a request
+
+        :param tIDs: Dictionary of the form {requestID: [tID, tID, ...]}}
+        :returns: S_OK() || S_ERROR()
+        """
+        return self.executeRPC(tIDs, call="deregisterTransformations")
+
     def registerRequests(self, requests):
         """Add a new production to the database
 
