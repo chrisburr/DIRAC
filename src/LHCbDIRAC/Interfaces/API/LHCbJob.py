@@ -37,10 +37,6 @@ An example DaVinci application script would be::
 
 The setDestination() method is optional and takes the DIRAC site name as an argument.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import re
 import six

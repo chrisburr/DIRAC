@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test_PMS_Client_ProcessingProgress."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import unittest
 
 dummyResults = {}

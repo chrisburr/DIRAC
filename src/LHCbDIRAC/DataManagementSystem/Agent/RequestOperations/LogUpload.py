@@ -17,10 +17,6 @@
 
 LogUpload operation handler
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # # imports
 import os
 from DIRAC import S_OK, S_ERROR

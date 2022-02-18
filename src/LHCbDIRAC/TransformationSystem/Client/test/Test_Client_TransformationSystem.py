@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Client test."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 
 import unittest

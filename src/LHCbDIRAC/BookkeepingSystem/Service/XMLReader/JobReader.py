@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """It stores the job related information."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobConfiguration import JobConfiguration
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobOption import JobOption
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.File import File

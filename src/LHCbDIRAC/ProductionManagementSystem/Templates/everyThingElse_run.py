@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Moving toward a templates-less system."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from six.moves import range
 
 import ast

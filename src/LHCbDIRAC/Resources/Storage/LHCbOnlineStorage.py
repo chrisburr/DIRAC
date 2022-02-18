@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """This is the LHCb Online storage."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from six.moves import xmlrpc_client as xmlrpclib
 import os
 

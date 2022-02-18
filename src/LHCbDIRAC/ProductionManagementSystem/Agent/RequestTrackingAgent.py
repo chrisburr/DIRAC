@@ -12,10 +12,6 @@
 
 Currently it updates the number of Input Events for processing productions.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.AgentModule import AgentModule
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

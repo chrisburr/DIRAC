@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Its ident the debug message."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 TAB = "\t"
 SPACE = " "
 DEFAULT = "___"
