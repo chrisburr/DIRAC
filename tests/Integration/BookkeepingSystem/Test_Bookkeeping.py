@@ -30,9 +30,6 @@ from __future__ import print_function
 # from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
 
-# __RCSID__ = "$Id$"
-
-
 # class BaseTestCase(unittest.TestCase):
 #   """ Base
 #   """

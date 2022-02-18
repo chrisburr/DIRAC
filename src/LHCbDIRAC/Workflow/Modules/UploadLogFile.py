@@ -29,6 +29,7 @@ from DIRAC.RequestManagementSystem.Client.File import File
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 
+import LHCbDIRAC
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Workflow.Modules.ModulesUtilities import zipFiles
 from LHCbDIRAC.Core.Utilities.ProductionData import getLogPath
@@ -46,7 +47,7 @@ class UploadLogFile(ModuleBase):
         self.log = gLogger.getSubLogger("UploadLogFile")
         super(UploadLogFile, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
 
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
 
         self.logSE = self.opsH.getValue("LogStorage/LogSE", "LogSE")
         self.logSizeLimit = self.opsH.getValue("LogFiles/SizeLimit", 1 * 1024 * 1024)

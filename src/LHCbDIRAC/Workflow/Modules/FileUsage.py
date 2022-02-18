@@ -15,6 +15,7 @@ from __future__ import division
 from __future__ import print_function
 import os
 
+import LHCbDIRAC
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
 from DIRAC.Core.Utilities import DEncode
 from DIRAC.RequestManagementSystem.Client.Request import Operation
@@ -30,7 +31,7 @@ class FileUsage(ModuleBase):
         """Module initialization."""
         self.log = gLogger.getSubLogger("FileUsage")
         super(FileUsage, self).__init__(self.log, bkClientIn=bkClient, dm=dm)
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
         self.dataUsageClient = DataUsageClient()
 
     #############################################################################

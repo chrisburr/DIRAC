@@ -15,6 +15,7 @@ from __future__ import division
 from __future__ import print_function
 from DIRAC import S_OK, S_ERROR, gLogger
 
+import LHCbDIRAC
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Core.Utilities.GangaDataFile import GangaDataFile
 
@@ -32,7 +33,7 @@ class CreateDataFile(ModuleBase):
         self.gangaFileName = "data.py"
         self.poolXMLCatName = "pool_xml_catalog.xml"
         self.persistency = ""
-        self.version = __RCSID__
+        self.version = LHCbDIRAC.version
 
     def _resolveInputVariables(self):
         """By convention the module parameters are resolved here."""

@@ -23,7 +23,7 @@ from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient import LHCB_BKKDBClient
 
-#############################################################################
+
 class LHCbBookkeepingCLI(cmd.Cmd):
     """class."""
 
