@@ -12,9 +12,6 @@ import json
 import os
 import pytest
 
-# sed -e 's/"it"/"IT"/g' -e 's/"tt"/"TT"/g' -e 's/"ot"/"OT"/g' -e 's/"rich1"/"RICH1"/g' -e 's/"rich2"/"RICH2"/g' -e 's/spd_prs/SPD_PRS/g' -e 's/"ecal"/"ECAL"/g' -e 's/"hcal"/"HCAL"/g' -e 's/"muon"/"MUON"/g' -e 's/"l0"/"L0"/g' -e 's/"hlt"/"HLT"/g' -e 's/"veloposition"/"VeloPosition"/g' -e 's/configname/ConfigName/g' -e 's/configversion/ConfigVersion/g' -e 's/description/Description/g' -e 's/beamcond/BeamCond/g' -e 's/beamenergy/BeamEnergy/g' -e 's/magneticfield/MagneticField/g' -e 's/"velo"/"VELO"/g' -e 's/configname/ConfigName/g' -e 's/configversion/ConfigVersion/g' -e 's/description/Description/g' -e 's/beamcond/BeamCond/g' -e 's/beamenergy/BeamEnergy/g' -e 's/magneticfield/MagneticField/g' -e 's/"velo"/"VELO"/g' -i /tmp/dtc4.json
-
-
 from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import generateConditionDescription
 
 
