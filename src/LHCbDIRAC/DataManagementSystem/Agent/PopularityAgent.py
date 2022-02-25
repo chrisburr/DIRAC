@@ -20,10 +20,6 @@ StorageUsageDB/Popularity table. Then it creates an accounting record for each d
 adding all the relevant directory metadata, obtained from the StorageUsageDB/DirMetadata table.
 The accounting records are stored in the AccountingDB and then displayed via the web portal.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # imports
 from datetime import datetime, timedelta
 

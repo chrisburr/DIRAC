@@ -9,10 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Unit tests for Workflow Modules utilities."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import unittest
 import copy
 import os

@@ -9,11 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Moving toward a templates-less system."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 import ast
 
 from DIRAC.Core.Base import Script

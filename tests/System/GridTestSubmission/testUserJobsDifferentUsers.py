@@ -11,16 +11,7 @@
 """ This submits user jobs using a second user, for which a proxy is downloaded locally
     This means that to run this test you need to have the KARMA!
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 # pylint: disable=wrong-import-position,unused-wildcard-import,wildcard-import
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import unittest
 
 from DIRAC.Core.Base.Script import parseCommandLine

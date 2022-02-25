@@ -12,10 +12,6 @@
 
 A tree ox XMLNodes.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import xml.dom.minidom
 
 ################################################################################

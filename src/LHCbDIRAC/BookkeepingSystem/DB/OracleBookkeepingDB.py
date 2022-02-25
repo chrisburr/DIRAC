@@ -9,11 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Queries creation."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 import datetime
 import re
 import six
