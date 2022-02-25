@@ -19,24 +19,7 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.FileParam import FilePara
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobParameters import JobParameters
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.JobReader import JobReader
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.ReplicaReader import ReplicaReader
-from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import (
-    BeamEnergyCondition,
-    VeloCondition,
-    MagneticFieldCondition,
-    EcalCondition,
-    HcalCondition,
-    HltCondition,
-    ItCondition,
-    LoCondition,
-    MuonCondition,
-    OtCondition,
-    Rich1Condition,
-    Rich2Condition,
-    Spd_prsCondition,
-    TtCondition,
-    VeloPosition,
-    Context,
-)
+from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import generateConditionDescription
 
 
 class XMLFilesReaderManager(object):
@@ -470,29 +453,9 @@ class XMLFilesReaderManager(object):
             ver = ver.capitalize()
             config.configVersion = ver
             self.log.debug("Data taking:", "%s" % datataking)
-            context = Context(datataking, config.configName)
-            conditions = [
-                BeamEnergyCondition(),
-                VeloCondition(),
-                MagneticFieldCondition(),
-                EcalCondition(),
-                HcalCondition(),
-                HltCondition(),
-                ItCondition(),
-                LoCondition(),
-                MuonCondition(),
-                OtCondition(),
-                Rich1Condition(),
-                Rich2Condition(),
-                Spd_prsCondition(),
-                TtCondition(),
-                VeloPosition(),
-            ]
-            for condition in conditions:
-                condition.interpret(context)
-
-            self.log.debug(context.getOutput())
-            datataking["Description"] = context.getOutput()
+            dtDescription = generateConditionDescription(datataking, config.configName)
+            self.log.debug(dtDescription)
+            datataking["Description"] = dtDescription
 
             res = self.bkClient_.getDataTakingCondDesc(datataking)
             dataTackingPeriodDesc = None
