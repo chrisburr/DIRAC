@@ -10,9 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """It returns the input and output files of a given list of DIRAC Jobids."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 from DIRAC.Core.Base.Script import Script
 

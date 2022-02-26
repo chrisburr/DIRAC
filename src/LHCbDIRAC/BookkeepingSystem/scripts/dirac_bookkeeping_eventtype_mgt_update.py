@@ -15,9 +15,6 @@ operate.
 Each line must have the following format: EVTTYPEID="<evant id>",
 DESCRIPTION="<description>", PRIMARY="<primary description>"
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import re
 import DIRAC
 from DIRAC import gLogger

@@ -11,7 +11,6 @@
 ###############################################################################
 """In a transformation, flush a list of runs or runs that are flushed in the
 transformation used in BKQuery."""
-
 import DIRAC
 from DIRAC.Core.Base.Script import Script
 

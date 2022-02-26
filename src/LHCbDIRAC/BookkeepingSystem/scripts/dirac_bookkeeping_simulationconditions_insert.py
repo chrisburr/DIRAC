@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Insert a new set of simulation conditions in the Bookkeeping."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from builtins import input
 
 import DIRAC

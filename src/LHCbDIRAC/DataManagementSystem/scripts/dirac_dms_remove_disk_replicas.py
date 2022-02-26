@@ -11,9 +11,7 @@
 ###############################################################################
 """Remove replicas of a (list of) LFNs from all non-ARCHIVE storage
 elements."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from DIRAC.Core.Base.Script import Script
 
 

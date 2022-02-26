@@ -10,7 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get the storage usage summary for the given directories."""
-
 import DIRAC
 from DIRAC.Core.Base.Script import Script
 from DIRAC import gConfig, gLogger

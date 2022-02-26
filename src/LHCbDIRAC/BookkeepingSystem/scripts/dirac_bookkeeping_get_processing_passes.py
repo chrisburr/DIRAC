@@ -11,9 +11,7 @@
 ###############################################################################
 """List all BK paths matching a wildcard path ('...' is the wildcard character,
 or '*' but enclose with quotes)"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from DIRAC.Core.Base.Script import Script
 
 

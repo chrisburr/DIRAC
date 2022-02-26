@@ -20,7 +20,6 @@
                  Derived data are left unchanged. If one wants to flag everything, use 1.
                - else that processing pass (and derived) and the RAW are flagged OK
 """
-
 import os
 
 import DIRAC

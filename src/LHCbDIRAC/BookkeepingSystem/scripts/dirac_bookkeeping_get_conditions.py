@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Returns list of Conditions for a run range, by default only if there is a FULL stream."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from DIRAC.Core.Base.Script import Script
 
 

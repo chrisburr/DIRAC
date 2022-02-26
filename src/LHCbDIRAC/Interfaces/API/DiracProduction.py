@@ -15,9 +15,6 @@ This class allows to monitor the progress of productions operationally.
 Of particular use are the monitoring functions allowing to drill down
 by site, minor status and application status for a given transformation.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import six
 

@@ -11,9 +11,6 @@
 ###############################################################################
 """This script adds a user directory to the DFC or changes a user directory's
 ownership."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import sys
 from time import time

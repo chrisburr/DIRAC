@@ -12,7 +12,6 @@
 """
  Test a plugin
 """
-
 import DIRAC
 from DIRAC import S_OK
 from DIRAC.Core.Base.Script import Script

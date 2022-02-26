@@ -16,7 +16,6 @@ Parameters:
    <run> : run number
    <flag> : flag to set
 """
-
 import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Base.Script import Script

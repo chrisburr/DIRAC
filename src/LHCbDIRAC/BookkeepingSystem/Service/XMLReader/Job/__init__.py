@@ -9,6 +9,3 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """It is used to store a grid job metadata information."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function

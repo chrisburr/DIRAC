@@ -11,9 +11,7 @@
 ###############################################################################
 """Set a (set of) LFNs as problematic in the FC and in the BK and
 transformation system if all replicas are problematic."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from DIRAC.Core.Base.Script import Script
 
 

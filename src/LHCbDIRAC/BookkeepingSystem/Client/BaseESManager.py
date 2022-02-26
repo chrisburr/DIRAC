@@ -9,8 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Base Entity System Manager."""
-
-
 import os
 from DIRAC import gLogger, S_OK, S_ERROR
 

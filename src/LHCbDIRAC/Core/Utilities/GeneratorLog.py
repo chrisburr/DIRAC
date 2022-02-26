@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Utilities to parse the XML Generator Logs."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import io
 import ast
 import json

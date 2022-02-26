@@ -10,7 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Set Data Quality Flag for the given run."""
-
 import DIRAC
 from DIRAC.Core.Base.Script import Script
 

@@ -10,9 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Retrieve from Bookkeeping the number of Jobs at each Site for a given Production."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import DIRAC
 from DIRAC.Core.Base.Script import Script
 

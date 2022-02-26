@@ -10,9 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Returns run ranges, split by conditions and by run gaps or time interval between them."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from DIRAC.Core.Base.Script import Script
 
 
