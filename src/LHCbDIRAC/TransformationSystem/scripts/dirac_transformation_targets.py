@@ -12,7 +12,7 @@
 """Gets all Assigned files in a transformation and reports by target SE."""
 
 from collections import defaultdict
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def __getTask(transClient, transID, taskID):
@@ -28,9 +28,8 @@ def initStat():
     return [0, 0]
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
     Script.parseCommandLine(ignoreErrors=True)

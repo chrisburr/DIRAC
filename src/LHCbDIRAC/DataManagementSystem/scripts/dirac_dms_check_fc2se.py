@@ -30,7 +30,7 @@ If --FixIt is set, takes actions:
   Bad checksum: remove replica or file from SE and catalogs if no good replica
 """
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def __getSEsFromOptions(dmScript):
@@ -50,10 +50,10 @@ def __getSEsFromOptions(dmScript):
     return seList
 
 
-@DIRACScript()
+@Script()
 def main():
     # Script initialization
-    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     Script.setUsageMessage(
         "\n".join(

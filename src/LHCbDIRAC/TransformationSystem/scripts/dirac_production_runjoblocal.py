@@ -35,7 +35,7 @@ else:
 
 from DIRAC import S_OK
 from DIRAC.Core.Utilities.File import mkDir
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def __runSystemDefaults(jobID=None):
@@ -140,9 +140,8 @@ def __runJobLocally(jobID, basepath):
     localJob.runLocal()
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.registerSwitch("D:", "Download=", "Defines data acquisition as DownloadInputData")
     Script.registerSwitch("P:", "Protocol=", "Defines data acquisition as InputDataByProtocol")

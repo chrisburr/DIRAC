@@ -13,21 +13,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def usage():
     """usage Prints script usage."""
-    from DIRAC.Core.Base import Script
-
     print("Usage: %s <Production ID> <Number Of Jobs>" % Script.scriptName)
     DIRAC.exit(2)
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
-
     Script.parseCommandLine(ignoreErrors=True)
 
     from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction

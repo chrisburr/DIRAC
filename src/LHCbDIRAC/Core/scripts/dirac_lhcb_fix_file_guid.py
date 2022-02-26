@@ -16,7 +16,7 @@ from __future__ import print_function
 import os
 
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 keep = None
 localFile = None
@@ -43,12 +43,10 @@ def leave(msg, error=None, exitCode=0):
     DIRAC.exit(exitCode)
 
 
-@DIRACScript()
+@Script()
 def main():
     global keep
     global localFile
-
-    from DIRAC.Core.Base import Script
 
     Script.registerSwitch("f:", "OldLFN=", "LFN of existing file to be fixed.")
     Script.registerSwitch(

@@ -11,7 +11,7 @@
 ###############################################################################
 """ Add a file type to the BKK
 """
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 
 Script.parseCommandLine()
 

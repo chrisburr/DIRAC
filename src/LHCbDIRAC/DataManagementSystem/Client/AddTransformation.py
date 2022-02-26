@@ -19,7 +19,7 @@ from collections import defaultdict
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation

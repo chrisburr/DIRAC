@@ -13,13 +13,12 @@
 transformation used in BKQuery."""
 
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     from DIRAC import gLogger
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
     Script.registerSwitch("", "Runs=", "   list of runs to flush (comma separated, ranges r1:r2)")

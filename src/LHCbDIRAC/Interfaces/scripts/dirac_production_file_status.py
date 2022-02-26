@@ -13,7 +13,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def usage():
@@ -21,16 +21,12 @@ def usage():
 
     Prints script usage
     """
-    from DIRAC.Core.Base import Script
-
     print("Usage: %s <LFN> [<LFN>] [--ProductionID=<ID>] [Try -h,--help for more information]" % Script.scriptName)
     DIRAC.exit(2)
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
-
     Script.registerSwitch(
         "",
         "ProductionID=",

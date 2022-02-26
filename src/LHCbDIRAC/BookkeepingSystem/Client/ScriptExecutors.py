@@ -17,7 +17,7 @@ import datetime
 
 from DIRAC import gLogger, S_OK, exit as diracExit
 from DIRAC.Core.Utilities.List import breakListIntoChunks
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import printDMResult, ProgressBar

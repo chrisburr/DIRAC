@@ -16,12 +16,11 @@ or all steps for a (list of) JobID
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     from DIRAC import gLogger
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, printDMResult

@@ -16,7 +16,7 @@ from __future__ import print_function
 import six
 
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def inaccessibleReplicas(lfn, se):
@@ -42,9 +42,8 @@ def prettyMsg(msg, msgList):
     gLogger.always("The following file%s %s:\n%s" % (areIs, msg, "\n".join(msgList)))
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, ProgressBar
 
     dmScript = DMScript()

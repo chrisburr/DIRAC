@@ -19,8 +19,7 @@ Parameters:
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def getProcessingPasses(bkDict, headPass):
@@ -56,7 +55,7 @@ def getProcessingPasses(bkDict, headPass):
     return passes
 
 
-@DIRACScript()
+@Script()
 def main():
     Script.setUsageMessage("Usage: %s <Processing Pass> <run> <status> <flag>" % (Script.scriptName))
     Script.parseCommandLine()

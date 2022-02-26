@@ -22,7 +22,7 @@ from xml.dom import minidom
 
 from DIRAC import gLogger, gConfig, S_OK
 from DIRAC.Core.Utilities.List import breakListIntoChunks
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Resources.Storage.StorageElement import StorageElement

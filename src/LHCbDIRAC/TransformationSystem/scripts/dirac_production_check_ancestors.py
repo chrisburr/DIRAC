@@ -12,7 +12,7 @@
 """Gets a list of files from BK and checks if they have common ancestors."""
 import time
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 fixIt = None
 
@@ -153,11 +153,10 @@ def analyzeAncestors(commonAncestors, ancestors, transClient, dm, bkClient):
         removeFile(list(lfnsToRemove), transClient=transClient, dm=dm, bkClient=bkClient)
 
 
-@DIRACScript()
+@Script()
 def main():
     global fixIt
 
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()

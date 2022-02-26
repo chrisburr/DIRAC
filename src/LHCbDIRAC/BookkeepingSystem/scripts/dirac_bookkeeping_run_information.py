@@ -15,12 +15,11 @@ from __future__ import division
 from __future__ import print_function
 import DIRAC
 from DIRAC import gLogger, S_OK
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.registerSwitch("", "Production=", "   <prodID>, get the run list from a production")
     Script.registerSwitch("", "Active", "   only get Active runs")

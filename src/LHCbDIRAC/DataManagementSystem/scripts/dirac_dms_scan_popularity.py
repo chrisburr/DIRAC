@@ -10,12 +10,11 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Script for scanning the popularity table."""
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     since = 30
     getAllDatasets = False

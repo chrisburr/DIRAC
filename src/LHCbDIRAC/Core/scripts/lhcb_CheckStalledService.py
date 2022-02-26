@@ -23,7 +23,7 @@ except ImportError:
     import subprocess as commands
 
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 msg = None
 
@@ -35,11 +35,9 @@ def write_log(mesg):
     msg += mesg + "\n"
 
 
-@DIRACScript()
+@Script()
 def main():
     global msg
-
-    from DIRAC.Core.Base import Script
 
     Script.addDefaultOptionValue("LogLevel", "verbose")
     Script.parseCommandLine(ignoreErrors=True)

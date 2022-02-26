@@ -13,7 +13,7 @@ import time
 import random
 import os
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 
 Script.parseCommandLine(ignoreErrors=True)
 

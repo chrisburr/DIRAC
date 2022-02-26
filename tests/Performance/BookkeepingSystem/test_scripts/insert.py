@@ -20,7 +20,7 @@ import random
 import time
 import datetime
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 
 Script.parseCommandLine(ignoreErrors=True)
 

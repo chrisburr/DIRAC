@@ -14,7 +14,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import LbPlatformUtils
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def sendMail(msg=""):
@@ -36,9 +36,8 @@ def sendMail(msg=""):
         )
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.registerSwitch("", "BinaryTag", "   Print the host binary tag instead of the host dirac_platform")
     Script.parseCommandLine(ignoreErrors=True)

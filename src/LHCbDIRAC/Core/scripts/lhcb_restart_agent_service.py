@@ -17,10 +17,10 @@ import re
 import os
 import sys
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     if "DIRAC" not in os.environ:
         print("The DIRAC environment is not set")

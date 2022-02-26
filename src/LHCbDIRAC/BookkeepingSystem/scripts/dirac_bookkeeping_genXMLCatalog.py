@@ -18,7 +18,7 @@ import tempfile
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 from DIRAC.Core.Utilities.Subprocess import systemCall
 
 
@@ -56,7 +56,6 @@ def __getLfnsFromFile(optFiles, gaudiVerbose):
 
 
 def execute():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     catalog = "pool_xml_catalog.xml"
@@ -232,7 +231,7 @@ def execute():
     DIRAC.exit(rc)
 
 
-@DIRACScript()
+@Script()
 def main():
     execute()
 

@@ -15,12 +15,11 @@ of ranges (a range has the form p1:p2)"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(
         "\n".join(
