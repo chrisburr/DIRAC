@@ -17,7 +17,7 @@ from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 @DIRACScript()
 def main():
-    from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script, Setter
+    from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script
 
     pluginScript = PluginScript()
     pluginScript.registerPluginSwitches()

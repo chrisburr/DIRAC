@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-import six
+
 from DIRAC.RequestManagementSystem.Client.Request import Request
 from DIRAC.RequestManagementSystem.Client.Operation import Operation
 from DIRAC.RequestManagementSystem.Client.File import File
@@ -65,7 +65,7 @@ class RAWReplicationBody(BaseBody):
 
         if isinstance(task["InputData"], list):
             lfns = task["InputData"]
-        elif isinstance(task["InputData"], six.string_types):
+        elif isinstance(task["InputData"], str):
             lfns = task["InputData"].split(",")
 
         req = Request()

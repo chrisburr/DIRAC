@@ -1741,6 +1741,7 @@ def getReplicationPlugins():
         "ReplicateToLocalSE",
         "ReplicateWithAncestors",
         "Healing",
+        "DataChallengeReplication",
     )
 
 
