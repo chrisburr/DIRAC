@@ -34,7 +34,9 @@ class LHCbFTS3Plugin(DefaultFTS3Plugin):
             dstSE = StorageElement(destSEName)
             dstBaseSEName = dstSE.options.get("BaseSE")
 
-            if (srcBaseSEName, dstBaseSEName) in list(itertools.product(("CERN-EOS", "CERN-CTA"), repeat=2)):
+            if (srcBaseSEName, dstBaseSEName) in list(
+                itertools.product(("CERN-EOS", "CERN-CTA", "CERN-CTA-DATACHALLENGE"), repeat=2)
+            ):
                 return True
 
         except Exception:
