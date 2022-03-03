@@ -23,13 +23,13 @@ If --FixIt is set, take actions
 - set replicaFlag = No in the BK for those files that are not in the FC
 """
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     # Script initialization
-    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
     from DIRAC import gLogger
 
     Script.setUsageMessage(

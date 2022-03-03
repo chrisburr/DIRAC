@@ -10,17 +10,14 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Restart any agent  and service installed on a VOBOX."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import re
 import os
 import sys
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     if "DIRAC" not in os.environ:
         print("The DIRAC environment is not set")

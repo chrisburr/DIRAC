@@ -10,13 +10,10 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get production numbers given a dataset path."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import time
 import six
 from DIRAC import gLogger, exit
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def printProds(title, prods):
@@ -29,7 +26,6 @@ def printProds(title, prods):
 
 
 def execute(dmScript):
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
     tr = TransformationClient()
@@ -67,9 +63,8 @@ def execute(dmScript):
     gLogger.notice("Completed in %.1f seconds" % (time.time() - startTime))
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()

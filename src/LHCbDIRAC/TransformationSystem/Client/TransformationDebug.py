@@ -27,7 +27,7 @@ from six.moves.urllib.request import FancyURLopener
 import DIRAC
 from DIRAC.Core.Utilities.File import mkDir
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 from DIRAC.Core.Security.Locations import getCAsLocation, getProxyLocation
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager

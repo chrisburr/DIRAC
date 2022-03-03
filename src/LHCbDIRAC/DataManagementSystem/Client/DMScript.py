@@ -19,7 +19,7 @@ import tempfile
 
 import DIRAC
 from DIRAC import gLogger, gConfig
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 
 from LHCbDIRAC.BookkeepingSystem.Client.BKQuery import BKQuery

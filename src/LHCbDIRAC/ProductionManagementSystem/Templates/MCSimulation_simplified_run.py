@@ -28,7 +28,7 @@ from six.moves import range
 
 import ast
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 
 Script.parseCommandLine()
 

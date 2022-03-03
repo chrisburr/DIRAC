@@ -10,19 +10,16 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Insert a new set of simulation conditions in the Bookkeeping."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from builtins import input
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(__doc__ + "\n".join(["Usage:", "  %s [option|cfgfile] ..." % Script.scriptName]))
     Script.parseCommandLine(ignoreErrors=True)

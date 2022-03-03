@@ -12,10 +12,9 @@
 """
  Test a plugin
 """
-
 import DIRAC
 from DIRAC import S_OK
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 class FakeClient(object):
@@ -254,10 +253,9 @@ def printFinalSEs(transType, location, targets):
         print("    Final SEs:", total)
 
 
-@DIRACScript()
+@Script()
 def main():
     import DIRAC
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript
 
     pluginScript = PluginScript()

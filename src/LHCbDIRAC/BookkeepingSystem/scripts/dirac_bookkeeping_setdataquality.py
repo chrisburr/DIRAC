@@ -20,13 +20,11 @@
                  Derived data are left unchanged. If one wants to flag everything, use 1.
                - else that processing pass (and derived) and the RAW are flagged OK
 """
-
 import os
 
 import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
-from DIRAC.Core.Base import Script
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def checkDQFlag(dqFlag):
@@ -159,7 +157,7 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
     return S_OK()
 
 
-@DIRACScript()
+@Script()
 def main():
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 

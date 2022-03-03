@@ -67,7 +67,7 @@ import argparse
 import sys
 
 from DIRAC.ConfigurationSystem.Client.CSAPI import CSAPI
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC import gLogger
 
 

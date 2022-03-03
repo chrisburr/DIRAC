@@ -11,16 +11,14 @@
 ###############################################################################
 """Check if all files have a replica in a certain (set of) SE )Tier1-Archive
 default) List the files that don't have a replica in the specified SE (group)"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     # Script initialization
-    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     Script.registerSwitch("", "FixIt", "   Take action to fix the catalogs")
     Script.setUsageMessage(

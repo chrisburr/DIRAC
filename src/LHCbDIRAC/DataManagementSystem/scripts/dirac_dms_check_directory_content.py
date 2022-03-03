@@ -12,16 +12,12 @@
 """For a given LFN directory, check the files that are registered in the FC and
 checks that they exist on the SE, and in Bookkeeping, with the  correct
 ReplicaFlag."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     unit = "TB"
     sites = []

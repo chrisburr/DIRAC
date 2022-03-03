@@ -31,7 +31,7 @@ import subprocess
 from collections import defaultdict
 
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 
@@ -86,10 +86,9 @@ def reduceArgs(noMerge, arguments, maxList=20):
     return sorted(others + finalArgs)
 
 
-@DIRACScript()
+@Script()
 def main():
     from DIRAC import gLogger, exit
-    from DIRAC.Core.Base import Script
 
     Script.registerSwitch("", "NoMerge", "If set, do not merge arguments if BK paths")
     Script.registerSwitch("", "Items=", "Alternative way of passing list of arguments")

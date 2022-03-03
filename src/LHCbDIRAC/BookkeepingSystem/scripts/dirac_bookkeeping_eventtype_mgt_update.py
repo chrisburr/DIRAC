@@ -15,18 +15,14 @@ operate.
 Each line must have the following format: EVTTYPEID="<evant id>",
 DESCRIPTION="<description>", PRIMARY="<primary description>"
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import re
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def process_event(eventline):
     """process one event."""
-    from DIRAC.Core.Base import Script
 
     try:
         eventline.index("EVTTYPEID")
@@ -72,9 +68,8 @@ def process_event(eventline):
     return result
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(
         "\n".join(

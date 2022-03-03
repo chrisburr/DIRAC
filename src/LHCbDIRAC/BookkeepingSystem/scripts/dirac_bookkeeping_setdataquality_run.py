@@ -10,14 +10,12 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Set Data Quality Flag for the given run."""
-
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(
         __doc__

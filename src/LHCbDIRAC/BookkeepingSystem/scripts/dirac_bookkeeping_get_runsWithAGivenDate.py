@@ -10,16 +10,13 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Retrieve from the Bookkeeping runs from a given date range."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     from DIRAC import gLogger, exit as DIRACexit
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(
         __doc__

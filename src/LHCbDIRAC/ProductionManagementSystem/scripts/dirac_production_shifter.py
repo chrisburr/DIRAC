@@ -31,20 +31,17 @@ The following switches and options are provided.
 - omitMerge     : omit all merge production
 - noFiles       : do not request file information
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 from datetime import datetime
 import sys
 
 from DIRAC import exit as DIRACExit
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def doParse():
     """Function that contains all the switches definition and isolates the rest
     of the module from parseCommandLine."""
-    from DIRAC.Core.Base import Script
 
     # Switch description
     Script.registerSwitch("i:", "requestID=", "ID of the request")
@@ -434,7 +431,7 @@ def printNow():
     sys.stdout.flush()
 
 
-@DIRACScript()
+@Script()
 def main():
     from DIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 

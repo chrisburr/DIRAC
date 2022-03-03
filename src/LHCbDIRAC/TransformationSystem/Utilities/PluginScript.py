@@ -11,7 +11,7 @@
 """PluginScript module holds PluginScript class, which is an extension of
 DMScript class."""
 from DIRAC import S_OK, gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 
 from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript

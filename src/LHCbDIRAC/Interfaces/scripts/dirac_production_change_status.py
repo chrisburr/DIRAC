@@ -9,15 +9,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
 def usage():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.Interfaces.API.DiracProduction import DiracProduction
 
     print("Usage: %s <Command> <Production ID> |<Production ID>" % Script.scriptName)
@@ -32,10 +29,8 @@ def usage():
     DIRAC.exit(2)
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
-
     Script.parseCommandLine(ignoreErrors=True)
 
     args = Script.getPositionalArgs()

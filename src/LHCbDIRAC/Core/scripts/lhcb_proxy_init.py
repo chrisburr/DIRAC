@@ -10,15 +10,12 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Use dirac-proxy-init to get a proxy."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import sys
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     if os.getenv("X509_CERT_DIR") is None:
         sys.exit("the variable X509_CERT_DIR do not exist")

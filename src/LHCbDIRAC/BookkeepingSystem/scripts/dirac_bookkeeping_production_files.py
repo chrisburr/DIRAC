@@ -10,15 +10,12 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Retrieve files of a given type for a production."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(
         __doc__

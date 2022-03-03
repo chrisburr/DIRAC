@@ -10,9 +10,6 @@
 ###############################################################################
 """An agent to extend MC productions based on the remaining events to
 produce."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import math
 import datetime
 

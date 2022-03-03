@@ -11,15 +11,13 @@
 ###############################################################################
 """Given a (list of) LFNs and SEs, check for existence of a file and register
 in the FC if the file exists."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()
     dmScript.registerFileSwitches()

@@ -12,12 +12,11 @@
 """This script allows to print information about a (list of)
 transformations."""
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     informations = [
         "AuthorDN",

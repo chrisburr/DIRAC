@@ -10,6 +10,3 @@
 ###############################################################################
 """This module used for reading an XML file which contains the jobs and files
 attributes."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function

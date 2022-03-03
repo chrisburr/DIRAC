@@ -13,12 +13,11 @@ import os
 import sys
 from time import time
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
     from DIRAC import exit, gLogger
 
     Script.registerSwitch("", "User=", "  User name")

@@ -16,12 +16,11 @@ import time
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()

@@ -11,15 +11,14 @@
 ###############################################################################
 """Set files Removed in a transformation."""
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
 
-@DIRACScript()
+@Script()
 def main():
     import DIRAC
     from DIRAC import gLogger
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()

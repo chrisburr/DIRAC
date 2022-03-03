@@ -19,17 +19,13 @@ Examples of Usage :
   dirac-production-set-run 1234 --EndRun 99000   (change endrun.)
   dirac-production-set-run 1234 --StartRun 99000 (change startrun.)
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import DIRAC
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
     from DIRAC import gLogger
-    from DIRAC.Core.Base import Script
 
     Script.setUsageMessage(
         f"{__doc__}"

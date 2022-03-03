@@ -10,15 +10,12 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Retrieve metadata from the Bookkeeping for the given files."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
     from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()

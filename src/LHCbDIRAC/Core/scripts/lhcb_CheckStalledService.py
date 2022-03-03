@@ -10,9 +10,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """check if a service or an agent is stalled."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 
 # TODO: This should be modernised to use subprocess(32)
@@ -23,7 +20,7 @@ except ImportError:
     import subprocess as commands
 
 from DIRAC import gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 msg = None
 
@@ -35,11 +32,9 @@ def write_log(mesg):
     msg += mesg + "\n"
 
 
-@DIRACScript()
+@Script()
 def main():
     global msg
-
-    from DIRAC.Core.Base import Script
 
     Script.addDefaultOptionValue("LogLevel", "verbose")
     Script.parseCommandLine(ignoreErrors=True)

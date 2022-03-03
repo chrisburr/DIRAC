@@ -10,16 +10,13 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Retrieve a single file or list of files from Grid storage to the current directory."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript, Script
+    from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
     dmScript = DMScript()
     dmScript.registerFileSwitches()

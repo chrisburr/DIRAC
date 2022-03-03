@@ -10,16 +10,13 @@
 ###############################################################################
 """Actual engine for adding a DM transformation, called by dirac-dms-add-
 Transformation."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import json
 from collections import defaultdict
 
 import DIRAC
 from DIRAC import gLogger
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
 from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation

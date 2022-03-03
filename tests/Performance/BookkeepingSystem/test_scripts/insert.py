@@ -13,14 +13,11 @@
 This test is used to test the insert
 
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import random
 import time
 import datetime
 
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 
 Script.parseCommandLine(ignoreErrors=True)
 

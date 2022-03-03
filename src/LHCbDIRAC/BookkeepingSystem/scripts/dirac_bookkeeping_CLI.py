@@ -10,12 +10,11 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Bookkeeping Command line interface."""
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from DIRAC.Core.Base import Script
 
     Script.parseCommandLine(ignoreErrors=True)
 

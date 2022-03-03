@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Just a module with some utilities."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import tarfile
 import zipfile

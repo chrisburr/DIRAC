@@ -9,9 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """BKQuery is a class that decodes BK paths, queries the BK at a high level."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import os
 import sys
 import six

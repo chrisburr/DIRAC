@@ -12,12 +12,12 @@
 """Create a new dataset replication or removal transformation according to
 plugin."""
 
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
+from DIRAC.Core.Base.Script import Script
 
 
-@DIRACScript()
+@Script()
 def main():
-    from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript, Script
+    from LHCbDIRAC.TransformationSystem.Utilities.PluginScript import PluginScript
 
     pluginScript = PluginScript()
     pluginScript.registerPluginSwitches()

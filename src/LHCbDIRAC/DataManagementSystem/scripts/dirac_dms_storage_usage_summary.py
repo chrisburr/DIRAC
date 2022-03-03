@@ -10,11 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Get the storage usage summary for the given directories."""
-
 import DIRAC
-from DIRAC.Core.Base import Script
+from DIRAC.Core.Base.Script import Script
 from DIRAC import gConfig, gLogger
-from DIRAC.Core.Utilities.DIRACScript import DIRACScript
 
 seSvcClassDict = {}
 infoStringLength = 1
@@ -504,7 +502,7 @@ def execute(unit, minimum, depth):
     DIRAC.exit(0)
 
 
-@DIRACScript()
+@Script()
 def main():
     global unit
     global dmScript
