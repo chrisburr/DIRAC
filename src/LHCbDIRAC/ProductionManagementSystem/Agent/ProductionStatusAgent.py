@@ -566,7 +566,7 @@ class ProductionStatusAgent(AgentModule):
                     if inputID in summary["prods"]:
                         inputState = summary["prods"][inputID]["state"]
                     else:
-                        inputState = inputTransformStatuses[inputID]
+                        inputState = inputTransformStatuses.get(inputID, "Unknown")
                     if inputState not in ["Archived", "Completed", "Finished"]:
                         self.log.info(
                             "Marking hasActiveInput=True for",
