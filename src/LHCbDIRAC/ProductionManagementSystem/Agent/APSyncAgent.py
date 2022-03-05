@@ -23,7 +23,7 @@ from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import 
 
 AGENT_NAME = "ProductionManagement/APSyncAgent"
 DONE_TRANSFORMATION_STATES = ["Archived", "Completed"]
-REMOVED_TRANSFORMATION_STATES = ["Deleted", "Cleaned"]
+REMOVED_TRANSFORMATION_STATES = ["Deleted", "Cleaned", "Cleaning"]
 
 
 class APSyncAgent(AgentModule):
