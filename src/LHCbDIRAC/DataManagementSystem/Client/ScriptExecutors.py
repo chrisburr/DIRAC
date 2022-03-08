@@ -543,6 +543,10 @@ def executeAccessURL(dmScript):
                 for urlPrio, url in enumerate(urls, start=1):
                     urlElement = ET.SubElement(fileElement, "url")
                     urlElement.set("priority", str(urlPrio))
+                    # In InputDataResolution "mdf:" is prepended to the URL for RAW files however
+                    # this is a Gaudi specific hack makes the metalink file unusable
+                    if url.startswith("mdf:"):
+                        url = url[len("mdf:") :]
                     urlElement.text = url
 
                 # we could use the ElementTree.write method, but it is ugly,
