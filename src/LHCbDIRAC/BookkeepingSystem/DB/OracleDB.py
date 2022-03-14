@@ -157,7 +157,7 @@ class OracleDB(object):
         if self._connected:
             return S_OK()
 
-        self.logger.debug("_connect: Attempting to access DB", "by user %s/%s." % (self.__userName, self.__passwd))
+        self.logger.debug("_connect: Attempting to access DB", "by user %s." % self.__userName)
         try:
             self.__newConnection()
             self.logger.debug("_connect: Connected.")
