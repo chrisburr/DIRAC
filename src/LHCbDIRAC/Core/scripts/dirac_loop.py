@@ -153,16 +153,16 @@ def main():
             # Look for a path in the line
             # "Real Data" is an exception in BK path (i.e. with space in it)... BKQuery understands without a space
             #    hence for simplicity here, remove the space to allow split() to work ;-)
-            words = arg.replace("Real Data", "RealData").split()
+            words = arg.replace("”", '"').replace("“", '"').replace("Real Data", "RealData").split()
             arg = None
             for word in words:
-                if word.startswith(("/", '"/', "'/")) or ":/" in word:
+                if word.startswith("/") or ":/" in word or '"/' in word or "'/" in word:
                     arg = word
                     break
         # If the argument is between quotes, take what is between the quotes
-        if arg[0] == "'":
+        if "'/" in arg:
             arg = arg.split("'")[1]
-        elif arg[0] == '"':
+        elif '"/' in arg:
             arg = arg.split('"')[1]
         elif noParse:
             # Consider the whole line is the argument
