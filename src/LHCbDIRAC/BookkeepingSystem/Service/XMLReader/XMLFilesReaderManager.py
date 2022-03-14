@@ -19,24 +19,7 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.FileParam import FilePara
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobParameters import JobParameters
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.JobReader import JobReader
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.ReplicaReader import ReplicaReader
-from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import (
-    BeamEnergyCondition,
-    VeloCondition,
-    MagneticFieldCondition,
-    EcalCondition,
-    HcalCondition,
-    HltCondition,
-    ItCondition,
-    LoCondition,
-    MuonCondition,
-    OtCondition,
-    Rich1Condition,
-    Rich2Condition,
-    Spd_prsCondition,
-    TtCondition,
-    VeloPosition,
-    Context,
-)
+from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import generateConditionDescription
 
 
 class XMLFilesReaderManager(object):
@@ -470,50 +453,26 @@ class XMLFilesReaderManager(object):
             ver = ver.capitalize()
             config.configVersion = ver
             self.log.debug("Data taking:", "%s" % datataking)
-            context = Context(datataking, config.configName)
-            conditions = [
-                BeamEnergyCondition(),
-                VeloCondition(),
-                MagneticFieldCondition(),
-                EcalCondition(),
-                HcalCondition(),
-                HltCondition(),
-                ItCondition(),
-                LoCondition(),
-                MuonCondition(),
-                OtCondition(),
-                Rich1Condition(),
-                Rich2Condition(),
-                Spd_prsCondition(),
-                TtCondition(),
-                VeloPosition(),
-            ]
-            for condition in conditions:
-                condition.interpret(context)
+            dtDescription = generateConditionDescription(datataking, config.configName)
+            self.log.debug(dtDescription)
+            datataking["Description"] = dtDescription
 
-            self.log.debug(context.getOutput())
-            datataking["Description"] = context.getOutput()
+            res = self.bkClient_._getDataTakingConditionId(dtDescription)
+            if not res["OK"]:
+                self.log.error(
+                    "Error retrieving the DataTaking Condition ID",
+                    f"Description: {dtDescription}. Error: {res['Message']}",
+                )
+                return res
 
-            res = self.bkClient_.getDataTakingCondDesc(datataking)
-            dataTackingPeriodDesc = None
-            if res["OK"]:
-                daqid = res["Value"]
-                if len(daqid) != 0:  # exist in the database datataking
-                    dataTackingPeriodDesc = res["Value"][0][0]
-                    self.log.debug("Data taking condition id", dataTackingPeriodDesc)
-                else:
-                    res = self.bkClient_.insertDataTakingCond(datataking)
-                    if not res["OK"]:
-                        return S_ERROR("DATA TAKING Problem:" + str(res["Message"]))
-                    dataTackingPeriodDesc = datataking["Description"]
-                    # The new data taking condition inserted. The name should be the generated name.
-            else:
-                # Note we allow to insert data quality tags when only the description is different.
-                res = self.bkClient_.insertDataTakingCond(datataking)
+            daqid = res["Value"]
+            # If there is no condition matching the description, create one
+            if daqid == -1:  # yes... -1 for non existing conditions
+                res = self.bkClient_.insertDataTakingCondDesc(dtDescription)
                 if not res["OK"]:
-                    return S_ERROR("DATA TAKING Problem:" + str(res["Message"]))
-                dataTackingPeriodDesc = datataking["Description"]
-                # The new data taking condition inserted. The name should be the generated name.
+                    self.log.error("Cannot insert DataTaking Condition Description", res["Message"])
+                    return res
+                daqid = res["Value"]
 
             # insert processing pass
             programName = None
@@ -571,7 +530,7 @@ class XMLFilesReaderManager(object):
             }
 
             self.log.debug("Pass_indexid", "%s" % steps)
-            self.log.debug("Data taking", "%s" % dataTackingPeriodDesc)
+            self.log.debug("Data taking", "%s" % dtDescription)
             self.log.debug("production", production)
 
             newJobParams = JobParameters()
@@ -585,7 +544,7 @@ class XMLFilesReaderManager(object):
             res = self.bkClient_.addProduction(
                 production,
                 simcond=None,
-                daq=dataTackingPeriodDesc,
+                daq=dtDescription,
                 steps=steps["Steps"],
                 inputproc="",
                 configName=config.configName,
