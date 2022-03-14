@@ -32,6 +32,7 @@ echo -e "*** $(date -u) **** LHCb Bookkeeping TESTS ****\n"
 pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_DB_StepsAndProds.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_Files.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 pytest "${THIS_DIR}/BookkeepingSystem/Test_Bookkeeping_MCProds.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
+pytest "${THIS_DIR}/BookkeepingSystem/Test_BookkeepingDB.py" |& tee -a "$SERVER_TEST_OUTPUT"; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb Accounting TESTS ****\n"

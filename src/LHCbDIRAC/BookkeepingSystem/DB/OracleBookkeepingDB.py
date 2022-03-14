@@ -1019,7 +1019,7 @@ class OracleBookkeepingDB(object):
         :return: condition used in the SQL WHERE clauses.
         """
         condition = ""
-        retVal = self.__getDataTakingConditionId(conddescription)
+        retVal = self._getDataTakingConditionId(conddescription)
         if retVal["OK"]:
             if retVal["Value"] != -1:
                 condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (
@@ -1041,7 +1041,7 @@ class OracleBookkeepingDB(object):
         return S_OK(condition)
 
     #############################################################################
-    def __getDataTakingConditionId(self, desc):
+    def _getDataTakingConditionId(self, desc):
         """For retrieving the data taking id for a given data taking description.
 
         :param str desc: data taking description
@@ -2630,6 +2630,48 @@ class OracleBookkeepingDB(object):
             ],
         )
         return res
+
+    def insertDataTakingCondDesc(self, dtDescription: str):
+        """inserts a data taking condition just from the description string
+
+        It reuses the existing oracle function until we decide what to do
+        with this table.
+
+        :param dtDescription: data taking conditions description
+        :returns: data quality id
+        """
+
+        res = self.dbW_.executeStoredFunctions(
+            "BOOKKEEPINGORACLEDB.insertDataTakingCond",
+            int,
+            [
+                dtDescription,
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+                "None",
+            ],
+        )
+        return res
+
+    def deleteDataTakingCondition(self, dtcId):
+        """it deletes a given data taking condition.
+
+        :param int dtcId: Data taking condition ID
+        """
+        return self.dbW_.query("delete data_taking_conditions where DaqPeriodId=:dtcId", kwparams={"dtcId": dtcId})
 
     #############################################################################
     def removeReplica(self, fileNames):
@@ -4809,7 +4851,7 @@ and files.qualityid= dataquality.qualityid"
         sim = None
         did = None
         if daq is not None:
-            retVal = self.__getDataTakingConditionId(daq)
+            retVal = self._getDataTakingConditionId(daq)
             if not retVal["OK"]:
                 return retVal
             if retVal["Value"] > -1:
