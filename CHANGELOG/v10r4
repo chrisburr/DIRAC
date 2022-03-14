@@ -1,3 +1,18 @@
+[v10.4.9]
+*ProductionManagement
+
+FIX: (!1195) Issues found while processing FEST data
+
+*DataManagementSystem
+
+FIX: (!1194) Strip "mdf:" prefix from URLs in metalink files
+
+*Bookkeeping
+
+CHANGE: (!1192) Condition string generation simplified, and sub-detector status not stored in the DB anymore
+
+
+
 [v10.4.8]
 *tests
 
