@@ -111,17 +111,14 @@ def executeFileMetadata(dmScript):
 
 def __buildPath(bkDict):
     """Build a BK path from the BK dictionary."""
-    return (
-        os.path.join(
-            "/" + bkDict["ConfigName"],
-            bkDict["ConfigVersion"],
-            bkDict["ConditionDescription"],
-            bkDict["ProcessingPass"][1:].replace("Real Data", "RealData"),
-            str(bkDict["EventType"]),
-            bkDict["FileType"],
-        )
-        + (" (Invisible)" if bkDict["VisibilityFlag"] == "N" else "")
-    )
+    return os.path.join(
+        "/" + bkDict["ConfigName"],
+        bkDict["ConfigVersion"],
+        bkDict["ConditionDescription"],
+        bkDict["ProcessingPass"][1:].replace("Real Data", "RealData"),
+        str(bkDict["EventType"]),
+        bkDict["FileType"],
+    ) + (" (Invisible)" if bkDict["VisibilityFlag"] == "N" else "")
 
 
 def executeFilePath(dmScript):
