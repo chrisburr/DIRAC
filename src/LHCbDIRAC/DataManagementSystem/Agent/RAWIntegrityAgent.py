@@ -24,7 +24,6 @@ from DIRAC import S_OK
 # # from Core
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData
-from DIRAC.FrameworkSystem.Client.MonitoringClient import gMonitor
 
 # # from DMS
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
@@ -63,55 +62,6 @@ class RAWIntegrityAgent(AgentModule):
         # (detector calibration files for example). The real data are registered in
         # the bookeeping by the DataMover
         self.fileCatalog = FileCatalog(catalogs="FileCatalog")
-
-        gMonitor.registerActivity("Iteration", "Agent Loops/min", "RAWIntegriryAgent", "Loops", gMonitor.OP_SUM)
-        gMonitor.registerActivity(
-            "WaitingFiles", "Files waiting for migration", "RAWIntegriryAgent", "Files", gMonitor.OP_MEAN
-        )
-        gMonitor.registerActivity("WaitSize", "Size of migration buffer", "RAWIntegrityAgent", "GB", gMonitor.OP_MEAN)
-
-        gMonitor.registerActivity(
-            "NewlyMigrated", "Newly migrated files", "RAWIntegriryAgent", "Files", gMonitor.OP_SUM
-        )
-        gMonitor.registerActivity("TotMigrated", "Total migrated files", "RAWIntegriryAgent", "Files", gMonitor.OP_ACUM)
-        gMonitor.registerActivity(
-            "TotMigratedSize", "Total migrated file size", "RAWIntegriryAgent", "GB", gMonitor.OP_ACUM
-        )
-
-        gMonitor.registerActivity("BadChecksum", "Checksums mismatch", "RAWIntegriryAgent", "Files", gMonitor.OP_SUM)
-        gMonitor.registerActivity(
-            "ErrorMetadata", "Error when getting files metadata", "RAWIntegriryAgent", "Files", gMonitor.OP_SUM
-        )
-        gMonitor.registerActivity(
-            "ErrorRegister", "Error when registering files", "RAWIntegriryAgent", "Files", gMonitor.OP_SUM
-        )
-        gMonitor.registerActivity(
-            "ErrorRemove", "Error when removing files", "RAWIntegriryAgent", "Files", gMonitor.OP_SUM
-        )
-
-        gMonitor.registerActivity(
-            "FailedMigrated",
-            "Number of files encountering error during migration",
-            "RAWIntegriryAgent",
-            "Files",
-            gMonitor.OP_SUM,
-        )
-        gMonitor.registerActivity(
-            "TotFailMigrated",
-            "Total number of files encountering error during migration",
-            "RAWIntegriryAgent",
-            "Files",
-            gMonitor.OP_ACUM,
-        )
-
-        gMonitor.registerActivity(
-            "MigrationTime", "Average migration time", "RAWIntegriryAgent", "Seconds", gMonitor.OP_MEAN
-        )
-        # gMonitor.registerActivity("TimeInQueue", "Average current wait for migration",
-        #                           "RAWIntegriryAgent", "Minutes", gMonitor.OP_MEAN)
-        gMonitor.registerActivity(
-            "MigrationRate", "Observed migration rate", "RAWIntegriryAgent", "MB/s", gMonitor.OP_MEAN
-        )
 
         # This sets the Default Proxy to used as that defined under
         # /Operations/Shifter/DataManager
@@ -194,7 +144,6 @@ class RAWIntegrityAgent(AgentModule):
 
             if failedMetadata:
                 self.log.info("Failed to obtain physical file metadata for %s files." % len(failedMetadata))
-                gMonitor.addMark("ErrorMetadata", len(failedMetadata))
 
             if successfulMetadata:
                 self.log.info("Obtained physical file metadata for %s files." % len(successfulMetadata))
@@ -206,7 +155,6 @@ class RAWIntegrityAgent(AgentModule):
                 res = self._checkMigrationStatus(successfulMetadata, activeFiles)
                 if not res["OK"]:
                     self.log.error("Error when checking migration status", res)
-                    gMonitor.addMark("BadChecksum", len(successfulMetadata))
                 else:
                     succCompare = res["Value"]["Successful"]
                     failedCompare = res["Value"]["Failed"]
@@ -221,8 +169,6 @@ class RAWIntegrityAgent(AgentModule):
 
                     filesNewlyCopied.extend(seFilesCopied)
                     filesNotYetCopied.extend(seFilesNotCopied)
-
-                    gMonitor.addMark("BadChecksum", len(failedCompare))
 
                     self.log.info("%s files newly copied at %s." % (len(seFilesCopied), se))
                     self.log.info("Found %s checksum mis-matches at %s." % (len(failedCompare), se))
@@ -267,7 +213,6 @@ class RAWIntegrityAgent(AgentModule):
                 successfulRegister.update(res["Value"]["Successful"])
                 failedRegister.update(res["Value"]["Failed"])
 
-        gMonitor.addMark("ErrorRegister", len(failedRegister))
         for lfn, reason in failedRegister.items():
             self.log.error("Failed to register lfn. Setting to Copied", "%s: %s" % (lfn, reason))
             res = self.rawIntegrityDB.setFileStatus(lfn, "Copied")
@@ -315,26 +260,17 @@ class RAWIntegrityAgent(AgentModule):
             filesNewlyRemoved = res["Value"]["Successful"]
             failedRemove = res["Value"]["Failed"]
 
-        gMonitor.addMark("ErrorRemove", len(failedRemove))
         for lfn, reason in failedRemove.items():
             self.log.error("Failed to remove lfn. Setting to Registered", "%s: %s" % (lfn, reason))
             res = self.rawIntegrityDB.setFileStatus(lfn, "Registered")
             if not res["OK"]:
                 self.log.error("Error setting file status to Registered", "%s: %s" % (lfn, res["Message"]))
 
-        now = datetime.datetime.utcnow()
         for lfn in filesNewlyRemoved:
             self.log.info("Successfully removed %s from the Online storage. Setting it to Done" % lfn)
             res = self.rawIntegrityDB.setFileStatus(lfn, "Done")
             if not res["OK"]:
                 self.log.error("Error setting file status to Done", "%s: %s" % (lfn, res["Message"]))
-            else:
-                # SubmitTime is ALREADY a datetime since it is declared as such in the DB.
-                submitTime = allUnmigratedFilesMeta[lfn]["SubmitTime"]
-                migrationTime = (now - submitTime).total_seconds()
-                gMonitor.addMark("MigrationTime", migrationTime)
-                fileSizeMB = allUnmigratedFilesMeta[lfn]["Size"] / (1024 * 1024.0)
-                gMonitor.addMark("MigrationRate", fileSizeMB / migrationTime)
 
         return filesNewlyRemoved
 
@@ -343,8 +279,6 @@ class RAWIntegrityAgent(AgentModule):
 
         # Don't use the server certificate otherwise the DFC wont let us write
         gConfigurationData.setOptionInCFG("/DIRAC/Security/UseServerCertificate", "false")
-
-        gMonitor.addMark("Iteration", 1)
 
         ############################################################
         #
@@ -381,12 +315,9 @@ class RAWIntegrityAgent(AgentModule):
             elif status == "Registered":
                 registeredFiles[lfn] = lfnMetadata
 
-        gMonitor.addMark("WaitingFiles", len(activeFiles))
         totalSize = 0
         for lfn, fileDict in activeFiles.items():
             totalSize += int(fileDict["Size"])
-            # gMonitor.addMark("TimeInQueue", (fileDict['WaitTime'] / 60))
-        gMonitor.addMark("WaitSize", (totalSize / (1024 * 1024 * 1024.0)))
 
         ############################################################
         #
@@ -422,10 +353,10 @@ class RAWIntegrityAgent(AgentModule):
 
         res = self.rawIntegrityDB.setLastMonitorTime()
         migratedSizeGB = migratedSize / (1024 * 1024 * 1024.0)
-        gMonitor.addMark("TotMigratedSize", migratedSizeGB)
-        gMonitor.addMark("NewlyMigrated", len(filesNewlyRemoved))
-        gMonitor.addMark("TotMigrated", len(filesNewlyRemoved))
-        gMonitor.addMark("FailedMigrated", failedMigrated)
-        gMonitor.addMark("TotFailMigrated", failedMigrated)
+        self.log.info("TotMigratedSize", migratedSizeGB)
+        self.log.info("NewlyMigrated", len(filesNewlyRemoved))
+        self.log.info("TotMigrated", len(filesNewlyRemoved))
+        self.log.info("FailedMigrated", failedMigrated)
+        self.log.info("TotFailMigrated", failedMigrated)
 
         return S_OK()

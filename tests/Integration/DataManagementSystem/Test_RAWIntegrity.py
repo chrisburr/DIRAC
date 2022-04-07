@@ -15,7 +15,6 @@ import unittest
 import sys
 import time
 import datetime
-import random
 import mock
 
 from DIRAC.Core.Base.Script import parseCommandLine
@@ -418,22 +417,6 @@ class RAWIntegrityAgentTest(unittest.TestCase):
                     successful[lfn] = "Youpee"
             return S_OK({"Successful": successful, "Failed": failed})
 
-    class mock_gMonitor(object):
-        """Fake the gMonitor and keep the counters"""
-
-        OP_SUM = OP_MEAN = OP_ACUM = None
-
-        def __init__(self, *_args, **__kwargs):
-            self.counters = {}
-
-        def registerActivity(self, counterName, *_args, **_kwargs):
-            """Register counter"""
-            self.counters[counterName] = []
-
-        def addMark(self, counterName, value):
-            """Add Mark"""
-            self.counters[counterName].append(value)
-
     class mock_StorageElement(object):
         """Fake the StorageElement and keep track of the removal"""
 
@@ -502,8 +485,7 @@ class RAWIntegrityAgentTest(unittest.TestCase):
                     successful[lfn] = "It worked :-)"
             return S_OK({"Successful": successful, "Failed": failed})
 
-    # Single instance of gMonitor and StorageElements to be used all along
-    gMonitor = mock_gMonitor()
+    # Single instance of StorageElements to be used all along
     genericSE = mock_StorageElement()
 
     # IMPORTANT: we use "new" in patch because we use this single instance
@@ -522,7 +504,6 @@ class RAWIntegrityAgentTest(unittest.TestCase):
             return "%s (%s)" % (self.lfn, self.size)
 
     @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.FileCatalog", side_effect=mock_FileCatalog)
-    @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.gMonitor", new=gMonitor)
     def setUp(self, _mockFC):  # pylint: disable=arguments-differ
         """This method resets the internal counters of the mock,
         creates a new RAWIntegrityAgent,
@@ -531,7 +512,6 @@ class RAWIntegrityAgentTest(unittest.TestCase):
 
         super(RAWIntegrityAgentTest, self).setUp()
         # Reset the counters since we have several loops
-        RAWIntegrityAgentTest.gMonitor.counters = {}
         RAWIntegrityAgentTest.genericSE.reset()
         self.agent = RAWIntegrityAgent("DataManagement/RAWIntegrityAgent", "DataManagement/RAWIntegrityAgent")
         self.agent.initialize()
@@ -602,7 +582,6 @@ class RAWIntegrityAgentTest(unittest.TestCase):
         for dbf in self.files:
             self.db.removeFile(dbf.lfn)
 
-    @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.gMonitor", new=gMonitor)
     @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.StorageElement", new=genericSE)
     def test_01_executeWithNoError(self):
         """Perform the execution loop but without the registration or the removal returning S_ERROR"""
@@ -639,7 +618,6 @@ class RAWIntegrityAgentTest(unittest.TestCase):
 
         self._analyseResults(allActiveFiles, pbMetadataFiles, pbRegisterFiles, pbRemoveFiles)
 
-    @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.gMonitor", new=gMonitor)
     @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.StorageElement", new=genericSE)
     def test_02_executeWithRegisterError(self):
         """Perform the execution loop and trigger an S_ERROR on Register"""
@@ -687,7 +665,6 @@ class RAWIntegrityAgentTest(unittest.TestCase):
 
         self._analyseResults(allActiveFiles, pbMetadataFiles, pbRegisterFiles, pbRemoveFiles)
 
-    @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.gMonitor", new=gMonitor)
     @mock.patch("LHCbDIRAC.DataManagementSystem.Agent.RAWIntegrityAgent.StorageElement", new=genericSE)
     def test_03_executeWithRemoveError(self):
         """Perform the execution loop and trigger an S_ERROR on Remove"""
@@ -768,43 +745,8 @@ class RAWIntegrityAgentTest(unittest.TestCase):
         # minus the one not yet copied
         failedMigratingFiles = allFiles - migratedFiles - set([self.notCopied])
 
-        # We expect some counters to have certain values
-        # First loop, so we look at the first value of the counter
-
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["WaitingFiles"][0], len(allActiveFiles))
-        self.assertEqual(
-            RAWIntegrityAgentTest.gMonitor.counters["WaitSize"][0],
-            (sum(f.size for f in allActiveFiles)) / (1024 * 1024 * 1024.0),
-        )
-
         # All these files are properly migrated
         migratedSize = sum(f.size for f in migratedFiles)
-
-        self.assertEqual(
-            RAWIntegrityAgentTest.gMonitor.counters["TotMigratedSize"][0], migratedSize / (1024 * 1024 * 1024.0)
-        )
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["NewlyMigrated"][0], len(migratedFiles))
-        # In fact these two counters are not the same, one is cumulative
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["TotMigrated"][0], len(migratedFiles))
-
-        # Error getting metadata
-        # Since we group by SE, we have two counters to check
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["ErrorMetadata"][0], len([self.failMetadata]))
-        self.assertEqual(
-            RAWIntegrityAgentTest.gMonitor.counters["ErrorMetadata"][1], len([self.errorMetadata, self.onSEMetadata])
-        )
-
-        # Error Registering
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["ErrorRegister"][0], len(pbRegisterFiles))
-
-        # Error Removing
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["ErrorRemove"][0], len(pbRemoveFiles))
-
-        # Error in the checksum (self.badChecksum)
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["BadChecksum"][0], 1)
-
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["FailedMigrated"][0], len(failedMigratingFiles))
-        self.assertEqual(RAWIntegrityAgentTest.gMonitor.counters["TotFailMigrated"][0], len(failedMigratingFiles))
 
         # We expect that there should be removals done
         # The files that end up migrated should be successfuly removed

@@ -26,7 +26,6 @@ from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.Core.Utilities.ThreadPool import ThreadPool
 from DIRAC.Core.Utilities.ThreadSafe import Synchronizer
 from DIRAC.Core.Utilities.List import breakListIntoChunks
-from DIRAC.FrameworkSystem.Client.MonitoringClient import gMonitor
 from DIRAC.TransformationSystem.Agent.TransformationAgentsUtilities import TransformationAgentsUtilities
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -112,7 +111,6 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
         for i in range(maxNumberOfThreads):
             threadPool.generateJobAndQueueIt(self._execute, [i])
 
-        gMonitor.registerActivity("Iteration", "Agent Loops", AGENT_NAME, "Loops/min", gMonitor.OP_SUM)
         return S_OK()
 
     @gSynchro
@@ -140,7 +138,6 @@ class BookkeepingWatchAgent(AgentModule, TransformationAgentsUtilities):
         Just fills a list, and a queue, with BKKQueries ID.
         """
 
-        gMonitor.addMark("Iteration", 1)
         # Get all the transformations
         result = self.transClient.getTransformations(condDict={"Status": ["Active", "Idle"]})
         if not result["OK"]:
