@@ -138,7 +138,7 @@ class RunDBInterfaceHandler(RequestHandler):
         else:
             filesQueryString = "success,result = server.getFilesDirac(fields=allFileFields)"
         print(filesQueryString)
-        exec (filesQueryString)
+        exec(filesQueryString)
         if not success:  # using exec statement above -> pylint: disable=undefined-variable
             return S_ERROR(result)  # using exec statement above -> pylint: disable=undefined-variable
         resultDict = {}
@@ -243,7 +243,7 @@ class RunDBInterfaceHandler(RequestHandler):
             jobsQueryString += "%s" % paramString
         jobsQueryString += ")"
         print(jobsQueryString)
-        exec (jobsQueryString)
+        exec(jobsQueryString)
         if not success:  # using exec statement above -> pylint: disable=E0601
             return S_ERROR(result)  # using exec statement above -> pylint: disable=E0601
         resultDict = {}
@@ -411,7 +411,7 @@ class RunDBInterfaceHandler(RequestHandler):
                 startTime = time.time()
                 execString = "success,result = server.%s()" % query
                 print(execString)
-                exec (execString)  # pylint: disable=exec-used
+                exec(execString)  # pylint: disable=exec-used
                 gLogger.debug(
                     "RunDBInterfaceHandler.getSelections: server.%s() took %.2f seconds."
                     % (query, time.time() - startTime)

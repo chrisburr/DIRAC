@@ -185,7 +185,7 @@ datasets.extend(
             "Visible": "Y",
             "fullpath": "/LHCb/Collision15/Beam6500GeV-VeloClosed-MagDown/Real Data/Reco15/90000000/RDST",
             "ConfigVersion": "Collision15",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 )
@@ -201,7 +201,7 @@ datasets.extend(
             "Visible": "Y",
             "fullpath": "/LHCb/Collision15/Beam6500GeV-VeloClosed-MagDown/Real Data/Reco15/90000000/RDST",
             "ConfigVersion": "Collision15em",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 )
@@ -218,7 +218,7 @@ datasets.extend(
             "fullpath": "/LHCb/Collision15/Beam6500GeV-VeloClosed-MagDown/\
                   Real Data/Reco15/Turbo01/95100000/FULLTURBO.DST",
             "ConfigVersion": "Collision15",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 )
@@ -235,7 +235,7 @@ datasets.extend(
             "fullpath": "/LHCb/Collision15/Beam6500GeV-VeloClosed-MagDown/Real Data/\
                   Reco15/Turbo01/95100000/FULLTURBO.DST",
             "ConfigVersion": "Collision15em",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 )
@@ -267,7 +267,7 @@ for i in [
                 "Visible": "Y",
                 "fullpath": c,
                 "ConfigVersion": "Collision15",
-                "DataQuality": [u"OK", u"UNCHECKED"],
+                "DataQuality": ["OK", "UNCHECKED"],
             }
         ]
     )
@@ -283,7 +283,7 @@ datasets += [
         "Visible": "Y",
         "fullpath": "/LHCb/Collision15/Beam6500GeV-VeloClosed-MagDown/Real Data/Turbo01/94000000/TURBO.MDST",
         "ConfigVersion": "Collision15",
-        "DataQuality": [u"OK", u"UNCHECKED"],
+        "DataQuality": ["OK", "UNCHECKED"],
     }
 ]
 
@@ -314,7 +314,7 @@ for i in [
             "fullpath": "/LHCb/Collision12/Beam4000GeV-VeloClosed-MagDown/\
                Real Data/Reco14/Stripping21/90000000/EW.DST",
             "ConfigVersion": "Collision12",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 for i in [
@@ -344,7 +344,7 @@ for i in [
             "fullpath": "/LHCb/Collision12/Beam4000GeV-VeloClosed-MagDown\
                 /Real Data/Reco14/Stripping21/90000000/EW.DST",
             "ConfigVersion": "Collision12",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -375,7 +375,7 @@ for i in [
             "fullpath": "/LHCb/Collision12/Beam4000GeV-VeloClosed-MagDown\
                 /Real Data/Reco14/Stripping21/90000000/EW.DST",
             "ConfigVersion": "Collision12",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -406,7 +406,7 @@ for i in [
             "fullpath": "/LHCb/Collision12/Beam4000GeV-VeloClosed-MagDown\
                 /Real Data/Reco14/Stripping21/90000000/EW.DST",
             "ConfigVersion": "Collision12",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -437,7 +437,7 @@ for i in [
             "fullpath": "/LHCb/Collision12/Beam4000GeV-VeloClosed-MagDown\
                 /Real Data/Reco14/Stripping21/90000000/EW.DST",
             "ConfigVersion": "Collision12",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -455,7 +455,7 @@ for i in evts:
             "fullpath": "/MC/2015/Beam6500GeV-Jun2015-MagDown-Nu1.6-Pythia6\
                 /Sim08h/Trig0x40f9014e/Reco15em/Turbo01em/11874091/DST",
             "ConfigVersion": "2015",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -492,7 +492,7 @@ for i in evts:
             "fullpath": "/MC/2015/Beam6500GeV-Jun2015-MagDown-Nu1.6-Pythia8\
                 /Sim08h/Trig0x40f9014e/Reco15em/Turbo01em/12873441/DST",
             "ConfigVersion": "2015",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -522,7 +522,7 @@ for i in evts:
             "fullpath": "/MC/2015/Beam6500GeV-Jun2015-MagUp-Nu1.6-Pythia6\
                 /Sim08h/Trig0x40f9014e/Reco15em/Turbo01em/11874091/DST",
             "ConfigVersion": "2015",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -553,7 +553,7 @@ for i in evts:
             "fullpath": "/MC/2015/Beam6500GeV-Jun2015-MagUp-Nu1.6-Pythia8\
                 /Sim08h/Trig0x40f9014e/Reco15em/Turbo01em/12143010/DST",
             "ConfigVersion": "2015",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -571,7 +571,7 @@ for i in evts:
             "fullpath": "/MC/Upgrade/Beam7000GeV-Upgrade-MagDown-Nu3.8-25ns-Pythia6\
                 /Sim08c/Digi13/Reco14U4/11114001/XDST",
             "ConfigVersion": "Upgrade",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 evts = [27165103, 30000000, 13102201, 13104013, 13104011, 13104012, 27165175, 13104015, 27165100]
@@ -587,7 +587,7 @@ for i in evts:
             "fullpath": "/MC/Upgrade/Beam7000GeV-Upgrade-MagDown-Nu3.8-25ns-Pythia8\
                 /Sim08c/Digi13/Reco14U4/13102201/XDST",
             "ConfigVersion": "Upgrade",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -602,7 +602,7 @@ datasets += [
         "fullpath": "/MC/Upgrade/Beam7000GeV-Upgrade-MagDown-Nu3.8-25ns-Pythia8\
               /Sim08c/Digi13/Reco14U4/Digi13-R/13104012/XDIGI",
         "ConfigVersion": "Upgrade",
-        "DataQuality": [u"OK", u"UNCHECKED"],
+        "DataQuality": ["OK", "UNCHECKED"],
     }
 ]
 
@@ -619,7 +619,7 @@ for i in evts:
             "fullpath": "/MC/Upgrade/Beam7000GeV-Upgrade-MagDown-Nu3.8-Pythia8\
                 /Sim08c/Digi13/Reco14U4/13102201/XDST",
             "ConfigVersion": "Upgrade",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -636,7 +636,7 @@ for i in evts:
             "fullpath": "/MC/Upgrade/Beam7000GeV-Upgrade-MagUp-Nu3.8-25ns-Pythia8\
                 /Sim08c-NoRichSpill/Digi13/Reco14U5/11124001/XDST",
             "ConfigVersion": "Upgrade",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -652,7 +652,7 @@ datasets += [
         "fullpath": "/MC/2010/Beam3500GeV-May2010-MagDown-Fix1\
               /Sim01/Trig0x002e002aFlagged/Reco08-MINBIAS/30000000/DST",
         "ConfigVersion": "2010",
-        "DataQuality": [u"OK", u"UNCHECKED"],
+        "DataQuality": ["OK", "UNCHECKED"],
     }
 ]
 evts = [60001008, 60002008, 60001001, 60002001]
@@ -667,7 +667,7 @@ for i in evts:
             "Visible": "Y",
             "fullpath": "/MC/2010/Beam3500GeV-May2010-MagDown-Fix1-Hijing/Sim01/Reco08/60001001/DST",
             "ConfigVersion": "2010",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -681,7 +681,7 @@ datasets += [
         "Visible": "Y",
         "fullpath": "/MC/2010/Beam3500GeV-May2010-MagOff-Fix1/Sim01/Reco08/30000000/DST",
         "ConfigVersion": "2010",
-        "DataQuality": [u"OK", u"UNCHECKED"],
+        "DataQuality": ["OK", "UNCHECKED"],
     }
 ]
 
@@ -697,7 +697,7 @@ for i in evts:
             "Visible": "Y",
             "fullpath": "/MC/2010/Beam3500GeV-May2010-MagUp-Fix1-Hijing/Sim01/Reco08/60001001/DST",
             "ConfigVersion": "2010",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -760,7 +760,7 @@ for i in evts:
             "fullpath": "/MC/2010/Beam3500GeV-Oct2010-MagDown-Nu2.5\
                 /Sim01/Trig0x002e002aFlagged/Reco08/Stripping12Flagged/11166121/ALLSTREAMS.DST",
             "ConfigVersion": "2010",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -777,7 +777,7 @@ for i in evts:
             "fullpath": "/MC/2010/Beam3500GeV-Oct2010-MagDown-Nu2.5\
                 /Sim01a/Trig0x002e002aFlagged/Reco08/Stripping12Flagged/10000020/ALLSTREAMS.DST",
             "ConfigVersion": "2010",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 
@@ -840,7 +840,7 @@ for i in evts:
             "fullpath": "/MC/2010/Beam3500GeV-Oct2010-MagUp-Nu2.5\
                 /Sim01/Trig0x002e002aFlagged/Reco08/Stripping12Flagged/10000000/ALLSTREAMS.DST",
             "ConfigVersion": "2010",
-            "DataQuality": [u"OK", u"UNCHECKED"],
+            "DataQuality": ["OK", "UNCHECKED"],
         }
     ]
 

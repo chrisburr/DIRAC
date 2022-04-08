@@ -145,7 +145,7 @@ class StorageHistoryAgent(AgentModule):
 
             self.log.notice(
                 " User %s is using %.2f GiB (%s files)"
-                % (user, userCatalogData[user]["Size"] / (1024.0 ** 3), userCatalogData[user]["Files"])
+                % (user, userCatalogData[user]["Size"] / (1024.0**3), userCatalogData[user]["Files"])
             )
         self.log.notice("Sending %s records to accounting for user storage" % numRows)
         res = gDataStoreClient.commit()

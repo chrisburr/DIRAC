@@ -139,8 +139,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"LHCbDIRAC"
-copyright = u"%s, LHCbDIRAC Project" % datetime.datetime.utcnow().year
+project = "LHCbDIRAC"
+copyright = "%s, LHCbDIRAC Project" % datetime.datetime.utcnow().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -280,7 +280,7 @@ htmlhelp_basename = "LHCbDIRACDocsdoc"
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ("index", "LHCbDIRACDocs.tex", u"LHCbDIRAC Documentation", u"LHCbDIRAC Project.", "manual"),
+    ("index", "LHCbDIRACDocs.tex", "LHCbDIRAC Documentation", "LHCbDIRAC Project.", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
