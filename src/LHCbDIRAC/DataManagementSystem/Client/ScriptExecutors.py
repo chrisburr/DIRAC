@@ -2051,7 +2051,7 @@ def registerBK2FC(lfnList, seList, printResult=False):
     if failed:
         if isinstance(failed, list):
             failed = dict.fromkeys(failed, "Not in BK")
-        gLogger.notice("%d files are not in the BK" % len(failed), failed)
+        gLogger.notice("%d files are not in the BK" % len(failed))
         result["Failed"].update(failed)
         lfnList = list(set(lfnList) - set(failed))
 
