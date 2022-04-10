@@ -2049,7 +2049,9 @@ def registerBK2FC(lfnList, seList, printResult=False):
     failed = res["Value"]["Failed"]
     bkMetadata = res["Value"]["Successful"]
     if failed:
-        gLogger.notice("%d files are not in the BK" % len(failed))
+        if isinstance(failed, list):
+            failed = dict.fromkeys(failed, "Not in BK")
+        gLogger.notice("%d files are not in the BK" % len(failed), failed)
         result["Failed"].update(failed)
         lfnList = list(set(lfnList) - set(failed))
 
