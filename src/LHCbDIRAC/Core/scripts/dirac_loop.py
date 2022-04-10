@@ -160,6 +160,8 @@ def main():
                     arg = word
                     break
         # If the argument is between quotes, take what is between the quotes
+        if not arg:
+            continue
         if "'/" in arg:
             arg = arg.split("'")[1]
         elif '"/' in arg:
