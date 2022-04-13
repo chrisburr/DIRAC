@@ -35,9 +35,9 @@ def _standardDirectory(dirPath):
 class StorageUsageDB(DB):
     """.. class:: StorageUsageDB"""
 
-    def __init__(self):
+    def __init__(self, parentLogger=None):
         """Standard Constructor."""
-        DB.__init__(self, "StorageUsageDB", "DataManagement/StorageUsageDB")
+        DB.__init__(self, "StorageUsageDB", "DataManagement/StorageUsageDB", parentLogger=parentLogger)
         self.__initializeDB()
 
     def __initializeDB(self):

@@ -29,10 +29,10 @@ from DIRAC.Core.Utilities.List import intListToString, breakListIntoChunks
 class TransformationDB(DIRACTransformationDB):
     """Extension of the DIRAC Transformation DB."""
 
-    def __init__(self, dbname=None, dbconfig=None, dbIn=None):
+    def __init__(self, dbname=None, dbconfig=None, dbIn=None, parentLogger=None):
         """The standard constructor takes the database name (dbname) and the name
         of the configuration section (dbconfig)"""
-        DIRACTransformationDB.__init__(self, dbname, dbconfig, dbIn)
+        DIRACTransformationDB.__init__(self, dbname, dbconfig, dbIn, parentLogger=parentLogger)
         self.lock = threading.Lock()
         self.queryFields = (
             "SimulationConditions",
