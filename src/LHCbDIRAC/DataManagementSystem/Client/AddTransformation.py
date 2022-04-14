@@ -531,7 +531,13 @@ def executeAddTransformation(pluginScript):
                 if not res["OK"]:
                     errMsg = "Could not add files to transformation"
                     break
-                gLogger.notice("%d files successfully added to transformation" % len(res["Value"]))
+                gLogger.notice("%d files successfully added to transformation" % len(res["Value"]["Successful"]))
+                if res["Value"]["Failed"]:
+                    errors = defaultdict(int)
+                    for error in res["Value"]["Failed"].values():
+                        errors[error] += 1
+                    for error, count in errors.items():
+                        gLogger.always("Failed to add %d files to transformation %d:" % (count, transID), error)
             if requestID:
                 transformation.setTransformationFamily(requestID)
             if start:
