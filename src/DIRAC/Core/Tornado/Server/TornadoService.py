@@ -86,15 +86,15 @@ class TornadoService(BaseRequestHandler):  # pylint: disable=abstract-method
     * ``method``: name of the method to call
     * ``args``: JSON encoded arguments for the method
     * ``extraCredentials``: (optional) Extra informations to authenticate client
-    * ``rawContent``: (optionnal, default False) If set to True, return the raw output
-        of the method called.
 
-    If ``rawContent`` was requested by the client, the ``Content-Type``
-    is ``application/octet-stream``, otherwise we set it to ``application/json``
-    and JEncode retVal.
+    By default the returned ``Content-Type`` will be either ``application/json``
+    or ``application/octet-stream`` however this may be overridden by the
+    implementation of the given route. Furthermore the ``Accept`` request header
+    can be used to override the default ``application/json``, (typically to
+    ``application/vnd.dirac+json`` which corresponds to ``JEncode``).
 
-    If ``retVal`` is a dictionary that contains a ``Callstack`` item,
-    it is removed, not to leak internal information.
+    If ``retVal`` is a dictionary that contains ``Callstack`` or ``ExecInfo``
+    keys, they will be removed, not to leak internal information.
 
 
     Example of call using ``requests``::

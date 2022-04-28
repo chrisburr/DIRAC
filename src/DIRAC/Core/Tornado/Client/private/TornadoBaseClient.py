@@ -565,6 +565,14 @@ class TornadoBaseClient(object):
                 gLogger.error("No proxy found")
                 return S_ERROR("No proxy found")
 
+        request_kwargs = dict(
+            data=dict(kwargs),
+            timeout=self.timeout,
+            verify=verify,
+            headers={"Accept": "application/vnd.dirac+json"},
+            **auth,
+        )
+
         # We have a try/except for all the exceptions
         # whose default behavior is to try again,
         # maybe to different server
@@ -576,26 +584,27 @@ class TornadoBaseClient(object):
 
                 # Default case, just return the result
                 if not outputFile:
-                    call = requests.post(url, data=kwargs, timeout=self.timeout, verify=verify, **auth)
+                    call = requests.post(url, **request_kwargs)
                     # raising the exception for status here
-                    # means essentialy that we are losing here the information of what is returned by the server
+                    # means essentially that we are losing here the information of what is returned by the server
                     # as error message, since it is not passed to the exception
                     # However, we can store the text and return it raw as an error,
                     # since there is no guarantee that it is any JEncoded text
                     # Note that we would get an exception only if there is an exception on the server side which
                     # is not handled.
-                    # Any standard S_ERROR will be transfered as an S_ERROR with a correct code.
+                    # Any standard S_ERROR will be transferred as an S_ERROR with a correct code.
                     rawText = call.text
                     call.raise_for_status()
                     return decode(rawText)[0]
                 else:
                     # Instruct the server not to encode the response
-                    kwargs["rawContent"] = True
+                    request_kwargs["headers"] = {"Accept": "application/octet-stream"}
+                    # TOOD: This is for legacy compatibility and can be removed in v8.1
+                    request_kwargs["data"]["rawContent"] = True
 
-                    rawText = None
                     # Stream download
                     # https://requests.readthedocs.io/en/latest/user/advanced/#body-content-workflow
-                    with requests.post(url, data=kwargs, timeout=self.timeout, verify=verify, stream=True, **auth) as r:
+                    with requests.post(url, stream=True, **request_kwargs) as r:
                         rawText = r.text
                         r.raise_for_status()
 

@@ -919,6 +919,11 @@ class BaseRequestHandler(RequestHandler):
             if "CallStack" in self.__result:
                 del self.__result["CallStack"]
 
+        # TODO: This is needed for backwards compatibility can can be removed in v8.1
+        rawContent = self.get_argument("rawContent", default=False)
+        if not rawContent:
+            rawContent = self.request.headers.get("Accept") == "application/octet-stream"
+
         # Here it is safe to write back to the client, because we are not in a thread anymore
         if isinstance(self.__result, TornadoResponse):
             self.__result._runActions(self)
@@ -936,18 +941,23 @@ class BaseRequestHandler(RequestHandler):
         # If set to true, do not JEncode the return of the RPC call
         # This is basically only used for file download through
         # the 'streamToClient' method.
-        elif self.get_argument("rawContent", default=False):
-            # See 4.5.1 http://www.rfc-editor.org/rfc/rfc2046.txt
-            self.set_header("Content-Type", "application/octet-stream")
+        elif rawContent or isinstance(self.__result, bytes):
+            if "content-type" not in self._headers:
+                self.set_header("Content-Type", "application/octet-stream")
+            if isinstance(self.__result, bytes):
+                self.set_header("Content-Length", len(self.__result))
             self.finish(self.__result)
 
         # Return simple text or html
-        elif isinstance(self.__result, (str, bytes)):
+        elif isinstance(self.__result, str):
             self.finish(self.__result)
 
-        # JSON
         else:
-            self.set_header("Content-Type", "application/json")
+            contentType = self.request.headers.get("Accept", "application/json")
+            if contentType not in ["application/json", "application/vnd.dirac+json"]:
+                raise HTTPError(status_code=HTTPStatus.NOT_ACCEPTABLE)
+            self.set_header("Content-Type", contentType)
+            # TODO: Use json.dumps instead of JEncode if returning application/json
             self.finish(encode(self.__result))
 
     # Make a coroutine, see https://www.tornadoweb.org/en/branch5.1/guide/coroutines.html#coroutines for details
