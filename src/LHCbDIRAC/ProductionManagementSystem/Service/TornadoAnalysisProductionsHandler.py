@@ -213,7 +213,7 @@ def _getOutputLFNs(pID2tID):
 
 def _getReplicas(lfns):
     sLog.info("Getting replicas for", f"{len(lfns)} LFNs")
-    replicas = returnValueOrRaise(DataManager().getReplicas(lfns, getUrl=False))
+    replicas = returnValueOrRaise(DataManager().getReplicas(lfns, diskOnly=True, getUrl=False))
     for se in gConfig.getValue("/Resources/Sites/LCG/LCG.CERN.cern/SE", []):
         seLFNs = {lfn for lfn, replicaInfo in replicas["Successful"].items() if se in replicaInfo}
         if not seLFNs:
