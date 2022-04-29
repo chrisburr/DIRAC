@@ -1798,7 +1798,7 @@ def groupByRun(files):
     return runDict
 
 
-def addFilesToTransformation(transID, lfns, addRunInfo=True):
+def addFilesToTransformation(transID, lfns, addRunInfo=True, resetPresentFiles=False):
     """Add files to a transformation, including the run number if required As
     this is also used by the add-files script, we also add run metadata to the TS
     is not present."""
@@ -1811,7 +1811,9 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
     transPlugin = res["Value"]["Plugin"]
     pluginsWithRunInfo = Operations().getValue("TransformationPlugins/PluginsWithRunInfo", [])
     addRunInfo = addRunInfo and transPlugin in pluginsWithRunInfo
-    addedLfns = set()
+    addedLfns = dict()
+    presentLfns = set()
+    failedLfns = dict()
     for lfnChunk in breakListIntoChunks(lfns, 1000):
         runDict = {}
         if addRunInfo:
@@ -1823,29 +1825,42 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
                     if runID:
                         runDict.setdefault(int(runID), set()).add(lfn)
             else:
-                break
+                failedLfns.update(dict.fromkeys(lfnChunk, res["Message"]))
+                continue
         errorLogged = False
-        while True:
+        retries = 10
+        while retries:
             res = transClient.addFilesToTransformation(transID, lfnChunk)
             if not res["OK"]:
                 if not errorLogged:
                     errorLogged = True
                     gLogger.error("Error adding %d files to transformation, retry..." % len(lfnChunk), res["Message"])
                 time.sleep(1)
+                retries -= 1
             else:
                 break
+        if not retries:
+            failedLfns.update(dict.fromkeys(lfnChunk, res["Message"]))
+            continue
         added = set(
             lfn for (lfn, status) in res["Value"]["Successful"].items() if status == "Added"
         )  # can be an iterator
-        addedLfns.update(added)
-        if addRunInfo and res["OK"]:
+        present = set(
+            lfn for (lfn, status) in res["Value"]["Successful"].items() if status == "Present"
+        )  # can be an iterator
+        addedLfns.update(dict.fromkeys(added, "Added"))
+        presentLfns.update(present)
+        if addRunInfo:
             gLogger.info("Add information for %d runs to transformation %s" % (len(runDict), transID))
             for runID, runLfns in runDict.items():  # can be an iterator
                 runLfns &= added
                 if runLfns:
                     res = transClient.addTransformationRunFiles(transID, runID, list(runLfns))
                     if not res["OK"]:
-                        break
+                        gLogger.error(
+                            "Error adding files to run",
+                            "for %d files to run %s: %s" % (len(runLfns), runID, res["Message"]),
+                        )
             # Add run metadata if not present in TS
             res = transClient.getRunsMetadata(list(runDict))
             if res["OK"]:
@@ -1865,10 +1880,19 @@ def addFilesToTransformation(transID, lfns, addRunInfo=True):
                         if not res["OK"]:
                             gLogger.error("Error setting run metadata in TS", res["Message"])
 
-    if not res["OK"]:
-        return res
     gLogger.info("%d files successfully added to transformation" % len(addedLfns))
-    return S_OK(addedLfns)
+    resetLfns = 0
+    if resetPresentFiles and presentLfns:
+        for lfnChunk in breakListIntoChunks(presentLfns, 1000):
+            res = transClient.setFileStatusForTransformation(transID, "Unused", lfnChunk, force=True)
+            if not res["OK"]:
+                gLogger.error("Error resetting files Unused", "for %d files: %s" % (len(lfnChunk), res["Message"]))
+                failedLfns.update(dict.fromkeys(lfnChunk, res["Message"]))
+            else:
+                resetLfns += len(lfnChunk)
+                addedLfns.update(dict.fromkeys(lfnChunk, "Reset"))
+        gLogger.info("Successfully reset %d files Unused in transformation %s" % (resetLfns, transID))
+    return S_OK({"Successful": addedLfns, "Failed": failedLfns})
 
 
 def stripDirectory(files, depth=None):
