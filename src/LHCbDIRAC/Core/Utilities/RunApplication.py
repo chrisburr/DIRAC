@@ -62,7 +62,7 @@ class RunApplication(object):
             gaudiAppModule.step_number,
         )
         self.applicationLog = gaudiAppModule.applicationLog or "applicationLog.txt"
-        self.stdError = gaudiAppModule.stdError
+        self.stdError = gaudiAppModule.stdError or self.applicationLog
 
         # Sanity checks
         if not gaudiAppModule.stepInputData and self.applicationName.lower() != "gauss":
@@ -174,6 +174,8 @@ class RunApplication(object):
             command = [self.prmonPath, "--json-summary", "./prmon_Gauss.json", "--"] + command
         self.log.notice("Running command", shlex.join(command))
 
+        stdout = ""
+        stderr = ""
         remoteRunner = RemoteRunner()
         if remoteRunner.is_remote_execution():
             outputDict = remoteRunner.execute(shlex.join(command))
@@ -184,7 +186,6 @@ class RunApplication(object):
             else:
                 # Sometimes Errno has not been purposely defined and is equal to 0
                 returncode = outputDict["Errno"] if outputDict["Errno"] != 0 else DErrno.ERESGEN
-                stdout = ""
                 stderr = outputDict["Message"]
         else:
             proc = await asyncio.create_subprocess_exec(
@@ -192,30 +193,37 @@ class RunApplication(object):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            stdout, stderr, _ = await asyncio.gather(
-                self._handleOutput(proc.stdout, self.applicationLog),
-                self._handleOutput(proc.stderr, self.stdError),
-                proc.wait(),
-            )
+            stdout_fh = None
+            if self.applicationLog:
+                stdout_fh = open(self.applicationLog, "at")
+
+            stderr_fh = None
+            if self.stdError == self.applicationLog:
+                stderr_fh = stdout_fh
+            elif self.stdError:
+                stderr_fh = open(self.applicationLog, "at")
+
+            try:
+                await asyncio.gather(
+                    self._handleOutput(proc.stdout, stdout_fh),
+                    self._handleOutput(proc.stderr, stderr_fh),
+                    proc.wait(),
+                )
+            finally:
+                if stdout_fh:
+                    stdout_fh.close()
+                if stderr_fh and stdout_fh != stderr_fh:
+                    stderr_fh.close()
             returncode = proc.returncode
         return (returncode, stdout, stderr)
 
-    async def _handleOutput(self, stream, filename):
+    async def _handleOutput(self, stream, fh):
         """Process the output of a current local execution"""
-        lines = []
-        try:
-            if filename:
-                log = open(filename, "at")
-            while line := await stream.readline():
-                line = line.decode(errors="backslashreplace")
-                lines += [line]
-                self._handleLine(line)
-                if filename:
-                    log.write(line)
-        finally:
-            if filename:
-                log.close()
-        return "".join(lines)
+        while line := await stream.readline():
+            line = line.decode(errors="backslashreplace")
+            self._handleLine(line)
+            if fh:
+                fh.write(line)
 
     def _handleRemoteOutput(self, lines, filename):
         """Process the output of a remote execution"""
