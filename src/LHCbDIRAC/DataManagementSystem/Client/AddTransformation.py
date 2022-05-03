@@ -18,6 +18,7 @@ import DIRAC
 from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 from DIRAC.Core.Utilities.List import breakListIntoChunks
+from DIRAC.Core.Utilities.ObjectLoader import ObjectLoader
 
 from LHCbDIRAC.TransformationSystem.Client.Transformation import Transformation
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
@@ -108,6 +109,8 @@ def executeAddTransformation(pluginScript):
     mcVersionSet = None
     nameOption = None
     checkMCReplication = False
+    bodyPlugin = None
+    transBody = None
 
     switches = Script.getUnprocessedSwitches()
     for opt, val in switches:
@@ -145,7 +148,14 @@ def executeAddTransformation(pluginScript):
             # Force to check all versions
             mcVersionSet = {"all"}
             checkMCReplication = True
+        elif opt == "BodyPlugin":
+            bodyPlugin = val
+        elif opt == "TransBody":
+            transBody = val
 
+    if bodyPlugin and transBody:
+        gLogger.fatal("Cannot specify both BodyPlugin and TransBody")
+        exit(1)
     if userGroup:
         from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 
@@ -358,17 +368,33 @@ def executeAddTransformation(pluginScript):
         transformation.setDescription(longName[:255])
         transformation.setLongDescription(longName)
         transformation.setType(transType)
-        transBody = None
-        if transType == "Removal":
-            if plugin == "DestroyDataset":
-                transBody = "removal;RemoveFile"
-            elif plugin == "DestroyDatasetWhenProcessed":
-                plugin = "DeleteReplicasWhenProcessed"
-                transBody = "removal;RemoveFile"
-                # Set the polling period to 0 if not defined
-                pluginParams.setdefault("Period", 0)
-            else:
-                transBody = "removal;RemoveReplica"
+
+        # Rename plugin
+        if plugin == "DestroyDatasetWhenProcessed":
+            plugin = "DeleteReplicasWhenProcessed"
+            # Set the polling period to 0 if not defined
+            pluginParams.setdefault("Period", 0)
+
+        # If we have a body plugin, load it
+        if bodyPlugin:
+            objLoader = ObjectLoader()
+            _class = objLoader.loadObject("TransformationSystem.Client.BodyPlugin.%s" % bodyPlugin, bodyPlugin)
+
+            if not _class["OK"]:
+                raise Exception(_class["Message"])
+            # TODO: handle the case of a body plugin with arguments
+            transBody = _class["Value"]()
+        else:
+            # If we don't have a body, define it for Removal transformations
+            if not transBody and transType == "Removal":
+                if plugin == "DestroyDataset":
+                    transBody = "removal;RemoveFile"
+                elif plugin == "DestroyDatasetWhenProcessed":
+                    transBody = "removal;RemoveFile"
+                else:
+                    transBody = "removal;RemoveReplica"
+
+        if transBody:
             transformation.setBody(transBody)
 
         if pluginSEParams:
