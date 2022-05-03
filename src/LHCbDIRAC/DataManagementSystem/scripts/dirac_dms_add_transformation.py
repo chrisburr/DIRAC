@@ -41,6 +41,13 @@ def main():
     Script.registerSwitch("", "CheckMCReplication", "   List all MC replication transformations that are obsolete")
     Script.registerSwitch("", "ListProcessingPasses", "   Only lists the processing passes")
 
+    Script.registerSwitch(
+        "",
+        "BodyPlugin=",
+        "   BodyPlugin to use for the transformation",
+    )
+    Script.registerSwitch("", "TransBody=", "   Body to use for the transformation")
+
     Script.setUsageMessage(
         __doc__
         + "\n".join(

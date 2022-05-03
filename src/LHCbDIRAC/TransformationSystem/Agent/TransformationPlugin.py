@@ -1818,3 +1818,30 @@ class TransformationPlugin(DIRACTransformationPlugin):
                     return res
 
         return S_OK(self.util.createTasks(storageElementGroups))
+
+    def _DataChallengeReplication(self):
+        """Plugin for replicating RAW data during the data challenges.
+        What it does will change every time, but the idea is to be as
+        close as possible to the RAWReplication, but without really
+        caring about runs."""
+        self.util.logInfo("Starting execution of plugin")
+
+        res = self.util.getPluginShares(section="DataChallenge")
+        if not res["OK"]:
+            self.util.logError("Section DataChallenge in Shares not available")
+            return res
+
+        _, targetShares = res["Value"]
+
+        sites = list(targetShares.keys())
+        weights = list(targetShares.values())
+        # Now group all of the files by their target SEs
+        storageElementGroups = defaultdict(list)
+
+        for lfn in self.transReplicas:  # can be an iterator
+            # Choose from the site
+            rndSite = random.choices(sites, weights=weights)[0]
+            stringTargetSEs = f"{rndSite}-DC-BUFFER,{rndSite}-DC-RAW"
+            storageElementGroups[stringTargetSEs].append(lfn)
+
+        return S_OK(self.util.createTasks(storageElementGroups))

@@ -13,6 +13,7 @@
 """
 import random
 import itertools
+import re
 from DIRAC import S_OK, S_ERROR
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.DataManagementSystem.private.FTS3Plugins.DefaultFTS3Plugin import DefaultFTS3Plugin
@@ -34,7 +35,9 @@ class LHCbFTS3Plugin(DefaultFTS3Plugin):
             dstSE = StorageElement(destSEName)
             dstBaseSEName = dstSE.options.get("BaseSE")
 
-            if (srcBaseSEName, dstBaseSEName) in list(itertools.product(("CERN-EOS", "CERN-CTA"), repeat=2)):
+            if (srcBaseSEName, dstBaseSEName) in list(
+                itertools.product(("CERN-EOS", "CERN-CTA", "CERN-CTA-DATACHALLENGE"), repeat=2)
+            ):
                 return True
 
         except Exception:
@@ -53,30 +56,34 @@ class LHCbFTS3Plugin(DefaultFTS3Plugin):
             ftsJob=ftsJob, sourceSEName=sourceSEName, destSEName=destSEName, **kwargs
         )
 
-    # According to RAL, their problem is fixed,
-    # (https://ggus.eu/?mode=ticket_info&ticket_id=151955#update#13
-    # so I comment this out, but I'll keep it a bit
-    # for ease of hotfixing, you know, just in case...
+    def selectSourceSE(self, ftsFile, replicaDict, allowedSources):
+        """
+        This is basically a copy/paste of the parent method, with the exception
+        of prefering local staging.
+        """
 
-    # def selectSourceSE(self, ftsFile, replicaDict, allowedSources):
-    #   """
-    #     This is basically a copy/paste of the parent method, with the exception
-    #     of not staging between CTA and Echo....
-    #   """
+        allowedSourcesSet = set(allowedSources) if allowedSources else set()
 
-    #   allowedSourcesSet = set(allowedSources) if allowedSources else set()
-    #   # Only consider the allowed sources
+        # If we have a restriction, apply it, otherwise take all the replicas
+        allowedReplicaSource = (set(replicaDict) & allowedSourcesSet) if allowedSourcesSet else replicaDict
 
-    #   # If we have a restriction, apply it, otherwise take all the replicas
-    #   allowedReplicaSource = (set(replicaDict) & allowedSourcesSet) if allowedSourcesSet else replicaDict
+        # If we have a replica at the same site as the destination
+        # use that one
+        # This is mostly done in order to favor local staging
+        #
+        # We go with the naive assumption that the site name
+        # is always the first part of the SE name, separated
+        # by either a - or a _ (like `_MC-DST`)
+        # (I know there are "proper tools" for checking if a SE is on the same site
+        # but since we are in the sheltered LHCb only environment, I can do that
+        # sort of optimization)
+        targetSite = re.split("-|_", ftsFile.targetSE)
+        sameSiteSE = [srcSE for srcSE in allowedReplicaSource if targetSite in srcSE]
+        if sameSiteSE:
+            allowedReplicaSource = sameSiteSE
 
-    #   # If we have CTA and RAL as a tape source, choose RAL.
-    #   if 'CERN-RAW' in allowedReplicaSource and 'RAL-RAW' in allowedReplicaSource:
-    #     allowedReplicaSource = {'RAL-RAW': True}
-    #   # pick a random source
-
-    #   randSource = random.choice(list(allowedReplicaSource))  # one has to convert to list
-    #   return randSource
+        randSource = random.choice(list(allowedReplicaSource))  # one has to convert to list
+        return randSource
 
     def inferFTSActivity(self, ftsOperation, rmsRequest, rmsOperation):
         """
