@@ -1,3 +1,27 @@
+[v10.4.12]
+*WorkloadManagementSystem
+
+CHANGE: (!1207) Ensure stderr from applications is always kept
+FIX: (!1207) Reduce memory usage in `RunApplication` by not storing stdout/stderr in memory
+
+*DataManagementSystem
+
+FIX: (!1203) treat the case when the `['Failed']` field returned by BK is a list and not a dict
+
+*Core
+
+FIX: (!1203) handle weird list of paths in `dirac-loop`
+
+*TransformationSystem
+
+CHANGE: (!1203) add option in `dirac-transformation-add-files` to allow resetting files already present as `Unused`. This is particularly useful in DM transformations as files may be considered more than once for replication or removal
+
+*Production
+
+CHANGE: (!1202) Do not get PFN for tape SEs
+
+
+
 [v10.4.11]
 
 
