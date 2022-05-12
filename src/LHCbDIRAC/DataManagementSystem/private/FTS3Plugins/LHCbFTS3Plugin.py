@@ -77,7 +77,7 @@ class LHCbFTS3Plugin(DefaultFTS3Plugin):
         # (I know there are "proper tools" for checking if a SE is on the same site
         # but since we are in the sheltered LHCb only environment, I can do that
         # sort of optimization)
-        targetSite = re.split("-|_", ftsFile.targetSE)
+        targetSite = re.split("-|_", ftsFile.targetSE)[0]
         sameSiteSE = [srcSE for srcSE in allowedReplicaSource if targetSite in srcSE]
         if sameSiteSE:
             allowedReplicaSource = sameSiteSE
