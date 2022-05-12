@@ -243,6 +243,8 @@ class MCSimulationTestingAgent(AgentModule):
             self.log.error("There are no successful tasks")
             return S_ERROR("There are no successful tasks")
 
+        successfulJobs = len(successful)
+
         CPUeJobTotal = 0.0
         for job in successful.values():
             cpuJob = 0
@@ -252,12 +254,15 @@ class MCSimulationTestingAgent(AgentModule):
                         events = bkJob["NumberOfEvents"]  # This must be there
                     timeInSeconds = bkJob["CPUTIME"]
                     cpuJob += timeInSeconds * bkJob["WNCPUHS06"]
+            if not events:  # extreme case of no events produced
+                successfulJobs -= 1
+                continue
             CPUeJob = cpuJob / events
             self.log.debug("CPUeJob = %d" % CPUeJob)
 
             CPUeJobTotal += CPUeJob
 
-        CPUe = CPUeJobTotal / len(successful)
+        CPUe = CPUeJobTotal / successfulJobs
         # We want to produce at least 25 events per job...
         MCCpu = str(25 * int(round(float(CPUe))))
         self.log.verbose("CPUe = %d, MCCpu = %s" % (CPUe, MCCpu))
