@@ -334,7 +334,7 @@ set_cvmfs_prod_link:
 
 # Update the Helm configuration
 # by setting LHCB_DIRAC_VERSION
-# and triggering chaen/diracchart pipeline
+# and triggering lhcb-dirac/diracchart pipeline
 deploy_k8:
   stage: finish_up
   allow_failure: true
@@ -349,7 +349,7 @@ deploy_k8:
     - /^v[0-9]+\.[0-9]+.+$/
     - /^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$/
   trigger:
-    project: chaen/diracchart
+    project: lhcb-dirac/diracchart
     strategy: depend
 
 # Job for starting the tag procedure
