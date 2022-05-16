@@ -123,6 +123,8 @@ EOT"""
         try:
             self.conn = stomp.Connection(
                 [(self.config["MsgBroker"], self.config["MsgPort"])],
+            )
+            self.conn.set_ssl(
                 use_ssl=_use_ssl,
                 ssl_key_file=_ssl_key_file,
                 ssl_cert_file=_ssl_cert_file,
@@ -132,7 +134,6 @@ EOT"""
             # There may be a need to receive messages.
             # In this case there should be a class with an on_message method
             # conn.set_listener('',MyListener()) python-messaging provides a useful class.
-            self.conn.start()
             self.conn.connect()
         except stomp.exception.ConnectFailedException as e:
             gLogger.error("Error establishing connection: %s" % e)
