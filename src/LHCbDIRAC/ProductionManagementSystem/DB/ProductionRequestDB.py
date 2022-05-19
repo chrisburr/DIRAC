@@ -38,9 +38,9 @@ from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import informPeople
 class ProductionRequestDB(DB):
     """DB class for ProductionManagement/ProductionRequestDB."""
 
-    def __init__(self):
+    def __init__(self, parentLogger=None):
         """Constructor."""
-        DB.__init__(self, "ProductionRequestDB", "ProductionManagement/ProductionRequestDB")
+        DB.__init__(self, "ProductionRequestDB", "ProductionManagement/ProductionRequestDB", parentLogger=parentLogger)
         self.dateColumns = ["StartingDate", "FinalizationDate"]
         self.dateFormat = "%Y-%m-%d"
         self.lock = threading.Lock()

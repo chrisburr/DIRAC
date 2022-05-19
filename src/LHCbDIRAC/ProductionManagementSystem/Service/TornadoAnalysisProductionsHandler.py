@@ -29,12 +29,17 @@ optDate = (type(None), datetime)
 optString = (type(None), str)
 
 sLog = gLogger.getSubLogger(__name__)
+sLog._setOption("tornadoComponent", "ProductionManagement/TornadoAnalysisProduction")
 
 
 class TornadoAnalysisProductionsHandler(TornadoService):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._db = AnalysisProductionsDB()
+
+    @classmethod
+    def initializeHandler(cls, serviceInfoDict):
+        """initialize handler"""
+        cls._db = AnalysisProductionsDB(parentLogger=cls.log)
 
     types_listAnalyses = [optDate]
 

@@ -58,9 +58,9 @@ def inject_session(func):
 class AnalysisProductionsDB(DIRACDB):
     __engineCache = {}
 
-    def __init__(self, *, url=None):
+    def __init__(self, *, url=None, parentLogger=None):
         self.fullname = self.__class__.__name__
-        super().__init__()
+        super().__init__(parentLogger=parentLogger)
         if url is None:
             param = returnValueOrRaise(getDBParameters("ProductionManagement/AnalysisProductionsDB"))
             url = f"mysql://{param['User']}:{param['Password']}@{param['Host']}:{param['Port']}/{param['DBName']}"

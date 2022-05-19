@@ -22,10 +22,10 @@ from DIRAC.WorkloadManagementSystem.DB.JobDB import JobDB as DIRACJobDB
 class JobDB(DIRACJobDB):
     """Extension of the DIRAC Job DB."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """The standard constructor takes the database name (dbname) and the name
         of the configuration section (dbconfig)"""
-        DIRACJobDB.__init__(self)
+        DIRACJobDB.__init__(self, *args, **kwargs)
         self.jdl2DBParameters += ["runNumber"]
 
     def getTimings(self, site, period=3600):
