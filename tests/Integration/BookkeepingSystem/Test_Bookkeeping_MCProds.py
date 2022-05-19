@@ -973,12 +973,26 @@ def test_getJobInformation():
         assert sorted(params) == sorted(record)
         record.pop("JobId")
         record.pop("StepId")
+
+        referenceParams = None
         if record["CPUTime"] == d1["CPUTime"]:
+            referenceParams = d1
             assert sorted(record.items()) == sorted(d1.items())  # can be an iterator
         elif record["CPUTime"] == d2["CPUTime"]:
+            referenceParams = d2
             assert sorted(record.items()) == sorted(d2.items())  # can be an iterator
         else:
             assert False
+        for param, refValue in referenceParams.items():
+            recordValue = record[param]
+            # There is a few second details between inserting data and retrieving it
+            # so account for it
+            if isinstance(refValue, datetime.datetime):
+                assert abs(refValue - recordValue) < datetime.timedelta(
+                    seconds=120
+                ), f"{param}: {refValue} != {recordValue}"
+            else:
+                assert refValue == recordValue, f"{param}: {refValue} != {recordValue}"
 
     retVal = bk.getJobInformation({"Production": 12345})
     assert retVal["OK"], retVal["Message"]
