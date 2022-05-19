@@ -27,6 +27,7 @@ def main():
     dmScript.registerFileSwitches()
 
     Script.registerSwitch("", "NoRunInfo", "   Use if no run information is required")
+    Script.registerSwitch("", "ResetPresentFiles", "   Reset files Unused if they are present in the transformation")
     Script.registerSwitch("", "Chown=", "   Give user/group for chown of the directories of files in the FC")
 
     Script.parseCommandLine(ignoreErrors=True)
@@ -43,11 +44,14 @@ def main():
 
     runInfo = True
     userGroup = None
+    resetPresentFiles = False
 
     switches = Script.getUnprocessedSwitches()
     for opt, val in switches:
         if opt == "NoRunInfo":
             runInfo = False
+        elif opt == "ResetPresentFiles":
+            resetPresentFiles = True
         elif opt == "Chown":
             userGroup = val.split("/")
             if len(userGroup) != 2 or not userGroup[1].startswith("lhcb_"):
@@ -68,9 +72,7 @@ def main():
 
     from LHCbDIRAC.DataManagementSystem.Utilities.FCUtilities import chown
     from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import addFilesToTransformation
-    from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 
-    trClient = TransformationClient()
     transList = getTransformations(Script.getPositionalArgs())
     if not transList:
         DIRAC.exit(1)
@@ -90,9 +92,25 @@ def main():
 
     rc = 0
     for transID in transList:
-        res = addFilesToTransformation(transID, requestedLFNs, addRunInfo=runInfo)
+        res = addFilesToTransformation(transID, requestedLFNs, addRunInfo=runInfo, resetPresentFiles=resetPresentFiles)
         if res["OK"]:
-            gLogger.always("Successfully added %d files to transformation %d" % (len(res["Value"]), transID))
+            added = list(res["Value"]["Successful"].values()).count("Added")
+            if added:
+                gLogger.always("Successfully added %d files to transformation %d" % (added, transID))
+            else:
+                gLogger.always("No files added to transformation", str(transID))
+            reset = list(res["Value"]["Successful"].values()).count("Reset")
+            if reset:
+                gLogger.always("Successfully reset %d files Unused in transformation %d" % (reset, transID))
+            if res["Value"]["Failed"]:
+                from collections import defaultdict
+
+                errors = defaultdict(int)
+                for error in res["Value"]["Failed"].values():
+                    errors[error] += 1
+                for error, count in errors.items():
+                    gLogger.always("Failed to add %d files to transformation %d:" % (count, transID), error)
+                rc = 1
         else:
             gLogger.always(
                 "Failed to add %d files to transformation %d" % (len(requestedLFNs), transID), res["Message"]
