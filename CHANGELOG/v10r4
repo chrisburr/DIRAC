@@ -1,3 +1,18 @@
+[v10.4.13]
+*BKK
+
+FIX: (!1217) bkk MC test is a bit less strict about timestamp comparison
+
+*TransformationSystem
+
+FIX: (!1212) skip jobs that did not produce events
+
+*DataManagementSystem
+
+FIX: (!1210) typo in finding the corresponding site of an SE in LHCbFTS3Plugin
+
+
+
 [v10.4.12]
 *WorkloadManagementSystem
 
