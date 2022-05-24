@@ -157,8 +157,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
         AllStreamsDST = "/lhcb/certification/test/ALLSTREAMS.DST/00012345/0005/00012345_00054321_5.AllStreams.dst"
         reslist = [
             {
-                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00012345_00054321.tar"],
-                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005/00054321"],
+                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00054321.zip"],
+                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005"],
                 "DebugLFNs": [
                     "/lhcb/debug/test/SIM/00012345/0005/00012345_00054321_1.sim",
                     "/lhcb/debug/test/DIGI/00012345/0005/00012345_00054321_2.digi",
@@ -180,8 +180,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
                 ],
             },
             {
-                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00012345_00054321.tar"],
-                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005/00054321"],
+                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00054321.zip"],
+                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005"],
                 "DebugLFNs": [
                     "/lhcb/debug/test/SIM/00012345/0005/00012345_00054321_1.sim",
                     "/lhcb/debug/test/DIGI/00012345/0005/00012345_00054321_2.digi",
@@ -198,8 +198,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
                 "ProductionOutputData": ["/lhcb/certification/test/DST/00012345/0005/00012345_00054321_4.dst"],
             },
             {
-                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00012345_00054321.tar"],
-                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005/00054321"],
+                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00054321.zip"],
+                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005"],
                 "DebugLFNs": [
                     "/lhcb/debug/test/SIM/00012345/0005/00012345_00054321_1.sim",
                     "/lhcb/debug/test/DIGI/00012345/0005/00012345_00054321_2.digi",
@@ -216,8 +216,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
                 "ProductionOutputData": ["/lhcb/certification/test/DST/00012345/0005/00012345_00054321_4.dst"],
             },
             {
-                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00012345_00054321.tar"],
-                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005/00054321"],
+                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00054321.zip"],
+                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005"],
                 "DebugLFNs": [
                     "/lhcb/debug/test/SIM/00012345/0005/00012345_00054321_1.sim",
                     "/lhcb/debug/test/DIGI/00012345/0005/00012345_00054321_2.digi",
@@ -237,8 +237,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
                 ],
             },
             {
-                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00012345_00054321.tar"],
-                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005/00054321"],
+                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00054321.zip"],
+                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005"],
                 "DebugLFNs": [
                     "/lhcb/debug/test/SIM/00012345/0005/00012345_00054321_1.sim",
                     "/lhcb/debug/test/DIGI/00012345/0005/00012345_00054321_2.digi",
@@ -255,8 +255,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
                 "ProductionOutputData": [AllStreamsDST],
             },
             {
-                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00012345_00054321.tar"],
-                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005/00054321"],
+                "LogTargetPath": ["/lhcb/certification/test/LOG/00012345/0005/00054321.zip"],
+                "LogFilePath": ["/lhcb/certification/test/LOG/00012345/0005"],
                 "DebugLFNs": [
                     "/lhcb/debug/test/SIM/00012345/0005/00012345_00054321_1.sim",
                     "/lhcb/debug/test/DIGI/00012345/0005/00012345_00054321_2.digi",
@@ -357,8 +357,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
             {
                 "OK": True,
                 "Value": {
-                    "LogTargetPath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000/00012345_00000001.tar"],
-                    "LogFilePath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000/00000001"],
+                    "LogTargetPath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000/00000001.zip"],
+                    "LogFilePath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000"],
                 },
             },
         )
@@ -370,8 +370,8 @@ class ProductionDataSuccess(UtilitiesTestCase):
             {
                 "OK": True,
                 "Value": {
-                    "LogTargetPath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000/00012345_00000001.tar"],
-                    "LogFilePath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000/00000001"],
+                    "LogTargetPath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000/00000001.zip"],
+                    "LogFilePath": ["/lhcb/LHCb/Collision11/LOG/00012345/0000"],
                 },
             },
         )
