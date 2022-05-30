@@ -26,7 +26,6 @@ from datetime import datetime, timedelta
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Base.AgentModule import AgentModule
-from DIRAC.Core.Utilities import Time
 from DIRAC.Core.Utilities.File import mkDir
 from DIRAC.AccountingSystem.Client.DataStoreClient import gDataStoreClient
 from LHCbDIRAC.AccountingSystem.Client.Types.Popularity import Popularity
@@ -127,7 +126,7 @@ class PopularityAgent(AgentModule):
                     self.log.verbose(" -------- site  %s  count: %d " % (site, traceDict[day][lfn][site]))
 
         self.log.info("Retrieve meta-data information for each directory ")
-        now = Time.dateTime()
+        now = datetime.utcnow()
         self.numPopRows = 0  # keep a counter of the records to send to accounting data-store
         for day in traceDict:
             timeForAccounting = self.computeTimeForAccounting(startTime, day)

@@ -10,9 +10,9 @@
 ###############################################################################
 """StepAccounting module performs several common operations at the end of a
 workflow step, in particular prepares and sends the step accounting data."""
+import datetime
 
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
-from DIRAC.Core.Utilities import Time
 from DIRAC.Workflow.Utilities.Utils import getStepCPUTimes
 
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
@@ -106,7 +106,7 @@ class StepAccounting(ModuleBase):
 
             self._resolveInputVariables(dsc)
 
-            now = Time.dateTime()
+            now = datetime.datetime.utcnow()
             jobStep.setStartTime(now)
             jobStep.setEndTime(now)
 
