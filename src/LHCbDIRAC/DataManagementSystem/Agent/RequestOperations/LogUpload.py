@@ -70,7 +70,17 @@ class LogUpload(DMSRequestOperationsBase):
             lfn = opFile.LFN
             self.log.info("processing file %s" % lfn)
 
-            destination = "/".join(lfn.split("/")[0:-1]) + "/" + (os.path.basename(lfn)).split("_")[1].split(".")[0]
+            # compatibility with the old way of doing failover log with tar files.
+            # Files were uploaded as
+            # LFN: /lhcb/MC/Upgrade/LOG/00162343/0000/00162343_00007130.tar
+            # destination: /lhcb/MC/Upgrade/LOG/00162343/0000/00007130/00162343_00007130.tar
+            # (although being a zip file !)
+            # Now we stick to zip file, and destination should be left empty
+            if os.path.split(lfn) == ".tar":
+                destination = "/".join(lfn.split("/")[0:-1]) + "/" + (os.path.basename(lfn)).split("_")[1].split(".")[0]
+            else:
+                destination = None
+
             logUpload = self.dm.replicate(
                 lfn, self.operation.targetSEList[0], destPath=destination, localCache=self.workDirectory
             )

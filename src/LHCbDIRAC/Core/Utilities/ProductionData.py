@@ -106,8 +106,8 @@ def constructProductionLFNs(paramDict, bkClient=None, quick=True):
 
         # Get log file path - unique for all modules
         logPath = _makeProductionPath(str(jobID).zfill(8), lfnRoot, "LOG", str(productionID).zfill(8), log=True)
-        logFilePath = ["%s/%s" % (logPath, str(jobID).zfill(8))]
-        logTargetPath = ["%s/%s_%s.tar" % (logPath, str(productionID).zfill(8), str(jobID).zfill(8))]
+        logFilePath = [logPath]
+        logTargetPath = ["%s/%s.zip" % (logPath, str(jobID).zfill(8))]
         # [ aside, why does makeProductionPath not append the jobID itself ????
         # this is really only used in one place since the logTargetPath is just
         # written to a text file (should be reviewed)... ]
@@ -179,8 +179,8 @@ def getLogPath(paramDict, bkClient=None, quick=True):
 
         # Get log file path - unique for all modules
         logPath = _makeProductionPath(str(jobID).zfill(8), lfnRoot, "LOG", str(productionID).zfill(8), log=True)
-        logFilePath = ["%s/%s" % (logPath, str(jobID).zfill(8))]
-        logTargetPath = ["%s/%s_%s.tar" % (logPath, str(productionID).zfill(8), str(jobID).zfill(8))]
+        logFilePath = [logPath]
+        logTargetPath = ["%s/%s.zip" % (logPath, str(jobID).zfill(8))]
 
         gLogger.verbose("Log file path is:\n%s" % logFilePath)
         gLogger.verbose("Log target path is:\n%s" % logTargetPath)
