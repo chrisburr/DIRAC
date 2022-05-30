@@ -345,8 +345,7 @@ deploy_k8:
     variables:
       - $SWEEP != "true"
   except:
-    - /^v[0-9]+\.[0-9]+.+$/
-    - /^v[1-9][0-9]*r[0-9]+(p[0-9]+)?$/
+    - /^v[0-9]+\.[0-9]+\.[0-9]+$/
   trigger:
     project: lhcb-dirac/diracchart
     strategy: depend
