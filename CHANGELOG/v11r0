@@ -1,3 +1,14 @@
+[v11.0.0a2]
+*Core
+
+FIX: (!1220) ProductionData now returns the correct path for log files
+
+*DataManagementSystem
+
+FIX: (!1220) LogUpload failover request can handle both tar and zip files
+
+
+
 [v11.0.0a1]
 [v11.0.0a0]
 *BKK
