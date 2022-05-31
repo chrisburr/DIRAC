@@ -29,7 +29,7 @@ def main():
     if not os.path.isdir(os.environ["X509_VOMS_DIR"]):
         sys.exit("the directory %s does not exist" % os.environ["X509_VOMS_DIR"])
 
-    out = os.system("dirac-proxy-init -o LogLevel=NOTICE --strict --rfc '%s'" % "' '".join(sys.argv[1:]))
+    out = os.system("dirac-proxy-init -o LogLevel=NOTICE --strict '%s'" % "' '".join(sys.argv[1:]))
     sys.exit(int(out / 256))
 
 
