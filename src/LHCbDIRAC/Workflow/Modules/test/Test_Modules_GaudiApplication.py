@@ -46,7 +46,7 @@ def rmFiles():
 def test_execute(mocker, rmFiles):
     from LHCbDIRAC.Workflow.Modules.GaudiApplication import GaudiApplication
 
-    mocker.patch("LHCbDIRAC.Core.Utilities.RunApplication.RunApplication", side_effect=MagicMock())
+    mocker.patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.RunApplication", side_effect=MagicMock())
     mocker.patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.ModuleBase._manageAppOutput", side_effect=MagicMock())
     mocker.patch("LHCbDIRAC.Workflow.Modules.GaudiApplication.gConfig", side_effect=MagicMock())
     mocker.patch("LHCbDIRAC.Workflow.Modules.ModuleBase.RequestValidator", side_effect=MagicMock())

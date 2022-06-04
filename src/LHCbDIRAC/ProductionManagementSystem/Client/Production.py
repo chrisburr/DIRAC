@@ -20,9 +20,11 @@ Notes:
   can automatically construct and publish the BK pass info and transformations
 - Uses __getOutputLFNs() function to add production output directory parameter
 """
+import json
 import shutil
 import re
 import os
+import pprint
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Workflow.Workflow import Workflow, fromXMLString
@@ -155,6 +157,7 @@ class Production(object):
             else:
                 extraPackages = extraPackages.split(";")
         if optionsFile:
+            # ????
             if not re.search(";", optionsFile):
                 optionsFile = [optionsFile]
 
@@ -526,9 +529,11 @@ class Production(object):
                 "====> %s %s %s" % (bkPassInfo[step]["ApplicationName"], bkPassInfo[step]["ApplicationVersion"], step)
             )
             info.append("%s Option Files:" % (bkPassInfo[step]["ApplicationName"]))
-            if bkPassInfo[step]["OptionFiles"]:
-                for opts in bkPassInfo[step]["OptionFiles"].split(";"):
-                    info.append("%s" % opts)
+            if optionsFiles := bkPassInfo[step]["OptionFiles"]:
+                if optionsFiles.startswith("{"):
+                    info.append(pprint.pformat(json.loads(optionsFiles)))
+                else:
+                    info.extend(optionsFiles.split(";"))
             if bkPassInfo[step]["ExtraPackages"]:
                 info.append("ExtraPackages: %s" % (bkPassInfo[step]["ExtraPackages"]))
 

@@ -13,6 +13,7 @@
 
     This is the module used for each and every job of productions. It can also be used by users.
 """
+import json
 import os
 
 from DIRAC import S_OK, S_ERROR, gLogger, gConfig
@@ -21,6 +22,7 @@ from DIRAC.Core.Utilities import DErrno
 import LHCbDIRAC
 from LHCbDIRAC.Core.Utilities.ProductionOptions import getDataOptions, getModuleOptions
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
+from LHCbDIRAC.Core.Utilities.RunApplication import RunApplication, LbRunError, LHCbApplicationError, LHCbDIRACError
 
 
 class GaudiApplication(ModuleBase):
@@ -67,13 +69,6 @@ class GaudiApplication(ModuleBase):
         module used for each and every job of productions. It can also be
         used by users.
         """
-        # pylint doesn't like this as it's now Python 3 only
-        from LHCbDIRAC.Core.Utilities.RunApplication import (  # pylint: disable=import-error,no-name-in-module
-            RunApplication,
-            LbRunError,
-            LHCbApplicationError,
-            LHCbDIRACError,
-        )
 
         try:
             super(GaudiApplication, self).execute(
@@ -102,10 +97,14 @@ class GaudiApplication(ModuleBase):
                 self._disableWatchdogCPUCheck()
 
             # Resolve options files
-            commandOptions = []
-            if self.optionsFile and self.optionsFile != "None":
-                commandOptions += self.optionsFile.split(";")
-            self.log.info("Final options files: %s" % (", ".join(commandOptions)))
+            if self.optionsFile.startswith("{"):
+                commandOptions = json.loads(self.optionsFile)
+                self.log.info("Found lbexec style configuration:", commandOptions)
+            else:
+                commandOptions = []
+                if self.optionsFile and self.optionsFile != "None":
+                    commandOptions += self.optionsFile.split(";")
+                self.log.info("Final options files: %s" % (", ".join(commandOptions)))
 
             runNumberGauss = 0
             firstEventNumberGauss = 0
@@ -166,6 +165,7 @@ class GaudiApplication(ModuleBase):
                 )  # Always useful to see in the logs (don't use gLogger as we often want to cut n' paste)
                 with open(generatedOpts, "w") as options:
                     options.write(projectOpts)
+                # TODO Don't do this with lbexec
                 commandOptions.append(generatedOpts)
 
             # How to run the application
