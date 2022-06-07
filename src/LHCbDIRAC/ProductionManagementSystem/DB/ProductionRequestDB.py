@@ -209,7 +209,7 @@ class ProductionRequestDB(DB):
 
         if rec["RequestState"]:
             if not rec["RequestState"] in ["New", "BK Check", "Submitted"]:
-                return S_ERROR("The request can't be created in '%s' state" % rec["requestState"])
+                return S_ERROR("The request can't be created in '%s' state" % rec["RequestState"])
             if rec["RequestState"] != "New":
                 # !!! full information check must be here, but currently in the JS...
                 # so we only check EventType consistency
