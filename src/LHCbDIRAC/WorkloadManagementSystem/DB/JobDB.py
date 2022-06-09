@@ -12,9 +12,9 @@
 
 Extends the DIRAC JobDB with minor things
 """
+import datetime
 
 from DIRAC import S_OK
-from DIRAC.Core.Utilities import Time
 
 from DIRAC.WorkloadManagementSystem.DB.JobDB import JobDB as DIRACJobDB
 
@@ -35,7 +35,7 @@ class JobDB(DIRACJobDB):
             return ret
         site = ret["Value"]
 
-        date = str(Time.dateTime() - Time.second * period)
+        date = str(datetime.datetime.utcnow() - datetime.timedelta(seconds=1) * period)
         req = "SELECT JobID from Jobs WHERE Site=%s and EndExecTime > '%s' " % (site, date)
         result = self._query(req)
         jobList = [str(x[0]) for x in result["Value"]]
