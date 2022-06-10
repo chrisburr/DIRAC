@@ -9,6 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Just couple utilities."""
+import json
 import os
 import sqlite3
 
@@ -220,3 +221,10 @@ def informPeople(rec, oldstate, state, author, inform):
 
     else:
         return
+
+
+def unpackOptionFile(optionsFile):
+    if optionsFile.startswith("{"):
+        return json.loads(optionsFile)
+    else:
+        return optionsFile.split(";")

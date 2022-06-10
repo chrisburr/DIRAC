@@ -87,6 +87,7 @@ class OracleBookkeepingDB(object):
             else:
                 return S_ERROR("isMulticore is not Y or N!")
         if in_dict:
+            queryKwparams = {}
             infiletypes = in_dict.get("InputFileTypes", default)
             outfiletypes = in_dict.get("OutputFileTypes", default)
             matching = in_dict.get("Equal", "YES")
@@ -168,12 +169,12 @@ class OracleBookkeepingDB(object):
             optFile = in_dict.get("OptionFiles", default)
             if optFile != default:
                 if isinstance(optFile, six.string_types):
-                    condition += " and s.optionfiles='%s'" % (optFile)
+                    condition += " and s.optionfiles = :optionfiles"
+                    queryKwparams["optionfiles"] = optFile
                 elif isinstance(optFile, list):
-                    values = " and ("
-                    for i in optFile:
-                        values += " s.optionfiles='%s' or " % (i)
-                    condition += values[:-3] + ")"
+                    bindNames = {f"optionfiles{i}": _optFile for i, _optFile in enumerate(optFile)}
+                    condition += f" and s.optionfiles in ({','.join(f':{b}' for b in bindNames)})"
+                    queryKwparams.update(bindNames)
 
             dddb = in_dict.get("DDDB", default)
             if dddb != default:
@@ -357,7 +358,7 @@ class OracleBookkeepingDB(object):
          r.stepid(+)=rr.runtimeprojectid  %s "
                     % (tables, condition)
                 )
-            retVal = self.dbR_.query(command)
+            retVal = self.dbR_.query(command, kwparams=queryKwparams)
         else:
             command = (
                 "select s.stepid, s.stepname, s.applicationname,s.applicationversion,s.optionfiles,s.DDDB,s.CONDDB, \
@@ -673,24 +674,27 @@ class OracleBookkeepingDB(object):
 
         step = in_dict.get("Step", default)
         if step != default:
-            command = selection + ")values(%d" % (sid)
-            command += ",'%s'" % (step.get("StepName", "NULL"))
-            command += ",'%s'" % (step.get("ApplicationName", "NULL"))
-            command += ",'%s'" % (step.get("ApplicationVersion", "NULL"))
-            command += ",'%s'" % (step.get("OptionFiles", "NULL"))
-            command += ",'%s'" % (step.get("DDDB", "NULL"))
-            command += ",'%s'" % (step.get("CONDDB", "NULL"))
-            command += ",'%s'" % (step.get("ExtraPackages", "NULL"))
-            command += ",'%s'" % (step.get("Visible", "NULL"))
-            command += ",'%s'" % (step.get("ProcessingPass", "NULL"))
-            command += ",'%s'" % (step.get("Usable", "Not ready"))
-            command += ",'%s'" % (step.get("DQTag", ""))
-            command += ",'%s'" % (step.get("OptionsFormat", ""))
-            command += ",'%s'" % (step.get("isMulticore", "N"))
-            command += ",'%s'" % (step.get("SystemConfig", "NULL"))
-            command += ",'%s'" % (step.get("mcTCK", "NULL"))
-            command += values + ")"
-            retVal = self.dbW_.query(command)
+            names = {
+                "StepName": "NULL",
+                "ApplicationName": "NULL",
+                "ApplicationVersion": "NULL",
+                "OptionFiles": "NULL",
+                "DDDB": "NULL",
+                "CONDDB": "NULL",
+                "ExtraPackages": "NULL",
+                "Visible": "NULL",
+                "ProcessingPass": "NULL",
+                "Usable": "Not ready",
+                "DQTag": "",
+                "OptionsFormat": "",
+                "isMulticore": "N",
+                "SystemConfig": "NULL",
+                "mcTCK": "NULL",
+            }
+            bindNames = {"sid": sid}
+            bindNames.update({k.lower(): step.get(k, v) for k, v in names.items()})
+            command = f"{selection}) values ({','.join(f':{b}' for b in bindNames)} {values})"
+            retVal = self.dbW_.query(command, kwparams=bindNames)
             if retVal["OK"]:
                 r_project = in_dict.get("RuntimeProjects", step.get("RuntimeProjects", default))
                 if r_project != default:

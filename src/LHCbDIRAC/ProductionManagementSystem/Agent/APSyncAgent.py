@@ -20,6 +20,7 @@ from DIRAC.Core.Utilities.ReturnValues import convertToReturnValue, returnValueO
 from LHCbDIRAC.ProductionManagementSystem.Client.AnalysisProductionsClient import AnalysisProductionsClient
 from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
+from LHCbDIRAC.ProductionManagementSystem.Utilities.Utils import unpackOptionFile
 
 AGENT_NAME = "ProductionManagement/APSyncAgent"
 DONE_TRANSFORMATION_STATES = ["Archived", "Completed"]
@@ -217,7 +218,7 @@ class APSyncAgent(AgentModule):
                             "stepID": sInfo["BKStepID"],
                             "application": sInfo["ApplicationName"] + "/" + sInfo["ApplicationVersion"],
                             "extras": sInfo["ExtraPackages"].split(";"),
-                            "options": sInfo["OptionFiles"].split(";"),
+                            "options": unpackOptionFile(sInfo["OptionFiles"]),
                         }
                         for sInfo in steps
                     ],
