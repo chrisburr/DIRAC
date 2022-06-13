@@ -1,3 +1,15 @@
+[v10.4.14]
+*Bookkeeping
+
+FIX: (!1225) Use bind variables when querying `steps.OptionFiles`
+
+*ProductionManagement
+
+FEAT: (!1225) Support lbexec for PyConf based applications
+FIX: (!1223) KeyError when submitting productions with invalid initial state
+
+
+
 [v10.4.13]
 *BKK
 
