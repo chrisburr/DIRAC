@@ -10,15 +10,17 @@
 ###############################################################################
 """Reads .log-files and outputs summary of counters as a .json-file and a
 .html-file."""
+from multiprocessing.sharedctypes import Value
 import os
 import json
 
 from distutils.version import LooseVersion  # pylint:disable=import-error,no-name-in-module
 
 from DIRAC import gLogger, S_OK, S_ERROR
+from DIRAC.Core.Utilities import TimeUtilities
 
 
-def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsID, name="errors.json"):
+def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
     """The script that runs everything.
 
     :param str logFile: the name of the logfile
@@ -30,15 +32,14 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
     :param str name: the name of the output json file, standardised to 'errors.json'
     """
     logString = ""
-    fullPathFileName = pickStringFile(project, version, appConfigVersion)
-    dictTotal = []
-    dictG4Errors = dict()
-    dictG4ErrorsCount = dict()
-
-    if fullPathFileName is None or not os.path.exists(fullPathFileName) or os.stat(fullPathFileName)[6] == 0:
-        gLogger.warn("STRINGFILE %s is empty" % fullPathFileName)
-
-    readErrorDict(fullPathFileName, dictG4Errors)
+    dictG4Errors = {
+        "G4Exception": "",
+        "G4 Exception": "",
+        "ERROR ": "",
+        "FATAL ": "",
+    }
+    errorG4Dict = dict()
+    errorDict = dict()
 
     res = getLogString(logFile, logString)
     if not res["OK"]:
@@ -47,13 +48,9 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
     logString = res["Value"]
 
     reversedKeys = sorted(dictG4Errors, reverse=True)
-
     for errorString in reversedKeys:
-        dictCountDumpErrorString = dict()
-        dictTemp = dict()
         ctest = logString.count(errorString)
         test = logString.find(errorString)
-        array = []
         for i in range(ctest):
             start = test
             test = logString.find(errorString, start)
@@ -70,49 +67,31 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
                 continue
 
             if test != -1:
-                eventnr = ""
-                runnr = ""
-
-                eventnr_point = logString.rfind("INFO Evt", test - 5000, test)
-                if eventnr_point != -1:
-                    eventnr = "Evt " + logString[eventnr_point:test].split("INFO Evt")[1].strip().split(",")[0]
-                    runnr = logString[eventnr_point:].split("INFO Evt")[1].strip().split(",")[1]
-
                 if errorString.find("G4") != -1:
                     check = logString[test : test + 250].find("***")
                     if check != -1:
                         errorBase = logString[test : test + 250].split("***")[0]
-                        dictCountDumpErrorString[i] = eventnr + "  " + runnr + "  -->" + errorBase
-
-                        array.append(dict())
-                        array[-1]["eventnr"] = eventnr
-                        array[-1]["runnr"] = runnr
-
+                        strippedErrString = errorBase.rstrip().replace("\n", "")
+                        if not strippedErrString.startswith("G4Exception-END") and not strippedErrString.startswith(
+                            "G4Exception-START"
+                        ):
+                            if strippedErrString in errorG4Dict:
+                                errorG4Dict[strippedErrString] = errorG4Dict[strippedErrString] + 1
+                            else:
+                                errorG4Dict[strippedErrString] = 1
                         lengthDump = len(errorBase)
                         test = test + lengthDump
                 else:
                     errorBase = logString[test : test + 250].split("\n")[0]
-                    dictCountDumpErrorString[i] = eventnr + "  " + runnr + "  -->" + errorBase
-
-                    array.append(dict())
-                    array[-1]["eventnr"] = eventnr
-                    array[-1]["runnr"] = runnr
-
+                    if errorBase in errorDict:
+                        errorDict[errorBase] = errorDict[errorBase] + 1
+                    else:
+                        errorDict[errorBase] = 1
                     lengthDump = len(errorBase)
                     test = test + lengthDump
 
-                if array[-1] is not None:
-                    dictTemp[errorString] = dict()
-                    dictTemp[errorString] = array
-
-        if dictTemp != {}:
-            dictTotal.append(dictTemp)
-        dictG4ErrorsCount[errorString] = dictCountDumpErrorString
-
-    createJSONtable(dictTotal, name, jobID, prodID, wmsID)
-    createHTMLtable(dictG4ErrorsCount, "errors.html")
-
-    return S_OK()
+    result = createJSONtable(errorDict, errorG4Dict, name, jobID, prodID, wmsID)
+    return S_OK(result)
 
 
 ################################################
@@ -152,7 +131,7 @@ def readLogFile(logFile, project, version, appConfigVersion, jobID, prodID, wmsI
 # \
 
 
-def createJSONtable(dictTotal, name, jobID, prodID, wmsID):
+def createJSONtable(errorDict, errorG4Dict, name, jobID, prodID, wmsID):
     """Creates a JSON file out of the collection of errors listed in dictTotal.
 
     :param dict dictTotal: the dictionary of errors
@@ -161,85 +140,19 @@ def createJSONtable(dictTotal, name, jobID, prodID, wmsID):
     :param str prodID: the ProductionID of the log
     :param str wmsID: the wmsID of the log
     """
+
     result = {}
     result["JobID"] = jobID
     result["ProductionID"] = prodID
     result["wmsID"] = wmsID
-
+    result["timestamp"] = int(TimeUtilities.toEpochMilliSeconds())
+    for k, v in errorDict.items():
+        result[k] = v
+    for (k, v) in errorG4Dict.items():
+        result[k] = v
     with open(name, "w") as output:
-        for error in dictTotal:
-            for key, value in error.items():
-                result[key] = len(value)
         json.dump(result, output, indent=2)
-
-
-#####################################################
-
-
-def createHTMLtable(dictG4ErrorsCount, name):
-    """Creates an HTML file out of the collection of errors listed in
-    dictG4ErrorsCount.
-
-    :param dict dictG4ErrorsCount: the dictionary of errors
-    :param str name: the name of the HTML file
-    """
-    with open(name, "w") as f:
-        f.write("<HTML>\n")
-
-        f.write("<table border=1 bordercolor=#000000 width=100% bgcolor=#BCCDFE>")
-        f.write("<tr>")
-        f.write("<td>ERROR TYPE</td>")
-        f.write("<td>COUNTER</td>")
-        f.write("<td>DUMP OF ERROR MESSAGES</td>")
-        f.write("</tr>")
-
-        orderedKeys = sorted(dictG4ErrorsCount)
-        for errString in orderedKeys:
-            if dictG4ErrorsCount[errString] != {}:
-                f.write("<tr>")
-                f.write("<td>" + errString + "</td>")
-                f.write("<td>" + str(len(dictG4ErrorsCount[errString])) + "</td>")
-                f.write("<td>")
-                f.write("<lu>")
-                for y in dictG4ErrorsCount[errString]:
-                    f.write("<li>")
-                    f.write(" " + dictG4ErrorsCount[errString][y] + " ")
-                f.write("</lu>")
-                f.write("</td>")
-                f.write("</tr>")
-
-        f.write("</table>")
-
-
-#######################################################
-
-
-def readErrorDict(fullPathFileName, dictName):
-    """Reads errors in a stringfile and puts them in dictName.
-
-    :param str fullPathFileName: the name of the stringfile
-    :param dict dictName: the name of the dict that will insert the data in fullPathFileName
-    """
-    fileLines = getLines(fullPathFileName)
-    for line in fileLines:
-        errorString = line.split(",")[0]
-        description = line.split(",")[1]
-        dictName[errorString] = description
-
-
-################################################
-
-
-def getLines(fullPathFileName):
-    """Reads lines in string file.
-
-    :param str fullPathFileName: the name of the file to be opened and read
-    """
-
-    gLogger.notice(">>> Processed STRINGFILE -> ", fullPathFileName)
-    with open(fullPathFileName, "r") as f:
-        lines = f.readlines()
-    return lines
+    return result
 
 
 ################################################
@@ -264,48 +177,6 @@ def getLogString(logFile, logString):
         logString = f.read()
     gLogger.notice("Successfully read %s" % logFile)
     return S_OK(logString)
-
-
-################################################
-
-
-def pickStringFile(project, version, appConfigVersion):
-    """Picks the string file from the current directory.
-
-    :param str project: the project name
-    :param str version: the version of the project
-    :param str version: APPCONFIG version
-    """
-
-    if os.environ.get("VO_LHCB_SW_DIR"):
-        sharedArea = os.environ["VO_LHCB_SW_DIR"]
-
-        # sometimes this is wrong... so trying to correct it!
-        if "lhcb" not in os.listdir(sharedArea):
-            sharedArea = os.path.join(sharedArea, "lib")
-            if "lhcb" not in os.listdir(sharedArea):
-                gLogger.error("Current sharedArea (%s) content: " % sharedArea, os.listdir(sharedArea))
-                raise RuntimeError("Can't find a sharedArea")
-
-    else:
-        sharedArea = "/cvmfs/lhcb.cern.ch/lib"
-
-    sourceDir = os.path.join(sharedArea, "lhcb", "DBASE", "AppConfig", appConfigVersion, "errstrings")
-    fileName = project + "_" + version + "_errs.txt"
-    fullPathFileName = os.path.join(sourceDir, os.path.basename(fileName))
-    if not os.path.exists(fullPathFileName):
-        gLogger.notice("string file %s does not exist, attempting to take the most recent file ..." % fullPathFileName)
-        fileList = [fn for fn in os.listdir(sourceDir) if project in fn]
-        if fileList:
-            versionsList = [x.replace(project + "_", "").replace("_errs.txt", "") for x in fileList]
-            mostRecentVersion = sorted(versionsList, key=LooseVersion)[-1]
-            fileName = project + "_" + mostRecentVersion + "_errs.txt"
-            fullPathFileName = os.path.join(sourceDir, os.path.basename(fileName))
-        else:
-            gLogger.warn("WARNING: no string files for this project")
-            return None
-
-    return fullPathFileName
 
 
 # This is a relic from the previous version of the file, I'll keep it for the while
