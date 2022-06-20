@@ -10,11 +10,13 @@
 ###############################################################################
 # Test for LogErr.py
 # sut
+import os
+
 from LHCbDIRAC.Core.Utilities import LogErr
 from DIRAC.tests.Utilities.utils import find_all
 
 
-logFile = find_all("testLogFile.log", "../", "src/LHCbDIRAC/Core/Utilities/test")[0]
+logFile = find_all("testLogFile.log", "../", "tests/Integration/WorkloadManagementSystem")[0]
 with open(logFile, "r") as f:
     logString = f.read()
 
@@ -24,6 +26,7 @@ def test_ReadFirstLogFile():
     prodID = "100"
     wmsID = "123"
     res = LogErr.readLogFile(logString, jobID, prodID, wmsID, "logErrorTestOutput.json")
+
     assert res["OK"]
     assert res["Value"] == {
         "JobID": "001",
@@ -35,3 +38,6 @@ def test_ReadFirstLogFile():
         "ERROR No particle with barcode equal to 1!": 4,
         "G4Exception : PART102      issued by : G4ParticleDefintion::G4ParticleDefintionStrange PDGEncoding": 7,
     }
+    # Removing output file
+    if os.path.exists("logErrorTestOutput.json"):
+        os.remove("logErrorTestOutput.json")

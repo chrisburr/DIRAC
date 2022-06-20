@@ -12,6 +12,7 @@
 .html-file."""
 import os
 import json
+import DIRAC
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities import TimeUtilities
