@@ -136,7 +136,7 @@ Ecut value = 5.0
 # \----- (End of User Gauss/Gauss) -------------------------------------------------------------------
 # GaussTape.ItemList    = ['/Event/Gen/Header#1', '/Event/MC/Header#1', '/Event/Gen/BeamParameters#1', '/Event/Gen/Collisions#1', '/Event/pSim/MCVertices#1', '/Event/pSim/MCParticles#1', '/Event/pSim/Velo/Hits#1', '/Event/pSim/PuVeto/Hits#1', '/Event/pSim/IT/Hits#1', '/Event/pSim/OT/Hits#1', '/Event/pSim/TT/Hits#1', '/Event/pSim/Muon/Hits#1', '/Event/pSim/Spd/Hits#1', '/Event/pSim/Prs/Hits#1', '/Event/pSim/Ecal/Hits#1', '/Event/pSim/Hcal/Hits#1', '/Event/pSim/Rich/Hits#1', '/Event/pSim/Rich/OpticalPhotons#1', '/Event/pSim/Rich/Tracks#1', '/Event/pSim/Rich/Segments#1', '/Event/Link/MC/Particles2MCRichTracks#1', '/Event/Link/MC/Rich/Hits2MCRichOpticalPhotons#1']
 # GaussTape.OptItemList = ['/Event/PrevPrev/Gen/Header#1', '/Event/PrevPrev/MC/Header#1', '/Event/Prev/Gen/Header#1', '/Event/Prev/MC/Header#1', '/Event/Next/Gen/Header#1', '/Event/Next/MC/Header#1', '/Event/NextNext/Gen/Header#1', '/Event/NextNext/MC/Header#1', '/Event/PrevPrev/Gen/Collisions#1', '/Event/Prev/Gen/Collisions#1', '/Event/Next/Gen/Collisions#1', '/Event/NextNext/Gen/Collisions#1', '/Event/PrevPrev/pSim/MCVertices#1', '/Event/Prev/pSim/MCVertices#1', '/Event/Next/pSim/MCVertices#1', '/Event/NextNext/pSim/MCVertices#1', '/Event/PrevPrev/pSim/MCParticles#1', '/Event/Prev/pSim/MCParticles#1', '/Event/Next/pSim/MCParticles#1', '/Event/NextNext/pSim/MCParticles#1', '/Event/PrevPrev/pSim/Velo/Hits#1', '/Event/PrevPrev/pSim/PuVeto/Hits#1', '/Event/PrevPrev/pSim/IT/Hits#1', '/Event/PrevPrev/pSim/OT/Hits#1', '/Event/PrevPrev/pSim/TT/Hits#1', '/Event/PrevPrev/pSim/Muon/Hits#1', '/Event/PrevPrev/pSim/Spd/Hits#1', '/Event/PrevPrev/pSim/Prs/Hits#1', '/Event/PrevPrev/pSim/Ecal/Hits#1', '/Event/PrevPrev/pSim/Hcal/Hits#1', '/Event/PrevPrev/pSim/Rich/Hits#1', '/Event/PrevPrev/pSim/Rich/OpticalPhotons#1', '/Event/PrevPrev/pSim/Rich/Tracks#1', '/Event/PrevPrev/pSim/Rich/Segments#1', '/Event/Link/PrevPrev/MC/Particles2MCRichTracks#1', '/Event/Link/PrevPrev/MC/Rich/Hits2MCRichOpticalPhotons#1', '/Event/Prev/pSim/Velo/Hits#1', '/Event/Prev/pSim/PuVeto/Hits#1', '/Event/Prev/pSim/IT/Hits#1', '/Event/Prev/pSim/OT/Hits#1', '/Event/Prev/pSim/TT/Hits#1', '/Event/Prev/pSim/Muon/Hits#1', '/Event/Prev/pSim/Spd/Hits#1', '/Event/Prev/pSim/Prs/Hits#1', '/Event/Prev/pSim/Ecal/Hits#1', '/Event/Prev/pSim/Hcal/Hits#1', '/Event/Prev/pSim/Rich/Hits#1', '/Event/Prev/pSim/Rich/OpticalPhotons#1', '/Event/Prev/pSim/Rich/Tracks#1', '/Event/Prev/pSim/Rich/Segments#1', '/Event/Link/Prev/MC/Particles2MCRichTracks#1', '/Event/Link/Prev/MC/Rich/Hits2MCRichOpticalPhotons#1', '/Event/Next/pSim/Velo/Hits#1', '/Event/Next/pSim/PuVeto/Hits#1', '/Event/Next/pSim/IT/Hits#1', '/Event/Next/pSim/OT/Hits#1', '/Event/Next/pSim/TT/Hits#1', '/Event/Next/pSim/Muon/Hits#1', '/Event/Next/pSim/Spd/Hits#1', '/Event/Next/pSim/Prs/Hits#1', '/Event/Next/pSim/Ecal/Hits#1', '/Event/Next/pSim/Hcal/Hits#1', '/Event/Next/pSim/Rich/Hits#1', '/Event/Next/pSim/Rich/OpticalPhotons#1', '/Event/Next/pSim/Rich/Tracks#1', '/Event/Next/pSim/Rich/Segments#1', '/Event/Link/Next/MC/Particles2MCRichTracks#1', '/Event/Link/Next/MC/Rich/Hits2MCRichOpticalPhotons#1', '/Event/NextNext/pSim/Velo/Hits#1', '/Event/NextNext/pSim/PuVeto/Hits#1', '/Event/NextNext/pSim/IT/Hits#1', '/Event/NextNext/pSim/OT/Hits#1', '/Event/NextNext/pSim/TT/Hits#1', '/Event/NextNext/pSim/Muon/Hits#1', '/Event/NextNext/pSim/Spd/Hits#1', '/Event/NextNext/pSim/Prs/Hits#1', '/Event/NextNext/pSim/Ecal/Hits#1', '/Event/NextNext/pSim/Hcal/Hits#1', '/Event/NextNext/pSim/Rich/Hits#1', '/Event/NextNext/pSim/Rich/OpticalPhotons#1', '/Event/NextNext/pSim/Rich/Tracks#1', '/Event/NextNext/pSim/Rich/Segments#1', '/Event/Link/NextNext/MC/Particles2MCRichTracks#1', '/Event/Link/NextNext/MC/Rich/Hits2MCRichOpticalPhotons#1']
-ApplicationMgr    SUCCESS 
+ApplicationMgr    SUCCESS
 ====================================================================================================================================
                                                    Welcome to Gauss version v49r22
                                           running on b7s14p5707.cern.ch on Thu Jun 16 05:26:11 2022
@@ -175,7 +175,7 @@ WARNING: G4QStoppingPhysics is deprecated and will be removed in GEANT4 version 
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -183,7 +183,7 @@ Strange PDGEncoding
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -191,7 +191,7 @@ Strange PDGEncoding
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -199,7 +199,7 @@ Strange PDGEncoding
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -207,7 +207,7 @@ Strange PDGEncoding
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -215,7 +215,7 @@ Strange PDGEncoding
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -223,7 +223,7 @@ Strange PDGEncoding
 -------- WWWW ------- G4Exception-START -------- WWWW -------
 *** G4Exception : PART102
       issued by : G4ParticleDefintion::G4ParticleDefintion
-Strange PDGEncoding 
+Strange PDGEncoding
 *** This is just a warning message. ***
 -------- WWWW -------- G4Exception-END --------- WWWW -------
 
@@ -272,7 +272,7 @@ Strange PDGEncoding
 2022-06-16 03:26:19 UTC GaussGen             INFO Luminosity = 1.77e+29 /cm2/s
 2022-06-16 03:26:19 UTC GaussGen             INFO Nu = 1.59764
 2022-06-16 03:26:19 UTC GaussGen             INFO emittance = 5.22671e-07
-2022-06-16 03:26:19 UTC GaussGen             INFO Luminous region = ( 0.0280001, 0.0280001, 36.9 ), mm 
+2022-06-16 03:26:19 UTC GaussGen             INFO Luminous region = ( 0.0280001, 0.0280001, 36.9 ), mm
 Message from PHCORK(MODCOR):: initialization
 MODOP=5 -- corrects Energy from mass+flow
 
@@ -290,7 +290,7 @@ MODOP=5 -- corrects Energy from mass+flow
            From version 3.00   - by N. Davidson, T. Przedzinski and Z. Was
 ********************************************************************************
 
-                  Internal (default) input parameters: 
+                  Internal (default) input parameters:
 
                     INTERF= 1 ISEC= 0 ITRE= 0 IEXP= 1 IFTOP= 1 IFW= 1
                     ALPHA_QED= 0.00729735 XPHCUT= 1e-07
@@ -309,62 +309,62 @@ MODOP=2 -- blocks emission in pi0 to gamma e+e-: DEFAULT
 Message from PHCORK(MODCOR):: initialization
 MODOP=5 -- corrects Energy from mass+flow
 
- *------------------------------------------------------------------------------------* 
- |                                                                                    | 
- |  *------------------------------------------------------------------------------*  | 
- |  |                                                                              |  | 
- |  |                                                                              |  | 
- |  |   PPP   Y   Y  TTTTT  H   H  III    A      Welcome to the Lund Monte Carlo!  |  | 
- |  |   P  P   Y Y     T    H   H   I    A A     This is PYTHIA version 8.186      |  | 
- |  |   PPP     Y      T    HHHHH   I   AAAAA    Last date of change:  8 Jul 2014  |  | 
- |  |   P       Y      T    H   H   I   A   A                                      |  | 
- |  |   P       Y      T    H   H  III  A   A    Now is 16 Jun 2022 at 05:26:20    |  | 
- |  |                                                                              |  | 
- |  |   Torbjorn Sjostrand;  Department of Astronomy and Theoretical Physics,      |  | 
- |  |      Lund University, Solvegatan 14A, SE-223 62 Lund, Sweden;                |  | 
- |  |      phone: + 46 - 46 - 222 48 16; e-mail: torbjorn@thep.lu.se               |  | 
- |  |   Jesper Roy Christiansen;  Department of Astronomy and Theoretical Physics, |  | 
- |  |      Lund University, Solvegatan 14A, SE-223 62 Lund, Sweden;                |  | 
- |  |      e-mail: Jesper.Roy.Christiansen@thep.lu.se                              |  | 
- |  |   Nishita Desai;  Institut fuer Theoretische Physik,                         |  | 
- |  |     Universitaet Heidelberg, Philosophenweg 16, D-69120 Heidelberg, Germany; |  | 
- |  |      phone: +49 - 6221 54 9424; e-mail: Nishita.Desai@cern.ch                |  | 
- |  |   Philip Ilten;  Massachusetts Institute of Technology,                      |  | 
- |  |      stationed at CERN, CH-1211 Geneva 23, Switzerland;                      |  | 
- |  |      e-mail: philten@cern.ch                                                 |  | 
- |  |   Stephen Mrenna;  Computing Division, Simulations Group,                    |  | 
- |  |      Fermi National Accelerator Laboratory, MS 234, Batavia, IL 60510, USA;  |  | 
- |  |      phone: + 1 - 630 - 840 - 2556; e-mail: mrenna@fnal.gov                  |  | 
- |  |   Stefan Prestel;  Theory Group, DESY,                                       |  | 
- |  |      Notkestrasse 85, D-22607 Hamburg, Germany;                              |  | 
- |  |      phone: + 49 - 40 - 8998-4250; e-mail: stefan.prestel@thep.lu.se         |  | 
- |  |   Peter Skands;  Theoretical Physics, CERN, CH-1211 Geneva 23, Switzerland;  |  | 
- |  |      phone: + 41 - 22 - 767 2447; e-mail: peter.skands@cern.ch               |  | 
- |  |   Stefan Ask; former author; e-mail: ask.stefan@gmail.com                    |  | 
- |  |   Richard Corke; former author; e-mail: r.corke@errno.net                    |  | 
- |  |                                                                              |  | 
- |  |   The main program reference is the 'Brief Introduction to PYTHIA 8.1',      |  | 
- |  |   T. Sjostrand, S. Mrenna and P. Skands, Comput. Phys. Comm. 178 (2008) 85   |  | 
- |  |   [arXiv:0710.3820]                                                          |  | 
- |  |                                                                              |  | 
- |  |   The main physics reference is the 'PYTHIA 6.4 Physics and Manual',         |  | 
- |  |   T. Sjostrand, S. Mrenna and P. Skands, JHEP05 (2006) 026 [hep-ph/0603175]. |  | 
- |  |                                                                              |  | 
- |  |   An archive of program versions and documentation is found on the web:      |  | 
- |  |   http://www.thep.lu.se/~torbjorn/Pythia.html                                |  | 
- |  |                                                                              |  | 
- |  |   This program is released under the GNU General Public Licence version 2.   |  | 
- |  |   Please respect the MCnet Guidelines for Event Generator Authors and Users. |  | 
- |  |                                                                              |  | 
- |  |   Disclaimer: this program comes without any guarantees.                     |  | 
- |  |   Beware of errors and use common sense when interpreting results.           |  | 
- |  |                                                                              |  | 
- |  |   Copyright (C) 2014 Torbjorn Sjostrand                                      |  | 
- |  |                                                                              |  | 
- |  |                                                                              |  | 
- |  *------------------------------------------------------------------------------*  | 
- |                                                                                    | 
- *------------------------------------------------------------------------------------* 
+ *------------------------------------------------------------------------------------*
+ |                                                                                    |
+ |  *------------------------------------------------------------------------------*  |
+ |  |                                                                              |  |
+ |  |                                                                              |  |
+ |  |   PPP   Y   Y  TTTTT  H   H  III    A      Welcome to the Lund Monte Carlo!  |  |
+ |  |   P  P   Y Y     T    H   H   I    A A     This is PYTHIA version 8.186      |  |
+ |  |   PPP     Y      T    HHHHH   I   AAAAA    Last date of change:  8 Jul 2014  |  |
+ |  |   P       Y      T    H   H   I   A   A                                      |  |
+ |  |   P       Y      T    H   H  III  A   A    Now is 16 Jun 2022 at 05:26:20    |  |
+ |  |                                                                              |  |
+ |  |   Torbjorn Sjostrand;  Department of Astronomy and Theoretical Physics,      |  |
+ |  |      Lund University, Solvegatan 14A, SE-223 62 Lund, Sweden;                |  |
+ |  |      phone: + 46 - 46 - 222 48 16; e-mail: torbjorn@thep.lu.se               |  |
+ |  |   Jesper Roy Christiansen;  Department of Astronomy and Theoretical Physics, |  |
+ |  |      Lund University, Solvegatan 14A, SE-223 62 Lund, Sweden;                |  |
+ |  |      e-mail: Jesper.Roy.Christiansen@thep.lu.se                              |  |
+ |  |   Nishita Desai;  Institut fuer Theoretische Physik,                         |  |
+ |  |     Universitaet Heidelberg, Philosophenweg 16, D-69120 Heidelberg, Germany; |  |
+ |  |      phone: +49 - 6221 54 9424; e-mail: Nishita.Desai@cern.ch                |  |
+ |  |   Philip Ilten;  Massachusetts Institute of Technology,                      |  |
+ |  |      stationed at CERN, CH-1211 Geneva 23, Switzerland;                      |  |
+ |  |      e-mail: philten@cern.ch                                                 |  |
+ |  |   Stephen Mrenna;  Computing Division, Simulations Group,                    |  |
+ |  |      Fermi National Accelerator Laboratory, MS 234, Batavia, IL 60510, USA;  |  |
+ |  |      phone: + 1 - 630 - 840 - 2556; e-mail: mrenna@fnal.gov                  |  |
+ |  |   Stefan Prestel;  Theory Group, DESY,                                       |  |
+ |  |      Notkestrasse 85, D-22607 Hamburg, Germany;                              |  |
+ |  |      phone: + 49 - 40 - 8998-4250; e-mail: stefan.prestel@thep.lu.se         |  |
+ |  |   Peter Skands;  Theoretical Physics, CERN, CH-1211 Geneva 23, Switzerland;  |  |
+ |  |      phone: + 41 - 22 - 767 2447; e-mail: peter.skands@cern.ch               |  |
+ |  |   Stefan Ask; former author; e-mail: ask.stefan@gmail.com                    |  |
+ |  |   Richard Corke; former author; e-mail: r.corke@errno.net                    |  |
+ |  |                                                                              |  |
+ |  |   The main program reference is the 'Brief Introduction to PYTHIA 8.1',      |  |
+ |  |   T. Sjostrand, S. Mrenna and P. Skands, Comput. Phys. Comm. 178 (2008) 85   |  |
+ |  |   [arXiv:0710.3820]                                                          |  |
+ |  |                                                                              |  |
+ |  |   The main physics reference is the 'PYTHIA 6.4 Physics and Manual',         |  |
+ |  |   T. Sjostrand, S. Mrenna and P. Skands, JHEP05 (2006) 026 [hep-ph/0603175]. |  |
+ |  |                                                                              |  |
+ |  |   An archive of program versions and documentation is found on the web:      |  |
+ |  |   http://www.thep.lu.se/~torbjorn/Pythia.html                                |  |
+ |  |                                                                              |  |
+ |  |   This program is released under the GNU General Public Licence version 2.   |  |
+ |  |   Please respect the MCnet Guidelines for Event Generator Authors and Users. |  |
+ |  |                                                                              |  |
+ |  |   Disclaimer: this program comes without any guarantees.                     |  |
+ |  |   Beware of errors and use common sense when interpreting results.           |  |
+ |  |                                                                              |  |
+ |  |   Copyright (C) 2014 Torbjorn Sjostrand                                      |  |
+ |  |                                                                              |  |
+ |  |                                                                              |  |
+ |  *------------------------------------------------------------------------------*  |
+ |                                                                                    |
+ *------------------------------------------------------------------------------------*
 
 
  *************************************
@@ -385,22 +385,22 @@ MODOP=5 -- corrects Energy from mass+flow
  *************************************
   In F3pi: chpt + 1 resonance + 2 resonance (RchT)
   KORB: rho/rhop -> pi-pi0 mixing:
-  KORB: rho   =  0.769900024      0.151199996    
-  KORB: rhop  =   1.37000000      0.509999990     -0.109999999    
+  KORB: rho   =  0.769900024      0.151199996
+  KORB: rhop  =   1.37000000      0.509999990     -0.109999999
   KORB: K*/K*prime -> Kpi mixing:
   KORB: kstp  =   1.70000005      0.234999999      -3.79999988E-02
   KORB: a1/a1prime -> 3pi, KKpi mixing:
-  KORB: a1    =   1.27499998      0.699999988    
-  KORB: a1prim=   1.46099997      0.250000000       0.00000000    
+  KORB: a1    =   1.27499998      0.699999988
+  KORB: a1prim=   1.46099997      0.250000000       0.00000000
   KORB: K1A/K1B -> Kpipi mixing:
-  KORB: K1A   =   1.26999998       9.00000036E-02   1.00000000    
-  KORB: K1B   =   1.40199995      0.173999995      0.800000012    
+  KORB: K1A   =   1.26999998       9.00000036E-02   1.00000000
+  KORB: K1B   =   1.40199995      0.173999995      0.800000012
   KORB: rho/rhop/rhopp -> 4pi mixing:
-  KORB: rho   =  0.769900024      0.151199996    
-  KORB: rhopp =   1.46500003      0.310000002     -0.109999999    
-  KORB: rhoppp=   1.70000005      0.234999999     -0.109999999    
-  KORB: 3PI-PI0 PARAMS:   0.00000000      0.124200001      0.160400003      0.271100014      0.444299996    
-  KORB: PI-3PI0 PARAMS:   0.00000000       1.00000000    
+  KORB: rho   =  0.769900024      0.151199996
+  KORB: rhopp =   1.46500003      0.310000002     -0.109999999
+  KORB: rhoppp=   1.70000005      0.234999999     -0.109999999
+  KORB: 3PI-PI0 PARAMS:   0.00000000      0.124200001      0.160400003      0.271100014      0.444299996
+  KORB: PI-3PI0 PARAMS:   0.00000000       1.00000000
 Reading SANC input files.
 File 'table1-1.txt'  missing... skipped.
 File 'table2-2.txt'  missing... skipped.
@@ -409,24 +409,24 @@ File 'table11-11.txt' missing... skipped.
 2022-06-16 03:26:20 UTC Generation.Sign...SUCCESS ==================================================================
 2022-06-16 03:26:20 UTC Generation.Sign...SUCCESS Using as production engine Pythia8Production
 2022-06-16 03:26:20 UTC Generation.Sign...SUCCESS ==================================================================
-2022-06-16 03:26:20 UTC LoKiSvc           SUCCESS 
+2022-06-16 03:26:20 UTC LoKiSvc           SUCCESS
 
 
 Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome
-LoKi                                                                                               LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                        Welcome to LoKi!                                       LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                      (LOops & KInematics)                                     LoKi 
-LoKi                                                                                               LoKi 
-LoKi                         Smart & Friendly C++ Physics Analysis Tool Kit                        LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                                                                               LoKi 
-LoKi                         Author:  Vanya BELYAEV Ivan.Belyaev@nikhef.nl                         LoKi 
-LoKi                     With the kind help of Galina Pakhlova & Sergey Barsuk                     LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                       Have fun and enjoy!                                     LoKi 
-LoKi                                                                                               LoKi 
+LoKi                                                                                               LoKi
+LoKi                                                                                               LoKi
+LoKi                                        Welcome to LoKi!                                       LoKi
+LoKi                                                                                               LoKi
+LoKi                                      (LOops & KInematics)                                     LoKi
+LoKi                                                                                               LoKi
+LoKi                         Smart & Friendly C++ Physics Analysis Tool Kit                        LoKi
+LoKi                                                                                               LoKi
+LoKi                                                                                               LoKi
+LoKi                         Author:  Vanya BELYAEV Ivan.Belyaev@nikhef.nl                         LoKi
+LoKi                     With the kind help of Galina Pakhlova & Sergey Barsuk                     LoKi
+LoKi                                                                                               LoKi
+LoKi                                       Have fun and enjoy!                                     LoKi
+LoKi                                                                                               LoKi
 Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome
 Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome
 
@@ -435,9 +435,9 @@ Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome Welcome 
 LHAPDF 6.1.4 loading /cvmfs/lhcb.cern.ch/lib/lhcb/DBASE/LHAPDFSets/v61r0/data/CT09MCS/CT09MCS_0000.dat
 CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
  PYTHIA Warning in MultipartonInteractions::init: maximum increased by factor 5.188
-2022-06-16 03:26:45 UTC Generation.Sign...   INFO Generating Signal events of B- B+ 
+2022-06-16 03:26:45 UTC Generation.Sign...   INFO Generating Signal events of B- B+
 2022-06-16 03:26:45 UTC Generation.Sign...   INFO The signal decay mode has visible branching fractions of :0.000180622
-2022-06-16 03:26:45 UTC Generation.Beam...   INFO Smearing of interaction point with Gaussian distribution 
+2022-06-16 03:26:45 UTC Generation.Beam...   INFO Smearing of interaction point with Gaussian distribution
 2022-06-16 03:26:45 UTC Generation        SUCCESS ==================================================================
 2022-06-16 03:26:45 UTC Generation        SUCCESS Requested to generate EventType 12165529
 2022-06-16 03:26:45 UTC Generation        SUCCESS ==================================================================
@@ -447,13 +447,13 @@ CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
 2022-06-16 03:26:46 UTC GaussGenPrevPrev  SUCCESS ==================================================================
 2022-06-16 03:26:46 UTC GaussGenPrevPrev  SUCCESS Requested to process 225 events
 2022-06-16 03:26:46 UTC GaussGenPrevPrev  SUCCESS ==================================================================
-2022-06-16 03:26:46 UTC GenerationPrevP...   INFO Poisson distribution with fixed luminosity. 
+2022-06-16 03:26:46 UTC GenerationPrevP...   INFO Poisson distribution with fixed luminosity.
 2022-06-16 03:26:46 UTC GenerationPrevP...   INFO Generating Minimum Bias events.
 2022-06-16 03:26:46 UTC GenerationPrevP...SUCCESS ==================================================================
 2022-06-16 03:26:46 UTC GenerationPrevP...SUCCESS Using as production engine Pythia8Production
 2022-06-16 03:26:46 UTC GenerationPrevP...SUCCESS ==================================================================
  PYTHIA Warning in MultipartonInteractions::init: maximum increased by factor 5.172
-2022-06-16 03:27:00 UTC GenerationPrevP...   INFO Smearing of interaction point with Gaussian distribution 
+2022-06-16 03:27:00 UTC GenerationPrevP...   INFO Smearing of interaction point with Gaussian distribution
 2022-06-16 03:27:00 UTC GenerationPrevPrevSUCCESS ==================================================================
 2022-06-16 03:27:00 UTC GenerationPrevPrevSUCCESS Requested to generate EventType 30000000
 2022-06-16 03:27:00 UTC GenerationPrevPrevSUCCESS ==================================================================
@@ -463,13 +463,13 @@ CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
 2022-06-16 03:27:00 UTC GaussGenPrev      SUCCESS ==================================================================
 2022-06-16 03:27:00 UTC GaussGenPrev      SUCCESS Requested to process 225 events
 2022-06-16 03:27:00 UTC GaussGenPrev      SUCCESS ==================================================================
-2022-06-16 03:27:00 UTC GenerationPrev....   INFO Poisson distribution with fixed luminosity. 
+2022-06-16 03:27:00 UTC GenerationPrev....   INFO Poisson distribution with fixed luminosity.
 2022-06-16 03:27:00 UTC GenerationPrev....   INFO Generating Minimum Bias events.
 2022-06-16 03:27:00 UTC GenerationPrev....SUCCESS ==================================================================
 2022-06-16 03:27:00 UTC GenerationPrev....SUCCESS Using as production engine Pythia8Production
 2022-06-16 03:27:00 UTC GenerationPrev....SUCCESS ==================================================================
  PYTHIA Warning in MultipartonInteractions::init: maximum increased by factor 5.257
-2022-06-16 03:27:15 UTC GenerationPrev....   INFO Smearing of interaction point with Gaussian distribution 
+2022-06-16 03:27:15 UTC GenerationPrev....   INFO Smearing of interaction point with Gaussian distribution
 2022-06-16 03:27:15 UTC GenerationPrev    SUCCESS ==================================================================
 2022-06-16 03:27:15 UTC GenerationPrev    SUCCESS Requested to generate EventType 30000000
 2022-06-16 03:27:15 UTC GenerationPrev    SUCCESS ==================================================================
@@ -479,13 +479,13 @@ CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
 2022-06-16 03:27:15 UTC GaussGenNext      SUCCESS ==================================================================
 2022-06-16 03:27:15 UTC GaussGenNext      SUCCESS Requested to process 225 events
 2022-06-16 03:27:15 UTC GaussGenNext      SUCCESS ==================================================================
-2022-06-16 03:27:15 UTC GenerationNext....   INFO Poisson distribution with fixed luminosity. 
+2022-06-16 03:27:15 UTC GenerationNext....   INFO Poisson distribution with fixed luminosity.
 2022-06-16 03:27:15 UTC GenerationNext....   INFO Generating Minimum Bias events.
 2022-06-16 03:27:15 UTC GenerationNext....SUCCESS ==================================================================
 2022-06-16 03:27:15 UTC GenerationNext....SUCCESS Using as production engine Pythia8Production
 2022-06-16 03:27:15 UTC GenerationNext....SUCCESS ==================================================================
  PYTHIA Warning in MultipartonInteractions::init: maximum increased by factor 5.172
-2022-06-16 03:27:31 UTC GenerationNext....   INFO Smearing of interaction point with Gaussian distribution 
+2022-06-16 03:27:31 UTC GenerationNext....   INFO Smearing of interaction point with Gaussian distribution
 2022-06-16 03:27:31 UTC GenerationNext    SUCCESS ==================================================================
 2022-06-16 03:27:31 UTC GenerationNext    SUCCESS Requested to generate EventType 30000000
 2022-06-16 03:27:31 UTC GenerationNext    SUCCESS ==================================================================
@@ -495,13 +495,13 @@ CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
 2022-06-16 03:27:31 UTC GaussGenNextNext  SUCCESS ==================================================================
 2022-06-16 03:27:31 UTC GaussGenNextNext  SUCCESS Requested to process 225 events
 2022-06-16 03:27:31 UTC GaussGenNextNext  SUCCESS ==================================================================
-2022-06-16 03:27:31 UTC GenerationNextN...   INFO Poisson distribution with fixed luminosity. 
+2022-06-16 03:27:31 UTC GenerationNextN...   INFO Poisson distribution with fixed luminosity.
 2022-06-16 03:27:31 UTC GenerationNextN...   INFO Generating Minimum Bias events.
 2022-06-16 03:27:31 UTC GenerationNextN...SUCCESS ==================================================================
 2022-06-16 03:27:31 UTC GenerationNextN...SUCCESS Using as production engine Pythia8Production
 2022-06-16 03:27:31 UTC GenerationNextN...SUCCESS ==================================================================
  PYTHIA Warning in MultipartonInteractions::init: maximum increased by factor 5.219
-2022-06-16 03:27:45 UTC GenerationNextN...   INFO Smearing of interaction point with Gaussian distribution 
+2022-06-16 03:27:45 UTC GenerationNextN...   INFO Smearing of interaction point with Gaussian distribution
 2022-06-16 03:27:45 UTC GenerationNextNextSUCCESS ==================================================================
 2022-06-16 03:27:45 UTC GenerationNextNextSUCCESS Requested to generate EventType 30000000
 2022-06-16 03:27:45 UTC GenerationNextNextSUCCESS ==================================================================
@@ -657,31 +657,31 @@ CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
 2022-06-16 03:28:03 UTC GaussTape            INFO Data source: EventDataSvc output: DATAFILE='00160207_00043195_1.sim' SVC='RootCnvSvc' OPT='REC'
 2022-06-16 03:28:03 UTC FileRecordPersi...   INFO Added successfully Conversion service:FileRecordCnvSvc
 2022-06-16 03:28:03 UTC FSROutputStream...   INFO Data source: FileRecordDataSvc output: DATAFILE='00160207_00043195_1.sim' SVC='FileRecordCnvSvc' OPT='REC'
-2022-06-16 03:28:03 UTC EventLoopMgr      WARNING Unable to locate service "EventSelector" 
+2022-06-16 03:28:03 UTC EventLoopMgr      WARNING Unable to locate service "EventSelector"
 2022-06-16 03:28:03 UTC EventLoopMgr      WARNING No events will be processed from external input.
 2022-06-16 03:28:03 UTC ApplicationMgr       INFO Application Manager Initialized successfully
 2022-06-16 03:28:03 UTC ApplicationMgr       INFO Application Manager Started successfully
 2022-06-16 03:28:03 UTC GaussGen             INFO Evt 18918973,  Run 16063895,  Nr. in job = 1 with seeds [16063895, 18918973, 593211172, 0]
- PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed  
- PYTHIA Error in ProcessLevel::findJunctions: N(unmatched (anti)colour tags) != 3  
- PYTHIA Error in HadronLevel::traceFromCol: colour tracing failed  
- PYTHIA Error in Pythia::forceHadronLevel: hadronLevel failed; try again  
- PYTHIA Abort from Pythia::forceHadronLevel: hadronLevel failed; giving up  
- PYTHIA Warning in Pythia::check: energy-momentum not quite conserved  
- PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity  
- PYTHIA Error in Pythia::check: unmatched particle energy/momentum/mass  
- PYTHIA Abort from Pythia::next: check of event revealed problems  
- PYTHIA Warning in MultipartonInteractions::pTnext: weight above unity  
- PYTHIA Error in Pythia::next: partonLevel failed; try again  
- PYTHIA Error in StringFragmentation::fragment: stuck in joining  
- PYTHIA Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame  
- PYTHIA Warning in MultipartonInteractions::pTfirst: weight above unity  
+ PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed
+ PYTHIA Error in ProcessLevel::findJunctions: N(unmatched (anti)colour tags) != 3
+ PYTHIA Error in HadronLevel::traceFromCol: colour tracing failed
+ PYTHIA Error in Pythia::forceHadronLevel: hadronLevel failed; try again
+ PYTHIA Abort from Pythia::forceHadronLevel: hadronLevel failed; giving up
+ PYTHIA Warning in Pythia::check: energy-momentum not quite conserved
+ PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity
+ PYTHIA Error in Pythia::check: unmatched particle energy/momentum/mass
+ PYTHIA Abort from Pythia::next: check of event revealed problems
+ PYTHIA Warning in MultipartonInteractions::pTnext: weight above unity
+ PYTHIA Error in Pythia::next: partonLevel failed; try again
+ PYTHIA Error in StringFragmentation::fragment: stuck in joining
+ PYTHIA Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame
+ PYTHIA Warning in MultipartonInteractions::pTfirst: weight above unity
 2022-06-16 03:29:56 UTC GaussGenPrevPrev     INFO Evt 18918973,  Run 16063895,  Nr. in job = 1 with seeds [16063895, 18918973, 641718082, 0]
 2022-06-16 03:29:56 UTC GaussGenPrev         INFO Evt 18918973,  Run 16063895,  Nr. in job = 1 with seeds [16063895, 18918973, 31582613, 0]
- PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity  
+ PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity
 2022-06-16 03:29:56 UTC GaussGenNext         INFO Evt 18918973,  Run 16063895,  Nr. in job = 1 with seeds [16063895, 18918973, 1329595769, 0]
 2022-06-16 03:29:56 UTC GaussGenNextNext     INFO Evt 18918973,  Run 16063895,  Nr. in job = 1 with seeds [16063895, 18918973, 1687722164, 0]
---- Warning from G4Material::G4Material() define a material with density=0 is not allowed. 
+--- Warning from G4Material::G4Material() define a material with density=0 is not allowed.
  The material /dd/Materials/Vacuum will be constructed with the default minimal density: 1e-25g/cm3
 2022-06-16 03:29:56 UTC MagneticFieldSvc     INFO Opened magnetic field file : /cvmfs/lhcb.cern.ch/lib/lhcb/DBASE/FieldMap/v5r7/cdf/field.v5r0.c1.down.cdf
 2022-06-16 03:29:56 UTC MagneticFieldSvc     INFO Opened magnetic field file : /cvmfs/lhcb.cern.ch/lib/lhcb/DBASE/FieldMap/v5r7/cdf/field.v5r0.c2.down.cdf
@@ -693,29 +693,29 @@ CT09MCS PDF set, member #0, version 1; LHAPDF ID = 10770
 2022-06-16 03:29:57 UTC GiGaGeo              INFO world():: Global        'G4Field Manager' is set to be = G4FieldManager
 2022-06-16 03:29:57 UTC GiGaGeo              INFO world():: Global        'G4MagneticField' is set to be = GiGaMagFieldGlobal
 2022-06-16 03:29:57 UTC GiGaGeo              INFO world():: Global 'G4MagIntegratorStepper' is set to be = G4ClassicalRK4
-2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder3 .  Please Check Geometry DB  
-2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder4 .  Please Check Geometry DB  
-2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder1 .  Please Check Geometry DB  
-2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder2 .  Please Check Geometry DB  
---- Warning from G4Material::G4Material() define a material with density=0 is not allowed. 
+2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder3 .  Please Check Geometry DB
+2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder4 .  Please Check Geometry DB
+2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder1 .  Please Check Geometry DB
+2022-06-16 03:30:02 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/BeforeMagnetRegion/TT/Modules/lvLadder2 .  Please Check Geometry DB
+--- Warning from G4Material::G4Material() define a material with density=0 is not allowed.
  The material /dd/Materials/RichMaterials/RichHpdVacuum will be constructed with the default minimal density: 1e-25g/cm3
---- Warning from G4Material::G4Material() define a material with density=0 is not allowed. 
+--- Warning from G4Material::G4Material() define a material with density=0 is not allowed.
  The material /dd/Materials/RichMaterials/HpdS20PhCathode will be constructed with the default minimal density: 1e-25g/cm3
 2022-06-16 03:30:03 UTC GiGaGeo.ZeroField    INFO createFieldMgr(): null magnetic field
 2022-06-16 03:30:04 UTC RFileCnv             INFO opening Root file "/cvmfs/lhcb.cern.ch/lib/lhcb/PARAM/ParamFiles/v8r36/data/gausscalo.root" for reading
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/Ladder/lvLong410Sector .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX1LongLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITULongLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITVLongLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX2LongLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/Ladder/lvShort320Sector .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX1ShortLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITUShortLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITVShortLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX2ShortLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/Ladder/lvShort410Sector .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITV_410_4to7_ShortLayer .  Please Check Geometry DB  
-2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITV_410_1to4_ShortLayer .  Please Check Geometry DB  
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/Ladder/lvLong410Sector .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX1LongLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITULongLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITVLongLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX2LongLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/Ladder/lvShort320Sector .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX1ShortLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITUShortLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITVShortLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITX2ShortLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/Ladder/lvShort410Sector .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITV_410_4to7_ShortLayer .  Please Check Geometry DB
+2022-06-16 03:30:06 UTC GiGaLVCnv         WARNING  GiGaLVolConv Misalignment: Multiple indistinguishable misalignable detector elements found inside  /dd/Geometry/AfterMagnetRegion/T/IT/lvITV_410_1to4_ShortLayer .  Please Check Geometry DB
 2022-06-16 03:30:10 UTC MainEventGaussSim    INFO Evt 18918973,  Run 16063895,  Nr. in job = 1 with seeds [16063895, 18918973, 1242957957, 0]
 2022-06-16 03:30:10 UTC GiGa.GiGaMgr         INFO GiGaRunManager::  Geometry will be extracted from GiGaGeo
 WARNING: G4QCaptureAtRest is deprecated and will be removed in GEANT4 version 10.0.
@@ -726,13 +726,13 @@ RichHpdPhotoElectricEffect UseNominalHpdQE =   0
 RichHpd Hit Smearing Flag and Values  =   1  0.760  0.085   0.000
 2022-06-16 03:30:11 UTC RichHpdProperties    INFO Total Number of hpds in Rich1 = 196
 2022-06-16 03:30:11 UTC RichHpdProperties    INFO Total Number of hpds in Rich2 = 288
-2022-06-16 03:30:11 UTC RichHpdProperties    INFO Filled the HPD QE, PSF and Demag tables for  RICH  
+2022-06-16 03:30:11 UTC RichHpdProperties    INFO Filled the HPD QE, PSF and Demag tables for  RICH
  RichG4Cerenkov Rich2 backgrActivateFlag  Rich2 backgrprob  1  0.5
 ### G4VEnergyLoss class is obsolete and will be removed for the next release.
 Rich Hpd SiHitEfficiency  BackScatterCorrectedProb 0.85   0.0385953
-2022-06-16 03:30:11 UTC GiGa.ModularPL       INFO  The production cut for gamma is set to 	5 mm 
-2022-06-16 03:30:11 UTC GiGa.ModularPL       INFO  The production cut for electron is set to 	5 mm 
-2022-06-16 03:30:11 UTC GiGa.ModularPL       INFO  The production cut for positron is set to 	5 mm 
+2022-06-16 03:30:11 UTC GiGa.ModularPL       INFO  The production cut for gamma is set to 	5 mm
+2022-06-16 03:30:11 UTC GiGa.ModularPL       INFO  The production cut for electron is set to 	5 mm
+2022-06-16 03:30:11 UTC GiGa.ModularPL       INFO  The production cut for positron is set to 	5 mm
 ============================================================================================
              HADRONIC PROCESSES SUMMARY (verbose level 1)
 
@@ -872,8 +872,8 @@ AntiNeutronInelastic  Crs sctns:              AntiAGlauber: Emin(GeV)=    0  Ema
                                             BertiniCascade: Emin(GeV)=    0  Emax(GeV)= 5
 
    PionPlusInelastic  Crs sctns:      G4CrossSectionPairGG: Emin(GeV)=    0  Emax(GeV)= 100000
-                         G4CrossSectionPairGG: G4PiNuclearCrossSection cross sections 
-                           below 91 GeV, Glauber-Gribov above 
+                         G4CrossSectionPairGG: G4PiNuclearCrossSection cross sections
+                           below 91 GeV, Glauber-Gribov above
                                           GheishaInelastic: Emin(GeV)=    0  Emax(GeV)= 100000
 
 
@@ -889,8 +889,8 @@ AntiNeutronInelastic  Crs sctns:              AntiAGlauber: Emin(GeV)=    0  Ema
                                             BertiniCascade: Emin(GeV)=    0  Emax(GeV)= 5
 
   PionMinusInelastic  Crs sctns:      G4CrossSectionPairGG: Emin(GeV)=    0  Emax(GeV)= 100000
-                         G4CrossSectionPairGG: G4PiNuclearCrossSection cross sections 
-                           below 91 GeV, Glauber-Gribov above 
+                         G4CrossSectionPairGG: G4PiNuclearCrossSection cross sections
+                           below 91 GeV, Glauber-Gribov above
                                           GheishaInelastic: Emin(GeV)=    0  Emax(GeV)= 100000
 
 
@@ -909,7 +909,7 @@ AntiNeutronInelastic  Crs sctns:              AntiAGlauber: Emin(GeV)=    0  Ema
 
 ============================================================================================
 2022-06-16 03:30:37 UTC RichG4HistoSet2      INFO Now Booking Rich G4 Histo Set2
-G4Fragment::CalculateExcitationEnergy(): WARNING 
+G4Fragment::CalculateExcitationEnergy(): WARNING
 Fragment: A =   1, Z =   0, U = -2.000e-05 MeV  IsStable= 1
           P = (3.279e+01,6.229e+01,-4.459e+01) MeV   E = 9.433e+02 MeV
 
@@ -955,8 +955,8 @@ WARNING: G4QPDGToG4Particle is deprecated and will be removed in GEANT4 version 
 2022-06-16 03:35:26 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	1118
 2022-06-16 03:35:26 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	1234
 2022-06-16 03:35:26 UTC GaussGen             INFO Evt 18918975,  Run 16063895,  Nr. in job = 3 with seeds [16063895, 18918975, 1187411449, 0]
- PYTHIA Warning in SpaceShower::pT2nextQCD: small daughter PDF  
- PYTHIA Error in ParticleDecays::decay: failed to find workable decay channel  
+ PYTHIA Warning in SpaceShower::pT2nextQCD: small daughter PDF
+ PYTHIA Error in ParticleDecays::decay: failed to find workable decay channel
 2022-06-16 03:36:21 UTC GaussGenPrevPrev     INFO Evt 18918975,  Run 16063895,  Nr. in job = 3 with seeds [16063895, 18918975, 1739675168, 0]
 2022-06-16 03:36:21 UTC GaussGenPrev         INFO Evt 18918975,  Run 16063895,  Nr. in job = 3 with seeds [16063895, 18918975, 1501252900, 0]
 2022-06-16 03:36:21 UTC GaussGenNext         INFO Evt 18918975,  Run 16063895,  Nr. in job = 3 with seeds [16063895, 18918975, 1923468356, 0]
@@ -993,8 +993,8 @@ WARNING: G4QPDGToG4Particle is deprecated and will be removed in GEANT4 version 
 2022-06-16 03:39:14 UTC GiGaGetNextEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	3
 2022-06-16 03:39:14 UTC NextNextEventGa...   INFO Evt 18918976,  Run 16063895,  Nr. in job = 4 with seeds [16063895, 18918976, 1515587867, 0]
 2022-06-16 03:39:14 UTC GaussGen             INFO Evt 18918977,  Run 16063895,  Nr. in job = 5 with seeds [16063895, 18918977, 944723387, 0]
- PYTHIA Error in Pythia::check: charge not conserved  
- PYTHIA Abort from Pythia::forceHadronLevel: check of event revealed problems  
+ PYTHIA Error in Pythia::check: charge not conserved
+ PYTHIA Abort from Pythia::forceHadronLevel: check of event revealed problems
 2022-06-16 03:39:39 UTC Generation.Sign...   INFO Number of repetitions of hadronization exceeds the limit
 2022-06-16 03:39:44 UTC Generation.Sign...   INFO Number of repetitions of hadronization exceeds the limit
 2022-06-16 03:39:55 UTC Generation.Sign...   INFO Number of repetitions of hadronization exceeds the limit
@@ -1115,7 +1115,7 @@ WARNING: G4QPDGToG4Particle is deprecated and will be removed in GEANT4 version 
 2022-06-16 03:50:56 UTC GaussGenPrev         INFO Evt 18918983,  Run 16063895,  Nr. in job = 11 with seeds [16063895, 18918983, 345620482, 0]
 2022-06-16 03:50:56 UTC GaussGenNext         INFO Evt 18918983,  Run 16063895,  Nr. in job = 11 with seeds [16063895, 18918983, 1079024918, 0]
 2022-06-16 03:50:56 UTC GaussGenNextNext     INFO Evt 18918983,  Run 16063895,  Nr. in job = 11 with seeds [16063895, 18918983, 1678800707, 0]
- PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed  
+ PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed
 2022-06-16 03:50:56 UTC MainEventGaussSim    INFO Evt 18918983,  Run 16063895,  Nr. in job = 11 with seeds [16063895, 18918983, 723664, 0]
 2022-06-16 03:52:15 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	5865
 2022-06-16 03:52:15 UTC GiGaGetMainEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	6559
@@ -1148,9 +1148,9 @@ WARNING: G4QPDGToG4Particle is deprecated and will be removed in GEANT4 version 
 2022-06-16 03:54:37 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	318
 2022-06-16 03:54:37 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	319
 2022-06-16 03:54:37 UTC GaussGen             INFO Evt 18918985,  Run 16063895,  Nr. in job = 13 with seeds [16063895, 18918985, 968199785, 0]
- PYTHIA Warning in TauDecays::decay: unknown tau production, assuming unpolarized and uncorrelated  
- PYTHIA Error in Pythia::check: energy-momentum not conserved  
- PYTHIA Abort from Pythia::forceHadronLevel: check of event revealed problems  
+ PYTHIA Warning in TauDecays::decay: unknown tau production, assuming unpolarized and uncorrelated
+ PYTHIA Error in Pythia::check: energy-momentum not conserved
+ PYTHIA Abort from Pythia::forceHadronLevel: check of event revealed problems
 2022-06-16 03:55:11 UTC GaussGenPrevPrev     INFO Evt 18918985,  Run 16063895,  Nr. in job = 13 with seeds [16063895, 18918985, 226075226, 0]
 2022-06-16 03:55:11 UTC GaussGenPrev         INFO Evt 18918985,  Run 16063895,  Nr. in job = 13 with seeds [16063895, 18918985, 1187149493, 0]
 2022-06-16 03:55:11 UTC GaussGenNext         INFO Evt 18918985,  Run 16063895,  Nr. in job = 13 with seeds [16063895, 18918985, 1540117517, 0]
@@ -1243,7 +1243,7 @@ WARNING: G4QPDGToG4Particle is deprecated and will be removed in GEANT4 version 
 2022-06-16 04:06:35 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	1660
 2022-06-16 04:06:35 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	1682
 2022-06-16 04:06:36 UTC GaussGen             INFO Evt 18918990,  Run 16063895,  Nr. in job = 18 with seeds [16063895, 18918990, 904824527, 0]
- PYTHIA Error in SpaceShower::pT2nearQCDthreshold: stuck in loop  
+ PYTHIA Error in SpaceShower::pT2nearQCDthreshold: stuck in loop
 2022-06-16 04:07:09 UTC Generation.Sign...   INFO Number of repetitions of hadronization exceeds the limit
 2022-06-16 04:07:19 UTC GaussGenPrevPrev     INFO Evt 18918990,  Run 16063895,  Nr. in job = 18 with seeds [16063895, 18918990, 672946075, 0]
 2022-06-16 04:07:19 UTC GaussGenPrev         INFO Evt 18918990,  Run 16063895,  Nr. in job = 18 with seeds [16063895, 18918990, 1727620332, 0]
@@ -1448,8 +1448,8 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 04:28:41 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	2594
 2022-06-16 04:28:41 UTC GiGaGetMainEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	2886
 2022-06-16 04:28:41 UTC PrevPrevEventGa...   INFO Evt 18919000,  Run 16063895,  Nr. in job = 28 with seeds [16063895, 18919000, 1009890305, 0]
-2022-06-16 04:28:59 UTC /dd/Structure/L...  ERROR Gap not found! 
-2022-06-16 04:28:59 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 04:28:59 UTC /dd/Structure/L...  ERROR Gap not found!
+2022-06-16 04:28:59 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 04:28:59 UTC GiGaGetPrevPrev...   INFO Number of extracted MCParticles 'MC/Particles' 	2027
 2022-06-16 04:28:59 UTC GiGaGetPrevPrev...   INFO Number of extracted MCVertices  'MC/Vertices'  	2105
 2022-06-16 04:28:59 UTC PrevEventGaussSim    INFO Evt 18919000,  Run 16063895,  Nr. in job = 28 with seeds [16063895, 18919000, 1652895008, 0]
@@ -1543,7 +1543,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 04:44:15 UTC GaussGenPrevPrev     INFO Evt 18919005,  Run 16063895,  Nr. in job = 33 with seeds [16063895, 18919005, 702565177, 0]
 2022-06-16 04:44:15 UTC GaussGenPrev         INFO Evt 18919005,  Run 16063895,  Nr. in job = 33 with seeds [16063895, 18919005, 1027936904, 0]
 2022-06-16 04:44:15 UTC GaussGenNext         INFO Evt 18919005,  Run 16063895,  Nr. in job = 33 with seeds [16063895, 18919005, 932036732, 0]
- PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity  
+ PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity
 2022-06-16 04:44:15 UTC GaussGenNextNext     INFO Evt 18919005,  Run 16063895,  Nr. in job = 33 with seeds [16063895, 18919005, 982434445, 0]
 2022-06-16 04:44:15 UTC MainEventGaussSim    INFO Evt 18919005,  Run 16063895,  Nr. in job = 33 with seeds [16063895, 18919005, 2051608642, 0]
 2022-06-16 04:44:36 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	1854
@@ -1812,7 +1812,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 05:11:06 UTC GiGaGetPrevPrev...   INFO Number of extracted MCParticles 'MC/Particles' 	121
 2022-06-16 05:11:06 UTC GiGaGetPrevPrev...   INFO Number of extracted MCVertices  'MC/Vertices'  	116
 2022-06-16 05:11:06 UTC PrevEventGaussSim    INFO Evt 18919018,  Run 16063895,  Nr. in job = 46 with seeds [16063895, 18919018, 1324856499, 0]
-2022-06-16 05:11:29 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 05:11:29 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 05:11:29 UTC GiGaGetPrevEvent     INFO Number of extracted MCParticles 'MC/Particles' 	2279
 2022-06-16 05:11:29 UTC GiGaGetPrevEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	2621
 2022-06-16 05:11:30 UTC NextEventGaussSim    INFO Evt 18919018,  Run 16063895,  Nr. in job = 46 with seeds [16063895, 18919018, 893574123, 0]
@@ -1861,7 +1861,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 05:13:24 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	2
 2022-06-16 05:13:24 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	3
 2022-06-16 05:13:24 UTC GaussGen             INFO Evt 18919021,  Run 16063895,  Nr. in job = 49 with seeds [16063895, 18919021, 804962962, 0]
- PYTHIA Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold  
+ PYTHIA Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold
 2022-06-16 05:13:50 UTC GaussGenPrevPrev     INFO Evt 18919021,  Run 16063895,  Nr. in job = 49 with seeds [16063895, 18919021, 263592545, 0]
 2022-06-16 05:13:50 UTC GaussGenPrev         INFO Evt 18919021,  Run 16063895,  Nr. in job = 49 with seeds [16063895, 18919021, 287509915, 0]
 2022-06-16 05:13:50 UTC GaussGenNext         INFO Evt 18919021,  Run 16063895,  Nr. in job = 49 with seeds [16063895, 18919021, 1430582838, 0]
@@ -1978,7 +1978,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 05:26:41 UTC GaussGen             INFO Evt 18919027,  Run 16063895,  Nr. in job = 55 with seeds [16063895, 18919027, 1168699242, 0]
 2022-06-16 05:27:41 UTC GaussGenPrevPrev     INFO Evt 18919027,  Run 16063895,  Nr. in job = 55 with seeds [16063895, 18919027, 1214087531, 0]
 2022-06-16 05:27:41 UTC GaussGenPrev         INFO Evt 18919027,  Run 16063895,  Nr. in job = 55 with seeds [16063895, 18919027, 1742158342, 0]
- PYTHIA Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame  
+ PYTHIA Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame
 2022-06-16 05:27:41 UTC GaussGenNext         INFO Evt 18919027,  Run 16063895,  Nr. in job = 55 with seeds [16063895, 18919027, 1562636217, 0]
 2022-06-16 05:27:41 UTC GaussGenNextNext     INFO Evt 18919027,  Run 16063895,  Nr. in job = 55 with seeds [16063895, 18919027, 2140477881, 0]
 2022-06-16 05:27:41 UTC MainEventGaussSim    INFO Evt 18919027,  Run 16063895,  Nr. in job = 55 with seeds [16063895, 18919027, 1445496054, 0]
@@ -2098,7 +2098,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 05:42:10 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	3491
 2022-06-16 05:42:10 UTC GiGaGetMainEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	3662
 2022-06-16 05:42:10 UTC PrevPrevEventGa...   INFO Evt 18919033,  Run 16063895,  Nr. in job = 61 with seeds [16063895, 18919033, 1933747298, 0]
-2022-06-16 05:42:14 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 05:42:14 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 05:42:14 UTC GiGaGetPrevPrev...   INFO Number of extracted MCParticles 'MC/Particles' 	569
 2022-06-16 05:42:14 UTC GiGaGetPrevPrev...   INFO Number of extracted MCVertices  'MC/Vertices'  	540
 2022-06-16 05:42:14 UTC PrevEventGaussSim    INFO Evt 18919033,  Run 16063895,  Nr. in job = 61 with seeds [16063895, 18919033, 366349587, 0]
@@ -2151,7 +2151,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 05:46:58 UTC GaussGen             INFO Evt 18919036,  Run 16063895,  Nr. in job = 64 with seeds [16063895, 18919036, 1532416771, 0]
 2022-06-16 05:47:08 UTC GaussGenPrevPrev     INFO Evt 18919036,  Run 16063895,  Nr. in job = 64 with seeds [16063895, 18919036, 621992336, 0]
 2022-06-16 05:47:08 UTC GaussGenPrev         INFO Evt 18919036,  Run 16063895,  Nr. in job = 64 with seeds [16063895, 18919036, 921393171, 0]
- PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed  
+ PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed
 2022-06-16 05:47:08 UTC GaussGenNext         INFO Evt 18919036,  Run 16063895,  Nr. in job = 64 with seeds [16063895, 18919036, 952319003, 0]
 2022-06-16 05:47:08 UTC GaussGenNextNext     INFO Evt 18919036,  Run 16063895,  Nr. in job = 64 with seeds [16063895, 18919036, 380703829, 0]
 2022-06-16 05:47:08 UTC MainEventGaussSim    INFO Evt 18919036,  Run 16063895,  Nr. in job = 64 with seeds [16063895, 18919036, 1889614307, 0]
@@ -2189,7 +2189,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 05:50:32 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	332
 2022-06-16 05:50:32 UTC GaussGen             INFO Evt 18919038,  Run 16063895,  Nr. in job = 66 with seeds [16063895, 18919038, 2043252712, 0]
 2022-06-16 05:51:39 UTC Generation.Sign...   INFO Number of repetitions of hadronization exceeds the limit
- PYTHIA Error in HadronLevel::traceFromAcol: colour tracing failed  
+ PYTHIA Error in HadronLevel::traceFromAcol: colour tracing failed
 2022-06-16 05:51:48 UTC GaussGenPrevPrev     INFO Evt 18919038,  Run 16063895,  Nr. in job = 66 with seeds [16063895, 18919038, 256053019, 0]
 2022-06-16 05:51:48 UTC GaussGenPrev         INFO Evt 18919038,  Run 16063895,  Nr. in job = 66 with seeds [16063895, 18919038, 581819170, 0]
 2022-06-16 05:51:48 UTC GaussGenNext         INFO Evt 18919038,  Run 16063895,  Nr. in job = 66 with seeds [16063895, 18919038, 544831073, 0]
@@ -2556,7 +2556,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 06:33:54 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	6977
 2022-06-16 06:33:54 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	7741
 2022-06-16 06:33:54 UTC GaussGen             INFO Evt 18919056,  Run 16063895,  Nr. in job = 84 with seeds [16063895, 18919056, 601515603, 0]
- PYTHIA Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop  
+ PYTHIA Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop
 2022-06-16 06:34:56 UTC GaussGenPrevPrev     INFO Evt 18919056,  Run 16063895,  Nr. in job = 84 with seeds [16063895, 18919056, 1629566258, 0]
 2022-06-16 06:34:56 UTC GaussGenPrev         INFO Evt 18919056,  Run 16063895,  Nr. in job = 84 with seeds [16063895, 18919056, 998073227, 0]
 2022-06-16 06:34:56 UTC GaussGenNext         INFO Evt 18919056,  Run 16063895,  Nr. in job = 84 with seeds [16063895, 18919056, 695895331, 0]
@@ -2824,7 +2824,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 07:09:59 UTC NextNextEventGa...   INFO Evt 18919069,  Run 16063895,  Nr. in job = 97 with seeds [16063895, 18919069, 1961604014, 0]
 2022-06-16 07:09:59 UTC GaussGen             INFO Evt 18919070,  Run 16063895,  Nr. in job = 98 with seeds [16063895, 18919070, 858621201, 0]
 2022-06-16 07:10:14 UTC GaussGenPrevPrev     INFO Evt 18919070,  Run 16063895,  Nr. in job = 98 with seeds [16063895, 18919070, 870439576, 0]
- PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity  
+ PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity
 2022-06-16 07:10:14 UTC GaussGenPrev         INFO Evt 18919070,  Run 16063895,  Nr. in job = 98 with seeds [16063895, 18919070, 1073124207, 0]
 2022-06-16 07:10:14 UTC GaussGenNext         INFO Evt 18919070,  Run 16063895,  Nr. in job = 98 with seeds [16063895, 18919070, 961586655, 0]
 2022-06-16 07:10:14 UTC GaussGenNextNext     INFO Evt 18919070,  Run 16063895,  Nr. in job = 98 with seeds [16063895, 18919070, 1189118751, 0]
@@ -3078,7 +3078,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 07:39:53 UTC GiGaGetPrevPrev...   INFO Number of extracted MCParticles 'MC/Particles' 	2
 2022-06-16 07:39:53 UTC GiGaGetPrevPrev...   INFO Number of extracted MCVertices  'MC/Vertices'  	3
 2022-06-16 07:39:53 UTC PrevEventGaussSim    INFO Evt 18919082,  Run 16063895,  Nr. in job = 110 with seeds [16063895, 18919082, 1986479590, 0]
-2022-06-16 07:40:41 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 07:40:41 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 07:40:41 UTC GiGaGetPrevEvent     INFO Number of extracted MCParticles 'MC/Particles' 	4572
 2022-06-16 07:40:41 UTC GiGaGetPrevEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	4871
 2022-06-16 07:40:41 UTC NextEventGaussSim    INFO Evt 18919082,  Run 16063895,  Nr. in job = 110 with seeds [16063895, 18919082, 289373838, 0]
@@ -3125,7 +3125,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 07:45:49 UTC GaussGenPrev         INFO Evt 18919085,  Run 16063895,  Nr. in job = 113 with seeds [16063895, 18919085, 1065434902, 0]
 2022-06-16 07:45:49 UTC GaussGenNext         INFO Evt 18919085,  Run 16063895,  Nr. in job = 113 with seeds [16063895, 18919085, 1272866797, 0]
 2022-06-16 07:45:49 UTC GaussGenNextNext     INFO Evt 18919085,  Run 16063895,  Nr. in job = 113 with seeds [16063895, 18919085, 664063929, 0]
- PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity  
+ PYTHIA Warning in SpaceShower::pT2nextQCD: weight above unity
 2022-06-16 07:45:49 UTC MainEventGaussSim    INFO Evt 18919085,  Run 16063895,  Nr. in job = 113 with seeds [16063895, 18919085, 2129305735, 0]
 2022-06-16 07:45:58 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	698
 2022-06-16 07:45:58 UTC GiGaGetMainEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	727
@@ -3330,14 +3330,14 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 08:08:49 UTC GiGaGetPrevEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	2850
 2022-06-16 08:08:49 UTC NextEventGaussSim    INFO Evt 18919095,  Run 16063895,  Nr. in job = 123 with seeds [16063895, 18919095, 1305441909, 0]
 2022-06-16 08:08:49 UTC NextNextEventGa...   INFO Evt 18919095,  Run 16063895,  Nr. in job = 123 with seeds [16063895, 18919095, 1473540236, 0]
-2022-06-16 08:09:12 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 08:09:12 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 08:09:12 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	1639
 2022-06-16 08:09:12 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	1685
 2022-06-16 08:09:13 UTC GaussGen             INFO Evt 18919096,  Run 16063895,  Nr. in job = 124 with seeds [16063895, 18919096, 1791872725, 0]
 2022-06-16 08:10:05 UTC GaussGenPrevPrev     INFO Evt 18919096,  Run 16063895,  Nr. in job = 124 with seeds [16063895, 18919096, 1576811730, 0]
 2022-06-16 08:10:05 UTC GaussGenPrev         INFO Evt 18919096,  Run 16063895,  Nr. in job = 124 with seeds [16063895, 18919096, 783518203, 0]
 2022-06-16 08:10:05 UTC GaussGenNext         INFO Evt 18919096,  Run 16063895,  Nr. in job = 124 with seeds [16063895, 18919096, 1150466591, 0]
- PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed  
+ PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed
 2022-06-16 08:10:05 UTC GaussGenNextNext     INFO Evt 18919096,  Run 16063895,  Nr. in job = 124 with seeds [16063895, 18919096, 1020684880, 0]
 2022-06-16 08:10:05 UTC MainEventGaussSim    INFO Evt 18919096,  Run 16063895,  Nr. in job = 124 with seeds [16063895, 18919096, 1537871055, 0]
 2022-06-16 08:10:44 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	3696
@@ -4037,7 +4037,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 09:26:38 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	1645
 2022-06-16 09:26:38 UTC GaussGen             INFO Evt 18919134,  Run 16063895,  Nr. in job = 162 with seeds [16063895, 18919134, 543541768, 0]
 2022-06-16 09:27:07 UTC GaussGenPrevPrev     INFO Evt 18919134,  Run 16063895,  Nr. in job = 162 with seeds [16063895, 18919134, 670614920, 0]
- PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed  
+ PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed
 2022-06-16 09:27:07 UTC GaussGenPrev         INFO Evt 18919134,  Run 16063895,  Nr. in job = 162 with seeds [16063895, 18919134, 1248848510, 0]
 2022-06-16 09:27:07 UTC GaussGenNext         INFO Evt 18919134,  Run 16063895,  Nr. in job = 162 with seeds [16063895, 18919134, 280326856, 0]
 2022-06-16 09:27:08 UTC GaussGenNextNext     INFO Evt 18919134,  Run 16063895,  Nr. in job = 162 with seeds [16063895, 18919134, 632443052, 0]
@@ -4127,7 +4127,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 09:38:36 UTC GiGaGetPrevEvent     INFO Number of extracted MCParticles 'MC/Particles' 	2570
 2022-06-16 09:38:36 UTC GiGaGetPrevEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	2672
 2022-06-16 09:38:36 UTC NextEventGaussSim    INFO Evt 18919138,  Run 16063895,  Nr. in job = 166 with seeds [16063895, 18919138, 480188673, 0]
-2022-06-16 09:38:58 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 09:38:58 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 09:38:58 UTC GiGaGetNextEvent     INFO Number of extracted MCParticles 'MC/Particles' 	2098
 2022-06-16 09:38:58 UTC GiGaGetNextEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	2324
 2022-06-16 09:38:58 UTC NextNextEventGa...   INFO Evt 18919138,  Run 16063895,  Nr. in job = 166 with seeds [16063895, 18919138, 737844277, 0]
@@ -4307,7 +4307,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 09:55:15 UTC GiGaGetNextEvent     INFO Number of extracted MCParticles 'MC/Particles' 	2202
 2022-06-16 09:55:15 UTC GiGaGetNextEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	2445
 2022-06-16 09:55:15 UTC NextNextEventGa...   INFO Evt 18919147,  Run 16063895,  Nr. in job = 175 with seeds [16063895, 18919147, 29444007, 0]
-2022-06-16 09:55:25 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 09:55:25 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 09:55:25 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	1005
 2022-06-16 09:55:25 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	1082
 2022-06-16 09:55:25 UTC GaussGen             INFO Evt 18919148,  Run 16063895,  Nr. in job = 176 with seeds [16063895, 18919148, 1220745606, 0]
@@ -4892,7 +4892,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 10:52:06 UTC GaussGenNextNext     INFO Evt 18919178,  Run 16063895,  Nr. in job = 206 with seeds [16063895, 18919178, 1824502784, 0]
 2022-06-16 10:52:06 UTC MainEventGaussSim    INFO Evt 18919178,  Run 16063895,  Nr. in job = 206 with seeds [16063895, 18919178, 1234961986, 0]
 2022-06-16 10:52:06 UTC GenToSim            ERROR No particle with barcode equal to 1!
-2022-06-16 10:52:46 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 10:52:46 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 10:52:46 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	3508
 2022-06-16 10:52:46 UTC GiGaGetMainEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	3770
 2022-06-16 10:52:46 UTC PrevPrevEventGa...   INFO Evt 18919178,  Run 16063895,  Nr. in job = 206 with seeds [16063895, 18919178, 690584977, 0]
@@ -5113,7 +5113,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:14:50 UTC GiGaGetNextEvent     INFO Number of extracted MCParticles 'MC/Particles' 	664
 2022-06-16 11:14:50 UTC GiGaGetNextEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	818
 2022-06-16 11:14:50 UTC NextNextEventGa...   INFO Evt 18919188,  Run 16063895,  Nr. in job = 216 with seeds [16063895, 18919188, 1293107604, 0]
-2022-06-16 11:15:29 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 11:15:29 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 11:15:29 UTC GiGaGetNextNext...   INFO Number of extracted MCParticles 'MC/Particles' 	3212
 2022-06-16 11:15:29 UTC GiGaGetNextNext...   INFO Number of extracted MCVertices  'MC/Vertices'  	3342
 2022-06-16 11:15:29 UTC GaussGen             INFO Evt 18919189,  Run 16063895,  Nr. in job = 217 with seeds [16063895, 18919189, 2114440527, 0]
@@ -5200,7 +5200,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:23:22 UTC GaussGenNext         INFO Evt 18919193,  Run 16063895,  Nr. in job = 221 with seeds [16063895, 18919193, 642742040, 0]
 2022-06-16 11:23:22 UTC GaussGenNextNext     INFO Evt 18919193,  Run 16063895,  Nr. in job = 221 with seeds [16063895, 18919193, 366662791, 0]
 2022-06-16 11:23:23 UTC MainEventGaussSim    INFO Evt 18919193,  Run 16063895,  Nr. in job = 221 with seeds [16063895, 18919193, 1605546335, 0]
-2022-06-16 11:24:02 UTC /dd/Structure/L...  ERROR Gap not found! 
+2022-06-16 11:24:02 UTC /dd/Structure/L...  ERROR Gap not found!
 2022-06-16 11:24:02 UTC GiGaGetMainEvent     INFO Number of extracted MCParticles 'MC/Particles' 	3663
 2022-06-16 11:24:02 UTC GiGaGetMainEvent     INFO Number of extracted MCVertices  'MC/Vertices'  	4029
 2022-06-16 11:24:02 UTC PrevPrevEventGa...   INFO Evt 18919193,  Run 16063895,  Nr. in job = 221 with seeds [16063895, 18919193, 1241136042, 0]
@@ -5295,7 +5295,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC GaussGen          SUCCESS ==================================================================
 2022-06-16 11:35:44 UTC GaussGen          SUCCESS 225 events processed
 2022-06-16 11:35:44 UTC GaussGen          SUCCESS ==================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlg        INFO 
+2022-06-16 11:35:44 UTC GenMonitorAlg        INFO
 ======================== Generators Statistics ====================
 =                                                                 =
 = Number of particles generated: 502233
@@ -5315,11 +5315,11 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 = Mean charged stable multiplicity in LHCb eta: 71.64
 =                                                                 =
 ===================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlg     SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2 
+2022-06-16 11:35:44 UTC GenMonitorAlg     SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2
 2022-06-16 11:35:44 UTC GaussGenPrevPrev  SUCCESS ==================================================================
 2022-06-16 11:35:44 UTC GaussGenPrevPrev  SUCCESS 225 events processed
 2022-06-16 11:35:44 UTC GaussGenPrevPrev  SUCCESS ==================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgPr...   INFO 
+2022-06-16 11:35:44 UTC GenMonitorAlgPr...   INFO
 ======================== Generators Statistics ====================
 =                                                                 =
 = Number of particles generated: 172487
@@ -5339,11 +5339,11 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 = Mean charged stable multiplicity in LHCb eta: 27.2077
 =                                                                 =
 ===================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgPr...SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2 
+2022-06-16 11:35:44 UTC GenMonitorAlgPr...SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2
 2022-06-16 11:35:44 UTC GaussGenPrev      SUCCESS ==================================================================
 2022-06-16 11:35:44 UTC GaussGenPrev      SUCCESS 225 events processed
 2022-06-16 11:35:44 UTC GaussGenPrev      SUCCESS ==================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgPrev    INFO 
+2022-06-16 11:35:44 UTC GenMonitorAlgPrev    INFO
 ======================== Generators Statistics ====================
 =                                                                 =
 = Number of particles generated: 169143
@@ -5363,11 +5363,11 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 = Mean charged stable multiplicity in LHCb eta: 28.2414
 =                                                                 =
 ===================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgPrev SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2 
+2022-06-16 11:35:44 UTC GenMonitorAlgPrev SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2
 2022-06-16 11:35:44 UTC GaussGenNext      SUCCESS ==================================================================
 2022-06-16 11:35:44 UTC GaussGenNext      SUCCESS 225 events processed
 2022-06-16 11:35:44 UTC GaussGenNext      SUCCESS ==================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgNext    INFO 
+2022-06-16 11:35:44 UTC GenMonitorAlgNext    INFO
 ======================== Generators Statistics ====================
 =                                                                 =
 = Number of particles generated: 196194
@@ -5387,11 +5387,11 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 = Mean charged stable multiplicity in LHCb eta: 33.4689
 =                                                                 =
 ===================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgNext SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2 
+2022-06-16 11:35:44 UTC GenMonitorAlgNext SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2
 2022-06-16 11:35:44 UTC GaussGenNextNext  SUCCESS ==================================================================
 2022-06-16 11:35:44 UTC GaussGenNextNext  SUCCESS 225 events processed
 2022-06-16 11:35:44 UTC GaussGenNextNext  SUCCESS ==================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgNe...   INFO 
+2022-06-16 11:35:44 UTC GenMonitorAlgNe...   INFO
 ======================== Generators Statistics ====================
 =                                                                 =
 = Number of particles generated: 176865
@@ -5411,7 +5411,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 = Mean charged stable multiplicity in LHCb eta: 29.7351
 =                                                                 =
 ===================================================================
-2022-06-16 11:35:44 UTC GenMonitorAlgNe...SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2 
+2022-06-16 11:35:44 UTC GenMonitorAlgNe...SUCCESS Booked 21 Histogram(s) : 1D=19 2D=2
 2022-06-16 11:35:44 UTC MainEventGaussSim SUCCESS ==================================================================
 2022-06-16 11:35:44 UTC MainEventGaussSim SUCCESS 225 events processed
 2022-06-16 11:35:44 UTC MainEventGaussSim SUCCESS ==================================================================
@@ -5509,7 +5509,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "# PackedData"                                  |       225 |      58691 |     260.85 |     128.51 |      42.000 |      871.00 |
 2022-06-16 11:35:44 UTC VeloGaussMoni        INFO ------------------------------------------------------
-2022-06-16 11:35:44 UTC VeloGaussMoni        INFO                 - VeloGaussMoni table -                 
+2022-06-16 11:35:44 UTC VeloGaussMoni        INFO                 - VeloGaussMoni table -
 2022-06-16 11:35:44 UTC VeloGaussMoni        INFO ------------------------------------------------------
 2022-06-16 11:35:44 UTC VeloGaussMoni        INFO | Number of MCHits/Event:       1834.61+/-58.8047
 2022-06-16 11:35:44 UTC VeloGaussMoni        INFO | Number of PileUpMCHits/Event: 82.4267+/-3.1112
@@ -5519,7 +5519,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC TTHitMonitor         INFO Mean beta * gamma: 1130.64
 2022-06-16 11:35:44 UTC TTHitMonitor         INFO Most Probable deposited charge: 0.155692
 2022-06-16 11:35:44 UTC TTHitMonitor         INFO Half Sample width 0.0531756
-2022-06-16 11:35:44 UTC TTHitMonitor      SUCCESS Booked 7 Histogram(s) : 1D=7 
+2022-06-16 11:35:44 UTC TTHitMonitor      SUCCESS Booked 7 Histogram(s) : 1D=7
 2022-06-16 11:35:44 UTC TTHitMonitor      SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |     14955 |      14955 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -5530,7 +5530,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC ITHitMonitor         INFO Mean beta * gamma: 3779.83
 2022-06-16 11:35:44 UTC ITHitMonitor         INFO Most Probable deposited charge: 0.122015
 2022-06-16 11:35:44 UTC ITHitMonitor         INFO Half Sample width 0.0451823
-2022-06-16 11:35:44 UTC ITHitMonitor      SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC ITHitMonitor      SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC ITHitMonitor      SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      7223 |       7223 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -5541,20 +5541,20 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC OTHitMonitor         INFO Mean beta * gamma: 1554.73
 2022-06-16 11:35:44 UTC OTHitMonitor         INFO Most Probable deposited charge: 0.196911
 2022-06-16 11:35:44 UTC OTHitMonitor         INFO Half Sample width 0.0784103
-2022-06-16 11:35:44 UTC OTHitMonitor      SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC OTHitMonitor      SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC OTHitMonitor      SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |     27411 |      27411 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
  | "betaGamma"                                     |    413895 |6.434937e+08 |     1554.7 |     6180.9 |   0.0011493 |  2.7121e+05 |
  | "numberHits"                                    |       225 |     413895 |     1839.5 |     932.00 |      186.00 |      6942.0 |
-2022-06-16 11:35:44 UTC SpdMonitor        SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC PrsMonitor        SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC EcalMonitor       SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC HcalMonitor       SUCCESS Booked 16 Histogram(s) : 1D=16 
+2022-06-16 11:35:44 UTC SpdMonitor        SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC PrsMonitor        SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC EcalMonitor       SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC HcalMonitor       SUCCESS Booked 16 Histogram(s) : 1D=16
 2022-06-16 11:35:44 UTC MuonHitChecker       INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitChecker       INFO        Muon Monitoring Table 
+2022-06-16 11:35:44 UTC MuonHitChecker       INFO        Muon Monitoring Table
 2022-06-16 11:35:44 UTC MuonHitChecker       INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitChecker       INFO  M1        M2        M3        M4        M5 
+2022-06-16 11:35:44 UTC MuonHitChecker       INFO  M1        M2        M3        M4        M5
 2022-06-16 11:35:44 UTC MuonHitChecker       INFO 105.284  29.409  7.902  3.289  3.453   R1
 2022-06-16 11:35:44 UTC MuonHitChecker       INFO 131.844  28.644  4.533  2.458  1.804   R2
 2022-06-16 11:35:44 UTC MuonHitChecker       INFO 141.196  14.129  2.893  2.124  1.573   R3
@@ -6022,7 +6022,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "# PackedData"                                  |       183 |      18535 |     101.28 |     105.61 |      0.0000 |      493.00 |
 2022-06-16 11:35:44 UTC VeloGaussMoniPr...   INFO ------------------------------------------------------
-2022-06-16 11:35:44 UTC VeloGaussMoniPr...   INFO                 - VeloGaussMoni table -                 
+2022-06-16 11:35:44 UTC VeloGaussMoniPr...   INFO                 - VeloGaussMoni table -
 2022-06-16 11:35:44 UTC VeloGaussMoniPr...   INFO ------------------------------------------------------
 2022-06-16 11:35:44 UTC VeloGaussMoniPr...   INFO | Number of MCHits/Event:       746.23+/-57.4145
 2022-06-16 11:35:44 UTC VeloGaussMoniPr...   INFO | Number of PileUpMCHits/Event: 38.459+/-2.96743
@@ -6032,7 +6032,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC TTHitMonitorPre...   INFO Mean beta * gamma: 951.024
 2022-06-16 11:35:44 UTC TTHitMonitorPre...   INFO Most Probable deposited charge: 0.155281
 2022-06-16 11:35:44 UTC TTHitMonitorPre...   INFO Half Sample width 0.0546823
-2022-06-16 11:35:44 UTC TTHitMonitorPre...SUCCESS Booked 7 Histogram(s) : 1D=7 
+2022-06-16 11:35:44 UTC TTHitMonitorPre...SUCCESS Booked 7 Histogram(s) : 1D=7
 2022-06-16 11:35:44 UTC TTHitMonitorPre...SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      5140 |       5140 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -6043,7 +6043,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC ITHitMonitorPre...   INFO Mean beta * gamma: 2941.25
 2022-06-16 11:35:44 UTC ITHitMonitorPre...   INFO Most Probable deposited charge: 0.122122
 2022-06-16 11:35:44 UTC ITHitMonitorPre...   INFO Half Sample width 0.0453005
-2022-06-16 11:35:44 UTC ITHitMonitorPre...SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC ITHitMonitorPre...SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC ITHitMonitorPre...SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      2431 |       2431 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -6054,20 +6054,20 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC OTHitMonitorPre...   INFO Mean beta * gamma: 1433.15
 2022-06-16 11:35:44 UTC OTHitMonitorPre...   INFO Most Probable deposited charge: 0.198083
 2022-06-16 11:35:44 UTC OTHitMonitorPre...   INFO Half Sample width 0.0795939
-2022-06-16 11:35:44 UTC OTHitMonitorPre...SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC OTHitMonitorPre...SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC OTHitMonitorPre...SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      9149 |       9149 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
  | "betaGamma"                                     |    130972 |1.877024e+08 |     1433.1 |     5710.3 |   0.0025671 |  2.0436e+05 |
  | "numberHits"                                    |       183 |     130972 |     715.69 |     770.53 |      0.0000 |      4136.0 |
-2022-06-16 11:35:44 UTC SpdMonitorPrevPrevSUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC PrsMonitorPrevPrevSUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC EcalMonitorPrev...SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC HcalMonitorPrev...SUCCESS Booked 16 Histogram(s) : 1D=16 
+2022-06-16 11:35:44 UTC SpdMonitorPrevPrevSUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC PrsMonitorPrevPrevSUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC EcalMonitorPrev...SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC HcalMonitorPrev...SUCCESS Booked 16 Histogram(s) : 1D=16
 2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO        Muon Monitoring Table 
+2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO        Muon Monitoring Table
 2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO  M1        M2        M3        M4        M5 
+2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO  M1        M2        M3        M4        M5
 2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO 108.005  29.481  7.415  3.311  3.388   R1
 2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO 133.011  28.918  4.563  2.656  1.770   R2
 2022-06-16 11:35:44 UTC MuonHitCheckerP...   INFO 144.809  14.601  2.749  2.246  1.645   R3
@@ -6535,7 +6535,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "# PackedData"                                  |       174 |      18142 |     104.26 |     115.94 |      0.0000 |      831.00 |
 2022-06-16 11:35:44 UTC VeloGaussMoniPrev    INFO ------------------------------------------------------
-2022-06-16 11:35:44 UTC VeloGaussMoniPrev    INFO                 - VeloGaussMoni table -                 
+2022-06-16 11:35:44 UTC VeloGaussMoniPrev    INFO                 - VeloGaussMoni table -
 2022-06-16 11:35:44 UTC VeloGaussMoniPrev    INFO ------------------------------------------------------
 2022-06-16 11:35:44 UTC VeloGaussMoniPrev    INFO | Number of MCHits/Event:       767.264+/-63.3792
 2022-06-16 11:35:44 UTC VeloGaussMoniPrev    INFO | Number of PileUpMCHits/Event: 39.8333+/-3.40882
@@ -6545,7 +6545,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC TTHitMonitorPrev     INFO Mean beta * gamma: 987.054
 2022-06-16 11:35:44 UTC TTHitMonitorPrev     INFO Most Probable deposited charge: 0.155522
 2022-06-16 11:35:44 UTC TTHitMonitorPrev     INFO Half Sample width 0.0541221
-2022-06-16 11:35:44 UTC TTHitMonitorPrev  SUCCESS Booked 7 Histogram(s) : 1D=7 
+2022-06-16 11:35:44 UTC TTHitMonitorPrev  SUCCESS Booked 7 Histogram(s) : 1D=7
 2022-06-16 11:35:44 UTC TTHitMonitorPrev  SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      4314 |       4314 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -6556,7 +6556,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC ITHitMonitorPrev     INFO Mean beta * gamma: 3333.64
 2022-06-16 11:35:44 UTC ITHitMonitorPrev     INFO Most Probable deposited charge: 0.122751
 2022-06-16 11:35:44 UTC ITHitMonitorPrev     INFO Half Sample width 0.0455648
-2022-06-16 11:35:44 UTC ITHitMonitorPrev  SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC ITHitMonitorPrev  SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC ITHitMonitorPrev  SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      2168 |       2168 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -6567,20 +6567,20 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC OTHitMonitorPrev     INFO Mean beta * gamma: 1370.06
 2022-06-16 11:35:44 UTC OTHitMonitorPrev     INFO Most Probable deposited charge: 0.197488
 2022-06-16 11:35:44 UTC OTHitMonitorPrev     INFO Half Sample width 0.0808013
-2022-06-16 11:35:44 UTC OTHitMonitorPrev  SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC OTHitMonitorPrev  SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC OTHitMonitorPrev  SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      8818 |       8818 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
  | "betaGamma"                                     |    125510 |1.719562e+08 |     1370.1 |     5210.9 |   0.0017401 |  1.2398e+05 |
  | "numberHits"                                    |       174 |     125510 |     721.32 |     803.10 |      0.0000 |      5415.0 |
-2022-06-16 11:35:44 UTC SpdMonitorPrev    SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC PrsMonitorPrev    SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC EcalMonitorPrev   SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC HcalMonitorPrev   SUCCESS Booked 16 Histogram(s) : 1D=16 
+2022-06-16 11:35:44 UTC SpdMonitorPrev    SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC PrsMonitorPrev    SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC EcalMonitorPrev   SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC HcalMonitorPrev   SUCCESS Booked 16 Histogram(s) : 1D=16
 2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO        Muon Monitoring Table 
+2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO        Muon Monitoring Table
 2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO  M1        M2        M3        M4        M5 
+2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO  M1        M2        M3        M4        M5
 2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO 104.713  29.724  7.391  3.276  3.333   R1
 2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO 131.862  30.322  4.448  1.977  1.626   R2
 2022-06-16 11:35:44 UTC MuonHitCheckerPrev   INFO 140.115  14.879  2.977  2.155  1.540   R3
@@ -7048,7 +7048,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "# PackedData"                                  |       177 |      22907 |     129.42 |     134.99 |      0.0000 |      742.00 |
 2022-06-16 11:35:44 UTC VeloGaussMoniNext    INFO ------------------------------------------------------
-2022-06-16 11:35:44 UTC VeloGaussMoniNext    INFO                 - VeloGaussMoni table -                 
+2022-06-16 11:35:44 UTC VeloGaussMoniNext    INFO                 - VeloGaussMoni table -
 2022-06-16 11:35:44 UTC VeloGaussMoniNext    INFO ------------------------------------------------------
 2022-06-16 11:35:44 UTC VeloGaussMoniNext    INFO | Number of MCHits/Event:       897.898+/-66.8869
 2022-06-16 11:35:44 UTC VeloGaussMoniNext    INFO | Number of PileUpMCHits/Event: 44.2486+/-3.21343
@@ -7058,7 +7058,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC TTHitMonitorNext     INFO Mean beta * gamma: 973.497
 2022-06-16 11:35:44 UTC TTHitMonitorNext     INFO Most Probable deposited charge: 0.156102
 2022-06-16 11:35:44 UTC TTHitMonitorNext     INFO Half Sample width 0.0565385
-2022-06-16 11:35:44 UTC TTHitMonitorNext  SUCCESS Booked 7 Histogram(s) : 1D=7 
+2022-06-16 11:35:44 UTC TTHitMonitorNext  SUCCESS Booked 7 Histogram(s) : 1D=7
 2022-06-16 11:35:44 UTC TTHitMonitorNext  SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      6160 |       6160 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -7069,7 +7069,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC ITHitMonitorNext     INFO Mean beta * gamma: 3622.9
 2022-06-16 11:35:44 UTC ITHitMonitorNext     INFO Most Probable deposited charge: 0.12119
 2022-06-16 11:35:44 UTC ITHitMonitorNext     INFO Half Sample width 0.0452103
-2022-06-16 11:35:44 UTC ITHitMonitorNext  SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC ITHitMonitorNext  SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC ITHitMonitorNext  SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      2805 |       2805 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -7080,20 +7080,20 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC OTHitMonitorNext     INFO Mean beta * gamma: 1444.12
 2022-06-16 11:35:44 UTC OTHitMonitorNext     INFO Most Probable deposited charge: 0.197725
 2022-06-16 11:35:44 UTC OTHitMonitorNext     INFO Half Sample width 0.0820707
-2022-06-16 11:35:44 UTC OTHitMonitorNext  SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC OTHitMonitorNext  SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC OTHitMonitorNext  SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |     11290 |      11290 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
  | "betaGamma"                                     |    163011 |2.354078e+08 |     1444.1 |     5510.4 |   0.0022850 |  1.6692e+05 |
  | "numberHits"                                    |       177 |     163011 |     920.97 |     968.88 |      0.0000 |      4974.0 |
-2022-06-16 11:35:44 UTC SpdMonitorNext    SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC PrsMonitorNext    SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC EcalMonitorNext   SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC HcalMonitorNext   SUCCESS Booked 16 Histogram(s) : 1D=16 
+2022-06-16 11:35:44 UTC SpdMonitorNext    SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC PrsMonitorNext    SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC EcalMonitorNext   SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC HcalMonitorNext   SUCCESS Booked 16 Histogram(s) : 1D=16
 2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO        Muon Monitoring Table 
+2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO        Muon Monitoring Table
 2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO  M1        M2        M3        M4        M5 
+2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO  M1        M2        M3        M4        M5
 2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO 103.367  29.186  7.847  3.141  3.661   R1
 2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO 128.333  27.542  4.638  2.610  1.910   R2
 2022-06-16 11:35:44 UTC MuonHitCheckerNext   INFO 139.740  14.023  2.497  1.960  1.576   R3
@@ -7561,7 +7561,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "# PackedData"                                  |       185 |      20227 |     109.34 |     107.27 |      0.0000 |      485.00 |
 2022-06-16 11:35:44 UTC VeloGaussMoniNe...   INFO ------------------------------------------------------
-2022-06-16 11:35:44 UTC VeloGaussMoniNe...   INFO                 - VeloGaussMoni table -                 
+2022-06-16 11:35:44 UTC VeloGaussMoniNe...   INFO                 - VeloGaussMoni table -
 2022-06-16 11:35:44 UTC VeloGaussMoniNe...   INFO ------------------------------------------------------
 2022-06-16 11:35:44 UTC VeloGaussMoniNe...   INFO | Number of MCHits/Event:       788.941+/-54.9689
 2022-06-16 11:35:44 UTC VeloGaussMoniNe...   INFO | Number of PileUpMCHits/Event: 36.8432+/-2.62238
@@ -7571,7 +7571,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC TTHitMonitorNex...   INFO Mean beta * gamma: 1026.88
 2022-06-16 11:35:44 UTC TTHitMonitorNex...   INFO Most Probable deposited charge: 0.155496
 2022-06-16 11:35:44 UTC TTHitMonitorNex...   INFO Half Sample width 0.0540266
-2022-06-16 11:35:44 UTC TTHitMonitorNex...SUCCESS Booked 7 Histogram(s) : 1D=7 
+2022-06-16 11:35:44 UTC TTHitMonitorNex...SUCCESS Booked 7 Histogram(s) : 1D=7
 2022-06-16 11:35:44 UTC TTHitMonitorNex...SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      5609 |       5609 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -7582,7 +7582,7 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC ITHitMonitorNex...   INFO Mean beta * gamma: 3640.69
 2022-06-16 11:35:44 UTC ITHitMonitorNex...   INFO Most Probable deposited charge: 0.1209
 2022-06-16 11:35:44 UTC ITHitMonitorNex...   INFO Half Sample width 0.0457678
-2022-06-16 11:35:44 UTC ITHitMonitorNex...SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC ITHitMonitorNex...SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC ITHitMonitorNex...SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      2485 |       2485 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
@@ -7593,20 +7593,20 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC OTHitMonitorNex...   INFO Mean beta * gamma: 1486.24
 2022-06-16 11:35:44 UTC OTHitMonitorNex...   INFO Most Probable deposited charge: 0.19752
 2022-06-16 11:35:44 UTC OTHitMonitorNex...   INFO Half Sample width 0.0810713
-2022-06-16 11:35:44 UTC OTHitMonitorNex...SUCCESS Booked 9 Histogram(s) : 1D=9 
+2022-06-16 11:35:44 UTC OTHitMonitorNex...SUCCESS Booked 9 Histogram(s) : 1D=9
 2022-06-16 11:35:44 UTC OTHitMonitorNex...SUCCESS Number of counters : 3
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "DeltaRay"                                      |      9894 |       9894 |     1.0000 |     0.0000 |      1.0000 |      1.0000 |
  | "betaGamma"                                     |    144765 |2.151553e+08 |     1486.2 |     6388.3 |   0.0028416 |  2.8096e+05 |
  | "numberHits"                                    |       185 |     144765 |     782.51 |     778.91 |      0.0000 |      3688.0 |
-2022-06-16 11:35:44 UTC SpdMonitorNextNextSUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC PrsMonitorNextNextSUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC EcalMonitorNext...SUCCESS Booked 19 Histogram(s) : 1D=19 
-2022-06-16 11:35:44 UTC HcalMonitorNext...SUCCESS Booked 16 Histogram(s) : 1D=16 
+2022-06-16 11:35:44 UTC SpdMonitorNextNextSUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC PrsMonitorNextNextSUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC EcalMonitorNext...SUCCESS Booked 19 Histogram(s) : 1D=19
+2022-06-16 11:35:44 UTC HcalMonitorNext...SUCCESS Booked 16 Histogram(s) : 1D=16
 2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO        Muon Monitoring Table 
+2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO        Muon Monitoring Table
 2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO -----------------------------------------------------------------
-2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO  M1        M2        M3        M4        M5 
+2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO  M1        M2        M3        M4        M5
 2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO 105.011  29.092  7.205  3.092  3.368   R1
 2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO 131.584  29.276  4.827  2.622  1.941   R2
 2022-06-16 11:35:44 UTC MuonHitCheckerN...   INFO 140.373  13.930  2.914  2.200  1.605   R3
@@ -7981,70 +7981,70 @@ Warning: Bad energy non-conservation detected, will re-sample the interaction
 2022-06-16 11:35:44 UTC FSROutputStream...   INFO Set up File Summary Record
 2022-06-16 11:35:44 UTC FSROutputStream...   INFO Events output: 1
 2022-06-16 11:35:44 UTC EventLoopMgr         INFO Histograms converted successfully according to request.
-2022-06-16 11:35:44 UTC LoKiSvc           SUCCESS 
+2022-06-16 11:35:44 UTC LoKiSvc           SUCCESS
 
 
 Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good
 Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good
-LoKi                                                                                               LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                       Good Bye from LoKi!                                     LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                      (LOops & KInematics)                                     LoKi 
-LoKi                                                                                               LoKi 
-LoKi                         Smart & Friendly C++ Physics Analysis Tool Kit                        LoKi 
-LoKi                                                                                               LoKi 
-LoKi                                                                                               LoKi 
-LoKi                      LoKi mailing list ('LoKi-club') : lhcb-loki@cern.ch                      LoKi 
-LoKi      Comments, suggestions, criticism, ideas, questions and requests are *ALWAYS* welcome     LoKi 
-LoKi                                                                                               LoKi 
+LoKi                                                                                               LoKi
+LoKi                                                                                               LoKi
+LoKi                                       Good Bye from LoKi!                                     LoKi
+LoKi                                                                                               LoKi
+LoKi                                      (LOops & KInematics)                                     LoKi
+LoKi                                                                                               LoKi
+LoKi                         Smart & Friendly C++ Physics Analysis Tool Kit                        LoKi
+LoKi                                                                                               LoKi
+LoKi                                                                                               LoKi
+LoKi                      LoKi mailing list ('LoKi-club') : lhcb-loki@cern.ch                      LoKi
+LoKi      Comments, suggestions, criticism, ideas, questions and requests are *ALWAYS* welcome     LoKi
+LoKi                                                                                               LoKi
 Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good
 Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good
 
 
 
 2022-06-16 11:35:44 UTC ToolSvc              INFO Removing all tools created by ToolSvc
-2022-06-16 11:35:44 UTC NextNextEventGa...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC NextNextEventGa...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC NextNextEventGa...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.7054 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   442470.7 |     1966.5 |     50.585 |      1756.5 |      1994.5 |
-2022-06-16 11:35:44 UTC NextEventGaussS...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC NextEventGaussS...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC NextEventGaussS...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.7054 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   442466.6 |     1966.5 |     50.661 |      1752.4 |      1994.5 |
-2022-06-16 11:35:44 UTC PrevEventGaussS...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC PrevEventGaussS...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC PrevEventGaussS...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.7566 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   442450.4 |     1966.4 |     50.734 |      1748.3 |      1994.5 |
-2022-06-16 11:35:44 UTC PrevPrevEventGa...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC PrevPrevEventGa...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC PrevPrevEventGa...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.7566 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   442273.1 |     1965.7 |     52.907 |      1670.2 |      1994.5 |
-2022-06-16 11:35:44 UTC MainEventGaussS...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC MainEventGaussS...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC MainEventGaussS...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.6644 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |     441967 |     1964.3 |     61.304 |      1432.1 |      1994.5 |
-2022-06-16 11:35:44 UTC GaussGenNextNex...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC GaussGenNextNex...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC GaussGenNextNex...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.6644 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   441883.2 |     1963.9 |     64.700 |      1348.2 |      1994.5 |
-2022-06-16 11:35:44 UTC GaussGenNext.Ga...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC GaussGenNext.Ga...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC GaussGenNext.Ga...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.6644 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   441883.2 |     1963.9 |     64.700 |      1348.2 |      1994.5 |
-2022-06-16 11:35:44 UTC GaussGenPrev.Ga...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC GaussGenPrev.Ga...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC GaussGenPrev.Ga...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.6644 |      0.0000 |      97.160 |
  | "Total Memory/MB"                               |       225 |   441883.2 |     1963.9 |     64.700 |      1348.2 |      1994.5 |
-2022-06-16 11:35:44 UTC GaussGenPrevPre...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC GaussGenPrevPre...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC GaussGenPrevPre...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.6644 |      0.0000 |      97.160 |
@@ -8054,7 +8054,7 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
 2022-06-16 11:35:44 UTC Generation.Sign...SUCCESS  #WARNINGS   = 1        Message = 'releaseSvc(IInterface):: IInterface* is not active'
 2022-06-16 11:35:44 UTC ToolSvc.EvtGenD...SUCCESS Exceptions/Errors/Warnings/Infos Statistics : 0/1/0/0
 2022-06-16 11:35:44 UTC ToolSvc.EvtGenD...SUCCESS  #ERRORS     = 1        Message = 'EvtGen particle not decayed [Generation]'
-2022-06-16 11:35:44 UTC GaussGen.GaussG...SUCCESS Booked 4 Histogram(s) : 1D=4 
+2022-06-16 11:35:44 UTC GaussGen.GaussG...SUCCESS Booked 4 Histogram(s) : 1D=4
 2022-06-16 11:35:44 UTC GaussGen.GaussG...SUCCESS Number of counters : 2
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  | "Delta Memory/MB"                               |       215 |    201.888 |    0.93901 |     7.6644 |      0.0000 |      97.160 |
@@ -8082,15 +8082,15 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
  |                                                                                                                 |
  *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
 
- *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
- |                                                                                                                 | 
- |  times   message                                                                                                | 
- |                                                                                                                 | 
- |      9   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
- |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
- |      1   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
- |                                                                                                                 | 
- *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------*
+ |                                                                                                                 |
+ |  times   message                                                                                                |
+ |                                                                                                                 |
+ |      9   Error in BeamRemnants::setKinematics: kinematics construction failed                                   |
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            |
+ |      1   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------*
 
  *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
  |                                                                                                                 |
@@ -8109,15 +8109,15 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
  |                                                                                                                 |
  *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
 
- *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
- |                                                                                                                 | 
- |  times   message                                                                                                | 
- |                                                                                                                 | 
- |      8   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
- |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
- |      2   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
- |                                                                                                                 | 
- *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------*
+ |                                                                                                                 |
+ |  times   message                                                                                                |
+ |                                                                                                                 |
+ |      8   Error in BeamRemnants::setKinematics: kinematics construction failed                                   |
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            |
+ |      2   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------*
 
  *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
  |                                                                                                                 |
@@ -8136,16 +8136,16 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
  |                                                                                                                 |
  *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
 
- *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
- |                                                                                                                 | 
- |  times   message                                                                                                | 
- |                                                                                                                 | 
- |      3   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
- |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
- |      8   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
- |      1   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
- |                                                                                                                 | 
- *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------*
+ |                                                                                                                 |
+ |  times   message                                                                                                |
+ |                                                                                                                 |
+ |      3   Error in BeamRemnants::setKinematics: kinematics construction failed                                   |
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            |
+ |      8   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 |
+ |      1   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                |
+ |                                                                                                                 |
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------*
 
  *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
  |                                                                                                                 |
@@ -8164,16 +8164,16 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
  |                                                                                                                 |
  *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
 
- *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
- |                                                                                                                 | 
- |  times   message                                                                                                | 
- |                                                                                                                 | 
- |      3   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
- |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
- |      4   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
- |                                                                                                                 | 
- *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
-2022-06-16 11:35:44 UTC Generation.Sign...SUCCESS Booked 3 Histogram(s) : 2D=3 
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------*
+ |                                                                                                                 |
+ |  times   message                                                                                                |
+ |                                                                                                                 |
+ |      3   Error in BeamRemnants::setKinematics: kinematics construction failed                                   |
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            |
+ |      4   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------*
+2022-06-16 11:35:44 UTC Generation.Sign...SUCCESS Booked 3 Histogram(s) : 2D=3
 2022-06-16 11:35:44 UTC Generation.Sign...SUCCESS Number of counters : 4
  |    Counter                                      |     #     |    sum     | mean/eff^* | rms/err^*  |     min     |     max     |
  |*"Efficiency for  [B+]cc "                       |      2915 |        226 |(  7.75300 +- 0.495327 )%|   -------   |   -------   |
@@ -8200,35 +8200,35 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
  |                                                                                                                 |
  *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
 
- *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
- |                                                                                                                 | 
- |  times   message                                                                                                | 
- |                                                                                                                 | 
- |      9   Abort from Pythia::forceHadronLevel: check of event revealed problems                                  | 
- |  39377   Abort from Pythia::forceHadronLevel: hadronLevel failed; giving up                                     | 
- |    444   Abort from Pythia::next: check of event revealed problems                                              | 
- |  15823   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
- |     20   Error in HadronLevel::traceFromAcol: colour tracing failed                                             | 
- | 393100   Error in HadronLevel::traceFromCol: colour tracing failed                                              | 
- |      6   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
- |      5   Error in ParticleDecays::decay: failed to find workable decay channel                                  | 
- |  38761   Error in ProcessLevel::findJunctions: N(unmatched (anti)colour tags) != 3                              | 
- |      9   Error in Pythia::check: energy-momentum not conserved                                                  | 
- |    655   Error in Pythia::check: unmatched particle energy/momentum/mass                                        | 
- | 394585   Error in Pythia::forceHadronLevel: hadronLevel failed; try again                                       | 
- |    280   Error in Pythia::next: partonLevel failed; try again                                                   | 
- |     39   Error in SpaceShower::pT2nearQCDthreshold: stuck in loop                                               | 
- |   1442   Error in StringFragmentation::fragment: stuck in joining                                               | 
- |     17   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      | 
- |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
- |     22   Warning in MultipartonInteractions::pTfirst: weight above unity                                        | 
- |     91   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
- |    418   Warning in Pythia::check: energy-momentum not quite conserved                                          | 
- |     71   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 | 
- |   5133   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
- |    333   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
- |                                                                                                                 | 
- *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------*
+ |                                                                                                                 |
+ |  times   message                                                                                                |
+ |                                                                                                                 |
+ |      9   Abort from Pythia::forceHadronLevel: check of event revealed problems                                  |
+ |  39377   Abort from Pythia::forceHadronLevel: hadronLevel failed; giving up                                     |
+ |    444   Abort from Pythia::next: check of event revealed problems                                              |
+ |  15823   Error in BeamRemnants::setKinematics: kinematics construction failed                                   |
+ |     20   Error in HadronLevel::traceFromAcol: colour tracing failed                                             |
+ | 393100   Error in HadronLevel::traceFromCol: colour tracing failed                                              |
+ |      6   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           |
+ |      5   Error in ParticleDecays::decay: failed to find workable decay channel                                  |
+ |  38761   Error in ProcessLevel::findJunctions: N(unmatched (anti)colour tags) != 3                              |
+ |      9   Error in Pythia::check: energy-momentum not conserved                                                  |
+ |    655   Error in Pythia::check: unmatched particle energy/momentum/mass                                        |
+ | 394585   Error in Pythia::forceHadronLevel: hadronLevel failed; try again                                       |
+ |    280   Error in Pythia::next: partonLevel failed; try again                                                   |
+ |     39   Error in SpaceShower::pT2nearQCDthreshold: stuck in loop                                               |
+ |   1442   Error in StringFragmentation::fragment: stuck in joining                                               |
+ |     17   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      |
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            |
+ |     22   Warning in MultipartonInteractions::pTfirst: weight above unity                                        |
+ |     91   Warning in MultipartonInteractions::pTnext: weight above unity                                         |
+ |    418   Warning in Pythia::check: energy-momentum not quite conserved                                          |
+ |     71   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 |
+ |   5133   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 |
+ |    333   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                |
+ |                                                                                                                 |
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------*
 2022-06-16 11:35:44 UTC TimingAuditor.T...   INFO --------------------------------------------------------------------------------------------------
 2022-06-16 11:35:44 UTC TimingAuditor.T...   INFO This machine has a speed about   2.98 times the speed of a 2.8 GHz Xeon.
 2022-06-16 11:35:44 UTC TimingAuditor.T...   INFO Algorithm          (millisec) |    <user> |   <clock> |      min       max | entries | total (s) |
@@ -8758,7 +8758,6 @@ Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye Good Bye
 2022-06-16 11:35:45 UTC ******Stat******     INFO  "#Ecal MCHits"  |       944 |    2874763 |     3045.3 |     2835.6 |      0.0000 |      19291. |
 2022-06-16 11:35:45 UTC ******Stat******     INFO  "#Rich MCHits"  |       944 |    3037875 |     3218.1 |     3057.7 |      0.0000 |      18907. |
 2022-06-16 11:35:45 UTC ******Stat******     INFO ****************************************************************************************************
-2022-06-16 11:35:45 UTC ChronoStatSvc.f...   INFO  Service finalized successfully 
+2022-06-16 11:35:45 UTC ChronoStatSvc.f...   INFO  Service finalized successfully
 2022-06-16 11:35:45 UTC ApplicationMgr       INFO Application Manager Finalized successfully
 2022-06-16 11:35:45 UTC ApplicationMgr       INFO Application Manager Terminated successfully
-

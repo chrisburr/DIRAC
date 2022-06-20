@@ -10,11 +10,8 @@
 ###############################################################################
 """Reads .log-files and outputs summary of counters as a .json-file and a
 .html-file."""
-from multiprocessing.sharedctypes import Value
 import os
 import json
-
-from distutils.version import LooseVersion  # pylint:disable=import-error,no-name-in-module
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities import TimeUtilities
@@ -24,8 +21,6 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
     """The script that runs everything.
 
     :param str logFile: the name of the logfile
-    :param str project: the project string of the file
-    :param str version: the versio of the project
     :param str jobID: the JobID
     :param str prodID: the production ID
     :param str wmsID: the wmsID
@@ -37,15 +32,20 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
         "G4 Exception": "",
         "ERROR ": "",
         "FATAL ": "",
+        "PYTHIA WARNING ": "",
     }
     errorG4Dict = dict()
     errorDict = dict()
-
-    res = getLogString(logFile, logString)
-    if not res["OK"]:
-        gLogger.warn("Problems in reading %s" % logFile)
-        return res
-    logString = res["Value"]
+    if isinstance(logFile, str):
+        if logFile.endswith(".log"):
+            res = getLogString(logFile, logString)
+            if not res["OK"]:
+                gLogger.warn("Problems in reading %s" % logFile)
+                return res
+            logString = res["Value"]
+        else:
+            gLogger.debug("The log is already in a readable string")
+            logString = logFile
 
     reversedKeys = sorted(dictG4Errors, reverse=True)
     for errorString in reversedKeys:
@@ -82,7 +82,7 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
                         lengthDump = len(errorBase)
                         test = test + lengthDump
                 else:
-                    errorBase = logString[test : test + 250].split("\n")[0]
+                    errorBase = logString[test : test + 250].split("\n")[0].rstrip()
                     if errorBase in errorDict:
                         errorDict[errorBase] = errorDict[errorBase] + 1
                     else:
