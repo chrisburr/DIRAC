@@ -295,8 +295,7 @@ def _lookup_simulation_condition(query: dict):
     elif len(conditions) != 1:
         raise NotImplementedError(conditions)
     conditions = conditions[0]
-    result = {}
-    result["SimCondDetail"] = {
+    simcond_detail = {
         "BeamEnergy": conditions["BeamEnergy"],
         "Generator": conditions["Generator"],
         "Luminosity": conditions["Luminosity"],
@@ -305,9 +304,11 @@ def _lookup_simulation_condition(query: dict):
         "BeamCond": conditions["BeamCond"],
         "DetectorCond": conditions["DetectorCond"],
     }
-    result["SimCondID"] = conditions["SimId"]
-    result["SimCondition"] = conditions["SimDescription"]
-    return result
+    return {
+        "SimCondDetail": json.dumps(simcond_detail),
+        "SimCondID": conditions["SimId"],
+        "SimCondition": conditions["SimDescription"],
+    }
 
 
 def find_step_id(step: ProductionStep) -> Optional[int]:
