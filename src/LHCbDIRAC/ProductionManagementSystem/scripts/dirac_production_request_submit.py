@@ -18,6 +18,8 @@ from DIRAC import gLogger
 from DIRAC.Core.Utilities.DIRACScript import DIRACScript as Script
 from DIRAC.Core.Utilities.ReturnValues import convertToReturnValue, returnValueOrRaise
 
+from LHCbDIRAC.ProductionManagementSystem.Utilities.Models import parse_obj, ProductionBase
+
 
 def parseArgs():
     doSubmit = False
@@ -41,21 +43,24 @@ def parseArgs():
 def main():
     yamlPath, doSubmit = parseArgs()
 
-    from LHCbDIRAC.ProductionManagementSystem.Utilities.Models import parse_obj
-
-    productions = [parse_obj(spec) for spec in yaml.safe_load(yamlPath.read_text())]
-    submitProductions(productions, dryRun=not doSubmit)
+    productionRequests = [parse_obj(spec) for spec in yaml.safe_load(yamlPath.read_text())]
+    submitProductionRequests(productionRequests, dryRun=not doSubmit)
     if not doSubmit:
-        gLogger.always(f'This was a dry run! Pass "--submit" to actually submit productions.')
+        gLogger.always(f'This was a dry run! Pass "--submit" to actually submit production requests.')
 
 
-def submitProductions(productions, *, dryRun=True):
+def submitProductionRequests(productionRequests: list[ProductionBase], *, dryRun=True):
+    """Submit a collection of production requests
+
+    :param productionRequests: List of production requests to submit
+    :param dryRun: Set to False to actually submit the production requests
+    """
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
     from LHCbDIRAC.ProductionManagementSystem.Utilities.ModelCompatibility import retValToListOfDict
 
     # Register filetypes
     requiredFileTypes = set()
-    for prod in productions:
+    for prod in productionRequests:
         for step in prod.steps:
             requiredFileTypes |= {x.type for x in step.input}
             requiredFileTypes |= {x.type for x in step.output}
@@ -64,13 +69,13 @@ def submitProductions(productions, *, dryRun=True):
     if missingFileTypes:
         raise NotImplementedError(f"Unknown file types that need to be registered: {missingFileTypes!r}")
 
-    # Create steps and submit productions
-    for i, prod in enumerate(productions, start=1):
-        gLogger.always("Considering production", f"{i} of {len(productions)}: {prod.name}")
-        _submitProduction(prod, dryRun=dryRun)
+    # Create steps and submit production requests
+    for i, prod in enumerate(productionRequests, start=1):
+        gLogger.always("Considering production", f"{i} of {len(productionRequests)}: {prod.name}")
+        _submitProductionRequests(prod, dryRun=dryRun)
 
 
-def _submitProduction(prod, *, dryRun=True):
+def _submitProductionRequests(prod: ProductionBase, *, dryRun=True):
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
     from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
     from LHCbDIRAC.ProductionManagementSystem.Utilities.Models import ProductionStates

@@ -15,6 +15,7 @@ This module contains functions which convert the ``pydantic`` models in
 WebApp applications.
 """
 import json
+from typing import Optional
 
 from DIRAC.Core.Utilities.ReturnValues import returnValueOrRaise
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -76,6 +77,7 @@ PRODUCTION_DICT_KEYS = [
 
 
 def make_subprod_legacy_dict(sub_production, parent_id):
+    """Make a webapp-like dictionary for defining a sub-production-request"""
     data = {k: None for k in PRODUCTION_DICT_KEYS}
 
     data["ParentID"] = parent_id
@@ -90,6 +92,7 @@ def make_subprod_legacy_dict(sub_production, parent_id):
 
 
 def step_to_legacy_dict(step: ProductionStep):
+    """Make a webapp-like dictionary that can be used to search for a step in the bookkeeping"""
     result = {
         "ApplicationName": step.application.name,
         "ApplicationVersion": step.application.version,
@@ -131,6 +134,7 @@ def step_to_legacy_dict(step: ProductionStep):
 
 
 def step_to_step_manager_dict(step: ProductionStep):
+    """Make a webapp-like dictionary for creating a step in the bookkeeping"""
     result = {"Step": step_to_legacy_dict(step)}
 
     if step.input:
@@ -140,6 +144,7 @@ def step_to_step_manager_dict(step: ProductionStep):
 
 
 def _step_to_production_manager_dict(i: int, step: ProductionStep):
+    """Make a webapp-like dictionary for defining a step in the metadata of a production request"""
     legacy_dict = step_to_legacy_dict(step)
 
     detail = {}
@@ -195,6 +200,7 @@ def _step_to_production_manager_dict(i: int, step: ProductionStep):
 
 
 def production_to_legacy_dict(prod: ProductionBase):
+    """Make a webapp-like dictionary for creating a production request"""
     request = {
         "RequestName": prod.name,
         "RequestType": prod.type,
@@ -276,10 +282,16 @@ def production_to_legacy_dict(prod: ProductionBase):
     return request, sub_productions
 
 
-def _lookup_simulation_condition(query):
+def _lookup_simulation_condition(query: dict):
+    """Create a dictionary for the given simulation condition
+
+    This method queries the bookkeeping to get full metadata of the corresponding condition.
+    """
     conditions = retValToListOfDict(BookkeepingClient().getSimulationConditions(query))
     if len(conditions) == 0:
-        raise NotImplementedError(repr(query) + " is not known")
+        raise NotImplementedError(
+            f"{query} is not known, an expert should create it using dirac-bookkeeping-simulationconditions-insert"
+        )
     elif len(conditions) != 1:
         raise NotImplementedError(conditions)
     conditions = conditions[0]
@@ -298,7 +310,8 @@ def _lookup_simulation_condition(query):
     return result
 
 
-def find_step_id(step: ProductionStep):
+def find_step_id(step: ProductionStep) -> Optional[int]:
+    """Query the bookkeeping for a already defined step, returning its ID or None"""
     legacy_dict = step_to_legacy_dict(step)
     # Don't query on NULL keys as the bookkeeping gets confused
     query = {k: v for k, v in legacy_dict.items() if v}
@@ -345,6 +358,7 @@ def find_step_id(step: ProductionStep):
     return match["StepId"]
 
 
-def retValToListOfDict(retVal):
+def retValToListOfDict(retVal) -> list[dict]:
+    """Convert a Records-style bookkeeping response to a list of dictionaries"""
     retVal = returnValueOrRaise(retVal)
     return [dict(zip(retVal["ParameterNames"], record)) for record in retVal["Records"]]
