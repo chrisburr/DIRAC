@@ -21,7 +21,7 @@ import six
 from DIRAC import gConfig, gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 
-# from DIRAC.Core.Utilities.Time import timeThis
+# from DIRAC.Core.Utilities.TimeUtilities import timeThis
 from DIRAC.Core.Utilities.File import mkDir
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers, resolveSEGroup
