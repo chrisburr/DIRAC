@@ -17,6 +17,7 @@
   determine storage usage.
 """
 # # imports
+import datetime
 import time
 import random
 import os
@@ -33,7 +34,7 @@ from DIRAC.FrameworkSystem.Client.ProxyManagerClient import gProxyManager
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 from DIRAC.Core.Utilities import List
-from DIRAC.Core.Utilities.Time import timeInterval, dateTime, week
+from DIRAC.Core.Utilities.TimeUtilities import timeInterval, week
 from DIRAC.Core.Utilities.DictCache import DictCache
 from DIRAC.Core.Utilities.List import breakListIntoChunks
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -367,7 +368,7 @@ class StorageUsageAgent(AgentModule):
         errorReason = {}
         for subDir in subDirs:
             self.__directoryOwners.setdefault(subDir, (subDirs[subDir]["Owner"], subDirs[subDir]["OwnerGroup"]))
-            subDirs[subDir] = subDirs[subDir].get("CreationTime", dateTime())
+            subDirs[subDir] = subDirs[subDir].get("CreationTime", datetime.datetime.utcnow())
             if dirUsage:
                 # This part here is for removing the recursivity introduced by the DFC
                 args = [subDir]
@@ -443,7 +444,7 @@ class StorageUsageAgent(AgentModule):
                 return
         # We don't need the cached information about owner
         self.__directoryOwners.pop(dirPath, None)
-        rightNow = dateTime()
+        rightNow = datetime.datetime.utcnow()
         chosenDirs = [
             subDir
             for subDir in subDirs

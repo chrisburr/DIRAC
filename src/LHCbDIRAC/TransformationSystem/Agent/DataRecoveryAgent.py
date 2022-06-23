@@ -36,7 +36,6 @@ import datetime
 
 from DIRAC import S_OK
 from DIRAC.Core.Base.AgentModule import AgentModule
-from DIRAC.Core.Utilities.Time import dateTime
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient
 
@@ -268,7 +267,7 @@ class DataRecoveryAgent(AgentModule):
         )
 
         jobFileDict = {}
-        olderThan = dateTime() - datetime.timedelta(hours=selectDelay)
+        olderThan = datetime.datetime.utcnow() - datetime.timedelta(hours=selectDelay)
 
         res = self.transClient.getTransformationTasks(
             condDict={"TransformationID": transformation, "TaskID": taskIDList},

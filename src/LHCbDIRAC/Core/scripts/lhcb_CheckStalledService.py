@@ -10,6 +10,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """check if a service or an agent is stalled."""
+import datetime
 import os
 
 # TODO: This should be modernised to use subprocess(32)
@@ -39,10 +40,10 @@ def main():
     Script.addDefaultOptionValue("LogLevel", "verbose")
     Script.parseCommandLine(ignoreErrors=True)
 
-    from DIRAC.Core.Utilities.Time import fromString, second, dateTime, timeInterval
+    from DIRAC.Core.Utilities.TimeUtilities import fromString, second, timeInterval
     from DIRAC.Interfaces.API.DiracAdmin import DiracAdmin
 
-    now = dateTime()
+    now = datetime.datetime.utcnow()
     runit_dir = "/opt/dirac/startup"
     logfile = "log/current"
     pollingtime = 60

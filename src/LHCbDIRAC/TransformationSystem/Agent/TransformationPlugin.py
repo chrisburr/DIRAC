@@ -22,7 +22,7 @@ import six
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Utilities.List import breakListIntoChunks, randomize
 
-# from DIRAC.Core.Utilities.Time import timeThis
+# from DIRAC.Core.Utilities.TimeUtilities import timeThis
 from DIRAC.DataManagementSystem.Utilities.DMSHelpers import resolveSEGroup
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Resources.Storage.StorageElement import StorageElement

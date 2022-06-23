@@ -19,7 +19,7 @@ import os
 import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
-from DIRAC.Core.Utilities.Time import toString
+from DIRAC.Core.Utilities.TimeUtilities import toString
 from DIRAC.Core.Utilities.PromptUser import promptUser
 from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 

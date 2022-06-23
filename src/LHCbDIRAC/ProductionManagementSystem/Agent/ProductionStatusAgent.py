@@ -42,7 +42,7 @@ from concurrent.futures import ThreadPoolExecutor, wait
 import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.AgentModule import AgentModule
-from DIRAC.Core.Utilities.Time import timeThis
+from DIRAC.Core.Utilities.TimeUtilities import timeThis
 from DIRAC.Interfaces.API.Dirac import Dirac
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
