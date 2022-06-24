@@ -22,9 +22,6 @@ extra-services:
 # Additional shell commands to run
 commands:
   post-prepare:
-    - docker exec -u root -w /home/dirac server yum-config-manager --add-repo http://linuxsoft.cern.ch//cern/centos/7/cernonly/x86_64
-    # This will only work inside the CERN network!
-    - docker exec -u root -w /home/dirac server yum install -y oracle-instantclient-basic oracle-instantclient-devel
     - |
       while ! (docker logs bkdb | grep 'DATABASE IS READY TO USE!'); do
         echo "Waiting for bookkeeping database to be ready... $(docker logs bkdb | grep 'complete' | tail -n 1)";

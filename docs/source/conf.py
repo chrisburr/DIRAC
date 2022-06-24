@@ -301,7 +301,7 @@ latex_documents = [
 # latex_use_modindex = True
 
 # packages that cannot be installed in RTD
-# autodoc_mock_imports = ['lcg_util', 'cx_Oracle', 'fts3', 'XRootD', 'gfal2', 'arc', '_arc',
+# autodoc_mock_imports = ['lcg_util', 'oracledb', 'fts3', 'XRootD', 'gfal2', 'arc', '_arc',
 #                        'matplotlib',
 #                        'git',
 #                        'numpy', 'irods', 'pylab', 'stomp',
