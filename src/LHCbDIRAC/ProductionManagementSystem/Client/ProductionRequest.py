@@ -165,38 +165,43 @@ class ProductionRequest(object):
                     if value.lower() == "frompreviousstep":
                         value = self.stepsListDict[-1][parameter]
 
-                if parameter == "OptionFiles":  # Modifying the OptionFiles (for setting the compression level)
-                    if (
-                        "MDF" not in stepsListDictItem["fileTypesOut"]
-                    ):  # certain MC produce MDF, which shouldn't be compressed
-                        #
-                        # If the prod manager sets a compression level for a particular step, either we append the option file
-                        # or we overwrite the existing one inherited with the step
-                        #
-                        if len(self.compressionLvl) > count and self.compressionLvl[count] != "":
-                            persist = re.compile("Compression-[A-Z]{4}-[1-9]")
-                            # self.compressionLvl[count] = self.appConfig + self.compressionLvl[count] + '.py'
-                            self.compressionLvl[count] = (
-                                self.appConfig + self.compDict[self.compressionLvl[count].upper()] + ".py"
-                            )
-                            if not persist.search(value):
-                                if value == "":
-                                    value = self.compressionLvl[count]
-                                else:
-                                    value = ";".join((value, self.compressionLvl[count]))
+                # TODO: This should be moved to LbProdRun
+                if (
+                    parameter == "OptionFiles"
+                    and "MDF" not in stepsListDictItem["fileTypesOut"]
+                    and not value.startswith("{")
+                ):
+                    # Modifying the OptionFiles (for setting the compression level)
+                    # certain MC produce MDF, which shouldn't be compressed
+                    #
+                    # If the prod manager sets a compression level for a particular step, either we append the option file
+                    # or we overwrite the existing one inherited with the step
+                    #
+                    if len(self.compressionLvl) > count and self.compressionLvl[count] != "":
+                        persist = re.compile("Compression-[A-Z]{4}-[1-9]")
+                        # self.compressionLvl[count] = self.appConfig + self.compressionLvl[count] + '.py'
+                        self.compressionLvl[count] = (
+                            self.appConfig + self.compDict[self.compressionLvl[count].upper()] + ".py"
+                        )
+                        if not persist.search(value):
+                            if value == "":
+                                value = self.compressionLvl[count]
                             else:
-                                value = persist.sub(persist.search(self.compressionLvl[count]).group(), value)
-                        #
-                        # If instead the prod manager doesn't declare a compression level, e.g. for intermediate steps,
-                        # we check if there is one in the options and in case we delete it. This leaves the default zip level
-                        # defined inside Gaudi
-                        #
-                        elif len(self.compressionLvl) > count and self.compressionLvl[count] == "":
-                            persist = re.compile(r"\$\w+/Persistency/Compression-[A-Z]{4}-[1-9].py;?")
-                            if persist.search(value):
-                                value = persist.sub("", value)
+                                value = ";".join((value, self.compressionLvl[count]))
+                        else:
+                            value = persist.sub(persist.search(self.compressionLvl[count]).group(), value)
+                    #
+                    # If instead the prod manager doesn't declare a compression level, e.g. for intermediate steps,
+                    # we check if there is one in the options and in case we delete it. This leaves the default zip level
+                    # defined inside Gaudi
+                    #
+                    elif len(self.compressionLvl) > count and self.compressionLvl[count] == "":
+                        persist = re.compile(r"\$\w+/Persistency/Compression-[A-Z]{4}-[1-9].py;?")
+                        if persist.search(value):
+                            value = persist.sub("", value)
 
                 if parameter == "SystemConfig" and value is not None and re.search("slc5", value):
+                    # TODO: Remove this from the DB so the hack can be removed
                     p = re.compile(r"\$\w+/Persistency/Compression-[A-Z]{4}-[1-9].py;?")
                     if p.search(stepsListDictItem["OptionFiles"]):
                         stepsListDictItem["OptionFiles"] = p.sub("", stepsListDictItem["OptionFiles"])

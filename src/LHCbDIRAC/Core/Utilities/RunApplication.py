@@ -79,10 +79,7 @@ class RunApplication(object):
                 "number_of_processors": gaudiAppModule.numberOfProcessors,
                 "version": gaudiAppModule.applicationVersion,
             },
-            "options": {
-                "files": commandOptions,
-                "processing_pass": gaudiAppModule.processingPass,
-            },
+            "options": {},
             "db_tags": {},
             "input": {
                 "files": ["LFN:" + sid for sid in gaudiAppModule.stepInputData],
@@ -103,10 +100,16 @@ class RunApplication(object):
         prodInfo["application"]["event_timeout"] = eventTimeout
 
         # options
-        if gaudiAppModule.optionsFormat:
-            prodInfo["options"]["format"] = gaudiAppModule.optionsFormat
-        if gaudiAppModule.extraOptionsLine:
-            prodInfo["options"]["gaudi_extra_options"] = gaudiAppModule.extraOptionsLine
+        if isinstance(commandOptions, dict):
+            # This is an lbexec style application
+            prodInfo["options"] = commandOptions
+        else:
+            prodInfo["options"]["files"] = commandOptions
+            prodInfo["options"]["processing_pass"] = gaudiAppModule.processingPass
+            if gaudiAppModule.optionsFormat:
+                prodInfo["options"]["format"] = gaudiAppModule.optionsFormat
+            if gaudiAppModule.extraOptionsLine:
+                prodInfo["options"]["gaudi_extra_options"] = gaudiAppModule.extraOptionsLine
 
         # db_tags
         if gaudiAppModule.DDDBTag:
