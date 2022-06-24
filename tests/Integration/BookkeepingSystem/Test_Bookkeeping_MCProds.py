@@ -17,7 +17,6 @@ production to db requites:
 """
 # pylint: disable=invalid-name,wrong-import-position
 
-import io
 import os
 import datetime
 
@@ -495,7 +494,7 @@ def test_registerProduction():
     )
 
     bkFile = find_all("Job_Report_MCFastSimulation.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(gauss_sid))
     with open(bkFile + ".temp", "w") as fd:
@@ -565,14 +564,14 @@ def test_registerProduction():
     )
 
     bkFile = find_all("Job_Report_MCReconstruction_1.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(moore_sid))
     with open(bkFile + ".temp", "w") as fd:
         fd.write(filedata)
 
     bkFile = find_all("Job_Report_MCReconstruction_2.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(moore_sid))
     with open(bkFile + ".temp", "w") as fd:
@@ -636,7 +635,7 @@ def test_registerProduction():
     )
 
     bkFile = find_all("Job_Report_MCMerge.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(noether_sid))
     with open(bkFile + ".temp", "w") as fd:
@@ -1036,7 +1035,7 @@ def test_sendJobReport():
         "Job_Report_MCMerge.xml.temp",
     ]:
         bkFile = find_all(rep, "..", "BookkeepingSystem")[0]
-        with io.open(bkFile, "r") as fd:
+	with open(bkFile, "r") as fd:
             bkXML = fd.read()
         res = bk.sendXMLBookkeepingReport(bkXML)
         assert res["OK"]
