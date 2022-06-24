@@ -74,10 +74,10 @@ def executeFileMetadata(dmScript):
     for lfn in lfnMetadata:
         lfnMetaDict = lfnMetadata[lfn]
         if full:
-            gLogger.notice("%s%s %s" % (sep, "FileName".ljust(lenItem), lfn))
+            gLogger.notice("{}{} {}".format(sep, "FileName".ljust(lenItem), lfn))
             sep = "\n"
             for item in sorted(lfnMetaDict):
-                gLogger.notice("%s %s" % (item.ljust(lenItem), lfnMetaDict[item]))
+                gLogger.notice("{} {}".format(item.ljust(lenItem), lfnMetaDict[item]))
         else:
             size = lfnMetaDict["FileSize"]
             guid = lfnMetaDict["GUID"]
@@ -195,7 +195,7 @@ def executeFilePath(dmScript):
             if res["OK"]:
                 for lfn, metadata in res["Value"]["Successful"].items():  # can be an iterator
                     group = metadata.get(groupBy)
-                    paths["Successful"].setdefault("%s %s" % (groupBy, group), set()).add(lfn)
+                    paths["Successful"].setdefault("{} {}".format(groupBy, group), set()).add(lfn)
                     lfnChunk.remove(lfn)
                 paths["Failed"].extend(lfnChunk)
         progressBar.endLoop()
@@ -260,7 +260,7 @@ def executeFilePath(dmScript):
                 bkDict["Path"] = __buildPath(bkDict)
                 if groupBy in bkDict:
                     if groupBy != "Path":
-                        prStr = "%s %s" % (groupBy, bkDict[groupBy])
+                        prStr = "{} {}".format(groupBy, bkDict[groupBy])
                     else:
                         prStr = bkDict[groupBy]
                     paths["Successful"].setdefault(prStr, set()).update(directories[dirName])
@@ -283,9 +283,9 @@ def executeFilePath(dmScript):
                         inv = ""
                     pathSummary["Successful"][path] = "%d files%s" % (nfiles, inv)
                 if failed:
-                    pathSummary["Failed"] = dict(
-                        (path, "Directory not in BK (%d files)" % len(directories[path])) for path in failed
-                    )
+                    pathSummary["Failed"] = {
+                        path: "Directory not in BK (%d files)" % len(directories[path]) for path in failed
+                    }
                 else:
                     pathSummary.pop("Failed")
                 res = S_OK(pathSummary)
@@ -297,7 +297,7 @@ def executeFilePath(dmScript):
     printDMResult(res, empty="None", script="dirac-bookkeeping-file-path")
     if printList:
         gLogger.notice("\nList of %s values" % groupBy)
-        gLogger.notice(",".join(sorted([item.replace("%s " % groupBy, "") for item in res["Value"]["Successful"]])))
+        gLogger.notice(",".join(sorted(item.replace("%s " % groupBy, "") for item in res["Value"]["Successful"])))
 
 
 def _updateFileLumi(fileDict, retries=5):
@@ -394,7 +394,7 @@ def _updateRunLumi(run, evtType, fileInfo, doIt=False, force=False):
     info = res["Value"]
     runLumi = info["TotalLuminosity"]
     runEvts = dict(zip(info["Stream"], info["Number of events"]))[evtType]
-    filesLumi = sum([lumi for _lfn, _evts, lumi in fileInfo])
+    filesLumi = sum(lumi for _lfn, _evts, lumi in fileInfo)
     # Check luminosity
     error = False
     if not runEvts:
@@ -416,7 +416,7 @@ def _updateRunLumi(run, evtType, fileInfo, doIt=False, force=False):
         gLogger.notice("Run %d: %d RAW files are OK" % (run, len(fileInfo)))
 
     # Now update descendants
-    fileLumi = dict([(lfn, lumi) for lfn, _evts, lumi in fileInfo])
+    fileLumi = {lfn: lumi for lfn, _evts, lumi in fileInfo}
     result = _updateDescendantsLumi(fileLumi, doIt=doIt, force=force)
     return error or result
 
@@ -545,9 +545,9 @@ def executeFileAncestors(dmScript, level=1):
             else:
                 okResult = result["Value"]["WithMetadata"]
                 for lfn in okResult:
-                    fullResult["Value"].setdefault("Successful", {})[lfn] = dict(
-                        (desc, "Replica-%s" % meta["GotReplica"]) for desc, meta in okResult[lfn].items()
-                    )  # can be an iterator
+                    fullResult["Value"].setdefault("Successful", {})[lfn] = {
+                        desc: "Replica-%s" % meta["GotReplica"] for desc, meta in okResult[lfn].items()
+                    }  # can be an iterator
             failed = result["Value"]["Failed"]
             if isinstance(failed, list):
                 failed = dict.fromkeys(failed, "Not found")
@@ -626,9 +626,9 @@ def executeFileDescendants(dmScript, level=1):
             else:
                 okResult = result["Value"]["WithMetadata"]
                 for lfn in okResult:
-                    fullResult["Value"].setdefault("Successful", {})[lfn] = dict(
-                        (desc, "Replica-%s" % meta["GotReplica"]) for desc, meta in okResult[lfn].items()
-                    )  # can be an iterator
+                    fullResult["Value"].setdefault("Successful", {})[lfn] = {
+                        desc: "Replica-%s" % meta["GotReplica"] for desc, meta in okResult[lfn].items()
+                    }  # can be an iterator
             failed = result["Value"]["Failed"]
             if isinstance(failed, list):
                 failed = dict.fromkeys(failed, "Unknown error")
@@ -673,7 +673,7 @@ def executeGetFiles(dmScript, maxFiles=20):
     bkQuery = dmScript.getBKQuery()
     bkQueries = [bkQuery] if bkQuery else []
     if bkFile and os.path.exists(bkFile):
-        with open(bkFile, "rt") as fd:
+        with open(bkFile) as fd:
             bkQueries += [BKQuery(ll.strip().split()[0]) for ll in fd.readlines()]
 
     if not bkQueries:
@@ -720,7 +720,7 @@ def executeGetFiles(dmScript, maxFiles=20):
         if not nMax:
             nMax = nFiles
     gLogger.notice("%d files found" % nFiles, "(showing only first %d files):" % nMax if nFiles > nMax else ":")
-    outputStr = "%s %s %s %s %s" % (
+    outputStr = "{} {} {} {} {}".format(
         "FileName".ljust(100),
         "Size".ljust(10),
         "GUID".ljust(40),
@@ -735,7 +735,7 @@ def executeGetFiles(dmScript, maxFiles=20):
         guid = metadata["GUID"]
         hasReplica = metadata["GotReplica"]
         visible = metadata.get("VisibilityFlag", "?")
-        outputStr = "%s %s %s %s %s" % (
+        outputStr = "{} {} {} {} {}".format(
             lfn.ljust(100),
             str(size).ljust(10),
             guid.ljust(40),
@@ -865,7 +865,7 @@ def executeFileSisters(dmScript, level=1):
         ancestors = {}
         # More than one file in the input list may have the same ancestor(s), check if they are sisters/cousins
         for lfn, ancList in result["Value"]["Successful"].items():  # can be an iterator
-            sameAncestors = set(anc["FileName"] for anc in ancList) & set(ancestors)
+            sameAncestors = {anc["FileName"] for anc in ancList} & set(ancestors)
             skip = False
             if sameAncestors:
                 # Some of the input files share the same ancestor, are they sisters/cousins?
@@ -1218,26 +1218,28 @@ def executeGetStats(dmScript):
         for name, value in zip(paramNames, records):
             if name == "NbofFiles":
                 nfiles = value
-                gLogger.notice("%s: %s" % ("Nb of Files".ljust(tab), _intWithQuotes(value)))
+                gLogger.notice("{}: {}".format("Nb of Files".ljust(tab), _intWithQuotes(value)))
             elif name == "NumberOfEvents":
                 nevts = value
-                gLogger.notice("%s: %s" % ("Nb of Events".ljust(tab), _intWithQuotes(value)))
+                gLogger.notice("{}: {}".format("Nb of Events".ljust(tab), _intWithQuotes(value)))
             elif name == "FileSize":
                 size = value
                 sizePerEvt = "(%.1f kB per evt)" % (size / nevts / 1000.0) if nevts and nDatasets == 1 else ""
                 size, sizeUnit = scaleSize(size)
-                gLogger.notice("%s: %.3f %s %s" % ("Total size".ljust(tab), size, sizeUnit, sizePerEvt))
+                gLogger.notice("{}: {:.3f} {} {}".format("Total size".ljust(tab), size, sizeUnit, sizePerEvt))
             elif name == "Luminosity":
                 lumi = value / nDatasets
                 lumi, lumiUnit = _scaleLumi(lumi)
                 lumiString = "Luminosity" if nDatasets == 1 else "Avg luminosity"
-                gLogger.notice("%s: %.3f %s" % (lumiString.ljust(tab), lumi, lumiUnit))
+                gLogger.notice("{}: {:.3f} {}".format(lumiString.ljust(tab), lumi, lumiUnit))
             elif name == "SizePerLumi":
                 # value *= nDatasets
-                gLogger.notice("%s: %.1f GB" % (("Size  per %s" % "/pb").ljust(tab), value * 1000000.0 / 1000000000.0))
+                gLogger.notice(
+                    "{}: {:.1f} GB".format(("Size  per %s" % "/pb").ljust(tab), value * 1000000.0 / 1000000000.0)
+                )
         if lumi:
             filesPerLumi = nfiles / lumi
-            gLogger.notice("%s: %.1f" % (("Files per %s" % lumiUnit).ljust(tab), filesPerLumi))
+            gLogger.notice("{}: {:.1f}".format(("Files per %s" % lumiUnit).ljust(tab), filesPerLumi))
 
         if triggerRate:
             # Get information from the runs, but first get those that are Finished
@@ -1290,15 +1292,15 @@ def executeGetStats(dmScript):
                     triggerRate = 0.0
                     rate = "Run duration not available"
                 totalLumi, lumiUnit = _scaleLumi(totalLumi)
-                gLogger.notice("%s: %.3f %s" % ("Total Luminosity".ljust(tab), totalLumi, lumiUnit))
+                gLogger.notice("{}: {:.3f} {}".format("Total Luminosity".ljust(tab), totalLumi, lumiUnit))
                 gLogger.notice("%s: %.2f hours (%d runs)" % ("Run duration".ljust(tab), fullDuration, len(runs)))
-                gLogger.notice("%s: %s" % ("Trigger rate".ljust(tab), rate))
+                gLogger.notice("{}: {}".format("Trigger rate".ljust(tab), rate))
                 rate = (
                     ("%.1f MB/second" % (size / 1000000.0 / fullDuration / 3600.0))
                     if fullDuration
                     else "Run duration not available"
                 )
-                gLogger.notice("%s: %s" % ("Throughput".ljust(tab), rate))
+                gLogger.notice("{}: {}".format("Throughput".ljust(tab), rate))
                 collBunches = 0.0
                 result = {}
                 # FIXME: if/when the online run DB is accessible to get the number of bunches this should be re-activated
@@ -1310,9 +1312,9 @@ def executeGetStats(dmScript):
                 #     collBunches += result[fill] * fillDuration[fill]
                 if fullDuration and collBunches:
                     collBunches /= fullDuration
-                    gLogger.notice("%s: %.1f on average" % ("Colliding bunches".ljust(tab), collBunches))
+                    gLogger.notice("{}: {:.1f} on average".format("Colliding bunches".ljust(tab), collBunches))
                     gLogger.notice(
-                        "%s: %.2f events/s/bunch" % ("Trigger per bunch".ljust(tab), triggerRate / collBunches)
+                        "{}: {:.2f} events/s/bunch".format("Trigger per bunch".ljust(tab), triggerRate / collBunches)
                     )
                 if listFills:
                     gLogger.notice(
@@ -1422,7 +1424,7 @@ def executeRunInfo(item):
             if not res["OK"]:
                 gLogger.fatal("Error getting DQFlag", res["Message"])
                 diracExit(1)
-            dq = dict((r, dq) for r, dq, s in res["Value"] if s == 90000000)
+            dq = {r: dq for r, dq, s in res["Value"] if s == 90000000}
             for run in runChunk:
                 if dq.get(run) not in dqFlag:
                     runsList.remove(run)
@@ -1533,7 +1535,7 @@ def executeRunInfo(item):
         if item == "Ranges":
             gLogger.notice("Total number of runs: %d" % len(runDict))
         for rangeStr in sorted(rangesDict):
-            gLogger.notice("%s : %s" % (rangeStr, rangesDict[rangeStr]))
+            gLogger.notice("{} : {}".format(rangeStr, rangesDict[rangeStr]))
     else:
         for itemValue in sorted(itemDict):
             gLogger.notice("%s :" % itemValue, ", ".join(itemDict[itemValue]))
@@ -1758,7 +1760,7 @@ def executeRejectionStats(dmScript):
                 progressBar.endLoop()
 
         eventInputStatByStream[stream] = sum(jobEventInputStat[_jobFromLfn(lfn)] for lfn in lfns)
-        jobs[stream] = set(_jobFromLfn(lfn) for lfn in lfns)
+        jobs[stream] = {_jobFromLfn(lfn) for lfn in lfns}
     # End of loop on streams
 
     tab = "\t" if byStream else ""
@@ -1775,7 +1777,7 @@ def executeRejectionStats(dmScript):
         if prInput:
             eventInputStat = eventInputStatByStream[stream] / float(rescale)
         if len(fileTypes) > 1:
-            gLogger.notice("For %s stream%s:" % (stream, "" if byStream else "s"))
+            gLogger.notice("For {} stream{}:".format(stream, "" if byStream else "s"))
         gLogger.notice(tab + "Event stat: %d on %d files" % (eventStat, len(lfnsByStream[stream])))
         if prInput:
             gLogger.notice(

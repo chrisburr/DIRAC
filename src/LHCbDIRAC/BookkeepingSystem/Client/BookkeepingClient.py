@@ -23,7 +23,6 @@ Whatever:
   }
 """
 import tempfile
-import six
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.Client import Client, createClient
@@ -76,12 +75,11 @@ class BookkeepingClient(Client):
         in_dict = dict(in_dict)
         bkk = TransferClient("Bookkeeping/BookkeepingManager")
         params = JEncoder.dumps(in_dict)
-        file_name = tempfile.NamedTemporaryFile()
-        retVal = bkk.receiveFile(file_name.name, params)
-        if not retVal["OK"]:
-            return retVal
-        value = JEncoder.load(open(file_name.name))
-        file_name.close()
+        with tempfile.NamedTemporaryFile() as file_name:
+            retVal = bkk.receiveFile(file_name.name, params)
+            if not retVal["OK"]:
+                return retVal
+            value = JEncoder.load(open(file_name.name))
         return S_OK(value)
 
     #############################################################################
@@ -96,7 +94,7 @@ class BookkeepingClient(Client):
         :return: job meta data
         """
         conditions = {}
-        if isinstance(in_dict, six.string_types):
+        if isinstance(in_dict, str):
             conditions["lfn"] = in_dict.split(";")
         elif isinstance(in_dict, list):
             conditions["lfn"] = in_dict
@@ -112,7 +110,7 @@ class BookkeepingClient(Client):
         :param list lfns: list of LFNs or an LFN
         :param str flag: data quality flag: OK, UNCHECKED, etc.
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
 
         return self._getRPC().setFileDataQuality(lfns, flag)
@@ -127,7 +125,7 @@ class BookkeepingClient(Client):
 
         :returns: It returns the ancestors of a file with metadata or a list of files
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
 
         return self._getRPC().getFileAncestors(lfns, depth, replica)
@@ -141,7 +139,7 @@ class BookkeepingClient(Client):
         :param bool replica: take into account the replica flag.
         :return: descendants of a file or a list of files.
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
 
         return self._getRPC().getFileDescendants(lfns, depth, production, checkreplica)
@@ -152,7 +150,7 @@ class BookkeepingClient(Client):
 
         :param list lfns: list of LFNs
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().addFiles(lfns)
 
@@ -162,7 +160,7 @@ class BookkeepingClient(Client):
 
         :param list lfns: list of lfns
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().removeFiles(lfns)
 
@@ -173,7 +171,7 @@ class BookkeepingClient(Client):
         :param list lfns: list of LFNs
         :return: file metadata
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().getFileMetadata(lfns)
 
@@ -184,7 +182,7 @@ class BookkeepingClient(Client):
         :param list lfns: list of LFNs
         :return: file metadata
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().getFileMetaDataForWeb(lfns)
 
@@ -196,7 +194,7 @@ class BookkeepingClient(Client):
         :param list lfns: list of LFNs
         :return: a dictionary with the lfns {'lfn':True/False}
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().exists(lfns)
 
@@ -253,9 +251,9 @@ class BookkeepingClient(Client):
         :param list runs: list of run numbers.
         :return: run or file data quality
         """
-        if isinstance(runs, six.string_types):
+        if isinstance(runs, str):
             runs = runs.split(";")
-        elif isinstance(runs, six.integer_types):
+        elif isinstance(runs, int):
             runs = [runs]
         return self._getRPC().getRunFilesDataQuality(runs)
 
@@ -265,7 +263,7 @@ class BookkeepingClient(Client):
 
         :paran list lfns: an lfn or list of lfns
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().setFilesInvisible(lfns)
 
@@ -275,7 +273,7 @@ class BookkeepingClient(Client):
 
         :param list lfns: an lfn or list of lfns
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().setFilesVisible(lfns)
 
@@ -286,7 +284,7 @@ class BookkeepingClient(Client):
         :param list lfns: list of lfns
         :return: file type version
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().getFileTypeVersion(lfns)
 
@@ -297,7 +295,7 @@ class BookkeepingClient(Client):
         :param list lfns: list of lfns
         :return: directory metadata
         """
-        if isinstance(lfns, six.string_types):
+        if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().getDirectoryMetadata(lfns)
 
@@ -333,7 +331,7 @@ class BookkeepingClient(Client):
         :param list diracjobids: list of dirac job ids.
         :return: input/output file(s) for a given dirac job
         """
-        if isinstance(diracjobids, six.integer_types):
+        if isinstance(diracjobids, int):
             diracjobids = [diracjobids]
         return self._getRPC().getJobInputOutputFiles(diracjobids)
 
@@ -342,7 +340,7 @@ class BookkeepingClient(Client):
 
         :param list runnumbers: list of run numbers.
         """
-        if isinstance(runnumbers, six.integer_types):
+        if isinstance(runnumbers, int):
             runnumbers = [runnumbers]
         return self._getRPC().fixRunLuminosity(runnumbers)
 
@@ -359,12 +357,11 @@ class BookkeepingClient(Client):
         bkk = TransferClient("Bookkeeping/BookkeepingManager")
         in_dict["MethodName"] = "getFiles"
         params = JEncoder.dumps(in_dict)
-        file_name = tempfile.NamedTemporaryFile()
-        retVal = bkk.receiveFile(file_name.name, params)
-        if not retVal["OK"]:
-            return retVal
-        value = JEncoder.load(open(file_name.name))
-        file_name.close()
+        with tempfile.NamedTemporaryFile() as file_name:
+            retVal = bkk.receiveFile(file_name.name, params)
+            if not retVal["OK"]:
+                return retVal
+            value = JEncoder.load(open(file_name.name))
         return value
 
     def getRunStatus(self, runs):
@@ -374,9 +371,9 @@ class BookkeepingClient(Client):
         :return: run status (finished, or not finished)
         """
         runnumbers = []
-        if isinstance(runs, six.string_types):
+        if isinstance(runs, str):
             runnumbers = [int(run) for run in runs.split(";")]
-        elif isinstance(runs, six.integer_types):
+        elif isinstance(runs, int):
             runnumbers += [runs]
         else:
             runnumbers = runs

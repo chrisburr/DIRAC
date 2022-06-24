@@ -18,7 +18,7 @@ from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.BookkeepingSystem.Client import objects
-from LHCbDIRAC.BookkeepingSystem.Client.Help import Help
+from LHCbDIRAC.BookkeepingSystem.Client.Help import helpConfig, helpProcessing, helpEventType
 
 INTERNAL_PATH_SEPARATOR = "/"
 
@@ -77,12 +77,9 @@ class LHCbBookkeepingManager(BaseESManager):
     def __init__(self, url=None, web=False, welcome=True):
         """initialize the values."""
         BaseESManager.__init__(self)
-        self._BaseESManager___fileSeparator = INTERNAL_PATH_SEPARATOR
-        # self.__pathSeparator = INTERNAL_PATH_SEPARATOR
         self.db_ = BookkeepingClient(url)
         if not web:
             self.fileCatalog = FileCatalog()
-        self.helper_ = Help()
 
         self.__entityCache = {"/": (objects.Entity({"name": "/", "fullpath": "/", "expandable": True}), 0)}
         self.parameter_ = self.__bookkeepingParameters[0]
@@ -143,11 +140,11 @@ class LHCbBookkeepingManager(BaseESManager):
     def help(self):
         """help information."""
         if self.parameter_ == self.__bookkeepingParameters[0]:
-            self.helper_.helpConfig(self._getTreeLevels())
+            helpConfig(self._getTreeLevels())
         elif self.parameter_ == self.__bookkeepingParameters[1]:
-            self.helper_.helpEventType(self._getTreeLevels())
+            helpEventType(self._getTreeLevels())
         elif self.parameter_ == self.__bookkeepingParameters[2]:
-            self.helper_.helpProcessing(self._getTreeLevels())
+            helpProcessing(self._getTreeLevels())
 
     #############################################################################
     def getPossibleParameters(self):
@@ -1453,8 +1450,7 @@ class LHCbBookkeepingManager(BaseESManager):
         If invalid path returns null
         """
         path = path.strip(INTERNAL_PATH_SEPARATOR + " ")
-        paths = path.split(self.getPathSeparator())
-        return paths
+        return path.split(INTERNAL_PATH_SEPARATOR)
 
     #############################################################################
     def _cacheIt(self, entityList):
@@ -1866,9 +1862,9 @@ class LHCbBookkeepingManager(BaseESManager):
             if retVal["OK"]:
                 for ppass, record in retVal["Value"]["Records"].items():
                     ppass = dataset.get("ProcessingPass", ppass)
-                    string += "\n%s Processing Pass: '%s' \n\n" % (self.comment, ppass)
+                    string += "\n{} Processing Pass: '{}' \n\n".format(self.comment, ppass)
                     for i in record:
-                        string += "%s %s : %s \n" % (self.comment, i[0], i[1])
+                        string += "{} {} : {} \n".format(self.comment, i[0], i[1])
         return string
 
     #############################################################################
@@ -1996,7 +1992,7 @@ class LHCbBookkeepingManager(BaseESManager):
 
     def __getSelectedQualities(self):
         """data quality."""
-        return [flag for flag, val in self.dataQualities_.items() if val is True]
+        return [flag for flag, val in self.dataQualities_.items() if val]
 
     #############################################################################
     def getStepsMetadata(self, bkDict):

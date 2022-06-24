@@ -13,20 +13,9 @@ import os
 from DIRAC import gLogger, S_OK, S_ERROR
 
 
-class BaseESManager(object):
+class BaseESManager:
     """Base Entity manager class."""
 
-    #############################################################################
-    def __init__(self):
-        """Initialize the class members."""
-        self.__fileSeparator = "/"
-
-    #############################################################################
-    def getPathSeparator(self):
-        """The path separator used."""
-        return self.__fileSeparator
-
-    #############################################################################
     def list(self, path="/", selectionDict=None, sortDict=None, startItem=0, maxitems=0):
         """list the path."""
         selectionDict = selectionDict if selectionDict is not None else {}
@@ -39,7 +28,6 @@ class BaseESManager(object):
         gLogger.error(str(maxitems))
         return S_ERROR("Not Implemented!")
 
-    #############################################################################
     @staticmethod
     def getAbsolutePath(path):
         """absolute path."""
@@ -50,17 +38,14 @@ class BaseESManager(object):
         try:
             path = os.path.abspath(path)
             return S_OK(path)
-        except IOError as ex:
+        except OSError as ex:
             return S_ERROR("getAbsalutePath: " + str(ex))
 
-    #############################################################################
     def mergePaths(self, path1, path2):
         """merge two path."""
         gLogger.debug("mergePaths(path1, path2) with input " + str(path1) + ", " + str(path2))
-        path = self.getAbsolutePath(os.path.join(path1, path2))
-        return path
+        return self.getAbsolutePath(os.path.join(path1, path2))
 
-    #############################################################################
     def get(self, path=""):
         """the path element."""
         gLogger.warn("not implemented" + path + str(self.__class__))
