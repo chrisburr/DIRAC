@@ -60,10 +60,9 @@ longer needed.
 # https://python-oracledb.readthedocs.io/en/latest/user_guide/connection_handling.html#connection-pooling
 # FIXME: tnsEntry is named dsn in python-oracledb
 
-from six.moves import queue as Queue
 import time
 import threading
-import six
+from queue import Queue
 
 import oracledb
 from oracledb import STRING as oracledb_STRING  # pylint: disable=no-name-in-module
@@ -79,7 +78,7 @@ maxConnectRetry = 100
 maxArraysize = 5000  # max allowed
 
 
-class OracleDB(object):
+class OracleDB:
     """Basic multithreaded DIRAC Oracle Client Class."""
 
     def __init__(self, userName, password="", tnsEntry="", maxQueueSize=100):
@@ -95,7 +94,7 @@ class OracleDB(object):
 
         # let the derived class decide what to do with if is not 1
         self._threadsafe = oracledb.threadsafety
-        self.logger.debug("thread_safe = %s" % self._threadsafe)
+	self.logger.debug(f"thread_safe = {self.__threadsafe}")
 
         self.__checkQueueSize(maxQueueSize)
 
@@ -147,11 +146,11 @@ class OracleDB(object):
         try:
             raise x
         except oracledb.Error as e:
-            self.logger.error("%s: %s" % (methodName, err), "%s" % (e))
-            return S_ERROR("%s: ( %s )" % (err, e))
+	    self.logger.error(f"{methodName}: {err}", str(e))
+	    return S_ERROR(f"{err}: ( {e} )")
         except Exception as x:
-            self.logger.error("%s: %s" % (methodName, err), str(x))
-            return S_ERROR("%s: (%s)" % (err, str(x)))
+	    self.logger.error(f"{methodName}: {err}", str(x))
+	    return S_ERROR(f"{err}: ({x})")
 
     def _connect(self):
         """open connection to Oracle DB and put Connection into Queue set connected
@@ -160,7 +159,7 @@ class OracleDB(object):
         if self._connected:
             return S_OK()
 
-        self.logger.debug("_connect: Attempting to access DB", "by user %s." % self.__userName)
+	self.logger.debug(f"_connect: Attempting to access DB", "by user {self.__userName}.")
         try:
             self.__newConnection()
             self.logger.debug("_connect: Connected.")
@@ -240,21 +239,21 @@ class OracleDB(object):
             results = None
             if array:
                 fArray = array[0]
-                if isinstance(fArray, six.string_types):
+		if isinstance(fArray, str):
                     result = cursor.arrayvar(oracledb_STRING, array)
                     parameters += [result]
-                elif isinstance(fArray, six.integer_types):
+		elif isinstance(fArray, int):
                     result = cursor.arrayvar(oracledb_NUMBER, array)
                     parameters += [result]
                 elif isinstance(fArray, list):
                     for i in array:
-                        if isinstance(i, (bool,) + six.string_types + six.integer_types):
+			if isinstance(i, (bool, str, int)):
                             parameters += [i]
                         elif i:
-                            if isinstance(i[0], six.string_types):
+			    if isinstance(i[0], str):
                                 result = cursor.arrayvar(oracledb_STRING, i)
                                 parameters += [result]
-                            elif isinstance(i[0], six.integer_types):
+			    elif isinstance(i[0], int):
                                 result = cursor.arrayvar(oracledb_NUMBER, i)
                                 parameters += [result]
                             else:
@@ -378,7 +377,7 @@ class OracleDB(object):
             self.logger.debug("__getConnection: Empty Queue")
             try:
                 if trial == min(100, maxConnectRetry):
-                    return S_ERROR("Could not get a connection after %s retries." % maxConnectRetry)
+		    return S_ERROR(f"Could not get a connection after {maxConnectRetry} retries.")
                 try:
                     self.__newConnection()
                     return self.__getConnection()

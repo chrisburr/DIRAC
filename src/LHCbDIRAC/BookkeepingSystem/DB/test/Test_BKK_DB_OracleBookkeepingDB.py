@@ -9,7 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Test_BKK_DB_OracleBookkeepingDB."""
-import mock
+from unittest import mock
 
 import LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB as moduleTested
 from LHCbDIRAC.BookkeepingSystem.DB.OracleDB import OracleDB

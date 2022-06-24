@@ -11,7 +11,6 @@
 """Queries creation."""
 import datetime
 import re
-import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
@@ -24,7 +23,7 @@ global default
 default = "ALL"
 
 
-class OracleBookkeepingDB(object):
+class OracleBookkeepingDB:
     """This class provides all the methods which manipulate the database."""
 
     #############################################################################
@@ -101,9 +100,9 @@ class OracleBookkeepingDB(object):
                 return S_ERROR("Wrong Equal value!")
 
             if infiletypes != default or outfiletypes != default:
-                if isinstance(infiletypes, six.string_types):
+		if isinstance(infiletypes, str):
                     infiletypes = []
-                if isinstance(outfiletypes, six.string_types):
+		if isinstance(outfiletypes, str):
                     outfiletypes = []
                 infiletypes.sort()
                 outfiletypes.sort()
@@ -124,140 +123,140 @@ class OracleBookkeepingDB(object):
                 )
 
             startDate = in_dict.get("StartDate", default)
-            if startDate != default:
-                condition += " AND s.inserttimestamps >= TO_TIMESTAMP (' %s ' ,'YYYY-MM-DD HH24:MI:SS')" % (startDate)
+	    if startDate != default:
+		condition += " AND s.inserttimestamps >= TO_TIMESTAMP (' %s ' ,'YYYY-MM-DD HH24:MI:SS')" % (startDate)
 
-            stepId = in_dict.get("StepId", default)
-            if stepId != default:
-                if isinstance(stepId, (six.string_types + six.integer_types)):
-                    condition += " AND s.stepid= %s" % (str(stepId))
-                elif isinstance(stepId, (list, tuple)):
-                    condition += "AND s.stepid in (%s)" % ",".join(str(sid) for sid in stepId)
-                else:
-                    return S_ERROR("Wrong StepId")
+	    stepId = in_dict.get("StepId", default)
+	    if stepId != default:
+		if isinstance(stepId, ((str,) + (int,))):
+		    condition += " AND s.stepid= %s" % (str(stepId))
+		elif isinstance(stepId, (list, tuple)):
+		    condition += "AND s.stepid in (%s)" % ",".join(str(sid) for sid in stepId)
+		else:
+		    return S_ERROR("Wrong StepId")
 
-            stepName = in_dict.get("StepName", default)
-            if stepName != default:
-                if isinstance(stepName, six.string_types):
-                    condition += " AND s.stepname='%s'" % (stepName)
-                elif isinstance(stepName, list):
-                    values = " AND ("
-                    for i in stepName:
-                        values += " s.stepname='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    stepName = in_dict.get("StepName", default)
+	    if stepName != default:
+		if isinstance(stepName, str):
+		    condition += " AND s.stepname='%s'" % (stepName)
+		elif isinstance(stepName, list):
+		    values = " AND ("
+		    for i in stepName:
+			values += " s.stepname='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            appName = in_dict.get("ApplicationName", default)
-            if appName != default:
-                if isinstance(appName, six.string_types):
-                    condition += " AND s.applicationName='%s'" % (appName)
-                elif isinstance(appName, list):
-                    values = " AND ("
-                    for i in appName:
-                        values += " s.applicationName='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    appName = in_dict.get("ApplicationName", default)
+	    if appName != default:
+		if isinstance(appName, str):
+		    condition += " AND s.applicationName='%s'" % (appName)
+		elif isinstance(appName, list):
+		    values = " AND ("
+		    for i in appName:
+			values += " s.applicationName='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            appVersion = in_dict.get("ApplicationVersion", default)
-            if appVersion != default:
-                if isinstance(appVersion, six.string_types):
-                    condition += " AND s.applicationversion='%s'" % (appVersion)
-                elif isinstance(appVersion, list):
-                    values = " AND ("
-                    for i in appVersion:
-                        values += " s.applicationversion='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    appVersion = in_dict.get("ApplicationVersion", default)
+	    if appVersion != default:
+		if isinstance(appVersion, str):
+		    condition += " AND s.applicationversion='%s'" % (appVersion)
+		elif isinstance(appVersion, list):
+		    values = " AND ("
+		    for i in appVersion:
+			values += " s.applicationversion='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            optFile = in_dict.get("OptionFiles", default)
-            if optFile != default:
-                if isinstance(optFile, six.string_types):
-                    condition += " AND s.optionfiles='%s'" % (optFile)
-                elif isinstance(optFile, list):
-                    values = " AND ("
-                    for i in optFile:
-                        values += " s.optionfiles='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    optFile = in_dict.get("OptionFiles", default)
+	    if optFile != default:
+		if isinstance(optFile, str):
+		    condition += " AND s.optionfiles='%s'" % (optFile)
+		elif isinstance(optFile, list):
+		    values = " AND ("
+		    for i in optFile:
+			values += " s.optionfiles='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            dddb = in_dict.get("DDDB", default)
-            if dddb != default:
-                if isinstance(dddb, six.string_types):
-                    condition += " AND s.dddb='%s'" % (dddb)
-                elif isinstance(dddb, list):
-                    values = " AND ("
-                    for i in dddb:
-                        values += " s.dddb='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    dddb = in_dict.get("DDDB", default)
+	    if dddb != default:
+		if isinstance(dddb, str):
+		    condition += " AND s.dddb='%s'" % (dddb)
+		elif isinstance(dddb, list):
+		    values = " AND ("
+		    for i in dddb:
+			values += " s.dddb='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            conddb = in_dict.get("CONDDB", default)
-            if conddb != default:
-                if isinstance(conddb, six.string_types):
-                    condition += " AND s.conddb='%s'" % (conddb)
-                elif isinstance(conddb, list):
-                    values = " AND ("
-                    for i in conddb:
-                        values += " s.conddb='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    conddb = in_dict.get("CONDDB", default)
+	    if conddb != default:
+		if isinstance(conddb, str):
+		    condition += " AND s.conddb='%s'" % (conddb)
+		elif isinstance(conddb, list):
+		    values = " AND ("
+		    for i in conddb:
+			values += " s.conddb='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            extraP = in_dict.get("ExtraPackages", default)
-            if extraP != default:
-                if isinstance(extraP, six.string_types):
-                    condition += " AND s.extrapackages='%s'" % (extraP)
-                elif isinstance(extraP, list):
-                    values = " AND ("
-                    for i in extraP:
-                        values += " s.extrapackages='%s' OR " % (i)
-                    condition += values + ")"
+	    extraP = in_dict.get("ExtraPackages", default)
+	    if extraP != default:
+		if isinstance(extraP, str):
+		    condition += " AND s.extrapackages='%s'" % (extraP)
+		elif isinstance(extraP, list):
+		    values = " AND ("
+		    for i in extraP:
+			values += " s.extrapackages='%s' OR " % (i)
+		    condition += values + ")"
 
-            visible = in_dict.get("Visible", default)
-            if visible != default:
-                if isinstance(visible, six.string_types):
-                    condition += " AND s.visible='%s'" % (visible)
-                elif isinstance(visible, list):
-                    values = " AND ("
-                    for i in visible:
-                        values += " s.visible='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    visible = in_dict.get("Visible", default)
+	    if visible != default:
+		if isinstance(visible, str):
+		    condition += " AND s.visible='%s'" % (visible)
+		elif isinstance(visible, list):
+		    values = " AND ("
+		    for i in visible:
+			values += " s.visible='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            procPass = in_dict.get("ProcessingPass", default)
-            if procPass != default:
-                if isinstance(procPass, six.string_types):
-                    condition += " AND s.processingpass LIKE'%%%s%%'" % (procPass)
-                elif isinstance(procPass, list):
-                    values = " AND ("
-                    for i in procPass:
-                        values += " s.processingpass LIKE '%%%s%%' OR " % (i)
-                    condition += values[:-3] + ")"
+	    procPass = in_dict.get("ProcessingPass", default)
+	    if procPass != default:
+		if isinstance(procPass, str):
+		    condition += " AND s.processingpass LIKE'%%%s%%'" % (procPass)
+		elif isinstance(procPass, list):
+		    values = " AND ("
+		    for i in procPass:
+			values += " s.processingpass LIKE '%%%s%%' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            usable = in_dict.get("Usable", default)
-            if usable != default:
-                if isinstance(usable, six.string_types):
-                    condition += " AND s.usable='%s'" % (usable)
-                elif isinstance(usable, list):
-                    values = " AND ("
-                    for i in usable:
-                        values += " s.usable='%s' OR " % (i)
+	    usable = in_dict.get("Usable", default)
+	    if usable != default:
+		if isinstance(usable, str):
+		    condition += " AND s.usable='%s'" % (usable)
+		elif isinstance(usable, list):
+		    values = " AND ("
+		    for i in usable:
+			values += " s.usable='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             runtimeProject = in_dict.get("RuntimeProjects", default)
-            if runtimeProject != default:
-                condition += " AND s.runtimeProject=%d" % (runtimeProject)
+	    if runtimeProject != default:
+		condition += " AND s.runtimeProject=%d" % (runtimeProject)
 
-            dqtag = in_dict.get("DQTag", default)
-            if dqtag != default:
-                if isinstance(dqtag, six.string_types):
-                    condition += " AND s.dqtag='%s'" % (dqtag)
-                elif isinstance(dqtag, list):
-                    values = " AND ("
-                    for i in dqtag:
-                        values += "  s.dqtag='%s' OR " % (i)
-                    condition += values[:-3] + ")"
+	    dqtag = in_dict.get("DQTag", default)
+	    if dqtag != default:
+		if isinstance(dqtag, str):
+		    condition += " AND s.dqtag='%s'" % (dqtag)
+		elif isinstance(dqtag, list):
+		    values = " AND ("
+		    for i in dqtag:
+			values += "  s.dqtag='%s' OR " % (i)
+		    condition += values[:-3] + ")"
 
-            optsf = in_dict.get("OptionsFormat", default)
-            if optsf != default:
-                if isinstance(optsf, six.string_types):
-                    condition += " AND s.optionsFormat='%s'" % (optsf)
-                elif isinstance(optsf, list):
-                    values = " AND ("
-                    for i in optsf:
-                        values += " s.optionsFormat='%s' OR " % (i)
+	    optsf = in_dict.get("OptionsFormat", default)
+	    if optsf != default:
+		if isinstance(optsf, str):
+		    condition += " AND s.optionsFormat='%s'" % (optsf)
+		elif isinstance(optsf, list):
+		    values = " AND ("
+		    for i in optsf:
+			values += " s.optionsFormat='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             sysconfig = in_dict.get("SystemConfig", default)
@@ -286,7 +285,7 @@ class OracleBookkeepingDB(object):
                     for item in items:
                         order += "s.%s," % (item)
                     condition += " %s %s" % (order[:-1], order)
-                elif isinstance(items, six.string_types):
+		elif isinstance(items, str):
                     condition += " s.%s %s" % (items, order)
                 else:
                     return S_ERROR("SortItems is not properly defined!")
@@ -779,17 +778,17 @@ extrapackages,visible, processingpass, usable, DQTag, optionsformat,isMulticore,
         if ok:
             stepid = in_dict.get("StepId", default)
             if stepid != default:
-                in_dict.pop("StepId")
-                condition = " WHERE stepid=%s" % (str(stepid))
-                command = "UPDATE steps set "
-                for i in in_dict:
-                    if isinstance(in_dict[i], six.string_types):
-                        command += " %s='%s'," % (i, str(in_dict[i]))
-                    else:
-                        if in_dict[i]:
-                            values = "filetypesARRAY("
-                            ftypes = in_dict[i]
-                            ftypes = sorted(ftypes, key=lambda k: k["FileType"])
+		in_dict.pop("StepId")
+		condition = " WHERE stepid=%s" % (str(stepid))
+		command = "UPDATE steps set "
+		for i in in_dict:
+		    if isinstance(in_dict[i], str):
+			command += " %s='%s'," % (i, str(in_dict[i]))
+		    else:
+			if in_dict[i]:
+			    values = "filetypesARRAY("
+			    ftypes = in_dict[i]
+			    ftypes = sorted(ftypes, key=lambda k: k["FileType"])
                             for j in ftypes:
                                 filetype = j.get("FileType", default)
                                 if filetype != default:
@@ -1545,32 +1544,32 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
         """
         production = params.get("Production", default)
         lfn = params.get("LFN", default)
-        condition = ""
-        diracJobids = params.get("DiracJobId", default)
+	condition = ""
+	diracJobids = params.get("DiracJobId", default)
 
-        tables = " jobs j, files f, configurations c"
-        result = None
-        if production != default:
-            if isinstance(production, (six.string_types + six.integer_types)):
-                condition += "AND j.production=%d " % (int(production))
-            elif isinstance(production, list):
-                condition += "AND j.production in (" + ",".join([str(p) for p in production]) + ")"
-            else:
-                result = S_ERROR("The production type is invalid. It can be a list, integer or string!")
-        elif lfn != default:
-            if isinstance(lfn, six.string_types):
-                condition += "AND f.filename='%s' " % (lfn)
-            elif isinstance(lfn, list):
-                condition += "AND (" + " or ".join(["f.filename='%s'" % x for x in lfn]) + ")"
-            else:
-                result = S_ERROR("You must provide an LFN or a list of LFNs!")
-        elif diracJobids != default:
-            if isinstance(diracJobids, (six.string_types + six.integer_types)):
-                condition += "AND j.DIRACJOBID=%s " % diracJobids
-            elif isinstance(diracJobids, list):
-                condition += "AND j.DIRACJOBID in (" + ",".join([str(djobid) for djobid in diracJobids]) + ")"
-            else:
-                result = S_ERROR("Please provide a correct DIRAC jobid!")
+	tables = " jobs j, files f, configurations c"
+	result = None
+	if production != default:
+	    if isinstance(production, ((str,) + (int,))):
+		condition += "AND j.production=%d " % (int(production))
+	    elif isinstance(production, list):
+		condition += "AND j.production in (" + ",".join([str(p) for p in production]) + ")"
+	    else:
+		result = S_ERROR("The production type is invalid. It can be a list, integer or string!")
+	elif lfn != default:
+	    if isinstance(lfn, str):
+		condition += "AND f.filename='%s' " % (lfn)
+	    elif isinstance(lfn, list):
+		condition += "AND (" + " or ".join(["f.filename='%s'" % x for x in lfn]) + ")"
+	    else:
+		result = S_ERROR("You must provide an LFN or a list of LFNs!")
+	elif diracJobids != default:
+	    if isinstance(diracJobids, ((str,) + (int,))):
+		condition += "AND j.DIRACJOBID=%s " % diracJobids
+	    elif isinstance(diracJobids, list):
+		condition += "AND j.DIRACJOBID in (" + ",".join([str(djobid) for djobid in diracJobids]) + ")"
+	    else:
+		result = S_ERROR("Please provide a correct DIRAC jobid!")
 
         if not result:
             command = (
@@ -2962,16 +2961,16 @@ AND ft.filetypeid=f.ftypeid"
         :param dict inputParams:RunNumber, Fields (CONFIGNAME, CONFIGVERSION, JOBSTART, JOBEND,
         TCK, FILLNUMBER, PROCESSINGPASS, CONDITIONDESCRIPTION,CONDDB, DDDB), Statistics (NBOFFILES, EVENTSTAT,
         FILESIZE, FULLSTAT, LUMINOSITY, INSTLUMINOSITY, EVENTTYPEID)
-        :return: run statistics
-        """
-        runnb = inputParams.get("RunNumber", default)
-        if runnb == default:
-            return S_ERROR("A RunNumber must be given!")
+	:return: run statistics
+	"""
+	runnb = inputParams.get("RunNumber", default)
+	if runnb == default:
+	    return S_ERROR("A RunNumber must be given!")
 
-        if isinstance(runnb, (six.string_types + six.integer_types)):
-            runnb = [runnb]
-        runs = ",".join([str(run) for run in runnb])
-        fields = inputParams.get(
+	if isinstance(runnb, ((str,) + (int,))):
+	    runnb = [runnb]
+	runs = ",".join([str(run) for run in runnb])
+	fields = inputParams.get(
             "Fields",
             [
                 "CONFIGNAME",
@@ -3006,13 +3005,14 @@ AND ft.filetypeid=f.ftypeid"
                     selection.append("BOOKKEEPINGORACLEDB.getProductionProcessingPass(-1 * jobs.runnumber)")
                 else:
                     selection.append("jobs.%s" % (i))
-            elif i.upper() in conditionsFields:
-                if "productionscontainer" not in tables:
-                    tables.extend(["productionscontainer", "data_taking_conditions"])
-                    conditions += " AND jobs.production=productionscontainer.production AND productionscontainer.daqperiodid=data_taking_conditions.daqperiodid "
-                selection.append("data_taking_conditions.description")
-            elif i.upper() in stepsFields:
-                if "stepscontainer" not in tables:
+	    elif i.upper() in conditionsFields:
+		if "productionscontainer" not in tables:
+		    tables.extend(["productionscontainer", "data_taking_conditions"])
+		    conditions += " AND jobs.production=productionscontainer.production"
+		    conditions += " AND productionscontainer.daqperiodid=data_taking_conditions.daqperiodid "
+		selection.append("data_taking_conditions.description")
+	    elif i.upper() in stepsFields:
+		if "stepscontainer" not in tables:
                     tables.extend(["stepscontainer", "steps"])
                     conditions += (
                         "AND jobs.production=stepscontainer.production AND stepscontainer.stepid=steps.stepid "
@@ -3755,16 +3755,16 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                     tables += " , productionoutputfiles prod"
 
             if isinstance(production, list) and production:
-                condition += " AND "
-                cond = " ("
-                for i in production:
-                    cond += " %s.production=%s or " % (table, str(i))
-                cond = cond[:-3] + ")"
-                condition += cond
-            elif isinstance(production, (six.string_types + six.integer_types)):
-                condition += " AND %s.production=%s" % (table, str(production))
+		condition += " AND "
+		cond = " ("
+		for i in production:
+		    cond += " %s.production=%s or " % (table, str(i))
+		cond = cond[:-3] + ")"
+		condition += cond
+	    elif isinstance(production, ((str,) + (int,))):
+		condition += " AND %s.production=%s" % (table, str(production))
 
-        return condition, tables
+	return condition, tables
 
     #############################################################################
     @staticmethod
@@ -3776,18 +3776,18 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         :return: condition and tables
         """
 
-        if tcks not in [None, default]:
-            if isinstance(tcks, list):
-                if default in tcks:
-                    tcks.remove(default)
-                if tcks:
-                    condition += " AND (" + " or ".join([" j.tck='%s'" % i for i in tcks]) + ")"
-            elif isinstance(tcks, six.string_types):
-                condition += " AND j.tck='%s'" % (tcks)
-            else:
-                return S_ERROR("The TCK should be a list or a string")
+	if tcks not in [None, default]:
+	    if isinstance(tcks, list):
+		if default in tcks:
+		    tcks.remove(default)
+		if tcks:
+		    condition += " AND (" + " or ".join([" j.tck='%s'" % i for i in tcks]) + ")"
+	    elif isinstance(tcks, str):
+		condition += " AND j.tck='%s'" % (tcks)
+	    else:
+		return S_ERROR("The TCK should be a list or a string")
 
-        return S_OK(condition)
+	return S_OK(condition)
 
     #############################################################################
     def __buildProcessingPass(self, procPass, condition, tables, useMainTables=True):
@@ -3849,28 +3849,28 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
             if tables.lower().find("filetypes") < 0:
                 tables += " ,filetypes ft"
             if isinstance(ftype, list) and ftype:
-                condition += " AND "
-                cond = " ("
-                for i in ftype:
-                    cond += " ft.name='%s' or " % (i)
-                cond = cond[:-3] + ")"
-                condition += cond
-            elif isinstance(ftype, six.string_types):
-                condition += " AND ft.name='%s'" % (ftype)
-            else:
-                return S_ERROR("File type problem!")
+		condition += " AND "
+		cond = " ("
+		for i in ftype:
+		    cond += " ft.name='%s' or " % (i)
+		cond = cond[:-3] + ")"
+		condition += cond
+	    elif isinstance(ftype, str):
+		condition += " AND ft.name='%s'" % (ftype)
+	    else:
+		return S_ERROR("File type problem!")
 
-            if useMainTables:
-                condition += " AND f.filetypeid=ft.filetypeid"
-            else:
-                condition += " AND ft.filetypeid=prod.filetypeid"
+	    if useMainTables:
+		condition += " AND f.filetypeid=ft.filetypeid"
+	    else:
+		condition += " AND ft.filetypeid=prod.filetypeid"
 
-        if isinstance(ftype, six.string_types) and ftype.upper() == "RAW" and "jobs" in tables:
-            # we know the production of a run is less than 0.
-            # this is needed to speed up the queries when the file type is raw
-            # (we reject all recostructed + stripped jobs/files. ).
-            condition += " AND j.production<0"
-        return condition, tables
+	if isinstance(ftype, str) and ftype.upper() == "RAW" and "jobs" in tables:
+	    # we know the production of a run is less than 0.
+	    # this is needed to speed up the queries when the file type is raw
+	    # (we reject all recostructed + stripped jobs/files. ).
+	    condition += " AND j.production<0"
+	return condition, tables
 
     #############################################################################
     @staticmethod
@@ -3889,20 +3889,20 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
             table = "j"
         if runnumbers and runnumbers != default:
             if useMainTables:
-                condition += "AND prview.runnumber=j.runnumber "
-            else:
-                condition += "AND prview.production=cont.production "
-            if "prodrunview" not in tables.lower():
-                tables += " , prodrunview prview"
-        cond = None
-        if isinstance(runnumbers, six.integer_types):
-            condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
-        elif isinstance(runnumbers, six.string_types) and runnumbers.upper() != default:
-            condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
-        elif isinstance(runnumbers, list) and runnumbers:
-            cond = " ("
-            for i in runnumbers:
-                cond += " %s.runnumber=%s OR " % (table, str(i))
+		condition += "AND prview.runnumber=j.runnumber "
+	    else:
+		condition += "AND prview.production=cont.production "
+	    if "prodrunview" not in tables.lower():
+		tables += " , prodrunview prview"
+	cond = None
+	if isinstance(runnumbers, int):
+	    condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
+	elif isinstance(runnumbers, str) and runnumbers.upper() != default:
+	    condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
+	elif isinstance(runnumbers, list) and runnumbers:
+	    cond = " ("
+	    for i in runnumbers:
+		cond += " %s.runnumber=%s OR " % (table, str(i))
             cond = cond[:-3] + ")"
             if startRunID is not None and endRunID is not None:
                 condition += "AND (%s.runnumber>=%s AND %s.runnumber<=%s OR %s) " % (
@@ -3911,21 +3911,21 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                     table,
                     str(endRunID),
                     cond,
-                )
-            elif startRunID is not None or endRunID is not None:
-                condition += "AND %s " % (cond)
-            elif startRunID is None or endRunID is None:
-                condition += "AND %s " % (cond)
-        else:
-            if (isinstance(startRunID, six.string_types) and startRunID.upper() != default) or (
-                isinstance(startRunID, six.integer_types) and startRunID is not None
-            ):
-                condition += "AND %s.runnumber>=%s " % (table, str(startRunID))
-            if (isinstance(endRunID, six.string_types) and endRunID.upper() is not default) or (
-                isinstance(endRunID, six.integer_types) and endRunID is not None
-            ):
-                condition += "AND %s.runnumber<=%s " % (table, str(endRunID))
-        return S_OK((condition, tables))
+		)
+	    elif startRunID is not None or endRunID is not None:
+		condition += "AND %s " % (cond)
+	    elif startRunID is None or endRunID is None:
+		condition += "AND %s " % (cond)
+	else:
+	    if (isinstance(startRunID, str) and startRunID.upper() != default) or (
+		isinstance(startRunID, int) and startRunID is not None
+	    ):
+		condition += "AND %s.runnumber>=%s " % (table, str(startRunID))
+	    if (isinstance(endRunID, str) and endRunID.upper() is not default) or (
+		isinstance(endRunID, int) and endRunID is not None
+	    ):
+		condition += "AND %s.runnumber<=%s " % (table, str(endRunID))
+	return S_OK((condition, tables))
 
     #############################################################################
     @staticmethod
@@ -3950,25 +3950,25 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                     tables += " , productionoutputfiles prod"
 
             if isinstance(evt, (list, tuple)) and evt:
-                condition += " AND "
-                cond = " ("
-                for i in evt:
-                    cond += " %s.eventtypeid=%s or " % (table, (str(i)))
-                cond = cond[:-3] + ")"
-                condition += cond
-            elif isinstance(evt, (six.string_types + six.integer_types)):
-                condition += " AND %s.eventtypeid=%s" % (table, str(evt))
-            if useMainTables:
-                if isinstance(evt, (list, tuple)) and evt:
-                    condition += " AND "
-                    cond = " ("
-                    for i in evt:
-                        cond += " %s.eventtypeid=%s or " % (table, (str(i)))
-                    cond = cond[:-3] + ")"
-                    condition += cond
-                elif isinstance(evt, (six.string_types + six.integer_types)):
-                    condition += " AND %s.eventtypeid=%s" % (table, str(evt))
-        return condition, tables
+		condition += " AND "
+		cond = " ("
+		for i in evt:
+		    cond += " %s.eventtypeid=%s or " % (table, (str(i)))
+		cond = cond[:-3] + ")"
+		condition += cond
+	    elif isinstance(evt, ((str,) + (int,))):
+		condition += " AND %s.eventtypeid=%s" % (table, str(evt))
+	    if useMainTables:
+		if isinstance(evt, (list, tuple)) and evt:
+		    condition += " AND "
+		    cond = " ("
+		    for i in evt:
+			cond += " %s.eventtypeid=%s or " % (table, (str(i)))
+		    cond = cond[:-3] + ")"
+		    condition += cond
+		elif isinstance(evt, ((str,) + (int,))):
+		    condition += " AND %s.eventtypeid=%s" % (table, str(evt))
+	return condition, tables
 
     #############################################################################
     @staticmethod
@@ -4382,31 +4382,31 @@ rownum <=%d ) WHERE r >%d"
     def getDataTakingCondId(self, condition):
         """For retrieving the data quality id.
 
-        :param dict condition: data taking attributes
-        :return: the data taking conditions identifier
-        """
-        command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
-        for param in condition:
-            if isinstance(condition[param], six.string_types) and not condition[param].strip():
-                command += str(param) + " is NULL AND "
-            elif condition[param] is not None:
-                command += str(param) + "='" + condition[param] + "' AND "
-            else:
-                command += str(param) + " is NULL AND "
+	:param dict condition: data taking attributes
+	:return: the data taking conditions identifier
+	"""
+	command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
+	for param in condition:
+	    if isinstance(condition[param], str) and not condition[param].strip():
+		command += str(param) + " is NULL AND "
+	    elif condition[param] is not None:
+		command += str(param) + "='" + condition[param] + "' AND "
+	    else:
+		command += str(param) + " is NULL AND "
 
         command = command[:-4]
         res = self.dbR_.query(command)
-        if res["OK"]:
-            if not res["Value"]:
-                command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
-                for param in condition:
-                    if param != "Description":
-                        if isinstance(condition[param], six.string_types) and not condition[param].strip():
-                            command += str(param) + " is NULL AND "
-                        elif condition[param] is not None:
-                            command += str(param) + "='" + condition[param] + "' AND "
-                        else:
-                            command += str(param) + " is NULL AND "
+	if res["OK"]:
+	    if not res["Value"]:
+		command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
+		for param in condition:
+		    if param != "Description":
+			if isinstance(condition[param], str) and not condition[param].strip():
+			    command += str(param) + " is NULL AND "
+			elif condition[param] is not None:
+			    command += str(param) + "='" + condition[param] + "' AND "
+			else:
+			    command += str(param) + " is NULL AND "
 
                 command = command[:-4]
                 retVal = self.dbR_.query(command)
@@ -4422,31 +4422,31 @@ rownum <=%d ) WHERE r >%d"
         """For retrieving the data taking conditions which fullfill for given
         condition.
 
-        :param dict condition: data taking attributes
-        :return: the data taking description which adequate a given conditions.
-        """
-        command = "SELECT description FROM data_taking_conditions WHERE "
-        for param in condition:
-            if isinstance(condition[param], six.string_types) and not condition[param].strip():
-                command += str(param) + " is NULL and "
-            elif condition[param] is not None:
-                command += str(param) + "='" + condition[param] + "' and "
-            else:
-                command += str(param) + " is NULL and "
+	:param dict condition: data taking attributes
+	:return: the data taking description which adequate a given conditions.
+	"""
+	command = "SELECT description FROM data_taking_conditions WHERE "
+	for param in condition:
+	    if isinstance(condition[param], str) and not condition[param].strip():
+		command += str(param) + " is NULL and "
+	    elif condition[param] is not None:
+		command += str(param) + "='" + condition[param] + "' and "
+	    else:
+		command += str(param) + " is NULL and "
 
         command = command[:-4]
         res = self.dbR_.query(command)
-        if res["OK"]:
-            if not res["Value"]:
-                command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
-                for param in condition:
-                    if param != "Description":
-                        if isinstance(condition[param], six.string_types) and not condition[param].strip():
-                            command += str(param) + " is NULL and "
-                        elif condition[param] is not None:
-                            command += str(param) + "='" + condition[param] + "' and "
-                        else:
-                            command += str(param) + " is NULL and "
+	if res["OK"]:
+	    if not res["Value"]:
+		command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
+		for param in condition:
+		    if param != "Description":
+			if isinstance(condition[param], str) and not condition[param].strip():
+			    command += str(param) + " is NULL and "
+			elif condition[param] is not None:
+			    command += str(param) + "='" + condition[param] + "' and "
+			else:
+			    command += str(param) + " is NULL and "
 
                 command = command[:-4]
                 retVal = self.dbR_.query(command)
@@ -4785,7 +4785,7 @@ rownum <=%d ) WHERE r >%d"
         fileTypeMap = {"RAW": "MDF"}
         eventtypes = []
         if eventType:
-            if isinstance(eventType, (six.string_types, six.integer_types)):
+	    if isinstance(eventType, ((str,), (int,))):
                 eventtypes.append(int(eventType))
             elif isinstance(eventType, list):
                 eventtypes = eventType
@@ -5237,7 +5237,7 @@ CONNECT BY NOCYCLE PRIOR  id=parentid) v WHERE v.path='%s' \
             if not retVal["OK"]:
                 result = retVal
             else:
-                productions = set([i[0] for i in retVal["Value"]])
+		productions = {i[0] for i in retVal["Value"]}
                 self.log.debug("Productions:", "%s" % str(productions))
                 parametersNames = ["id", "name"]
                 for prod in productions:
@@ -5549,7 +5549,7 @@ configurations c WHERE j.configurationid=c.configurationid %s AND prod.productio
                 for item in items:
                     order += "sim.%s," % (item)
                 condition += " %s" % order[:-1]
-            elif isinstance(items, six.string_types):
+	    elif isinstance(items, str):
                 condition += " sim.%s %s" % (items, order)
             else:
                 result = S_ERROR("SortItems is not properly defined!")
@@ -5814,7 +5814,7 @@ diracjobid=%d ORDER BY j.jobid, f.filename"
             if not retVal["OK"]:
                 failed.append({evtId: {"Error": retVal["Message"], "EvtentType": evt}})
 
-        successful = list(set(evt["EVTTYPEID"] for evt in eventtypes) - set(list(i)[0] for i in failed))
+	successful = list({evt["EVTTYPEID"] for evt in eventtypes} - {list(i)[0] for i in failed})
         return S_OK({"Failed": failed, "Successful": successful})
 
     #############################################################################
@@ -5840,7 +5840,7 @@ diracjobid=%d ORDER BY j.jobid, f.filename"
             if not retVal["OK"]:
                 failed.append({evtId: {"Error": retVal["Message"], "EvtentType": evt}})
 
-        successful = list(set(evt["EVTTYPEID"] for evt in eventtypes) - set(list(i)[0] for i in failed))
+	successful = list({evt["EVTTYPEID"] for evt in eventtypes} - {list(i)[0] for i in failed})
         return S_OK({"Failed": failed, "Successful": successful})
 
     def getRunConfigurationsAndDataTakingCondition(self, runnumber):
