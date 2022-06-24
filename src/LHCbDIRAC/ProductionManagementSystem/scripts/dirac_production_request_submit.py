@@ -91,19 +91,19 @@ def _submitProductionRequests(prod: ProductionBase, *, dryRun=True):
     for j, step in enumerate(prod.steps, start=1):
         step.id = find_step_id(step)
         if step.id is not None:
-            gLogger.verbose(f"Step {j} of {len(prod.steps)}: Found existing step with ID {step.id=}")
+            gLogger.info(f"Step {j} of {len(prod.steps)}: Found existing step with ID {step.id=}")
             continue
 
         step_info = step_to_step_manager_dict(step)
-        gLogger.debug("Running insertStep with", step_info)
+        gLogger.verbose("Running insertStep with", step_info)
         if not dryRun:
             step.id = returnValueOrRaise(BookkeepingClient().insertStep(step_info))
-            gLogger.verbose(f"Step {j} of {len(prod.steps)}: Created step with ID {step.id=}")
+            gLogger.info(f"Step {j} of {len(prod.steps)}: Created step with ID {step.id=}")
 
     if prod.id is not None:
         raise RuntimeError(f"{prod.id} has already been submitted")
     request_info, sub_productions = production_to_legacy_dict(prod)
-    gLogger.debug(f"Creating production request with", request_info)
+    gLogger.verbose(f"Creating production request with", request_info)
     if not dryRun:
         prod.id = returnValueOrRaise(prc.createProductionRequest(request_info))
 
@@ -112,7 +112,7 @@ def _submitProductionRequests(prod: ProductionBase, *, dryRun=True):
         if prod.state != ProductionStates.NEW:
             raise RuntimeError("Can only add sub productions to productions in state 'New'")
         sub_prod_info = make_subprod_legacy_dict(sub_prod, prod.id)
-        gLogger.debug(f"Creating production sub request with", request_info)
+        gLogger.verbose(f"Creating production sub request with", request_info)
         if not dryRun:
             sub_prod_id = returnValueOrRaise(prc.createProductionRequest(sub_prod_info))
             sub_prod_ids.append(sub_prod_id)
