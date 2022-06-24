@@ -83,7 +83,7 @@ class OracleBookkeepingDB(object):
         isMulticore = in_dict.get("isMulticore", default)
         if isMulticore.upper() != default:
             if isMulticore.upper() in ["Y", "N"]:
-                condition += " and s.isMulticore='%s'" % (isMulticore)
+                condition += " AND s.isMulticore='%s'" % (isMulticore)
             else:
                 return S_ERROR("isMulticore is not Y or N!")
         if in_dict:
@@ -107,12 +107,12 @@ class OracleBookkeepingDB(object):
                     outfiletypes = []
                 infiletypes.sort()
                 outfiletypes.sort()
-                values = "lists( "
+                values = "lists("
                 for i in infiletypes:
                     values += "'%s'," % (i)
                 inp = values[:-1] + ")"
 
-                values = "lists( "
+                values = "lists("
                 for i in outfiletypes:
                     values += "'%s'," % (i)
                 out = values[:-1] + ")"
@@ -125,148 +125,148 @@ class OracleBookkeepingDB(object):
 
             startDate = in_dict.get("StartDate", default)
             if startDate != default:
-                condition += " and s.inserttimestamps >= TO_TIMESTAMP (' %s ' ,'YYYY-MM-DD HH24:MI:SS')" % (startDate)
+                condition += " AND s.inserttimestamps >= TO_TIMESTAMP (' %s ' ,'YYYY-MM-DD HH24:MI:SS')" % (startDate)
 
             stepId = in_dict.get("StepId", default)
             if stepId != default:
                 if isinstance(stepId, (six.string_types + six.integer_types)):
-                    condition += " and s.stepid= %s" % (str(stepId))
+                    condition += " AND s.stepid= %s" % (str(stepId))
                 elif isinstance(stepId, (list, tuple)):
-                    condition += "and s.stepid in (%s)" % ",".join(str(sid) for sid in stepId)
+                    condition += "AND s.stepid in (%s)" % ",".join(str(sid) for sid in stepId)
                 else:
                     return S_ERROR("Wrong StepId")
 
             stepName = in_dict.get("StepName", default)
             if stepName != default:
                 if isinstance(stepName, six.string_types):
-                    condition += " and s.stepname='%s'" % (stepName)
+                    condition += " AND s.stepname='%s'" % (stepName)
                 elif isinstance(stepName, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in stepName:
-                        values += " s.stepname='%s' or " % (i)
+                        values += " s.stepname='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             appName = in_dict.get("ApplicationName", default)
             if appName != default:
                 if isinstance(appName, six.string_types):
-                    condition += " and s.applicationName='%s'" % (appName)
+                    condition += " AND s.applicationName='%s'" % (appName)
                 elif isinstance(appName, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in appName:
-                        values += " s.applicationName='%s' or " % (i)
+                        values += " s.applicationName='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             appVersion = in_dict.get("ApplicationVersion", default)
             if appVersion != default:
                 if isinstance(appVersion, six.string_types):
-                    condition += " and s.applicationversion='%s'" % (appVersion)
+                    condition += " AND s.applicationversion='%s'" % (appVersion)
                 elif isinstance(appVersion, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in appVersion:
-                        values += " s.applicationversion='%s' or " % (i)
+                        values += " s.applicationversion='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             optFile = in_dict.get("OptionFiles", default)
             if optFile != default:
                 if isinstance(optFile, six.string_types):
-                    condition += " and s.optionfiles = :optionfiles"
-                    queryKwparams["optionfiles"] = optFile
+                    condition += " AND s.optionfiles='%s'" % (optFile)
                 elif isinstance(optFile, list):
-                    bindNames = {f"optionfiles{i}": _optFile for i, _optFile in enumerate(optFile)}
-                    condition += f" and s.optionfiles in ({','.join(f':{b}' for b in bindNames)})"
-                    queryKwparams.update(bindNames)
+                    values = " AND ("
+                    for i in optFile:
+                        values += " s.optionfiles='%s' OR " % (i)
+                    condition += values[:-3] + ")"
 
             dddb = in_dict.get("DDDB", default)
             if dddb != default:
                 if isinstance(dddb, six.string_types):
-                    condition += " and s.dddb='%s'" % (dddb)
+                    condition += " AND s.dddb='%s'" % (dddb)
                 elif isinstance(dddb, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in dddb:
-                        values += " s.dddb='%s' or " % (i)
+                        values += " s.dddb='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             conddb = in_dict.get("CONDDB", default)
             if conddb != default:
                 if isinstance(conddb, six.string_types):
-                    condition += " and s.conddb='%s'" % (conddb)
+                    condition += " AND s.conddb='%s'" % (conddb)
                 elif isinstance(conddb, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in conddb:
-                        values += " s.conddb='%s' or " % (i)
+                        values += " s.conddb='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             extraP = in_dict.get("ExtraPackages", default)
             if extraP != default:
                 if isinstance(extraP, six.string_types):
-                    condition += " and s.extrapackages='%s'" % (extraP)
+                    condition += " AND s.extrapackages='%s'" % (extraP)
                 elif isinstance(extraP, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in extraP:
-                        values += " s.extrapackages='%s' or " % (i)
+                        values += " s.extrapackages='%s' OR " % (i)
                     condition += values + ")"
 
             visible = in_dict.get("Visible", default)
             if visible != default:
                 if isinstance(visible, six.string_types):
-                    condition += " and s.visible='%s'" % (visible)
+                    condition += " AND s.visible='%s'" % (visible)
                 elif isinstance(visible, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in visible:
-                        values += " s.visible='%s' or " % (i)
+                        values += " s.visible='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             procPass = in_dict.get("ProcessingPass", default)
             if procPass != default:
                 if isinstance(procPass, six.string_types):
-                    condition += " and s.processingpass like'%%%s%%'" % (procPass)
+                    condition += " AND s.processingpass LIKE'%%%s%%'" % (procPass)
                 elif isinstance(procPass, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in procPass:
-                        values += " s.processingpass like '%%%s%%' or " % (i)
+                        values += " s.processingpass LIKE '%%%s%%' OR " % (i)
                     condition += values[:-3] + ")"
 
             usable = in_dict.get("Usable", default)
             if usable != default:
                 if isinstance(usable, six.string_types):
-                    condition += " and s.usable='%s'" % (usable)
+                    condition += " AND s.usable='%s'" % (usable)
                 elif isinstance(usable, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in usable:
-                        values += " s.usable='%s' or " % (i)
+                        values += " s.usable='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             runtimeProject = in_dict.get("RuntimeProjects", default)
             if runtimeProject != default:
-                condition += " and s.runtimeProject=%d" % (runtimeProject)
+                condition += " AND s.runtimeProject=%d" % (runtimeProject)
 
             dqtag = in_dict.get("DQTag", default)
             if dqtag != default:
                 if isinstance(dqtag, six.string_types):
-                    condition += " and s.dqtag='%s'" % (dqtag)
+                    condition += " AND s.dqtag='%s'" % (dqtag)
                 elif isinstance(dqtag, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in dqtag:
-                        values += "  s.dqtag='%s' or " % (i)
+                        values += "  s.dqtag='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             optsf = in_dict.get("OptionsFormat", default)
             if optsf != default:
                 if isinstance(optsf, six.string_types):
-                    condition += " and s.optionsFormat='%s'" % (optsf)
+                    condition += " AND s.optionsFormat='%s'" % (optsf)
                 elif isinstance(optsf, list):
-                    values = " and ("
+                    values = " AND ("
                     for i in optsf:
-                        values += " s.optionsFormat='%s' or " % (i)
+                        values += " s.optionsFormat='%s' OR " % (i)
                     condition += values[:-3] + ")"
 
             sysconfig = in_dict.get("SystemConfig", default)
             if sysconfig != default:
-                condition += " and s.systemconfig='%s'" % sysconfig
+                condition += " AND s.systemconfig='%s'" % sysconfig
 
             mcTck = in_dict.get("mcTCK", default)
             if mcTck != default:
-                condition += " and s.mcTCK='%s'" % mcTck
+                condition += " AND s.mcTCK='%s'" % mcTck
 
             start = in_dict.get("StartItem", default)
             maximum = in_dict.get("MaxItem", default)
@@ -291,82 +291,79 @@ class OracleBookkeepingDB(object):
                 else:
                     return S_ERROR("SortItems is not properly defined!")
             else:
-                condition += " order by s.inserttimestamps desc"
+                condition += " ORDER BY s.inserttimestamps DESC"
             if fileTypefilter:
                 if paging:
                     command = (
-                        " select sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, \
-                    sdddb, sconddb, sextrapackages, svisible, sprocessingpass, susable, \
-                    sdqtag, soptsf, smulti, ssysconfig, smcTck, \
-                     rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, \
-                     rsconddb, rsextrapackages, rsvisible, rsprocessingpass, rsusable, \
-                     rdqtag, roptsf, rmulti, rsysconfig, rmcTck from \
-  ( select ROWNUM r , sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, sdddb, sconddb,\
-  sextrapackages, svisible, sprocessingpass, susable, sdqtag, soptsf, smulti, ssysconfig, smcTck,\
-     rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, rsconddb,\
-     rsextrapackages, rsvisible, rsprocessingpass, rsusable , rdqtag, roptsf, rmulti, rsysconfig, rmcTck from \
-    ( select ROWNUM r, s.stepid sstepid ,s.stepname sname, s.applicationname sapplicationname,\
-    s.applicationversion sapplicationversion, s.optionfiles soptionfiles,\
-    s.DDDB sdddb,s.CONDDB sconddb, s.extrapackages sextrapackages,s.Visible svisible ,\
-    s.ProcessingPass sprocessingpass, s.Usable susable, s.dqtag sdqtag, s.optionsFormat soptsf,\
-     s.isMulticore smulti, s.systemconfig ssysconfig, s.mcTCK smcTck, \
-    s.rstepid rsstepid ,s.rstepname rsname, s.rapplicationname rsapplicationname,\
-    s.rapplicationversion rsapplicationversion, s.roptionfiles rsoptionfiles,\
-    s.rDDDB rsdddb,s.rCONDDB rsconddb, s.rextrapackages rsextrapackages,s.rVisible rsvisible , \
-    s.rProcessingPass rsprocessingpass,s.rUsable rsusable, s.rdqtag rdqtag, s.roptionsFormat roptsf, \
-    s.risMulticore rmulti, s.rsystemconfig rsysconfig, s.mcTCK rmcTck \
-    from %s where s.stepid=s.stepid %s \
-     ) where rownum <=%d ) where r >%d"
+                        "SELECT sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, \
+sdddb, sconddb, sextrapackages, svisible, sprocessingpass, susable, sdqtag, soptsf, smulti, ssysconfig, smcTck, \
+rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, \
+rsconddb, rsextrapackages, rsvisible, rsprocessingpass, rsusable, rdqtag, roptsf, rmulti, rsysconfig, rmcTck FROM \
+(SELECT ROWNUM r , sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, sdddb, sconddb, \
+sextrapackages, svisible, sprocessingpass, susable, sdqtag, soptsf, smulti, ssysconfig, smcTck, \
+rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, rsconddb, \
+rsextrapackages, rsvisible, rsprocessingpass, rsusable , rdqtag, roptsf, rmulti, rsysconfig, rmcTck FROM \
+(SELECT ROWNUM r, s.stepid sstepid ,s.stepname sname, s.applicationname sapplicationname, \
+s.applicationversion sapplicationversion, s.optionfiles soptionfiles, \
+s.DDDB sdddb,s.CONDDB sconddb, s.extrapackages sextrapackages,s.Visible svisible, \
+s.ProcessingPass sprocessingpass, s.Usable susable, s.dqtag sdqtag, s.optionsFormat soptsf, \
+s.isMulticore smulti, s.systemconfig ssysconfig, s.mcTCK smcTck, \
+s.rstepid rsstepid ,s.rstepname rsname, s.rapplicationname rsapplicationname, \
+s.rapplicationversion rsapplicationversion, s.roptionfiles rsoptionfiles, \
+s.rDDDB rsdddb,s.rCONDDB rsconddb, s.rextrapackages rsextrapackages,s.rVisible rsvisible , \
+s.rProcessingPass rsprocessingpass,s.rUsable rsusable, s.rdqtag rdqtag, s.roptionsFormat roptsf, \
+s.risMulticore rmulti, s.rsystemconfig rsysconfig, s.mcTCK rmcTck \
+FROM %s WHERE s.stepid=s.stepid %s \
+) WHERE rownum <=%d ) WHERE r >%d"
                         % (fileTypefilter, condition, maximum, start)
                     )
                 else:
-                    command = " select * from %s where s.stepid=s.stepid %s" % (fileTypefilter, condition)
+                    command = "SELECT * FROM %s WHERE s.stepid=s.stepid %s" % (fileTypefilter, condition)
             elif paging:
                 command = (
-                    "select sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, \
-                    sdddb, sconddb, sextrapackages, svisible, sprocessingpass, susable, \
-                    sdqtag, soptsf, smulti, ssysconfig, smcTck, \
-                     rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, \
-                     rsconddb, rsextrapackages, rsvisible, rsprocessingpass, rsusable, \
-                     rdqtag, roptsf, rmulti, rsysconfig, rmcTck from \
-  ( select ROWNUM r , sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, sdddb, sconddb,\
-  sextrapackages, svisible, sprocessingpass, susable, sdqtag, soptsf, smulti, ssysconfig, smcTck,\
-     rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, rsconddb,\
-     rsextrapackages, rsvisible, rsprocessingpass, rsusable , rdqtag, roptsf, rmulti, rsysconfig, rmcTck from \
-    ( select ROWNUM r, s.stepid sstepid ,s.stepname sname, s.applicationname sapplicationname,\
-    s.applicationversion sapplicationversion, s.optionfiles soptionfiles,\
-    s.DDDB sdddb,s.CONDDB sconddb, s.extrapackages sextrapackages,s.Visible svisible ,\
-    s.ProcessingPass sprocessingpass, s.Usable susable, s.dqtag sdqtag, s.optionsFormat soptsf,\
-     s.isMulticore smulti, s.systemconfig ssysconfig, s.mcTCK smcTck, \
-    r.stepid rsstepid ,r.stepname rsname, r.applicationname rsapplicationname,\
-    r.applicationversion rsapplicationversion, r.optionfiles rsoptionfiles,\
-    r.DDDB rsdddb,r.CONDDB rsconddb, r.extrapackages rsextrapackages,r.Visible rsvisible ,\
-    r.ProcessingPass rsprocessingpass,r.Usable rsusable, r.dqtag rdqtag, r.optionsFormat roptsf, \
-    r.isMulticore rmulti, r.systemconfig rsysconfig, r.mcTCK rmcTck \
-    from %s where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid %s \
-     ) where rownum <=%d ) where r >%d"
+                    "SELECT sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, \
+sdddb, sconddb, sextrapackages, svisible, sprocessingpass, susable, \
+sdqtag, soptsf, smulti, ssysconfig, smcTck, \
+rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, \
+rsconddb, rsextrapackages, rsvisible, rsprocessingpass, rsusable, \
+rdqtag, roptsf, rmulti, rsysconfig, rmcTck FROM \
+(SELECT ROWNUM r , sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, sdddb, sconddb, \
+sextrapackages, svisible, sprocessingpass, susable, sdqtag, soptsf, smulti, ssysconfig, smcTck, \
+rsstepid, rsname, rsapplicationname, rsapplicationversion, rsoptionfiles, rsdddb, rsconddb, \
+rsextrapackages, rsvisible, rsprocessingpass, rsusable , rdqtag, roptsf, rmulti, rsysconfig, rmcTck FROM \
+(SELECT ROWNUM r, s.stepid sstepid ,s.stepname sname, s.applicationname sapplicationname, \
+s.applicationversion sapplicationversion, s.optionfiles soptionfiles, \
+s.DDDB sdddb,s.CONDDB sconddb, s.extrapackages sextrapackages,s.Visible svisible, \
+s.ProcessingPass sprocessingpass, s.Usable susable, s.dqtag sdqtag, s.optionsFormat soptsf, \
+s.isMulticore smulti, s.systemconfig ssysconfig, s.mcTCK smcTck, \
+r.stepid rsstepid ,r.stepname rsname, r.applicationname rsapplicationname, \
+r.applicationversion rsapplicationversion, r.optionfiles rsoptionfiles, \
+r.DDDB rsdddb,r.CONDDB rsconddb, r.extrapackages rsextrapackages,r.Visible rsvisible, \
+r.ProcessingPass rsprocessingpass,r.Usable rsusable, r.dqtag rdqtag, r.optionsFormat roptsf, \
+r.isMulticore rmulti, r.systemconfig rsysconfig, r.mcTCK rmcTck \
+FROM %s WHERE s.stepid=rr.stepid(+) AND r.stepid(+)=rr.runtimeprojectid %s \
+) WHERE rownum <=%d) WHERE r >%d"
                     % (tables, condition, maximum, start)
                 )
 
             else:
                 command = (
-                    "select s.stepid,s.stepname, s.applicationname,s.applicationversion,s.optionfiles,s.DDDB,s.CONDDB,\
-         s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.dqtag, s.optionsformat, s.ismulticore, \
-         s.systemconfig, s.mcTCK, r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,\
-         r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, \
-         r.ismulticore, r.systemconfig, r.mcTCK from %s where s.stepid=rr.stepid(+) and \
-         r.stepid(+)=rr.runtimeprojectid  %s "
+                    "SELECT s.stepid,s.stepname, s.applicationname,s.applicationversion,s.optionfiles,s.DDDB,s.CONDDB, \
+s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.dqtag, s.optionsformat, s.ismulticore, \
+s.systemconfig, s.mcTCK, r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles, \
+r.DDDB,r.CONDDB, r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, \
+r.ismulticore, r.systemconfig, r.mcTCK FROM %s WHERE s.stepid=rr.stepid(+) AND \
+r.stepid(+)=rr.runtimeprojectid  %s "
                     % (tables, condition)
                 )
             retVal = self.dbR_.query(command, kwparams=queryKwparams)
         else:
             command = (
-                "select s.stepid, s.stepname, s.applicationname,s.applicationversion,s.optionfiles,s.DDDB,s.CONDDB, \
-      s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, \
-      s.mcTCK,r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, \
-      r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.ismulticore,\
-      r.systemconfig, r.mcTCK \
-      from %s where s.stepid=rr.stepid(+) and r.stepid(+)=rr.runtimeprojectid "
+                "SELECT s.stepid, s.stepname, s.applicationname,s.applicationversion,s.optionfiles,s.DDDB,s.CONDDB, \
+s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.dqtag, s.optionsformat, s.isMulticore, s.systemconfig, \
+s.mcTCK,r.stepid, r.stepname, r.applicationname,r.applicationversion,r.optionfiles,r.DDDB,r.CONDDB, \
+r.extrapackages,r.Visible, r.ProcessingPass, r.Usable, r.dqtag, r.optionsformat, r.ismulticore, r.systemconfig, r.mcTCK \
+FROM %s WHERE s.stepid=rr.stepid(+) AND r.stepid(+)=rr.runtimeprojectid "
                 % (tables)
             )
             retVal = self.dbR_.query(command)
@@ -427,9 +424,9 @@ class OracleBookkeepingDB(object):
             return S_OK({"ParameterNames": parameters, "Records": records, "TotalRecords": len(records)})
 
         if fileTypefilter:
-            command = "select count(*) from %s where s.stepid>0 %s " % (fileTypefilter, condition)
+            command = "SELECT count(*) FROM %s WHERE s.stepid>0 %s " % (fileTypefilter, condition)
         else:
-            command = "select count(*) from steps s where s.stepid>0 %s " % (condition)
+            command = "SELECT count(*) FROM steps s WHERE s.stepid>0 %s " % (condition)
 
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
@@ -447,13 +444,12 @@ class OracleBookkeepingDB(object):
         result = S_ERROR()
         condition = ""
         selection = "s.stepid,stepname, s.applicationname,s.applicationversion,s.optionfiles,s.DDDB,CONDDB,\
-     s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.DQTag, s.optionsformat, s.ismulticore, \
-     s.systemconfig, s.mcTCK"
+s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.DQTag, s.optionsformat, s.ismulticore, s.systemconfig, s.mcTCK"
         tables = "steps s, runtimeprojects rp"
         stepId = in_dict.get("StepId", default)
         if stepId != default:
             condition += " rp.stepid=%d" % (stepId)
-            command = " select %s from %s where s.stepid=rp.runtimeprojectid and %s" % (selection, tables, condition)
+            command = " SELECT %s FROM %s WHERE s.stepid=rp.runtimeprojectid AND %s" % (selection, tables, condition)
             retVal = self.dbR_.query(command)
             if retVal["OK"]:
                 parameters = [
@@ -492,8 +488,8 @@ class OracleBookkeepingDB(object):
         :return: the step input files
         """
         command = (
-            "select inputFiletypes.name,inputFiletypes.visible from steps, \
-     table(steps.InputFileTypes) inputFiletypes where steps.stepid="
+            "SELECT inputFiletypes.name,inputFiletypes.visible FROM steps, \
+table(steps.InputFileTypes) inputFiletypes WHERE steps.stepid="
             + str(stepId)
         )
         return self.dbR_.query(command)
@@ -517,7 +513,7 @@ class OracleBookkeepingDB(object):
                     values += "ftype('%s','%s')," % (fileType, visible)
             values = values[:-1]
             values += ")"
-        command = "update steps set inputfiletypes=%s where stepid=%s" % (values, str(stepid))
+        command = "UPDATE steps SET inputfiletypes=%s WHERE stepid=%s" % (values, str(stepid))
         return self.dbW_.query(command)
 
     #############################################################################
@@ -539,7 +535,7 @@ class OracleBookkeepingDB(object):
                     values += "ftype('%s','%s')," % (fileType, visible)
             values = values[:-1]
             values += ")"
-        command = "update steps set Outputfiletypes=%s  where stepid=%s" % (values, str(stepid))
+        command = "UPDATE steps SET Outputfiletypes=%s WHERE stepid=%s" % (values, str(stepid))
         return self.dbW_.query(command)
 
     #############################################################################
@@ -550,9 +546,8 @@ class OracleBookkeepingDB(object):
         :return: the output file types for a given step
         """
         command = (
-            "select outputfiletypes.name,outputfiletypes.visible from steps, \
-    table(steps.outputfiletypes) outputfiletypes where  steps.stepid="
-            + str(stepId)
+            "SELECT outputfiletypes.name, outputfiletypes.visible FROM "
+            "steps, table(steps.outputfiletypes) outputfiletypes WHERE steps.stepid=" + str(stepId)
         )
         return self.dbR_.query(command)
 
@@ -566,12 +561,11 @@ class OracleBookkeepingDB(object):
         """
         condition = ""
         if stepid != default:
-            condition = " and s.stepid=%s" % stepid
+            condition = " AND s.stepid=%s" % stepid
 
         command = (
-            "select distinct ft.name, s.visible from productionoutputfiles s, filetypes ft where \
-    s.filetypeid=ft.filetypeid and s.production=%s %s"
-            % (prod, condition)
+            "SELECT DISTINCT ft.name, s.visible from productionoutputfiles s, filetypes FT WHERE "
+            "s.filetypeid=ft.filetypeid AND s.production=%s %s" % (prod, condition)
         )
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
@@ -580,8 +574,8 @@ class OracleBookkeepingDB(object):
             # this is for backward compatibility.
             # FIXME: make sure the productionoutputfiles is correctly propagated and after the method can be simpified
             command = (
-                "select o.name,o.visible from steps s, table(s.outputfiletypes) o, stepscontainer st \
-            where st.stepid=s.stepid and st.production=%d %s order by step"
+                "SELECT o.name,o.visible from steps s, table(s.outputfiletypes) o, stepscontainer st \
+WHERE st.stepid=s.stepid AND st.production=%d %s ORDER BY step"
                 % (int(prod), condition)
             )
             retVal = self.dbR_.query(command)
@@ -644,8 +638,8 @@ class OracleBookkeepingDB(object):
         else:
             sid = retVal["Value"][0][0]
 
-        selection = "insert into steps(stepid,stepname,applicationname,applicationversion,OptionFiles,dddb,conddb,\
-    extrapackages,visible, processingpass, usable, DQTag, optionsformat,isMulticore, SystemConfig, mcTCK"
+        selection = "INSERT INTO steps(stepid,stepname,applicationname,applicationversion,OptionFiles,dddb,conddb, \
+extrapackages,visible, processingpass, usable, DQTag, optionsformat,isMulticore, SystemConfig, mcTCK"
         inFileTypes = in_dict.get("InputFileTypes", default)
         if inFileTypes != default:
             inFileTypes = sorted(inFileTypes, key=lambda k: k["FileType"])
@@ -786,8 +780,8 @@ class OracleBookkeepingDB(object):
             stepid = in_dict.get("StepId", default)
             if stepid != default:
                 in_dict.pop("StepId")
-                condition = " where stepid=%s" % (str(stepid))
-                command = "update steps set "
+                condition = " WHERE stepid=%s" % (str(stepid))
+                command = "UPDATE steps set "
                 for i in in_dict:
                     if isinstance(in_dict[i], six.string_types):
                         command += " %s='%s'," % (i, str(in_dict[i]))
@@ -821,10 +815,8 @@ class OracleBookkeepingDB(object):
         :return: the available configuration names
         """
         command = (
-            "select c.configname from configurations c, productionoutputfiles prod, productionscontainer cont\
-                where cont.configurationid=c.configurationid\
-                and prod.production=cont.production %s\
-                group by c.configname order by c.configname"
+            "SELECT c.configname from configurations c, productionoutputfiles prod, productionscontainer cont \
+WHERE cont.configurationid=c.configurationid AND prod.production=cont.production %s GROUP BY c.configname ORDER BY c.configname"
             % self.__buildVisible(visible="Y", replicaFlag="Yes")
         )
         return self.dbR_.query(command)
@@ -848,11 +840,9 @@ class OracleBookkeepingDB(object):
         result = S_ERROR()
         if configname != default:
             command = (
-                "select c.configversion from configurations c, productionoutputfiles prod, productionscontainer cont\
-                  where cont.configurationid=c.configurationid\
-                  and c.configname='%s' and prod.production=cont.production %s\
-                  group by c.configversion \
-                  order by c.configversion"
+                "SELECT c.configversion from configurations c, productionoutputfiles prod, productionscontainer cont \
+WHERE cont.configurationid=c.configurationid AND c.configname='%s' AND prod.production=cont.production %s \
+GROUP BY c.configversion ORDER BY c.configversion"
                 % (configname, self.__buildVisible(visible="Y", replicaFlag="Yes"))
             )
             result = self.dbR_.query(command)
@@ -871,29 +861,28 @@ class OracleBookkeepingDB(object):
         :return: the conditions for a given configuration name, version and event type
         """
 
-        condition = " and cont.production=prod.production %s " % self.__buildVisible(visible="Y", replicaFlag="Yes")
+        condition = " AND cont.production=prod.production %s " % self.__buildVisible(visible="Y", replicaFlag="Yes")
         tables = " configurations c, productionscontainer cont, productionoutputfiles prod "
         condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
         if evt != default:
-            condition += " and prod.eventtypeid=%s" % (str(evt))
+            condition += " AND prod.eventtypeid=%s" % (str(evt))
 
         command = (
-            "select distinct simulationConditions.SIMID,data_taking_conditions.DAQPERIODID,\
-    simulationConditions.SIMDESCRIPTION, simulationConditions.BEAMCOND, \
-    simulationConditions.BEAMENERGY, simulationConditions.GENERATOR,\
-    simulationConditions.MAGNETICFIELD,simulationConditions.DETECTORCOND, \
-    simulationConditions.LUMINOSITY, simulationconditions.G4settings, \
-    data_taking_conditions.DESCRIPTION,data_taking_conditions.BEAMCOND, \
-    data_taking_conditions.BEAMENERGY,data_taking_conditions.MAGNETICFIELD, \
-    data_taking_conditions.VELO,data_taking_conditions.IT, \
-    data_taking_conditions.TT,data_taking_conditions.OT,\
-    data_taking_conditions.RICH1,data_taking_conditions.RICH2, \
-    data_taking_conditions.SPD_PRS, data_taking_conditions.ECAL, \
-    data_taking_conditions.HCAL, data_taking_conditions.MUON, data_taking_conditions.L0, data_taking_conditions.HLT,\
-     data_taking_conditions.VeloPosition from simulationConditions,data_taking_conditions, %s where \
-      cont.simid=simulationConditions.simid(+) and \
-      cont.DAQPERIODID=data_taking_conditions.DAQPERIODID(+) %s"
+            "SELECT DISTINCT simulationConditions.SIMID,data_taking_conditions.DAQPERIODID, \
+simulationConditions.SIMDESCRIPTION, simulationConditions.BEAMCOND, \
+simulationConditions.BEAMENERGY, simulationConditions.GENERATOR, \
+simulationConditions.MAGNETICFIELD,simulationConditions.DETECTORCOND, \
+simulationConditions.LUMINOSITY, simulationconditions.G4settings, \
+data_taking_conditions.DESCRIPTION,data_taking_conditions.BEAMCOND, \
+data_taking_conditions.BEAMENERGY,data_taking_conditions.MAGNETICFIELD, \
+data_taking_conditions.VELO,data_taking_conditions.IT, \
+data_taking_conditions.TT,data_taking_conditions.OT, \
+data_taking_conditions.RICH1,data_taking_conditions.RICH2, \
+data_taking_conditions.SPD_PRS, data_taking_conditions.ECAL, \
+data_taking_conditions.HCAL, data_taking_conditions.MUON, data_taking_conditions.L0, data_taking_conditions.HLT, \
+data_taking_conditions.VeloPosition FROM simulationConditions,data_taking_conditions, %s WHERE \
+cont.simid=simulationConditions.simid(+) AND cont.DAQPERIODID=data_taking_conditions.DAQPERIODID(+) %s"
             % (tables, condition)
         )
 
@@ -919,12 +908,12 @@ class OracleBookkeepingDB(object):
         precords = []
         pparameters = []
 
-        condition = " and cont.production=prod.production %s " % self.__buildVisible(visible="Y", replicaFlag="Yes")
+        condition = " AND cont.production=prod.production %s " % self.__buildVisible(visible="Y", replicaFlag="Yes")
         tables = ""
         condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
         if eventType != default:
-            condition += " and prod.eventtypeid=%s" % (str(eventType))
+            condition += " AND prod.eventtypeid=%s" % (str(eventType))
 
         if conddescription != default:
             retVal = self.__getConditionString(conddescription, "cont")
@@ -934,21 +923,21 @@ class OracleBookkeepingDB(object):
                 condition += retVal["Value"]
 
         if production != default:
-            condition += " and prod.production=" + str(production)
+            condition += " AND prod.production=" + str(production)
 
         tables = ""
         if runnumber != default:
             tables += " , prodrunview "
-            condition += " and prodrunview.production=prod.production and prodrunview.runnumber=%s" % (str(runnumber))
+            condition += " AND prodrunview.production=prod.production AND prodrunview.runnumber=%s" % (str(runnumber))
 
         proc = path.split("/")[len(path.split("/")) - 1]
         if proc != "":
             command = (
-                "select v.id from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
-                                           FROM processing v   \
-                                           START WITH id in (select distinct id from processing where name='%s') \
-                                              CONNECT BY NOCYCLE PRIOR  id=parentid) v \
-                     where v.path='%s'"
+                "SELECT v.id FROM (SELECT DISTINCT SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
+FROM processing v \
+START WITH id in (SELECT DISTINCT id FROM processing WHERE name='%s') \
+CONNECT BY NOCYCLE PRIOR  id=parentid) v \
+WHERE v.path='%s'"
                 % (path.split("/")[1], path)
             )
             retVal = self.dbR_.query(command)
@@ -962,12 +951,9 @@ class OracleBookkeepingDB(object):
             if pro == "":
                 return S_ERROR("Empty Directory")
             command = (
-                "select distinct eventTypes.EventTypeId,\
-       eventTypes.Description from eventtypes, productionoutputfiles prod,\
-         productionscontainer cont, configurations c, processing %s where \
-        eventTypes.EventTypeId=prod.eventtypeid and \
-        cont.processingid=processing.id and \
-        processing.id in (%s) %s"
+                "SELECT DISTINCT eventTypes.EventTypeId, eventTypes.Description FROM "
+                "eventtypes, productionoutputfiles prod, productionscontainer cont, configurations c, processing %s WHERE "
+                "eventTypes.EventTypeId=prod.eventtypeid AND cont.processingid=processing.id AND processing.id in (%s) %s"
                 % (tables, pro, condition)
             )
 
@@ -980,22 +966,19 @@ class OracleBookkeepingDB(object):
                 return retVal
 
             command = (
-                "SELECT distinct name \
-      FROM processing   where parentid in (%s) \
-      START WITH id in (select distinct cont.processingid \
-      from productionscontainer cont, productionoutputfiles prod, configurations c %s where \
-      cont.production=prod.production  %s )  CONNECT BY NOCYCLE PRIOR  parentid=id \
-      order by name desc"
+                "SELECT DISTINCT name FROM processing WHERE parentid in (%s) "
+                "START WITH id in "
+                "(SELECT DISTINCT cont.processingid FROM "
+                "productionscontainer cont, productionoutputfiles prod, configurations c %s WHERE "
+                "cont.production=prod.production  %s) CONNECT BY NOCYCLE PRIOR  parentid=id ORDER BY name DESC"
                 % (pro, tables, condition)
             )
         else:
             command = (
-                "SELECT distinct name \
-      FROM processing  where parentid is null START WITH id in \
-      (select distinct cont.processingid \
-      from productionscontainer cont, productionoutputfiles prod, configurations c %s where \
-      cont.production=prod.production %s ) CONNECT BY NOCYCLE PRIOR  parentid=id \
-      order by name desc"
+                "SELECT DISTINCT name FROM processing  WHERE parentid is null START WITH id IN "
+                "(SELECT DISTINCT cont.processingid FROM "
+                "productionscontainer cont, productionoutputfiles prod, configurations c %s WHERE "
+                "cont.production=prod.production %s) CONNECT BY NOCYCLE PRIOR  parentid=id ORDER BY name DESC"
                 % (tables, condition)
             )
         retVal = self.dbR_.query(command)
@@ -1026,7 +1009,7 @@ class OracleBookkeepingDB(object):
         retVal = self._getDataTakingConditionId(conddescription)
         if retVal["OK"]:
             if retVal["Value"] != -1:
-                condition += " and %s.DAQPERIODID=%s and %s.DAQPERIODID is not null " % (
+                condition += " AND %s.DAQPERIODID=%s AND %s.DAQPERIODID is not null " % (
                     table,
                     str(retVal["Value"]),
                     table,
@@ -1035,7 +1018,7 @@ class OracleBookkeepingDB(object):
                 retVal = self.__getSimulationConditionId(conddescription)
                 if retVal["OK"]:
                     if retVal["Value"] != -1:
-                        condition += " and %s.simid=%s and %s.simid is not null " % (table, str(retVal["Value"]), table)
+                        condition += " AND %s.simid=%s AND %s.simid is not null " % (table, str(retVal["Value"]), table)
                     else:
                         return S_ERROR("Condition does not exists!")
                 else:
@@ -1051,7 +1034,7 @@ class OracleBookkeepingDB(object):
         :param str desc: data taking description
         :return: the data taking conditions identifire
         """
-        command = "select DAQPERIODID from data_taking_conditions where DESCRIPTION='" + str(desc) + "'"
+        command = "SELECT DAQPERIODID FROM data_taking_conditions WHERE DESCRIPTION='" + str(desc) + "'"
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -1068,7 +1051,7 @@ class OracleBookkeepingDB(object):
         :param str desc: simulation condition description
         :return: the simulation condition identifier
         """
-        command = "select simid from simulationconditions where simdescription='%s'" % (desc)
+        command = "SELECT simid FROM simulationconditions WHERE simdescription='%s'" % (desc)
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -1103,7 +1086,7 @@ class OracleBookkeepingDB(object):
         """
 
         tables = " productionoutputfiles prod, productionscontainer cont "
-        condition = " and cont.production=prod.production %s " % self.__buildVisible(
+        condition = " AND cont.production=prod.production %s " % self.__buildVisible(
             visible=visible, replicaFlag=replicaFlag
         )
 
@@ -1123,7 +1106,7 @@ class OracleBookkeepingDB(object):
             return retVal
         condition, tables = retVal["Value"]
 
-        command = "select prod.production from %s where 1=1  %s group by prod.production" % (tables, condition)
+        command = "SELECT prod.production FROM %s WHERE 1=1  %s GROUP BY prod.production" % (tables, condition)
 
         return self.dbR_.query(command)
 
@@ -1156,7 +1139,7 @@ class OracleBookkeepingDB(object):
         """
 
         tables = " productionoutputfiles prod, productionscontainer cont, filetypes ftypes "
-        condition = " and cont.production=prod.production %s " % self.__buildVisible(
+        condition = " AND cont.production=prod.production %s " % self.__buildVisible(
             visible=visible, replicaFlag=replicaFlag
         )
 
@@ -1179,11 +1162,11 @@ class OracleBookkeepingDB(object):
         proc = ""
         if processing != default:
             command = (
-                "select v.id from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
-                                           FROM processing v   \
-                                           START WITH id in (select distinct id from processing where name='%s') \
-                                              CONNECT BY NOCYCLE PRIOR  id=parentid) v \
-                     where v.path='%s'"
+                "SELECT v.id FROM (SELECT DISTINCT SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
+FROM processing v \
+START WITH id in (SELECT DISTINCT id FROM processing WHERE name='%s') \
+CONNECT BY NOCYCLE PRIOR  id=parentid) v \
+WHERE v.path='%s'"
                 % (processing.split("/")[1], processing)
             )
             retVal = self.dbR_.query(command)
@@ -1194,11 +1177,10 @@ class OracleBookkeepingDB(object):
                 pro += "%s," % (str(i[0]))
             pro = pro[:-1]
             pro += ")"
-            proc = " and cont.processingid in %s " % pro
+            proc = " AND cont.processingid in %s " % pro
         command = (
-            "select ftypes.name from %s \
-                 where prod.production=cont.production %s\
-                   and prod.filetypeId=ftypes.filetypeid  %s group by ftypes.name"
+            "SELECT ftypes.name FROM %s \
+WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %s GROUP BY ftypes.name"
             % (tables, condition, proc)
         )
 
@@ -1254,16 +1236,17 @@ class OracleBookkeepingDB(object):
             runnumbers = []
 
         if selection is None:
-            selection = " distinct f.FileName, f.EventStat, f.FileSize, f.CreationDate, j.JobStart, j.JobEnd, \
-    j.WorkerNode, ft.Name, j.runnumber, j.fillnumber, f.fullstat, d.dataqualityflag, \
-    j.eventinputstat, j.totalluminosity, f.luminosity, f.instLuminosity, j.tck, f.guid, f.adler32, \
-    f.eventTypeid, f.md5sum,f.visibilityflag, j.jobid, f.gotreplica, f.inserttimestamp "
+            selection = (
+                " DISTINCT f.FileName, f.EventStat, f.FileSize, f.CreationDate, j.JobStart, j.JobEnd, "
+                "j.WorkerNode, ft.Name, j.runnumber, j.fillnumber, f.fullstat, d.dataqualityflag, "
+                "j.eventinputstat, j.totalluminosity, f.luminosity, f.instLuminosity, j.tck, f.guid, f.adler32, "
+                "f.eventTypeid, f.md5sum,f.visibilityflag, j.jobid, f.gotreplica, f.inserttimestamp "
+            )
 
         tables = " files f, dataquality d, jobs j, productionoutputfiles prod, productionscontainer cont, filetypes ft "
         condition = (
-            " and cont.production=prod.production and \
-    j.production=prod.production and j.stepid=prod.stepid  and \
-    prod.eventtypeid=f.eventtypeid %s "
+            "AND cont.production=prod.production AND j.production=prod.production "
+            "AND j.stepid=prod.stepid AND prod.eventtypeid=f.eventtypeid %s "
             % self.__buildVisible(visible=visible, replicaFlag=replicaflag)
         )
 
@@ -1309,10 +1292,7 @@ class OracleBookkeepingDB(object):
         condition, tables = self.__buildFileTypes(filetype, condition, tables, useMainTables=False)
 
         command = (
-            "select %s from %s  where \
-    j.jobid=f.jobid  and \
-    ft.filetypeid=f.filetypeid and \
-    f.qualityid=d.qualityid %s"
+            "SELECT %s FROM %s WHERE j.jobid=f.jobid AND ft.filetypeid=f.filetypeid AND f.qualityid=d.qualityid %s"
             % (selection, tables, condition)
         )
         return self.dbR_.query(command)
@@ -1324,7 +1304,7 @@ class OracleBookkeepingDB(object):
         :return: the available data quality flags
         """
         result = S_ERROR()
-        command = " select dataqualityflag from dataquality"
+        command = " SELECT dataqualityflag FROM dataquality"
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             result = retVal
@@ -1342,8 +1322,10 @@ class OracleBookkeepingDB(object):
 
         :return: the available productions
         """
-        command = "select distinct production from productionoutputfiles where production > 0 and\
-    gotreplica='Yes' and visible='Y'"
+        command = (
+            "SELECT DISTINCT production FROM productionoutputfiles WHERE "
+            "production > 0 AND gotreplica='Yes' AND visible='Y'"
+        )
         return self.dbR_.query(command)
 
     #############################################################################
@@ -1352,9 +1334,7 @@ class OracleBookkeepingDB(object):
 
         :return: aviable runs
         """
-        command = " select distinct runnumber from prodrunview"
-        res = self.dbR_.query(command)
-        return res
+        return self.dbR_.query("SELECT DISTINCT runnumber FROM prodrunview")
 
     #############################################################################
     def getAvailableEventTypes(self):
@@ -1402,10 +1382,10 @@ class OracleBookkeepingDB(object):
         """
 
         command = (
-            "select c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion from \
-    productionscontainer cont, configurations c, stepscontainer scont, steps s where cont.production=%s and\
-    cont.configurationid=c.configurationid and cont.production=scont.production and scont.stepid=s.stepid \
-    group by c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
+            "SELECT c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion FROM \
+productionscontainer cont, configurations c, stepscontainer scont, steps s WHERE cont.production=%s AND \
+cont.configurationid=c.configurationid AND cont.production=scont.production AND scont.stepid=s.stepid \
+GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
             % prodid
         )
 
@@ -1427,10 +1407,9 @@ class OracleBookkeepingDB(object):
         daqdesc = None
 
         command = (
-            "select distinct sim.simdescription, daq.description from simulationconditions sim, \
-    data_taking_conditions daq,productionscontainer prod \
-    where sim.simid(+)=prod.simid and daq.daqperiodid(+)=prod.daqperiodid and prod.production="
-            + str(prodid)
+            "SELECT DISTINCT sim.simdescription, daq.description FROM simulationconditions sim, "
+            "data_taking_conditions daq, productionscontainer prod WHERE "
+            "sim.simid(+)=prod.simid AND daq.daqperiodid(+)=prod.daqperiodid AND prod.production=" + str(prodid)
         )
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
@@ -1573,35 +1552,34 @@ class OracleBookkeepingDB(object):
         result = None
         if production != default:
             if isinstance(production, (six.string_types + six.integer_types)):
-                condition += " and j.production=%d " % (int(production))
+                condition += "AND j.production=%d " % (int(production))
             elif isinstance(production, list):
-                condition += " and j.production in ( " + ",".join([str(p) for p in production]) + ")"
+                condition += "AND j.production in (" + ",".join([str(p) for p in production]) + ")"
             else:
                 result = S_ERROR("The production type is invalid. It can be a list, integer or string!")
         elif lfn != default:
             if isinstance(lfn, six.string_types):
-                condition += " and f.filename='%s' " % (lfn)
+                condition += "AND f.filename='%s' " % (lfn)
             elif isinstance(lfn, list):
-                condition += " and (" + " or ".join(["f.filename='%s'" % x for x in lfn]) + ")"
+                condition += "AND (" + " or ".join(["f.filename='%s'" % x for x in lfn]) + ")"
             else:
                 result = S_ERROR("You must provide an LFN or a list of LFNs!")
         elif diracJobids != default:
             if isinstance(diracJobids, (six.string_types + six.integer_types)):
-                condition += " and j.DIRACJOBID=%s " % diracJobids
+                condition += "AND j.DIRACJOBID=%s " % diracJobids
             elif isinstance(diracJobids, list):
-                condition += " and j.DIRACJOBID in ( " + ",".join([str(djobid) for djobid in diracJobids]) + ")"
+                condition += "AND j.DIRACJOBID in (" + ",".join([str(djobid) for djobid in diracJobids]) + ")"
             else:
                 result = S_ERROR("Please provide a correct DIRAC jobid!")
 
         if not result:
             command = (
-                " select  distinct j.DIRACJOBID, j.DIRACVERSION, j.EVENTINPUTSTAT, j.EXECTIME,\
-      j.FIRSTEVENTNUMBER,j.LOCATION,  j.NAME, j.NUMBEROFEVENTS, \
-                 j.STATISTICSREQUESTED, j.WNCPUPOWER, j.CPUTIME, j.WNCACHE, j.WNMEMORY, j.WNMODEL, \
-                 j.WORKERNODE, j.WNCPUHS06, j.jobid, j.totalluminosity, j.production, j.WNMJFHS06,\
-                 c.ConfigName,c.ConfigVersion, j.JobEnd, j.JobStart, j.RunNumber, j.FillNumber, j.Tck, j.stepid \
-                 from %s where f.jobid=j.jobid and c.configurationid=j.configurationid %s"
-                % (tables, condition)
+                "SELECT  DISTINCT j.DIRACJOBID, j.DIRACVERSION, j.EVENTINPUTSTAT, j.EXECTIME, "
+                "j.FIRSTEVENTNUMBER,j.LOCATION, j.NAME, j.NUMBEROFEVENTS, j.STATISTICSREQUESTED, "
+                "j.WNCPUPOWER, j.CPUTIME, j.WNCACHE, j.WNMEMORY, j.WNMODEL, "
+                "j.WORKERNODE, j.WNCPUHS06, j.jobid, j.totalluminosity, j.production, j.WNMJFHS06, "
+                "c.ConfigName,c.ConfigVersion, j.JobEnd, j.JobStart, j.RunNumber, j.FillNumber, j.Tck, j.stepid "
+                "FROM %s WHERE f.jobid=j.jobid AND c.configurationid=j.configurationid %s" % (tables, condition)
             )
             retVal = self.dbR_.query(command)
             if retVal["OK"]:
@@ -1676,15 +1654,16 @@ class OracleBookkeepingDB(object):
         value = {}
         condition = ""
         if gotreplica != default:
-            condition += " and files.gotreplica='%s'" % (str(gotreplica))
+            condition += " AND files.gotreplica='%s'" % (str(gotreplica))
 
         if ftype != default:
-            condition += " and filetypes.name='%s'" % (ftype)
+            condition += " AND filetypes.name='%s'" % (ftype)
 
         command = (
-            "select files.filename, files.gotreplica, files.filesize,files.guid, \
-    filetypes.name, files.inserttimestamp, files.visibilityflag from jobs,files,filetypes where\
-    jobs.jobid=files.jobid and files.filetypeid=filetypes.filetypeid and jobs.production=%d %s"
+            "SELECT files.filename, files.gotreplica, files.filesize,files.guid, filetypes.name, "
+            "files.inserttimestamp, files.visibilityflag "
+            "FROM jobs,files,filetypes WHERE "
+            "jobs.jobid=files.jobid AND files.filetypeid=filetypes.filetypeid AND jobs.production=%d %s"
             % (prod, condition)
         )
 
@@ -1791,9 +1770,9 @@ class OracleBookkeepingDB(object):
         :param dict fileAttr: file attributes
         """
         utctime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        command = "update files Set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS') ," % (str(utctime))
+        command = "UPDATE files Set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS') ," % (str(utctime))
         command += ",".join(["%s=%s" % (str(attribute), str(fileAttr[attribute])) for attribute in fileAttr])
-        command += " where fileName='%s'" % (filename)
+        command += " WHERE fileName='%s'" % (filename)
         res = self.dbW_.query(command)
         return res
 
@@ -1807,14 +1786,14 @@ class OracleBookkeepingDB(object):
         utctime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         sqls = []
         for filename in lfnswithmeta:
-            command = "update files Set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS') ," % (str(utctime))
+            command = "UPDATE files Set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS'), " % (str(utctime))
             command += ",".join(
                 [
                     "%s=%s" % (str(attribute), str(lfnswithmeta[filename][attribute]))
                     for attribute in lfnswithmeta[filename]
                 ]
             )
-            command += " where fileName='%s'" % (filename)
+            command += " WHERE fileName='%s'" % (filename)
             sqls += [command]
 
         retVal = self.dbR_.executeStoredProcedure(
@@ -1831,8 +1810,7 @@ class OracleBookkeepingDB(object):
         """
         utctime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         command = (
-            " update files set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS'),\
-     filename ='%s' where filename='%s'"
+            " UPDATE files SET inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS'), filename ='%s' WHERE filename='%s'"
             % (str(utctime), newLFN, oldLFN)
         )
         res = self.dbW_.query(command)
@@ -1846,12 +1824,10 @@ class OracleBookkeepingDB(object):
         :return: the input files for a given jobid
         """
         command = (
-            " select files.filename from inputfiles,files where \
-    files.fileid=inputfiles.fileid and inputfiles.jobid="
+            " SELECT files.filename FROM inputfiles,files WHERE files.fileid=inputfiles.fileid AND inputfiles.jobid="
             + str(jobid)
         )
-        res = self.dbR_.query(command)
-        return res
+        return self.dbR_.query(command)
 
     #############################################################################
     def getOutputFiles(self, jobid):
@@ -1860,9 +1836,7 @@ class OracleBookkeepingDB(object):
         :param long jobid: bookkeeping jobid
         :return: the outputfiles for a given jobid
         """
-        command = " select files.filename from files where files.jobid =" + str(jobid)
-        res = self.dbR_.query(command)
-        return res
+        return self.dbR_.query("SELECT files.filename FROM files WHERE files.jobid=" + str(jobid))
 
     #############################################################################
     def insertTag(self, name, tag):
@@ -1881,7 +1855,7 @@ class OracleBookkeepingDB(object):
         :param str value: CONDDB, DDDB, etc. tag
         """
         result = False
-        command = "select count(*) from tags where name='%s' and tag='%s'" % (str(name), str(value))
+        command = "SELECT COUNT(*) FROM tags WHERE name='%s' AND tag='%s'" % (str(name), str(value))
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             result = retVal
@@ -1896,11 +1870,9 @@ class OracleBookkeepingDB(object):
         :param list lfns: list of LFNs
         :param str flag: data quality flag
         """
-        result = S_ERROR()
-        values = {}
         retVal = self.__getDataQualityId(flag)
         if not retVal["OK"]:
-            result = retVal
+            return retVal
         else:
             qid = retVal["Value"]
             failed = []
@@ -1913,6 +1885,7 @@ class OracleBookkeepingDB(object):
                 self.log.error(retVal["Message"])
             else:
                 succ = lfns
+            values = {}
             values["Successful"] = succ
             values["Failed"] = failed
             result = S_OK(values)
@@ -1979,10 +1952,8 @@ class OracleBookkeepingDB(object):
         """
         result = S_ERROR()
         command = (
-            "select distinct j.runnumber from  jobs j, productionscontainer prod where \
-    j.production=prod.production and \
-    j.production<0 and \
-    j.runnumber=%s"
+            "SELECT DISTINCT j.runnumber FROM  jobs j, productionscontainer prod WHERE \
+j.production=prod.production AND j.production<0 AND j.runnumber=%s"
             % (str(runNb))
         )
         retVal = self.dbR_.query(command)
@@ -2001,9 +1972,8 @@ class OracleBookkeepingDB(object):
                     qid = retVal["Value"]
                     utctime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     command = (
-                        " update files set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS'), \
-          qualityId=%d where fileid in ( select files.fileid from jobs, files where jobs.jobid=files.jobid and \
-            jobs.runnumber=%d)"
+                        "UPDATE files set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS'), \
+qualityId=%d WHERE fileid in (SELECT files.fileid from jobs, files where jobs.jobid=files.jobid AND jobs.runnumber=%d)"
                         % (str(utctime), qid, runNb)
                     )
                     retVal = self.dbW_.query(command)
@@ -2012,8 +1982,7 @@ class OracleBookkeepingDB(object):
                         result = retVal
                     else:
                         command = (
-                            "select files.filename from jobs, files where jobs.jobid=files.jobid and \
-              jobs.runnumber=%s"
+                            "SELECT files.filename FROM jobs, files where jobs.jobid=files.jobid AND jobs.runnumber=%s"
                             % (runNb)
                         )
 
@@ -2040,7 +2009,7 @@ class OracleBookkeepingDB(object):
         :param str flag: data quality flag
         """
         result = S_ERROR()
-        command = "select distinct jobs.production  from jobs where jobs.production=%d" % (prod)
+        command = "SELECT DISTINCT jobs.production FROM jobs WHERE jobs.production=%d" % (prod)
         retVal = self.dbR_.query(command)
 
         if not retVal["OK"]:
@@ -2058,9 +2027,8 @@ class OracleBookkeepingDB(object):
                     qid = retVal["Value"]
                     utctime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     command = (
-                        " update files set inserttimestamp=TO_TIMESTAMP('%s' + str(utctime),'YYYY-MM-DD HH24:MI:SS'), \
-          qualityId=%d where fileid in ( select files.fileid from jobs, files where jobs.jobid=files.jobid and \
-            jobs.production=%d)"
+                        "UPDATE files SET inserttimestamp=TO_TIMESTAMP('%s' + str(utctime),'YYYY-MM-DD HH24:MI:SS'), \
+qualityId=%d WHERE fileid IN (SELECT files.fileid FROM jobs, files WHERE jobs.jobid=files.jobid AND jobs.production=%d)"
                         % (str(utctime), qid, prod)
                     )
                     retVal = self.dbW_.query(command)
@@ -2069,8 +2037,7 @@ class OracleBookkeepingDB(object):
                         result = retVal
                     else:
                         command = (
-                            "select files.filename from jobs, files where jobs.jobid=files.jobid and \
-              jobs.production=%d"
+                            "SELECT files.filename FROM jobs, files WHERE jobs.jobid=files.jobid AND jobs.production=%d"
                             % (prod)
                         )
                         retVal = self.dbR_.query(command)
@@ -2111,10 +2078,10 @@ class OracleBookkeepingDB(object):
             jobID = int(result.get("Value", 0))
             if jobID:
                 command = (
-                    "select files.fileName,files.jobid, files.gotreplica, files.eventstat,\
-         files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name \
-        from inputfiles,files, filetypes where files.filetypeid=filetypes.filetypeid \
-         and inputfiles.fileid=files.fileid and inputfiles.jobid=%d"
+                    "SELECT files.fileName,files.jobid, files.gotreplica, files.eventstat, \
+files.eventtypeid, files.luminosity, files.instLuminosity, filetypes.name \
+FROM inputfiles,files, filetypes WHERE files.filetypeid=filetypes.filetypeid \
+AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
                     % (jobID)
                 )
                 res = self.dbR_.query(command)
@@ -2762,7 +2729,7 @@ class OracleBookkeepingDB(object):
         """
         command = (
             "SELECT COUNT(*), SUM(files.EventStat), SUM(files.FILESIZE), SUM(files.Luminosity), \
-    SUM(files.instLuminosity) from files, jobs WHERE jobs.jobid=files.jobid AND jobs.production=%d"
+    SUM(files.instLuminosity) FROM files ,jobs WHERE jobs.jobid=files.jobid AND jobs.production=%d"
             % (prod)
         )
         return self.dbR_.query(command)
@@ -2810,36 +2777,32 @@ class OracleBookkeepingDB(object):
         if ftype != "ALL":
 
             command = (
-                "select rnum, filename, filesize, name , creationdate, eventtypeId, \
-      eventstat,gotreplica, inserttimestamp , luminosity ,instLuminosity from \
-                ( select rownum rnum, filename, filesize, name , creationdate, \
-                eventtypeId, eventstat, gotreplica, inserttimestamp, luminosity,instLuminosity \
-                from ( select files.filename, files.filesize, filetypes.name , files.creationdate, \
-                files.eventtypeId, files.eventstat,files.gotreplica, \
-                files.inserttimestamp, files.luminosity, files.instLuminosity \
-                           from jobs,files, filetypes where \
-                           jobs.jobid=files.jobid and \
-                           jobs.production=%s and filetypes.filetypeid=files.filetypeid and filetypes.name='%s' \
-                           Order by files.filename) where rownum <= %d )\
-                            where rnum > %d"
+                "SELECT rnum, filename, filesize, name , creationdate, eventtypeId, \
+eventstat,gotreplica, inserttimestamp , luminosity ,instLuminosity FROM \
+(SELECT rownum rnum, filename, filesize, name , creationdate, \
+eventtypeId, eventstat, gotreplica, inserttimestamp, luminosity,instLuminosity \
+FROM (SELECT files.filename, files.filesize, filetypes.name , files.creationdate, \
+files.eventtypeId, files.eventstat,files.gotreplica, \
+files.inserttimestamp, files.luminosity, files.instLuminosity \
+FROM jobs,files, filetypes WHERE jobs.jobid=files.jobid AND \
+jobs.production=%s AND filetypes.filetypeid=files.filetypeid AND filetypes.name='%s' \
+ORDER BY files.filename) WHERE rownum <= %d ) WHERE rnum > %d"
                 % (prod, ftype, maxitems, startItem)
             )
         else:
 
             command = (
-                "select rnum, fname, fsize, name, fcreation, feventtypeid,\
-       feventstat, fgotreplica, finst, flumi, finstlumy from \
-      (select rownum rnum, fname, fsize, ftypeid, fcreation, feventtypeid, \
-      feventstat, fgotreplica, finst, flumi, finstlumy\
-      from ( select files.filename fname, files.filesize fsize, filetypeid \
-      ftypeid, files.creationdate fcreation, files.eventtypeId feventtypeid, \
-          files.eventstat feventstat, files.gotreplica fgotreplica, \
-          files.inserttimestamp finst, files.luminosity flumi, files.instLuminosity finstlumy\
-            from jobs,files where\
-            jobs.jobid=files.jobid and\
-            jobs.production=%d\
-            Order by files.filename) where rownum <=%d)f , filetypes ft where rnum > %d \
-            and ft.filetypeid=f.ftypeid"
+                "SELECT rnum, fname, fsize, name, fcreation, feventtypeid, \
+feventstat, fgotreplica, finst, flumi, finstlumy FROM \
+(SELECT rownum rnum, fname, fsize, ftypeid, fcreation, feventtypeid, \
+feventstat, fgotreplica, finst, flumi, finstlumy \
+FROM (SELECT files.filename fname, files.filesize fsize, filetypeid \
+ftypeid, files.creationdate fcreation, files.eventtypeId feventtypeid, \
+files.eventstat feventstat, files.gotreplica fgotreplica, \
+files.inserttimestamp finst, files.luminosity flumi, files.instLuminosity finstlumy \
+FROM jobs,files WHERE jobs.jobid=files.jobid AND \
+jobs.production=%d ORDER BY files.filename) WHERE rownum <=%d)f , filetypes ft WHERE rnum > %d \
+AND ft.filetypeid=f.ftypeid"
                 % (prod, maxitems, startItem)
             )
 
@@ -2923,13 +2886,11 @@ class OracleBookkeepingDB(object):
         """
         result = S_ERROR()
         command = (
-            "select distinct j.fillnumber, conf.configname, conf.configversion, \
-    daq.description, j.jobstart, j.jobend, j.tck, j.TOTALLUMINOSITY \
-        from jobs j, configurations conf,data_taking_conditions \
-        daq, productionscontainer prod where \
-        j.configurationid=conf.configurationid and \
-        j.production<0 and prod.daqperiodid=daq.daqperiodid and\
-         j.production=prod.production and j.runnumber=%d"
+            "SELECT DISTINCT j.fillnumber, conf.configname, conf.configversion, "
+            "daq.description, j.jobstart, j.jobend, j.tck, j.TOTALLUMINOSITY "
+            "FROM jobs j, configurations conf, data_taking_conditions daq, productionscontainer prod "
+            "WHERE j.configurationid=conf.configurationid AND "
+            "j.production<0 AND prod.daqperiodid=daq.daqperiodid AND j.production=prod.production AND j.runnumber=%d"
             % (runnb)
         )
         retVal = self.dbR_.query(command)
@@ -2953,14 +2914,11 @@ class OracleBookkeepingDB(object):
         else:
             values["ProcessingPass"] = retVal["Value"]
             command = (
-                " select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.fullstat), \
-      files.eventtypeid , sum(files.luminosity), sum(files.instLuminosity)  from files,jobs \
-           where files.JobId=jobs.JobId and  \
-           files.gotReplica='Yes' and \
-           jobs.production<0 and \
-           jobs.runnumber="
+                "SELECT COUNT(*), SUM(files.EventStat), SUM(files.FILESIZE), SUM(files.fullstat), "
+                "files.eventtypeid, SUM(files.luminosity), SUM(files.instLuminosity) FROM files,jobs "
+                "WHERE files.JobId=jobs.JobId AND files.gotReplica='Yes' AND jobs.production<0 AND jobs.runnumber="
                 + str(runnb)
-                + " Group by files.eventtypeid"
+                + " GROUP BY files.eventtypeid"
             )
             retVal = self.dbR_.query(command)
             if not retVal["OK"]:
@@ -3006,118 +2964,110 @@ class OracleBookkeepingDB(object):
         FILESIZE, FULLSTAT, LUMINOSITY, INSTLUMINOSITY, EVENTTYPEID)
         :return: run statistics
         """
-        result = S_ERROR()
         runnb = inputParams.get("RunNumber", default)
         if runnb == default:
-            result = S_ERROR("The RunNumber must be given!")
-        else:
-            if isinstance(runnb, (six.string_types + six.integer_types)):
-                runnb = [runnb]
-            runs = ""
-            for i in runnb:
-                runs += "%d," % (int(i))
-            runs = runs[:-1]
-            fields = inputParams.get(
-                "Fields",
-                [
-                    "CONFIGNAME",
-                    "CONFIGVERSION",
-                    "JOBSTART",
-                    "JOBEND",
-                    "TCK",
-                    "FILLNUMBER",
-                    "PROCESSINGPASS",
-                    "CONDITIONDESCRIPTION",
-                    "CONDDB",
-                    "DDDB",
-                ],
+            return S_ERROR("A RunNumber must be given!")
+
+        if isinstance(runnb, (six.string_types + six.integer_types)):
+            runnb = [runnb]
+        runs = ",".join([str(run) for run in runnb])
+        fields = inputParams.get(
+            "Fields",
+            [
+                "CONFIGNAME",
+                "CONFIGVERSION",
+                "JOBSTART",
+                "JOBEND",
+                "TCK",
+                "FILLNUMBER",
+                "PROCESSINGPASS",
+                "CONDITIONDESCRIPTION",
+                "CONDDB",
+                "DDDB",
+            ],
+        )
+        statistics = inputParams.get("Statistics", [])
+        configurationsFields = ["CONFIGNAME", "CONFIGVERSION"]
+        jobsFields = ["JOBSTART", "JOBEND", "TCK", "FILLNUMBER", "PROCESSINGPASS"]
+        conditionsFields = ["CONDITIONDESCRIPTION"]
+        stepsFields = ["CONDDB", "DDDB"]
+        selection = []
+        tables = ["jobs"]
+        conditions = "jobs.runnumber in (%s) AND jobs.production <0 " % (runs)
+
+        for i in fields:
+            if i.upper() in configurationsFields:
+                if "configurations" not in tables:
+                    tables.append("configurations")
+                    conditions += "AND jobs.configurationid=configurations.configurationid "
+                selection.append("configurations.%s" % (i))
+            elif i.upper() in jobsFields:
+                if i.upper() == "PROCESSINGPASS":
+                    selection.append("BOOKKEEPINGORACLEDB.getProductionProcessingPass(-1 * jobs.runnumber)")
+                else:
+                    selection.append("jobs.%s" % (i))
+            elif i.upper() in conditionsFields:
+                if "productionscontainer" not in tables:
+                    tables.extend(["productionscontainer", "data_taking_conditions"])
+                    conditions += " AND jobs.production=productionscontainer.production AND productionscontainer.daqperiodid=data_taking_conditions.daqperiodid "
+                selection.append("data_taking_conditions.description")
+            elif i.upper() in stepsFields:
+                if "stepscontainer" not in tables:
+                    tables.extend(["stepscontainer", "steps"])
+                    conditions += (
+                        "AND jobs.production=stepscontainer.production AND stepscontainer.stepid=steps.stepid "
+                    )
+                selection.append("steps.%s" % (i))
+
+        command = "SELECT jobs.runnumber, %s FROM %s WHERE %s " % (", ".join(selection), ", ".join(tables), conditions)
+        retVal = self.dbR_.query(command)
+        if not retVal["OK"]:
+            return retVal
+
+        values = {}
+        for i in retVal["Value"]:
+            rnb = i[0]
+            i = i[1:]
+            record = dict(zip(fields, i))
+            values[rnb] = record
+
+        if statistics:
+            filesFields = [
+                "NBOFFILES",
+                "EVENTSTAT",
+                "FILESIZE",
+                "FULLSTAT",
+                "LUMINOSITY",
+                "INSTLUMINOSITY",
+                "EVENTTYPEID",
+            ]
+            tables = "jobs, files f "
+            conditions = (
+                "jobs.jobid=f.jobid AND jobs.runnumber in (%s) AND jobs.production <0 AND f.gotreplica='Yes' GROUP BY "
+                "jobs.runnumber,f.eventtypeid " % (runs)
             )
-            statistics = inputParams.get("Statistics", [])
-            configurationsFields = ["CONFIGNAME", "CONFIGVERSION"]
-            jobsFields = ["JOBSTART", "JOBEND", "TCK", "FILLNUMBER", "PROCESSINGPASS"]
-            conditionsFields = ["CONDITIONDESCRIPTION"]
-            stepsFields = ["CONDDB", "DDDB"]
-            selection = ""
-            tables = "jobs j,"
-            conditions = " j.runnumber in (%s) and j.production <0 " % (runs)
-
-            for i in fields:
-                if i.upper() in configurationsFields:
-                    if tables.find("configurations") < 0:
-                        tables += " configurations c,"
-                        conditions += " and j.configurationid=c.configurationid "
-                    selection += "c.%s," % (i)
-                elif i.upper() in jobsFields:
-                    if i.upper() == "PROCESSINGPASS":
-                        selection += "BOOKKEEPINGORACLEDB.getProductionProcessingPass(-1 * j.runnumber),"
-                    else:
-                        selection += "j.%s," % (i)
-                elif i.upper() in conditionsFields:
-                    if tables.find("productionscontainer") < 0:
-                        tables += " productionscontainer prod, data_taking_conditions daq,"
-                        conditions += " and j.production=prod.production and prod.daqperiodid=daq.daqperiodid "
-                    selection += "daq.description,"
-                elif i.upper() in stepsFields:
-                    if tables.find("stepscontainer") < 0:
-                        tables += " stepscontainer st, steps s,"
-                        conditions += " and j.production=st.production and st.stepid=s.stepid "
-                    selection += " s.%s," % (i)
-
+            selection = "jobs.runnumber, "
+            for i in statistics:
+                if i.upper() == "NBOFFILES":
+                    selection += "COUNT(*), "
+                elif i.upper() == "EVENTTYPEID":
+                    selection += "f.%s," % (i)
+                elif i.upper() in filesFields:
+                    selection += "sum(f.%s), " % (i)
             selection = selection[:-1]
-            tables = tables[:-1]
-
-            command = "select j.runnumber, %s from %s where %s" % (selection, tables, conditions)
+            command = "SELECT %s  from %s where %s" % (selection, tables, conditions)
             retVal = self.dbR_.query(command)
             if not retVal["OK"]:
-                result = retVal
+                return retVal
             else:
-                values = {}
                 for i in retVal["Value"]:
                     rnb = i[0]
+                    if "Statistics" not in values[rnb]:
+                        values[rnb]["Statistics"] = []
                     i = i[1:]
-                    record = dict(zip(fields, i))
-                    values[rnb] = record
-
-                if statistics:
-                    filesFields = [
-                        "NBOFFILES",
-                        "EVENTSTAT",
-                        "FILESIZE",
-                        "FULLSTAT",
-                        "LUMINOSITY",
-                        "INSTLUMINOSITY",
-                        "EVENTTYPEID",
-                    ]
-                    tables = "jobs j, files f"
-                    conditions = (
-                        " j.jobid=f.jobid and j.runnumber in (%s) and \
-          j.production <0 and f.gotreplica='Yes' \
-          Group by j.runnumber,f.eventtypeid"
-                        % (runs)
-                    )
-                    selection = "j.runnumber,"
-                    for i in statistics:
-                        if i.upper() == "NBOFFILES":
-                            selection += "count(*),"
-                        elif i.upper() == "EVENTTYPEID":
-                            selection += "f.%s," % (i)
-                        elif i.upper() in filesFields:
-                            selection += "sum(f.%s)," % (i)
-                    selection = selection[:-1]
-                    command = "select %s  from %s where %s" % (selection, tables, conditions)
-                    retVal = self.dbR_.query(command)
-                    if not retVal["OK"]:
-                        result = retVal
-                    else:
-                        for i in retVal["Value"]:
-                            rnb = i[0]
-                            if "Statistics" not in values[rnb]:
-                                values[rnb]["Statistics"] = []
-                            i = i[1:]
-                            record = dict(zip(statistics, i))
-                            values[rnb]["Statistics"] += [record]
-                result = S_OK(values)
-        return result
+                    record = dict(zip(statistics, i))
+                    values[rnb]["Statistics"] += [record]
+        return S_OK(values)
 
     #############################################################################
     def getProductionFilesStatus(self, productionid=None, lfns=None):
@@ -3136,9 +3086,7 @@ class OracleBookkeepingDB(object):
         noreplicas = []
         if productionid is not None:
             command = (
-                "select files.filename, files.gotreplica from files,jobs where \
-                 files.jobid=jobs.jobid and \
-                 jobs.production=%d"
+                "SELECT files.filename, files.gotreplica FROM files,jobs WHERE files.jobid=jobs.jobid AND jobs.production=%d "
                 % (productionid)
             )
             retVal = self.dbR_.query(command)
@@ -3154,7 +3102,7 @@ class OracleBookkeepingDB(object):
             result["noreplica"] = noreplicas
         elif lfns:
             for lfn in lfns:
-                command = " select files.filename, files.gotreplica from files where filename='%s'" % (lfn)
+                command = " SELECT files.filename, files.gotreplica FROM files WHERE filename='%s' " % (lfn)
                 retVal = self.dbR_.query(command)
                 if not retVal["OK"]:
                     return retVal
@@ -3182,7 +3130,7 @@ class OracleBookkeepingDB(object):
         """
 
         result = S_ERROR("getFileCreationLog error!")
-        command = "select files.jobid from files where files.filename='%s'" % (lfn)
+        command = "SELECT files.jobid FROM files WHERE files.filename='%s' " % (lfn)
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             result = retVal
@@ -3191,8 +3139,7 @@ class OracleBookkeepingDB(object):
         else:
             jobid = retVal["Value"][0][0]
             command = (
-                "select filename from files where \
-      (files.filetypeid=17 or files.filetypeid=9) and files.jobid=%d"
+                "SELECT filename FROM files WHERE (files.filetypeid=17 OR files.filetypeid=9) AND files.jobid=%d "
                 % (jobid)
             )
             retVal = self.dbR_.query(command)
@@ -3235,11 +3182,10 @@ class OracleBookkeepingDB(object):
         :return: production statistics
         """
 
-        tables = " productionoutputfiles prod, productionscontainer cont, simulationconditions sim,\
-     data_taking_conditions daq, configurations c "
+        tables = " productionoutputfiles prod, productionscontainer cont, simulationconditions sim, \
+data_taking_conditions daq, configurations c "
         condition = (
-            " cont.production=prod.production and\
-    c.configurationid=cont.configurationid  %s "
+            "cont.production=prod.production AND c.configurationid=cont.configurationid %s "
             % self.__buildVisible(visible="Y", replicaFlag="Yes")
         )
 
@@ -3262,16 +3208,14 @@ class OracleBookkeepingDB(object):
         condition, tables = retVal["Value"]
 
         command = (
-            " select c.configname, c.configversion, sim.simdescription, daq.description, \
- cont.processingid, prod.eventtypeid,e.description, prod.production, ftypes.name, sum(f.eventstat) \
-from jobs j, files f, filetypes ftypes, eventtypes e, %s where j.jobid= f.jobid and \
-f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and prod.eventtypeid=f.eventtypeid and\
-  prod.stepid= j.stepid and sim.simid(+)=cont.simid and prod.filetypeid=f.filetypeid and \
-  prod.filetypeid=ftypes.filetypeid and daq.daqperiodid(+)=cont.daqperiodid  and \
-  prod.production = cont.production and %s\
-  group by c.configname, c.configversion, sim.simdescription, \
-    daq.description, cont.processingid, prod.eventtypeid, e.description, \
-    prod.production, ftypes.name"
+            "SELECT c.configname, c.configversion, sim.simdescription, daq.description, \
+ cont.processingid, prod.eventtypeid,e.description, prod.production, ftypes.name, SUM(f.eventstat) \
+FROM jobs j, files f, filetypes ftypes, eventtypes e, %s WHERE j.jobid= f.jobid AND \
+f.gotreplica='Yes' AND prod.stepid= j.stepid AND e.eventtypeid=f.eventtypeid AND prod.eventtypeid=f.eventtypeid AND \
+prod.stepid= j.stepid AND sim.simid(+)=cont.simid AND prod.filetypeid=f.filetypeid AND \
+prod.filetypeid=ftypes.filetypeid AND daq.daqperiodid(+)=cont.daqperiodid  AND \
+prod.production = cont.production AND %s GROUP BY c.configname, c.configversion, sim.simdescription, \
+daq.description, cont.processingid, prod.eventtypeid, e.description, prod.production, ftypes.name"
             % (tables, condition)
         )
         retVal = self.dbR_.query(command)
@@ -3316,9 +3260,9 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
         daqdesc = None
 
         command = (
-            "select distinct sim.simdescription, daq.description from \
-    simulationconditions sim, data_taking_conditions daq,productionscontainer prod \
-              where sim.simid(+)=prod.simid and daq.daqperiodid(+)=prod.daqperiodid and prod.production="
+            "SELECT DISTINCT sim.simdescription, daq.description FROM \
+simulationconditions sim, data_taking_conditions daq, productionscontainer prod \
+WHERE sim.simid(+)=prod.simid AND daq.daqperiodid(+)=prod.daqperiodid AND prod.production="
             + str(prod)
         )
         retVal = self.dbR_.query(command)
@@ -3346,13 +3290,13 @@ f.gotreplica='Yes' and prod.stepid= j.stepid and e.eventtypeid=f.eventtypeid and
         """
 
         command = (
-            "select  files.fileid, files.filename,files.adler32,\
-    files.creationdate,files.eventstat,files.eventtypeid,files.gotreplica, \
-files.guid,files.jobid,files.md5sum, files.filesize,files.fullstat, dataquality.\
-dataqualityflag, files.inserttimestamp, files.luminosity, files.instLuminosity from files, dataquality \
-where files.fileid in ( select inputfiles.fileid from files,inputfiles where \
-files.jobid= inputfiles.jobid and files.filename='%s')\
-and files.qualityid= dataquality.qualityid"
+            "SELECT  files.fileid, files.filename,files.adler32, \
+files.creationdate, files.eventstat, files.eventtypeid, files.gotreplica, \
+files.guid, files.jobid, files.md5sum, files.filesize, files.fullstat, dataquality.dataqualityflag, \
+files.inserttimestamp, files.luminosity, files.instLuminosity FROM files, dataquality \
+WHERE files.fileid IN (SELECT inputfiles.fileid FROM files,inputfiles WHERE \
+files.jobid= inputfiles.jobid AND files.filename='%s')\
+AND files.qualityid= dataquality.qualityid"
             % lfn
         )
 
@@ -3442,7 +3386,7 @@ and files.qualityid= dataquality.qualityid"
 
         :return: the tags
         """
-        command = "select name, tag from tags order by inserttimestamp desc"
+        command = "SELECT name, tag FROM tags ORDER BY inserttimestamp DESC"
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -3481,21 +3425,21 @@ and files.qualityid= dataquality.qualityid"
             if startDate == default and endDate == default:
                 return S_ERROR("The Start and End date must be given!")
             else:
-                condition += " and jobs.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (startDate)
-                condition += " and jobs.jobstart <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (endDate)
+                condition += " AND jobs.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (startDate)
+                condition += " AND jobs.jobstart <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (endDate)
         else:
             if startDate != default:
-                condition += " and jobs.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (startDate)
+                condition += " AND jobs.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (startDate)
             if endDate != default:
-                condition += " and jobs.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (endDate)
+                condition += " AND jobs.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (endDate)
             elif startDate != default and endDate == default:
                 currentTimeStamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 condition += (
-                    " and jobs.jobend <= TO_TIMESTAMP ('" + str(currentTimeStamp) + "','YYYY-MM-DD HH24:MI:SS')"
+                    " AND jobs.jobend <= TO_TIMESTAMP ('" + str(currentTimeStamp) + "','YYYY-MM-DD HH24:MI:SS')"
                 )
-                condition += " and jobs.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
+                condition += " AND jobs.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
 
-        command = " select jobs.runnumber from jobs where jobs.production < 0" + condition
+        command = " SELECT jobs.runnumber FROM jobs WHERE jobs.production < 0" + condition
         retVal = self.dbR_.query(command)
         runIds = []
         if retVal["OK"]:
@@ -3512,8 +3456,8 @@ and files.qualityid= dataquality.qualityid"
             notProcessedRuns = []
             for i in runIds:
                 command = (
-                    "select files.filename from files,jobs where jobs.jobid=files.jobid\
-         and files.gotreplica='Yes' and jobs.production<0 and jobs.runnumber=%d"
+                    "SELECT files.filename FROM files,jobs WHERE jobs.jobid=files.jobid \
+AND files.gotreplica='Yes' AND jobs.production<0 AND jobs.runnumber=%d"
                     % (i)
                 )
                 retVal = self.dbR_.query(command)
@@ -3556,10 +3500,10 @@ and files.qualityid= dataquality.qualityid"
                 if retVal["OK"]:
                     processingid = retVal["Value"]
                     command = (
-                        "select distinct prod.production  from productionoutputfiles prod,\
-           prodrunview prview, productionscontainer cont where \
-      prod.production=prview.production and prview.runnumber=%d and \
-      prod.production>0 and prod.production=cont.production and cont.processingid=%d"
+                        "SELECT DISTINCT prod.production FROM productionoutputfiles prod, \
+prodrunview prview, productionscontainer cont WHERE \
+prod.production=prview.production AND prview.runnumber=%d AND \
+prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                         % (run, processingid)
                     )
                     result = self.dbR_.query(command)
@@ -3700,7 +3644,7 @@ and files.qualityid= dataquality.qualityid"
             tcks = []
 
         condition = ""
-        tables = " files f,jobs j "
+        tables = " files f, jobs j"
 
         condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
@@ -3748,29 +3692,17 @@ and files.qualityid= dataquality.qualityid"
         #  hint = '/*+INDEX(j JOBS_PRODUCTIONID) INDEX(f FILES_JOB_EVENT_FILETYPE) INDEX(ft FILETYPES_ID_NAME)*/'
 
         if nbofEvents:
-            command = (
-                " select sum(f.eventstat) \
-      from %s where f.jobid= j.jobid %s "
-                % (tables, condition)
-            )
+            command = "SELECT SUM(f.eventstat) FROM %s WHERE f.jobid= j.jobid %s " % (tables, condition)
         elif filesize:
-            command = (
-                " select sum(f.filesize) \
-      from %s where f.jobid= j.jobid %s "
-                % (tables, condition)
-            )
+            command = "SELECT SUM(f.filesize) FROM %s WHERE f.jobid= j.jobid %s " % (tables, condition)
         else:
-            command = (
-                " select distinct f.filename \
-      from %s where f.jobid= j.jobid %s "
-                % (tables, condition)
-            )
+            command = "SELECT DISTINCT f.filename FROM %s WHERE f.jobid= j.jobid %s " % (tables, condition)
         return self.dbR_.query(command)
 
     #############################################################################
     @staticmethod
     def __buildConfiguration(configName, configVersion, condition, tables):
-        """it make the condition string for a given configName and configVersion.
+        """it constructs the condition string for a given configName and configVersion.
 
         :param str configName: configuration name
         :param str configVersion: configuration version
@@ -3780,12 +3712,11 @@ and files.qualityid= dataquality.qualityid"
         """
 
         if configName not in [default, None, ""] and configVersion not in [default, None, ""]:
-            if "productionscontainer" not in tables.lower():
-                tables += " ,productionscontainer cont"
             if "configurations" not in tables.lower():
-                tables += " ,configurations c "
-            condition += " and c.configurationid=cont.configurationid  and c.configname='%s' " % (configName)
-            condition += " and c.configversion='%s' " % (configVersion)
+                tables += " , configurations c"
+            condition += " AND c.configurationid=j.configurationid"
+            condition += " AND c.configname='%s'" % configName
+            condition += " AND c.configversion='%s'" % configVersion
 
         return condition, tables
 
@@ -3795,11 +3726,11 @@ and files.qualityid= dataquality.qualityid"
             condition = ""
         if not visible.upper().startswith("A"):
             if visible.upper().startswith("Y"):
-                condition += " and prod.visible='Y'"
+                condition += " AND prod.visible='Y'"
             elif visible.upper().startswith("N"):
-                condition += " and prod.visible='N'"
+                condition += " AND prod.visible='N'"
         if replicaFlag.upper() != default:
-            condition += " and prod.gotreplica='%s'" % replicaFlag
+            condition += " AND prod.gotreplica='%s'" % replicaFlag
 
         return condition
 
@@ -3808,11 +3739,10 @@ and files.qualityid= dataquality.qualityid"
     def __buildProduction(production, condition, tables, useMainTables=True):
         """it adds the production which can be a list or string to the jobs table.
 
-        :param list,int long the production number(s)
-        :param str condition It contains the where conditions
-        :param str tables it containes the tables.
-        :param str visible the default value is 'ALL'. [Y,N]
-        :param bool useView It is better not to use the view in some cases. This variable is used to
+        :param list,int long production: the production number(s)
+        :param str condition: contains the conditions
+        :param str tables: contains the tables.
+        :param bool useMainTables: It is better not to use the view in some cases. This variable is used to
         disable the view usage.
         """
 
@@ -3822,17 +3752,17 @@ and files.qualityid= dataquality.qualityid"
                 table = "j"
             else:
                 if "productionoutputfiles" not in tables.lower():
-                    tables += " ,productionoutputfiles prod"
+                    tables += " , productionoutputfiles prod"
 
             if isinstance(production, list) and production:
-                condition += " and "
-                cond = " ( "
+                condition += " AND "
+                cond = " ("
                 for i in production:
                     cond += " %s.production=%s or " % (table, str(i))
                 cond = cond[:-3] + ")"
                 condition += cond
             elif isinstance(production, (six.string_types + six.integer_types)):
-                condition += " and %s.production=%s" % (table, str(production))
+                condition += " AND %s.production=%s" % (table, str(production))
 
         return condition, tables
 
@@ -3851,9 +3781,9 @@ and files.qualityid= dataquality.qualityid"
                 if default in tcks:
                     tcks.remove(default)
                 if tcks:
-                    condition += " and ( " + " or ".join([" j.tck='%s'" % i for i in tcks]) + ")"
+                    condition += " AND (" + " or ".join([" j.tck='%s'" % i for i in tcks]) + ")"
             elif isinstance(tcks, six.string_types):
-                condition += " and j.tck='%s'" % (tcks)
+                condition += " AND j.tck='%s'" % (tcks)
             else:
                 return S_ERROR("The TCK should be a list or a string")
 
@@ -3863,22 +3793,21 @@ and files.qualityid= dataquality.qualityid"
     def __buildProcessingPass(self, procPass, condition, tables, useMainTables=True):
         """It adds the processing pass condition to the query.
 
-        :param str procPass it is a processing pass for example: /Real Data/Reco20
-        :param str condition It contains the where conditions
-        :param str tables it containes the tables.
-        :param str visible the default value is 'ALL'. [Y,N]
-        :param bool useView It is better not to use the view in some cases. This variable is used to
+        :param str procPass: processing pass for example: /Real Data/Reco20
+        :param str condition: contains the conditions
+        :param str tables: contains the tables.
+        :param bool useMainTables: It is better not to use the view in some cases. This variable is used to
         disable the view usage.
         """
         if procPass not in [default, None]:
             if not re.search("^/", procPass):
                 procPass = procPass.replace(procPass, "/%s" % procPass)
             command = (
-                "select v.id from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
+                "SELECT v.id FROM (SELECT DISTINCT SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
                                            FROM processing v   \
-                                           START WITH id in (select distinct id from processing where name='%s') \
-                                              CONNECT BY NOCYCLE PRIOR  id=parentid) v \
-                     where v.path='%s'"
+                                           START WITH id in (SELECT DISTINCT id FROM processing WHERE name='%s') \
+                                              CONNECT BY NOCYCLE PRIOR id=parentid) v \
+                     WHERE v.path='%s'"
                 % (procPass.split("/")[1], procPass)
             )
             retVal = self.dbR_.query(command)
@@ -3899,7 +3828,7 @@ and files.qualityid= dataquality.qualityid"
                 condition += " and cont.production=j.production "
 
             if "productionscontainer" not in tables.lower():
-                tables += ",productionscontainer cont"
+                tables += " , productionscontainer cont"
         return S_OK((condition, tables))
 
     #############################################################################
@@ -3920,27 +3849,27 @@ and files.qualityid= dataquality.qualityid"
             if tables.lower().find("filetypes") < 0:
                 tables += " ,filetypes ft"
             if isinstance(ftype, list) and ftype:
-                condition += " and "
-                cond = " ( "
+                condition += " AND "
+                cond = " ("
                 for i in ftype:
                     cond += " ft.name='%s' or " % (i)
                 cond = cond[:-3] + ")"
                 condition += cond
             elif isinstance(ftype, six.string_types):
-                condition += " and ft.name='%s'" % (ftype)
+                condition += " AND ft.name='%s'" % (ftype)
             else:
                 return S_ERROR("File type problem!")
 
             if useMainTables:
-                condition += " and f.filetypeid=ft.filetypeid"
+                condition += " AND f.filetypeid=ft.filetypeid"
             else:
-                condition += " and ft.filetypeid=prod.filetypeid"
+                condition += " AND ft.filetypeid=prod.filetypeid"
 
         if isinstance(ftype, six.string_types) and ftype.upper() == "RAW" and "jobs" in tables:
             # we know the production of a run is less than 0.
             # this is needed to speed up the queries when the file type is raw
             # (we reject all recostructed + stripped jobs/files. ).
-            condition += " and j.production<0"
+            condition += " AND j.production<0"
         return condition, tables
 
     #############################################################################
@@ -3960,25 +3889,23 @@ and files.qualityid= dataquality.qualityid"
             table = "j"
         if runnumbers and runnumbers != default:
             if useMainTables:
-                condition += " and prview.runnumber=j.runnumber "
+                condition += "AND prview.runnumber=j.runnumber "
             else:
-                condition += " and prview.production=cont.production "
+                condition += "AND prview.production=cont.production "
             if "prodrunview" not in tables.lower():
-                tables += " ,prodrunview prview"
-            if "productionscontainer" not in tables.lower():
-                tables += " ,productionscontainer cont"
+                tables += " , prodrunview prview"
         cond = None
         if isinstance(runnumbers, six.integer_types):
-            condition += " and %s.runnumber=%s" % (table, str(runnumbers))
+            condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
         elif isinstance(runnumbers, six.string_types) and runnumbers.upper() != default:
-            condition += " and %s.runnumber=%s" % (table, str(runnumbers))
+            condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
         elif isinstance(runnumbers, list) and runnumbers:
-            cond = " ( "
+            cond = " ("
             for i in runnumbers:
-                cond += " %s.runnumber=%s or " % (table, str(i))
+                cond += " %s.runnumber=%s OR " % (table, str(i))
             cond = cond[:-3] + ")"
             if startRunID is not None and endRunID is not None:
-                condition += " and (%s.runnumber>=%s and %.runnumber<=%s or %s)" % (
+                condition += "AND (%s.runnumber>=%s AND %s.runnumber<=%s OR %s) " % (
                     table,
                     str(startRunID),
                     table,
@@ -3986,18 +3913,18 @@ and files.qualityid= dataquality.qualityid"
                     cond,
                 )
             elif startRunID is not None or endRunID is not None:
-                condition += " and %s " % (cond)
+                condition += "AND %s " % (cond)
             elif startRunID is None or endRunID is None:
-                condition += " and %s " % (cond)
+                condition += "AND %s " % (cond)
         else:
             if (isinstance(startRunID, six.string_types) and startRunID.upper() != default) or (
                 isinstance(startRunID, six.integer_types) and startRunID is not None
             ):
-                condition += " and %s.runnumber>=%s" % (table, str(startRunID))
+                condition += "AND %s.runnumber>=%s " % (table, str(startRunID))
             if (isinstance(endRunID, six.string_types) and endRunID.upper() is not default) or (
                 isinstance(endRunID, six.integer_types) and endRunID is not None
             ):
-                condition += " and %s.runnumber<=%s" % (table, str(endRunID))
+                condition += "AND %s.runnumber<=%s " % (table, str(endRunID))
         return S_OK((condition, tables))
 
     #############################################################################
@@ -4020,27 +3947,27 @@ and files.qualityid= dataquality.qualityid"
                 table = "f"
             else:
                 if "productionoutputfiles" not in tables.lower():
-                    tables += " ,productionoutputfiles prod"
+                    tables += " , productionoutputfiles prod"
 
             if isinstance(evt, (list, tuple)) and evt:
-                condition += " and "
-                cond = " ( "
+                condition += " AND "
+                cond = " ("
                 for i in evt:
                     cond += " %s.eventtypeid=%s or " % (table, (str(i)))
                 cond = cond[:-3] + ")"
                 condition += cond
             elif isinstance(evt, (six.string_types + six.integer_types)):
-                condition += " and %s.eventtypeid=%s" % (table, str(evt))
+                condition += " AND %s.eventtypeid=%s" % (table, str(evt))
             if useMainTables:
                 if isinstance(evt, (list, tuple)) and evt:
-                    condition += " and "
-                    cond = " ( "
+                    condition += " AND "
+                    cond = " ("
                     for i in evt:
                         cond += " %s.eventtypeid=%s or " % (table, (str(i)))
                     cond = cond[:-3] + ")"
                     condition += cond
                 elif isinstance(evt, (six.string_types + six.integer_types)):
-                    condition += " and %s.eventtypeid=%s" % (table, str(evt))
+                    condition += " AND %s.eventtypeid=%s" % (table, str(evt))
         return condition, tables
 
     #############################################################################
@@ -4054,13 +3981,13 @@ and files.qualityid= dataquality.qualityid"
         :return: condition and tables
         """
         if startDate not in [None, default, []]:
-            condition += " and f.inserttimestamp >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(startDate))
+            condition += " AND f.inserttimestamp >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(startDate))
 
         if endDate not in [None, default, []]:
-            condition += " and f.inserttimestamp <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(endDate))
+            condition += " AND f.inserttimestamp <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(endDate))
         elif startDate not in [None, default, []] and endDate in [None, default, []]:
             currentTimeStamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            condition += " and f.inserttimestamp <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (
+            condition += " AND f.inserttimestamp <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (
                 str(currentTimeStamp)
             )
         return condition
@@ -4077,13 +4004,13 @@ and files.qualityid= dataquality.qualityid"
         :return: condition and tables
         """
         if jobStartDate not in [None, default, []]:
-            condition += " and j.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobStartDate))
+            condition += " AND j.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobStartDate))
 
         if jobEndDate not in [None, default, []]:
-            condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobEndDate))
+            condition += " AND j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobEndDate))
         elif jobStartDate not in [None, default, []] and jobEndDate in [None, default, []]:
             currentTimeStamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            condition += " and j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
+            condition += " AND j.jobend <= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(currentTimeStamp))
         return condition
 
     #############################################################################
@@ -4100,7 +4027,7 @@ and files.qualityid= dataquality.qualityid"
                 conds = " ("
                 for i in flag:
                     quality = None
-                    command = "select QualityId from dataquality where dataqualityflag='%s'" % (str(i))
+                    command = "SELECT QualityId FROM dataquality WHERE dataqualityflag='%s'" % (str(i))
                     res = self.dbR_.query(command)
                     if not res["OK"]:
                         self.log.error("Data quality problem:", res["Message"])
@@ -4112,7 +4039,7 @@ and files.qualityid= dataquality.qualityid"
                 condition += " and" + conds[:-3] + ")"
             else:
                 quality = None
-                command = "select QualityId from dataquality where dataqualityflag='" + str(flag) + "'"
+                command = "SELECT QualityId FROM dataquality WHERE dataqualityflag='" + str(flag) + "'"
                 res = self.dbR_.query(command)
                 if not res["OK"]:
                     self.log.error("Data quality problem:", res["Message"])
@@ -4121,7 +4048,7 @@ and files.qualityid= dataquality.qualityid"
                 else:
                     quality = res["Value"][0][0]
 
-                condition += " and f.qualityid=" + str(quality)
+                condition += " AND f.qualityid=" + str(quality)
         return S_OK((condition, tables))
 
     #############################################################################
@@ -4134,7 +4061,7 @@ and files.qualityid= dataquality.qualityid"
         :return: condition and tables
         """
         if replicaFlag in ["Yes", "No"]:
-            condition += " and f.gotreplica='%s' " % replicaFlag
+            condition += " AND f.gotreplica='%s' " % replicaFlag
         return condition
 
     #############################################################################
@@ -4149,13 +4076,13 @@ and files.qualityid= dataquality.qualityid"
         """
         if not visible.upper().startswith("A"):
             if visible.upper().startswith("Y"):
-                condition += " and f.visibilityflag='Y'"
+                condition += " AND f.visibilityflag='Y'"
             elif visible.upper().startswith("N"):
-                condition += " and f.visibilityflag='N'"
+                condition += " AND f.visibilityflag='N'"
         if tables.upper().find("FILES") < 0:
-            tables += " ,file f "
+            tables += " , file f "
         if tables.upper().find("JOBS") < 0:
-            tables += " ,jobs j "
+            tables += " , jobs j "
         return condition, tables
 
     #############################################################################
@@ -4178,7 +4105,7 @@ and files.qualityid= dataquality.qualityid"
                 return retVal
             condition += retVal["Value"]
             if tables.upper().find("PRODUCTIONSCONTAINER") < 0:
-                tables += " ,productionscontainer cont "
+                tables += " , productionscontainer cont "
 
         return S_OK((condition, tables))
 
@@ -4231,8 +4158,8 @@ and files.qualityid= dataquality.qualityid"
         if simdesc != default:
             conddescription = simdesc
 
-        selection = " distinct f.filename, f.eventstat, j.eventinputstat, \
-     j.runnumber, j.fillnumber, f.filesize, j.totalluminosity, f.luminosity, f.instLuminosity, j.tck "
+        selection = " DISTINCT f.filename, f.eventstat, j.eventinputstat, \
+j.runnumber, j.fillnumber, f.filesize, j.totalluminosity, f.luminosity, f.instLuminosity, j.tck "
 
         return self.getFilesWithMetadata(
             configName,
@@ -4306,9 +4233,8 @@ and files.qualityid= dataquality.qualityid"
 
         tables = " files f, jobs j, productionscontainer cont, productionoutputfiles prod "
         condition = (
-            " and cont.production=prod.production and \
-    j.production=prod.production and j.stepid=prod.stepid and\
-    prod.eventtypeid=f.eventtypeid %s "
+            " AND cont.production=prod.production AND j.production=prod.production AND j.stepid=prod.stepid AND \
+prod.eventtypeid=f.eventtypeid %s "
             % self.__buildVisible(visible=visible, replicaFlag=replicaFlag)
         )
 
@@ -4357,11 +4283,11 @@ and files.qualityid= dataquality.qualityid"
         condition, tables = retVal["Value"]
 
         command = (
-            "select count(distinct fileid),\
-    SUM(f.EventStat), SUM(f.FILESIZE), \
-    SUM(f.luminosity),SUM(f.instLuminosity) from  %s  where \
-    j.jobid=f.jobid and \
-    prod.production=cont.production and prod.filetypeid=f.filetypeid %s"
+            "SELECT COUNT(DISTINCT fileid), \
+SUM(f.EventStat), SUM(f.FILESIZE), \
+SUM(f.luminosity),SUM(f.instLuminosity) FROM  %s WHERE \
+j.jobid=f.jobid AND \
+prod.production=cont.production AND prod.filetypeid=f.filetypeid %s"
             % (tables, condition)
         )
         return self.dbR_.query(command)
@@ -4399,9 +4325,8 @@ and files.qualityid= dataquality.qualityid"
 
         tables = " files f, jobs j, productionoutputfiles prod, productionscontainer cont, filetypes ft, dataquality d "
         condition = (
-            " and cont.production=prod.production and d.qualityid=f.qualityid and \
-    j.production=prod.production and j.stepid=prod.stepid and \
-    prod.eventtypeid=f.eventtypeid %s "
+            " AND cont.production=prod.production AND d.qualityid=f.qualityid AND \
+j.production=prod.production AND j.stepid=prod.stepid AND prod.eventtypeid=f.eventtypeid %s "
             % self.__buildVisible(visible="Y", replicaFlag="Yes")
         )
 
@@ -4437,22 +4362,18 @@ and files.qualityid= dataquality.qualityid"
 
         # TODO: Distinct is being used here to work around https://its.cern.ch/jira/browse/LHCBDIRAC-895
         command = (
-            "select distinct fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen, evttypeid, \
-    jrun, jfill, ffull, dflag,   jevent, jtotal, flum, finst, jtck from \
-              (select rownum r, fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen,\
-               evttypeid, jrun, jfill, ffull, dflag,   jevent, jtotal, flum, finst, jtck from \
-                  (select ROWNUM r, f.FileName fname, f.EventStat fstat, f.FileSize fsize, \
-                  f.CreationDate fcreation, j.JobStart jstat, j.JobEnd jend, j.WorkerNode jnode, \
-                  ft.Name ftypen, f.eventtypeid evttypeid, j.runnumber jrun, j.fillnumber jfill,\
-                   f.fullstat ffull, d.dataqualityflag dflag,j.eventinputstat jevent, j.totalluminosity jtotal,\
-                           f.luminosity flum, f.instLuminosity finst, j.tck jtck, j.WNMJFHS06,j.HLT2TCK,\
-                           j.NumberOfProcessors from %s where \
-    j.jobid=f.jobid and \
-    ft.filetypeid=prod.filetypeid and \
-    f.filetypeid=prod.filetypeid and \
-    f.gotreplica='Yes' and \
-    f.visibilityflag='Y' %s) where\
-     rownum <=%d ) where r >%d"
+            "SELECT DISTINCT fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen, evttypeid, \
+jrun, jfill, ffull, dflag,   jevent, jtotal, flum, finst, jtck FROM \
+(SELECT rownum r, fname, fstat, fsize, fcreation, jstat, jend, jnode, ftypen, \
+evttypeid, jrun, jfill, ffull, dflag,   jevent, jtotal, flum, finst, jtck FROM \
+(SELECT ROWNUM r, f.FileName fname, f.EventStat fstat, f.FileSize fsize, \
+f.CreationDate fcreation, j.JobStart jstat, j.JobEnd jend, j.WorkerNode jnode, \
+ft.Name ftypen, f.eventtypeid evttypeid, j.runnumber jrun, j.fillnumber jfill, \
+f.fullstat ffull, d.dataqualityflag dflag,j.eventinputstat jevent, j.totalluminosity jtotal, \
+f.luminosity flum, f.instLuminosity finst, j.tck jtck, j.WNMJFHS06,j.HLT2TCK, \
+j.NumberOfProcessors FROM %s WHERE j.jobid=f.jobid AND \
+ft.filetypeid=prod.filetypeid AND f.filetypeid=prod.filetypeid AND f.gotreplica='Yes' AND f.visibilityflag='Y' %s) WHERE \
+rownum <=%d ) WHERE r >%d"
             % (tables, condition, int(maxitems), int(startitem))
         )
         return self.dbR_.query(command)
@@ -4464,36 +4385,35 @@ and files.qualityid= dataquality.qualityid"
         :param dict condition: data taking attributes
         :return: the data taking conditions identifier
         """
-        command = "select DaqPeriodId from data_taking_conditions where "
+        command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
         for param in condition:
             if isinstance(condition[param], six.string_types) and not condition[param].strip():
-                command += str(param) + " is NULL and "
+                command += str(param) + " is NULL AND "
             elif condition[param] is not None:
-                command += str(param) + "='" + condition[param] + "' and "
+                command += str(param) + "='" + condition[param] + "' AND "
             else:
-                command += str(param) + " is NULL and "
+                command += str(param) + " is NULL AND "
 
         command = command[:-4]
         res = self.dbR_.query(command)
         if res["OK"]:
             if not res["Value"]:
-                command = "select DaqPeriodId from data_taking_conditions where "
+                command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
                 for param in condition:
                     if param != "Description":
                         if isinstance(condition[param], six.string_types) and not condition[param].strip():
-                            command += str(param) + " is NULL and "
+                            command += str(param) + " is NULL AND "
                         elif condition[param] is not None:
-                            command += str(param) + "='" + condition[param] + "' and "
+                            command += str(param) + "='" + condition[param] + "' AND "
                         else:
-                            command += str(param) + " is NULL and "
+                            command += str(param) + " is NULL AND "
 
                 command = command[:-4]
                 retVal = self.dbR_.query(command)
                 if retVal["OK"]:
                     if retVal["Value"]:
                         return S_ERROR(
-                            "Only the Description is different, \
-            the other attributes are the same and they are exists in the DB!"
+                            "Only the Description is different, the other attributes are the same and they are exists in the DB!"
                         )
         return res
 
@@ -4505,7 +4425,7 @@ and files.qualityid= dataquality.qualityid"
         :param dict condition: data taking attributes
         :return: the data taking description which adequate a given conditions.
         """
-        command = "select description from data_taking_conditions where "
+        command = "SELECT description FROM data_taking_conditions WHERE "
         for param in condition:
             if isinstance(condition[param], six.string_types) and not condition[param].strip():
                 command += str(param) + " is NULL and "
@@ -4518,7 +4438,7 @@ and files.qualityid= dataquality.qualityid"
         res = self.dbR_.query(command)
         if res["OK"]:
             if not res["Value"]:
-                command = "select DaqPeriodId from data_taking_conditions where "
+                command = "SELECT DaqPeriodId FROM data_taking_conditions WHERE "
                 for param in condition:
                     if param != "Description":
                         if isinstance(condition[param], six.string_types) and not condition[param].strip():
@@ -4533,8 +4453,7 @@ and files.qualityid= dataquality.qualityid"
                 if retVal["OK"]:
                     if retVal["Value"]:
                         return S_ERROR(
-                            "Only the Description is different,\
-             the other attributes are the same and they are exists in the DB!"
+                            "Only the Description is different, the other attributes are the same and they are exists in the DB!"
                         )
         return res
 
@@ -4577,7 +4496,7 @@ and files.qualityid= dataquality.qualityid"
             dataset["Step"]["DDDB"] = dddb
 
         command = (
-            "select stepid, stepname from steps where applicationname='%s' \
+            "SELECT stepid, stepname from steps where applicationname='%s' \
     and applicationversion='%s' %s "
             % (programName, programVersion, condition)
         )
@@ -4600,7 +4519,7 @@ and files.qualityid= dataquality.qualityid"
         :param str name: processing pass name for example: Sim10
         :return: the processing pass ids for a given processing pass name
         """
-        command = "select id from processing where name='%s'" % (name)
+        command = "SELECT id from processing where name='%s'" % (name)
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -4656,14 +4575,14 @@ and files.qualityid= dataquality.qualityid"
         for i in values:
             command = ""
             if parentid is not None:
-                command = "select id from processing where name='%s' and parentid=%s" % (i, parentid)
+                command = "SELECT id from processing WHERE name='%s' AND parentid=%s" % (i, parentid)
             else:
-                command = "select id from processing where name='%s' and parentid is null" % (i)
+                command = "SELECT id from processing WHERE name='%s' AND parentid is null" % (i)
             retVal = self.dbR_.query(command)
             if retVal["OK"]:
                 if not retVal["Value"]:
                     if parentid is not None:
-                        command = "select max(id)+1 from processing"
+                        command = "SELECT max(id)+1 from processing"
                         retVal = self.dbR_.query(command)
                         if retVal["OK"]:
                             processingpassid = retVal["Value"][0][0]
@@ -4679,7 +4598,7 @@ and files.qualityid= dataquality.qualityid"
                             values.remove(i)
                             self.__insertprocessing(values, processingpassid, ids)
                     else:
-                        command = "select max(id)+1 from processing"
+                        command = "SELECT max(id)+1 FROM processing"
                         retVal = self.dbR_.query(command)
                         if retVal["OK"]:
                             processingpassid = retVal["Value"][0][0]
@@ -4769,7 +4688,7 @@ and files.qualityid= dataquality.qualityid"
 
         :param int production: production number
         """
-        return self.dbR_.query("select count(*) from productionscontainer where production=" + str(production))
+        return self.dbR_.query("SELECT count(*) FROM productionscontainer WHERE production=" + str(production))
 
     #############################################################################
     def addProduction(
@@ -4904,21 +4823,18 @@ and files.qualityid= dataquality.qualityid"
         :return: event types
         """
 
-        tables = "  productionoutputfiles prod, productionscontainer cont, eventtypes e, configurations c "
-        condition = (
-            " cont.production=prod.production and \
-    prod.eventtypeid=e.eventtypeid %s "
-            % self.__buildVisible(visible="Y", replicaFlag="Yes")
+        tables = "productionoutputfiles prod, productionscontainer cont, eventtypes e, configurations c "
+        condition = " cont.production=prod.production and prod.eventtypeid=e.eventtypeid %s " % self.__buildVisible(
+            visible="Y", replicaFlag="Yes"
         )
 
         condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
         condition, tables = self.__buildProduction(prod, condition, tables, useMainTables=False)
 
-        command = (
-            " select e.eventtypeid, e.description \
-    from  %s where %s group by e.eventtypeid, e.description"
-            % (tables, condition)
+        command = "SELECT e.eventtypeid, e.description FROM  %s WHERE %s GROUP BY e.eventtypeid, e.description" % (
+            tables,
+            condition,
         )
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
@@ -4941,13 +4857,11 @@ and files.qualityid= dataquality.qualityid"
 
         if procpass != default:
             condition += (
-                " and prod.processingid in ( \
-                    select v.id from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
-                                        FROM processing v   \
-                                        START WITH id in (select distinct id from processing where name='%s') \
-                                        CONNECT BY NOCYCLE PRIOR  id=parentid) v where v.path='%s' \
-                       )"
-                % (procpass.split("/")[1], procpass)
+                " AND prod.processingid in"
+                "(SELECT v.id FROM (SELECT DISTINCT SYS_CONNECT_BY_PATH(name, '/') Path, id ID "
+                "FROM processing v START WITH id in "
+                "(SELECT DISTINCT id FROM processing WHERE name='%s') "
+                "CONNECT BY NOCYCLE PRIOR  id=parentid) v WHERE v.path='%s')" % (procpass.split("/")[1], procpass)
             )
 
         if cond != default:
@@ -4958,16 +4872,13 @@ and files.qualityid= dataquality.qualityid"
                 return retVal
 
         if stepname != default:
-            condition += " and s.processingpass='%s' " % (stepname)
+            condition += " AND s.processingpass='%s' " % (stepname)
 
         command = (
-            "select distinct s.stepid,s.stepname,s.applicationname,s.applicationversion, \
-    s.optionfiles,s.dddb, s.conddb,s.extrapackages,s.visible, cont.step \
-                from steps s, productionscontainer prod, stepscontainer cont \
-               where \
-              cont.stepid=s.stepid and \
-              prod.production=cont.production %s order by cont.step"
-            % (condition)
+            "SELECT DISTINCT s.stepid,s.stepname,s.applicationname,s.applicationversion, "
+            "s.optionfiles,s.dddb, s.conddb,s.extrapackages,s.visible, cont.step FROM "
+            "steps s, productionscontainer prod, stepscontainer cont WHERE "
+            "cont.stepid=s.stepid AND prod.production=cont.production %s ORDER BY cont.step" % (condition)
         )
 
         retVal = self.dbR_.query(command)
@@ -5015,22 +4926,17 @@ and files.qualityid= dataquality.qualityid"
 
         if procpass != default:
             condition += (
-                " and prod.processingid in ( \
-                    select v.id from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
-                                        FROM processing v   \
-                                        START WITH id in (select distinct id from processing where name='%s') \
-                                        CONNECT BY NOCYCLE PRIOR  id=parentid) v where v.path='%s' \
-                       )"
-                % (procpass.split("/")[1], procpass)
+                " AND prod.processingid in "
+                "(SELECT v.id from (SELECT DISTINCT SYS_CONNECT_BY_PATH(name, '/') Path, id ID "
+                "FROM processing v START WITH id in (SELECT DISTINCT id from processing where name='%s') "
+                "CONNECT BY NOCYCLE PRIOR  id=parentid) v where v.path='%s')" % (procpass.split("/")[1], procpass)
             )
 
         command = (
-            "select distinct s.stepid,s.stepname,s.applicationname,s.applicationversion, \
-    s.optionfiles,s.dddb, s.conddb,s.extrapackages,s.visible, cont.step \
-                from steps s, productionscontainer prod, stepscontainer cont \
-               where \
-              cont.stepid=s.stepid and \
-              prod.production=cont.production %s and prod.production=%dorder by cont.step"
+            "SELECT DISTINCT s.stepid,s.stepname,s.applicationname,s.applicationversion, "
+            "s.optionfiles,s.dddb, s.conddb,s.extrapackages,s.visible, cont.step "
+            "FROM steps s, productionscontainer prod, stepscontainer cont "
+            "WHERE cont.stepid=s.stepid AND prod.production=cont.production %s AND prod.production=%d ORDER BY cont.step"
             % (condition, prod)
         )
 
@@ -5079,7 +4985,7 @@ and files.qualityid= dataquality.qualityid"
         :param long runnb: run number
         :return: the processing pass of a run
         """
-        command = "select distinct runnumber, processingpass from table (BOOKKEEPINGORACLEDB.getRunProcPass(%d))" % (
+        command = "SELECT DISTINCT runnumber, processingpass from table (BOOKKEEPINGORACLEDB.getRunProcPass(%d))" % (
             runnb
         )
         return self.dbR_.query(command)
@@ -5097,23 +5003,22 @@ and files.qualityid= dataquality.qualityid"
         :retun: the number of raw files
         """
         condition = ""
-        tables = "jobs j, files f"
+        tables = "jobs, files"
         if eventtype != default:
-            condition = " and f.eventtypeid=%d" % (eventtype)
+            condition = " AND files.eventtypeid=%d" % (eventtype)
 
         if visible != default:
-            condition += " and f.visibilityFlag='%s'" % (visible)
+            condition += " AND files.visibilityFlag='%s'" % (visible)
 
         if replicaFlag != default:
-            condition += " and f.gotreplica='%s'" % (replicaFlag)
+            condition += " AND files.gotreplica='%s'" % (replicaFlag)
 
         if isFinished != default:
-            tables += " ,runstatus r"
-            condition += " and j.runnumber=r.runnumber and r.finished='%s' " % isFinished
+            tables += " , runstatus"
+            condition += " AND jobs.runnumber=runstatus.runnumber and runstatus.finished='%s' " % isFinished
 
         command = (
-            " select count(*) from %s  where \
-    j.jobid=f.jobid and j.production<0 and j.runnumber=%d %s "
+            "SELECT COUNT(*) FROM %s WHERE jobs.jobid=files.jobid AND jobs.production<0 AND jobs.runnumber=%d %s"
             % (tables, runid, condition)
         )
         return self.dbR_.query(command)
@@ -5201,7 +5106,7 @@ and files.qualityid= dataquality.qualityid"
             visible="Y",
             replicaflag="Yes",
             runnumbers=runnb,
-            selection=" distinct j.tck ",
+            selection=" DISTINCT j.tck ",
         )
 
     #############################################################################
@@ -5236,18 +5141,17 @@ and files.qualityid= dataquality.qualityid"
             "steps s, productionscontainer cont, stepscontainer scont, productionoutputfiles prod, configurations c"
         )
         if configName != default:
-            condition += " and c.configname='%s' " % (configName)
+            condition += " AND c.configname='%s' " % (configName)
 
         if configVersion != default:
-            condition += " and c.configversion='%s' " % (configVersion)
+            condition += " AND c.configversion='%s' " % (configVersion)
 
         if procpass != default:
             condition += (
-                " and cont.processingid in ( \
-                    select v.id from (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
-                                        FROM processing v   \
-                                        START WITH id in (select distinct id from processing where name='%s') \
-                                        CONNECT BY NOCYCLE PRIOR  id=parentid) v where v.path='%s' \
+                " AND cont.processingid IN (\
+SELECT v.id from (SELECT DISTINCT SYS_CONNECT_BY_PATH(name, '/') Path, id ID \
+FROM processing v START WITH id IN (SELECT DISTINCT id FROM processing WHERE name='%s') \
+CONNECT BY NOCYCLE PRIOR  id=parentid) v WHERE v.path='%s' \
                        )"
                 % (procpass.split("/")[1], procpass)
             )
@@ -5260,33 +5164,30 @@ and files.qualityid= dataquality.qualityid"
                 return retVal
 
         if evt != default:
-            condition += "  and prod.eventtypeid=%s " % (str(evt))
+            condition += "  AND prod.eventtypeid=%s " % (str(evt))
 
         if production != default:
-            condition += " and prod.production=" + str(production)
+            condition += " AND prod.production=" + str(production)
 
         if runnb != default:
             tables += " ,prodrunview rview"
-            condition += " and rview.production=prod.production and rview.runnumber=%d and prod.production<0" % (runnb)
+            condition += " AND rview.production=prod.production AND rview.runnumber=%d AND prod.production<0" % (runnb)
 
         if filetype != default:
             tables += ", filetypes ftypes"
-            condition += " and ftypes.name='%s' and prod.filetypeid=ftypes.filetypeid " % (filetype)
+            condition += " AND ftypes.name='%s' AND prod.filetypeid=ftypes.filetypeid " % (filetype)
 
         if visible != default:
-            condition += " and prod.visible='%s'" % visible
+            condition += " AND prod.visible='%s'" % visible
 
         if replica != default:
-            condition += " and prod.gotreplica='%s'" % replica
+            condition += " AND prod.gotreplica='%s'" % replica
 
         command = (
-            "select %s  from  %s \
-               where \
-              scont.stepid=s.stepid and \
-              cont.production=prod.production and \
-              c.configurationid=cont.configurationid and\
-              prod.production=scont.production %s order by scont.step"
-            % (selection, tables, condition)
+            "SELECT %s FROM  %s WHERE "
+            "scont.stepid=s.stepid AND cont.production=prod.production AND "
+            "c.configurationid=cont.configurationid AND prod.production=scont.production %s "
+            "ORDER BY scont.step" % (selection, tables, condition)
         )
         return command
 
@@ -5385,9 +5286,8 @@ and files.qualityid= dataquality.qualityid"
                 runnb,
                 "Y",
                 "Yes",
-                selection="distinct s.stepid,s.stepname,s.applicationname,\
-                                           s.applicationversion,s.optionfiles,s.dddb,\
-                                           s.conddb,s.extrapackages,s.visible, scont.step",
+                selection="DISTINCT s.stepid,s.stepname,s.applicationname, \
+s.applicationversion,s.optionfiles,s.dddb, s.conddb,s.extrapackages,s.visible, scont.step",
             )
             retVal = self.dbR_.query(command)
             if not retVal["OK"]:
@@ -5501,10 +5401,10 @@ and files.qualityid= dataquality.qualityid"
 
         :return: the runs data taking description and production
         """
-        command = " select d.description, r.runnumber, r.production from \
-    prodrunview r, productionoutputfiles p, data_taking_conditions d, productionscontainer cont where \
-    d.daqperiodid=cont.daqperiodid and p.production=r.production and cont.production=p.production\
-     group by d.description,  r.runnumber, r.production order by r.runnumber"
+        command = "SELECT d.description, r.runnumber, r.production FROM \
+prodrunview r, productionoutputfiles p, data_taking_conditions d, productionscontainer cont WHERE \
+d.daqperiodid=cont.daqperiodid AND p.production=r.production AND cont.production=p.production \
+GROUP BY d.description, r.runnumber, r.production ORDER BY r.runnumber"
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -5553,10 +5453,8 @@ and files.qualityid= dataquality.qualityid"
                 return retVal
 
         command = (
-            "select distinct j.FillNumber from jobs j, productionscontainer prod,\
-     configurations c where \
-    j.configurationid=c.configurationid %s and \
-    prod.production=j.production and j.production<0"
+            "SELECT DISTINCT j.FillNumber FROM jobs j, productionscontainer prod, \
+configurations c WHERE j.configurationid=c.configurationid %s AND prod.production=j.production AND j.production<0"
             % (condition)
         )
         retVal = self.dbR_.query(command)
@@ -5572,7 +5470,7 @@ and files.qualityid= dataquality.qualityid"
         :return: runs
         """
 
-        command = "select distinct j.runnumber from jobs j where j.production<0 and j.fillnumber=%d" % (fillid)
+        command = "SELECT DISTINCT j.runnumber FROM jobs j WHERE j.production<0 AND j.fillnumber=%d" % (fillid)
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -5608,7 +5506,7 @@ and files.qualityid= dataquality.qualityid"
             quality=quality,
             visible="Y",
             replicaflag="Yes",
-            selection=" distinct j.runnumber ",
+            selection=" DISTINCT j.runnumber ",
         )
 
     #############################################################################
@@ -5626,15 +5524,15 @@ and files.qualityid= dataquality.qualityid"
 
         simid = in_dict.get("SimId", default)
         if simid != default:
-            condition += " and sim.simid=%d " % int(simid)
+            condition += " AND sim.simid=%d " % int(simid)
 
         simdesc = in_dict.get("SimDescription", default)
         if simdesc != default:
-            condition += " and sim.simdescription like '%" + simdesc + "%'"
+            condition += " AND sim.simdescription like '%" + simdesc + "%'"
 
         visible = in_dict.get("Visible", default)
         if visible != default:
-            condition += " and sim.visible='%s'" % visible
+            condition += " AND sim.visible='%s'" % visible
 
         if start != default and maximum != default:
             paging = True
@@ -5656,35 +5554,35 @@ and files.qualityid= dataquality.qualityid"
             else:
                 result = S_ERROR("SortItems is not properly defined!")
         else:
-            condition += " order by sim.inserttimestamps desc"
+            condition += " ORDER BY sim.inserttimestamps desc"
 
         if paging:
             command = (
-                " select sim_simid, sim_simdescription, sim_beamcond, sim_beamenergy, sim_generator,\
-      sim_magneticfield, sim_detectorcond, sim_luminosity, sim_g4settings, sim_visible from \
-      ( select ROWNUM r , sim_simid, sim_simdescription, sim_beamcond, sim_beamenergy, sim_generator, \
-      sim_magneticfield, sim_detectorcond, sim_luminosity, sim_g4settings, sim_visible from \
-      ( select ROWNUM r, sim.simid sim_simid, sim.simdescription sim_simdescription, sim.beamcond\
-      sim_beamcond, sim.beamenergy sim_beamenergy, sim.generator sim_generator, \
-      sim.magneticfield sim_magneticfield, sim.detectorcond sim_detectorcond, sim.luminosity\
-      sim_luminosity, sim.g4settings sim_g4settings, sim.visible sim_visible \
-      from %s where sim.simid=sim.simid %s ) where rownum <=%d ) where r >%d"
+                "SELECT sim_simid, sim_simdescription, sim_beamcond, sim_beamenergy, sim_generator, \
+sim_magneticfield, sim_detectorcond, sim_luminosity, sim_g4settings, sim_visible FROM \
+(SELECT ROWNUM r , sim_simid, sim_simdescription, sim_beamcond, sim_beamenergy, sim_generator, \
+sim_magneticfield, sim_detectorcond, sim_luminosity, sim_g4settings, sim_visible FROM \
+(SELECT ROWNUM r, sim.simid sim_simid, sim.simdescription sim_simdescription, sim.beamcond \
+sim_beamcond, sim.beamenergy sim_beamenergy, sim.generator sim_generator, \
+sim.magneticfield sim_magneticfield, sim.detectorcond sim_detectorcond, sim.luminosity \
+sim_luminosity, sim.g4settings sim_g4settings, sim.visible sim_visible \
+FROM %s WHERE sim.simid=sim.simid %s) WHERE rownum <=%d) WHERE r >%d"
                 % (tables, condition, maximum, start)
             )
             retVal = self.dbR_.query(command)
         else:
             command = (
-                "select sim.simid sim_simid, sim.simdescription sim_simdescription, sim.beamcond sim_beamcond,\
-      sim.beamenergy sim_beamenergy, sim.generator sim_generator, \
-      sim.magneticfield sim_magneticfield, sim.detectorcond sim_detectorcond, sim.luminosity sim_luminosity,\
-      sim.g4settings sim_g4settings, sim.visible sim_visible from %s where sim.simid=sim.simid %s"
+                "SELECT sim.simid sim_simid, sim.simdescription sim_simdescription, sim.beamcond sim_beamcond, \
+sim.beamenergy sim_beamenergy, sim.generator sim_generator, \
+sim.magneticfield sim_magneticfield, sim.detectorcond sim_detectorcond, sim.luminosity sim_luminosity, \
+sim.g4settings sim_g4settings, sim.visible sim_visible FROM %s WHERE sim.simid=sim.simid %s"
                 % (tables, condition)
             )
             retVal = self.dbR_.query(command)
 
         if not retVal["OK"]:
             return retVal
-        command = "select count(*) from simulationconditions"
+        command = "SELECT count(*) FROM simulationconditions"
 
         parameterNames = [
             "SimId",
@@ -5718,7 +5616,7 @@ and files.qualityid= dataquality.qualityid"
                 if cond != "SimId":
                     condition += "%s='%s'," % (cond, in_dict[cond])
             condition = condition[:-1]
-            command = "update simulationconditions set %s where simid=%d" % (condition, int(simid))
+            command = "UPDATE simulationconditions SET %s WHERE simid=%d" % (condition, int(simid))
             return self.dbW_.query(command)
         else:
             return S_ERROR("SimId is missing!")
@@ -5729,7 +5627,7 @@ and files.qualityid= dataquality.qualityid"
 
         :param long simid: simulation condition id
         """
-        return self.dbW_.query("delete simulationconditions where simid=%d" % simid)
+        return self.dbW_.query("DELETE simulationconditions WHERE simid=%d" % simid)
 
     #############################################################################
     def getProductionSummaryFromView(self, in_dict):
@@ -5742,11 +5640,10 @@ and files.qualityid= dataquality.qualityid"
         configName = in_dict.get("ConfigName", default)
         configVersion = in_dict.get("ConfigVersion", default)
 
-        tables = " productionoutputfiles prod, productionscontainer cont, simulationconditions sim,\
-     data_taking_conditions daq, configurations c "
+        tables = " productionoutputfiles prod, productionscontainer cont, simulationconditions sim, \
+data_taking_conditions daq, configurations c "
         condition = (
-            " cont.production=prod.production and\
-    c.configurationid=cont.configurationid  %s "
+            " cont.production=prod.production AND c.configurationid=cont.configurationid %s "
             % self.__buildVisible(visible="Y", replicaFlag="Yes")
         )
 
@@ -5757,12 +5654,9 @@ and files.qualityid= dataquality.qualityid"
         condition, tables = self.__buildEventType(evt, condition, tables, useMainTables=False)
 
         command = (
-            "select prod.production, prod.eventtypeid, c.configname, c.configversion, \
-                      BOOKKEEPINGORACLEDB.getProductionProcessingPass(prod.production),\
-                      sim.simdescription, daq.description\
-                 from %s \
-                 where sim.simid(+)=cont.simid and \
-                daq.daqperiodid(+)=cont.daqperiodid and %s"
+            "SELECT prod.production, prod.eventtypeid, c.configname, c.configversion, \
+BOOKKEEPINGORACLEDB.getProductionProcessingPass(prod.production), sim.simdescription, daq.description \
+FROM %s WHERE sim.simid(+)=cont.simid AND DAQ.daqperiodid(+)=cont.daqperiodid AND %s"
             % (tables, condition)
         )
         parameterNames = [
@@ -5799,8 +5693,8 @@ and files.qualityid= dataquality.qualityid"
         result = {"Failed": {}, "Successful": {}}
         for diracJobid in diracjobids:
             command = (
-                "select j.jobid, f.filename from inputfiles i, files f, jobs j where f.fileid=i.fileid and \
-      i.jobid=j.jobid and j.diracjobid=%d order by j.jobid, f.filename"
+                "SELECT j.jobid, f.filename FROM inputfiles i, files f, jobs j WHERE f.fileid=i.fileid AND \
+i.jobid=j.jobid and j.diracjobid=%d ORDER BY j.jobid, f.filename"
                 % int(diracJobid)
             )
             retVal = self.dbR_.query(command)
@@ -5812,8 +5706,8 @@ and files.qualityid= dataquality.qualityid"
                 result["Successful"][diracJobid]["InputFiles"] += [i[1]]
 
             command = (
-                "select j.jobid, f.filename  from jobs j, files f where j.jobid=f.jobid and \
-      diracjobid=%d order by j.jobid, f.filename"
+                "SELECT j.jobid, f.filename FROM jobs j, files f WHERE j.jobid=f.jobid AND \
+diracjobid=%d ORDER BY j.jobid, f.filename"
                 % int(diracJobid)
             )
             retVal = self.dbR_.query(command)
@@ -5846,8 +5740,7 @@ and files.qualityid= dataquality.qualityid"
         result = self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.setRunFinished", [runnumber, isFinished], False)
         if not result["OK"]:
             return result
-        else:
-            return S_OK("%s is finished" % (str(runnumber)))
+        return S_OK("%s is finished" % (str(runnumber)))
 
     #############################################################################
     def getRunStatus(self, runnumbers):
@@ -5861,7 +5754,7 @@ and files.qualityid= dataquality.qualityid"
         status["Successful"] = {}
         status["Failed"] = []
         for i in runnumbers:
-            command = "select Finished from runstatus where runnumber=%d" % i
+            command = "SELECT Finished FROM runstatus WHERE runnumber=%d" % i
             retVal = self.dbR_.query(command)
             if not retVal["OK"]:
                 self.log.error(i, retVal["Message"])
@@ -5958,9 +5851,8 @@ and files.qualityid= dataquality.qualityid"
         :return: S_OK()/S_ERROR ConfigName, ConfigVersion and DataTakingDescription
         """
         command = (
-            "select c.configname, c.configversion from jobs j, configurations c \
-                  where j.configurationid=c.configurationid and \
-                        j.production<0 and j.runnumber=%d"
+            "SELECT c.configname, c.configversion FROM jobs j, configurations c \
+WHERE j.configurationid=c.configurationid AND j.production<0 AND j.runnumber=%d"
             % runnumber
         )
 
@@ -5974,11 +5866,8 @@ and files.qualityid= dataquality.qualityid"
         result = {"ConfigName": retVal["Value"][0][0], "ConfigVersion": retVal["Value"][0][1]}
 
         command = (
-            "select d.description from jobs j, productionscontainer prod, data_taking_conditions d\
-                WHERE j.production=prod.production and \
-                      j.production<0 and \
-                      prod.daqperiodid=d.daqperiodid and \
-                      j.runnumber=%d"
+            "SELECT d.description FROM jobs j, productionscontainer prod, data_taking_conditions d \
+WHERE j.production=prod.production AND j.production<0 AND prod.daqperiodid=d.daqperiodid AND j.runnumber=%d"
             % runnumber
         )
 
@@ -6007,7 +5896,7 @@ and files.qualityid= dataquality.qualityid"
         :returns: S_OK/S_ERROR a list of db tags
         """
 
-        command = "select distinct DDDB,CONDDB,DQTAG from steps where Usable='Yes'"
+        command = "SELECT DISTINCT DDDB,CONDDB,DQTAG FROM steps WHERE Usable='Yes'"
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal

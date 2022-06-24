@@ -32,10 +32,7 @@ Make sure that you are using the correct version.
 #. in the terminal execute ``@/path/to/oracle_schema_storedprocedures.sql``
 #. commit;
 
-In case of error you have to use 'show errors' command
-
-In case of a schema change, you can find the command that needs to be executed in this sql file `oracle_schema_commands.sql <https://gitlab.cern.ch/lhcb-dirac/LHCbDIRAC/blob/master/src/LHCbDIRAC/BookkeepingSystem/DB/oracle_schema_commands.sql>`_
-
+In case of error you can use the ``show errors`` command.
 
 Discover slow queries in the db
 ===============================
@@ -44,8 +41,7 @@ Note: If you are not familiar with Oracle, it is better to send a mail to `<mail
 You can write we have problem with the database and that the queries are very slow.
 IT/DB expert will find the slow queries and will probably tell what is the problem and try to solve.
 
-The `<https://cern.ch/session-manager>`_ is a portal provided by IT/DB where you can logon and find the running queries.
-You can find the query which is running very long, get the execution plan and also can take the query and run it in ``sqlplus``.
+The `session-manager <https://cern.ch/session-manager>`_ is a portal provided by IT/DB where you can login and find long running queries, get the execution plan and also can take the query and run it in ``sqlplus``.
 So you can compare the execution plan which is in the web and in sqlplus.
 
 When you login to the session manager, you have a reader and a writer account. All the select queries are running with the reader account.
@@ -189,18 +185,55 @@ The following query can be used to check the step:
 
 .. code-block:: sql
 
-    SELECT * FROM (SELECT distinct SYS_CONNECT_BY_PATH(name, '/') Path, id ID
-         FROM processing v   START WITH id in (SELECT distinct id FROM processing where name='Real Data')
-    CONNECT BY NOCYCLE PRIOR  id=parentid) v   where v.path='/Real Data/Reco16Smog';
+    SELECT
+	*
+    FROM
+	(
+	    SELECT DISTINCT
+		sys_connect_by_path(name, '/') path,
+		id                             id
+	    FROM
+		processing v
+	    START WITH
+		id IN (
+		    SELECT DISTINCT
+			id
+		    FROM
+			processing
+		    WHERE
+			name = 'Real Data'
+		)
+	    CONNECT BY NOCYCLE
+		PRIOR id = parentid
+	) v
+    WHERE
+	v.path = '/Real Data/Reco16Smog';
 
 If we know the processing id, we can use the following query to found out the processing pass:
 
 .. code-block:: sql
 
-    SELECT v.id,v.path FROM (SELECT distinct  LEVEL-1 Pathlen, SYS_CONNECT_BY_PATH(name, '/') Path, id
-      FROM processing
-      WHERE LEVEL > 0 and id=1915
-      CONNECT BY PRIOR id=parentid order by Pathlen desc) v where rownum<=1;
+    SELECT
+	v.id,
+	v.path
+    FROM
+	(
+	    SELECT DISTINCT
+		level - 1                      pathlen,
+		sys_connect_by_path(name, '/') path,
+		id
+	    FROM
+		processing
+	    WHERE
+		    level > 0
+		AND id = 1915
+	    CONNECT BY
+		PRIOR id = parentid
+	    ORDER BY
+		pathlen DESC
+	) v
+    WHERE
+	ROWNUM <= 1;
 
 =====================
 Bookkeeping down time
@@ -220,7 +253,7 @@ The following services/agent needs to be stopped before the deep down time (Syst
     RequestTrackingAgent
   DMS:
     PopularityAgent
-  StorageHistoryAgents(s)
+    StorageHistoryAgents(s)
 
 Just before the intervention stop all Bookkeeping services.
 
@@ -248,7 +281,17 @@ For monitoring:
 
 .. code-block:: sql
 
-    select JOB_NAME, STATE, LAST_START_DATE, LAST_RUN_DURATION, NEXT_RUN_DATE, RUN_COUNT, FAILURE_COUNT from USER_SCHEDULER_JOBS;
+    SELECT
+	job_name,
+	state,
+	last_start_date,
+	last_run_duration,
+	next_run_date,
+	run_count,
+	failure_count
+    FROM
+	user_scheduler_jobs;
+
 
 Debugging the produpdatejob in case of failure:
 
@@ -256,33 +299,66 @@ Debugging the produpdatejob in case of failure:
 - set serveroutput on
 - exec BKUTILITIES.updateProdOutputFiles();
 
-You will see the problematic production, which you will need to fix. For example: If the production is 22719, you can
-use the following queries for debug:
+You will see the problematic production, which you will need to fix. For example: If the production is 22719, you can use the following queries for debug:
 
 
 .. code-block:: sql
 
-  SELECT j.production,J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag
-    FROM jobs j, files f WHERE
-      j.jobid = f.jobid AND
-      j.production=22719 and
-      f.gotreplica IS NOT NULL and
-      f.filetypeid NOT IN(9,17) GROUP BY j.production, J.STEPID, f.eventtypeid, f.filetypeid, f.gotreplica, f.visibilityflag Order by f.gotreplica,f.visibilityflag asc;
+    SELECT
+	j.production,
+	j.stepid,
+	f.eventtypeid,
+	f.filetypeid,
+	f.gotreplica,
+	f.visibilityflag
+    FROM
+	jobs  j,
+	files f
+    WHERE
+	    j.jobid = f.jobid
+	AND j.production = 22719
+	AND f.gotreplica IS NOT NULL
+	AND f.filetypeid NOT IN ( 9, 17 )
+    GROUP BY
+	j.production,
+	j.stepid,
+	f.eventtypeid,
+	f.filetypeid,
+	f.gotreplica,
+	f.visibilityflag
+    ORDER BY
+	f.gotreplica,
+	f.visibilityflag ASC;
 
-  select * from files f, jobs j where
-      j.jobid = f.jobid AND
-      j.production=22719 and
-      f.gotreplica IS NOT NULL and
-            f.eventtypeid is NULL and
-      f.filetypeid NOT IN(9,17);
+    SELECT
+	*
+    FROM
+	files f,
+	jobs  j
+    WHERE
+	    j.jobid = f.jobid
+	AND j.production = 22719
+	AND f.gotreplica IS NOT NULL
+	AND f.eventtypeid IS NULL
+	AND f.filetypeid NOT IN ( 9, 17 );
 
-  update files set eventtypeid=90000000 where fileid in (select f.fileid from files f, jobs j where  j.jobid = f.jobid AND
-  j.production=22719 and
-  f.gotreplica IS NOT NULL and
-  f.eventtypeid is NULL and
-  f.filetypeid NOT IN(9,17));
-
-  commit;
+    UPDATE files
+    SET
+	eventtypeid = 90000000
+    WHERE
+	fileid IN (
+	    SELECT
+		f.fileid
+	    FROM
+		files f, jobs  j
+	    WHERE
+		    j.jobid = f.jobid
+		AND j.production = 22719
+		AND f.gotreplica IS NOT NULL
+		AND f.eventtypeid IS NULL
+		AND f.filetypeid NOT IN ( 9, 17 )
+	);
+    COMMIT;
 
 ===============================================
 Automatic updating of the prodrunview
@@ -291,23 +367,33 @@ Create an oracle periodic job:
 
 .. code-block:: sql
 
-  BEGIN
-  DBMS_SCHEDULER.CREATE_JOB (
-     job_name             => 'prodrunupdatejob',
-     job_type             => 'PLSQL_BLOCK',
-     job_action           => 'BEGIN BKUTILITIES.updateprodrunview(); END;',
-     repeat_interval      => 'FREQ=MINUTELY; interval=20',
-     start_date           => systimestamp,
-     enabled              =>  TRUE
-     );
-  END;
-  /
+    BEGIN
+    DBMS_SCHEDULER.CREATE_JOB (
+       job_name             => 'prodrunupdatejob',
+       job_type             => 'PLSQL_BLOCK',
+       job_action           => 'BEGIN BKUTILITIES.updateprodrunview(); END;',
+       repeat_interval      => 'FREQ=MINUTELY; interval=20',
+       start_date           => systimestamp,
+       enabled              =>  TRUE
+       );
+    END;
+    /
 
 For monitoring:
 
 .. code-block:: sql
 
-    select JOB_NAME, STATE, LAST_START_DATE, LAST_RUN_DURATION, NEXT_RUN_DATE, RUN_COUNT, FAILURE_COUNT from USER_SCHEDULER_JOBS;
+    SELECT
+	job_name,
+	state,
+	last_start_date,
+	last_run_duration,
+	next_run_date,
+	run_count,
+	failure_count
+    FROM
+	user_scheduler_jobs;
+
 
 Debugging the produpdatejob in case of failure:
 
