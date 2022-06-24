@@ -103,7 +103,7 @@ step_moore = {
 bk = OracleBookkeepingDB()
 
 # # first delete the content from the DB
-wipeOutDB()
+wipeOutDB(bk)
 
 #############################################################################
 
