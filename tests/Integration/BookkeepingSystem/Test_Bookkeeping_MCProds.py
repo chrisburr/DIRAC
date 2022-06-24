@@ -427,11 +427,16 @@ xmlStep8 = (
 
 #############################################################################
 
+# sut
+from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
+
 # What's used for the tests
 bk = BookkeepingClient()
+bkDB = OracleBookkeepingDB()
 
 # # first delete from DB ####################
-wipeOutDB()
+wipeOutDB(bkDB)
 
 #############################################################################
 

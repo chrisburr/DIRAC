@@ -13,97 +13,43 @@ It tests the insert of XML Summaries to the BookkeepingDB.
 """
 # pylint: disable=invalid-name,wrong-import-position
 
-
-import datetime
+import pytest
 
 from DIRAC.Core.Base.Script import parseCommandLine
 
 parseCommandLine()
 
-from .Utilities import wipeOutDB, addBasicData
+from DIRAC import gLogger
+
+gLogger.setLevel("DEBUG")
+
+from .Utilities import wipeOutDB, addBasicData, insertRAWFiles, rawFiles_1
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
-#############################################################################
-# Test data
-
-runnb = "1122"
-# 5 fake files
-files = ["/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw" % (runnb, runnb, i) for i in range(5)]
-
-# Construction of an XML Job report
-# (this should be similar to what comes from online)
-xmlJob = """<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE Job SYSTEM "book.dtd">
-<Job ConfigName="Test" ConfigVersion="Test01" Date="%jDate%" Time="%jTime%">
-  <TypedParameter Name="Production" Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="Name" Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="Location" Value="LHCb Online" Type="Info"/>
-  <TypedParameter Name="ProgramName" Value="Moore" Type="Info"/>
-  <TypedParameter Name="ProgramVersion" Value="v0r111" Type="Info"/>
-  <TypedParameter Name="NumberOfEvents" Value="500321" Type="Info"/>
-  <TypedParameter Name="ExecTime" Value="90000.0" Type="Info"/>
-  <TypedParameter Name="JobStart" Value="%jStart%" Type="Info"/>
-  <TypedParameter Name="JobEnd" Value="%jEnd%" Type="Info"/>
-  <TypedParameter Name="FirstEventNumber" Value="29" Type="Info"/>
-  <TypedParameter Name="RunNumber" Value="%runnb%" Type="Info"/>
-  <TypedParameter Name="FillNumber" Value="29" Type="Info"/>
-  <TypedParameter Name="JobType" Value="Merge" Type="Info"/>
-  <TypedParameter Name="TotalLuminosity" Value="121222.33" Type="Info"/>
-  <TypedParameter Name="Tck" Value="-2137784319" Type="Info"/>
-  <TypedParameter Name="HLT2Tck" Type="Info" Value="0xaa10c"/>
-  <TypedParameter Name="CondDB" Value="xy" Type="Info"/>
-  <TypedParameter Name="DDDB" Value="xyz" Type="Info"/>
-"""
-
-xmlFile = """
-<Quality Group="Production Manager" Flag="Not Checked"/>
-  <OutputFile Name="%filename%" TypeName="RAW" TypeVersion="MDF">
-   <Parameter Name="MD5Sum" Value="24F71879BA006B91FB8ADC529ACB7CC6"/>
-   <Parameter Name="EventTypeId" Value="30000000"/>
-   <Parameter Name="EventStat" Value="9000"/>
-   <Parameter Name="FileSize" Value="1640316586"/>
-   <Parameter Name="Guid" Value="3cc1b6fe-63c8-11dd-852f-00188b8565aa"/>
-   <Parameter Name="FullStat" Value="429"/>
-   <Parameter Name="CreationDate" Value="%fileCreation%"/>
-   <Parameter Name="Luminosity" Value="1212.233"/>
- </OutputFile>
- """
-
-dqCond = """
-  <DataTakingConditions>
-  <Parameter Name="Description" Value="Real Data"/>
-  <Parameter Name="BeamCond" Value="Collisions"/>
-  <Parameter Name="BeamEnergy" Value="450.0"/>
-  <Parameter Name="MagneticField" Value="Down"/>
-  <Parameter Name="VELO" Value="INCLUDED"/>
-  <Parameter Name="IT" Value="string"/>
-  <Parameter Name="TT" Value="string"/>
-  <Parameter Name="OT" Value=""/>
-  <Parameter Name="RICH1" Value="string"/>
-  <Parameter Name="RICH2" Value="string"/>
-  <Parameter Name="SPD_PRS" Value="string"/>
-  <Parameter Name="ECAL" Value="string"/>
-  <Parameter Name="HCAL" Value="string"/>
-  <Parameter Name="MUON" Value="string"/>
-  <Parameter Name="L0" Value="string"/>
-  <Parameter Name="HLT" Value="string"/>
-  <Parameter Name="VeloPosition" Value="Open"/>
-</DataTakingConditions>
-</Job>"""
-
-
-#############################################################################
 
 # What's used for the tests
 bk = BookkeepingClient()
+bkDB = OracleBookkeepingDB()
 
-# # first delete from DB
-wipeOutDB()
 
-# # then add some needed data
-addBasicData()
+@pytest.fixture
+def wipeout():
+    # first delete from DB
+    wipeOutDB(bkDB)
+    # then add some needed data
+    addBasicData(bkDB)
+
+    # inserting the files
+    insertRAWFiles(bk)
+
+    yield wipeout
+
+    # Delete again the DB
+    wipeOutDB(bkDB)
+
 
 #############################################################################
 
@@ -115,46 +61,14 @@ def test_ping():
     assert res["OK"]
 
 
-def test_sendXMLBookkeepingReport():
-    """
-    Send online XML report
-    """
-
-    res = bk.insertFileTypes("RAW", "Boole output, RAW buffer", "MDF")
-    assert res["OK"], res["Message"]
-
-    res = bk.insertEventType(30000000, "This is 30000000", "something Lambda X (blah)")
-    assert res["OK"], res["Message"]
-
-    res = bk.insertEventType(30000000, "This is 30000000", "something Lambda X (blah)")
-    assert res["OK"], res["Message"]
-
-    res = bk.setRunAndProcessingPassDataQuality(1122, "/Real Data", "OK")
-    assert res["OK"], res["Message"]
-
-    currentTime = datetime.datetime.now()
-    jobXML = xmlJob.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
-    jobXML = jobXML.replace("%jTime%", currentTime.strftime("%H:%M"))
-    jobXML = jobXML.replace("%runnb%", runnb)
-    jobXML = jobXML.replace("%jStart%", currentTime.strftime("%Y-%m-%d %H:%M"))
-    jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
-    xmlReport = jobXML
-    for f in files:
-        xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
-
-    xmlReport += dqCond
-    res = bk.sendXMLBookkeepingReport(xmlReport)
-    assert res["OK"], res["Message"]
-
-
-def test_getRunInformation():
+def test_getRunInformation(wipeout):
     """
     Test the run metadata
     """
-    retVal = bk.getRunInformation({"RunNumber": runnb})
+    retVal = bk.getRunInformation({"RunNumber": 1122})
     assert retVal["OK"], retVal["Message"]
-    assert runnb not in retVal["Value"]
-    assert sorted(retVal["Value"][int(runnb)]) == sorted(
+    assert "1122" not in retVal["Value"]
+    assert sorted(retVal["Value"][int(1122)]) == sorted(
         [
             "ConfigName",
             "JobEnd",
@@ -168,7 +82,7 @@ def test_getRunInformation():
             "ConfigVersion",
         ]
     )
-    result = dict(retVal["Value"][int(runnb)])
+    result = dict(retVal["Value"][int(1122)])
     result.pop("JobStart")
     result.pop("JobEnd")
     assert result == {
@@ -183,29 +97,24 @@ def test_getRunInformation():
     }
 
 
-def test_getListOfFills():
+def test_getListOfFills(wipeout):
     retVal = bk.getListOfFills({"ConfigName": "Test", "ConfigVersion": "Test01"})
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] == [29]
 
 
-def test_getRunsForFill():
+def test_getRunsForFill(wipeout):
     retVal = bk.getRunsForFill(29)
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] == [1122]
 
 
-def test_getRunInformations():
-    retVal = bk.getRunInformations(1123)
+def test_getRunInformations(wipeout):
+    retVal = bk.getRunInformations(1124)
     assert retVal["OK"] is False
 
     res = bk.addReplica("test")
     assert res["OK"] is False
-
-    res = bk.addReplica(files)
-    assert res["OK"] is True
-    assert res["Value"]["Failed"] == []
-    assert res["Value"]["Successful"] == files
 
     retVal = bk.getRunInformations(1122)
     assert retVal["OK"], retVal["Message"]
@@ -224,8 +133,25 @@ def test_getRunInformations():
     assert retVal["Value"]["TotalLuminosity"] == 121222.33
     assert retVal["Value"]["luminosity"] == [6061.165]
 
+    retVal = bk.getRunInformations(1123)
+    assert retVal["OK"], retVal["Message"]
+    assert retVal["Value"]["Configuration Name"] == "Test"
+    assert retVal["Value"]["Configuration Version"] == "Test02"
+    assert retVal["Value"]["DataTakingDescription"] == "Beam450GeV-MagDown"
+    assert retVal["Value"]["File size"] == [9841899516]
+    assert retVal["Value"]["FillNumber"] == 30
+    assert retVal["Value"]["FullStat"] == [2574]
+    assert retVal["Value"]["InstLuminosity"] == [0]
+    assert retVal["Value"]["Number of events"] == [54000]
+    assert retVal["Value"]["Number of file"] == [6]
+    assert retVal["Value"]["ProcessingPass"] == "/Real Data"
+    assert retVal["Value"]["Stream"] == [30000000]
+    assert retVal["Value"]["Tck"] == "-0x7f6bffff"
+    assert retVal["Value"]["TotalLuminosity"] == 121222.33
+    assert retVal["Value"]["luminosity"] == [7273.398]
 
-def test_getRunFiles():
+
+def test_getRunFiles(wipeout):
     retVal = bk.getRunFiles(1122)
     assert retVal["OK"], retVal["Message"]
     assert len(retVal["Value"]) == 5
@@ -244,43 +170,108 @@ def test_getRunFiles():
         assert sorted(retVal["Value"][rec]) == sorted(runMeta)
 
 
-def test_getRunNbAndTck():
+def test_getRunNbAndTck(wipeout):
     retVal = bk.getRunNbAndTck("/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw")
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] == [(1122, "-0x7f6bffff")]
 
 
-def test_getRunFilesDataQuality():
+def test_getRunFilesDataQuality(wipeout):
     retVal = bk.getRunFilesDataQuality(1122)
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] == [(1122, "OK", 30000000)]
 
 
-def test_getNbOfRawFiles():
+def test_getNbOfRawFiles(wipeout):
     retVal = bk.getNbOfRawFiles({"RunNumber": 1122})
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] == 5
 
 
-def test_addFiles():
+def test_getFiles(wipeout):
+    """test of getFiles method"""
+    bkQueryDict = {
+	"ConfigName": "Test",
+	"ConfigVersion": "Test01",
+	"FileType": "RAW",
+    }
+    res = bk.getFiles(bkQueryDict)
+    assert res["OK"], res["Message"]
+    assert len(res["Value"]) == 5
+
+    bkQueryDict = {
+	"ConfigName": "Test",
+	"ConfigVersion": "Test02",
+	"FileType": "RAW",
+    }
+    res = bk.getFiles(bkQueryDict)
+    assert res["OK"], res["Message"]
+    assert len(res["Value"]) == 6
+
+    bkQueryDict = {
+	"ConfigName": "Test",
+	"ConfigVersion": "Test02",
+	"RunNumber": [1122],
+    }
+    res = bk.getFiles(bkQueryDict)
+    assert res["OK"], res["Message"]
+    assert len(res["Value"]) == 0
+
+    # FIXME: these following 2 ones fail because by adding RunNumber
+    # the code buids a query involving prodrunview, which happens to be
+    # empty on the test setup
+    # prodrunview is not a view but a real table, that should be filled up
+    # by a procedure. In the test setup the procedure is deployed but the table
+    # is anywat empty.
+    # 2 cases:
+    # - this test setup is broken
+    # - using prodrunview brakes these queries
+    # in theory prodrunview is there for speeding up things
+
+    # bkQueryDict = {
+    #     "ConfigName": "Test",
+    #     "ConfigVersion": "Test02",
+    #     "RunNumber": [1123],
+    # }
+    # res = bk.getFiles(bkQueryDict)
+    # assert res["OK"], res["Message"]
+    # assert len(res["Value"]) == 6
+
+    # bkQueryDict = {
+    #     "ConfigName": "Test",
+    #     "RunNumber": [1122, 1123],
+    #     "FileType": "RAW",
+    # }
+    # res = bk.getFiles(bkQueryDict)
+    # assert res["OK"], res["Message"]
+    # assert len(res["Value"]) == 11
+
+    bkQueryDict = {
+	"ConfigName": "Test",
+	"ConfigVersion": "Test02",
+	"FileType": "NOT",
+    }
+    res = bk.getFiles(bkQueryDict)
+    assert res["OK"], res["Message"]
+    assert len(res["Value"]) == 0
+
+
+def test_addFiles(wipeout):
     """
     add replica flag
     """
-    retVal = bk.addFiles(files)
+    retVal = bk.addFiles(rawFiles_1)
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"]["Failed"] == []
-    assert retVal["Value"]["Successful"] == files
+    assert retVal["Value"]["Successful"] == rawFiles_1
 
     retVal = bk.addFiles("test.txt")
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"]["Successful"] == []
     assert retVal["Value"]["Failed"] == ["test.txt"]
 
-    bk.updateProductionOutputfiles()
-    assert retVal["OK"], retVal["Message"]
 
-
-def test_fileMetadata():
+def test_fileMetadata(wipeout):
     """
     test the file metadata method
     """
@@ -303,12 +294,12 @@ def test_fileMetadata():
         "InstLuminosity",
         "DataqualityFlag",
     ]
-    retVal = bk.getFileMetadata(files)
+    retVal = bk.getFileMetadata(rawFiles_1)
 
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"]["Failed"] == []
-    assert len(retVal["Value"]["Successful"]) == len(files)
-    assert sorted(retVal["Value"]["Successful"]) == sorted(files)
+    assert len(retVal["Value"]["Successful"]) == len(rawFiles_1)
+    assert sorted(retVal["Value"]["Successful"]) == sorted(rawFiles_1)
     # make sure the files has all parameters
     for fName in retVal["Value"]["Successful"]:
         assert sorted(retVal["Value"]["Successful"][fName]) == sorted(fileParams)
@@ -319,7 +310,7 @@ def test_fileMetadata():
     assert retVal["Value"]["Failed"] == ["test.txt"]
 
 
-def test_getAvailableFileTypes():
+def test_getAvailableFileTypes(wipeout):
     """
     retrieve the file types
     """
@@ -329,15 +320,15 @@ def test_getAvailableFileTypes():
     assert len(retVal["Value"]) > 0
 
 
-def test_removeFiles():
+def test_removeFiles(wipeout):
     """
     Set the replica flag to no
     """
 
-    retVal = bk.removeFiles(files)
+    retVal = bk.removeFiles(rawFiles_1)
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"]["Failed"] == []
-    assert retVal["Value"]["Successful"] == files
+    assert retVal["Value"]["Successful"] == rawFiles_1
 
     retVal = bk.removeFiles("test.txt")
     assert retVal["OK"], retVal["Message"]
