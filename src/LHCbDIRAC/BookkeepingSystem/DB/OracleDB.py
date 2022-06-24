@@ -57,14 +57,17 @@ the calling method is responsible for closing this connection once it is no
 longer needed.
 """
 # FIXME: use Connection Pooling
-# https://cx-oracle.readthedocs.io/en/latest/user_guide/connection_handling.html#connection-pooling
+# https://python-oracledb.readthedocs.io/en/latest/user_guide/connection_handling.html#connection-pooling
+# FIXME: tnsEntry is named dsn in python-oracledb
 
 from six.moves import queue as Queue
 import time
 import threading
 import six
 
-import cx_Oracle
+import oracledb
+from oracledb import STRING as oracledb_STRING  # pylint: disable=no-name-in-module
+from oracledb import NUMBER as oracledb_NUMBER  # pylint: disable=no-name-in-module
 
 from DIRAC import gLogger
 from DIRAC import S_OK, S_ERROR
@@ -91,7 +94,7 @@ class OracleDB(object):
             self.logger = gLogger.getSubLogger("Oracle")
 
         # let the derived class decide what to do with if is not 1
-        self._threadsafe = cx_Oracle.threadsafety
+        self._threadsafe = oracledb.threadsafety
         self.logger.debug("thread_safe = %s" % self._threadsafe)
 
         self.__checkQueueSize(maxQueueSize)
@@ -143,7 +146,7 @@ class OracleDB(object):
 
         try:
             raise x
-        except cx_Oracle.Error as e:
+        except oracledb.Error as e:
             self.logger.error("%s: %s" % (methodName, err), "%s" % (e))
             return S_ERROR("%s: ( %s )" % (err, e))
         except Exception as x:
@@ -172,13 +175,13 @@ class OracleDB(object):
         S_ERROR upon error.
 
         Use of params and kwparams to pass bind variabes is strongly encouraged
-        to prevent SQL injection and improve performance. See the cx_Oracle
+        to prevent SQL injection and improve performance. See the python-oracledb
         documentation for more information.
 
         :param str cmd: the SQL string to be executed
         :param conn: the connection to use, optional
-        :param list params: positional bind variables to pass to cx_Oracle.Cursor.execute
-        :param dict kwparams: named bind variables to pass to cx_Oracle.Cursor.execute
+        :param list params: positional bind variables to pass to oracledb.Cursor.execute
+        :param dict kwparams: named bind variables to pass to oracledb.Cursor.execute
         """
         self.logger.debug("query:", f"{cmd!r} {params!r} {kwparams!r}")
 
@@ -238,10 +241,10 @@ class OracleDB(object):
             if array:
                 fArray = array[0]
                 if isinstance(fArray, six.string_types):
-                    result = cursor.arrayvar(cx_Oracle.STRING, array)
+                    result = cursor.arrayvar(oracledb_STRING, array)
                     parameters += [result]
                 elif isinstance(fArray, six.integer_types):
-                    result = cursor.arrayvar(cx_Oracle.NUMBER, array)
+                    result = cursor.arrayvar(oracledb_NUMBER, array)
                     parameters += [result]
                 elif isinstance(fArray, list):
                     for i in array:
@@ -249,15 +252,15 @@ class OracleDB(object):
                             parameters += [i]
                         elif i:
                             if isinstance(i[0], six.string_types):
-                                result = cursor.arrayvar(cx_Oracle.STRING, i)
+                                result = cursor.arrayvar(oracledb_STRING, i)
                                 parameters += [result]
                             elif isinstance(i[0], six.integer_types):
-                                result = cursor.arrayvar(cx_Oracle.NUMBER, i)
+                                result = cursor.arrayvar(oracledb_NUMBER, i)
                                 parameters += [result]
                             else:
                                 return S_ERROR("The array type is not supported!!!")
                         else:
-                            result = cursor.arrayvar(cx_Oracle.STRING, [], 0)
+                            result = cursor.arrayvar(oracledb_STRING, [], 0)
                             parameters += [result]
                 else:
                     return S_ERROR("The array type is not supported!!!")
@@ -315,7 +318,7 @@ class OracleDB(object):
         """Create a New connection and put it in the Queue."""
         self.logger.debug("__newConnection:")
 
-        connection = cx_Oracle.connect(self.__userName, self.__passwd, self.__tnsName, threaded=True)
+        connection = oracledb.connect(user=self.__userName, password=self.__passwd, dsn=self.__tnsName)
         self.__putConnection(connection)
 
     def __putConnection(self, connection):
