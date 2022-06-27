@@ -22,23 +22,23 @@ from fnmatch import fnmatch
 import six
 
 import DIRAC
-from DIRAC.Core.Utilities.File import mkDir
 from DIRAC import gLogger
+from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.File import mkDir
 from DIRAC.Core.Utilities.List import breakListIntoChunks
-from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
+from DIRAC.DataManagementSystem.Client.DataManager import DataManager
+from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient, printOperation
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 from DIRAC.Resources.Storage.StorageElement import StorageElement
-from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient, printOperation
 from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
-from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 
-from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import PluginUtilities
 from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
-from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
 
 
 def _checkReplicasForProblematic(lfns, replicas, nbReplicasProblematic, problematicReplicas):
@@ -139,15 +139,10 @@ def _getLog(urlBase, logFile, debug=False):
     # read the actual files...
     cc = []
     for fileName in matchingFiles:
-        fd = zf.open(fileName)
-        if not fd:
-            if debug:
-                print("Couldn't open file...", fileName)
-        else:
+        with zf.open(fileName) as fd:
             if debug:
                 print("File %s successfully open" % fileName)
             cc += fd.read().decode("utf-8").split("\n")
-            fd.close()
     if debug:
         print("%d files read... %d lines" % (len(matchingFiles), len(cc)))
     if zf:
