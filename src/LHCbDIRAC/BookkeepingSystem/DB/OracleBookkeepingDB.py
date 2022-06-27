@@ -128,7 +128,7 @@ class OracleBookkeepingDB:
 
 	    stepId = in_dict.get("StepId", default)
 	    if stepId != default:
-		if isinstance(stepId, ((str,) + (int,))):
+		if isinstance(stepId, (str, int)):
 		    condition += " AND s.stepid= %s" % (str(stepId))
 		elif isinstance(stepId, (list, tuple)):
 		    condition += "AND s.stepid in (%s)" % ",".join(str(sid) for sid in stepId)
@@ -168,12 +168,12 @@ class OracleBookkeepingDB:
 	    optFile = in_dict.get("OptionFiles", default)
 	    if optFile != default:
 		if isinstance(optFile, str):
-		    condition += " AND s.optionfiles='%s'" % (optFile)
+		    condition += " AND s.optionfiles = :optionfiles"
+		    queryKwparams["optionfiles"] = optFile
 		elif isinstance(optFile, list):
-		    values = " AND ("
-		    for i in optFile:
-			values += " s.optionfiles='%s' OR " % (i)
-		    condition += values[:-3] + ")"
+		    bindNames = {f"optionfiles{i}": _optFile for i, _optFile in enumerate(optFile)}
+		    condition += f" AND s.optionfiles in ({','.join(f':{b}' for b in bindNames)})"
+		    queryKwparams.update(bindNames)
 
 	    dddb = in_dict.get("DDDB", default)
 	    if dddb != default:
@@ -1550,7 +1550,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
 	tables = " jobs j, files f, configurations c"
 	result = None
 	if production != default:
-	    if isinstance(production, ((str,) + (int,))):
+	    if isinstance(production, (str, int)):
 		condition += "AND j.production=%d " % (int(production))
 	    elif isinstance(production, list):
 		condition += "AND j.production in (" + ",".join([str(p) for p in production]) + ")"
@@ -1564,7 +1564,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
 	    else:
 		result = S_ERROR("You must provide an LFN or a list of LFNs!")
 	elif diracJobids != default:
-	    if isinstance(diracJobids, ((str,) + (int,))):
+	    if isinstance(diracJobids, (str, int)):
 		condition += "AND j.DIRACJOBID=%s " % diracJobids
 	    elif isinstance(diracJobids, list):
 		condition += "AND j.DIRACJOBID in (" + ",".join([str(djobid) for djobid in diracJobids]) + ")"
@@ -2967,7 +2967,7 @@ AND ft.filetypeid=f.ftypeid"
 	if runnb == default:
 	    return S_ERROR("A RunNumber must be given!")
 
-	if isinstance(runnb, ((str,) + (int,))):
+	if isinstance(runnb, (str, int)):
 	    runnb = [runnb]
 	runs = ",".join([str(run) for run in runnb])
 	fields = inputParams.get(
@@ -3737,12 +3737,12 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
     #############################################################################
     @staticmethod
     def __buildProduction(production, condition, tables, useMainTables=True):
-        """it adds the production which can be a list or string to the jobs table.
+	"""it adds the production which can be a list or string to the jobs table.
 
-        :param list,int long production: the production number(s)
-        :param str condition: contains the conditions
-        :param str tables: contains the tables.
-        :param bool useMainTables: It is better not to use the view in some cases. This variable is used to
+	:param list, int, long production: the production number(s)
+	:param str condition: contains the conditions
+	:param str tables: contains the tables.
+	:param bool useMainTables: It is better not to use the view in some cases. This variable is used to
         disable the view usage.
         """
 
@@ -3761,7 +3761,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
 		    cond += " %s.production=%s or " % (table, str(i))
 		cond = cond[:-3] + ")"
 		condition += cond
-	    elif isinstance(production, ((str,) + (int,))):
+	    elif isinstance(production, (str, int)):
 		condition += " AND %s.production=%s" % (table, str(production))
 
 	return condition, tables
@@ -3956,7 +3956,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
 		    cond += " %s.eventtypeid=%s or " % (table, (str(i)))
 		cond = cond[:-3] + ")"
 		condition += cond
-	    elif isinstance(evt, ((str,) + (int,))):
+	    elif isinstance(evt, (str, int)):
 		condition += " AND %s.eventtypeid=%s" % (table, str(evt))
 	    if useMainTables:
 		if isinstance(evt, (list, tuple)) and evt:
@@ -3966,7 +3966,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
 			cond += " %s.eventtypeid=%s or " % (table, (str(i)))
 		    cond = cond[:-3] + ")"
 		    condition += cond
-		elif isinstance(evt, ((str,) + (int,))):
+		elif isinstance(evt, (str, int)):
 		    condition += " AND %s.eventtypeid=%s" % (table, str(evt))
 	return condition, tables
 
@@ -4782,13 +4782,13 @@ rownum <=%d ) WHERE r >%d"
         :returns: S_OK/S_ERROR
         """
         # if we have some specific file type version, it can be added to this dictionary
-        fileTypeMap = {"RAW": "MDF"}
-        eventtypes = []
-        if eventType:
-	    if isinstance(eventType, ((str,), (int,))):
-                eventtypes.append(int(eventType))
-            elif isinstance(eventType, list):
-                eventtypes = eventType
+	fileTypeMap = {"RAW": "MDF"}
+	eventtypes = []
+	if eventType:
+	    if isinstance(eventType, (str, int)):
+		eventtypes.append(int(eventType))
+	    elif isinstance(eventType, list):
+		eventtypes = eventType
             else:
                 return S_ERROR("%s event type is not valid!" % eventType)
         self.log.verbose("The following event types will be inserted:", "%s" % eventtypes)
@@ -5577,18 +5577,18 @@ sim.beamenergy sim_beamenergy, sim.generator sim_generator, \
 sim.magneticfield sim_magneticfield, sim.detectorcond sim_detectorcond, sim.luminosity sim_luminosity, \
 sim.g4settings sim_g4settings, sim.visible sim_visible FROM %s WHERE sim.simid=sim.simid %s"
                 % (tables, condition)
-            )
-            retVal = self.dbR_.query(command)
+	    )
+	    retVal = self.dbR_.query(command)
 
-        if not retVal["OK"]:
-            return retVal
-        command = "SELECT count(*) FROM simulationconditions"
+	if not retVal["OK"]:
+	    return retVal
+	command = "SELECT COUNT(*) FROM simulationconditions"
 
-        parameterNames = [
-            "SimId",
-            "SimDescription",
-            "BeamCond",
-            "BeamEnergy",
+	parameterNames = [
+	    "SimId",
+	    "SimDescription",
+	    "BeamCond",
+	    "BeamEnergy",
             "Generator",
             "MagneticField",
             "DetectorCond",

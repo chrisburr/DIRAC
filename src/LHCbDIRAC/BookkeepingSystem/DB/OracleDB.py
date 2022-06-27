@@ -62,7 +62,7 @@ longer needed.
 
 import time
 import threading
-from queue import Queue
+import queue
 
 import oracledb
 from oracledb import STRING as oracledb_STRING  # pylint: disable=no-name-in-module
@@ -92,17 +92,17 @@ class OracleDB:
         if "logger" not in dir(self):
             self.logger = gLogger.getSubLogger("Oracle")
 
-        # let the derived class decide what to do with if is not 1
-        self._threadsafe = oracledb.threadsafety
-	self.logger.debug(f"thread_safe = {self.__threadsafe}")
+	# let the derived class decide what to do with if is not 1
+	self._threadsafe = oracledb.threadsafety
+	self.logger.debug(f"thread_safe = {self._threadsafe}")
 
-        self.__checkQueueSize(maxQueueSize)
+	self.__checkQueueSize(maxQueueSize)
 
         self.__userName = str(userName)
         self.__passwd = str(password)
         self.__tnsName = str(tnsEntry)
         # Create the connection Queue to reuse connections
-        self.__connectionQueue = Queue.Queue(maxQueueSize)
+	self.__connectionQueue = queue.Queue(maxQueueSize)
         # Create the connection Semaphore to limit total number of open connection
         self.__connectionSemaphore = threading.Semaphore(maxQueueSize)
 
@@ -125,7 +125,7 @@ class OracleDB:
             try:
                 connection = self.__connectionQueue.get_nowait()
                 connection.close()
-            except Queue.Empty:
+	    except queue.Empty:
                 self.logger.debug("No more connection in Queue")
                 break
 
@@ -301,7 +301,7 @@ class OracleDB:
             result = cursor.callfunc(packageName, returnType, parameters)
             retDict = S_OK(result)
         except Exception as x:
-            self.logger.debug("_query:", packageName + "(" + str(parameters) + ")")
+	    self.logger.debug(f"_query: {packageName} ({parameters})")
             retDict = self._except("_query", x, "Execution failed.")
             connection.rollback()
 
@@ -329,7 +329,7 @@ class OracleDB:
         self.__connectionSemaphore.release()
         try:
             self.__connectionQueue.put_nowait(connection)
-        except Queue.Full:
+	except queue.Full:
             self.logger.debug("__putConnection: Full Queue")
             try:
                 connection.close()
@@ -372,7 +372,7 @@ class OracleDB:
                     self.__connectionSemaphore.release()
                     return self.__getConnection()
                 return S_OK(connection)
-        except Queue.Empty:
+	except queue.Empty:
             self.__connectionSemaphore.release()
             self.logger.debug("__getConnection: Empty Queue")
             try:
