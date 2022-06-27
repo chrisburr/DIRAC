@@ -57,8 +57,9 @@ class ProductionStep(BaseModel):
     data_pkgs: list[DataPackage]
 
     class DBTags(BaseModel):
-        DDDB: str
-        CondDB: str
+        DDDB: Optional[str] = None
+        CondDB: Optional[str] = None
+        DQTag: Optional[str] = None
 
     dbtags: Optional[DBTags]
 

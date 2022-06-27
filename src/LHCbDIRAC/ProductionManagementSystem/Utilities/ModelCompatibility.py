@@ -114,9 +114,11 @@ def step_to_legacy_dict(step: ProductionStep):
     if step.dbtags:
         result["CONDDB"] = step.dbtags.CondDB or ""
         result["DDDB"] = step.dbtags.DDDB or ""
+        result["DQTag"] = step.dbtags.DQTag or ""
     else:
         result["CONDDB"] = "fromPreviousStep"
         result["DDDB"] = "fromPreviousStep"
+        result["DQTag"] = "fromPreviousStep"
 
     if isinstance(step.options, dict):
         # lbexec style options
