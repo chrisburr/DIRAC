@@ -1,3 +1,15 @@
+[v10.4.15]
+*ProductionManagement
+
+NEW: (!1235) dirac-production-request-run-local command for locally testing YAML-defined production requests
+NEW: (!1226) Add dirac-production-submit command for creating production requests from a YAML file
+
+*ResourceStatusSystem
+
+CHANGE: (!1229) NagiosTopologyAgent does not generate XML topology file anymore
+
+
+
 [v10.4.14]
 *Bookkeeping
 
