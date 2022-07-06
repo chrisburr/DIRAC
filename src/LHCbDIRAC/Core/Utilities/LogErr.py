@@ -90,69 +90,44 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
                     lengthDump = len(errorBase)
                     test = test + lengthDump
 
-    result = createJSONtable(errorDict, errorG4Dict, name, jobID, prodID, wmsID)
-    return S_OK(result)
+    for (k, v) in errorG4Dict.items():
+	errorDict[k] = v
+    createJSONtable(errorDict, name, jobID, prodID, wmsID)
+    return S_OK()
 
 
 ################################################
 
-#   # Due to issues in the mapping of the ES DB, this mapping
-#   (which is more clear than the one below) couldn't be used.
-#   # I have still saved the function here.
 
-# def createJSONtable(dictTotal, name):
-
-#   ids = {}
-#   ids['JobID'] = JOB_ID
-#   ids['ProductionID'] = PROD_ID
-#   ids['TransformationID'] = TRANS_ID
-
-#   errors = []
-
-#   with open(name, 'w') as output:
-#     for error in dictTotal:
-#       newrow = {}
-#       for key, value in error.items():
-#         newrow['Error type'] = key
-#         newrow['Counter'] = len(value)
-#         newrow['Events'] = value
-#       errors.append(newrow)
-
-#     errorDict = {'Errors' : errors}
-
-#     result = {}
-#     result['ID'] = ids
-#     result['Errors'] = errors
-#     result = {'Log_output' : result}
-
-#     output.write(json.dumps(result, indent = 2))
-#   return
-
-# \
-
-
-def createJSONtable(errorDict, errorG4Dict, name, jobID, prodID, wmsID):
+def createJSONtable(errorDict, name, jobID, prodID, wmsID):
     """Creates a JSON file out of the collection of errors listed in dictTotal.
 
-    :param dict dictTotal: the dictionary of errors
+    :param dict errorDict: the dictionary of errors
     :param str name: the name of the JSON file
     :param str jobID: the JobID of the log
     :param str prodID: the ProductionID of the log
     :param str wmsID: the wmsID of the log
     """
 
-    result = {}
-    result["JobID"] = jobID
-    result["ProductionID"] = prodID
-    result["wmsID"] = wmsID
-    result["timestamp"] = int(TimeUtilities.toEpochMilliSeconds())
-    for k, v in errorDict.items():
-        result[k] = v
-    for (k, v) in errorG4Dict.items():
-        result[k] = v
+    resultList = {}
+    counter = 0
     with open(name, "w") as output:
-        json.dump(result, output, indent=2)
-    return result
+	for errName, nrOfErrs in errorDict.items():
+	    print("Error type: ", errName)
+	    print("Nr of Err: ", nrOfErrs)
+	    for i in range(1, nrOfErrs + 1):
+		print(f"Loop {i}")
+		result = {}
+		result["JobID"] = jobID
+		result["ProductionID"] = prodID
+		result["wmsID"] = wmsID
+		result["timestamp"] = int(TimeUtilities.toEpochMilliSeconds())
+		result["Errors"] = 1
+		result["ErrorType"] = errName
+		resultList[counter] = result
+		counter = counter + 1
+	json.dump(resultList, output, indent=2)
+    gLogger.notice("Finished creating the JSON file with Gauss Erros")
 
 
 ################################################
@@ -177,37 +152,3 @@ def getLogString(logFile, logString):
         logString = f.read()
     gLogger.notice("Successfully read %s" % logFile)
     return S_OK(logString)
-
-
-# This is a relic from the previous version of the file, I'll keep it for the while
-
-# global LOG_STRING
-# global STRING_FILE
-# global FILE_OK
-
-# LOG_FILE = sys.argv[1]
-# PROJECT = sys.argv[2]
-# VERSION = sys.argv[3]
-
-# global JOB_ID
-# global PROD_ID
-# global TRANS_ID
-
-# JOB_ID = sys.argv[4]
-# PROD_ID = sys.argv[5]
-# TRANS_ID = sys.argv[6]
-
-# #LOG_STRING = ''
-# #FILE_OK = ''
-# dictG4Errors = dict()
-# dictG4ErrorsCount = dict()
-# STRING_FILE = pickStringFile(PROJECT, VERSION)
-
-# if STRING_FILE is not None:
-#   if os.stat(STRING_FILE)[6] != 0:
-#     main(LOG_FILE)
-#   else:
-#     print 'WARNING: STRINGFILE %s is empty' % STRING_FILE
-
-# The file is run as follows:
-# readLogFile('Example.log', 'project', 'version', 'jobID', 'prodID', 'wmsID')
