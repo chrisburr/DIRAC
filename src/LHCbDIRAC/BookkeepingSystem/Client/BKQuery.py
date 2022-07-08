@@ -11,7 +11,6 @@
 """BKQuery is a class that decodes BK paths, queries the BK at a high level."""
 import os
 import sys
-import six
 from fnmatch import fnmatch
 from DIRAC import gLogger
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -78,11 +77,11 @@ def parseRuns(bkQuery, runs):
     :param runs: a string, an int, or a list,dict,tuple of run numbers
     :type runs: string or int/long, iterable
     """
-    if isinstance(runs, six.string_types):
+    if isinstance(runs, str):
         runs = runs.split(",")
     elif isinstance(runs, (dict, tuple)):
         runs = list(runs)
-    elif isinstance(runs, six.integer_types):
+    elif isinstance(runs, int):
         runs = [str(runs)]
     if len(runs) > 1:
         runList = []
@@ -144,7 +143,7 @@ class BKQuery:
             bkQueryDict = bkQuery.getQueryDict().copy()
         elif isinstance(bkQuery, dict):
             bkQueryDict = bkQuery.copy()
-        elif isinstance(bkQuery, six.string_types):
+        elif isinstance(bkQuery, str):
             bkPath = bkQuery
         bkQueryDict = self.buildBKQuery(
             bkPath=bkPath,
@@ -322,7 +321,7 @@ class BKQuery:
 
         # Remove all "ALL"'s in the dict, if any
         for i in self.__bkQueryDict:
-            if isinstance(bkQuery[i], six.string_types) and bkQuery[i] == "ALL":
+            if isinstance(bkQuery[i], str) and bkQuery[i] == "ALL":
                 bkQuery.pop(i)
 
         # If there is only one production, make it faster with a single value rather than a list
@@ -367,7 +366,7 @@ class BKQuery:
         # There are two items in the dictionary: ConditionDescription and Simulation/DataTaking-Conditions
         eventType = self.__bkQueryDict.get("EventType", "ALL")
         if self.__bkQueryDict.get("ConfigName") == "MC" or (
-            isinstance(eventType, six.string_types) and eventType.upper() != "ALL" and eventType[0] != "9"
+            isinstance(eventType, str) and eventType.upper() != "ALL" and eventType[0] != "9"
         ):
             conditionsKey = "SimulationConditions"
         else:
@@ -381,7 +380,7 @@ class BKQuery:
 
     def setDQFlag(self, dqFlag="OK"):
         """Sets the data quality."""
-        if isinstance(dqFlag, six.string_types):
+        if isinstance(dqFlag, str):
             dqFlag = dqFlag.upper()
         elif isinstance(dqFlag, list):
             dqFlag = [dq.upper() for dq in dqFlag]
@@ -402,7 +401,7 @@ class BKQuery:
     def setEventType(self, eventTypes=None):
         """Sets the event type."""
         if eventTypes:
-            if isinstance(eventTypes, six.string_types):
+            if isinstance(eventTypes, str):
                 eventTypes = eventTypes.split(",")
             elif not isinstance(eventTypes, list):
                 eventTypes = [eventTypes]
@@ -418,7 +417,7 @@ class BKQuery:
 
     def setVisible(self, visible=None):
         """Sets the visibility flag."""
-        if visible is True or (isinstance(visible, six.string_types) and visible[0].lower() == "y"):
+        if visible is True or (isinstance(visible, str) and visible[0].lower() == "y"):
             visible = "Yes"
         if visible is False:
             visible = "No"
@@ -500,7 +499,7 @@ class BKQuery:
 
     def __fileType(self, fileType=None, returnList=False):
         """return the file types taking into account the expected file types."""
-        gLogger.verbose("BKQuery.__fileType: %s, fileType: %s" % (self, fileType))
+        gLogger.verbose(f"BKQuery.__fileType: {self}, fileType: {fileType}")
         if not fileType:
             return []
         self.__getAllBKFileTypes()
@@ -557,7 +556,7 @@ class BKQuery:
     def __getAllBKFileTypes(self):
         """Returns the file types from the bookkeeping database."""
         if not self.__bkFileTypes:
-            self.__bkFileTypes = set([self.__fakeAllDST])
+            self.__bkFileTypes = {self.__fakeAllDST}
             warned = False
             while True:
                 res = self.__bkClient.getAvailableFileTypes()
@@ -731,7 +730,7 @@ class BKQuery:
                     directory = os.path.join(os.path.dirname(lfn), "")
                     dirs[directory] = dirs.setdefault(directory, 0) + 1
                 for directory in sorted(dirs):
-                    gLogger.notice("%s %s files" % (directory, dirs[directory]))
+                    gLogger.notice(f"{directory} {dirs[directory]} files")
                 if printSEUsage:
                     rpc = StorageUsageClient()
                     totalUsage = {}
@@ -745,9 +744,9 @@ class BKQuery:
                     ses = sorted(totalUsage)
                     totalUsage["Total"] = totalSize
                     ses.append("Total")
-                    gLogger.notice("\n%s %s" % ("SE".ljust(20), "Size (TB)"))
+                    gLogger.notice("\n{} {}".format("SE".ljust(20), "Size (TB)"))
                     for se in ses:
-                        gLogger.notice("%s %s" % (se.ljust(20), ("%.1f" % (totalUsage[se] / 1000000000000.0))))
+                        gLogger.notice("{} {}".format(se.ljust(20), ("%.1f" % (totalUsage[se] / 1000000000000.0))))
         return lfns
 
     def getDirs(self, printOutput=False, visible=None):
@@ -801,12 +800,12 @@ class BKQuery:
                 return []
             if self.getProcessingPass().replace("/", "") != "Real Data":
                 fileTypes = self.getFileTypeList()
-                prodList = set(
+                prodList = {
                     prod
                     for prods in res["Value"]["Records"]
                     for prod in prods
                     if self.__getProdStatus(prod) != "Deleted"
-                )
+                }
                 # print '\n', self.__bkQueryDict, res['Value']['Records'], '\nVisible:', visible, prodList
                 pList = set()
                 if fileTypes:
@@ -818,10 +817,10 @@ class BKQuery:
                 if not pList:
                     pList = prodList
             else:
-                runList = sorted([-run for r in res["Value"]["Records"] for run in r])
+                runList = sorted(-run for r in res["Value"]["Records"] for run in r)
                 startRun = int(self.__bkQueryDict.get("StartRun", 0))
                 endRun = int(self.__bkQueryDict.get("EndRun", sys.maxsize))
-                pList = set(run for run in runList if run >= startRun and run <= endRun)
+                pList = {run for run in runList if run >= startRun and run <= endRun}
             fullList.update(pList)
         return sorted(fullList)
 
@@ -908,7 +907,7 @@ class BKQuery:
         ppRecords = res["Value"][0]
         if "Name" in ppRecords["ParameterNames"]:
             ind = ppRecords["ParameterNames"].index("Name")
-            passes = sorted([os.path.join(initialPP, rec[ind]) for rec in ppRecords["Records"]])
+            passes = sorted(os.path.join(initialPP, rec[ind]) for rec in ppRecords["Records"])
         else:
             passes = []
         evtRecords = res["Value"][1]

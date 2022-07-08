@@ -23,8 +23,6 @@ from LHCbDIRAC.BookkeepingSystem.Client.LHCB_BKKDBClient import LHCB_BKKDBClient
 class LHCbBookkeepingCLI(cmd.Cmd):
     """class."""
 
-    #############################################################################
-
     def __init__(self):
         """constructor."""
         cmd.Cmd.__init__(self)
@@ -59,8 +57,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
     #############################################################################
     def __bklist(self, path):
         """list a path."""
-        retVal = self.bk.list(path)
-        return retVal
+        return self.bk.list(path)
 
     def __bkListAll(self, path):
         """list the directory with metadata.
@@ -79,11 +76,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
     #############################################################################
     def __checkDirectory(self, path):
         """is empty directory."""
-        res = self.bk.list(path)
-        retValue = False
-        if res:
-            retValue = True
-        return retValue
+        return True if self.bk.list(path) else False
 
     #############################################################################
     def __rootDirectory(self):
@@ -149,7 +142,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
         if len(path) > 0 and path[0] == "-":
             try:
                 if path[1] != "a":
-                    print("ls: invalid option -- {}".format(path[1]))
+                    print(f"ls: invalid option -- {path[1]}")
                     print("Try `help ls' for more information.")
                 else:
                     path = path[2:]
@@ -190,7 +183,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
         files = None
         if retVal:
             if "FileName" not in retVal[0]:
-                print("No file found belong to {} bookkeeping path!".format(self.currentPath))
+                print(f"No file found belong to {self.currentPath} bookkeeping path!")
                 return
             else:
                 files = retVal
@@ -385,7 +378,7 @@ class LHCbBookkeepingCLI(cmd.Cmd):
         retVal = self.bk.getProcessingPassSteps({"StepName": command})
         if retVal["OK"]:
             proc = retVal["Value"]
-            print("{0} {1} step found in the bkk".format(proc["TotalRecords"], command))
+            print("{} {} step found in the bkk".format(proc["TotalRecords"], command))
             for i in proc["Records"]:
                 print(" ".ljust(5) + i)
                 for j in proc["Records"][i]:

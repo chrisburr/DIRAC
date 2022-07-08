@@ -9,7 +9,6 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """BookkeepingManager service is the front-end to the Bookkeeping database."""
-import six
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
@@ -57,7 +56,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_OK()
 
     #############################################################################
-    types_sendXMLBookkeepingReport = [six.string_types]
+    types_sendXMLBookkeepingReport = [str]
 
     def export_sendXMLBookkeepingReport(self, xml):
         """This method is used to upload an xml report which is produced after when
@@ -157,7 +156,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getAvailableFileTypes()
 
     #############################################################################
-    types_insertFileTypes = [six.string_types, six.string_types, six.string_types]
+    types_insertFileTypes = [str, str, str]
 
     @classmethod
     def export_insertFileTypes(cls, ftype, desc, fileType):
@@ -359,7 +358,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return result
 
     #############################################################################
-    types_getProcessingPass = [dict, six.string_types]
+    types_getProcessingPass = [dict, str]
 
     @classmethod
     def export_getProcessingPass(cls, in_dict, path=None):
@@ -511,7 +510,7 @@ class BookkeepingManagerHandler(RequestHandler):
             gLogger.verbose("DataQualityFlag will be removed. It will changed to DataQuality")
 
         if "RunNumbers" in in_dict:
-            gLogger.verbose("RunNumbers will be removed. It will changed to RunNumbers")
+            gLogger.verbose("RunNumbers will be removed. It will changed to RunNumber")
 
         result = []
         retVal = cls.bkkDB.getFiles(
@@ -859,7 +858,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getMoreProductionInformations(prodid)
 
     #############################################################################
-    types_getJobInfo = [six.string_types]
+    types_getJobInfo = [str]
 
     @classmethod
     def export_getJobInfo(cls, lfn):
@@ -885,7 +884,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getJobInformation(in_dict)
 
     #############################################################################
-    types_getRunNumber = [six.string_types]
+    types_getRunNumber = [str]
 
     @classmethod
     def export_getRunNumber(cls, lfn):
@@ -893,7 +892,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getRunNumber(lfn)
 
     #############################################################################
-    types_getRunNbAndTck = [six.string_types]
+    types_getRunNbAndTck = [str]
 
     @classmethod
     def export_getRunNbAndTck(cls, lfn):
@@ -901,7 +900,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getRunNbAndTck(lfn)
 
     #############################################################################
-    types_getProductionFiles = [six.integer_types, six.string_types]
+    types_getProductionFiles = [int, str]
 
     @classmethod
     def export_getProductionFiles(cls, prod, fileType, replica=default):
@@ -910,7 +909,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionFiles(prod, fileType, replica)
 
     #############################################################################
-    types_getProductionFilesBulk = [list, six.string_types]
+    types_getProductionFilesBulk = [list, str]
 
     @classmethod
     def export_getProductionFilesBulk(cls, prods, fileType, replica=default):
@@ -934,7 +933,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getRunFiles(runid)
 
     #############################################################################
-    types_updateFileMetaData = [six.string_types, dict]
+    types_updateFileMetaData = [str, dict]
 
     @classmethod
     def export_updateFileMetaData(cls, filename, fileAttr):
@@ -946,7 +945,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.updateFileMetaData(filename, fileAttr)
 
     #############################################################################
-    types_renameFile = [six.string_types, six.string_types]
+    types_renameFile = [str, str]
 
     @classmethod
     def export_renameFile(cls, oldLFN, newLFN):
@@ -955,7 +954,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.renameFile(oldLFN, newLFN)
 
     #############################################################################
-    types_getProductionProcessingPassID = [six.integer_types]
+    types_getProductionProcessingPassID = [int]
 
     @classmethod
     def export_getProductionProcessingPassID(cls, prodid):
@@ -963,7 +962,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionProcessingPassID(prodid)
 
     #############################################################################
-    types_getProductionProcessingPass = [six.integer_types]
+    types_getProductionProcessingPass = [int]
 
     @classmethod
     def export_getProductionProcessingPass(cls, prodid):
@@ -997,7 +996,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_OK({"Successfull": successfull, "Faild": faild})
 
     #############################################################################
-    types_setFileDataQuality = [list, six.string_types]
+    types_setFileDataQuality = [list, str]
 
     @classmethod
     def export_setFileDataQuality(cls, lfns, flag):
@@ -1005,7 +1004,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.setFileDataQuality(lfns, flag)
 
     #############################################################################
-    types_setRunAndProcessingPassDataQuality = [six.integer_types, six.string_types, six.string_types]
+    types_setRunAndProcessingPassDataQuality = [(int, str), str, str]
 
     @classmethod
     def export_setRunAndProcessingPassDataQuality(cls, runNB, procpass, flag):
@@ -1016,10 +1015,12 @@ class BookkeepingManagerHandler(RequestHandler):
         used to set the data quality flag to a given run files which
         processed by a given processing pass.
         """
+        if isinstance(runNB, str):
+            runNB = int(runNB)
         return cls.bkkDB.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
     #############################################################################
-    types_setRunDataQuality = [int, six.string_types]
+    types_setRunDataQuality = [int, str]
 
     @classmethod
     def export_setRunDataQuality(cls, runNb, flag):
@@ -1030,7 +1031,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.setRunDataQuality(runNb, flag)
 
     #############################################################################
-    types_setQualityRun = [int, six.string_types]
+    types_setQualityRun = [int, str]
 
     @classmethod
     def export_setQualityRun(cls, runNb, flag):
@@ -1038,7 +1039,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.setRunDataQuality(runNb, flag)
 
     #############################################################################
-    types_setProductionDataQuality = [int, six.string_types]
+    types_setProductionDataQuality = [int, str]
 
     @classmethod
     def export_setProductionDataQuality(cls, prod, flag):
@@ -1120,7 +1121,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return self.export_getFileDescendents(lfn, depth, production, checkreplica)
 
     #############################################################################
-    types_checkfile = [six.string_types]
+    types_checkfile = [str]
 
     @classmethod
     def export_checkfile(cls, fileName):
@@ -1128,7 +1129,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.checkfile(fileName)
 
     #############################################################################
-    types_checkFileTypeAndVersion = [six.string_types, six.string_types]
+    types_checkFileTypeAndVersion = [str, str]
 
     @classmethod
     def export_checkFileTypeAndVersion(cls, ftype, version):
@@ -1136,7 +1137,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.checkFileTypeAndVersion(ftype, version)
 
     #############################################################################
-    types_checkEventType = [six.integer_types]
+    types_checkEventType = [int]
 
     @classmethod
     def export_checkEventType(cls, eventTypeId):
@@ -1168,7 +1169,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getSimConditions()
 
     #############################################################################
-    types_removeReplica = [six.string_types]
+    types_removeReplica = [str]
 
     @classmethod
     def export_removeReplica(cls, fileName):
@@ -1208,7 +1209,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getFileMetaDataForWeb(lfns)
 
     #############################################################################
-    types_getProductionFilesForUsers = [int, dict, dict, six.integer_types, six.integer_types]
+    types_getProductionFilesForUsers = [int, dict, dict, int, int]
 
     @classmethod
     def export_getProductionFilesForUsers(cls, prod, ftype, sortDict, startItem, maxitems):
@@ -1216,7 +1217,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionFilesForWeb(prod, ftype, sortDict, startItem, maxitems)
 
     #############################################################################
-    types_getProductionFilesForWeb = [six.integer_types, dict, dict, six.integer_types, six.integer_types]
+    types_getProductionFilesForWeb = [int, dict, dict, int, int]
 
     @classmethod
     def export_getProductionFilesWeb(cls, prod, ftype, sortDict, startItem, maxitems):
@@ -1241,7 +1242,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.addReplica(fileName)
 
     #############################################################################
-    types_getRunInformations = [six.integer_types]
+    types_getRunInformations = [int]
 
     @classmethod
     def export_getRunInformations(cls, runnb):
@@ -1257,7 +1258,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getRunInformation(runnb)
 
     #############################################################################
-    types_getFileCreationLog = [six.string_types]
+    types_getFileCreationLog = [str]
 
     @classmethod
     def export_getFileCreationLog(cls, lfn):
@@ -1265,7 +1266,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getFileCreationLog(lfn)
 
     #############################################################################
-    types_getLogfile = [six.string_types]
+    types_getLogfile = [str]
 
     @classmethod
     def export_getLogfile(cls, lfn):
@@ -1273,7 +1274,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getFileCreationLog(lfn)
 
     #############################################################################
-    types_insertEventType = [six.integer_types, six.string_types, six.string_types]
+    types_insertEventType = [int, str, str]
 
     @classmethod
     def export_insertEventType(cls, evid, desc, primary):
@@ -1287,14 +1288,14 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_OK(str(evid) + " event type exists")
 
     #############################################################################
-    types_addEventType = [six.integer_types, six.string_types, six.string_types]
+    types_addEventType = [int, str, str]
 
     def export_addEventType(self, evid, desc, primary):
         """more info in the BookkeepingClient.py."""
         return self.export_insertEventType(evid, desc, primary)
 
     #############################################################################
-    types_updateEventType = [six.integer_types, six.string_types, six.string_types]
+    types_updateEventType = [int, str, str]
 
     @classmethod
     def export_updateEventType(cls, evid, desc, primary):
@@ -1342,7 +1343,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionSummary(cName, cVersion, simdesc, pgroup, production, ftype, evttype)
 
     #############################################################################
-    types_getProductionInformation = [six.integer_types]
+    types_getProductionInformation = [int]
 
     def export_getProductionInformation(self, prodid):
         """It returns statistics (data processing phases, number of events, etc.) for a given production"""
@@ -1404,7 +1405,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_OK(result)
 
     #############################################################################
-    types_getFileHistory = [six.string_types]
+    types_getFileHistory = [str]
 
     @classmethod
     def export_getFileHistory(cls, lfn):
@@ -1460,7 +1461,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_OK(result)
 
     #############################################################################
-    types_getJobsNb = [six.integer_types]
+    types_getJobsNb = [int]
 
     @classmethod
     @deprecated("Use getProductionNbOfJobs")
@@ -1469,7 +1470,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionNbOfJobs(prodid)
 
     #############################################################################
-    types_getProductionNbOfJobs = [six.integer_types]
+    types_getProductionNbOfJobs = [int]
 
     @classmethod
     def export_getProductionNbOfJobs(cls, prodid):
@@ -1477,7 +1478,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionNbOfJobs(prodid)
 
     #############################################################################
-    types_getNumberOfEvents = [six.integer_types]
+    types_getNumberOfEvents = [int]
 
     @classmethod
     @deprecated("Use getProductionNbOfEvents")
@@ -1486,7 +1487,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionNbOfEvents(prodid)
 
     #############################################################################
-    types_getProductionNbOfEvents = [six.integer_types]
+    types_getProductionNbOfEvents = [int]
 
     @classmethod
     def export_getProductionNbOfEvents(cls, prodid):
@@ -1494,7 +1495,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionNbOfEvents(prodid)
 
     #############################################################################
-    types_getSizeOfFiles = [six.integer_types]
+    types_getSizeOfFiles = [int]
 
     @classmethod
     @deprecated("Use getProductionSizeOfFiles")
@@ -1503,7 +1504,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionSizeOfFiles(prodid)
 
     #############################################################################
-    types_getProductionSizeOfFiles = [six.integer_types]
+    types_getProductionSizeOfFiles = [int]
 
     @classmethod
     def export_getProductionSizeOfFiles(cls, prodid):
@@ -1511,7 +1512,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionSizeOfFiles(prodid)
 
     #############################################################################
-    types_getNbOfFiles = [six.integer_types]
+    types_getNbOfFiles = [int]
 
     @classmethod
     @deprecated("Use getProductionNbOfFiles")
@@ -1520,7 +1521,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionNbOfFiles(prodid)
 
     #############################################################################
-    types_getProductionNbOfFiles = [six.integer_types]
+    types_getProductionNbOfFiles = [int]
 
     @classmethod
     def export_getProductionNbOfFiles(cls, prodid):
@@ -1528,7 +1529,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionNbOfFiles(prodid)
 
     #############################################################################
-    types_getNbOfJobsBySites = [six.integer_types]
+    types_getNbOfJobsBySites = [int]
 
     @classmethod
     def export_getNbOfJobsBySites(cls, prodid):
@@ -1545,7 +1546,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getAvailableTags()
 
     #############################################################################
-    types_getProcessedEvents = [six.integer_types]
+    types_getProcessedEvents = [int]
 
     @classmethod
     @deprecated("Use getProductionProcessedEvents")
@@ -1554,7 +1555,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getProductionProcessedEvents(prodid)
 
     #############################################################################
-    types_getProductionProcessedEvents = [six.integer_types]
+    types_getProductionProcessedEvents = [int]
 
     @classmethod
     def export_getProductionProcessedEvents(cls, prodid):
@@ -1616,7 +1617,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.setFilesVisible(lfns)
 
     #############################################################################
-    types_getRunAndProcessingPassDataQuality = [six.integer_types, six.integer_types]
+    types_getRunAndProcessingPassDataQuality = [int, int]
 
     @classmethod
     def export_getRunAndProcessingPassDataQuality(cls, runnb, processing):
@@ -1632,7 +1633,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getAvailableConfigurations()
 
     #############################################################################
-    types_getRunProcessingPass = [six.integer_types]
+    types_getRunProcessingPass = [int]
 
     @classmethod
     def export_getRunProcessingPass(cls, runnumber):
@@ -1688,7 +1689,7 @@ class BookkeepingManagerHandler(RequestHandler):
             gLogger.verbose("DataQualityFlag will be removed. It will changed to DataQuality")
 
         if "RunNumbers" in values:
-            gLogger.verbose("RunNumbers will be removed. It will changed to RunNumbers")
+            gLogger.verbose("RunNumbers will be removed. It will changed to RunNumber")
 
         result = []
         retVal = cls.bkkDB.getFiles(
@@ -1765,7 +1766,7 @@ class BookkeepingManagerHandler(RequestHandler):
             gLogger.verbose("DataQualityFlag will be removed. It will changed to DataQuality")
 
         if "RunNumbers" in in_dict:
-            gLogger.verbose("RunNumbers will be removed. It will changed to RunNumbers")
+            gLogger.verbose("RunNumbers will be removed. It will changed to RunNumber")
 
         gLogger.debug("getVisibleFilesWithMetadata->", "%s" % in_dict)
         result = {}
@@ -1982,7 +1983,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_ERROR("The Production dictionary key is missing!!!")
 
     #############################################################################
-    types_getRunQuality = [six.string_types, six.string_types]
+    types_getRunQuality = [str, str]
 
     @deprecated("Use getRunWithProcessingPassAndDataQuality")
     def export_getRunQuality(self, procpass, flag=default):
@@ -1991,7 +1992,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return self.export_getRunWithProcessingPassAndDataQuality(procpass, flag)
 
     #############################################################################
-    types_getRunWithProcessingPassAndDataQuality = [six.string_types, six.string_types]
+    types_getRunWithProcessingPassAndDataQuality = [str, str]
 
     @classmethod
     def export_getRunWithProcessingPassAndDataQuality(cls, procpass, flag=default):
@@ -2033,7 +2034,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_ERROR("The run number has to be specified!")
 
     #############################################################################
-    types_getProcessingPassId = [six.string_types]
+    types_getProcessingPassId = [str]
 
     @classmethod
     def export_getProcessingPassId(cls, fullpath):
@@ -2124,7 +2125,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return self.export_getTCKs(in_dict)
 
     #############################################################################
-    types_getSteps = [six.integer_types]
+    types_getSteps = [int]
 
     @classmethod
     def export_getSteps(cls, prodID):
@@ -2175,7 +2176,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getDirectoryMetadata(lfn)
 
     #############################################################################
-    types_getFilesForGUID = [six.string_types]
+    types_getFilesForGUID = [str]
 
     @classmethod
     def export_getFilesForGUID(cls, guid):
@@ -2204,7 +2205,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getListOfFills(configName, configVersion, conddescription)
 
     #############################################################################
-    types_getRunsForFill = [six.integer_types]
+    types_getRunsForFill = [int]
 
     @classmethod
     def export_getRunsForFill(cls, fillid):
@@ -2251,7 +2252,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.updateSimulationConditions(in_dict)
 
     #############################################################################
-    types_deleteSimulationConditions = [six.integer_types]
+    types_deleteSimulationConditions = [int]
 
     @classmethod
     def export_deleteSimulationConditions(cls, simid):
@@ -2273,14 +2274,14 @@ class BookkeepingManagerHandler(RequestHandler):
         """It returns the input and output files for a given DIRAC jobid."""
         return cls.bkkDB.getJobInputOutputFiles(diracjobids)
 
-    types_setRunOnlineFinished = [six.integer_types]
+    types_setRunOnlineFinished = [int]
 
     @classmethod
     def export_setRunOnlineFinished(cls, runnumber):
         """It is used to set the run finished..."""
         return cls.bkkDB.setRunStatusFinished(runnumber, "Y")
 
-    types_setRunOnlineNotFinished = [six.integer_types]
+    types_setRunOnlineNotFinished = [int]
 
     @classmethod
     def export_setRunOnlineNotFinished(cls, runnumber):
@@ -2308,7 +2309,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.fixRunLuminosity(runnumbers)
 
     #############################################################################
-    types_getProductionProducedEvents = [six.integer_types]
+    types_getProductionProducedEvents = [int]
 
     @classmethod
     def export_getProductionProducedEvents(cls, prodid):
@@ -2356,7 +2357,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.bulkupdateEventType(eventtypes)
 
     #############################################################################
-    types_getRunConfigurationsAndDataTakingCondition = [six.integer_types]
+    types_getRunConfigurationsAndDataTakingCondition = [int]
 
     @classmethod
     def export_getRunConfigurationsAndDataTakingCondition(cls, runnumber):
