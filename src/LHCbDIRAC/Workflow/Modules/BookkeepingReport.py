@@ -10,14 +10,10 @@
 ###############################################################################
 """Bookkeeping Reporting module (just prepare the files, do not send them
 (which is done in the uploadOutput)"""
-from collections import defaultdict
 import os
 import re
 import shlex
-import socket
 import time
-import psutil
-from xml.dom.minidom import Document, DocumentType
 
 from DIRAC import gLogger, S_OK, S_ERROR, gConfig
 from DIRAC.Core.Utilities.Subprocess import systemCall
@@ -29,7 +25,7 @@ from LHCbDIRAC.Resources.Catalog.PoolXMLFile import getOutputType
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 from LHCbDIRAC.Core.Utilities.ProductionData import constructProductionLFNs
 from LHCbDIRAC.Core.Utilities.XMLSummaries import XMLSummary, XMLSummaryError
-from LHCbDIRAC.Core.Utilities.XMLTreeParser import addChildNode
+from LHCbDIRAC.Core.Utilities.BookkeepingJobInfo import BookkeepingJobInfo
 
 
 class BookkeepingReport(ModuleBase):
@@ -98,7 +94,7 @@ class BookkeepingReport(ModuleBase):
             doc = self.__makeBookkeepingXML(bkLFNs, logFilePath)
 
             if saveOnFile:
-                bfilename = "bookkeeping_" + self.step_id + ".xml"
+                bfilename = f"bookkeeping_{self.step_id}.xml"
                 with open(bfilename, "wb") as bfile:
                     bfile.write(doc)
             else:
@@ -222,140 +218,59 @@ class BookkeepingReport(ModuleBase):
         </Job>
 
         """
-        # Generate XML document
-        doc = Document()
-        docType = DocumentType("Job")
-        docType.systemId = "book.dtd"
-        doc.appendChild(docType)
-
-        # Generate JobNode
-        doc, jobNode = self.__generateJobNode(doc)
+        job_info = BookkeepingJobInfo(
+            ConfigName=self.workflow_commons.get("configName", self.applicationName),
+            ConfigVersion=self.workflow_commons.get("configVersion", self.applicationVersion),
+            Date=self.ldate,
+            Time=self.ltime,
+        )
         # Generate TypedParams
-        jobNode = self.__generateTypedParams(jobNode)
+        self.__generateTypedParams(job_info)
         # Generate InputFiles
-        jobNode = self.__generateInputFiles(jobNode, bkLFNs)
+        self.__generateInputFiles(job_info, bkLFNs)
         # Generate OutputFiles
-        jobNode = self.__generateOutputFiles(jobNode, bkLFNs, logFilePath)
+        self.__generateOutputFiles(job_info, bkLFNs, logFilePath)
         # Generate SimulationConditions
-        jobNode = self.__generateSimulationCondition(jobNode)
-
-        prettyXMLDoc = doc.toprettyxml(indent="    ", encoding="ISO-8859-1")
-
-        # horrible, necessary hack!
-        prettyXMLDoc = prettyXMLDoc.replace(b"'book.dtd'", b'"book.dtd"')
-
-        return prettyXMLDoc
+        if self.applicationName == "Gauss":
+            job_info.simulation_condition = self.simDescription
+        return job_info.to_xml()
 
     ################################################################################
 
-    def __generateJobNode(self, doc):
-        """Node looks like.this::
-
-        <Job ConfigName="" ConfigVersion="" Date="" Time="">
-        """
-
-        # Get the Config name from the environment if any
-        if "configName" in self.workflow_commons:
-            configName = self.workflow_commons["configName"]
-            configVersion = self.workflow_commons["configVersion"]
-        else:
-            configName = self.applicationName
-            configVersion = self.applicationVersion
-
-        jobAttributes = (configName, configVersion, self.ldate, self.ltime)
-
-        return addChildNode(doc, "Job", 1, jobAttributes)
-
-    ################################################################################
-
-    def __generateTypedParams(self, jobNode):
-        """TypedParameter looks like this::
-
-          <TypedParameter Name="" Type="" Value="">
-
-        List of possible TypedParameter names
-        - CPUTIME
-        - ExecTime
-        - WNMODEL
-        - WNMEMORY
-        - WNCPUPOWER
-        - WNCACHE
-        - WNCPUHS06
-        - WNMJFHS06
-        - Production
-        - DiracJobId
-        - Name
-        - JobStart
-        - JobEnd
-        - Location
-        - JobType
-        - WorkerNode
-        - GeometryVersion
-        - ProgramName
-        - ProgramVersion
-        - DiracVersion
-        - FirstEventNumber
-        - StatisticsRequested
-        - NumberOfEvents
-        - StepID
-        """
-
-        typedParams = []
-
-        # Timing
+    def __generateTypedParams(self, job_info):
+        """Set fields in job_info.typed_parameters"""
         exectime, cputime = getStepCPUTimes(self.step_commons)
-
-        typedParams.append(("CPUTIME", cputime))
-        typedParams.append(("ExecTime", exectime))
-
-        res = self.__getNodeInformation()
-        nodeInfo = defaultdict(lambda: "unknown")
-        if res["OK"]:
-            nodeInfo.update(res["Value"])
-
-        typedParams.append(("WNMODEL", nodeInfo["ModelName"]))
-        typedParams.append(("WNCPUPOWER", nodeInfo["CPU(MHz)"]))
-        typedParams.append(("WNCACHE", nodeInfo["CacheSize(kB)"]))
-
-        host = os.environ.get("HOSTNAME", os.environ.get("HOST"))
-        typedParams.append(("WorkerNode", host or nodeInfo["HostName"]))
+        job_info.typed_parameters.CPUTIME = cputime
+        job_info.typed_parameters.ExecTime = exectime
 
         try:
-            memory = self.xf_o.memory
+            job_info.typed_parameters.WNMEMORY = self.xf_o.memory
         except AttributeError:
-            memory = nodeInfo["Memory(kB)"]
-
-        typedParams.append(("WNMEMORY", memory))
+            pass
 
         diracPower = gConfig.getValue("/LocalSite/CPUNormalizationFactor", "0")
-        typedParams.append(("WNCPUHS06", diracPower))
+        job_info.typed_parameters.WNCPUHS06 = diracPower
         mjfPower = gConfig.getValue("/LocalSite/CPUScalingFactor", "0")
         # Trick to know that the value is obtained from MJF: # from diracPower
         if mjfPower != diracPower:
-            typedParams.append(("WNMJFHS06", mjfPower))
-        typedParams.append(("NumberOfProcessors", self.numberOfProcessors))
-        typedParams.append(("Production", self.production_id))
-        typedParams.append(("DiracJobId", str(self.jobID)))
-        typedParams.append(("Name", self.step_id))
-        typedParams.append(("JobStart", "%s %s" % (self.ldatestart, self.ltimestart)))
-        typedParams.append(("JobEnd", "%s %s" % (self.ldate, self.ltime)))
-        typedParams.append(("Location", self.siteName))
-        typedParams.append(("JobType", self.jobType))
+            job_info.typed_parameters.WNMJFHS06 = mjfPower
+        job_info.typed_parameters.NumberOfProcessors = self.numberOfProcessors
+        job_info.typed_parameters.Production = self.production_id
+        job_info.typed_parameters.DiracJobId = str(self.jobID)
+        job_info.typed_parameters.Name = self.step_id
+        job_info.typed_parameters.JobStart = f"{self.ldatestart} {self.ltimestart}"
+        job_info.typed_parameters.JobEnd = f"{self.ldate} {self.ltime}"
+        job_info.typed_parameters.Location = self.siteName
+        job_info.typed_parameters.JobType = self.jobType
 
-        if "XMLDDDB_VERSION" in os.environ:
-            typedParams.append(("GeometryVersion", os.environ["XMLDDDB_VERSION"]))
+        job_info.typed_parameters.ProgramName = self.applicationName
+        job_info.typed_parameters.ProgramVersion = self.applicationVersion
 
-        typedParams.append(("ProgramName", self.applicationName))
-        typedParams.append(("ProgramVersion", self.applicationVersion))
+        job_info.typed_parameters.FirstEventNumber = 1
 
-        # DIRAC version
-        typedParams.append(("DiracVersion", LHCbDIRAC.__version__))
+        job_info.typed_parameters.StatisticsRequested = self.numberOfEvents
 
-        typedParams.append(("FirstEventNumber", 1))
-
-        typedParams.append(("StatisticsRequested", self.numberOfEvents))
-
-        typedParams.append(("StepID", self.BKstepID))
+        job_info.typed_parameters.StepID = self.BKstepID
 
         try:
             noOfEvents = self.xf_o.inputEventsTotal if self.xf_o.inputEventsTotal else self.xf_o.outputEventsTotal
@@ -365,96 +280,64 @@ class BookkeepingReport(ModuleBase):
             if not res["OK"]:
                 raise AttributeError("Can't get the BKK file metadata")
             noOfEvents = sum(fileMeta["EventStat"] for fileMeta in res["Value"]["Successful"].values())
-
-        typedParams.append(("NumberOfEvents", noOfEvents))
-
-        # Add TypedParameters to the XML file
-        for typedParam in typedParams:
-            jobNode = addChildNode(jobNode, "TypedParameter", 0, typedParam)
-
-        return jobNode
+        job_info.typed_parameters.NumberOfEvents = noOfEvents
 
     ################################################################################
 
-    def __generateInputFiles(self, jobNode, bkLFNs):
-        """InputData looks like this::
-
-        <InputFile Name=""/>
-        """
-
-        self.log.debug("Adding InputData: bkLFNs = %s" % bkLFNs)
-        self.log.debug("Adding InputData: self.stepInputData = %s" % self.stepInputData)
-
-        if self.stepInputData:
-            intermediateInputs = False
-            for inputname in self.stepInputData:
-                for bkLFN in bkLFNs:
-                    if os.path.basename(bkLFN).lower() == os.path.basename(inputname).lower():
-                        # preserve the case
-                        inputF = os.path.join(os.path.dirname(os.path.normpath(bkLFN)), os.path.basename(inputname))
-                        jobNode = addChildNode(jobNode, "InputFile", 0, (inputF,))
-                        intermediateInputs = True
-                if not intermediateInputs:
-                    jobNode = addChildNode(
-                        jobNode, "InputFile", 0, (inputname,)
-                    )  # in this case inputname will be an LFN
-
-        return jobNode
+    def __generateInputFiles(self, job_info, bkLFNs):
+        self.log.debug("Adding InputData: bkLFNs", bkLFNs)
+        self.log.debug("Adding InputData: self.stepInputData", self.stepInputData)
+        for inputname in self.stepInputData or []:
+            for bkLFN in bkLFNs:
+                if os.path.basename(bkLFN).lower() == os.path.basename(inputname).lower():
+                    # preserve the case
+                    inputF = os.path.join(os.path.dirname(os.path.normpath(bkLFN)), os.path.basename(inputname))
+                    job_info.input_files.append(inputF)
+                    break
+            else:
+                # inputname is an LFN
+                job_info.input_files.append(inputname)
 
     ################################################################################
 
-    def __generateOutputFiles(self, jobNode, bkLFNs, logFilePath):
-        """OutputFile looks like this::
-
-        <OutputFile Name="" TypeName="" TypeVersion="">
-          <Parameter Name="" Value=""/>
-          ...
-          <Replica Location="" Name=""/>
-          ....
-        </OutputFile>
-        """
-
+    def __generateOutputFiles(self, job_info, bkLFNs, logFilePath):
         if self.eventType is not None:
             eventtype = self.eventType
         else:
             self.log.warn("BookkeepingReport: no eventType specified")
             eventtype = "Unknown"
-        self.log.info("Event type = %s" % (str(self.eventType)))
+        self.log.info("Event type =", eventtype)
 
         outputs = []
-        count = 0
         bkTypeDict = {}
-        while count < len(self.stepOutputs):
-            if "outputDataName" in self.stepOutputs[count]:
-                outputs.append(
-                    ((self.stepOutputs[count]["outputDataName"]), (self.stepOutputs[count]["outputDataType"]))
-                )
-            if "outputBKType" in self.stepOutputs[count]:
-                bkTypeDict[self.stepOutputs[count]["outputDataName"]] = self.stepOutputs[count]["outputBKType"]
-            count = count + 1
+        for stepOutput in self.stepOutputs:
+            if "outputDataName" in stepOutput:
+                outputs.append(((stepOutput["outputDataName"]), (stepOutput["outputDataType"])))
+            if "outputBKType" in stepOutput:
+                bkTypeDict[stepOutput["outputDataName"]] = stepOutput["outputBKType"]
         outputs.append(((self.applicationLog), ("LOG")))
-        self.log.info(outputs)
+        self.log.info("Found outputs", outputs)
+
         if isinstance(logFilePath, list):
             logFilePath = logFilePath[0]
 
-        for output, outputtype in list(outputs):
-            self.log.info("Looking at output %s %s" % (output, outputtype))
+        for output, outputtype in outputs:
+            self.log.info("Looking at output", f"{output} with type {outputtype}")
             typeName = outputtype.upper()
             typeVersion = "1"
             fileStats = "0"
             if output in bkTypeDict:
                 typeVersion = getOutputType(output, self.stepInputData)[output]
-                self.log.info("Setting POOL XML catalog type", "for %s to %s" % (output, typeVersion))
+                self.log.info("Setting POOL XML catalog type", f"for {output} to {typeVersion}")
                 typeName = bkTypeDict[output].upper()
                 self.log.info(
                     "Setting explicit BK type version",
-                    "for %s to %s and file type to %s" % (output, typeVersion, typeName),
+                    f"for {output} to {typeVersion} and file type to {typeName}",
                 )
-
                 fileStats, output = self._getFileStatsFromXMLSummary(output, outputtype)
 
             if not os.path.exists(output):
-                self.log.error("Output file does not exist", "Output file name: %s" % output)
+                self.log.error("Output file does not exist", f"Output file name: {output}")
                 continue
             # Output file size
             if "size" not in self.step_commons or output not in self.step_commons["size"]:
@@ -502,16 +385,16 @@ class BookkeepingReport(ModuleBase):
                 raise NameError("No GUID found")
 
             # find the constructed lfn
-            lfn = ""
-            if not re.search(".log$", output):
+            if re.search(r"\.log$", output):
+                lfn = os.path.join(logFilePath, self.applicationLog)
+            else:
                 for outputLFN in bkLFNs:
                     if os.path.basename(outputLFN) == output:
                         lfn = outputLFN
-                if not lfn:
+                        break
+                else:
                     self.log.error("Could not find LFN", "for %s" % output)
                     raise NameError("Could not find LFN of output file")
-            else:
-                lfn = "%s/%s" % (logFilePath, self.applicationLog)
 
             oldTypeName = None
             if "HIST" in typeName.upper():
@@ -522,38 +405,32 @@ class BookkeepingReport(ModuleBase):
                 typeName = "%sHIST" % (self.applicationName.upper())
 
             # Add Output to the XML file
-            oFileAttributes = (lfn, typeName, typeVersion)
-            jobNode, oFile = addChildNode(jobNode, "OutputFile", 1, oFileAttributes)
+            outputFile = BookkeepingJobInfo.OutputFile(
+                Name=lfn,
+                TypeName=typeName,
+                TypeVersion=typeVersion,
+                FileSize=outputsize,
+                CreationDate=time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(time.time())),
+                MD5Sum=md5sum,
+                Guid=guid,
+            )
 
             # HIST is in the dataTypes e.g. we may have new names in the future ;)
             if oldTypeName:
                 typeName = oldTypeName
 
             if outputtype != "LOG":
-                oFile = addChildNode(oFile, "Parameter", 0, ("EventTypeId", eventtype))
+                outputFile.EventTypeId = eventtype
                 if fileStats != "Unknown":
-                    oFile = addChildNode(oFile, "Parameter", 0, ("EventStat", fileStats))
+                    outputFile.EventStat = fileStats
 
-            oFile = addChildNode(oFile, "Parameter", 0, ("FileSize", outputsize))
-
-            oFile = addChildNode(
-                oFile, "Parameter", 0, ("CreationDate", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(time.time())))
-            )
-
-            ############################################################
             # Log file replica information
-            #      if typeName == "LOG":
             if self.applicationLog:
                 logfile = self.applicationLog
                 if logfile == output:
-                    logurl = "http://lhcb-logs.cern.ch/storage"
-                    url = logurl + logFilePath + "/" + self.applicationLog
-                    oFile = addChildNode(oFile, "Replica", 0, (url,))
+                    outputFile.Replica = f"http://lhcb-logs.cern.ch/storage{logFilePath}/{self.applicationLog}"
 
-            oFile = addChildNode(oFile, "Parameter", 0, ("MD5Sum", md5sum))
-            oFile = addChildNode(oFile, "Parameter", 0, ("Guid", guid))
-
-        return jobNode
+            job_info.output_files.append(outputFile)
 
     ################################################################################
 
@@ -592,41 +469,3 @@ class BookkeepingReport(ModuleBase):
                 return "Unknown", output
 
             raise KeyError("Could not find output LFN in XML summary object")
-
-    def __generateSimulationCondition(self, jobNode):
-        """SimulationCondition looks like this::
-
-        <SimulationCondition>
-          <Parameter Name="" Value=""/>
-        </SimulationCondition>
-        """
-        if self.applicationName == "Gauss":
-            jobNode, sim = addChildNode(jobNode, "SimulationCondition", 1, ())
-            sim = addChildNode(sim, "Parameter", 0, ("SimDescription", self.simDescription))
-
-        return jobNode
-
-    ################################################################################
-
-    def __getNodeInformation(self):
-        """Try to obtain system HostName, CPU, Model, cache and memory.
-
-        This information is not essential to the running of the jobs but
-        will be reported if available.
-        """
-        result = {}
-        try:
-            result["HostName"] = socket.gethostname()
-            result["CPU(MHz)"] = psutil.cpu_freq()[0]
-            result["Memory(kB)"] = int(psutil.virtual_memory()[1] / 1024)
-
-            with open("/proc/cpuinfo", "r") as cpuinfo:
-                info = cpuinfo.readlines()
-            result["ModelName"] = [x.strip().split(":")[1] for x in info if "model name" in x][0].strip()
-            result["CacheSize(kB)"] = [x.strip().split(":")[1] for x in info if "cache size" in x][0].strip()
-
-        except BaseException as x:
-            self.log.exception("BookkeepingReport failed to obtain node information", lException=x)
-            return S_ERROR("Failed to obtain system information")
-
-        return S_OK(result)
