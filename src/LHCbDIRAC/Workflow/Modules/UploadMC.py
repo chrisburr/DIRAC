@@ -96,12 +96,15 @@ class UploadMC(ModuleBase):
                     try:
                         jsonData = json.load(fd)
                         self.log.verbose("Content of JSON file", "%s: %s" % (fn, jsonData))
+			errorList = []  # Fill this list to send the data in a bulk
+			for (i, error) in jsonData.items():
+			    errorList.append(error)
                         if self._enableModule() and self.opsH.getValue("Productions/UploadES_GaussErrors", True):
-                            res = mcStatsClient.set("gaussErrors", jsonData)
+			    res = mcStatsClient.set("gaussErrors", errorList)
                             if not res["OK"]:
                                 self.log.error(
                                     "MC Error data not set, exiting without affecting workflow status",
-                                    "%s: %s" % (str(jsonData), res["Message"]),
+				    "%s: %s" % (str(errorList), res["Message"]),
                                 )
                         else:
                             # At this point we can see exactly what the module would have uploaded

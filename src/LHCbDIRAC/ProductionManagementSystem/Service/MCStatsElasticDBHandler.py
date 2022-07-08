@@ -10,8 +10,6 @@
 ###############################################################################
 """ DIRAC service that expose access for MCStatsElasticDBs (several ElasticSearch DBs)
 """
-import six
-
 from DIRAC import S_OK
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticApplicationSummaryDB import ElasticApplicationSummaryDB
@@ -24,7 +22,7 @@ class MCStatsElasticDBHandler(RequestHandler):
     """Tiny service for setting/getting/removing data from ElasticSearch MCStats DBs"""
 
     @classmethod
-    def initializeHandler(cls, serviceInfoDict):
+    def initializeHandler(cls):
         elasticApplicationSummaryDB = ElasticApplicationSummaryDB()
         elasticMCBooleLogErrorsDB = ElasticMCBooleLogErrorsDB()
         elasticMCGaussLogErrorsDB = ElasticMCGaussLogErrorsDB()
@@ -39,21 +37,21 @@ class MCStatsElasticDBHandler(RequestHandler):
 
         return S_OK()
 
-    types_set = [six.string_types, dict]
+    types_set = [str, (dict, list)]
 
     def export_set(self, typeName, data):
 
         self.log.debug("Called set() with typeName = %s, data = %s" % (typeName, str(data)))
         return self.db[typeName].set(data)
 
-    types_get = [six.string_types, int]
+    types_get = [str, int]
 
     def export_get(self, typeName, productionID):
 
         self.log.debug("Called get() with typeName = %s, productionID = %d" % (typeName, productionID))
         return self.db[typeName].get(productionID)
 
-    types_remove = [six.string_types, int]
+    types_remove = [str, int]
 
     def export_remove(self, typeName, productionID):
 

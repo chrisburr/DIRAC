@@ -113,10 +113,7 @@ def createJSONtable(errorDict, name, jobID, prodID, wmsID):
     counter = 0
     with open(name, "w") as output:
 	for errName, nrOfErrs in errorDict.items():
-	    print("Error type: ", errName)
-	    print("Nr of Err: ", nrOfErrs)
 	    for i in range(1, nrOfErrs + 1):
-		print(f"Loop {i}")
 		result = {}
 		result["JobID"] = jobID
 		result["ProductionID"] = prodID
