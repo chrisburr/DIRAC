@@ -22,7 +22,7 @@ class MCStatsElasticDBHandler(RequestHandler):
     """Tiny service for setting/getting/removing data from ElasticSearch MCStats DBs"""
 
     @classmethod
-    def initializeHandler(cls):
+    def initializeHandler(cls, serviceInfoDict):
         elasticApplicationSummaryDB = ElasticApplicationSummaryDB()
         elasticMCBooleLogErrorsDB = ElasticMCBooleLogErrorsDB()
         elasticMCGaussLogErrorsDB = ElasticMCGaussLogErrorsDB()
@@ -44,16 +44,16 @@ class MCStatsElasticDBHandler(RequestHandler):
         self.log.debug("Called set() with typeName = %s, data = %s" % (typeName, str(data)))
         return self.db[typeName].set(data)
 
-    types_get = [str, int]
+    types_get = [str, (str, int)]
 
     def export_get(self, typeName, productionID):
 
-        self.log.debug("Called get() with typeName = %s, productionID = %d" % (typeName, productionID))
+	self.log.debug("Called get() with typeName = %s, productionID = %s" % (typeName, str(productionID)))
         return self.db[typeName].get(productionID)
 
-    types_remove = [str, int]
+    types_remove = [str, (str, int)]
 
     def export_remove(self, typeName, productionID):
 
-        self.log.debug("Called remove() with typeName = %s, productionID = %d" % (typeName, productionID))
+	self.log.debug("Called remove() with typeName = %s, productionID = %s" % (typeName, str(productionID)))
         return self.db[typeName].remove(productionID)

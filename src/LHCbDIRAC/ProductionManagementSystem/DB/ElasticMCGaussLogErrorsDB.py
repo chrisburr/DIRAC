@@ -75,7 +75,6 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
 	result = self.bulk_index(
 	    indexPrefix=self.indexName, data=data, mapping=mapping, period=None
 	)  # pylint: disable=no-member
-	print("SET RESULT: ", result)
 	if not result["OK"]:
 	    self.log.error("ERROR: Couldn't insert data", result["Message"])
 	return result

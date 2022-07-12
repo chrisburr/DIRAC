@@ -27,7 +27,6 @@ from .MCStatsSampleData import gauss_errors_2, boole_errors_1
 # sut
 from LHCbDIRAC.ProductionManagementSystem.Client.MCStatsClient import MCStatsClient
 
-
 mcStatsClient = MCStatsClient()
 
 # db = {
@@ -68,7 +67,6 @@ def test_setAndGetandRemove():
 
     # Set gauss errors
     result = mcStatsClient.set("gaussErrors", gauss_errors_2)
-    print(result)
     assert result["OK"]
 
     # Set boole errors
@@ -78,6 +76,7 @@ def test_setAndGetandRemove():
 
     # Get gauss errors
     result = mcStatsClient.get("gaussErrors", "004")
+    print(result)
     assert result["OK"]
     assert result["Value"] == expectedRes
 
