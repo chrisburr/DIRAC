@@ -589,7 +589,7 @@ class XMLFilesReaderManager(object):
 
         res = self.bkClient_.insertJob(attrList)
 
-        if not res["OK"] and production < 0:
+        if not res["OK"] and production is not None and production < 0:
             self.log.error("Failed inserting job", res["Message"])
             retVal = self.bkClient_.deleteProductionsContainer(production)
             if not retVal["OK"]:
