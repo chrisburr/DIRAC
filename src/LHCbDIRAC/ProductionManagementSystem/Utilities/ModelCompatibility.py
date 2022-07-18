@@ -235,7 +235,7 @@ def production_to_legacy_dict(prod: ProductionBase):
         if prod.mc_config_version is not None:
             request["Extra"] = json.dumps({"mcConfigVersion": prod.mc_config_version})
 
-        request.update(_lookup_simulation_condition({"SimDescription": prod.sim_condition}))
+        request.update(_lookup_simulation_condition(prod.sim_condition))
         sub_productions = [
             {
                 "EventType": event_type.id,
@@ -284,12 +284,16 @@ def production_to_legacy_dict(prod: ProductionBase):
     return request, sub_productions
 
 
-def _lookup_simulation_condition(query: dict):
+def _lookup_simulation_condition(sim_condition: str):
     """Create a dictionary for the given simulation condition
 
     This method queries the bookkeeping to get full metadata of the corresponding condition.
     """
+    query = {"SimDescription": sim_condition}
     conditions = retValToListOfDict(BookkeepingClient().getSimulationConditions(query))
+    # getSimulationConditions queries for 'SimDescription like "%sim_condition%"'
+    # so filter out any extra results
+    conditions = [x for x in conditions if x["SimDescription"] == sim_condition]
     if len(conditions) == 0:
         raise NotImplementedError(
             f"{query} is not known, an expert should create it using dirac-bookkeeping-simulationconditions-insert"
