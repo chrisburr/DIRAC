@@ -1,3 +1,15 @@
+[v10.4.16]
+*ProductionManagement
+
+FIX: (!1244) Filter out invalid results from BookkeepingClient.getSimulationCondition when submitting productions
+
+*Bookkeeping
+
+FIX: (!1243) Handling errors in XMLFilesReaderManager for production jobs with invalid XML
+CHANGE: (!1241) Factorise bookkeeping XML generation out of BookkeepingReport
+
+
+
 [v10.4.15]
 *ProductionManagement
 
