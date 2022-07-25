@@ -15,8 +15,8 @@ import datetime
 #############################################################################
 # Test data
 
-runnb_1 = "1122"
-runnb_2 = "1123"
+runnb_1 = 1122
+runnb_2 = 1123
 
 # 5 fake files
 rawFiles_1 = ["/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw" % (runnb_1, runnb_1, i) for i in range(5)]
@@ -154,9 +154,6 @@ def insertRAWFiles(bk):
     res = bk.insertEventType(30000000, "This is 30000000", "something Lambda X (blah)")
     assert res["OK"], res["Message"]
 
-    res = bk.insertEventType(30000000, "This is 30000000", "something Lambda X (blah)")
-    assert res["OK"], res["Message"]
-
     res = bk.setRunAndProcessingPassDataQuality(runnb_1, "/Real Data", "OK")
     assert res["OK"], res["Message"]
     res = bk.setRunAndProcessingPassDataQuality(runnb_2, "/Real Data", "OK")
@@ -172,7 +169,7 @@ def insertRAWFiles(bk):
     jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
     xmlReport = jobXML
     for f in rawFiles_1:
-	xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
+        xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
 
     xmlReport += dqCond
     res = bk.sendXMLBookkeepingReport(xmlReport)
@@ -191,7 +188,7 @@ def insertRAWFiles(bk):
     jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
     xmlReport = jobXML
     for f in rawFiles_2:
-	xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
+        xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
 
     xmlReport += dqCond
     res = bk.sendXMLBookkeepingReport(xmlReport)

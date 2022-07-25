@@ -191,27 +191,27 @@ def test_getNbOfRawFiles(wipeout):
 def test_getFiles(wipeout):
     """test of getFiles method"""
     bkQueryDict = {
-	"ConfigName": "Test",
-	"ConfigVersion": "Test01",
-	"FileType": "RAW",
+        "ConfigName": "Test",
+        "ConfigVersion": "Test01",
+        "FileType": "RAW",
     }
     res = bk.getFiles(bkQueryDict)
     assert res["OK"], res["Message"]
     assert len(res["Value"]) == 5
 
     bkQueryDict = {
-	"ConfigName": "Test",
-	"ConfigVersion": "Test02",
-	"FileType": "RAW",
+        "ConfigName": "Test",
+        "ConfigVersion": "Test02",
+        "FileType": "RAW",
     }
     res = bk.getFiles(bkQueryDict)
     assert res["OK"], res["Message"]
     assert len(res["Value"]) == 6
 
     bkQueryDict = {
-	"ConfigName": "Test",
-	"ConfigVersion": "Test02",
-	"RunNumber": [1122],
+        "ConfigName": "Test",
+        "ConfigVersion": "Test02",
+        "RunNumber": [1122],
     }
     res = bk.getFiles(bkQueryDict)
     assert res["OK"], res["Message"]
@@ -247,9 +247,9 @@ def test_getFiles(wipeout):
     # assert len(res["Value"]) == 11
 
     bkQueryDict = {
-	"ConfigName": "Test",
-	"ConfigVersion": "Test02",
-	"FileType": "NOT",
+        "ConfigName": "Test",
+        "ConfigVersion": "Test02",
+        "FileType": "NOT",
     }
     res = bk.getFiles(bkQueryDict)
     assert res["OK"], res["Message"]
