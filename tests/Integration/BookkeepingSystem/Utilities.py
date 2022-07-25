@@ -15,8 +15,8 @@ import datetime
 #############################################################################
 # Test data
 
-runnb_1 = "1122"
-runnb_2 = "1123"
+runnb_1 = 1122
+runnb_2 = 1123
 
 # 5 fake files
 rawFiles_1 = ["/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw" % (runnb_1, runnb_1, i) for i in range(5)]
@@ -149,9 +149,6 @@ def addBasicData(bkDB):
 def insertRAWFiles(bk):
 
     res = bk.insertFileTypes("RAW", "Boole output, RAW buffer", "MDF")
-    assert res["OK"], res["Message"]
-
-    res = bk.insertEventType(30000000, "This is 30000000", "something Lambda X (blah)")
     assert res["OK"], res["Message"]
 
     res = bk.insertEventType(30000000, "This is 30000000", "something Lambda X (blah)")
