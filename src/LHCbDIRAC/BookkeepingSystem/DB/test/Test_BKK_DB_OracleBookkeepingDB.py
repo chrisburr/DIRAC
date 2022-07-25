@@ -78,7 +78,7 @@ def test_buildRunNumbers():
         endRunID = 2
         retVal = client._buildRunnumbers(runnumbers, startRunID, endRunID, condition, tables)
         assert retVal["OK"] is True
-	assert retVal["Value"] == ("AND j.runnumber>=1 AND j.runnumber<=2 ", "")
+        assert retVal["Value"] == ("AND j.runnumber>=1 AND j.runnumber<=2 ", "")
 
 
 def test_buildConditions():
@@ -96,8 +96,8 @@ def test_buildConditions():
         retVal = client._buildConditions(simdesc, daqdesc, condition, tables)
         assert retVal["OK"] is True
         assert retVal["Value"] == (
-	    " AND cont.DAQPERIODID=1 AND cont.DAQPERIODID is not null ",
-	    " , productionscontainer cont ",
+            " AND cont.DAQPERIODID=1 AND cont.DAQPERIODID is not null ",
+            " , productionscontainer cont ",
         )
 
 
