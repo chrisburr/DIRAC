@@ -1716,7 +1716,7 @@ class LHCbBookkeepingManager:
         return self.db_.getFileAncestors(files, depth)
 
     #############################################################################
-    def getLogfile(self, filename):
+    def getFileCreationLog(self, filename):
         """log file."""
         return self.db_.getFileCreationLog(filename)
 

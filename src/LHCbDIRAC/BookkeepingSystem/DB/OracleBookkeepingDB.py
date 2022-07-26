@@ -2754,28 +2754,6 @@ class OracleBookkeepingDB(object):
         return S_OK(retVal)
 
     #############################################################################
-    def getFileMetaDataForWeb(self, lfns):
-        """For retrieving file metdata for web.
-
-        :param list lfns: list of LFNs
-
-        :returns lfn metadata
-        """
-        totalrecords = len(lfns)
-        parametersNames = ["Name", "FileSize", "FileType", "CreationDate", "EventType", "EventStat", "GotReplica"]
-        records = []
-        for lfn in lfns:
-            res = self.dbR_.executeStoredProcedure("BOOKKEEPINGORACLEDB.getFileMetaData", [lfn])
-            if not res["OK"]:
-                records = [str(res["Message"])]
-            else:
-                values = res["Value"]
-                for record in values:
-                    row = [lfn, record[9], record[5], record[2], record[4], record[3], record[6]]
-                    records += [row]
-        return S_OK({"TotalRecords": totalrecords, "ParameterNames": parametersNames, "Records": records})
-
-    #############################################################################
     def __getProductionStatisticsForUsers(self, prod):
         """For retrieving the statistics of a production.
 
@@ -2783,12 +2761,11 @@ class OracleBookkeepingDB(object):
         :return: number of files, evenet stat, filesize end luminosity
         """
         command = (
-            "select count(*), SUM(files.EventStat), SUM(files.FILESIZE), sum(files.Luminosity), \
-    sum(files.instLuminosity) from files ,jobs where jobs.jobid=files.jobid and jobs.production=%d"
+            "SELECT COUNT(*), SUM(files.EventStat), SUM(files.FILESIZE), SUM(files.Luminosity), \
+    SUM(files.instLuminosity) from files, jobs WHERE jobs.jobid=files.jobid AND jobs.production=%d"
             % (prod)
         )
-        res = self.dbR_.query(command)
-        return res
+        return self.dbR_.query(command)
 
     #############################################################################
     def getProductionFilesForWeb(self, prod, ftypeDict, sortDict, startItem, maxitems):
@@ -3204,7 +3181,7 @@ class OracleBookkeepingDB(object):
         :return: the logs of a file
         """
 
-        result = S_ERROR("getLogfile error!")
+        result = S_ERROR("getFileCreationLog error!")
         command = "select files.jobid from files where files.filename='%s'" % (lfn)
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:

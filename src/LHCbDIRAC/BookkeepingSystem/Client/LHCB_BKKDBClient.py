@@ -86,9 +86,9 @@ class LHCB_BKKDBClient:
         """ancestor of files."""
         return self.__ESManager.getAncestors(files, depth)  # pylint: disable=no-member
 
-    def getLogfile(self, filename):
+    def getFileCreationLog(self, filename):
         """log file of a given file."""
-        return self.__ESManager.getLogfile(filename)  # pylint: disable=no-member
+        return self.__ESManager.getFileCreationLog(filename)  # pylint: disable=no-member
 
     def writePythonOrJobOptions(self, startItem, maxitems, path, optstype):
         """python job option."""

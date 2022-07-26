@@ -27,6 +27,7 @@ import tempfile
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.DISET.TransferClient import TransferClient
+from DIRAC.Core.Utilities.Decorators import deprecated
 
 from LHCbDIRAC.BookkeepingSystem.Client import JEncoder
 from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
@@ -129,7 +130,11 @@ class BookkeepingClient(Client):
         return self._getRPC().getFileAncestors(lfns, depth, replica)
 
     #############################################################################
+    @deprecated("Use getFileDescendents")
     def getFileDescendants(self, lfns, depth=0, production=0, checkreplica=False):
+        return self.getFileDescendents(lfns, depth, production, checkreplica)
+
+    def getFileDescendents(self, lfns, depth=0, production=0, checkreplica=False):
         """Retrieve the file descendants.
 
         :param list lfns: list of LFNs
@@ -140,7 +145,7 @@ class BookkeepingClient(Client):
         if isinstance(lfns, str):
             lfns = lfns.split(";")
 
-        return self._getRPC().getFileDescendants(lfns, depth, production, checkreplica)
+        return self._getRPC().getFileDescendents(lfns, depth, production, checkreplica)
 
     #############################################################################
     def addFiles(self, lfns):
@@ -172,17 +177,6 @@ class BookkeepingClient(Client):
         if isinstance(lfns, str):
             lfns = lfns.split(";")
         return self._getRPC().getFileMetadata(lfns)
-
-    #############################################################################
-    def getFileMetaDataForWeb(self, lfns):
-        """This method only used by the web portal. It is same as getFileMetadata.
-
-        :param list lfns: list of LFNs
-        :return: file metadata
-        """
-        if isinstance(lfns, str):
-            lfns = lfns.split(";")
-        return self._getRPC().getFileMetaDataForWeb(lfns)
 
     #############################################################################
     def exists(self, lfns):
@@ -432,15 +426,13 @@ class BookkeepingClient(Client):
             return res
         steps = res["Value"]  # this is an ordered list
         if not steps:
-            self.log.error("Production %s does not have recorded steps" % prodID)
+            self.log.error(f"Production {prodID} does not have recorded steps")
             return S_ERROR("No recorded steps")
         # now we check if the first in the list had DDDB and CondDB defined, or not
         # if not, we get the steps of all the previous productions
         if steps[0][4] == steps[0][5] == "fromPreviousStep":
             # if we are here it is because in the current production none of the steps contain DB tags
-            self.log.info(
-                "DB tags are not set: they will be retrieved from the parent production(s)", "(prod: %s)" % prodID
-            )
+            self.log.info("DB tags are not set: they will be retrieved from the parent production(s)", f"(prod: {prodID})")
             numberOfSteps = len(steps)
             # Now finding the previous productions
             res = self._getPreviousProductions(prodID)
@@ -495,7 +487,7 @@ class BookkeepingClient(Client):
         # Start by getting the RequestID
         res = TransformationClient().getTransformation(prodID, True)
         if not res["OK"]:
-            self.log.error("Could not retrieve parameters for production", "%d: %s" % (prodID, res["Message"]))
+            self.log.error(f"Could not retrieve parameters for production", f"{prodID}: {res['Message']}")
             return res
         parameters = res["Value"]
 
@@ -511,7 +503,7 @@ class BookkeepingClient(Client):
 
         res = ProductionRequestClient().getProductionList(int(reqID))
         if not res["OK"]:
-            self.log.error("Could not retrieve productions list for request", "%d:%s" % (int(reqID), res["Message"]))
+            self.log.error("Could not retrieve productions list for request", f"{reqID}: {res['Message']}")
             return res
         ancestorProdIDs = res["Value"]
 

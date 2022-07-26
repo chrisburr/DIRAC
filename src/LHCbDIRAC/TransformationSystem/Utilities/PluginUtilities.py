@@ -686,9 +686,9 @@ get from BK"
     def getProcessedFiles(self, lfns):
         """Check which files have been processed by a given production, i.e. have a
         meaningful descendant."""
-        from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import getFileDescendants
+        from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import getFileDescendents
 
-        return getFileDescendants(self.transID, lfns, transClient=self.transClient, dm=self.dm, bkClient=self.bkClient)
+        return getFileDescendents(self.transID, lfns, transClient=self.transClient, dm=self.dm, bkClient=self.bkClient)
 
     # @timeThis
     def getRAWAncestorsForRun(self, runID, param=None, paramValue=None, getFiles=False):
@@ -1251,7 +1251,7 @@ get from BK"
             for lfnChunk in breakListIntoChunks(lfns, chunkSize):
                 progressBar.loop()
                 # prod is a long and server expects an int!
-                res = self.bkClient.getFileDescendants(lfnChunk, depth=1, production=int(prod), checkreplica=False)
+                res = self.bkClient.getFileDescendents(lfnChunk, depth=1, production=int(prod), checkreplica=False)
                 if not res["OK"]:
                     return res
                 for lfn, descDict in res["Value"]["WithMetadata"].items():  # can be an iterator

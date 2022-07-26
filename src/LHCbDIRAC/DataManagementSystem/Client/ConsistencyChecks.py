@@ -40,7 +40,7 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 prodsWithMerge = ("MCSimulation", "MCFastSimulation", "DataStripping", "MCStripping", "DataSwimming", "WGProduction")
 
 
-def getFileDescendants(transID, lfns, transClient=None, dm=None, bkClient=None, descendantsDepth=None):
+def getFileDescendents(transID, lfns, transClient=None, dm=None, bkClient=None, descendantsDepth=None):
     """Function that returns the list of descendants from BKK
 
     Args:
@@ -51,7 +51,7 @@ def getFileDescendants(transID, lfns, transClient=None, dm=None, bkClient=None, 
         dict: a dictionary of files with descendants (lfn as key)
 
     Examples:
-        >>> getFileDescendants(55032, ['/lhcb/LHCb/anLFN_1.dst', '/lhcb/LHCb/anLFN_2.dst',
+        >>> getFileDescendents(55032, ['/lhcb/LHCb/anLFN_1.dst', '/lhcb/LHCb/anLFN_2.dst',
                                        '/lhcb/LHCb/anLFN_3_NODESCENDANTS.dst'])
         {'/lhcb/LHCb/anLFN_1.dst': ['/lhcb/validation/desc_1.PIDCALIB.mdst',
                                     '/lhcb/validation/desc_1.pidcalib.root'],
@@ -601,7 +601,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
         for lfnChunk in breakListIntoChunks(lfns, chunkSize):
             progressBar.loop()
             while True:
-                resChunk = self.bkClient.getFileDescendants(
+                resChunk = self.bkClient.getFileDescendents(
                     lfnChunk, depth=self.descendantsDepth, production=self.prod, checkreplica=False
                 )
                 # If error, global or for some files, retry
@@ -733,7 +733,7 @@ class ConsistencyChecks(DiracConsistencyChecks):
                 for lfnChunk in breakListIntoChunks(setNotPresent, chunkSize):
                     progressBar.loop()
                     while True:
-                        res = self.bkClient.getFileDescendants(lfnChunk, depth=99, checkreplica=True)
+                        res = self.bkClient.getFileDescendents(lfnChunk, depth=99, checkreplica=True)
                         if res["OK"]:
                             # Exclude ignored file types, but select any other file type, key is daughters
                             notPresentDescendants.update(res["Value"]["WithMetadata"])

@@ -72,7 +72,7 @@ bkc_mock.getFileMetadata.return_value = {
     "rpcStub": (("Bookkeeping/BookkeepingManager",)),
 }
 bkc_mock.getFileTypeVersion.return_value = {"OK": True, "Value": {"lfn1": "ROOT", "lfn2": "MDF"}}
-bkc_mock.getFileDescendants.return_value = {
+bkc_mock.getFileDescendents.return_value = {
     "OK": True,
     "Value": {
         "Failed": [],
@@ -88,7 +88,7 @@ bkc_mock.getFileDescendants.return_value = {
 }
 
 
-class BookkeepingClientFake(object):
+class BookkeepingClientFake:
     """a fake BookkeepingClient - replicating some of the methods"""
 
     def getAvailableSteps(self, stepID):

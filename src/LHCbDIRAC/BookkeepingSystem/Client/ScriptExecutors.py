@@ -337,7 +337,7 @@ def _updateDescendantsLumi(parentLumi, doIt=False, force=False):
         return None
     # Get descendants:
     error = False
-    res = bkClient.getFileDescendants(list(parentLumi), depth=1, checkreplica=False)
+    res = bkClient.getFileDescendents(list(parentLumi), depth=1, checkreplica=False)
     if not res["OK"]:
         gLogger.error("Error getting descendants", res["Message"])
         return True
@@ -611,7 +611,7 @@ def executeFileDescendants(dmScript, level=1):
     fullResult = S_OK({})
     for lfnChunk in breakListIntoChunks(lfnList, 50):
         progressBar.loop()
-        result = bkClient.getFileDescendants(lfnChunk, depth=level, production=prod, checkreplica=checkreplica)
+        result = bkClient.getFileDescendents(lfnChunk, depth=level, production=prod, checkreplica=checkreplica)
         if result["OK"]:
             noDescendants = (
                 set(lfnChunk)
@@ -879,7 +879,7 @@ def executeFileSisters(dmScript, level=1):
                     ancestors.setdefault(anc["FileName"], []).append(lfn)
         # print ancestors
 
-        res = bkClient.getFileDescendants(list(ancestors), depth=999999, production=prod, checkreplica=checkreplica)
+        res = bkClient.getFileDescendents(list(ancestors), depth=999999, production=prod, checkreplica=checkreplica)
 
         fullResult["OK"] = res["OK"]
         if res["OK"]:
