@@ -39,7 +39,7 @@ class BaseESManager:
             path = os.path.abspath(path)
             return S_OK(path)
         except OSError as ex:
-            return S_ERROR("getAbsalutePath: " + str(ex))
+            return S_ERROR("getAbsolutePath: " + str(ex))
 
     def mergePaths(self, path1, path2):
         """merge two path."""
