@@ -1004,7 +1004,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.setFileDataQuality(lfns, flag)
 
     #############################################################################
-    types_setRunAndProcessingPassDataQuality = [(int, str), str, str]
+    types_setRunAndProcessingPassDataQuality = [int, str, str]
 
     @classmethod
     def export_setRunAndProcessingPassDataQuality(cls, runNB, procpass, flag):
@@ -1015,8 +1015,6 @@ class BookkeepingManagerHandler(RequestHandler):
         used to set the data quality flag to a given run files which
         processed by a given processing pass.
         """
-        if isinstance(runNB, str):
-            runNB = int(runNB)
         return cls.bkkDB.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
     #############################################################################
