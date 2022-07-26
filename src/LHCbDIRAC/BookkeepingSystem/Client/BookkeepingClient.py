@@ -354,7 +354,7 @@ class BookkeepingClient(Client):
             if not retVal["OK"]:
                 return retVal
             value = JEncoder.load(open(file_name.name))
-        return value
+        return S_OK(value)
 
     def getRunStatus(self, runs):
         """For retrieving the run status.

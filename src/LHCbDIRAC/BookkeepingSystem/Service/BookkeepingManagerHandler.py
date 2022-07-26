@@ -656,7 +656,7 @@ class BookkeepingManagerHandler(RequestHandler):
                     record[24],
                 ]
             ]
-        return {"ParameterNames": parameters, "Records": records, "TotalRecords": len(records)}
+        return S_OK({"ParameterNames": parameters, "Records": records, "TotalRecords": len(records)})
 
     #############################################################################
     types_getFilesSummary = [dict]
