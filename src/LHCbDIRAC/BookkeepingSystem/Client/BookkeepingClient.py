@@ -37,15 +37,13 @@ from LHCbDIRAC.TransformationSystem.Client.TransformationClient import Transform
 class BookkeepingClient(Client):
     """This class expose the methods of the Bookkeeping Service."""
 
-    def __init__(self, url=None, **kwargs):
+    def __init__(self, **kwargs):
         """c'tor.
 
         :param str url: can specify a specific URL
         """
         super(BookkeepingClient, self).__init__(**kwargs)
         self.setServer("Bookkeeping/BookkeepingManager")
-        if url:
-            self.setServer(url)
         self.timeout = 3600
         self.log = gLogger.getSubLogger("BookkeepingClient")
 

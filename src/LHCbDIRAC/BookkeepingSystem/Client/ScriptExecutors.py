@@ -762,7 +762,7 @@ def executeGetFiles(dmScript, maxFiles=20):
             dataset["fullpath"] = bkQueries[0].getPath()
         else:
             dataset = None
-        LHCB_BKKDBClient(welcome=False).writeJobOptions(fileDict, optionsFile=optionsFile, dataset=dataset)
+        LHCB_BKKDBClient().writeJobOptions(fileDict, optionsFile=optionsFile, dataset=dataset)
         gLogger.notice("\n%d files in options file %s" % (len(fileDict), optionsFile))
 
 
