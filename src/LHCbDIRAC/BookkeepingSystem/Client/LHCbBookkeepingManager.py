@@ -15,7 +15,6 @@ import time
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 
-from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.BookkeepingSystem.Client import objects
 from LHCbDIRAC.BookkeepingSystem.Client.Help import helpConfig, helpProcessing, helpEventType
@@ -25,7 +24,7 @@ INTERNAL_PATH_SEPARATOR = "/"
 #############################################################################
 
 
-class LHCbBookkeepingManager(BaseESManager):
+class LHCbBookkeepingManager:
     """creates the virtual file system."""
 
     __bookkeepingFolderProperties = [
@@ -76,7 +75,6 @@ class LHCbBookkeepingManager(BaseESManager):
     #############################################################################
     def __init__(self, url=None, web=False, welcome=True):
         """initialize the values."""
-        BaseESManager.__init__(self)
         self.db_ = BookkeepingClient(url)
         if not web:
             self.fileCatalog = FileCatalog()
@@ -100,7 +98,6 @@ class LHCbBookkeepingManager(BaseESManager):
         else:
             self.__filetypes = [i[0] for i in retVal["Value"]["Records"]]
 
-    #############################################################################
     def setFileTypes(self, fileTypeList=list()):
         """it sets the file types.
 
