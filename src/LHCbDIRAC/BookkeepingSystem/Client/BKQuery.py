@@ -174,7 +174,8 @@ class BKQuery:
         fileTypes = fileTypes if fileTypes is not None else []
 
         gLogger.verbose(
-            f"BKQUERY.buildBKQuery: Path {bkPath}, Dict {bkQueryDict}, Prods {prods}, Runs {runs}, FileTypes {fileTypes}, EventTypes {eventTypes}, Visible {visible}"
+            f"BKQUERY.buildBKQuery: Path {bkPath}, Dict {bkQueryDict}, Prods {prods}, "
+            f"Runs {runs}, FileTypes {fileTypes}, EventTypes {eventTypes}, Visible {visible}"
         )
         self.__bkQueryDict = {}
         if not bkPath and not prods and not bkQueryDict and not runs:
@@ -534,7 +535,9 @@ class BKQuery:
                 expandedTypes.add(ft)
         # Remove __exceptFileTypes only if not explicitly required
         # print "Obtained", fileTypes, expandedTypes
-        gLogger.verbose(f"BKQuery.__fileType: requested {allRequested}, expanded {expandedTypes}, except {self.__alreadyWarned}")
+        gLogger.verbose(
+            f"BKQuery.__fileType: requested {allRequested}, expanded {expandedTypes}, except {self.__alreadyWarned}"
+        )
         if expandedTypes - self.__bkFileTypes and not self.__alreadyWarned:
             self.__alreadyWarned = True
             gLogger.always(
@@ -602,7 +605,9 @@ class BKQuery:
                 if res["OK"]:
                     lfnsExcept = set(res["Value"]) & lfns
                 else:
-                    gLogger.error(f"***** ERROR ***** Error in getting dataset from BK for {exceptFiles} files:", res["Message"])
+                    gLogger.error(
+                        f"***** ERROR ***** Error in getting dataset from BK for {exceptFiles} files:", res["Message"]
+                    )
                     lfnsExcept = set()
                 if lfnsExcept:
                     gLogger.warn(

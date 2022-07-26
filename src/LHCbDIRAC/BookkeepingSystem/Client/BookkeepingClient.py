@@ -432,7 +432,9 @@ class BookkeepingClient(Client):
         # if not, we get the steps of all the previous productions
         if steps[0][4] == steps[0][5] == "fromPreviousStep":
             # if we are here it is because in the current production none of the steps contain DB tags
-            self.log.info("DB tags are not set: they will be retrieved from the parent production(s)", f"(prod: {prodID})")
+            self.log.info(
+                "DB tags are not set: they will be retrieved from the parent production(s)", f"(prod: {prodID})"
+            )
             numberOfSteps = len(steps)
             # Now finding the previous productions
             res = self._getPreviousProductions(prodID)

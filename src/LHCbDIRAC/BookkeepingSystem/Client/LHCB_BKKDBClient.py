@@ -9,6 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """LHCb Bookkeeping database client."""
+import os
 from LHCbDIRAC.BookkeepingSystem.Client.LHCbBookkeepingManager import LHCbBookkeepingManager
 
 
@@ -31,10 +32,10 @@ class LHCB_BKKDBClient:
         """It lists the database content as a Linux File System."""
         selectionDict = selectionDict if selectionDict is not None else {}
         sortDict = sortDict if sortDict is not None else {}
-        res = self.__ESManager.mergePaths(self.__currentDirectory, path)
-        if res["OK"]:
-            return self.__ESManager.list(res["Value"], selectionDict, sortDict, startItem, maxitems)
-        return res
+        res = self.__ESManager.getAbsolutePath(os.path.join(self.__currentDirectory, path))
+        if not res["OK"]:
+            return res
+        return self.__ESManager.list(res["Value"], selectionDict, sortDict, startItem, maxitems)
 
     def get(self, path=""):
         """get path."""
