@@ -11,7 +11,7 @@
 """stores the job configuration."""
 
 
-class JobConfiguration(object):
+class JobConfiguration:
     def __init__(self):
         """initialize the class members."""
         self.configName = ""  # None

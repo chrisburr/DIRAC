@@ -969,9 +969,9 @@ def _getCollidingBunches(fills):
 
     :return: dictionary {fill:nbCollisingBunches}
     """
-    from six.moves.urllib.request import urlopen
-    from six.moves.urllib.error import HTTPError
     import json
+    from urllib.request import urlopen
+    from urllib.error import HTTPError
 
     result = {}
     for fill in fills:

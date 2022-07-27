@@ -11,7 +11,7 @@
 """reads the data quality."""
 
 
-class Quality(object):
+class Quality:
     """Quality class."""
 
     def __init__(self):

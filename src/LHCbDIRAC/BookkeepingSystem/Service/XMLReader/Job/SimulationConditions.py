@@ -12,7 +12,7 @@
 from DIRAC import gLogger
 
 
-class SimulationConditions(object):
+class SimulationConditions:
     """SimulationConditions class."""
 
     def __init__(self):

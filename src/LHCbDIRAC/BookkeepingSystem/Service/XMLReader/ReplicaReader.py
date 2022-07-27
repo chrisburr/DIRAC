@@ -14,7 +14,7 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.ReplicaParam import R
 from DIRAC import gLogger
 
 
-class ReplicaReader(object):
+class ReplicaReader:
     @staticmethod
     def readReplica(doc, filename):
         """reads the replica information."""

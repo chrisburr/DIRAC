@@ -12,7 +12,7 @@
 from DIRAC import gLogger
 
 
-class Replica(object):
+class Replica:
     """Replica class."""
 
     #############################################################################

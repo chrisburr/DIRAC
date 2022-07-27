@@ -11,7 +11,7 @@
 """declare a file parameter."""
 
 
-class FileParam(object):
+class FileParam:
     def __init__(self):
         """initialize the class members."""
         self.name = ""
