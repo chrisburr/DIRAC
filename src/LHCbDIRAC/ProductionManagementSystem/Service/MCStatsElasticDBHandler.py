@@ -40,20 +40,14 @@ class MCStatsElasticDBHandler(RequestHandler):
     types_set = [str, (dict, list)]
 
     def export_set(self, typeName, data):
-
-        self.log.debug("Called set() with typeName = %s, data = %s" % (typeName, str(data)))
         return self.db[typeName].set(data)
 
     types_get = [str, (str, int)]
 
     def export_get(self, typeName, productionID):
-
-	self.log.debug("Called get() with typeName = %s, productionID = %s" % (typeName, str(productionID)))
         return self.db[typeName].get(productionID)
 
     types_remove = [str, (str, int)]
 
     def export_remove(self, typeName, productionID):
-
-	self.log.debug("Called remove() with typeName = %s, productionID = %s" % (typeName, str(productionID)))
         return self.db[typeName].remove(productionID)

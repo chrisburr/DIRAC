@@ -26,9 +26,9 @@ mapping = {
         "wmsID": {"type": "long"},
         "ProductionID": {"type": "integer"},
         "JobID": {"type": "integer"},
-	"Errors": {"type": "integer"},
-	"ErrorType": {"type": "keyword"},
-	"timestamp": {"type": "date"},
+        "Errors": {"type": "integer"},
+        "ErrorType": {"type": "keyword"},
+        "timestamp": {"type": "date"},
     }
 }
 
@@ -36,19 +36,19 @@ mapping = {
 class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
     def __init__(self):
         """Standard Constructor"""
-	try:
-	    section = getDatabaseSection("ProductionManagement", "ElasticMCGaussLogErrorsDB")
-	    indexPrefix = gConfig.getValue("%s/IndexPrefix" % section, CSGlobals.getSetup()).lower()
+        try:
+            section = getDatabaseSection("ProductionManagement", "ElasticMCGaussLogErrorsDB")
+            indexPrefix = gConfig.getValue(f"{section}/IndexPrefix", CSGlobals.getSetup()).lower()
 
-	    # Connecting to the ES cluster
-	    super(ElasticMCGaussLogErrorsDB, self).__init__(
-		name, "ProductionManagement/ElasticMCGaussLogErrorsDB", indexPrefix
-	    )
-	except Exception as ex:
-	    self.log.error("Can't connect to ElasticMCGaussLogErrorsDB", repr(ex))
-	    raise RuntimeError("Can't connect to ElasticMCGaussLogErrorsDB")
+            # Connecting to the ES cluster
+            super(ElasticMCGaussLogErrorsDB, self).__init__(
+                name, "ProductionManagement/ElasticMCGaussLogErrorsDB", indexPrefix
+            )
+        except Exception as ex:
+            self.log.error("Can't connect to ElasticMCGaussLogErrorsDB", repr(ex))
+            raise RuntimeError("Can't connect to ElasticMCGaussLogErrorsDB")
 
-        self.indexName = "%s_%s" % (self.getIndexPrefix(), name.lower())
+        self.indexName = f"{self.getIndexPrefix()}_{name.lower()}"
         # Verifying if the index is there, and if not create it
         if not self.client.indices.exists(self.indexName):
             result = self.createIndex(self.indexName, mapping, period=None)
@@ -60,44 +60,41 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
         self.dslSearch = self._Search(self.indexName)
 
     def set(self, data: list) -> dict:
-	"""
-	Inserts data into ES index
+        """
+        Inserts data into ES index
 
-	:param self: self reference
-	:param data: data to be inserted
+        :param self: self reference
+        :param data: data to be inserted
 
-	:returns: S_OK/S_ERROR as result of indexing
-	"""
-	self.log.debug(
-	    self.__class__.__name__,
-	    ".set(): inserting data in %s" % (self.indexName),  # pylint: disable=no-member
-	)
-	result = self.bulk_index(
-	    indexPrefix=self.indexName, data=data, mapping=mapping, period=None
-	)  # pylint: disable=no-member
-	if not result["OK"]:
-	    self.log.error("ERROR: Couldn't insert data", result["Message"])
-	return result
+        :returns: S_OK/S_ERROR as result of indexing
+        """
+        self.log.debug(
+            self.__class__.__name__,
+            f".set(): inserting data in {self.indexName}",  # pylint: disable=no-member
+        )
+        result = self.bulk_index(
+            indexPrefix=self.indexName, data=data, mapping=mapping, period=None
+        )  # pylint: disable=no-member
+        if not result["OK"]:
+            self.log.error("ERROR: Could not insert data", result["Message"])
+        return result
 
     def get(self, productionID: int) -> dict:
-	"""
-	Retrieves data from ES index
+        """
+        Retrieves data from ES index
 
-	:param self: self reference
-	:param value: data to be inserted
+        :param self: self reference
+        :param value: data to be inserted
 
-	:returns: S_OK/S_ERROR as result of indexing
-	"""
-	resultList = []
-	query = {"query": {"term": {"ProductionID": str(productionID)}}}  # no scoring
+        :returns: S_OK/S_ERROR as result of indexing
+        """
+        resultList = []
+        query = {"query": {"term": {"ProductionID": str(productionID)}}}  # no scoring
 
-	self.log.debug(
-	    self.__class__.__name__,
-	    f".get(): retrieving data from {self.indexName}",  # pylint: disable=no-member
-	)
+        self.log.debug(self.__class__.__name__, f".get(): retrieving data from {self.indexName}")
 
-	queryRes = self.query(index=self.indexName, query=query)
-	res = queryRes["Value"]["hits"]["hits"]
-	for doc in res:
-	    resultList.append(doc["_source"])
-	return S_OK(resultList)
+        queryRes = self.query(index=self.indexName, query=query)
+        res = queryRes["Value"]["hits"]["hits"]
+        for doc in res:
+            resultList.append(doc["_source"])
+        return S_OK(resultList)

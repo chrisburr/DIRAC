@@ -8,8 +8,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-"""Reads .log-files and outputs summary of counters as a .json-file and a
-.html-file."""
+"""Reads .log-files and outputs summary of counters as a .json-file
+"""
 import os
 import json
 
@@ -17,14 +17,14 @@ from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Utilities import TimeUtilities
 
 
-def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
+def readLogFile(logFile: str, jobID: str, prodID: str, wmsID: str, name: str = "errors.json") -> dict:
     """The script that runs everything.
 
-    :param str logFile: the name of the logfile
-    :param str jobID: the JobID
-    :param str prodID: the production ID
-    :param str wmsID: the wmsID
-    :param str name: the name of the output json file, standardised to 'errors.json'
+    :param logFile: the name of the logfile
+    :param jobID: the JobID
+    :param prodID: the production ID
+    :param wmsID: the wmsID
+    :param name: the name of the output json file, standardised to 'errors.json'
     """
     logString = ""
     dictG4Errors = {
@@ -40,7 +40,6 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
         if logFile.endswith(".log"):
             res = getLogString(logFile, logString)
             if not res["OK"]:
-                gLogger.warn("Problems in reading %s" % logFile)
                 return res
             logString = res["Value"]
         else:
@@ -61,7 +60,7 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
                 checke = logString[test : test + 100].find(error)
                 if checke != -1:
                     alreadyFound = True
-                    test = test + len(error)
+                    test += len(error)
                     break
             if alreadyFound:
                 continue
@@ -79,73 +78,62 @@ def readLogFile(logFile, jobID, prodID, wmsID, name="errors.json"):
                                 errorG4Dict[strippedErrString] = errorG4Dict[strippedErrString] + 1
                             else:
                                 errorG4Dict[strippedErrString] = 1
-                        lengthDump = len(errorBase)
-                        test = test + lengthDump
+                        test += len(errorBase)
                 else:
                     errorBase = logString[test : test + 250].split("\n")[0].rstrip()
                     if errorBase in errorDict:
                         errorDict[errorBase] = errorDict[errorBase] + 1
                     else:
                         errorDict[errorBase] = 1
-                    lengthDump = len(errorBase)
-                    test = test + lengthDump
+                    test += len(errorBase)
 
-    for (k, v) in errorG4Dict.items():
-	errorDict[k] = v
-    createJSONtable(errorDict, name, jobID, prodID, wmsID)
+    createJSONtable(errorDict | errorG4Dict, name, jobID, prodID, wmsID)
     return S_OK()
 
 
-################################################
-
-
-def createJSONtable(errorDict, name, jobID, prodID, wmsID):
+def createJSONtable(errorDict: dict, name: str, jobID: str, prodID: str, wmsID: str) -> None:
     """Creates a JSON file out of the collection of errors listed in dictTotal.
 
-    :param dict errorDict: the dictionary of errors
-    :param str name: the name of the JSON file
-    :param str jobID: the JobID of the log
-    :param str prodID: the ProductionID of the log
-    :param str wmsID: the wmsID of the log
+    :param errorDict: the dictionary of errors
+    :param name: the name of the JSON file
+    :param jobID: the JobID of the log
+    :param prodID: the ProductionID of the log
+    :param wmsID: the wmsID of the log
     """
 
     resultList = {}
     counter = 0
     with open(name, "w") as output:
-	for errName, nrOfErrs in errorDict.items():
-	    for i in range(1, nrOfErrs + 1):
-		result = {}
-		result["JobID"] = jobID
-		result["ProductionID"] = prodID
-		result["wmsID"] = wmsID
-		result["timestamp"] = int(TimeUtilities.toEpochMilliSeconds())
-		result["Errors"] = 1
-		result["ErrorType"] = errName
-		resultList[counter] = result
-		counter = counter + 1
-	json.dump(resultList, output, indent=2)
+        for errName, nrOfErrs in errorDict.items():
+            for i in range(1, nrOfErrs + 1):
+                result = {}
+                result["JobID"] = jobID
+                result["ProductionID"] = prodID
+                result["wmsID"] = wmsID
+                result["timestamp"] = int(TimeUtilities.toEpochMilliSeconds())
+                result["Errors"] = 1
+                result["ErrorType"] = errName
+                resultList[counter] = result
+                counter += 1
+        json.dump(resultList, output, indent=2)
     gLogger.notice("Finished creating the JSON file with Gauss Erros")
 
 
-################################################
+def getLogString(logFile: str, logString: str) -> dict:
+    """Checks if the log file can be opened, and saves the text in logFile into logString.
 
-
-def getLogString(logFile, logString):
-    """Checks if the log file can be opened, and saves the text in logFile into
-    logString.
-
-    :param str logFile: the name of the logFile
-    :param str logStr: the name of the variable that will save the contents of logFile
+    :param logFile: the name of the logFile
+    :param logStr: the name of the variable that will save the contents of logFile
     """
 
-    gLogger.notice("Attempting to open %s" % logFile)
+    gLogger.notice("Attempting to open", logFile)
     if not os.path.exists(logFile):
-        gLogger.error("%s could not be found" % logFile)
+        gLogger.error("File could not be found", f"({logFile})")
         return S_ERROR()
     if os.stat(logFile)[6] == 0:
-        gLogger.error("%s is empty" % logFile)
+        gLogger.error("File is empty", f"({logFile})")
         return S_ERROR()
     with open(logFile, "r") as f:
         logString = f.read()
-    gLogger.notice("Successfully read %s" % logFile)
+    gLogger.notice("Successfully read", logFile)
     return S_OK(logString)
