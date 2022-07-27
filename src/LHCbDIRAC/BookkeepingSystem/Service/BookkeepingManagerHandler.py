@@ -1770,7 +1770,7 @@ class BookkeepingManagerHandler(RequestHandler):
                 "Number Of Files": nbfiles,
                 "Number of Events": nbevents,
                 "EventInputStat": evinput,
-                "FileSize": fsize / 1000000000.0,
+                "FileSize": fsize / 1e9,
                 "TotalLuminosity": tLumi,
                 "Luminosity": lumi,
                 "InstLuminosity": ilumi,

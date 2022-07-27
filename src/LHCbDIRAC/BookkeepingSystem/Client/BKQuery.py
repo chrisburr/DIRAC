@@ -722,7 +722,7 @@ class BKQuery:
 
             # Only for printing
             if printOutput:
-                gLogger.notice(f"\n{len(lfns)} files (%.1f TB) in directories:", lfnSize)
+                gLogger.notice(f"\n{len(lfns)} files ({lfnSize:.1f} TB) in directories:")
                 dirs = {}
                 for lfn in lfns:
                     directory = os.path.join(os.path.dirname(lfn), "")
@@ -744,7 +744,7 @@ class BKQuery:
                     ses.append("Total")
                     gLogger.notice("\n{} {}".format("SE".ljust(20), "Size (TB)"))
                     for se in ses:
-                        gLogger.notice("{} {}".format(se.ljust(20), ("%.1f" % (totalUsage[se] / 1000000000000.0))))
+                        gLogger.notice("{} {}".format(se.ljust(20), ("%.1f" % (totalUsage[se] / 1e12))))
         return lfns
 
     def getDirs(self, printOutput=False, visible=None):

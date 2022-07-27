@@ -1920,7 +1920,7 @@ class LHCbBookkeepingManager:
                 info[1] += stat
                 size = metadata.get("FileSize")
                 if size is not None:
-                    info[2] += int(size) / 1000000000.0
+                    info[2] += int(size) / 1e9
         return evtTypes
 
     #############################################################################

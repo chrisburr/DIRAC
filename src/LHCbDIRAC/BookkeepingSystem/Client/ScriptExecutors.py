@@ -1235,7 +1235,7 @@ def executeGetStats(dmScript):
             elif name == "SizePerLumi":
                 # value *= nDatasets
                 gLogger.notice(
-                    "{}: {:.1f} GB".format(("Size  per %s" % "/pb").ljust(tab), value * 1000000.0 / 1000000000.0)
+                    "{}: {:.1f} GB".format(("Size  per %s" % "/pb").ljust(tab), value * 1e6 / 1e9)
                 )
         if lumi:
             filesPerLumi = nfiles / lumi
@@ -1296,7 +1296,7 @@ def executeGetStats(dmScript):
                 gLogger.notice("%s: %.2f hours (%d runs)" % ("Run duration".ljust(tab), fullDuration, len(runs)))
                 gLogger.notice("{}: {}".format("Trigger rate".ljust(tab), rate))
                 rate = (
-                    ("%.1f MB/second" % (size / 1000000.0 / fullDuration / 3600.0))
+                    ("%.1f MB/second" % (size / 1e6 / fullDuration / 3600.0))
                     if fullDuration
                     else "Run duration not available"
                 )
