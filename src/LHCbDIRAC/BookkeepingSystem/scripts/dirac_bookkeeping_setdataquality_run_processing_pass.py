@@ -62,8 +62,6 @@ def main():
     if len(args) < 3:
         Script.showHelp(exitCode=2)
 
-    exitCode = 0
-
     realData = "/Real Data"
     processing = args[0].replace("/RealData", realData)
     if processing == "":
@@ -131,7 +129,7 @@ def main():
         else:
             print("Run %d Processing Pass %s flagged %s" % (run, thisPass, flag))
 
-    DIRAC.exit(0)
+    DIRAC.exit()
 
 
 if __name__ == "__main__":

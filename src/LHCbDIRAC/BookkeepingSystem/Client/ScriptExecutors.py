@@ -981,7 +981,7 @@ def _getCollidingBunches(fills):
             result[fill] = int(fillInfo["nCollidingBunches"])
         except (KeyError, ValueError) as e:
             gLogger.exception("Exception getting info for fill", str(fill), lException=e)
-        except HTTPError as e:
+        except HTTPError:
             pass
     return result
 
@@ -1234,9 +1234,7 @@ def executeGetStats(dmScript):
                 gLogger.notice("{}: {:.3f} {}".format(lumiString.ljust(tab), lumi, lumiUnit))
             elif name == "SizePerLumi":
                 # value *= nDatasets
-                gLogger.notice(
-                    "{}: {:.1f} GB".format(("Size  per %s" % "/pb").ljust(tab), value * 1e6 / 1e9)
-                )
+                gLogger.notice("{}: {:.1f} GB".format(("Size per %s" % "/pb").ljust(tab), value * 1e6 / 1e9))
         if lumi:
             filesPerLumi = nfiles / lumi
             gLogger.notice("{}: {:.1f}".format(("Files per %s" % lumiUnit).ljust(tab), filesPerLumi))

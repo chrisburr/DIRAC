@@ -181,8 +181,6 @@ def main():
 
     Script.parseCommandLine(ignoreErrors=True)
 
-    exitCode = 0
-
     params = {"lfn": None, "runnumber": None, "dqflag": None, "processingpass": None}
 
     for switch in Script.getUnprocessedSwitches():
@@ -226,7 +224,7 @@ def main():
         res = flagFileList(params["lfn"], params["dqflag"])
         if res["OK"]:
             gLogger.notice("Files are flagged!")
-            DIRAC.exit(exitCode)
+            DIRAC.exit()
         else:
             gLogger.fatal(res["Message"])
 
@@ -272,7 +270,7 @@ def main():
                         gLogger.fatal(res["Message"])
                         DIRAC.exit(1)
 
-    DIRAC.exit(exitCode)
+    DIRAC.exit()
 
 
 if __name__ == "__main__":

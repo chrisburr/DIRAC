@@ -34,8 +34,6 @@ def main():
     if len(args) < 1:
         Script.showHelp()
 
-    exitCode = 0
-
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
     bk = BookkeepingClient()
@@ -59,7 +57,6 @@ def main():
             print(site.ljust(shift), str(sites[site]))
     else:
         print("ERROR getting number of jobs for %s:" % str(prod), res["Message"])
-        exitCode = 2
 
 
 if __name__ == "__main__":
