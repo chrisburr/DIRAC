@@ -1218,26 +1218,26 @@ def executeGetStats(dmScript):
         for name, value in zip(paramNames, records):
             if name == "NbofFiles":
                 nfiles = value
-                gLogger.notice("{}: {}".format("Nb of Files".ljust(tab), _intWithQuotes(value)))
+                gLogger.notice("Nb of Files".ljust(tab) + ": ", f"{_intWithQuotes(value)}")
             elif name == "NumberOfEvents":
                 nevts = value
-                gLogger.notice("{}: {}".format("Nb of Events".ljust(tab), _intWithQuotes(value)))
+                gLogger.notice("Nb of Events".ljust(tab) + ": ", f"{_intWithQuotes(value)}")
             elif name == "FileSize":
                 size = value
                 sizePerEvt = "(%.1f kB per evt)" % (size / nevts / 1000.0) if nevts and nDatasets == 1 else ""
                 size, sizeUnit = scaleSize(size)
-                gLogger.notice("{}: {:.3f} {} {}".format("Total size".ljust(tab), size, sizeUnit, sizePerEvt))
+                gLogger.notice("Total size".ljust(tab) + ": ", f"{size:.3f} {sizeUnit} {sizePerEvt}")
             elif name == "Luminosity":
                 lumi = value / nDatasets
                 lumi, lumiUnit = _scaleLumi(lumi)
                 lumiString = "Luminosity" if nDatasets == 1 else "Avg luminosity"
-                gLogger.notice("{}: {:.3f} {}".format(lumiString.ljust(tab), lumi, lumiUnit))
+                gLogger.notice(f"{lumiString.ljust(tab)}: {lumi:.3f} {lumiUnit}")
             elif name == "SizePerLumi":
                 # value *= nDatasets
-                gLogger.notice("{}: {:.1f} GB".format(("Size per %s" % "/pb").ljust(tab), value * 1e6 / 1e9))
+                gLogger.notice("Size per /pb".ljust(tab) + ": ", f"{value * 1e-3:.1f} GB")
         if lumi:
             filesPerLumi = nfiles / lumi
-            gLogger.notice("{}: {:.1f}".format(("Files per %s" % lumiUnit).ljust(tab), filesPerLumi))
+            gLogger.notice(f"Files per {lumiUnit}".ljust(tab) + ": ", f"{filesPerLumi:.1f}")
 
         if triggerRate:
             # Get information from the runs, but first get those that are Finished
@@ -1251,10 +1251,10 @@ def executeGetStats(dmScript):
             notFinished = set(runList) - set(runs)
             if notFinished:
                 gLogger.notice(
-                    "%d runs not Finished (ignored), %s runs Finished (used for trigger rate)"
-                    % (len(notFinished), str(len(runs) if runs else "no"))
+                    f"{len(notFinished)} runs not Finished (ignored), "
+                    f"{len(runs) if runs else 'no'} runs Finished (used for trigger rate)"
                 )
-                gLogger.notice("These runs are not Finished: %s" % ",".join(str(run) for run in sorted(notFinished)))
+                gLogger.notice("These runs are not Finished: ", ",".join(str(run) for run in sorted(notFinished)))
             if runs:
                 nevts = 0
                 size = 0
@@ -1278,14 +1278,14 @@ def executeGetStats(dmScript):
                         lumi = info["TotalLuminosity"]
                         if abs(lumi - runList[run][0] / nDatasets) > 1:
                             gLogger.notice(
-                                "Run and files luminosity mismatch (ignored): run %d, runLumi %d, filesLumi %d"
-                                % (run, lumi, int(runList[run][0] / nDatasets))
+                                "Run and files luminosity mismatch (ignored): ",
+                                f"run {run}, runLumi {lumi}, filesLumi {runList[run][0] / nDatasets}",
                             )
                         else:
                             totalLumi += lumi
                 if fullDuration:
                     triggerRate = nevts / fullDuration / 3600
-                    rate = "%.1f events/second" % triggerRate
+                    rate = f"{triggerRate:.1f} events/second"
                 else:
                     triggerRate = 0.0
                     rate = "Run duration not available"
