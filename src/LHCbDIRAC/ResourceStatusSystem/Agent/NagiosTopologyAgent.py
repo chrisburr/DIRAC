@@ -15,17 +15,12 @@ NagiosTopologyAgent.__bases__: DIRAC.Core.Base.AgentModule.AgentModule
 xml_append
 """
 import os
-import time
-import xml.dom.minidom
 import json
-import socket
 
-from six.moves.urllib.request import urlopen
-from DIRAC import S_OK, rootPath, gLogger, gConfig
+from DIRAC import S_OK, gConfig, rootPath
 from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getSites
 from DIRAC.ConfigurationSystem.Client.Helpers.Path import cfgPath
 from DIRAC.Core.Base.AgentModule import AgentModule
-from DIRAC.DataManagementSystem.Utilities.DMSHelpers import DMSHelpers
 from DIRAC.Resources.Storage.StorageElement import StorageElement
 
 AGENT_NAME = "ResourceStatus/NagiosTopologyAgent"
@@ -56,8 +51,6 @@ class NagiosTopologyAgent(AgentModule):
     def __init__(self, *args, **kwargs):
 
         AgentModule.__init__(self, *args, **kwargs)
-
-        self.topologyPath = "webRoot/www/topology/"
 
         self.dryRun = False
 
@@ -195,7 +188,7 @@ class NagiosTopologyAgent(AgentModule):
             siteInfo["Services"] = siteInfoServices
             fullSitesDict[site] = siteInfo
 
-        topologyFile = self.topologyPath + "topology.json"
+        topologyFile = os.path.join(rootPath, "webRoot/www/topology/topology.json")
         if not self.dryRun:
             with open(topologyFile, "w") as tj:
                 json.dump(fullSitesDict, tj)
