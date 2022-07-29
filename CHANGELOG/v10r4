@@ -1,3 +1,21 @@
+[v10.4.17]
+*ResourceStatusSystem
+
+FIX: (!1251) Fixed path to topology.json file
+
+*BKK
+
+FIX: (!1246) _getDataQuality does not raise an error if the DQ is not set
+
+Thank you for writing the text to appear in the release notes. It will show up
+exactly as it appears between the two bold lines
+
+*TransformationSystem
+
+FIX: (!1228) the script was not expecting log files within a zip file but a flat directory... This is fixed in this MR
+
+
+
 [v10.4.16]
 *ProductionManagement
 
