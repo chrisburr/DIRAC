@@ -19,7 +19,6 @@ import tempfile
 
 from collections import defaultdict
 from fnmatch import fnmatch
-import six
 
 import DIRAC
 from DIRAC import gLogger
@@ -1132,9 +1131,9 @@ class TransformationDebug(object):
         """
         Get the status of a (list of) job, return it formated <major>;<minor>;<application>
         """
-        if isinstance(job, six.string_types):
+        if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, six.integer_types):
+        elif isinstance(job, (int, long)):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1168,9 +1167,9 @@ class TransformationDebug(object):
         """
         Get the status of a (list of) job, return it formated <major>;<minor>;<application>
         """
-        if isinstance(job, six.string_types):
+        if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, six.integer_types):
+        elif isinstance(job, (int, long)):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1187,9 +1186,9 @@ class TransformationDebug(object):
         """
         Get the status of a (list of) job, return it formated <major>;<minor>;<application>
         """
-        if isinstance(job, six.string_types):
+        if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, six.integer_types):
+        elif isinstance(job, (int, long)):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
