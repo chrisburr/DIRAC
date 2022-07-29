@@ -124,12 +124,19 @@ def test__getRunNumbersAndTCKs(mocker, inputfiles, getRunNbAndTckRV, expected):
 @pytest.mark.parametrize(
     "prod, runNumber, getProductionProcessingPassID_RV, getRunAndProcessingPassDataQuality_RV, expected",
     [
+        #  no RunNumber -> OK, None
         (None, None, {"OK": True}, {"OK": True}, {"OK": True, "Value": None}),
+        # No processing pass -> OK, None
         (None, 123, {"OK": True, "Value": None}, {"OK": True}, {"OK": True, "Value": None}),
+        # No DQ -> OK, None
         (None, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": None}, {"OK": True, "Value": None}),
-        (None, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": "OK"}, {"OK": True, "Value": "OK"}),
+        # All OK -> OK, DQ value
+        (None, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": "DQValue"}, {"OK": True, "Value": "DQValue"}),
+        # processing pass ERROR -> ERROR
         (None, 123, {"OK": False, "Message": "NOK"}, {"OK": True, "Value": "OK"}, {"OK": False, "Message": "NOK"}),
-        (None, 123, {"OK": True, "Value": "OK"}, {"OK": False, "Message": "NOK"}, {"OK": False, "Message": "NOK"}),
+        # DQ Error -> OK, None (not an error, see method doc)
+        (None, 123, {"OK": True, "Value": "OK"}, {"OK": False, "Message": "NOK"}, {"OK": True, "Value": None}),
+        # All OK -> OK, DQValue
         (321, 123, {"OK": True, "Value": 1}, {"OK": True, "Value": "UNCHECKED"}, {"OK": True, "Value": "UNCHECKED"}),
     ],
 )
