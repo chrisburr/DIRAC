@@ -431,12 +431,14 @@ class XMLFilesReaderManager(object):
 
     @convertToReturnValue
     def _getDataQuality(self, prod=None, runNumber=None):
+        """Return the DQ for a given prod and run number.
+        A failure in finding the processing pass ID is a genuine error,
+        while not finding a DQ flag can be okay (case of real data taking, not yet flagged)
+        """
         if not runNumber:
             return None
         procID = returnValueOrRaise(self.bkClient_.getProductionProcessingPassID(prod or runNumber * -1))
-        if not procID:
-            return None
-        return returnValueOrRaise(self.bkClient_.getRunAndProcessingPassDataQuality(runNumber, procID))
+        return self.bkClient_.getRunAndProcessingPassDataQuality(runNumber, procID).get("Value")
 
     def __insertJob(self, job):
         """Inserts the job to the database."""
