@@ -1133,7 +1133,7 @@ class TransformationDebug(object):
         """
         if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, (int, long)):
+        elif isinstance(job, int):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1169,7 +1169,7 @@ class TransformationDebug(object):
         """
         if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, (int, long)):
+        elif isinstance(job, int):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1188,7 +1188,7 @@ class TransformationDebug(object):
         """
         if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, (int, long)):
+        elif isinstance(job, int):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
