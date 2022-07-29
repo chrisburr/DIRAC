@@ -14,30 +14,28 @@ Actual executor methods of the dirac-transformation-debug script
 import sys
 import os
 import datetime
-import gzip
-import ssl
-import tarfile
+import zipfile
 import tempfile
 
 from collections import defaultdict
 from fnmatch import fnmatch
-import six
-from six.moves.urllib.request import FancyURLopener
 
 import DIRAC
-from DIRAC.Core.Utilities.File import mkDir
 from DIRAC import gLogger
-from DIRAC.Core.Base.Script import Script
-from DIRAC.Core.Utilities.List import breakListIntoChunks
-from DIRAC.Core.Security.Locations import getCAsLocation, getProxyLocation
-from DIRAC.DataManagementSystem.Client.DataManager import DataManager
-from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
-from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient, printOperation
-from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
+from DIRAC.Core.Base import Script
+from DIRAC.Core.Utilities.File import mkDir
+from DIRAC.Core.Utilities.List import breakListIntoChunks
+from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
+from DIRAC.DataManagementSystem.Client.DataManager import DataManager
+from DIRAC.RequestManagementSystem.Client.ReqClient import ReqClient, printOperation
+from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
+from DIRAC.Resources.Storage.StorageElement import StorageElement
+from DIRAC.WorkloadManagementSystem.Client.JobMonitoringClient import JobMonitoringClient
 
-from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+from LHCbDIRAC.DataManagementSystem.Client.DMScript import DMScript
+from LHCbDIRAC.TransformationSystem.Client.TransformationClient import TransformationClient
 from LHCbDIRAC.TransformationSystem.Utilities.PluginUtilities import PluginUtilities
 from LHCbDIRAC.TransformationSystem.Utilities.ScriptUtilities import getTransformations
 
@@ -95,149 +93,61 @@ def _getLog(urlBase, logFile, debug=False):
     # Otherwise it can either be referenced within urlBase or contained (.tar.gz)
 
     # In order to use https with the correct CA, use the FancyURLOpener and the user proxy as certificate
-    context = ssl.create_default_context(capath=getCAsLocation())
-    proxyFile = getProxyLocation()
-    urlOpener = FancyURLopener(cert_file=proxyFile, context=context)
-    if os.path.basename(urlBase) == "":
-        url = os.path.join(urlBase, "index.html")
-    else:
-        url = urlBase
+    logSE = StorageElement("LogSE-EOS")
+    lfnBase = DMScript().getLFNsFromList([urlBase], directories=True)[0]
+    logLFN = os.path.normpath(lfnBase) + ".zip"
     if debug:
-        print("Entering getLog", url, logFile)
-    cc = None
-    if logFile and ".tgz" not in url:
-        # Try first with index.html and then try and list the directory
-        while True:
-            try:
-                fd = None
-                if debug:
-                    print("Try opening URL ", url)
-                fd = urlOpener.open(url)
-                if debug:
-                    print("Open")
-                cc = fd.read()
-                # Check if the page was not found
-                if (
-                    "404 - Not Found" in cc
-                    or "was not found on this server." in cc
-                    or "There was an error loading the page you requested" in cc
-                ):
-                    if debug:
-                        print("File not found")
-                    # If the file is not found, try with the urlBase
-                    if url == urlBase:
-                        return ""
-                    if debug:
-                        print("Try with urlBase", urlBase)
-                    url = urlBase
-                else:
-                    if debug:
-                        print("File read")
-                    break
-            except (IOError, ValueError) as e:
-                print("Exception opening %s: %s" % (url, repr(e)))
-                break
-            finally:
-                if fd:
-                    fd.close()
-        logURL = None
-        if cc:
-            cc = cc.split("\n")
-            for line in cc:
-                # Look for an html reference
-                try:
-                    ll = line.split("href=")[1].split('"')[1]
-                except IndexError:
-                    continue
-                # Find the URL
-                if fnmatch(ll, "*" + logFile + "*"):
-                    if debug:
-                        print("Match found:", ll)
-                    logURL = __buildURL(urlBase, ll)
-                elif fnmatch(ll, "*.tgz") or fnmatch(ll, "*.tar"):
-                    if debug:
-                        print("Match found with tgz or tar file:", ll)
-                    # If a tgz file is found, it could help, but still continue!
-                    logURL = __buildURL(urlBase, ll)
-                if logURL:
-                    break
-        if not logURL:
-            if debug:
-                print("No match found")
-            return ""
-        if debug:
-            print("URL found:", logURL)
-    tmp = None
-    tmp1 = None
-    tf = None
-    if ".tgz" in logURL or ".gz" in logURL or ".tar" in logURL:
-        if debug:
-            print("Opening tar file ", logURL)
-        # retrieve the zipped file
-        tmp = os.path.join(tempfile.gettempdir(), "logFile.tmp")
-        if debug:
-            print("Retrieve the file in ", tmp)
+        print("Entering getLog", logLFN, logFile)
+    if debug:
+        print("Opening zip file ", logLFN)
+    # retrieve the zipped file
+    tmpDir = tempfile.gettempdir()
+    tmp = os.path.join(tmpDir, os.path.basename(logLFN))
+    if debug:
+        print("Retrieve the file in ", tmp)
+    if os.path.exists(tmp):
+        os.remove(tmp)
+    # urlOpener.retrieve(logLFN, tmp)
+    res = returnSingleResult(logSE.getFile(logLFN, localPath=tmpDir))
+    if not res["OK"]:
+        # If the logfile was uploaded by a request, its URL is different, try it!
+        splitURL = urlBase.split("/")
+        logLFN = lfnBase + "%s_%s.tar" % (splitURL[9], splitURL[11])
+        tmp = os.path.join(tmpDir, os.path.basename(logLFN))
         if os.path.exists(tmp):
             os.remove(tmp)
-        urlOpener.retrieve(logURL, tmp)
-        with open(tmp, "rt") as fd:
-            cc = fd.read()
-        if "404 Not Found" in cc:
-            return ""
-            # unpack the tarfile
+        res = returnSingleResult(logSE.getFile(logLFN, localPath=tmpDir))
+        if not res["OK"]:
+            gLogger.error("Error getting log zip", res["Message"])
+            return None
         if debug:
-            print("Open tarfile ", tmp)
-        if ".tar" in logURL:
-            tf = tarfile.open(tmp, "r")
-        else:
-            tf = tarfile.open(tmp, "r:gz")
-        mn = tf.getnames()
-        fd = None
-        if debug:
-            print("Found those members", mn, ", looking for", logFile)
-        for fileName in mn:
-            if fnmatch(fileName, logFile + "*"):
-                if debug:
-                    print("Found ", logFile, " in tar object ", fileName)
-                if ".gz" in fileName:
-                    # file is again a gzip file!!
-                    tmp1 = os.path.join(tempfile.gettempdir(), "logFile-1.tmp")
-                    if debug:
-                        print("Extract", fileName, "into", tmp1, "and open it")
-                    tf.extract(fileName, tmp1)
-                    tmp1 = os.path.join(tmp1, fileName)
-                    fd = gzip.GzipFile(tmp1, "r")
-                else:
-                    fd = tf.extractfile(fileName)
-                break
-    else:
-        try:
-            fd = urlOpener.open(logURL)
-        except IOError as e:
+            print("Logfile is a failover upload zip with a .tar extension")
+    if debug:
+        print("Open zip file ", tmp)
+    zf = zipfile.ZipFile(tmp)
+    mn = zf.namelist()
+    if debug:
+        print("Found those members", mn, ", looking for", logFile)
+    # There may be more than one file matching the name, read them all
+    matchingFiles = []
+    for fileName in mn:
+        if fnmatch(fileName, "*/" + logFile + "*"):
             if debug:
-                print("Exception opening %s: %s" % (logURL, repr(e)))
-    # read the actual file...
-    if not fd:
-        if debug:
-            print("Couldn't open file...")
-        cc = ""
-    else:
-        if debug:
-            print("File successfully open")
-        cc = fd.read()
-        fd.close()
-        if "was not found on this server." not in cc:
-            cc = cc.split("\n")
+                print("Found ", logFile, " in zip object ", fileName)
+            matchingFiles.append(fileName)
+    # read the actual files...
+    cc = []
+    for fileName in matchingFiles:
+        with zf.open(fileName) as fd:
             if debug:
-                print("Reading the file now... %d lines" % len(cc))
-        else:
-            cc = ""
-    if tf:
-        tf.close()
+                print("File %s successfully open" % fileName)
+            cc += fd.read().decode("utf-8").split("\n")
+    if debug:
+        print("%d files read... %d lines" % (len(matchingFiles), len(cc)))
+    if zf:
+        zf.close()
     if tmp:
         os.remove(tmp)
-    if tmp1:
-        os.remove(tmp1)
     return cc
 
 
@@ -304,7 +214,7 @@ def _checkXMLSummary(job, logURL):
             if not lfns:
                 lfns = {None: "No errors found in XML summary"}
         return lfns
-    except tarfile.ReadError as e:
+    except Exception as e:
         gLogger.exception("Exception while checking XML summary", lException=e)
         return {None: "Could not open XML summary"}
 
@@ -313,8 +223,9 @@ def _checkLog(logURL):
     """
     Find ERROR string, core dump or "stalled events" in a logfile
     """
+    debug = False
     for i in range(5, 0, -1):
-        logFile = _getLog(logURL, "*_%d.log" % i, debug=False)
+        logFile = _getLog(logURL, "*_%d.log" % i, debug=debug)
         if logFile:
             break
     logDump = []
@@ -1220,9 +1131,9 @@ class TransformationDebug(object):
         """
         Get the status of a (list of) job, return it formated <major>;<minor>;<application>
         """
-        if isinstance(job, six.string_types):
+        if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, six.integer_types):
+        elif isinstance(job, int):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1256,9 +1167,9 @@ class TransformationDebug(object):
         """
         Get the status of a (list of) job, return it formated <major>;<minor>;<application>
         """
-        if isinstance(job, six.string_types):
+        if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, six.integer_types):
+        elif isinstance(job, int):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1275,9 +1186,9 @@ class TransformationDebug(object):
         """
         Get the status of a (list of) job, return it formated <major>;<minor>;<application>
         """
-        if isinstance(job, six.string_types):
+        if isinstance(job, str):
             jobs = [int(job)]
-        elif isinstance(job, six.integer_types):
+        elif isinstance(job, int):
             jobs = [job]
         else:
             jobs = list(int(jid) for jid in job)
@@ -1426,7 +1337,7 @@ class TransformationDebug(object):
                     for lastJob in sorted(exitedJobs, reverse=True)[0:10]:
                         res = self.monitoring.getJobParameter(lastJob, "Log URL")
                         if res["OK"] and "Log URL" in res["Value"]:
-                            logURL = res["Value"]["Log URL"].split('"')[1] + "/"
+                            logURL = res["Value"]["Log URL"].split('"')[1]  # + "/"
                             jobLogURL[lastJob] = logURL
                             lfns = _checkXMLSummary(str(lastJob), logURL)
                             lfns = dict((_genericLfn(lfn, lfnList), lfns[lfn]) for lfn in lfns if lfn)
