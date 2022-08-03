@@ -16,7 +16,7 @@ from LHCbDIRAC.Core.Utilities import LogErr
 from DIRAC.tests.Utilities.utils import find_all
 
 
-logFile = find_all("testLogFile.log", "../", "tests/Integration/WorkloadManagementSystem")[0]
+logFile = find_all("testLogFile.log", "../", "tests/Integration/Core")[0]
 with open(logFile, "r") as f:
     logString = f.read()
 
