@@ -656,7 +656,7 @@ class BookkeepingManagerHandler(RequestHandler):
                     record[24],
                 ]
             ]
-        return {"ParameterNames": parameters, "Records": records, "TotalRecords": len(records)}
+        return S_OK({"ParameterNames": parameters, "Records": records, "TotalRecords": len(records)})
 
     #############################################################################
     types_getFilesSummary = [dict]
@@ -1004,7 +1004,7 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.setFileDataQuality(lfns, flag)
 
     #############################################################################
-    types_setRunAndProcessingPassDataQuality = [(int, str), str, str]
+    types_setRunAndProcessingPassDataQuality = [int, str, str]
 
     @classmethod
     def export_setRunAndProcessingPassDataQuality(cls, runNB, procpass, flag):
@@ -1015,8 +1015,6 @@ class BookkeepingManagerHandler(RequestHandler):
         used to set the data quality flag to a given run files which
         processed by a given processing pass.
         """
-        if isinstance(runNB, str):
-            runNB = int(runNB)
         return cls.bkkDB.setRunAndProcessingPassDataQuality(runNB, procpass, flag)
 
     #############################################################################
@@ -1028,14 +1026,6 @@ class BookkeepingManagerHandler(RequestHandler):
 
         The input parameter is the run number and a data quality flag.
         """
-        return cls.bkkDB.setRunDataQuality(runNb, flag)
-
-    #############################################################################
-    types_setQualityRun = [int, str]
-
-    @classmethod
-    def export_setQualityRun(cls, runNb, flag):
-        """more info in the BookkeepingClient.py."""
         return cls.bkkDB.setRunDataQuality(runNb, flag)
 
     #############################################################################
@@ -1055,20 +1045,6 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getFileAncestors(lfns, depth, replica)
 
     #############################################################################
-    types_getAllAncestors = [list, int]
-
-    @classmethod
-    def export_getAllAncestors(cls, lfns, depth):
-        """more info in the BookkeepingClient.py."""
-        retVal = cls.bkkDB.getFileAncestors(lfns, depth, False)
-        if not retVal["OK"]:
-            return retVal
-        values = retVal["Value"]
-        for key, value in values["Successful"].items():
-            values["Successful"][key] = [i["FileName"] for i in value]
-        return S_OK(values)
-
-    #############################################################################
     types_getAncestors = [list, int]
 
     @classmethod
@@ -1083,29 +1059,6 @@ class BookkeepingManagerHandler(RequestHandler):
         return S_OK(values)
 
     #############################################################################
-    types_getAllAncestorsWithFileMetaData = [list, int]
-
-    @classmethod
-    def export_getAllAncestorsWithFileMetaData(cls, lfns, depth):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getFileAncestors(lfns, depth, False)
-
-    #############################################################################
-    types_getAllDescendents = [list, int, int, bool]
-
-    @classmethod
-    def export_getAllDescendents(cls, lfn, depth=0, production=0, checkreplica=False):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getFileDescendents(lfn, depth, production, checkreplica)
-
-    #############################################################################
-    types_getDescendents = [list, int]
-
-    def export_getDescendents(self, lfn, depth):
-        """more info in the BookkeepingClient.py."""
-        return self.export_getFileDescendants(lfn, depth)
-
-    #############################################################################
     types_getFileDescendents = [list, int, int, bool]
 
     @classmethod
@@ -1116,6 +1069,7 @@ class BookkeepingManagerHandler(RequestHandler):
     #############################################################################
     types_getFileDescendants = [list, int, int, bool]
 
+    @deprecated("Use getFileDescendents")
     def export_getFileDescendants(self, lfn, depth, production=0, checkreplica=True):
         """more info in the BookkeepingClient.py."""
         return self.export_getFileDescendents(lfn, depth, production, checkreplica)
@@ -1185,38 +1139,6 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getFileMetadata(lfns)
 
     #############################################################################
-    types_getFilesInformations = [list]
-
-    @classmethod
-    def export_getFilesInformations(cls, lfns):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getFileMetadata(lfns)
-
-    #############################################################################
-    types_getFileMetaDataForUsers = [list]
-
-    @classmethod
-    def export_getFileMetaDataForUsers(cls, lfns):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getFileMetaDataForWeb(lfns)
-
-    #############################################################################
-    types_getFileMetaDataForWeb = [list]
-
-    @classmethod
-    def export_getFileMetaDataForWeb(cls, lfns):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getFileMetaDataForWeb(lfns)
-
-    #############################################################################
-    types_getProductionFilesForUsers = [int, dict, dict, int, int]
-
-    @classmethod
-    def export_getProductionFilesForUsers(cls, prod, ftype, sortDict, startItem, maxitems):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getProductionFilesForWeb(prod, ftype, sortDict, startItem, maxitems)
-
-    #############################################################################
     types_getProductionFilesForWeb = [int, dict, dict, int, int]
 
     @classmethod
@@ -1266,14 +1188,6 @@ class BookkeepingManagerHandler(RequestHandler):
         return cls.bkkDB.getFileCreationLog(lfn)
 
     #############################################################################
-    types_getLogfile = [str]
-
-    @classmethod
-    def export_getLogfile(cls, lfn):
-        """more info in the BookkeepingClient.py."""
-        return cls.bkkDB.getFileCreationLog(lfn)
-
-    #############################################################################
     types_insertEventType = [int, str, str]
 
     @classmethod
@@ -1286,13 +1200,6 @@ class BookkeepingManagerHandler(RequestHandler):
                 return retVal
             return S_OK(str(evid) + " event type added successfully!")
         return S_OK(str(evid) + " event type exists")
-
-    #############################################################################
-    types_addEventType = [int, str, str]
-
-    def export_addEventType(self, evid, desc, primary):
-        """more info in the BookkeepingClient.py."""
-        return self.export_insertEventType(evid, desc, primary)
 
     #############################################################################
     types_updateEventType = [int, str, str]
@@ -1863,7 +1770,7 @@ class BookkeepingManagerHandler(RequestHandler):
                 "Number Of Files": nbfiles,
                 "Number of Events": nbevents,
                 "EventInputStat": evinput,
-                "FileSize": fsize / 1000000000.0,
+                "FileSize": fsize / 1e9,
                 "TotalLuminosity": tLumi,
                 "Luminosity": lumi,
                 "InstLuminosity": ilumi,

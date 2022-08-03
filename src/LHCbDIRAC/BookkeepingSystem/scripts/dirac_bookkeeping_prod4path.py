@@ -11,7 +11,6 @@
 ###############################################################################
 """Get production numbers given a dataset path."""
 import time
-import six
 from DIRAC import gLogger, exit
 from DIRAC.Core.Base.Script import Script
 
@@ -47,7 +46,7 @@ def execute(dmScript):
         ptype = tr.getTransformation(prod).get("Value", {}).get("Type", "Unknown")
         productions[prod] = ptype
         parent = tr.getBookkeepingQuery(prod).get("Value", {}).get("ProductionID", "")
-        while isinstance(parent, six.integer_types):
+        while isinstance(parent, int):
             ptype = tr.getTransformation(parent).get("Value", {}).get("Type", "Unknown")
             parents[parent] = ptype
             parent = tr.getBookkeepingQuery(parent).get("Value", {}).get("ProductionID", "")

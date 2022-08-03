@@ -26,7 +26,7 @@ from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 
 from LHCbDIRAC.Core.Utilities.ResolveSE import getDestinationSEList
 from LHCbDIRAC.Core.Utilities.ProductionData import constructProductionLFNs
-from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import getFileDescendants
+from LHCbDIRAC.DataManagementSystem.Client.ConsistencyChecks import getFileDescendents
 
 from LHCbDIRAC.Workflow.Modules.ModuleBase import ModuleBase
 
@@ -189,7 +189,7 @@ class UploadOutputData(ModuleBase):
                         )
                         lfnsWithDescendants = []
                     else:
-                        lfnsWithDescendants = getFileDescendants(
+                        lfnsWithDescendants = getFileDescendents(
                             self.production_id, self.inputDataList, dm=self.dataManager, bkClient=self.bkClient
                         )
                 if not lfnsWithDescendants:

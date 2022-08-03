@@ -69,7 +69,7 @@ class GangaDataFile(object):
 
         # Create a fake LFN->PFN dictionary to give the persistency
         fakePfns = dict.fromkeys(lfns, {"pfntype": persistency})
-        script = LHCB_BKKDBClient(welcome=False).writeJobOptions(
+        script = LHCB_BKKDBClient().writeJobOptions(
             lfns, optionsFile=self.fileName, catalog=self.xmlcatalog_file, savePfn=fakePfns
         )
         self.log.info("Created Ganga data file %s" % self.fileName)

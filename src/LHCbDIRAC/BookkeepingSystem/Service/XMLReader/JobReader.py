@@ -9,6 +9,7 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """It stores the job related information."""
+from DIRAC import gLogger
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobConfiguration import JobConfiguration
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.JobOption import JobOption
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.File import File
@@ -22,10 +23,9 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.FileReplica import Fi
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Replica.ReplicaParam import ReplicaParam
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.Quality import Quality
 from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.Job.QualityParameters import QualityParameters
-from DIRAC import gLogger
 
 
-class JobReader(object):
+class JobReader:
     """JobReader class."""
 
     def readJob(self, doc, fileName):

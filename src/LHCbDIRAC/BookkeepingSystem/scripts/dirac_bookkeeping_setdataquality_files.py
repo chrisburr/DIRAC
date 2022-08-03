@@ -56,7 +56,7 @@ def main():
         files = open(filename)
         for f in files:
             lfns += [f.strip()]
-    except Exception as ex:
+    except Exception:
         lfns = [filename]
 
     result = bk.setFileDataQuality(lfns, flag)

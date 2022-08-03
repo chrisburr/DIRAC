@@ -105,7 +105,7 @@ def parseRuns(bkQuery, runs):
     if "RunNumber" not in bkQuery:
         try:
             if runs[0] and runs[1] and int(runs[0]) > int(runs[1]):
-                gLogger.error("Warning: End run should be larger than start run: %d, %d" % (int(runs[0]), int(runs[1])))
+                gLogger.error(f"Warning: End run should be larger than start run: {runs[0]}, {runs[1]}")
                 raise BadRunRange
             if runs[0].isdigit():
                 bkQuery["StartRun"] = int(runs[0])
@@ -174,9 +174,8 @@ class BKQuery:
         fileTypes = fileTypes if fileTypes is not None else []
 
         gLogger.verbose(
-            "BKQUERY.buildBKQuery: Path %s, Dict %s, \
-      Prods %s, Runs %s, FileTypes %s, EventTypes %s, Visible %s"
-            % (bkPath, str(bkQueryDict), str(prods), str(runs), str(fileTypes), str(eventTypes), visible)
+            f"BKQUERY.buildBKQuery: Path {bkPath}, Dict {bkQueryDict}, Prods {prods}, "
+            f"Runs {runs}, FileTypes {fileTypes}, EventTypes {eventTypes}, Visible {visible}"
         )
         self.__bkQueryDict = {}
         if not bkPath and not prods and not bkQueryDict and not runs:
@@ -537,8 +536,7 @@ class BKQuery:
         # Remove __exceptFileTypes only if not explicitly required
         # print "Obtained", fileTypes, expandedTypes
         gLogger.verbose(
-            "BKQuery.__fileType: requested %s, expanded %s, except %s"
-            % (allRequested, expandedTypes, self.__exceptFileTypes)
+            f"BKQuery.__fileType: requested {allRequested}, expanded {expandedTypes}, except {self.__alreadyWarned}"
         )
         if expandedTypes - self.__bkFileTypes and not self.__alreadyWarned:
             self.__alreadyWarned = True
@@ -548,7 +546,7 @@ class BKQuery:
             )
         if allRequested or not expandedTypes & self.__exceptFileTypes:
             expandedTypes -= self.__exceptFileTypes
-        gLogger.verbose("BKQuery.__fileType: result %s" % sorted(expandedTypes))
+        gLogger.verbose(f"BKQuery.__fileType: result {sorted(expandedTypes)}")
         if len(expandedTypes) == 1 and not returnList:
             return list(expandedTypes)[0]
         return list(expandedTypes)
@@ -608,7 +606,7 @@ class BKQuery:
                     lfnsExcept = set(res["Value"]) & lfns
                 else:
                     gLogger.error(
-                        "***** ERROR ***** Error in getting dataset from BK for %s files:" % exceptFiles, res["Message"]
+                        f"***** ERROR ***** Error in getting dataset from BK for {exceptFiles} files:", res["Message"]
                     )
                     lfnsExcept = set()
                 if lfnsExcept:
@@ -632,7 +630,7 @@ class BKQuery:
                     if res["OK"] and isinstance(res["Value"], list) and res["Value"][0]:
                         lfnSize -= res["Value"][0]
 
-                lfnSize /= 1000000000000.0
+                lfnSize /= 1e12  # 1 Tera
             else:
                 lfnSize = 0.0
         return {"LFNs": list(lfns), "LFNSize": lfnSize}
@@ -718,13 +716,13 @@ class BKQuery:
             lfnSize = lfnsAndSize["LFNSize"]
 
         if not lfns:
-            gLogger.verbose("No files found for BK query %s" % str(self.__bkQueryDict))
+            gLogger.verbose("No files found for BK query", self.__bkQueryDict)
         else:
             lfns.sort()
 
             # Only for printing
             if printOutput:
-                gLogger.notice("\n%d files (%.1f TB) in directories:" % (len(lfns), lfnSize))
+                gLogger.notice(f"\n{len(lfns)} files ({lfnSize:.1f} TB) in directories:")
                 dirs = {}
                 for lfn in lfns:
                     directory = os.path.join(os.path.dirname(lfn), "")
@@ -746,7 +744,7 @@ class BKQuery:
                     ses.append("Total")
                     gLogger.notice("\n{} {}".format("SE".ljust(20), "Size (TB)"))
                     for se in ses:
-                        gLogger.notice("{} {}".format(se.ljust(20), ("%.1f" % (totalUsage[se] / 1000000000000.0))))
+                        gLogger.notice("{} {}".format(se.ljust(20), ("%.1f" % (totalUsage[se] / 1e12))))
         return lfns
 
     def getDirs(self, printOutput=False, visible=None):
@@ -764,7 +762,7 @@ class BKQuery:
         """Returns the status of a given transformation."""
         res = TransformationClient().getTransformation(prod, extraParams=False)
         if not res["OK"]:
-            gLogger.error("Could not get information", "on production %d" % prod)
+            gLogger.error("Could not get information", f"on production {prod}")
             return None
         return res["Value"]["Status"]
 
@@ -902,7 +900,7 @@ class BKQuery:
         res = self.__bkClient.getProcessingPass(queryDict, initialPP)
         if not res["OK"]:
             if "Empty Directory" not in res["Message"]:
-                gLogger.error("ERROR getting processing passes for %s" % queryDict, res["Message"])
+                gLogger.error(f"ERROR getting processing passes for {queryDict}", res["Message"])
             return {}
         ppRecords = res["Value"][0]
         if "Name" in ppRecords["ParameterNames"]:

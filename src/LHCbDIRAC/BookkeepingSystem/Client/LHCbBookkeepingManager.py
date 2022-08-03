@@ -15,7 +15,6 @@ import time
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Resources.Catalog.FileCatalog import FileCatalog
 
-from LHCbDIRAC.BookkeepingSystem.Client.BaseESManager import BaseESManager
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 from LHCbDIRAC.BookkeepingSystem.Client import objects
 from LHCbDIRAC.BookkeepingSystem.Client.Help import helpConfig, helpProcessing, helpEventType
@@ -25,7 +24,7 @@ INTERNAL_PATH_SEPARATOR = "/"
 #############################################################################
 
 
-class LHCbBookkeepingManager(BaseESManager):
+class LHCbBookkeepingManager:
     """creates the virtual file system."""
 
     __bookkeepingFolderProperties = [
@@ -74,12 +73,10 @@ class LHCbBookkeepingManager(BaseESManager):
     __bookkeepingQueryTypes = ["adv", "std"]
 
     #############################################################################
-    def __init__(self, url=None, web=False, welcome=True):
+    def __init__(self):
         """initialize the values."""
-        BaseESManager.__init__(self)
-        self.db_ = BookkeepingClient(url)
-        if not web:
-            self.fileCatalog = FileCatalog()
+        self.db_ = BookkeepingClient()
+        self.fileCatalog = FileCatalog()
 
         self.__entityCache = {"/": (objects.Entity({"name": "/", "fullpath": "/", "expandable": True}), 0)}
         self.parameter_ = self.__bookkeepingParameters[0]
@@ -89,18 +86,14 @@ class LHCbBookkeepingManager(BaseESManager):
 
         self.treeLevels_ = -1
         self.advancedQuery_ = False
-        if welcome:
-            print("WELCOME")
-            print("For more information use the 'help' command! ")
         self.dataQualities_ = {}
 
         retVal = self.db_.getAvailableFileTypes()
         if not retVal["OK"]:
-            gLogger.error(retVal)
+            gLogger.error(retVal["Message"])
         else:
             self.__filetypes = [i[0] for i in retVal["Value"]["Records"]]
 
-    #############################################################################
     def setFileTypes(self, fileTypeList=list()):
         """it sets the file types.
 
@@ -116,35 +109,19 @@ class LHCbBookkeepingManager(BaseESManager):
                 self.__filetypes = [i[0] for i in retVal["Value"]["Records"]]
 
     #############################################################################
-    def _updateTreeLevels(self, level):
-        """tree level update."""
-        self.treeLevels_ = level
-
-    #############################################################################
-    @staticmethod
-    def setVerbose(value):
-        """information printed."""
-        objects.VERBOSE = value
-
-    #############################################################################
     def setAdvancedQueries(self, value):
         """advanced queries."""
         self.advancedQuery_ = value
 
     #############################################################################
-    def _getTreeLevels(self):
-        """level of the current tree."""
-        return self.treeLevels_
-
-    #############################################################################
     def help(self):
         """help information."""
         if self.parameter_ == self.__bookkeepingParameters[0]:
-            helpConfig(self._getTreeLevels())
+            helpConfig(self.treeLevels_)
         elif self.parameter_ == self.__bookkeepingParameters[1]:
-            helpEventType(self._getTreeLevels())
+            helpEventType(self.treeLevels_)
         elif self.parameter_ == self.__bookkeepingParameters[2]:
-            helpProcessing(self._getTreeLevels())
+            helpProcessing(self.treeLevels_)
 
     #############################################################################
     def getPossibleParameters(self):
@@ -182,16 +159,9 @@ class LHCbBookkeepingManager(BaseESManager):
             gLogger.error("Wrong Parameter!")
 
     #############################################################################
-    def getLogicalFiles(self):
-        """lfn."""
-        return self.files_
-
-    #############################################################################
     def getFilesPFN(self):
         """pfn."""
-        lfns = self.files_
-        res = self.fileCatalog.getReplicas(lfns)
-        return res
+        return self.fileCatalog.getReplicas(self.files_)
 
     #############################################################################
     def list(self, path="/", selectionDict=None, sortDict=None, startItem=0, maxitems=0):
@@ -229,7 +199,7 @@ class LHCbBookkeepingManager(BaseESManager):
             level, procpass = self.__getLevel(
                 path=tmpPath, visited=[], level=0, start=False, end=False, processingpath="", startlevel=3
             )
-        self._updateTreeLevels(level)
+        self.treeLevels_ = level
         return level, processedPath, procpass
 
     #############################################################################
@@ -365,8 +335,6 @@ class LHCbBookkeepingManager(BaseESManager):
         """level all."""
         if self.advancedQuery_:
             return self._getEntityFromPath(path, "ALL", levels, description)
-        else:
-            return None
 
     @staticmethod
     def __createPath(processedPath, name):
@@ -1748,7 +1716,7 @@ class LHCbBookkeepingManager(BaseESManager):
         return self.db_.getFileAncestors(files, depth)
 
     #############################################################################
-    def getLogfile(self, filename):
+    def getFileCreationLog(self, filename):
         """log file."""
         return self.db_.getFileCreationLog(filename)
 
@@ -1952,7 +1920,7 @@ class LHCbBookkeepingManager(BaseESManager):
                 info[1] += stat
                 size = metadata.get("FileSize")
                 if size is not None:
-                    info[2] += int(size) / 1000000000.0
+                    info[2] += int(size) / 1e9
         return evtTypes
 
     #############################################################################

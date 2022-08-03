@@ -11,7 +11,7 @@
 """stores the data quality informations."""
 
 
-class QualityParameters(object):
+class QualityParameters:
     def __init__(self):
         """initialize the class members."""
         self.name = ""

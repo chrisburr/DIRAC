@@ -11,7 +11,7 @@
 """stores the jobs and its parameters."""
 
 
-class Job(object):
+class Job:
     """Job class."""
 
     def __init__(self):

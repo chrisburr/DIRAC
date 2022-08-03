@@ -22,7 +22,7 @@ from LHCbDIRAC.BookkeepingSystem.Service.XMLReader.ReplicaReader import ReplicaR
 from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import generateConditionDescription
 
 
-class XMLFilesReaderManager(object):
+class XMLFilesReaderManager:
     """XMLFilesReaderManager class."""
 
     #############################################################################

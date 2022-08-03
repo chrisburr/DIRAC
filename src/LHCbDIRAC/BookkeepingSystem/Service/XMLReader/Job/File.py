@@ -11,7 +11,7 @@
 """stores a file."""
 
 
-class File(object):
+class File:
     def __init__(self):
         """initialize the class members."""
         self.name = ""

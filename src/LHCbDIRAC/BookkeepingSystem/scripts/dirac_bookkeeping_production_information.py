@@ -34,8 +34,6 @@ def main():
     if len(args) < 1:
         Script.showHelp(exitCode=1)
 
-    exitCode = 0
-
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
     bk = BookkeepingClient()

@@ -11,7 +11,7 @@
 """stores the job options."""
 
 
-class JobOption(object):
+class JobOption:
     def __init__(self):
         """initialize the class members."""
         self.recipient = ""

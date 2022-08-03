@@ -22,10 +22,7 @@ def main():
 
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
 
-    bk = BookkeepingClient()
-    exitCode = 0
-
-    res = bk.getAvailableFileTypes()
+    res = BookkeepingClient().getAvailableFileTypes()
 
     if res["OK"]:
         dbresult = res["Value"]
@@ -33,7 +30,7 @@ def main():
         for record in dbresult["Records"]:
             print(str(record[0]).ljust(30) + str(record[1]))
 
-    DIRAC.exit(exitCode)
+    DIRAC.exit()
 
 
 if __name__ == "__main__":

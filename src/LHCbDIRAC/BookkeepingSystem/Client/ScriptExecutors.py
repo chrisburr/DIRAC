@@ -337,7 +337,7 @@ def _updateDescendantsLumi(parentLumi, doIt=False, force=False):
         return None
     # Get descendants:
     error = False
-    res = bkClient.getFileDescendants(list(parentLumi), depth=1, checkreplica=False)
+    res = bkClient.getFileDescendents(list(parentLumi), depth=1, checkreplica=False)
     if not res["OK"]:
         gLogger.error("Error getting descendants", res["Message"])
         return True
@@ -611,7 +611,7 @@ def executeFileDescendants(dmScript, level=1):
     fullResult = S_OK({})
     for lfnChunk in breakListIntoChunks(lfnList, 50):
         progressBar.loop()
-        result = bkClient.getFileDescendants(lfnChunk, depth=level, production=prod, checkreplica=checkreplica)
+        result = bkClient.getFileDescendents(lfnChunk, depth=level, production=prod, checkreplica=checkreplica)
         if result["OK"]:
             noDescendants = (
                 set(lfnChunk)
@@ -762,7 +762,7 @@ def executeGetFiles(dmScript, maxFiles=20):
             dataset["fullpath"] = bkQueries[0].getPath()
         else:
             dataset = None
-        LHCB_BKKDBClient(welcome=False).writeJobOptions(fileDict, optionsFile=optionsFile, dataset=dataset)
+        LHCB_BKKDBClient().writeJobOptions(fileDict, optionsFile=optionsFile, dataset=dataset)
         gLogger.notice("\n%d files in options file %s" % (len(fileDict), optionsFile))
 
 
@@ -879,7 +879,7 @@ def executeFileSisters(dmScript, level=1):
                     ancestors.setdefault(anc["FileName"], []).append(lfn)
         # print ancestors
 
-        res = bkClient.getFileDescendants(list(ancestors), depth=999999, production=prod, checkreplica=checkreplica)
+        res = bkClient.getFileDescendents(list(ancestors), depth=999999, production=prod, checkreplica=checkreplica)
 
         fullResult["OK"] = res["OK"]
         if res["OK"]:
@@ -969,9 +969,9 @@ def _getCollidingBunches(fills):
 
     :return: dictionary {fill:nbCollisingBunches}
     """
-    from six.moves.urllib.request import urlopen
-    from six.moves.urllib.error import HTTPError
     import json
+    from urllib.request import urlopen
+    from urllib.error import HTTPError
 
     result = {}
     for fill in fills:
@@ -981,7 +981,7 @@ def _getCollidingBunches(fills):
             result[fill] = int(fillInfo["nCollidingBunches"])
         except (KeyError, ValueError) as e:
             gLogger.exception("Exception getting info for fill", str(fill), lException=e)
-        except HTTPError as e:
+        except HTTPError:
             pass
     return result
 
@@ -1218,28 +1218,26 @@ def executeGetStats(dmScript):
         for name, value in zip(paramNames, records):
             if name == "NbofFiles":
                 nfiles = value
-                gLogger.notice("{}: {}".format("Nb of Files".ljust(tab), _intWithQuotes(value)))
+                gLogger.notice("Nb of Files".ljust(tab) + ": ", f"{_intWithQuotes(value)}")
             elif name == "NumberOfEvents":
                 nevts = value
-                gLogger.notice("{}: {}".format("Nb of Events".ljust(tab), _intWithQuotes(value)))
+                gLogger.notice("Nb of Events".ljust(tab) + ": ", f"{_intWithQuotes(value)}")
             elif name == "FileSize":
                 size = value
                 sizePerEvt = "(%.1f kB per evt)" % (size / nevts / 1000.0) if nevts and nDatasets == 1 else ""
                 size, sizeUnit = scaleSize(size)
-                gLogger.notice("{}: {:.3f} {} {}".format("Total size".ljust(tab), size, sizeUnit, sizePerEvt))
+                gLogger.notice("Total size".ljust(tab) + ": ", f"{size:.3f} {sizeUnit} {sizePerEvt}")
             elif name == "Luminosity":
                 lumi = value / nDatasets
                 lumi, lumiUnit = _scaleLumi(lumi)
                 lumiString = "Luminosity" if nDatasets == 1 else "Avg luminosity"
-                gLogger.notice("{}: {:.3f} {}".format(lumiString.ljust(tab), lumi, lumiUnit))
+                gLogger.notice(f"{lumiString.ljust(tab)}: {lumi:.3f} {lumiUnit}")
             elif name == "SizePerLumi":
                 # value *= nDatasets
-                gLogger.notice(
-                    "{}: {:.1f} GB".format(("Size  per %s" % "/pb").ljust(tab), value * 1000000.0 / 1000000000.0)
-                )
+                gLogger.notice("Size per /pb".ljust(tab) + ": ", f"{value * 1e-3:.1f} GB")
         if lumi:
             filesPerLumi = nfiles / lumi
-            gLogger.notice("{}: {:.1f}".format(("Files per %s" % lumiUnit).ljust(tab), filesPerLumi))
+            gLogger.notice(f"Files per {lumiUnit}".ljust(tab) + ": ", f"{filesPerLumi:.1f}")
 
         if triggerRate:
             # Get information from the runs, but first get those that are Finished
@@ -1253,10 +1251,10 @@ def executeGetStats(dmScript):
             notFinished = set(runList) - set(runs)
             if notFinished:
                 gLogger.notice(
-                    "%d runs not Finished (ignored), %s runs Finished (used for trigger rate)"
-                    % (len(notFinished), str(len(runs) if runs else "no"))
+                    f"{len(notFinished)} runs not Finished (ignored), "
+                    f"{len(runs) if runs else 'no'} runs Finished (used for trigger rate)"
                 )
-                gLogger.notice("These runs are not Finished: %s" % ",".join(str(run) for run in sorted(notFinished)))
+                gLogger.notice("These runs are not Finished: ", ",".join(str(run) for run in sorted(notFinished)))
             if runs:
                 nevts = 0
                 size = 0
@@ -1280,14 +1278,14 @@ def executeGetStats(dmScript):
                         lumi = info["TotalLuminosity"]
                         if abs(lumi - runList[run][0] / nDatasets) > 1:
                             gLogger.notice(
-                                "Run and files luminosity mismatch (ignored): run %d, runLumi %d, filesLumi %d"
-                                % (run, lumi, int(runList[run][0] / nDatasets))
+                                "Run and files luminosity mismatch (ignored): ",
+                                f"run {run}, runLumi {lumi}, filesLumi {runList[run][0] / nDatasets}",
                             )
                         else:
                             totalLumi += lumi
                 if fullDuration:
                     triggerRate = nevts / fullDuration / 3600
-                    rate = "%.1f events/second" % triggerRate
+                    rate = f"{triggerRate:.1f} events/second"
                 else:
                     triggerRate = 0.0
                     rate = "Run duration not available"
@@ -1296,7 +1294,7 @@ def executeGetStats(dmScript):
                 gLogger.notice("%s: %.2f hours (%d runs)" % ("Run duration".ljust(tab), fullDuration, len(runs)))
                 gLogger.notice("{}: {}".format("Trigger rate".ljust(tab), rate))
                 rate = (
-                    ("%.1f MB/second" % (size / 1000000.0 / fullDuration / 3600.0))
+                    ("%.1f MB/second" % (size / 1e6 / fullDuration / 3600.0))
                     if fullDuration
                     else "Run duration not available"
                 )

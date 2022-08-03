@@ -12,7 +12,7 @@
 from DIRAC import gLogger
 
 
-class ReplicaParam(object):
+class ReplicaParam:
     """ReplicaParam class."""
 
     def __init__(self):
