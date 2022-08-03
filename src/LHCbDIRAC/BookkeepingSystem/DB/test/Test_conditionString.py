@@ -15,7 +15,7 @@ import pytest
 from LHCbDIRAC.BookkeepingSystem.DB.DataTakingConditionInterpreter import generateConditionDescription
 
 
-with open(os.path.join(os.path.dirname(__file__), "dtc.json"), "r") as f:
+with open(os.path.join(os.path.dirname(__file__), "dtc.json")) as f:
     allExistingConditions = json.load(f)
 
 

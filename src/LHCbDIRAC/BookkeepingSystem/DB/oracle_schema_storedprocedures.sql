@@ -264,11 +264,15 @@ END;
 
 -------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE getavailableconfigurations (
-    a_cursor                    OUT udt_refcursor
+    a_cursor OUT udt_refcursor
 ) IS
 BEGIN
-  OPEN a_cursor FOR
-    SELECT configname,configversion FROM configurations;
+    OPEN a_cursor FOR SELECT DISTINCT
+			  configname,
+			  configversion
+		      FROM
+			  configurations;
+
 END;
 
 ---------------------------------------------------------------------------------------------------------------------------
@@ -1754,8 +1758,8 @@ PROCEDURE bulkupdatereplicarow(v_replica VARCHAR2, lfns varchararray)
 IS
 BEGIN
 FOR i IN lfns.first .. lfns.last LOOP
- UPDATE files SET inserttimestamp = sys_extract_utc(systimestamp),gotreplica = v_replica WHERE filename = lfns(i);
- COMMIT;
+  UPDATE files SET inserttimestamp = sys_extract_utc(systimestamp),gotreplica = v_replica WHERE filename = lfns(i);
+  COMMIT;
 END LOOP;
 END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
