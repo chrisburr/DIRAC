@@ -8,7 +8,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization  #
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
-""" Module containing a front-end to the ElasticSearch-based ElasticMCGaussLogErrorsDB.
+""" Module containing a front-end to the OpenSearch-based ElasticMCGaussLogErrorsDB.
 
     Here we define a mapping which is taken from a list of log errors.
 """
@@ -84,7 +84,7 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
         Retrieves data from ES index
 
         :param self: self reference
-        :param value: data to be inserted
+        :param productionID: production ID
 
         :returns: S_OK/S_ERROR as result of indexing
         """
@@ -93,8 +93,10 @@ class ElasticMCGaussLogErrorsDB(ElasticMCStatsDBBase):
 
         self.log.debug(self.__class__.__name__, f".get(): retrieving data from {self.indexName}")
 
-        queryRes = self.query(index=self.indexName, query=query)
-        res = queryRes["Value"]["hits"]["hits"]
+        res = self.query(index=self.indexName, query=query)
+        if not res["OK"]:
+            return res
+        res = res["Value"]["hits"]["hits"]
         for doc in res:
             resultList.append(doc["_source"])
         return S_OK(resultList)

@@ -36,15 +36,14 @@ def readLogFile(logFile: str, jobID: str, prodID: str, wmsID: str, name: str = "
     }
     errorG4Dict = dict()
     errorDict = dict()
-    if isinstance(logFile, str):
-        if logFile.endswith(".log"):
-            res = getLogString(logFile, logString)
-            if not res["OK"]:
-                return res
-            logString = res["Value"]
-        else:
-            gLogger.debug("The log is already in a readable string")
-            logString = logFile
+    if logFile.endswith(".log"):
+        res = __getLogString(logFile, logString)
+        if not res["OK"]:
+            return res
+        logString = res["Value"]
+    else:
+        gLogger.debug("The log is already in a readable string")
+        logString = logFile
 
     reversedKeys = sorted(dictG4Errors, reverse=True)
     for errorString in reversedKeys:
@@ -87,39 +86,19 @@ def readLogFile(logFile: str, jobID: str, prodID: str, wmsID: str, name: str = "
                         errorDict[errorBase] = 1
                     test += len(errorBase)
 
-    createJSONtable(errorDict | errorG4Dict, name, jobID, prodID, wmsID)
+    dictBase = {
+        "JobID": jobID,
+        "ProductionID": prodID,
+        "wmsID": wmsID,
+        "timestamp": int(TimeUtilities.toEpochMilliSeconds()),
+    }
+    with open(name, "w") as output:
+        output.write(json.dumps(dictBase | errorDict | errorG4Dict, indent=2))
+    gLogger.notice("Finished creating the JSON file with Gauss Errors")
     return S_OK()
 
 
-def createJSONtable(errorDict: dict, name: str, jobID: str, prodID: str, wmsID: str) -> None:
-    """Creates a JSON file out of the collection of errors listed in dictTotal.
-
-    :param errorDict: the dictionary of errors
-    :param name: the name of the JSON file
-    :param jobID: the JobID of the log
-    :param prodID: the ProductionID of the log
-    :param wmsID: the wmsID of the log
-    """
-
-    resultList = {}
-    counter = 0
-    with open(name, "w") as output:
-        for errName, nrOfErrs in errorDict.items():
-            for i in range(1, nrOfErrs + 1):
-                result = {}
-                result["JobID"] = jobID
-                result["ProductionID"] = prodID
-                result["wmsID"] = wmsID
-                result["timestamp"] = int(TimeUtilities.toEpochMilliSeconds())
-                result["Errors"] = 1
-                result["ErrorType"] = errName
-                resultList[counter] = result
-                counter += 1
-        json.dump(resultList, output, indent=2)
-    gLogger.notice("Finished creating the JSON file with Gauss Erros")
-
-
-def getLogString(logFile: str, logString: str) -> dict:
+def __getLogString(logFile: str, logString: str) -> dict:
     """Checks if the log file can be opened, and saves the text in logFile into logString.
 
     :param logFile: the name of the logFile
