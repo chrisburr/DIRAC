@@ -481,7 +481,7 @@ def execute(unit, minimum, depth):
         printSEUsage(totalUsage, grandTotal, scaleFactor)
     elif summary:
         if rank:
-            users = sorted(usersUsage, key=lambda x: int(usersUsage[x][0]))
+            users = sorted(usersUsage, key=lambda x: float(usersUsage[x][0]), reverse=True)
         for user in users:
             spaceUsed, quota = usersUsage[user]
             if spaceUsed > minimum:
