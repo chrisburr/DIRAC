@@ -1830,9 +1830,9 @@ class LHCbBookkeepingManager:
             if retVal["OK"]:
                 for ppass, record in retVal["Value"]["Records"].items():
                     ppass = dataset.get("ProcessingPass", ppass)
-                    string += "\n{} Processing Pass: '{}' \n\n".format(self.comment, ppass)
+                    string += f"\n{self.comment} Processing Pass: '{ppass}' \n\n"
                     for i in record:
-                        string += "{} {} : {} \n".format(self.comment, i[0], i[1])
+                        string += f"{self.comment} {i[0]} : {i[1]} \n"
         return string
 
     #############################################################################

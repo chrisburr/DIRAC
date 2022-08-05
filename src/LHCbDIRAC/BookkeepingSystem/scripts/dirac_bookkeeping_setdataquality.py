@@ -26,11 +26,11 @@ import DIRAC
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Base.Script import Script
 
+from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+
 
 def checkDQFlag(dqFlag):
     """Make sure the DQ flag is a known one."""
-    from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
     res = BookkeepingClient().getAvailableDataQuality()
     if not res["OK"]:
         return res
@@ -43,8 +43,6 @@ def checkDQFlag(dqFlag):
 
 def flagFileList(filename, dqFlag):
     """Flag a LFN or a list of LFN contained in a file."""
-    from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
     lfns = []
 
     # Load the list of LFN
@@ -52,7 +50,7 @@ def flagFileList(filename, dqFlag):
         with open(filename) as f:
             for lfn in f:
                 lfns.append(lfn.strip())
-    except IOError:
+    except OSError:
         lfns = filename.split(",")
 
     # Now flag the LFN
@@ -68,8 +66,6 @@ def flagFileList(filename, dqFlag):
 
 def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
     """Flag a run given its number, the processing pass and the DQ flag."""
-    from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
     res = getProcessingPasses(runNumber, "/Real Data")
     if not res["OK"]:
         return S_ERROR("flagRun: %s" % res["Message"])
@@ -100,17 +96,15 @@ def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
             dqFlag,
         )
         if not res["OK"]:
-            return S_ERROR("flagRun: processing pass %s\n error: %s" % (processingPass, res["Message"]))
+            return S_ERROR("flagRun: processing pass {processingPass}\n error: {res['Message']}")
         else:
-            gLogger.notice("Run %d Processing Pass %s flagged %s" % (runNumber, processingPass, dqFlag))
+            gLogger.notice(f"Run {runNumber} Processing Pass {processingPass} flagged {dqFlag}")
 
     return S_OK()
 
 
 def getProcessingPasses(runNumber, procPass):
     """Find all known processing passes for the selected configurations."""
-    from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
     res = BookkeepingClient().getRunConfigurationsAndDataTakingCondition(int(runNumber))
     if not res["OK"]:
         return res
@@ -130,8 +124,6 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
 
     The visited processing passes are kept in visitedProcessingPass
     """
-    from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
     res = BookkeepingClient().getProcessingPass(bkDict, processingPass)
     if not res["OK"]:
         gLogger.error(
@@ -145,7 +137,7 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
     if "Name" in records["ParameterNames"]:  # this mean we have processing passes
         # this is the name of the processing pass: 'ParameterNames': ['Name']
         index = records["ParameterNames"].index("Name")
-        passes = sorted([os.path.join(processingPass, record[index]) for record in records["Records"]])
+        passes = sorted(os.path.join(processingPass, record[index]) for record in records["Records"])
     else:
         passes = []
 
@@ -159,8 +151,6 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
 
 @Script()
 def main():
-    from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-
     Script.registerSwitch("l:", "lfnfile=", "Flag a LFN or list of LFN")
     Script.registerSwitch("r:", "run=", "Flag a run")
     Script.registerSwitch("p:", "processingPass=", "Processing pass for which a run should be flagged")
@@ -217,7 +207,7 @@ def main():
 
     res = checkDQFlag(params["dqflag"])
     if not res["OK"]:
-        gLogger.fatal("%s - %s" % (params["dqflag"], res["Message"]))
+        gLogger.fatal("{} - {}".format(params["dqflag"], res["Message"]))
         DIRAC.exit(1)
 
     if params["lfn"]:

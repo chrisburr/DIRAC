@@ -13,7 +13,7 @@
 # pylint: disable=protected-access,missing-docstring,invalid-name
 
 import pytest
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient

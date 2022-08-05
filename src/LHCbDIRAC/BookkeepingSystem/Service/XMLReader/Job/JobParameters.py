@@ -11,7 +11,7 @@
 """stores the job parameters."""
 
 
-class JobParameters(object):
+class JobParameters:
     def __init__(self):
         """initialize the class members."""
         self.name = ""

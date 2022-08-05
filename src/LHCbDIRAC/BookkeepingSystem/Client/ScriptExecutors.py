@@ -77,7 +77,7 @@ def executeFileMetadata(dmScript):
             gLogger.notice("{}{} {}".format(sep, "FileName".ljust(lenItem), lfn))
             sep = "\n"
             for item in sorted(lfnMetaDict):
-                gLogger.notice("{} {}".format(item.ljust(lenItem), lfnMetaDict[item]))
+                gLogger.notice(f"{item.ljust(lenItem)} {lfnMetaDict[item]}")
         else:
             size = lfnMetaDict["FileSize"]
             guid = lfnMetaDict["GUID"]
@@ -195,7 +195,7 @@ def executeFilePath(dmScript):
             if res["OK"]:
                 for lfn, metadata in res["Value"]["Successful"].items():  # can be an iterator
                     group = metadata.get(groupBy)
-                    paths["Successful"].setdefault("{} {}".format(groupBy, group), set()).add(lfn)
+                    paths["Successful"].setdefault(f"{groupBy} {group}", set()).add(lfn)
                     lfnChunk.remove(lfn)
                 paths["Failed"].extend(lfnChunk)
         progressBar.endLoop()
@@ -260,7 +260,7 @@ def executeFilePath(dmScript):
                 bkDict["Path"] = __buildPath(bkDict)
                 if groupBy in bkDict:
                     if groupBy != "Path":
-                        prStr = "{} {}".format(groupBy, bkDict[groupBy])
+                        prStr = f"{groupBy} {bkDict[groupBy]}"
                     else:
                         prStr = bkDict[groupBy]
                     paths["Successful"].setdefault(prStr, set()).update(directories[dirName])
@@ -1533,7 +1533,7 @@ def executeRunInfo(item):
         if item == "Ranges":
             gLogger.notice("Total number of runs: %d" % len(runDict))
         for rangeStr in sorted(rangesDict):
-            gLogger.notice("{} : {}".format(rangeStr, rangesDict[rangeStr]))
+            gLogger.notice(f"{rangeStr} : {rangesDict[rangeStr]}")
     else:
         for itemValue in sorted(itemDict):
             gLogger.notice("%s :" % itemValue, ", ".join(itemDict[itemValue]))

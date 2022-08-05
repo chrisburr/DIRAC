@@ -48,7 +48,7 @@ def main():
         if not res["Value"]:
             print("No jobs for production", prod)
             DIRAC.exit(0)
-        sites = dict([(site, num) for num, site in res["Value"]])
+        sites = {site: num for num, site in res["Value"]}
         shift = 0
         for site in sites:
             shift = max(shift, len(site) + 2)

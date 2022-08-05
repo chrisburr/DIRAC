@@ -105,7 +105,7 @@ class XMLFilesReaderManager:
             else:
                 result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
                 if not result["OK"]:
-                    self.log.error("The [type:version] is missing", "[%s: %s]" % (str(typeName), str(typeVersion)))
+                    self.log.error("The [type:version] is missing", f"[{typeName}: {typeVersion}]")
                     return S_ERROR("[type:version] missing")
 
                 self.log.debug(cachedTypeNameVersion + " added to the cache!")
@@ -309,7 +309,7 @@ class XMLFilesReaderManager:
         result = self.__insertJob(job)
         if not result["OK"]:
             config = job.configuration
-            errorMessage = "Unable to create Job: %s , %s, %s .\n Error: %s" % (
+            errorMessage = "Unable to create Job: {} , {}, {} .\n Error: {}".format(
                 str(config.configName),
                 str(config.configVersion),
                 str(config.date),
@@ -325,7 +325,7 @@ class XMLFilesReaderManager:
             except ValueError:
                 runnumber = -1
             if runnumber != -1:
-                self.log.verbose("Registering the run status for ", "Run number %s,  JobId %s" % (runnumber, job.jobID))
+                self.log.verbose("Registering the run status for ", f"Run number {runnumber},  JobId {job.jobID}")
                 result = self.bkClient_.insertRunStatus(runnumber, job.jobID, "N")
                 if not result["OK"]:
                     errorMessage = ("Unable to register run status", runnumber + result["Message"])
@@ -388,7 +388,7 @@ class XMLFilesReaderManager:
             if not result["OK"]:
                 errorMessage = (
                     "Unable to insert output file",
-                    "%s ! ERROR: %s" % (str(outputfile.name), result["Message"]),
+                    f"{outputfile.name} ! ERROR: {result['Message']}",
                 )
                 self.log.error(errorMessage[0], errorMessage[1])
                 res = self.bkClient_.deleteInputFiles(job.jobID)

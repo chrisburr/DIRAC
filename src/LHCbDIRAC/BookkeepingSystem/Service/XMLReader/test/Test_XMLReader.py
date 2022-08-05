@@ -11,7 +11,7 @@
 import datetime
 import pytest
 from xml.dom.minidom import parseString
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 mockBKDB = MagicMock()
 mockBKDB.return_value = None

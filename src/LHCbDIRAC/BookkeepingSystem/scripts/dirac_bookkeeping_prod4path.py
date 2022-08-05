@@ -21,7 +21,7 @@ def printProds(title, prods):
         typeDict.setdefault(prodType, []).append(prod)
     gLogger.notice(title)
     for prodType, prodList in typeDict.items():
-        gLogger.notice("(%s): %s" % (prodType, ",".join([str(prod) for prod in sorted(prodList)])))
+        gLogger.notice("({}): {}".format(prodType, ",".join([str(prod) for prod in sorted(prodList)])))
 
 
 def execute(dmScript):

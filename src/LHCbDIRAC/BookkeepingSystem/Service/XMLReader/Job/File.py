@@ -60,7 +60,7 @@ class File:
 
     def writeToXML(self):
         """creates an xml string."""
-        string = "  <OutputFile   Name='%s' TypeName='%s' TypeVersion='%s'>\n" % (self.name, self.type, self.version)
+        string = f"  <OutputFile   Name='{self.name}' TypeName='{self.type}' TypeVersion='{self.version}'>\n"
 
         for replica in self.replicas:
             string += replica.writeToXML()

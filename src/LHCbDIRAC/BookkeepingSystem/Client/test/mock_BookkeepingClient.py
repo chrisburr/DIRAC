@@ -11,7 +11,7 @@
 """A mock of the BookkeepingClient, used for testing purposes."""
 # pylint: disable=protected-access, missing-docstring, invalid-name, line-too-long
 
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 bkc_mock = MagicMock()
 bkc_mock.sendXMLBookkeepingReport.return_value = {"OK": True, "Value": ""}
