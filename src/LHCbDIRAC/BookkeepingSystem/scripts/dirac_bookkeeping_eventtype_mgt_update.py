@@ -102,7 +102,7 @@ def main():
             for line in fd:
                 evt = process_event(line)
                 eventtypes.append(evt)
-    except IOError:
+    except OSError:
         gLogger.error("Cannot open file " + fileName)
         DIRAC.exit(2)
 
@@ -115,7 +115,7 @@ def main():
             gLogger.error("Failed to update the following event types:")
             for evt in result["Value"]["Failed"]:
                 for i in evt.values():
-                    gLogger.error("%s : %s" % (repr(i.get("EvtentType")), i.get("Error")))
+                    gLogger.error("{} : {}".format(repr(i.get("EvtentType")), i.get("Error")))
 
         if result["Value"]["Successful"]:
             gLogger.notice("The following event types are updated: %s" % repr(result["Value"]["Successful"]))

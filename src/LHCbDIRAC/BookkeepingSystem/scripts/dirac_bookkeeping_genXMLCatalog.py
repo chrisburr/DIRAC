@@ -31,7 +31,7 @@ def __getLfnsFromFile(optFiles, gaudiVerbose):
                 DIRAC.exit(1)
             runOpts += opt + " "
 
-        gaudiRun = "gaudirun.py -n -o %s %s" % (tmpFile.name, runOpts)
+        gaudiRun = f"gaudirun.py -n -o {tmpFile.name} {runOpts}"
         gLogger.info("Extract list of input files from", optFiles)
 
         gLogger.info("lb-run LHCb for getting environment")

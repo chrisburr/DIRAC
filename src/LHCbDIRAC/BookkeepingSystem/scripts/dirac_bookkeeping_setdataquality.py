@@ -37,8 +37,7 @@ def checkDQFlag(dqFlag):
 
     if dqFlag in res["Value"]:
         return S_OK()
-    else:
-        return S_ERROR("Data quality flag is not in the db")
+    return S_ERROR("Data quality flag is not in the db")
 
 
 def flagFileList(filename, dqFlag):
@@ -52,7 +51,7 @@ def flagFileList(filename, dqFlag):
         with open(filename) as f:
             for lfn in f:
                 lfns.append(lfn.strip())
-    except IOError:
+    except OSError:
         lfns = filename.split(",")
 
     # Now flag the LFN
@@ -60,9 +59,8 @@ def flagFileList(filename, dqFlag):
 
     if not res["OK"]:
         return res
-    else:
-        gLogger.notice("The data quality has been set %s for %d files:" % (dqFlag, len(lfns)))
 
+    gLogger.notice("The data quality has been set", f"({dqFlag} for {len(lfns)} files)")
     return S_OK()
 
 
@@ -100,9 +98,8 @@ def flagRun(runNumber, procPass, dqFlag, flagRAW=False):
             dqFlag,
         )
         if not res["OK"]:
-            return S_ERROR("flagRun: processing pass %s\n error: %s" % (processingPass, res["Message"]))
-        else:
-            gLogger.notice("Run %d Processing Pass %s flagged %s" % (runNumber, processingPass, dqFlag))
+            return S_ERROR("flagRun: processing pass {processingPass}\n error: {res['Message']}")
+        gLogger.notice(f"Run {runNumber} Processing Pass {processingPass} flagged {dqFlag}")
 
     return S_OK()
 
@@ -145,7 +142,7 @@ def browseBkkPath(bkDict, processingPass, visitedProcessingPass):
     if "Name" in records["ParameterNames"]:  # this mean we have processing passes
         # this is the name of the processing pass: 'ParameterNames': ['Name']
         index = records["ParameterNames"].index("Name")
-        passes = sorted([os.path.join(processingPass, record[index]) for record in records["Records"]])
+        passes = sorted(os.path.join(processingPass, record[index]) for record in records["Records"])
     else:
         passes = []
 
@@ -217,7 +214,7 @@ def main():
 
     res = checkDQFlag(params["dqflag"])
     if not res["OK"]:
-        gLogger.fatal("%s - %s" % (params["dqflag"], res["Message"]))
+        gLogger.fatal("{} - {}".format(params["dqflag"], res["Message"]))
         DIRAC.exit(1)
 
     if params["lfn"]:

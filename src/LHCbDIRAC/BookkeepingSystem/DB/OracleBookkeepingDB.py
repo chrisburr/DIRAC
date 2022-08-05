@@ -284,9 +284,9 @@ class OracleBookkeepingDB:
                     order = ""
                     for item in items:
                         order += "s.%s," % (item)
-                    condition += " %s %s" % (order[:-1], order)
+                    condition += " {} {}".format(order[:-1], order)
                 elif isinstance(items, str):
-                    condition += " s.%s %s" % (items, order)
+                    condition += " s.{} {}".format(items, order)
                 else:
                     return S_ERROR("SortItems is not properly defined!")
             else:
@@ -317,7 +317,7 @@ FROM %s WHERE s.stepid=s.stepid %s \
                         % (fileTypefilter, condition, maximum, start)
                     )
                 else:
-                    command = "SELECT * FROM %s WHERE s.stepid=s.stepid %s" % (fileTypefilter, condition)
+                    command = "SELECT * FROM {} WHERE s.stepid=s.stepid {}".format(fileTypefilter, condition)
             elif paging:
                 command = (
                     "SELECT sstepid, sname, sapplicationname, sapplicationversion, soptionfiles, \
@@ -423,7 +423,7 @@ FROM %s WHERE s.stepid=rr.stepid(+) AND r.stepid(+)=rr.runtimeprojectid "
             return S_OK({"ParameterNames": parameters, "Records": records, "TotalRecords": len(records)})
 
         if fileTypefilter:
-            command = "SELECT count(*) FROM %s WHERE s.stepid>0 %s " % (fileTypefilter, condition)
+            command = "SELECT count(*) FROM {} WHERE s.stepid>0 {} ".format(fileTypefilter, condition)
         else:
             command = "SELECT count(*) FROM steps s WHERE s.stepid>0 %s " % (condition)
 
@@ -448,7 +448,9 @@ s.extrapackages,s.Visible, s.ProcessingPass, s.Usable, s.DQTag, s.optionsformat,
         stepId = in_dict.get("StepId", default)
         if stepId != default:
             condition += " rp.stepid=%d" % (stepId)
-            command = " SELECT %s FROM %s WHERE s.stepid=rp.runtimeprojectid AND %s" % (selection, tables, condition)
+            command = " SELECT {} FROM {} WHERE s.stepid=rp.runtimeprojectid AND {}".format(
+                selection, tables, condition
+            )
             retVal = self.dbR_.query(command)
             if retVal["OK"]:
                 parameters = [
@@ -509,10 +511,10 @@ table(steps.InputFileTypes) inputFiletypes WHERE steps.stepid="
                 fileType = i.get("FileType", default)
                 visible = i.get("Visible", default)
                 if fileType != default and visible != default:
-                    values += "ftype('%s','%s')," % (fileType, visible)
+                    values += "ftype('{}','{}'),".format(fileType, visible)
             values = values[:-1]
             values += ")"
-        command = "UPDATE steps SET inputfiletypes=%s WHERE stepid=%s" % (values, str(stepid))
+        command = "UPDATE steps SET inputfiletypes={} WHERE stepid={}".format(values, str(stepid))
         return self.dbW_.query(command)
 
     #############################################################################
@@ -531,10 +533,10 @@ table(steps.InputFileTypes) inputFiletypes WHERE steps.stepid="
                 fileType = i.get("FileType", default)
                 visible = i.get("Visible", default)
                 if fileType != default and visible != default:
-                    values += "ftype('%s','%s')," % (fileType, visible)
+                    values += "ftype('{}','{}'),".format(fileType, visible)
             values = values[:-1]
             values += ")"
-        command = "UPDATE steps SET Outputfiletypes=%s WHERE stepid=%s" % (values, str(stepid))
+        command = "UPDATE steps SET Outputfiletypes={} WHERE stepid={}".format(values, str(stepid))
         return self.dbW_.query(command)
 
     #############################################################################
@@ -645,7 +647,7 @@ extrapackages,visible, processingpass, usable, DQTag, optionsformat,isMulticore,
             values = ",filetypesARRAY("
             selection += ",InputFileTypes"
             for i in inFileTypes:
-                values += "ftype('%s', '%s')," % (
+                values += "ftype('{}', '{}'),".format(
                     (i.get("FileType", "").strip() if i.get("FileType", "") else i.get("FileType", "")),
                     (i.get("Visible", "").strip() if i.get("Visible", "") else i.get("Visible", "")),
                 )
@@ -658,7 +660,7 @@ extrapackages,visible, processingpass, usable, DQTag, optionsformat,isMulticore,
             values += " , filetypesARRAY("
             selection += ",OutputFileTypes"
             for i in outFileTypes:
-                values += "ftype('%s', '%s')," % (
+                values += "ftype('{}', '{}'),".format(
                     (i.get("FileType", "").strip() if i.get("FileType", "") else i.get("FileType", "")),
                     (i.get("Visible", "").strip() if i.get("Visible", "") else i.get("Visible", "")),
                 )
@@ -783,7 +785,7 @@ extrapackages,visible, processingpass, usable, DQTag, optionsformat,isMulticore,
                 command = "UPDATE steps set "
                 for i in in_dict:
                     if isinstance(in_dict[i], str):
-                        command += " %s='%s'," % (i, str(in_dict[i]))
+                        command += " {}='{}',".format(i, str(in_dict[i]))
                     else:
                         if in_dict[i]:
                             values = "filetypesARRAY("
@@ -1008,7 +1010,7 @@ WHERE v.path='%s'"
         retVal = self._getDataTakingConditionId(conddescription)
         if retVal["OK"]:
             if retVal["Value"] != -1:
-                condition += " AND %s.DAQPERIODID=%s AND %s.DAQPERIODID is not null " % (
+                condition += " AND {}.DAQPERIODID={} AND {}.DAQPERIODID is not null ".format(
                     table,
                     str(retVal["Value"]),
                     table,
@@ -1017,7 +1019,9 @@ WHERE v.path='%s'"
                 retVal = self.__getSimulationConditionId(conddescription)
                 if retVal["OK"]:
                     if retVal["Value"] != -1:
-                        condition += " AND %s.simid=%s AND %s.simid is not null " % (table, str(retVal["Value"]), table)
+                        condition += " AND {}.simid={} AND {}.simid is not null ".format(
+                            table, str(retVal["Value"]), table
+                        )
                     else:
                         return S_ERROR("Condition does not exists!")
                 else:
@@ -1105,7 +1109,7 @@ WHERE v.path='%s'"
             return retVal
         condition, tables = retVal["Value"]
 
-        command = "SELECT prod.production FROM %s WHERE 1=1  %s GROUP BY prod.production" % (tables, condition)
+        command = "SELECT prod.production FROM {} WHERE 1=1  {} GROUP BY prod.production".format(tables, condition)
 
         return self.dbR_.query(command)
 
@@ -1770,7 +1774,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
         """
         utctime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         command = "UPDATE files Set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS') ," % (str(utctime))
-        command += ",".join(["%s=%s" % (str(attribute), str(fileAttr[attribute])) for attribute in fileAttr])
+        command += ",".join(["{}={}".format(str(attribute), str(fileAttr[attribute])) for attribute in fileAttr])
         command += " WHERE fileName='%s'" % (filename)
         res = self.dbW_.query(command)
         return res
@@ -1788,7 +1792,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
             command = "UPDATE files Set inserttimestamp=TO_TIMESTAMP('%s','YYYY-MM-DD HH24:MI:SS'), " % (str(utctime))
             command += ",".join(
                 [
-                    "%s=%s" % (str(attribute), str(lfnswithmeta[filename][attribute]))
+                    "{}={}".format(str(attribute), str(lfnswithmeta[filename][attribute]))
                     for attribute in lfnswithmeta[filename]
                 ]
             )
@@ -1854,7 +1858,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
         :param str value: CONDDB, DDDB, etc. tag
         """
         result = False
-        command = "SELECT COUNT(*) FROM tags WHERE name='%s' AND tag='%s'" % (str(name), str(value))
+        command = "SELECT COUNT(*) FROM tags WHERE name='{}' AND tag='{}'".format(str(name), str(value))
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             result = retVal
@@ -3014,7 +3018,9 @@ AND ft.filetypeid=f.ftypeid"
                     )
                 selection.append("steps.%s" % (i))
 
-        command = "SELECT jobs.runnumber, %s FROM %s WHERE %s " % (", ".join(selection), ", ".join(tables), conditions)
+        command = "SELECT jobs.runnumber, {} FROM {} WHERE {} ".format(
+            ", ".join(selection), ", ".join(tables), conditions
+        )
         retVal = self.dbR_.query(command)
         if not retVal["OK"]:
             return retVal
@@ -3050,7 +3056,7 @@ AND ft.filetypeid=f.ftypeid"
                 elif i.upper() in filesFields:
                     selection += "sum(f.%s), " % (i)
             selection = selection[:-1]
-            command = "SELECT %s  from %s where %s" % (selection, tables, conditions)
+            command = "SELECT {}  from {} where {}".format(selection, tables, conditions)
             retVal = self.dbR_.query(command)
             if not retVal["OK"]:
                 return retVal
@@ -3686,11 +3692,11 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         #  hint = '/*+INDEX(j JOBS_PRODUCTIONID) INDEX(f FILES_JOB_EVENT_FILETYPE) INDEX(ft FILETYPES_ID_NAME)*/'
 
         if nbofEvents:
-            command = "SELECT SUM(f.eventstat) FROM %s WHERE f.jobid= j.jobid %s " % (tables, condition)
+            command = "SELECT SUM(f.eventstat) FROM {} WHERE f.jobid= j.jobid {} ".format(tables, condition)
         elif filesize:
-            command = "SELECT SUM(f.filesize) FROM %s WHERE f.jobid= j.jobid %s " % (tables, condition)
+            command = "SELECT SUM(f.filesize) FROM {} WHERE f.jobid= j.jobid {} ".format(tables, condition)
         else:
-            command = "SELECT DISTINCT f.filename FROM %s WHERE f.jobid= j.jobid %s " % (tables, condition)
+            command = "SELECT DISTINCT f.filename FROM {} WHERE f.jobid= j.jobid {} ".format(tables, condition)
         return self.dbR_.query(command)
 
     #############################################################################
@@ -3752,11 +3758,11 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                 condition += " AND "
                 cond = " ("
                 for i in production:
-                    cond += " %s.production=%s or " % (table, str(i))
+                    cond += " {}.production={} or ".format(table, str(i))
                 cond = cond[:-3] + ")"
                 condition += cond
             elif isinstance(production, (str, int)):
-                condition += " AND %s.production=%s" % (table, str(production))
+                condition += " AND {}.production={}".format(table, str(production))
 
         return condition, tables
 
@@ -3890,16 +3896,16 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                 tables += " , prodrunview prview"
         cond = None
         if isinstance(runnumbers, int):
-            condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
+            condition += "AND {}.runnumber={} ".format(table, str(runnumbers))
         elif isinstance(runnumbers, str) and runnumbers.upper() != default:
-            condition += "AND %s.runnumber=%s " % (table, str(runnumbers))
+            condition += "AND {}.runnumber={} ".format(table, str(runnumbers))
         elif isinstance(runnumbers, list) and runnumbers:
             cond = " ("
             for i in runnumbers:
-                cond += " %s.runnumber=%s OR " % (table, str(i))
+                cond += " {}.runnumber={} OR ".format(table, str(i))
             cond = cond[:-3] + ")"
             if startRunID is not None and endRunID is not None:
-                condition += "AND (%s.runnumber>=%s AND %s.runnumber<=%s OR %s) " % (
+                condition += "AND ({}.runnumber>={} AND {}.runnumber<={} OR {}) ".format(
                     table,
                     str(startRunID),
                     table,
@@ -3914,11 +3920,11 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
             if (isinstance(startRunID, str) and startRunID.upper() != default) or (
                 isinstance(startRunID, int) and startRunID is not None
             ):
-                condition += "AND %s.runnumber>=%s " % (table, str(startRunID))
+                condition += "AND {}.runnumber>={} ".format(table, str(startRunID))
             if (isinstance(endRunID, str) and endRunID.upper() is not default) or (
                 isinstance(endRunID, int) and endRunID is not None
             ):
-                condition += "AND %s.runnumber<=%s " % (table, str(endRunID))
+                condition += "AND {}.runnumber<={} ".format(table, str(endRunID))
         return S_OK((condition, tables))
 
     #############################################################################
@@ -3947,21 +3953,21 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
                 condition += " AND "
                 cond = " ("
                 for i in evt:
-                    cond += " %s.eventtypeid=%s or " % (table, (str(i)))
+                    cond += " {}.eventtypeid={} or ".format(table, (str(i)))
                 cond = cond[:-3] + ")"
                 condition += cond
             elif isinstance(evt, (str, int)):
-                condition += " AND %s.eventtypeid=%s" % (table, str(evt))
+                condition += " AND {}.eventtypeid={}".format(table, str(evt))
             if useMainTables:
                 if isinstance(evt, (list, tuple)) and evt:
                     condition += " AND "
                     cond = " ("
                     for i in evt:
-                        cond += " %s.eventtypeid=%s or " % (table, (str(i)))
+                        cond += " {}.eventtypeid={} or ".format(table, (str(i)))
                     cond = cond[:-3] + ")"
                     condition += cond
                 elif isinstance(evt, (str, int)):
-                    condition += " AND %s.eventtypeid=%s" % (table, str(evt))
+                    condition += " AND {}.eventtypeid={}".format(table, str(evt))
         return condition, tables
 
     #############################################################################
@@ -4568,7 +4574,7 @@ rownum <=%d ) WHERE r >%d"
         for i in values:
             command = ""
             if parentid is not None:
-                command = "SELECT id from processing WHERE name='%s' AND parentid=%s" % (i, parentid)
+                command = "SELECT id from processing WHERE name='{}' AND parentid={}".format(i, parentid)
             else:
                 command = "SELECT id from processing WHERE name='%s' AND parentid is null" % (i)
             retVal = self.dbR_.query(command)
@@ -4793,7 +4799,7 @@ rownum <=%d ) WHERE r >%d"
                     fversion = fileTypeMap.get(ftype.get("FileType"), "ROOT")
                     result = self.checkFileTypeAndVersion(ftype.get("FileType"), fversion)
                     if not result["OK"]:
-                        return S_ERROR("The type:%s, version:%s is missing." % (ftype.get("FileType"), fversion))
+                        return S_ERROR("The type:{}, version:{} is missing.".format(ftype.get("FileType"), fversion))
                     else:
                         fileTypeid = int(result["Value"])
                     retVal = self.dbW_.executeStoredProcedure(
@@ -4825,7 +4831,7 @@ rownum <=%d ) WHERE r >%d"
 
         condition, tables = self.__buildProduction(prod, condition, tables, useMainTables=False)
 
-        command = "SELECT e.eventtypeid, e.description FROM  %s WHERE %s GROUP BY e.eventtypeid, e.description" % (
+        command = "SELECT e.eventtypeid, e.description FROM  {} WHERE {} GROUP BY e.eventtypeid, e.description".format(
             tables,
             condition,
         )
@@ -5541,7 +5547,7 @@ configurations c WHERE j.configurationid=c.configurationid %s AND prod.productio
                     order += "sim.%s," % (item)
                 condition += " %s" % order[:-1]
             elif isinstance(items, str):
-                condition += " sim.%s %s" % (items, order)
+                condition += " sim.{} {}".format(items, order)
             else:
                 result = S_ERROR("SortItems is not properly defined!")
         else:
@@ -5605,7 +5611,7 @@ sim.g4settings sim_g4settings, sim.visible sim_visible FROM %s WHERE sim.simid=s
             condition = ""
             for cond in in_dict:
                 if cond != "SimId":
-                    condition += "%s='%s'," % (cond, in_dict[cond])
+                    condition += "{}='{}',".format(cond, in_dict[cond])
             condition = condition[:-1]
             command = "UPDATE simulationconditions SET %s WHERE simid=%d" % (condition, int(simid))
             return self.dbW_.query(command)

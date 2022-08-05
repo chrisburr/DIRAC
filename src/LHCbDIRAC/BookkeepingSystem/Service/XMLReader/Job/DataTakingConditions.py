@@ -12,7 +12,7 @@
 from DIRAC import gLogger
 
 
-class DataTakingConditions(object):
+class DataTakingConditions:
     """DataTakingConditions class."""
 
     def __init__(self):
