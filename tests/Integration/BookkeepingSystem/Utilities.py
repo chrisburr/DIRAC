@@ -19,8 +19,8 @@ runnb_1 = 1122
 runnb_2 = 1123
 
 # 5 fake files
-rawFiles_1 = ["/lhcb/data/2016/RAW/Test/test/%s/000%s_test_%d.raw" % (runnb_1, runnb_1, i) for i in range(5)]
-rawFiles_2 = ["/lhcb/data/2021/RAW/Test/test/%s/000%s_test_%d.raw" % (runnb_2, runnb_2, i) for i in range(5, 11)]
+rawFiles_1 = [f"/lhcb/data/2016/RAW/Test/test/{runnb_1}/000{runnb_1}_test_{i}.raw" for i in range(5)]
+rawFiles_2 = [f"/lhcb/data/2021/RAW/Test/test/{runnb_2}/000{runnb_2}_test_{i}.raw" for i in range(5, 11)]
 
 # Construction of an XML Job report
 # (this should be similar to what comes from online)
@@ -164,7 +164,7 @@ def insertRAWFiles(bk):
     # first group
     jobXML = xmlJob_1.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
     jobXML = jobXML.replace("%jTime%", currentTime.strftime("%H:%M"))
-    jobXML = jobXML.replace("%runnb%", runnb_1)
+    jobXML = jobXML.replace("%runnb%", str(runnb_1))
     jobXML = jobXML.replace("%jStart%", currentTime.strftime("%Y-%m-%d %H:%M"))
     jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
     xmlReport = jobXML
@@ -183,7 +183,7 @@ def insertRAWFiles(bk):
     # second group
     jobXML = xmlJob_2.replace("%jDate%", currentTime.strftime("%Y-%m-%d"))
     jobXML = jobXML.replace("%jTime%", currentTime.strftime("%H:%M"))
-    jobXML = jobXML.replace("%runnb%", runnb_2)
+    jobXML = jobXML.replace("%runnb%", str(runnb_2))
     jobXML = jobXML.replace("%jStart%", currentTime.strftime("%Y-%m-%d %H:%M"))
     jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
     xmlReport = jobXML
