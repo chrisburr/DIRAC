@@ -353,8 +353,7 @@ class BookkeepingClient(Client):
             retVal = bkk.receiveFile(file_name.name, params)
             if not retVal["OK"]:
                 return retVal
-            value = JEncoder.load(open(file_name.name))
-        return S_OK(value)
+            return JEncoder.load(open(file_name.name))
 
     def getRunStatus(self, runs):
         """For retrieving the run status.
