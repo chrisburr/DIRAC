@@ -1035,7 +1035,7 @@ def test_sendJobReport():
         "Job_Report_MCMerge.xml.temp",
     ]:
         bkFile = find_all(rep, "..", "BookkeepingSystem")[0]
-	with open(bkFile, "r") as fd:
+        with open(bkFile, "r") as fd:
             bkXML = fd.read()
         res = bk.sendXMLBookkeepingReport(bkXML)
         assert res["OK"]

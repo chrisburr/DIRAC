@@ -169,7 +169,7 @@ def insertRAWFiles(bk):
     jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
     xmlReport = jobXML
     for f in rawFiles_1:
-	xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
+        xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
 
     xmlReport += dqCond
     res = bk.sendXMLBookkeepingReport(xmlReport)
@@ -188,7 +188,7 @@ def insertRAWFiles(bk):
     jobXML = jobXML.replace("%jEnd%", currentTime.strftime("%Y-%m-%d %H:%M"))
     xmlReport = jobXML
     for f in rawFiles_2:
-	xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
+        xmlReport += xmlFile.replace("%filename%", f).replace("%fileCreation%", currentTime.strftime("%Y-%m-%d %H:%M"))
 
     xmlReport += dqCond
     res = bk.sendXMLBookkeepingReport(xmlReport)
