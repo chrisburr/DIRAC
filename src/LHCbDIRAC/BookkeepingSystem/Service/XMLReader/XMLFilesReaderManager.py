@@ -385,7 +385,6 @@ class XMLFilesReaderManager:
                 self.log.debug("The visibility flag is", outputFileTypes[ftype])
 
             result = self.__insertOutputFiles(job, outputfile)
-            print("AAAAAAAAa", result)
             if not result["OK"]:
                 errorMessage = (
                     "Unable to insert output file",

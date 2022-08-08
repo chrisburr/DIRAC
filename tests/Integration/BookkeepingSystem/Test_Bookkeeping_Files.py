@@ -196,7 +196,6 @@ def test_getFiles(wipeout):
         "FileType": "RAW",
     }
     res = bk.getFiles(bkQueryDict)
-    print(res)
     assert res["OK"], res["Message"]
     assert len(res["Value"]) == 5
 

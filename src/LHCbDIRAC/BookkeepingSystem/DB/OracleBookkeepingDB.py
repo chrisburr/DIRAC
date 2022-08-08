@@ -863,7 +863,7 @@ GROUP BY c.configversion ORDER BY c.configversion"
         """
 
         condition = " AND cont.production=prod.production %s " % self.__buildVisible(visible="Y", replicaFlag="Yes")
-        tables = " configurations c, productionscontainer cont, productionoutputfiles prod "
+        tables = " configurations c, productionscontainer cont, productionoutputfiles prod, jobs j "
         condition, tables = self.__buildConfiguration(configName, configVersion, condition, tables)
 
         if evt != default:
