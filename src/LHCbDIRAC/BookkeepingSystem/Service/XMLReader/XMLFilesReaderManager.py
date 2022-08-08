@@ -29,7 +29,7 @@ class XMLFilesReaderManager:
 
     def __init__(self):
         """initialize the member of class."""
-        self.bkClient_ = OracleBookkeepingDB()
+        self.db = OracleBookkeepingDB()
         self.log = gLogger.getSubLogger("XMLFilesReaderManager")
 
     #############################################################################
@@ -82,7 +82,7 @@ class XMLFilesReaderManager:
         # prepare for the insert, check the existence of the input files and retreive the fileid
         inputFiles = [inputFile.name for inputFile in job.inputFiles]
         if inputFiles:
-            result = self.bkClient_.bulkgetIDsFromFilesTable(inputFiles)
+            result = self.db.bulkgetIDsFromFilesTable(inputFiles)
             if not result["OK"]:
                 return result
             if result["Value"]["Failed"]:
@@ -103,7 +103,7 @@ class XMLFilesReaderManager:
                 typeID = fileTypeCache[cachedTypeNameVersion]
                 outputfile.typeID = typeID
             else:
-                result = self.bkClient_.checkFileTypeAndVersion(typeName, typeVersion)
+                result = self.db.checkFileTypeAndVersion(typeName, typeVersion)
                 if not result["OK"]:
                     self.log.error("The [type:version] is missing", f"[{typeName}: {typeVersion}]")
                     return S_ERROR("[type:version] missing")
@@ -128,12 +128,12 @@ class XMLFilesReaderManager:
                 self.log.debug("ParamName check of " + str(param.name))
 
                 if param.name == "EventType" and param.value:
-                    result = self.bkClient_.checkEventType(int(param.value))
+                    result = self.db.checkEventType(int(param.value))
                     if not result["OK"]:
                         return S_ERROR("The event type %s is missing!" % (str(param.value)))
 
                 if param.name == "EventTypeId" and param.value:
-                    result = self.bkClient_.checkEventType(int(param.value))
+                    result = self.db.checkEventType(int(param.value))
                     if not result["OK"]:
                         return S_ERROR("The event type %s is missing!" % (str(param.value)))
                     evtExists = True
@@ -143,7 +143,7 @@ class XMLFilesReaderManager:
 
                 if inputFiles:
                     fileName = inputFiles[0].name
-                    res = self.bkClient_.getFileMetadata([fileName])
+                    res = self.db.getFileMetadata([fileName])
                     if not res["OK"]:
                         return res
                     fileMetadata = res["Value"]["Successful"].get(fileName)
@@ -195,7 +195,7 @@ class XMLFilesReaderManager:
 
                 if job.getParam("JobType") and job.getParam("JobType").value == "DQHISTOMERGING":
                     self.log.debug("DQ merging!")
-                    retVal = self.bkClient_.getJobInfo(job.inputFiles[0].name)
+                    retVal = self.db.getJobInfo(job.inputFiles[0].name)
                     if not retVal["OK"]:
                         return retVal
                     prod = retVal["Value"][0][18]
@@ -208,7 +208,7 @@ class XMLFilesReaderManager:
                     prod = job.getParam("Production").value
                     self.log.debug("Production:", "%s" % prod)
 
-                retVal = self.bkClient_.getProductionProcessingPassID(prod)
+                retVal = self.db.getProductionProcessingPassID(prod)
                 if not retVal["OK"]:
                     return retVal
 
@@ -247,7 +247,7 @@ class XMLFilesReaderManager:
         # ## It is not urgent as we do not have a huge load on the database
         for i in inputfiles:
             fname = i.name
-            res = self.bkClient_.getJobInfo(fname)
+            res = self.db.getJobInfo(fname)
             if not res["OK"]:
                 return res
 
@@ -255,7 +255,7 @@ class XMLFilesReaderManager:
             if value and value[0][2] is not None:
                 sumEventInputStat += value[0][2]
 
-            res = self.bkClient_.getFileMetadata([fname])
+            res = self.db.getFileMetadata([fname])
             if not res["OK"]:
                 return res
 
@@ -326,11 +326,11 @@ class XMLFilesReaderManager:
                 runnumber = -1
             if runnumber != -1:
                 self.log.verbose("Registering the run status for ", f"Run number {runnumber},  JobId {job.jobID}")
-                result = self.bkClient_.insertRunStatus(runnumber, job.jobID, "N")
+                result = self.db.insertRunStatus(runnumber, job.jobID, "N")
                 if not result["OK"]:
                     errorMessage = ("Unable to register run status", runnumber + result["Message"])
                     self.log.error(errorMessage[0], errorMessage[1])
-                    res = self.bkClient_.deleteJob(job.jobID)
+                    res = self.db.deleteJob(job.jobID)
                     if not res["OK"]:
                         self.log.warn("Unable to delete job", str(job.jobID) + res["Message"])
                     return S_ERROR(errorMessage[0])
@@ -349,11 +349,11 @@ class XMLFilesReaderManager:
 
         inputFiles = job.inputFiles
         for inputfile in inputFiles:
-            result = self.bkClient_.insertInputFile(job.jobID, inputfile.fileID)
+            result = self.db.insertInputFile(job.jobID, inputfile.fileID)
             if not result["OK"]:
                 errorMessage = ("Unable to insert input file", (str(inputfile.name)) + result["Message"])
                 self.log.error(errorMessage[0], errorMessage[1])
-                res = self.bkClient_.deleteJob(job.jobID)
+                res = self.db.deleteJob(job.jobID)
                 if not res["OK"]:
                     self.log.warn("Unable to delete job", str(job.jobID) + res["Message"])
                 return S_ERROR(errorMessage[0])
@@ -361,7 +361,7 @@ class XMLFilesReaderManager:
         outputFiles = job.outputFiles
         prod = job.getParam("Production").value
         stepid = job.getParam("StepID").value
-        retVal = self.bkClient_.getProductionOutputFileTypes(prod, stepid)
+        retVal = self.db.getProductionOutputFileTypes(prod, stepid)
         if not retVal["OK"]:
             return retVal
         outputFileTypes = retVal["Value"]
@@ -385,16 +385,17 @@ class XMLFilesReaderManager:
                 self.log.debug("The visibility flag is", outputFileTypes[ftype])
 
             result = self.__insertOutputFiles(job, outputfile)
+            print("AAAAAAAAa", result)
             if not result["OK"]:
                 errorMessage = (
                     "Unable to insert output file",
                     f"{outputfile.name} ! ERROR: {result['Message']}",
                 )
                 self.log.error(errorMessage[0], errorMessage[1])
-                res = self.bkClient_.deleteInputFiles(job.jobID)
+                res = self.db.deleteInputFiles(job.jobID)
                 if not res["OK"]:
                     self.log.warn("Unable to delete inputfiles of", str(job.jobID) + res["Message"])
-                res = self.bkClient_.deleteJob(job.jobID)
+                res = self.db.deleteJob(job.jobID)
                 if not res["OK"]:
                     self.log.warn("Unable to delete job", str(job.jobID) + res["Message"])
                 return S_ERROR(errorMessage[0])
@@ -408,7 +409,7 @@ class XMLFilesReaderManager:
                 for param in params:
                     # just one param exist in params list, because JobReader only one param add to Replica
                     name = param.name
-                result = self.bkClient_.updateReplicaRow(outputfile.fileID, "No")
+                result = self.db.updateReplicaRow(outputfile.fileID, "No")
                 if not result["OK"]:
                     return S_ERROR("Unable to create Replica %s !" % (str(name)))
 
@@ -422,7 +423,7 @@ class XMLFilesReaderManager:
         runnumbers = set()
         tcks = set()
         for lfn in fileList:
-            for runtck in returnValueOrRaise(self.bkClient_.getRunNbAndTck(lfn)):
+            for runtck in returnValueOrRaise(self.db.getRunNbAndTck(lfn)):
                 if runtck[0]:
                     runnumbers.add(runtck[0])
                 if runtck[1] and runtck[1] != "None":
@@ -437,8 +438,8 @@ class XMLFilesReaderManager:
         """
         if not runNumber:
             return None
-        procID = returnValueOrRaise(self.bkClient_.getProductionProcessingPassID(prod or runNumber * -1))
-        return self.bkClient_.getRunAndProcessingPassDataQuality(runNumber, procID).get("Value")
+        procID = returnValueOrRaise(self.db.getProductionProcessingPassID(prod or runNumber * -1))
+        return self.db.getRunAndProcessingPassDataQuality(runNumber, procID).get("Value")
 
     def __insertJob(self, job):
         """Inserts the job to the database."""
@@ -459,7 +460,7 @@ class XMLFilesReaderManager:
             self.log.debug(dtDescription)
             datataking["Description"] = dtDescription
 
-            res = self.bkClient_._getDataTakingConditionId(dtDescription)
+            res = self.db._getDataTakingConditionId(dtDescription)
             if not res["OK"]:
                 self.log.error(
                     "Error retrieving the DataTaking Condition ID",
@@ -470,7 +471,7 @@ class XMLFilesReaderManager:
             daqid = res["Value"]
             # If there is no condition matching the description, create one
             if daqid == -1:  # yes... -1 for non existing conditions
-                res = self.bkClient_.insertDataTakingCondDesc(dtDescription)
+                res = self.db.insertDataTakingCondDesc(dtDescription)
                 if not res["OK"]:
                     self.log.error("Cannot insert DataTaking Condition Description", res["Message"])
                     return res
@@ -504,7 +505,7 @@ class XMLFilesReaderManager:
                 self.log.error("Run number is missing!")
                 return S_ERROR("Run number is missing!")
 
-            retVal = self.bkClient_.getStepIdandNameForRUN(programName, programVersion, conddb, dddb)
+            retVal = self.db.getStepIdandNameForRUN(programName, programVersion, conddb, dddb)
 
             if not retVal["OK"]:
                 return retVal
@@ -543,7 +544,7 @@ class XMLFilesReaderManager:
             message = "StepID for run: %s" % (str(production))
             self.log.info(message, stepid)
 
-            res = self.bkClient_.addProduction(
+            res = self.db.addProduction(
                 production,
                 simcond=None,
                 daq=dtDescription,
@@ -560,7 +561,7 @@ class XMLFilesReaderManager:
                 self.log.warn("The run already registered!")
             else:
                 self.log.error("Failing adding production", production + res["Message"])
-                retVal = self.bkClient_.deleteStepContainer(production)
+                retVal = self.db.deleteStepContainer(production)
                 if not retVal["OK"]:
                     return retVal
                 return S_ERROR("Failing adding production")
@@ -570,7 +571,7 @@ class XMLFilesReaderManager:
         for param in job.parameters:
             attrList[str(param.name)] = param.value
 
-        res = self.bkClient_.checkProcessingPassAndSimCond(attrList["Production"])
+        res = self.db.checkProcessingPassAndSimCond(attrList["Production"])
         if not res["OK"]:
             self.log.error("check processing pass and simulation condition error", res["Message"])
         else:
@@ -589,11 +590,11 @@ class XMLFilesReaderManager:
         if production is not None:  # for the online registration
             attrList["Production"] = production
 
-        res = self.bkClient_.insertJob(attrList)
+        res = self.db.insertJob(attrList)
 
         if not res["OK"] and production is not None and production < 0:
             self.log.error("Failed inserting job", res["Message"])
-            retVal = self.bkClient_.deleteProductionsContainer(production)
+            retVal = self.db.deleteProductionsContainer(production)
             if not retVal["OK"]:
                 self.log.error(retVal["Message"])
         return res
@@ -605,7 +606,7 @@ class XMLFilesReaderManager:
 
         for param in outputfile.params:
             attrList[str(param.name)] = param.value
-        return self.bkClient_.insertOutputFile(attrList)
+        return self.db.insertOutputFile(attrList)
 
     #############################################################################
     def processReplicas(self, replica):
@@ -622,7 +623,7 @@ class XMLFilesReaderManager:
             location = param.location
             delete = param.action == "Delete"
 
-            result = self.bkClient_.checkfile(replicaFileName)
+            result = self.db.checkfile(replicaFileName)
             if not result["OK"]:
                 message = "No replica can be "
                 if delete:
@@ -639,12 +640,12 @@ class XMLFilesReaderManager:
                 result = DataManager().getReplicas(replicaFileName)
                 replicaList = result["Value"]["Successful"]
                 if len(replicaList) == 0:
-                    result = self.bkClient_.updateReplicaRow(fileID, "No")
+                    result = self.db.updateReplicaRow(fileID, "No")
                     if not result["OK"]:
                         self.log.warn("Unable to set the Got_Replica flag for ", "%s" % replicaFileName)
                         return S_ERROR("Unable to set the Got_Replica flag for ", "%s" % replicaFileName)
             else:
-                result = self.bkClient_.updateReplicaRow(fileID, "Yes")
+                result = self.db.updateReplicaRow(fileID, "Yes")
                 if not result["OK"]:
                     return S_ERROR("Unable to set the Got_Replica flag for " + str(replicaFileName))
 
