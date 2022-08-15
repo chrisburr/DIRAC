@@ -464,3 +464,23 @@ build-wheel-and-maybe-deploy-to-pypi:
         if [ -z "$TWINE_PASSWORD" ] ; then echo "Set TWINE_PASSWORD in CI variables"; exit 1; fi
         twine upload -u __token__ dist/*
       fi
+
+run-dms-tests:
+  image: gitlab-registry.cern.ch/lhcb-docker/os-base/centos7-hepos:latest
+  timeout: 3h
+  when: manual
+  variables:
+    # The DIRAC repo to use for getting the test code'
+    DIRAC_test_repo: "DIRACGrid"
+    # The DIRAC branch to use for getting the test code
+    DIRAC_test_branch: integration
+    # The LHCbDIRAC repo to use for getting the test code
+    LHCbDIRAC_test_repo: 'lhcb-dirac'
+    # The LHCbDIRAC branch to use for getting the test code
+    LHCbDIRAC_test_branch: devel
+    # 'CS URL (put HTTPs if necessary
+    CSURL: 'dips://lhcb-cert-conf-dirac.cern.ch:9135/Configuration/Server'
+    DOCKER_TLS_CERTDIR: "/certs"
+    # SE_config should be defined as a gitlab variable
+  script:
+    - bash tests/System/StorageTests/run-storageelement-tests.sh
