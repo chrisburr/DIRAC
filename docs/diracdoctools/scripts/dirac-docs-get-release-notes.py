@@ -22,7 +22,7 @@ add this section to the config file
   All = Core
 
 """
-
+import re
 import os
 from collections import defaultdict
 import datetime
@@ -33,9 +33,10 @@ from pprint import pformat
 import logging
 import textwrap
 import requests
-from distutils.version import LooseVersion
 import six
 from configparser import ConfigParser
+from packaging.version import Version
+from diraccfg.versions import parseVersion
 
 
 G_ERROR = textwrap.dedent(
@@ -67,6 +68,23 @@ def listify(values):
     if isinstance(values, list):
         return values
     return [entry.strip() for entry in values.split(",") if entry]
+
+
+def diracVersionKey(version: str) -> Version:
+    """Parse a version string and return a Version object
+
+    Legacy DIRAC-style versions, i.e. vXrYpZ-preN are supported.
+    Malformed versions return a zero version number.
+    """
+    try:
+        return Version(version)
+    except Exception:
+        try:
+            major, minor, patch, pre = parseVersion(version)
+        except Exception:
+            return Version("0.0.0")
+        else:
+            return Version(f"{major}.{minor}.{patch}a{pre}")
 
 
 def githubSetup(GITHUBTOKEN=""):
@@ -517,7 +535,7 @@ class GithubInterface(object):
             else:
                 raise ValueError("Tag %s not found" % sinceTag)
         else:
-            sortedTags = sorted(tags, key=lambda tag: LooseVersion(tag["name"]), reverse=True)
+            sortedTags = sorted(tags, key=lambda tag: diracVersionKey(tag["name"]), reverse=True)
             latestTag = sortedTags[0]
 
         log.info("Found latest tag %s", latestTag["name"])
