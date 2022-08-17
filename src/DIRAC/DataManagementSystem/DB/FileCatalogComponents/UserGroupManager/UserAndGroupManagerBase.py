@@ -4,7 +4,7 @@ import time
 import threading
 
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 
 class UserAndGroupManagerBase(object):
@@ -27,6 +27,6 @@ class UserAndGroupManagerBase(object):
 
     def getUserAndGroupRight(self, credDict):
         """Evaluate rights for user and group operations"""
-        if Properties.FC_MANAGEMENT in credDict["properties"]:
+        if SecurityProperty.FC_MANAGEMENT in credDict["properties"]:
             return S_OK(True)
         return S_OK(False)

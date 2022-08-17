@@ -3,7 +3,7 @@
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 from DIRAC.Core.Utilities import List
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
 
 
@@ -164,7 +164,7 @@ class SandboxMetadataDB(DB):
 
         if ownerName or ownerGroup:
             requesterProps = Registry.getPropertiesForEntity(requesterGroup, name=requesterName)
-            if Properties.JOB_ADMINISTRATOR in requesterProps:
+            if SecurityProperty.JOB_ADMINISTRATOR in requesterProps:
                 if ownerName:
                     requesterName = ownerName
                 if ownerGroup:
@@ -238,12 +238,12 @@ class SandboxMetadataDB(DB):
         """
         sqlCond = ["s.OwnerId=o.OwnerId", "s.SBId=e.SBId", "e.EntitySetup=%s" % entitiesSetup]
         requesterProps = Registry.getPropertiesForEntity(requesterGroup, name=requesterName)
-        if Properties.JOB_ADMINISTRATOR in requesterProps:
+        if SecurityProperty.JOB_ADMINISTRATOR in requesterProps:
             # Do nothing, just ensure it doesn't fit in the other cases
             pass
-        elif Properties.JOB_SHARING in requesterProps:
+        elif SecurityProperty.JOB_SHARING in requesterProps:
             sqlCond.append("o.OwnerGroup='%s'" % requesterGroup)
-        elif Properties.NORMAL_USER in requesterProps:
+        elif SecurityProperty.NORMAL_USER in requesterProps:
             sqlCond.append("o.OwnerGroup='%s'" % requesterGroup)
             sqlCond.append("o.Owner='%s'" % requesterName)
         else:
@@ -300,14 +300,14 @@ class SandboxMetadataDB(DB):
             "e.EntitySetup = %s" % self._escapeString(entitySetup)["Value"],
         ]
         requesterProps = Registry.getPropertiesForEntity(requesterGroup, name=requesterName)
-        if Properties.JOB_ADMINISTRATOR in requesterProps or Properties.JOB_MONITOR in requesterProps:
+        if SecurityProperty.JOB_ADMINISTRATOR in requesterProps or SecurityProperty.JOB_MONITOR in requesterProps:
             # Do nothing, just ensure it doesn't fit in the other cases
             pass
-        elif Properties.JOB_SHARING in requesterProps:
+        elif SecurityProperty.JOB_SHARING in requesterProps:
             sqlTables.append("`sb_Owners` o")
             sqlCond.append("o.OwnerGroup='%s'" % requesterGroup)
             sqlCond.append("s.OwnerId=o.OwnerId")
-        elif Properties.NORMAL_USER in requesterProps:
+        elif SecurityProperty.NORMAL_USER in requesterProps:
             sqlTables.append("`sb_Owners` o")
             sqlCond.append("o.OwnerGroup='%s'" % requesterGroup)
             sqlCond.append("o.Owner='%s'" % requesterName)
@@ -365,12 +365,12 @@ class SandboxMetadataDB(DB):
         ]
         sqlCmd = "SELECT s.%s FROM `sb_SandBoxes` s, `sb_Owners` o WHERE" % field
         requesterProps = Registry.getPropertiesForEntity(requesterGroup, name=requesterName, dn=requesterDN)
-        if Properties.JOB_ADMINISTRATOR in requesterProps or Properties.JOB_MONITOR in requesterProps:
+        if SecurityProperty.JOB_ADMINISTRATOR in requesterProps or SecurityProperty.JOB_MONITOR in requesterProps:
             # Do nothing, just ensure it doesn't fit in the other cases
             pass
-        elif Properties.JOB_SHARING in requesterProps:
+        elif SecurityProperty.JOB_SHARING in requesterProps:
             sqlCond.append("o.OwnerGroup='%s'" % requesterGroup)
-        elif Properties.NORMAL_USER in requesterProps:
+        elif SecurityProperty.NORMAL_USER in requesterProps:
             sqlCond.append("o.OwnerGroup='%s'" % requesterGroup)
             sqlCond.append("o.Owner='%s'" % requesterName)
         else:

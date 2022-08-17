@@ -12,7 +12,7 @@ The following options can be set for the Configuration Service.
 """
 from DIRAC.ConfigurationSystem.private.ServiceInterface import ServiceInterface
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
-from DIRAC.Core.Security.Properties import CS_ADMINISTRATOR
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities.ReturnValues import S_OK, S_ERROR
 
 gServiceInterface = None
@@ -71,7 +71,7 @@ class ConfigurationHandler(RequestHandler):
         return gServiceInterface.updateConfiguration(sData, credDict["username"])
 
     types_forceGlobalConfigurationUpdate = []
-    auth_forceGlobalConfigurationUpdate = [CS_ADMINISTRATOR]
+    auth_forceGlobalConfigurationUpdate = [SecurityProperty.CS_ADMINISTRATOR]
 
     def export_forceGlobalConfigurationUpdate(self):
         """

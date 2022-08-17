@@ -10,7 +10,7 @@ from DIRAC.Core.DISET.private.FileHelper import FileHelper
 from DIRAC.Core.Utilities.ReturnValues import S_OK, S_ERROR, isReturnStructure
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 from DIRAC.FrameworkSystem.Client.Logger import gLogger
-from DIRAC.Core.Security.Properties import CS_ADMINISTRATOR
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 
 def getServiceOption(serviceInfo, optionName, defaultValue):
@@ -539,7 +539,7 @@ class RequestHandler(object):
         return S_OK(data)
 
     types_refreshConfiguration = [bool]
-    auth_refreshConfiguration = [CS_ADMINISTRATOR]
+    auth_refreshConfiguration = [SecurityProperty.CS_ADMINISTRATOR]
 
     @staticmethod
     def export_refreshConfiguration(fromMaster):

@@ -55,7 +55,7 @@ import inspect
 
 # # from DIRAC
 from DIRAC import S_OK, S_ERROR, gConfig, gLogger
-from DIRAC.Core.Security.Properties import FULL_DELEGATION, LIMITED_DELEGATION
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities.DIRACSingleton import DIRACSingleton
 from DIRAC.ConfigurationSystem.Client import PathFinder
 
@@ -303,7 +303,7 @@ class RequestValidator(metaclass=DIRACSingleton):
 
         # Only allow this if the credentials have Full or Limited delegation properties
 
-        if FULL_DELEGATION in credProperties or LIMITED_DELEGATION in credProperties:
+        if SecurityProperty.FULL_DELEGATION in credProperties or SecurityProperty.LIMITED_DELEGATION in credProperties:
             return True
 
         return False

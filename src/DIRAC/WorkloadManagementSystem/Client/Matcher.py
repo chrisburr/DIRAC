@@ -7,7 +7,7 @@ import time
 from DIRAC import gLogger, convertToPy3VersionNumber
 
 from DIRAC.Core.Utilities.PrettyPrint import printDict
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.WorkloadManagementSystem.Client import JobStatus
@@ -325,7 +325,7 @@ class Matcher:
 
     def _checkCredentials(self, resourceDict, credDict):
         """Check if we can get a job given the passed credentials"""
-        if Properties.GENERIC_PILOT in credDict["properties"]:
+        if SecurityProperty.GENERIC_PILOT in credDict["properties"]:
             # You can only match groups in the same VO
             if credDict["group"] == "hosts":
                 # for the host case the VirtualOrganization parameter
@@ -341,12 +341,12 @@ class Matcher:
                     raise RuntimeError(result["Message"])
         else:
             # If it's a private pilot, the DN has to be the same
-            if Properties.PILOT in credDict["properties"]:
+            if SecurityProperty.PILOT in credDict["properties"]:
                 self.log.notice("Setting the resource DN to the credentials DN")
                 resourceDict["OwnerDN"] = credDict["DN"]
             # If it's a job sharing. The group has to be the same and just check that the DN (if any)
             # belongs to the same group
-            elif Properties.JOB_SHARING in credDict["properties"]:
+            elif SecurityProperty.JOB_SHARING in credDict["properties"]:
                 resourceDict["OwnerGroup"] = credDict["group"]
                 self.log.notice("Setting the resource group to the credentials group")
                 if "OwnerDN" in resourceDict and resourceDict["OwnerDN"] != credDict["DN"]:

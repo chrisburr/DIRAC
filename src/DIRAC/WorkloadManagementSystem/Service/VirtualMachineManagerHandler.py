@@ -20,7 +20,7 @@ from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.Core.Utilities.ThreadScheduler import gThreadScheduler
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
 from DIRAC.WorkloadManagementSystem.DB.VirtualMachineDB import VirtualMachineDB
-from DIRAC.Core.Security.Properties import OPERATOR, VM_RPC_OPERATION
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getVMTypeConfig, getVMTypes
 from DIRAC.Resources.Cloud.Utilities import STATE_MAP
 from DIRAC.Resources.Cloud.EndpointFactory import EndpointFactory
@@ -241,7 +241,7 @@ class VirtualMachineManagerHandler(RequestHandler):
         """
         return true if rpc has OPERATOR
         """
-        if OPERATOR in self.rpcProperties:
+        if SecurityProperty.OPERATOR in self.rpcProperties:
             return S_OK("Auth")
         return S_OK("Unauth")
 

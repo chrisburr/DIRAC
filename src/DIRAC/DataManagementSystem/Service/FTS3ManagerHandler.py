@@ -11,7 +11,7 @@ Service handler for FTS3DB using DISET
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.ConfigurationSystem.Client.Helpers.Registry import getDNForUsername
 from DIRAC.Core.DISET.RequestHandler import RequestHandler, getServiceOption
-from DIRAC.Core.Security.Properties import FULL_DELEGATION, LIMITED_DELEGATION
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities import DErrno
 from DIRAC.Core.Utilities.JEncode import strToIntDict
 
@@ -47,7 +47,7 @@ class FTS3ManagerHandlerMixin:
     def _isAllowed(opObj, remoteCredentials):
         """
         Make sure the client is allowed to persist an operation
-        (FULL_DELEGATION or LIMITED_DELEGATION). This is the case of pilots,
+        (SecurityProperty.FULL_DELEGATION or SecurityProperty.LIMITED_DELEGATION). This is the case of pilots,
         the RequestExecutingAgent or the FTS3Agent
 
         :param opObj: the FTS3Operation object
@@ -78,7 +78,7 @@ class FTS3ManagerHandlerMixin:
 
         # Only allow this if the credentials have Full or Limited delegation properties
 
-        if FULL_DELEGATION in credProperties or LIMITED_DELEGATION in credProperties:
+        if SecurityProperty.FULL_DELEGATION in credProperties or SecurityProperty.LIMITED_DELEGATION in credProperties:
             return True
 
         return False

@@ -20,7 +20,7 @@ import sys
 from DIRAC import gLogger, S_OK
 from DIRAC.Core.Base.Script import Script
 from DIRAC.FrameworkSystem.Client.ProxyManagerClient import ProxyManagerClient
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
 
@@ -58,7 +58,7 @@ def main():
         sys.exit(1)
 
     if userName in Registry.getAllUsers():
-        if Properties.PROXY_MANAGEMENT not in proxyProps["groupProperties"]:
+        if SecurityProperty.PROXY_MANAGEMENT not in proxyProps["groupProperties"]:
             if userName != proxyProps["username"] and userName != proxyProps["issuer"]:
                 gLogger.notice("You can only query info about yourself!")
                 sys.exit(1)

@@ -17,7 +17,7 @@ from DIRAC import gConfig, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC.Core.Utilities.Mail import Mail
 from DIRAC.Core.Utilities.ThreadScheduler import gThreadScheduler
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.ConfigurationSystem.Client import PathFinder
 from DIRAC.FrameworkSystem.DB.NotificationDB import NotificationDB
 from DIRAC.Core.Utilities.DictCache import DictCache
@@ -217,7 +217,7 @@ class NotificationHandler(RequestHandler):
     def export_getAssigneeGroupsForUser(self, user):
         """Get all assignee groups and the users that belong to them"""
         credDict = self.getRemoteCredentials()
-        if Properties.ALARMS_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.ALARMS_MANAGEMENT not in credDict["properties"]:
             user = credDict["username"]
         return self.notDB.getAssigneeGroupsForUser(user)
 
@@ -240,7 +240,7 @@ class NotificationHandler(RequestHandler):
     def export_removeNotificationsForUser(self, user, notIds):
         """Get users in assignee group"""
         credDict = self.getRemoteCredentials()
-        if Properties.ALARMS_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.ALARMS_MANAGEMENT not in credDict["properties"]:
             user = credDict["username"]
         return self.notDB.removeNotificationsForUser(user, notIds)
 
@@ -249,7 +249,7 @@ class NotificationHandler(RequestHandler):
     def export_markNotificationsAsRead(self, user, notIds):
         """Delete an assignee group"""
         credDict = self.getRemoteCredentials()
-        if Properties.ALARMS_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.ALARMS_MANAGEMENT not in credDict["properties"]:
             user = credDict["username"]
         return self.notDB.markNotificationsSeen(user, True, notIds)
 
@@ -258,7 +258,7 @@ class NotificationHandler(RequestHandler):
     def export_markNotificationsAsNotRead(self, user, notIds):
         """Delete an assignee group"""
         credDict = self.getRemoteCredentials()
-        if Properties.ALARMS_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.ALARMS_MANAGEMENT not in credDict["properties"]:
             user = credDict["username"]
         return self.notDB.markNotificationsSeen(user, False, notIds)
 
@@ -267,6 +267,6 @@ class NotificationHandler(RequestHandler):
     def export_getNotifications(self, selectDict, sortList, startItem, maxItems):
         """Get all assignee groups and the users that belong to them"""
         credDict = self.getRemoteCredentials()
-        if Properties.ALARMS_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.ALARMS_MANAGEMENT not in credDict["properties"]:
             selectDict["user"] = [credDict["username"]]
         return self.notDB.getNotifications(selectDict, sortList, startItem, maxItems)

@@ -2,7 +2,7 @@
     with respect to job related operations
 """
 from DIRAC import S_OK, S_ERROR, gLogger
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.ConfigurationSystem.Client.Helpers.Registry import (
     getUsernameForDN,
     getGroupsForUser,
@@ -63,10 +63,10 @@ SHARED_GROUP_RIGHTS = OWNER_RIGHTS
 
 # Rights with respect to non-owner's jobs or to newly created jobs
 PROPERTY_RIGHTS = {}
-PROPERTY_RIGHTS[Properties.JOB_ADMINISTRATOR] = ADMIN_RIGHTS
-PROPERTY_RIGHTS[Properties.NORMAL_USER] = [RIGHT_SUBMIT]
-PROPERTY_RIGHTS[Properties.GENERIC_PILOT] = [RIGHT_RESCHEDULE]
-PROPERTY_RIGHTS[Properties.JOB_MONITOR] = [RIGHT_GET_INFO]
+PROPERTY_RIGHTS[SecurityProperty.JOB_ADMINISTRATOR] = ADMIN_RIGHTS
+PROPERTY_RIGHTS[SecurityProperty.NORMAL_USER] = [RIGHT_SUBMIT]
+PROPERTY_RIGHTS[SecurityProperty.GENERIC_PILOT] = [RIGHT_RESCHEDULE]
+PROPERTY_RIGHTS[SecurityProperty.JOB_MONITOR] = [RIGHT_GET_INFO]
 
 
 sLog = gLogger.getSubLogger(__name__)
@@ -116,23 +116,23 @@ class JobPolicy:
             self.__permissions[RIGHT_GET_INFO] = True
 
         # Give JobAdmin permission if needed
-        if Properties.JOB_ADMINISTRATOR in self.userProperties:
-            for right in PROPERTY_RIGHTS[Properties.JOB_ADMINISTRATOR]:
+        if SecurityProperty.JOB_ADMINISTRATOR in self.userProperties:
+            for right in PROPERTY_RIGHTS[SecurityProperty.JOB_ADMINISTRATOR]:
                 self.__permissions[right] = True
 
         # Give JobMonitor permission if needed
-        if Properties.JOB_MONITOR in self.userProperties:
-            for right in PROPERTY_RIGHTS[Properties.JOB_MONITOR]:
+        if SecurityProperty.JOB_MONITOR in self.userProperties:
+            for right in PROPERTY_RIGHTS[SecurityProperty.JOB_MONITOR]:
                 self.__permissions[right] = True
 
         # Give normal user permission if needed
-        if Properties.NORMAL_USER in self.userProperties:
-            for right in PROPERTY_RIGHTS[Properties.NORMAL_USER]:
+        if SecurityProperty.NORMAL_USER in self.userProperties:
+            for right in PROPERTY_RIGHTS[SecurityProperty.NORMAL_USER]:
                 self.__permissions[right] = True
 
         # Give permissions of the generic pilot
-        if Properties.GENERIC_PILOT in self.userProperties:
-            for right in PROPERTY_RIGHTS[Properties.GENERIC_PILOT]:
+        if SecurityProperty.GENERIC_PILOT in self.userProperties:
+            for right in PROPERTY_RIGHTS[SecurityProperty.GENERIC_PILOT]:
                 self.__permissions[right] = True
 
     def getJobPolicy(self, jobOwner="", jobOwnerGroup=""):
@@ -148,7 +148,7 @@ class JobPolicy:
 
         # Members of the same group sharing their jobs can do everything
         if jobOwnerGroup == self.userGroup:
-            if Properties.JOB_SHARING in self.userProperties:
+            if SecurityProperty.JOB_SHARING in self.userProperties:
                 for right in SHARED_GROUP_RIGHTS:
                     permDict[right] = True
 
@@ -210,16 +210,16 @@ class JobPolicy:
             return S_OK(userGroupList)
 
         # Administrators can do everything
-        if Properties.JOB_ADMINISTRATOR in self.userProperties:
+        if SecurityProperty.JOB_ADMINISTRATOR in self.userProperties:
             return S_OK(userGroupList)
 
         # Inspectors can see info for all the jobs
-        if Properties.JOB_MONITOR in self.userProperties and right == RIGHT_GET_INFO:
+        if SecurityProperty.JOB_MONITOR in self.userProperties and right == RIGHT_GET_INFO:
             return S_OK(userGroupList)
 
         userGroupList = []
         # User can do many things with his jobs
-        if Properties.NORMAL_USER in self.userProperties and right in OWNER_RIGHTS:
+        if SecurityProperty.NORMAL_USER in self.userProperties and right in OWNER_RIGHTS:
             result = getGroupsForUser(self.userName)
             if not result["OK"]:
                 return result
@@ -229,7 +229,7 @@ class JobPolicy:
                     userGroupList.append((self.userName, group))
 
         # User can do many things with the jobs in the shared group
-        if Properties.JOB_SHARING in self.userProperties and right in SHARED_GROUP_RIGHTS:
+        if SecurityProperty.JOB_SHARING in self.userProperties and right in SHARED_GROUP_RIGHTS:
             sharedUsers = getUsersInGroup(self.userGroup)
             for user in sharedUsers:
                 userGroupList.append((user, self.userGroup))

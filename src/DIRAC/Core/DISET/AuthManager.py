@@ -2,7 +2,7 @@
 """
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities import List
 from DIRAC.FrameworkSystem.Client.Logger import gLogger
 
@@ -225,7 +225,7 @@ class AuthManager(object):
                 retVal = Registry.getHostnameForDN(credDict[self.KW_DN])
                 if retVal["OK"]:
                     hostname = retVal["Value"]
-                    if Properties.TRUSTED_HOST in Registry.getPropertiesForHost(hostname, []):
+                    if SecurityProperty.TRUSTED_HOST in Registry.getPropertiesForHost(hostname, []):
                         return True
         return False
 

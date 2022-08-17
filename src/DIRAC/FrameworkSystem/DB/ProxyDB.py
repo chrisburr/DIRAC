@@ -21,7 +21,7 @@ from urllib.request import urlopen
 from DIRAC import gConfig, gLogger, S_OK, S_ERROR
 from DIRAC.Core.Base.DB import DB
 from DIRAC.Core.Utilities import DErrno
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Security.VOMS import VOMS
 from DIRAC.Core.Security.MyProxy import MyProxy
 from DIRAC.Core.Security.X509Request import X509Request  # pylint: disable=import-error
@@ -1374,7 +1374,7 @@ class ProxyDB(DB):
         result = self._query(cmd)
         if not result["OK"]:
             return result
-        pilotProps = (Properties.GENERIC_PILOT, Properties.PILOT)
+        pilotProps = (SecurityProperty.GENERIC_PILOT, SecurityProperty.PILOT)
         data = result["Value"]
         sent = []
         for row in data:

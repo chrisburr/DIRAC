@@ -17,7 +17,7 @@ DIRAC.initialize()  # Initialize configuration
 from DIRAC import gLogger
 
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
-from DIRAC.Core.Security.Properties import FULL_DELEGATION, LIMITED_DELEGATION
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 from DIRAC.RequestManagementSystem.Client.Request import Request
 from DIRAC.RequestManagementSystem.Client.Operation import Operation
@@ -200,7 +200,7 @@ class ReqClientMix(ReqClientTestCase):
         credProperties = getProxyInfo()["Value"]["groupProperties"]
 
         # If the proxy with which we test has delegation, it should work
-        if FULL_DELEGATION in credProperties or LIMITED_DELEGATION in credProperties:
+        if SecurityProperty.FULL_DELEGATION in credProperties or SecurityProperty.LIMITED_DELEGATION in credProperties:
             self.assertTrue(res["OK"], res)
             self.requestClient.deleteRequest(res["Value"])
         # otherwise no

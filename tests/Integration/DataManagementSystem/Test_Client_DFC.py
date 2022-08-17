@@ -17,7 +17,7 @@ import DIRAC
 DIRAC.initialize()  # Initialize configuration
 
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
-from DIRAC.Core.Security.Properties import FC_MANAGEMENT
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
 
 seName = "mySE"
@@ -903,7 +903,7 @@ if __name__ == "__main__":
     properties = res.get("properties", [])
     properties.extend(res.get("groupProperties", []))
 
-    isAdmin = FC_MANAGEMENT in properties
+    isAdmin = SecurityProperty.FC_MANAGEMENT in properties
     print("Running test with admin privileges : ", isAdmin)
 
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(UserGroupCase)

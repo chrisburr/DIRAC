@@ -4,7 +4,7 @@
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 from DIRAC import S_OK
 from DIRAC.FrameworkSystem.DB.UserProfileDB import UserProfileDB
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 
 class UserProfileManagerHandler(RequestHandler):
@@ -129,7 +129,7 @@ class UserProfileManagerHandler(RequestHandler):
         """
         credDict = self.getRemoteCredentials()
         requesterUserName = credDict["username"]
-        if Properties.SERVICE_ADMINISTRATOR in credDict["properties"]:
+        if SecurityProperty.SERVICE_ADMINISTRATOR in credDict["properties"]:
             admin = True
         else:
             admin = False

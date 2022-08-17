@@ -1,7 +1,7 @@
 """ Contains a class used for evaluating policies for accessing jobs/WMS/pilots accounting
 """
 from DIRAC import S_OK, S_ERROR
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.AccountingSystem.private.Policies.FilterExecutor import FilterExecutor
 
 
@@ -14,13 +14,13 @@ class JobPolicy(object):
         condDict = {}
         userProps = credDict["properties"]
 
-        if Properties.JOB_ADMINISTRATOR in userProps:
+        if SecurityProperty.JOB_ADMINISTRATOR in userProps:
             return condDict
-        elif Properties.JOB_MONITOR in userProps:
+        elif SecurityProperty.JOB_MONITOR in userProps:
             return condDict
-        elif Properties.ACCOUNTING_MONITOR in userProps:
+        elif SecurityProperty.ACCOUNTING_MONITOR in userProps:
             return condDict
-        elif Properties.JOB_SHARING in userProps:
+        elif SecurityProperty.JOB_SHARING in userProps:
             condDict["UserGroup"] = [credDict["group"]]
 
         return condDict
@@ -31,13 +31,13 @@ class JobPolicy(object):
     def __checkConditions(self, credDict, condDict, groupingField):
         userProps = credDict["properties"]
 
-        if Properties.JOB_ADMINISTRATOR in userProps:
+        if SecurityProperty.JOB_ADMINISTRATOR in userProps:
             return S_OK()
-        elif Properties.JOB_MONITOR in userProps:
+        elif SecurityProperty.JOB_MONITOR in userProps:
             return S_OK()
-        elif Properties.ACCOUNTING_MONITOR in userProps:
+        elif SecurityProperty.ACCOUNTING_MONITOR in userProps:
             return S_OK()
-        elif Properties.JOB_SHARING in userProps:
+        elif SecurityProperty.JOB_SHARING in userProps:
             if "User" in condDict:
                 condDict["UserGroup"] = credDict["group"]
             if "User" == groupingField:
@@ -46,7 +46,7 @@ class JobPolicy(object):
                 condDict["UserGroup"] = credDict["group"]
             if "UserGroup" == groupingField:
                 condDict["UserGroup"] = credDict["group"]
-        elif Properties.NORMAL_USER in userProps:
+        elif SecurityProperty.NORMAL_USER in userProps:
             if "User" in condDict:
                 condDict["User"] = credDict["username"]
             if "User" == groupingField:
@@ -74,15 +74,15 @@ class JobPolicy(object):
     def filterListingValues(self, credDict, dataDict):
         userProps = credDict["properties"]
 
-        if Properties.JOB_ADMINISTRATOR in userProps:
+        if SecurityProperty.JOB_ADMINISTRATOR in userProps:
             return S_OK(dataDict)
-        elif Properties.JOB_MONITOR in userProps:
+        elif SecurityProperty.JOB_MONITOR in userProps:
             return S_OK(dataDict)
-        elif Properties.ACCOUNTING_MONITOR in userProps:
+        elif SecurityProperty.ACCOUNTING_MONITOR in userProps:
             return S_OK(dataDict)
-        elif Properties.JOB_SHARING in userProps:
+        elif SecurityProperty.JOB_SHARING in userProps:
             return S_OK(dataDict)
-        elif Properties.NORMAL_USER in userProps:
+        elif SecurityProperty.NORMAL_USER in userProps:
             return S_OK(dataDict)
 
         dataDict["User"] = []

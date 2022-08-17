@@ -32,7 +32,7 @@ is taken and the **exchange token** request to Identity Provider is made. The re
 import pprint
 
 from DIRAC import S_OK, S_ERROR
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities import ThreadSafe
 from DIRAC.Core.Utilities.DictCache import DictCache
 from DIRAC.Core.Tornado.Server.TornadoService import TornadoService
@@ -89,7 +89,7 @@ class TokenManagerHandler(TornadoService):
                 tokensInfo += result["Value"]
         return S_OK(tokensInfo)
 
-    auth_getUsersTokensInfo = [Properties.PROXY_MANAGEMENT]
+    auth_getUsersTokensInfo = [SecurityProperty.PROXY_MANAGEMENT]
 
     def export_getUsersTokensInfo(self, users: list):
         """Get the info about the user tokens in the database
@@ -161,14 +161,14 @@ class TokenManagerHandler(TornadoService):
         :return: S_OK(bool)/S_ERROR()
         """
         credDict = self.getRemoteCredentials()
-        if Properties.FULL_DELEGATION in credDict["properties"]:
+        if SecurityProperty.FULL_DELEGATION in credDict["properties"]:
             return S_OK(False)
-        if Properties.LIMITED_DELEGATION in credDict["properties"]:
+        if SecurityProperty.LIMITED_DELEGATION in credDict["properties"]:
             return S_OK(True)
-        if Properties.PRIVATE_LIMITED_DELEGATION in credDict["properties"]:
+        if SecurityProperty.PRIVATE_LIMITED_DELEGATION in credDict["properties"]:
             if credDict["DN"] != requestedUserDN:
                 return S_ERROR("You are not allowed to download any token")
-            if Properties.PRIVATE_LIMITED_DELEGATION not in Registry.getPropertiesForGroup(requestedUserGroup):
+            if SecurityProperty.PRIVATE_LIMITED_DELEGATION not in Registry.getPropertiesForGroup(requestedUserGroup):
                 return S_ERROR("You can't download tokens for that group")
             return S_OK(True)
         # Not authorized!
@@ -281,7 +281,7 @@ class TokenManagerHandler(TornadoService):
         """
         # Delete it from cache
         credDict = self.getRemoteCredentials()
-        if Properties.PROXY_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.PROXY_MANAGEMENT not in credDict["properties"]:
             if userDN != credDict["DN"]:
                 return S_ERROR("You aren't allowed!")
         result = Registry.getIDFromDN(userDN)

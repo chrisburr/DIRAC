@@ -8,7 +8,7 @@
 """
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler, getServiceOption
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities.ObjectLoader import ObjectLoader
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
 
@@ -128,7 +128,7 @@ class ProxyManagerHandlerMixin:
                                          expiration time, persistent flag
         """
         credDict = self.getRemoteCredentials()
-        if Properties.PROXY_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.PROXY_MANAGEMENT not in credDict["properties"]:
             return self.__proxyDB.getUsers(validSecondsRequired, userMask=credDict["username"])
         return self.__proxyDB.getUsers(validSecondsRequired)
 
@@ -141,14 +141,14 @@ class ProxyManagerHandlerMixin:
         :return: S_OK(boolean)/S_ERROR()
         """
         credDict = self.getRemoteCredentials()
-        if Properties.FULL_DELEGATION in credDict["properties"]:
+        if SecurityProperty.FULL_DELEGATION in credDict["properties"]:
             return S_OK(False)
-        if Properties.LIMITED_DELEGATION in credDict["properties"]:
+        if SecurityProperty.LIMITED_DELEGATION in credDict["properties"]:
             return S_OK(True)
-        if Properties.PRIVATE_LIMITED_DELEGATION in credDict["properties"]:
+        if SecurityProperty.PRIVATE_LIMITED_DELEGATION in credDict["properties"]:
             if credDict["DN"] != requestedUserDN:
                 return S_ERROR("You are not allowed to download any proxy")
-            if Properties.PRIVATE_LIMITED_DELEGATION not in Registry.getPropertiesForGroup(requestedUserGroup):
+            if SecurityProperty.PRIVATE_LIMITED_DELEGATION not in Registry.getPropertiesForGroup(requestedUserGroup):
                 return S_ERROR("You can't download proxies for that group")
             return S_OK(True)
         # Not authorized!
@@ -301,7 +301,7 @@ class ProxyManagerHandlerMixin:
         :return: S_OK()/S_ERROR()
         """
         credDict = self.getRemoteCredentials()
-        if Properties.PROXY_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.PROXY_MANAGEMENT not in credDict["properties"]:
             if userDN != credDict["DN"]:
                 return S_ERROR("You aren't allowed!")
         retVal = self.__proxyDB.deleteProxy(userDN, userGroup)
@@ -323,7 +323,7 @@ class ProxyManagerHandlerMixin:
         :return: S_OK(dict)/S_ERROR() -- dict contain fields, record list, total records
         """
         credDict = self.getRemoteCredentials()
-        if Properties.PROXY_MANAGEMENT not in credDict["properties"]:
+        if SecurityProperty.PROXY_MANAGEMENT not in credDict["properties"]:
             selDict["UserName"] = credDict["username"]
         return self.__proxyDB.getProxiesContent(selDict, sortDict, start, limit)
 

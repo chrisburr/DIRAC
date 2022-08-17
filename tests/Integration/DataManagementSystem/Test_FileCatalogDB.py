@@ -16,7 +16,7 @@ DIRAC.initialize()  # Initialize configuration
 
 from DIRAC.DataManagementSystem.DB.FileCatalogDB import FileCatalogDB
 
-from DIRAC.Core.Security.Properties import FC_MANAGEMENT
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 seName = "mySE"
 testUser = "atsareg"
@@ -36,7 +36,7 @@ credDict = {
     "x509Chain": x509Chain,
     "username": "anonymous",
     "isLimitedProxy": False,
-    "properties": [FC_MANAGEMENT],
+    "properties": [SecurityProperty.FC_MANAGEMENT],
     "isProxy": False,
 }
 
@@ -1481,16 +1481,16 @@ if __name__ == "__main__":
 
         # Then run without admin privilege:
         isAdmin = False
-        if FC_MANAGEMENT in credDict["properties"]:
-            credDict["properties"].remove(FC_MANAGEMENT)
+        if SecurityProperty.FC_MANAGEMENT in credDict["properties"]:
+            credDict["properties"].remove(SecurityProperty.FC_MANAGEMENT)
         print("Running test without admin privileges")
 
         testResult = unittest.TextTestRunner(verbosity=2).run(_makeTestSuite())
 
         # First run with admin privilege:
         isAdmin = True
-        if FC_MANAGEMENT not in credDict["properties"]:
-            credDict["properties"].append(FC_MANAGEMENT)
+        if SecurityProperty.FC_MANAGEMENT not in credDict["properties"]:
+            credDict["properties"].append(SecurityProperty.FC_MANAGEMENT)
         print("Running test with admin privileges")
 
         testResult = unittest.TextTestRunner(verbosity=2).run(_makeTestSuite())

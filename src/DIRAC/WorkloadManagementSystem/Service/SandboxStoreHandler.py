@@ -14,7 +14,8 @@ import tempfile
 
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
-from DIRAC.Core.Security import Locations, Properties, X509Certificate
+from DIRAC.Core.Security import Locations, X509Certificate
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities.File import mkDir
 from DIRAC.Core.Utilities.ObjectLoader import ObjectLoader
 from DIRAC.DataManagementSystem.Client.DataManager import DataManager
@@ -68,7 +69,7 @@ class SandboxStoreHandler(RequestHandler):
         # prefix = self.getCSOption( "SandboxPrefix", "SandBox" )
         prefix = "SandBox"
         credDict = self.getRemoteCredentials()
-        if Properties.JOB_SHARING in credDict["properties"]:
+        if SecurityProperty.JOB_SHARING in credDict["properties"]:
             idField = credDict["group"]
         else:
             idField = "%s.%s" % (credDict["username"], credDict["group"])

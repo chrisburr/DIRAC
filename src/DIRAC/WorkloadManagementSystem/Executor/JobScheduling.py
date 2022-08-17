@@ -15,7 +15,7 @@ from DIRAC import S_OK, S_ERROR, gConfig
 
 from DIRAC.Core.Utilities.SiteSEMapping import getSEsForSite
 from DIRAC.Core.Utilities.TimeUtilities import fromString, toEpoch
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.ConfigurationSystem.Client.Helpers import Registry
 from DIRAC.ConfigurationSystem.Client.Helpers.Path import cfgPath
 from DIRAC.ConfigurationSystem.Client.Helpers.Operations import Operations
@@ -677,4 +677,4 @@ class JobScheduling(OptimizerExecutor):
             self.jobLog.error("Cannot retrieve OwnerGroup from DB", ": %s" % result["Message"])
             return result
         group = result["Value"]
-        return S_OK(Properties.STAGE_ALLOWED in Registry.getPropertiesForGroup(group))
+        return S_OK(SecurityProperty.STAGE_ALLOWED in Registry.getPropertiesForGroup(group))

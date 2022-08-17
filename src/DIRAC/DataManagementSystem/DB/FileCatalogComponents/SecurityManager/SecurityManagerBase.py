@@ -1,7 +1,7 @@
 """ DIRAC FileCatalog Security Manager base class
 """
 from DIRAC import S_OK, S_ERROR
-from DIRAC.Core.Security.Properties import FC_MANAGEMENT
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 _readMethods = [
     "exists",
@@ -94,6 +94,6 @@ class SecurityManagerBase(object):
         return S_OK(resDict)
 
     def hasAdminAccess(self, credDict):
-        if FC_MANAGEMENT in credDict["properties"]:
+        if SecurityProperty.FC_MANAGEMENT in credDict["properties"]:
             return S_OK(True)
         return S_OK(False)

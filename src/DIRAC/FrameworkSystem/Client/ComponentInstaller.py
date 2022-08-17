@@ -83,17 +83,7 @@ from DIRAC.ConfigurationSystem.Client.Helpers import (
     cfgInstallSection,
     CSGlobals,
 )
-from DIRAC.Core.Security.Properties import (
-    ALARMS_MANAGEMENT,
-    SERVICE_ADMINISTRATOR,
-    CS_ADMINISTRATOR,
-    JOB_ADMINISTRATOR,
-    FULL_DELEGATION,
-    PROXY_MANAGEMENT,
-    OPERATOR,
-    NORMAL_USER,
-    TRUSTED_HOST,
-)
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 from DIRAC.ConfigurationSystem.Client import PathFinder
 from DIRAC.Core.Utilities.MySQL import MySQL
@@ -431,22 +421,22 @@ class ComponentInstaller(object):
         hostDN = self.localCfg.getOption(cfgInstallPath("HostDN"), "")
         defaultGroupName = self.localCfg.getOption(cfgInstallPath("DefaultGroupName"), "dirac_user")
         adminGroupProperties = [
-            ALARMS_MANAGEMENT,
-            SERVICE_ADMINISTRATOR,
-            CS_ADMINISTRATOR,
-            JOB_ADMINISTRATOR,
-            FULL_DELEGATION,
-            PROXY_MANAGEMENT,
-            OPERATOR,
+            SecurityProperty.ALARMS_MANAGEMENT,
+            SecurityProperty.SERVICE_ADMINISTRATOR,
+            SecurityProperty.CS_ADMINISTRATOR,
+            SecurityProperty.JOB_ADMINISTRATOR,
+            SecurityProperty.FULL_DELEGATION,
+            SecurityProperty.PROXY_MANAGEMENT,
+            SecurityProperty.OPERATOR,
         ]
-        defaultGroupProperties = [NORMAL_USER]
+        defaultGroupProperties = [SecurityProperty.NORMAL_USER]
         defaultHostProperties = [
-            TRUSTED_HOST,
-            CS_ADMINISTRATOR,
-            JOB_ADMINISTRATOR,
-            FULL_DELEGATION,
-            PROXY_MANAGEMENT,
-            OPERATOR,
+            SecurityProperty.TRUSTED_HOST,
+            SecurityProperty.CS_ADMINISTRATOR,
+            SecurityProperty.JOB_ADMINISTRATOR,
+            SecurityProperty.FULL_DELEGATION,
+            SecurityProperty.PROXY_MANAGEMENT,
+            SecurityProperty.OPERATOR,
         ]
 
         for section in (

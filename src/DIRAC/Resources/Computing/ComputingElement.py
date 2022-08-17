@@ -32,7 +32,7 @@ import datetime
 
 from DIRAC import S_OK, S_ERROR, gLogger, version
 
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Security.VOMS import VOMS
 from DIRAC.Core.Security.ProxyFile import writeToProxyFile
 from DIRAC.Core.Security.ProxyInfo import getProxyInfoAsString
@@ -399,7 +399,7 @@ class ComputingElement(object):
         pilotProps = pilotProxyDict["groupProperties"]
 
         # if running with a pilot proxy, use it to renew the proxy of the payload
-        if Properties.PILOT in pilotProps or Properties.GENERIC_PILOT in pilotProps:
+        if SecurityProperty.PILOT in pilotProps or SecurityProperty.GENERIC_PILOT in pilotProps:
             self.log.info("Using Pilot credentials to get a new payload Proxy")
             return gProxyManager.renewProxy(
                 proxyToBeRenewed=payloadProxy,

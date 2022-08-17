@@ -22,7 +22,7 @@ from DIRAC.Core.Utilities.ModuleFactory import ModuleFactory
 from DIRAC.Core.Utilities.ClassAd.ClassAdLight import ClassAd
 from DIRAC.Core.Base.AgentModule import AgentModule
 from DIRAC.Core.Security.ProxyInfo import getProxyInfo
-from DIRAC.Core.Security import Properties
+from DIRAC.Core.Security.Properties import SecurityProperty
 from DIRAC.Core.Utilities import DErrno
 from DIRAC.FrameworkSystem.Client.ProxyManagerClient import gProxyManager
 from DIRAC.Resources.Computing.BatchSystems.TimeLeft.TimeLeft import TimeLeft
@@ -480,7 +480,7 @@ class JobAgent(AgentModule):
                 return S_ERROR("Proxy has no group properties defined")
 
             groupProps = ret["Value"]["groupProperties"]
-            if Properties.GENERIC_PILOT in groupProps or Properties.PILOT in groupProps:
+            if SecurityProperty.GENERIC_PILOT in groupProps or SecurityProperty.PILOT in groupProps:
                 proxyResult = self._requestProxyFromProxyManager(ownerDN, ownerGroup)
                 if not proxyResult["OK"]:
                     self.log.error("Invalid Proxy", proxyResult["Message"])

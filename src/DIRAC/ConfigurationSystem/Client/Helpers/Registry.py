@@ -5,6 +5,7 @@ import errno
 from DIRAC import S_OK, S_ERROR
 from DIRAC.ConfigurationSystem.Client.Config import gConfig
 from DIRAC.ConfigurationSystem.Client.Helpers.CSGlobals import getVO
+from DIRAC.Core.Security.Properties import SecurityProperty
 
 ID_DN_PREFIX = "/O=DIRAC/CN="
 
@@ -270,7 +271,8 @@ def getPropertiesForGroup(groupName, defaultValue=None):
     :return: defaultValue or list
     """
     option = "%s/Groups/%s/Properties" % (gBaseRegistrySection, groupName)
-    return gConfig.getValue(option, [] if defaultValue is None else defaultValue)
+    properties = gConfig.getValue(option, [] if defaultValue is None else defaultValue)
+    return [SecurityProperty(p) for p in properties]
 
 
 def getPropertiesForHost(hostName, defaultValue=None):
@@ -282,7 +284,8 @@ def getPropertiesForHost(hostName, defaultValue=None):
     :return: defaultValue or list
     """
     option = "%s/Hosts/%s/Properties" % (gBaseRegistrySection, hostName)
-    return gConfig.getValue(option, [] if defaultValue is None else defaultValue)
+    properties = gConfig.getValue(option, [] if defaultValue is None else defaultValue)
+    return [SecurityProperty(p) for p in properties]
 
 
 def getPropertiesForEntity(group, name="", dn="", defaultValue=None):
