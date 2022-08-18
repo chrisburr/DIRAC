@@ -23,7 +23,7 @@ from DIRAC import gLogger
 
 gLogger.setLevel("DEBUG")
 
-from .Utilities import wipeOutDB, addBasicData, insertRAWFiles, rawFiles_1
+from .Utilities import wipeOutDB, addBasicData, insertRAWFiles, rawFiles_1, runnb_1, runnb_2
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
@@ -65,10 +65,10 @@ def test_getRunInformation(wipeout):
     """
     Test the run metadata
     """
-    retVal = bk.getRunInformation({"RunNumber": 1122})
+    retVal = bk.getRunInformation({"RunNumber": runnb_1})
     assert retVal["OK"], retVal["Message"]
-    assert "1122" not in retVal["Value"]
-    assert sorted(retVal["Value"][int(1122)]) == sorted(
+    assert str(runnb_1) not in retVal["Value"]
+    assert sorted(retVal["Value"][runnb_1]) == sorted(
         [
             "ConfigName",
             "JobEnd",
@@ -82,7 +82,7 @@ def test_getRunInformation(wipeout):
             "ConfigVersion",
         ]
     )
-    result = dict(retVal["Value"][int(1122)])
+    result = dict(retVal["Value"][runnb_1])
     result.pop("JobStart")
     result.pop("JobEnd")
     assert result == {
@@ -106,7 +106,7 @@ def test_getListOfFills(wipeout):
 def test_getRunsForFill(wipeout):
     retVal = bk.getRunsForFill(29)
     assert retVal["OK"], retVal["Message"]
-    assert retVal["Value"] == [1122]
+    assert retVal["Value"] == [runnb_1]
 
 
 def test_getRunInformations(wipeout):
@@ -116,7 +116,7 @@ def test_getRunInformations(wipeout):
     res = bk.addReplica("test")
     assert res["OK"] is False
 
-    retVal = bk.getRunInformations(1122)
+    retVal = bk.getRunInformations(runnb_1)
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"]["Configuration Name"] == "Test"
     assert retVal["Value"]["Configuration Version"] == "Test01"
@@ -133,7 +133,7 @@ def test_getRunInformations(wipeout):
     assert retVal["Value"]["TotalLuminosity"] == 121222.33
     assert retVal["Value"]["luminosity"] == [6061.165]
 
-    retVal = bk.getRunInformations(1123)
+    retVal = bk.getRunInformations(runnb_2)
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"]["Configuration Name"] == "Test"
     assert retVal["Value"]["Configuration Version"] == "Test02"
@@ -152,7 +152,7 @@ def test_getRunInformations(wipeout):
 
 
 def test_getRunFiles(wipeout):
-    retVal = bk.getRunFiles(1122)
+    retVal = bk.getRunFiles(runnb_1)
     assert retVal["OK"], retVal["Message"]
     assert len(retVal["Value"]) == 5
 
@@ -173,17 +173,17 @@ def test_getRunFiles(wipeout):
 def test_getRunNbAndTck(wipeout):
     retVal = bk.getRunNbAndTck("/lhcb/data/2016/RAW/Test/test/1122/0001122_test_1.raw")
     assert retVal["OK"], retVal["Message"]
-    assert retVal["Value"] == [(1122, "-0x7f6bffff")]
+    assert retVal["Value"] == [(runnb_1, "-0x7f6bffff")]
 
 
 def test_getRunFilesDataQuality(wipeout):
-    retVal = bk.getRunFilesDataQuality(1122)
+    retVal = bk.getRunFilesDataQuality(runnb_1)
     assert retVal["OK"], retVal["Message"]
-    assert retVal["Value"] == [(1122, "OK", 30000000)]
+    assert retVal["Value"] == [(runnb_1, "OK", 30000000)]
 
 
 def test_getNbOfRawFiles(wipeout):
-    retVal = bk.getNbOfRawFiles({"RunNumber": 1122})
+    retVal = bk.getNbOfRawFiles({"RunNumber": runnb_1})
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] == 5
 
@@ -211,7 +211,7 @@ def test_getFiles(wipeout):
     bkQueryDict = {
         "ConfigName": "Test",
         "ConfigVersion": "Test02",
-        "RunNumber": [1122],
+        "RunNumber": [runnb_1],
     }
     res = bk.getFiles(bkQueryDict)
     assert res["OK"], res["Message"]
@@ -231,7 +231,7 @@ def test_getFiles(wipeout):
     # bkQueryDict = {
     #     "ConfigName": "Test",
     #     "ConfigVersion": "Test02",
-    #     "RunNumber": [1123],
+    #     "RunNumber": [runnb_2],
     # }
     # res = bk.getFiles(bkQueryDict)
     # assert res["OK"], res["Message"]
@@ -239,7 +239,7 @@ def test_getFiles(wipeout):
 
     # bkQueryDict = {
     #     "ConfigName": "Test",
-    #     "RunNumber": [1122, 1123],
+    #     "RunNumber": [runnb_1, runnb_2],
     #     "FileType": "RAW",
     # }
     # res = bk.getFiles(bkQueryDict)

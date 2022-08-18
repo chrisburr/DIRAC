@@ -31,6 +31,7 @@ from .Utilities import wipeOutDB, addBasicData
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
 #############################################################################
 # Test data
@@ -426,10 +427,6 @@ xmlStep8 = (
 
 
 #############################################################################
-
-# sut
-from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
-from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
 # What's used for the tests
 bk = BookkeepingClient()
@@ -1020,7 +1017,7 @@ def test_registerProduction(wipeout):
         "Job_Report_MCMerge.xml.temp",
     ]:
         bkFile = find_all(rep, "..", "BookkeepingSystem")[0]
-        with open(bkFile, "r") as fd:
+        with open(bkFile) as fd:
             bkXML = fd.read()
         res = bk.sendXMLBookkeepingReport(bkXML)
         assert res["OK"]
