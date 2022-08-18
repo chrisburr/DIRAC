@@ -11,7 +11,7 @@
 import datetime
 import pytest
 from xml.dom.minidom import parseString
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 mockBKDB = MagicMock()
 mockBKDB.return_value = None
@@ -113,8 +113,8 @@ def test__getRunNumbersAndTCKs(mocker, inputfiles, getRunNbAndTckRV, expected):
         side_effect=mockBKDB,
     )
     xfrm = XMLFilesReaderManager()
-    xfrm.bkClient_ = MagicMock()
-    xfrm.bkClient_.getRunNbAndTck.return_value = getRunNbAndTckRV
+    xfrm.db = MagicMock()
+    xfrm.db.getRunNbAndTck.return_value = getRunNbAndTckRV
 
     res = xfrm._getRunNumbersAndTCKs(inputfiles)
     assert res == expected
@@ -147,9 +147,9 @@ def test__getDataQuality(
         side_effect=mockBKDB,
     )
     xfrm = XMLFilesReaderManager()
-    xfrm.bkClient_ = MagicMock()
-    xfrm.bkClient_.getProductionProcessingPassID.return_value = getProductionProcessingPassID_RV
-    xfrm.bkClient_.getRunAndProcessingPassDataQuality.return_value = getRunAndProcessingPassDataQuality_RV
+    xfrm.db = MagicMock()
+    xfrm.db.getProductionProcessingPassID.return_value = getProductionProcessingPassID_RV
+    xfrm.db.getRunAndProcessingPassDataQuality.return_value = getRunAndProcessingPassDataQuality_RV
 
     res = xfrm._getDataQuality(prod, runNumber)
     assert res == expected

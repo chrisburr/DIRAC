@@ -51,7 +51,7 @@ def main():
         DIRACexit(1)
 
     if not res["Value"]:
-        gLogger.notice("No files found for production %s with type %s" % (prodID, filetype))
+        gLogger.notice(f"No files found for production {prodID} with type {filetype}")
     else:
         gLogger.notice(
             "%s %s %s %s %s"

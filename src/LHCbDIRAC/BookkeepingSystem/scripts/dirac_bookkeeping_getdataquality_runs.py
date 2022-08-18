@@ -26,7 +26,7 @@ def main():
         )
     )
     Script.parseCommandLine(ignoreErrors=True)
-    runSet = set(int(id) for arg in Script.getPositionalArgs() for id in arg.split(","))
+    runSet = {int(id) for arg in Script.getPositionalArgs() for id in arg.split(",")}
 
     if not runSet:
         Script.showHelp(exitCode=1)

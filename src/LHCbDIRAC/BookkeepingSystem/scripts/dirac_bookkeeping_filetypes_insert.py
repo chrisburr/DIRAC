@@ -11,7 +11,6 @@
 ###############################################################################
 """Insert new file types in the Bookkeeping."""
 
-from builtins import input
 
 import DIRAC
 from DIRAC import gLogger

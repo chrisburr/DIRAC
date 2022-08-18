@@ -113,10 +113,10 @@ def main():
         if not summary and jobLFNs:
             # Group files produced by the same job
             lfnsByJob = {}
-            for name, job in jobDict.items():  # Can be an iterator
+            for name, job in jobDict.items():
                 # For each jobID get set of LFNs and job steps
                 lfnsByJob.setdefault(job["DIRACJobId"], []).append((jobLFNs[name], job))
-            for jobID, lfnJobs in lfnsByJob.items():  # Can be an iterator
+            for jobID, lfnJobs in lfnsByJob.items():
                 jobStr = "Job %s" % jobID
                 # Split job and step information
                 stepDict = {jobStr: {}}
@@ -144,9 +144,7 @@ def main():
 
     if summary and jobLFNs:
         gLogger.always("List of DIRAC jobs:")
-        gLogger.always(
-            ",".join(sorted(set("%s" % val["DIRACJobId"] for val in jobDict.values())))
-        )  # Can be an iterator
+        gLogger.always(",".join(sorted({"%s" % val["DIRACJobId"] for val in jobDict.values()})))
     else:
         printDMResult(retVal, empty="File/job does not exist in the Bookkeeping")
 
