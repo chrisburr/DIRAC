@@ -53,7 +53,7 @@ from DIRAC.Core.Utilities.SiteSEMapping import getSEsForSite
 from DIRAC.FrameworkSystem.Client.BundleDeliveryClient import BundleDeliveryClient
 
 
-class Params(object):
+class Params:
     def __init__(self):
         self.issuer = None
         self.logLevel = None
