@@ -287,28 +287,23 @@ class AuthManager(object):
             return True
         return False
 
-    def matchProperties(self, credDict, validProps, caseSensitive=False):
-        """
-        Return True if one or more properties are in the valid list of properties
+    def matchProperties(self, credDict, validProps: list[SecurityProperty]) -> bool:
+        """Check if credDict has one or more valid properties
 
-        :type  props: list
-        :param props: List of properties to match
-        :type  validProps: list
-        :param validProps: List of valid properties
-        :return: Boolean specifying whether any property has matched the valid ones
+        :param credDict: List of properties to match
+        :param validProps: List of properties that grant access to this resource
+        :return: True if credDict is authorized to access this resource
         """
+        if not all(isinstance(x, SecurityProperty) for x in validProps):
+            raise NotImplementedError(f"{validProps=} should all be of type SecurityProperty")
+        if not all(isinstance(x, SecurityProperty) for x in credDict[self.KW_PROPERTIES]):
+            raise NotImplementedError(f"{credDict[self.KW_PROPERTIES]=} should all be of type SecurityProperty")
 
-        # HACK: Map lower case properties to properties to make the check in lowercase but return the proper case
-        if not caseSensitive:
-            validProps = dict((prop.lower(), prop) for prop in validProps)
-        else:
-            validProps = dict((prop, prop) for prop in validProps)
         groupProperties = credDict[self.KW_PROPERTIES]
         foundProps = []
         for prop in groupProperties:
-            if not caseSensitive:
-                prop = prop.lower()
             if prop in validProps:
-                foundProps.append(validProps[prop])
+                foundProps.append(prop)
+        # TODO Why does this mutate credDict?
         credDict[self.KW_PROPERTIES] = foundProps
-        return foundProps
+        return bool(foundProps)
