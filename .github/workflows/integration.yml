@@ -20,7 +20,7 @@ on:
 jobs:
   Integration:
     runs-on: ubuntu-latest
-    if: github.event_name != 'push' || github.repository == 'DIRACGrid/DIRAC'
+
     timeout-minutes: 45
     defaults:
       run:
