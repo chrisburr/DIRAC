@@ -98,9 +98,9 @@ class OracleDB:
 
         self.__checkQueueSize(maxQueueSize)
 
-        self.__userName = str(userName)
-        self.__passwd = str(password)
-        self.__tnsName = str(tnsEntry)
+        self.__userName = userName
+        self.__passwd = password
+        self.__tnsName = tnsEntry
         # Create the connection Queue to reuse connections
         self.__connectionQueue = queue.Queue(maxQueueSize)
         # Create the connection Semaphore to limit total number of open connection
@@ -159,7 +159,7 @@ class OracleDB:
         if self._connected:
             return S_OK()
 
-        self.logger.debug(f"_connect: Attempting to access DB", "by user {self.__userName}.")
+        self.logger.debug("_connect: Attempting to access DB", f"by user {self.__userName}.")
         try:
             self.__newConnection()
             self.logger.debug("_connect: Connected.")
@@ -316,7 +316,6 @@ class OracleDB:
     def __newConnection(self):
         """Create a New connection and put it in the Queue."""
         self.logger.debug("__newConnection:")
-
         connection = oracledb.connect(user=self.__userName, password=self.__passwd, dsn=self.__tnsName)
         self.__putConnection(connection)
 

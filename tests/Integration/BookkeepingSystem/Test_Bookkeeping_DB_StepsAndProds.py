@@ -103,7 +103,7 @@ step_moore = {
 bk = OracleBookkeepingDB()
 
 # # first delete the content from the DB
-wipeOutDB()
+wipeOutDB(bk)
 
 #############################################################################
 
@@ -155,7 +155,7 @@ def test_Steps():
     res = bk.getAvailableSteps({})
     assert res["OK"], res["Message"]
     stepsInDB = res["Value"]["Records"]
-    assert {gaussStepID, booleStepID, boole2StepID, mooreStepID}.issubset(set([x[0] for x in stepsInDB]))
+    assert {gaussStepID, booleStepID, boole2StepID, mooreStepID}.issubset({x[0] for x in stepsInDB})
 
     # Production 1: [gauss]
     res = bk.addProductionSteps([{"StepId": gaussStepID}], 1)

@@ -17,9 +17,9 @@ production to db requites:
 """
 # pylint: disable=invalid-name,wrong-import-position
 
-import io
 import os
 import datetime
+import pytest
 
 from DIRAC.Core.Base.Script import parseCommandLine
 
@@ -27,10 +27,11 @@ parseCommandLine()
 
 from DIRAC.tests.Utilities.utils import find_all
 
-from .Utilities import wipeOutDB
+from .Utilities import wipeOutDB, addBasicData
 
 # sut
 from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
+from LHCbDIRAC.BookkeepingSystem.DB.OracleBookkeepingDB import OracleBookkeepingDB
 
 #############################################################################
 # Test data
@@ -429,34 +430,51 @@ xmlStep8 = (
 
 # What's used for the tests
 bk = BookkeepingClient()
-
-# # first delete from DB ####################
-wipeOutDB()
-
-#############################################################################
+bkDB = OracleBookkeepingDB()
 
 
-def test_insertSimConditions():
-    """
-    register a simulation condition to the db
-    """
+@pytest.fixture
+def wipeout():
+    # first delete from DB
+    wipeOutDB(bkDB)
+    # then add some needed data
+    addBasicData(bkDB)
+
+    bk.insertFileTypes("SIM", "sim", "ROOT")
+    bk.insertFileTypes("DIGI", "digi", "ROOT")
+    bk.insertFileTypes("LOG", "log", "1")
+    bk.insertFileTypes("ALLSTREAMS.DST", "bof", "ROOT")
+    bk.insertFileTypes("DSTARD02HHHH.HLTFILTER.MDST", "booof", "ROOT")
+    res = bk.insertEventType(11104131, "This is 11104131L", "something GammaBeta Xyz (blah)")
+    assert res["OK"]
+    res = bk.insertEventType(27165000, "This is 27165000", "something Lambda Xyz (blah)")
+    assert res["OK"]
+
     retVal = bk.insertSimConditions(simCondDict)
     if not retVal["OK"]:
         assert "unique constraint" in retVal["Message"]
 
+    yield wipeout
 
-def test_registerProduction():
+    # Delete again the DB
+    wipeOutDB(bkDB)
+
+
+def test_getSimConditions(wipeout):
+    """
+    check the existence of the sim cond
+    """
+    retVal = bk.getSimConditions()
+    assert retVal["OK"], retVal["Message"]
+    assert len(retVal["Value"]) >= 1
+    assert simCondDict["SimDescription"] in (i[1] for i in retVal["Value"])
+
+
+def test_registerProduction(wipeout):
     """
     insert all steps which will be used by the production and register the production
     """
 
-    # preparing
-    bk.insertFileTypes("SIM", "sim", "ROOT")
-    bk.insertFileTypes("DIGI", "digi", "ROOT")
-    bk.insertEventType(11104131, "This is 11104131L", "something Lambda Xyz (blah)")
-    bk.insertSimConditions(simCondDict)
-
-    # actual tests
     retVal = bk.insertStep(
         {
             "Step": {
@@ -485,12 +503,13 @@ def test_registerProduction():
     assert retVal["OK"], retVal["Message"]
     assert retVal["Value"] > 0
     gauss_sid = retVal["Value"]
+
     productionSteps["Steps"].append(
         {"StepId": gauss_sid, "Visible": "Y", "OutputFileTypes": [{"Visible": "Y", "FileType": "SIM"}]}
     )
 
     bkFile = find_all("Job_Report_MCFastSimulation.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(gauss_sid))
     with open(bkFile + ".temp", "w") as fd:
@@ -560,14 +579,14 @@ def test_registerProduction():
     )
 
     bkFile = find_all("Job_Report_MCReconstruction_1.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(moore_sid))
     with open(bkFile + ".temp", "w") as fd:
         fd.write(filedata)
 
     bkFile = find_all("Job_Report_MCReconstruction_2.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(moore_sid))
     with open(bkFile + ".temp", "w") as fd:
@@ -631,7 +650,7 @@ def test_registerProduction():
     )
 
     bkFile = find_all("Job_Report_MCMerge.xml", "..", "BookkeepingSystem")[0]
-    with open(bkFile, "r") as fd:
+    with open(bkFile) as fd:
         filedata = fd.read()
     filedata = filedata.replace("#STEP_ID#", str(noether_sid))
     with open(bkFile + ".temp", "w") as fd:
@@ -731,17 +750,6 @@ def test_registerProduction():
     res = bk.getProductionInformation(12345)
     assert res["OK"]
     assert len(res["Value"]["Steps"]) == 8
-
-
-def test_sendMCXMLBookkeepingReport():
-
-    # preparing
-    bk.insertFileTypes("SIM", "sim", "ROOT")
-    bk.insertFileTypes("DIGI", "digi", "ROOT")
-    bk.insertFileTypes("LOG", "log", "1")
-    bk.insertEventType(27165000, "This is 11104131", "something GammaBeta Xyz (blah)")
-    bk.insertEventType(11104131, "This is 11104131L", "something Lambda Xyz (blah)")
-    bk.insertSimConditions(simCondDict)
 
     jobStart = jobEnd = datetime.datetime.now()
     jobStart = jobEnd = jobStart.replace(second=0, microsecond=0)
@@ -852,18 +860,6 @@ def test_sendMCXMLBookkeepingReport():
     retVal = bk.sendXMLBookkeepingReport(step8)
     assert retVal["OK"], retVal["Message"]
 
-
-def test_getSimConditions():
-    """
-    check the existence of the sim cond
-    """
-    retVal = bk.getSimConditions()
-    assert retVal["OK"], retVal["Message"]
-    assert len(retVal["Value"]) >= 1
-    assert simCondDict["SimDescription"] in (i[1] for i in retVal["Value"])
-
-
-def test_getJobInformation():
     """
     test the job information method
     """
@@ -1010,20 +1006,10 @@ def test_getJobInformation():
     assert retVal["OK"], retVal["Message"]
     assert len(retVal["Value"]) == 8
 
-
-def test_sendJobReport():
     """
     Send real job XML report
     """
 
-    # preparing
-    bk.insertFileTypes("ALLSTREAMS.DST", "bof", "ROOT")
-    bk.insertFileTypes("DSTARD02HHHH.HLTFILTER.MDST", "booof", "ROOT")
-    bk.insertFileTypes("LOG", "log", "1")
-    res = bk.insertEventType(27165000, "This is 27165000", "something Lambda Xyz (blah)")
-    assert res["OK"]
-
-    # actual test
     for rep in [
         "Job_Report_MCFastSimulation.xml.temp",
         "Job_Report_MCReconstruction_1.xml.temp",
@@ -1031,14 +1017,12 @@ def test_sendJobReport():
         "Job_Report_MCMerge.xml.temp",
     ]:
         bkFile = find_all(rep, "..", "BookkeepingSystem")[0]
-        with io.open(bkFile, "r") as fd:
+        with open(bkFile) as fd:
             bkXML = fd.read()
         res = bk.sendXMLBookkeepingReport(bkXML)
         assert res["OK"]
         os.remove(bkFile)
 
-
-def test_addFiles():
     lfns = [
         "/lhcb/MC/2012/SIM/00056438/0000/00056438_00001025_test_1.sim",
         "/lhcb/MC/2012/DIGI/00056438/0000/00056438_00001025_test_2.digi",
