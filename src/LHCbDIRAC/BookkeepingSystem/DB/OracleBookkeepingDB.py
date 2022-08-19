@@ -3713,13 +3713,16 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         if configName not in [default, None, ""] and configVersion not in [default, None, ""]:
             if "configurations" not in tables.lower():
                 tables += " , configurations c"
+            if "jobs" not in tables.lower():
+                tables += " , jobs j"
             condition += " AND c.configurationid=j.configurationid"
             condition += " AND c.configname='%s'" % configName
             condition += " AND c.configversion='%s'" % configVersion
 
         return condition, tables
 
-    def __buildVisible(self, condition=None, visible=default, replicaFlag=default):
+    @staticmethod
+    def __buildVisible(condition=None, visible=default, replicaFlag=default):
         """It makes the condition for a given visibility flag and replica flag."""
         if condition is None:
             condition = ""
