@@ -1,3 +1,14 @@
+[v11.0.0a3]
+*Tests
+
+NEW: (!1259) add a manual CI job for DMS tests
+
+*Workflow
+
+CHANGE: (!1249) New structure for MC error json file
+
+
+
 [v11.0.0a2]
 *Core
 
