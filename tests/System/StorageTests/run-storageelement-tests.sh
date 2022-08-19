@@ -63,7 +63,7 @@ cd ..
 # Get the certificates
 mkdir -p "/tmp/home/certs"
 echo "${LHCBDIRAC_CERTIF_HOSTCERT}" | base64 -d > "/tmp/home/certs/hostcert.pem"
-echo "${LHCbDIRAC_CERTIF_HOSTKEY}" | base64 -d > "/tmp/home/certs/hostkey.pem"
+echo "${LHCBDIRAC_CERTIF_HOSTKEY}" | base64 -d > "/tmp/home/certs/hostkey.pem"
 chmod 400 "/tmp/home/certs/hostkey.pem"
 
 curl -LO https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-x86_64.sh
