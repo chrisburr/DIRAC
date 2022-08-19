@@ -343,7 +343,7 @@ class BookkeepingManagerHandler(RequestHandler):
                             ]
                         ]
                     else:
-                        result = S_ERROR("Condition does not exists")
+                        result = S_ERROR("Condition does not exist")
                         ok = False
             if ok:
                 result = S_OK(

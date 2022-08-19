@@ -853,12 +853,11 @@ GROUP BY c.configversion ORDER BY c.configversion"
 
     #############################################################################
     def getConditions(self, configName, configVersion, evt):
-        """Retrieving the data taking or simulation conditions for a given event
-        type.
+        """Retrieving the data taking or simulation conditions for a given event type.
 
         :param str configName: configuration name
         :param str configVersion: configuration version
-        :param long evt: event type id
+        :param int evt: event type id
         :return: the conditions for a given configuration name, version and event type
         """
 
@@ -898,7 +897,7 @@ cont.simid=simulationConditions.simid(+) AND cont.DAQPERIODID=data_taking_condit
         :param str configName: configuration name
         :param str configVersion: configuration version
         :param str conddescription: data taking or simulation description
-        :param long runnumber: run number
+        :param int runnumber: run number
         :param int production: production number
         :param eventType: event type identifier
         :param str path: processing pass
@@ -1023,7 +1022,7 @@ WHERE v.path='%s'"
                             table, str(retVal["Value"]), table
                         )
                     else:
-                        return S_ERROR("Condition does not exists!")
+                        return S_ERROR("Condition does not exist!")
                 else:
                     return retVal
         else:
@@ -1081,7 +1080,7 @@ WHERE v.path='%s'"
         :param str configVersion: configuration version
         :param str conddescription: data taking or simulation description
         :param str processing: processing pass
-        :param long evt: event type identifier
+        :param int evt: event type identifier
         :param str visible: the file visibility flag
         :param str file type: file type
         :param str replicaFlag: replica flag
@@ -1132,8 +1131,8 @@ WHERE v.path='%s'"
         :param str configVersion: configuration version
         :param str conddescription: data taking or simulation description
         :param str processing: processing pass
-        :param long evt: event type identifier
-        :param long runnb: run number
+        :param int evt: event type identifier
+        :param int runnb: run number
         :param int production: production number
         :param str visible: the file visibility flag
         :param str file type: file type
@@ -1218,7 +1217,7 @@ WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %
         :param str configVersion: configuration version
         :param str conddescription: data taking or simulation description
         :param str processing: processing pass
-        :param long evt: event type identifier
+        :param int evt: event type identifier
         :param int production: production number
         :param str filetype: file type
         :param str quality: data quality flag
@@ -1227,8 +1226,8 @@ WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %
         :param datetime startDate: job/run insert start time stamp
         :param datetime endDate: job/run end insert time stamp
         :param list runnumbers: run numbers
-        :param long startRunID: start run
-        :param long endRunID: end run
+        :param int startRunID: start run
+        :param int endRunID: end run
         :param str tcks: TCK number
         :param datetime jobStart: job starte date
         :param datetime jobEnd: job end date
@@ -1351,7 +1350,7 @@ WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %
     def getProductionProcessingPass(self, prodid):
         """For retrieving the processing pass from a given production.
 
-        :param long prodid: production number
+        :param int prodid: production number
         :return: processing pass
         """
         return self.dbW_.executeStoredFunctions("BOOKKEEPINGORACLEDB.getProductionProcessingPass", str, [prodid])
@@ -1360,7 +1359,7 @@ WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %
     def getRunProcessingPass(self, runnumber):
         """For retrieving the processing pass for a given run number.
 
-        :param long runnumber: run number
+        :param int runnumber: run number
         :return: the processing pass for a given run
         """
         return self.dbW_.executeStoredFunctions(
@@ -1371,7 +1370,7 @@ WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %
     def getProductionProcessingPassID(self, prodid):
         """For retrieving the processing pass id.
 
-        :param long prodid: production number
+        :param int prodid: production number
         :return: the processing pass identifier of a production
         """
         return self.dbW_.executeStoredFunctions("BOOKKEEPINGORACLEDB.getProductionProcessingPassId", int, [prodid])
@@ -1380,7 +1379,7 @@ WHERE prod.production=cont.production %s AND prod.filetypeId=ftypes.filetypeid %
     def getMoreProductionInformations(self, prodid):
         """For retrieving the production statistics.
 
-        :param long prodid: production number
+        :param int prodid: production number
         :return: the statistics of a production
         """
 
@@ -1742,7 +1741,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
     def getRunFiles(self, runid):
         """Retrieving list of LFNs for a given run.
 
-        :param long runid: run number
+        :param int runid: run number
         :return: a list of files with metadata for a given run
         """
         result = S_ERROR()
@@ -1823,7 +1822,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
     def getInputFiles(self, jobid):
         """For retrieving the input files for a given job.
 
-        :param long jobid: bookkeeping job id
+        :param int jobid: bookkeeping job id
         :return: the input files for a given jobid
         """
         command = (
@@ -1836,7 +1835,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
     def getOutputFiles(self, jobid):
         """For retrieving the output files for a given job.
 
-        :param long jobid: bookkeeping jobid
+        :param int jobid: bookkeeping jobid
         :return: the outputfiles for a given jobid
         """
         return self.dbR_.query("SELECT files.filename FROM files WHERE files.jobid=" + str(jobid))
@@ -1945,7 +1944,7 @@ GROUP BY c.configname, c.configversion, s.ApplicationName, s.ApplicationVersion"
     def setRunDataQuality(self, runNb, flag):
         """sets the data quality flag for a given run.
 
-        :param long runNb: run number
+        :param int runNb: run number
         :param flag: data quality flag
         """
         result = S_ERROR()
@@ -2263,7 +2262,7 @@ AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
     def checkEventType(self, eventTypeId):  # eventType(self, eventTypeId):
         """checks the event type.
 
-        :param long eventTypeId: event type
+        :param int eventTypeId: event type
         :return: event type
         """
         result = S_ERROR()
@@ -2392,8 +2391,8 @@ AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
     def insertInputFile(self, jobID, fileId):
         """inserts the input file of a job.
 
-        :param long jobID: internal bookkeeping job id
-        :param long fileId: internal file id
+        :param int jobID: internal bookkeeping job id
+        :param int fileId: internal file id
         """
         result = self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.insertInputFilesRow", [fileId, jobID], False)
         return result
@@ -2469,7 +2468,7 @@ AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
     def updateReplicaRow(self, fileID, replica):  # , name, location):
         """adds the replica flag.
 
-        :param long fileID: internal bookkeeping file id
+        :param int fileID: internal bookkeeping file id
         :param str replica: replica flag
         """
         return self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.updateReplicaRow", [fileID, replica], False)
@@ -2478,7 +2477,7 @@ AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
     def deleteJob(self, jobID):
         """deletes a job.
 
-        :param long jobID: internal bookkeeping job id
+        :param int jobID: internal bookkeeping job id
         """
         self.log.warn("Deleting job", jobID)
         return self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.deleteJob", [jobID], False)
@@ -2487,7 +2486,7 @@ AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
     def deleteInputFiles(self, jobID):
         """deletes the input files of a job.
 
-        :param long jobid:internal bookkeeping job id
+        :param int jobid:internal bookkeeping job id
         """
         self.log.warn("Deleting input files of", jobID)
         return self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.deleteInputFiles", [jobID], False)
@@ -2496,7 +2495,7 @@ AND inputfiles.fileid=files.fileid AND inputfiles.jobid=%d"
     def deleteFile(self, fileID):
         """deletes a file.
 
-        :param long fileid: internal bookkeeping file id
+        :param int fileid: internal bookkeeping file id
         """
         self.log.warn("Deleting file", fileID)
         return self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.deletefile", [fileID], False)
@@ -2879,7 +2878,7 @@ AND ft.filetypeid=f.ftypeid"
     def getRunInformations(self, runnb):
         """For retrieving the run statistics.
 
-        :param long runnb: run number
+        :param int runnb: run number
         :return: the run statistics
         """
         result = S_ERROR()
@@ -3073,7 +3072,7 @@ AND ft.filetypeid=f.ftypeid"
     def getProductionFilesStatus(self, productionid=None, lfns=None):
         """the status of the files produced by a production.
 
-        :param long productionid: production number
+        :param int productionid: production number
         :param list lfns: list of LFNs
         :return: replica, noreplica, missing
         """
@@ -3155,7 +3154,7 @@ AND ft.filetypeid=f.ftypeid"
     def insertEventTypes(self, evid, desc, primary):
         """inserts an event type.
 
-        :param long evid: event type id
+        :param int evid: event type id
         :param str desc: event type description
         :param str primary: event type short description
         """
@@ -3178,7 +3177,7 @@ AND ft.filetypeid=f.ftypeid"
         :param str processing: processing pass
         :paran int production: production number
         :param str ftype: file type
-        :param long evttype: event type id
+        :param int evttype: event type id
         :return: production statistics
         """
 
@@ -3617,7 +3616,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         :param str datataking: data taking condition description
         :pram str procPass: processing pass
         :param str ftype: file type
-        :param long evt: event type
+        :param int evt: event type
         :param str configName: configuration name
         :param str configVersion: configuration version
         :param int production: production number
@@ -3625,8 +3624,8 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         :param datetime startDate: job/run insert start time stamp
         :param datetime endDate: job/run insert end time stamp
         :param bool nbofEvents: count number of events
-        :param long startRunID: start run number
-        :param long endRunID: end run number
+        :param int startRunID: start run number
+        :param int endRunID: end run number
         :param list runnumbers: list of run numbers
         :param str replicaFlag: file replica flag
         :param str visible: file visibility flag
@@ -3739,7 +3738,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
     def __buildProduction(production, condition, tables, useMainTables=True):
         """it adds the production which can be a list or string to the jobs table.
 
-        :param list, int, long production: the production number(s)
+        :param list, int production: the production number(s)
         :param str condition: contains the conditions
         :param str tables: contains the tables.
         :param bool useMainTables: It is better not to use the view in some cases. This variable is used to
@@ -3773,7 +3772,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
 
         :param list tcks: list of run TCKs
         :param str condition: condition string
-        :return: condition and tables
+        :return: condition
         """
 
         if tcks not in [None, default]:
@@ -3878,8 +3877,8 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         """it adds the run numbers or start end run to the jobs table.
 
         :param list runnumbers: list of runs
-        :param long startRunID: start run number
-        :param long endRunID: end run number
+        :param int startRunID: start run number
+        :param int endRunID: end run number
         :param str condition: condition string
         :param str tables: tables used by join
         :return: condition and tables
@@ -3978,7 +3977,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         :param datetime startDate:  file insert start date
         :param datetime endDate: file insert end date
         :param str condition: condition string
-        :return: condition and tables
+        :return: condition
         """
         if startDate not in [None, default, []]:
             condition += " AND f.inserttimestamp >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(startDate))
@@ -4001,7 +4000,7 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         :param datetime jobStartDate:  file insert start date
         :param datetime jobEndDate: file insert end date
         :param str condition: condition string
-        :return: condition and tables
+        :return: condition
         """
         if jobStartDate not in [None, default, []]:
             condition += " AND j.jobstart >= TO_TIMESTAMP ('%s','YYYY-MM-DD HH24:MI:SS')" % (str(jobStartDate))
@@ -4146,8 +4145,8 @@ prod.production>0 AND prod.production=cont.production AND cont.processingid=%d"
         :param datetime startDate: job start insert time stamp
         :param datetime endDate: job end insert time stamp
         :param bool nbofEvemts: count number of events
-        :param long startRunID: start run number
-        :param long endRunID: end run number
+        :param int startRunID: start run number
+        :param int endRunID: end run number
         :param str replicaFlag: file replica flag
         :param list tcks: run TCKs
         :param datetime jobStart: job starte date
@@ -4211,12 +4210,12 @@ j.runnumber, j.fillnumber, f.filesize, j.totalluminosity, f.luminosity, f.instLu
         :param str configVersion: configuration version
         :param str conddescription: simulation or data taking condition
         :param str processingPass: processing pass
-        :param long eventType: event type
+        :param int eventType: event type
         :param int production: production number
         :param str filetype: file type
         :param str dataQuality: data quality
-        :param long startRun: satart run number
-        :param long endRun: end run number
+        :param int startRun: satart run number
+        :param int endRun: end run number
         :param str visible: visibility flag
         :param datetime startDate: job start insert time stamp
         :param datetime endDate: job end insert time stamp
@@ -4313,13 +4312,13 @@ prod.production=cont.production AND prod.filetypeid=f.filetypeid %s"
         :param str configVersion: configuration version
         :param str conddescription: simulation or data taking condition
         :param str processing: processing pass
-        :param long evt: event type
+        :param int evt: event type
         :param int production: production number
         :param str filetype: file type
         :param str quality: data quality
-        :param long runnb: run number
-        :param long startitem: staring row number
-        :pram long maxitems: maximum returned rows
+        :param int runnb: run number
+        :param int startitem: staring row number
+        :pram int maxitems: maximum returned rows
         :return: a list of limited number of files
         """
 
@@ -4459,8 +4458,7 @@ rownum <=%d ) WHERE r >%d"
 
     #############################################################################
     def getStepIdandNameForRUN(self, programName, programVersion, conddb, dddb):
-        """For retrieving the steps which is used by given application, conddb,
-        dddb.
+        """For retrieving the steps which is used by given application, conddb, dddb.
 
         :param str programName: application name
         :param str programVersion: application version
@@ -4529,7 +4527,7 @@ rownum <=%d ) WHERE r >%d"
     def __getprocessingid(self, processingpassid):
         """For retrieving processing pass for a given id.
 
-        :param long processongpassid: processing pass id
+        :param int processongpassid: processing pass id
         :return: processing pass
         """
         command = (
@@ -4566,7 +4564,7 @@ rownum <=%d ) WHERE r >%d"
         """inserts a processing pass.
 
         :param list values: processing pass names: Reco09, Stripping19
-        :param long parentid: the parent processing pass
+        :param int parentid: the parent processing pass
         :param list ids: keeps all processing pass ids
         """
         if ids is None:
@@ -4710,7 +4708,7 @@ rownum <=%d ) WHERE r >%d"
         :param str inputproc: input processing pass
         :param str configName: configuration name
         :param str configVersion: configuration version
-        :param long eventType: eventTyoe
+        :param int eventType: eventTyoe
         """
         self.log.verbose("Adding production", production)
         path = []
@@ -4981,7 +4979,7 @@ rownum <=%d ) WHERE r >%d"
     def getRunAndProcessingPass(self, runnb):
         """For retrieving the processing pass of a given run.
 
-        :param long runnb: run number
+        :param int runnb: run number
         :return: the processing pass of a run
         """
         command = "SELECT DISTINCT runnumber, processingpass from table (BOOKKEEPINGORACLEDB.getRunProcPass(%d))" % (
@@ -4994,8 +4992,8 @@ rownum <=%d ) WHERE r >%d"
     def getNbOfRawFiles(self, runid, eventtype, replicaFlag="Yes", visible="Y", isFinished=default):
         """For retrieving the number of raw files for a given condition.
 
-        :param long runid: run number
-        :param long eventtype: event type
+        :param int runid: run number
+        :param int eventtype: event type
         :param str replicaFlag: file replica flag
         :param str visible: file visibility flag
         :param str isFinished: the run status
@@ -5041,8 +5039,8 @@ rownum <=%d ) WHERE r >%d"
     def insertRuntimeProject(self, projectid, runtimeprojectid):
         """inserts a runtime project.
 
-        :param long projectid: run time project stepid
-        :param long runtimeprojectid: reference to other step
+        :param int projectid: run time project stepid
+        :param int runtimeprojectid: reference to other step
         """
         return self.dbW_.executeStoredProcedure(
             "BOOKKEEPINGORACLEDB.insertRuntimeProject", [projectid, runtimeprojectid], False
@@ -5052,8 +5050,8 @@ rownum <=%d ) WHERE r >%d"
     def updateRuntimeProject(self, projectid, runtimeprojectid):
         """changes the runtime project.
 
-        :param long projectid: run time project stepid
-        :param long runtimeprojectid: new run time project stepid (new reference to a stepid)
+        :param int projectid: run time project stepid
+        :param int runtimeprojectid: new run time project stepid (new reference to a stepid)
         """
         return self.dbW_.executeStoredProcedure(
             "BOOKKEEPINGORACLEDB.updateRuntimeProject", [projectid, runtimeprojectid], False
@@ -5062,7 +5060,7 @@ rownum <=%d ) WHERE r >%d"
     def removeRuntimeProject(self, stepid):
         """removes the runtime project.
 
-        :param long stepid: step id
+        :param int stepid: step id
         """
         return self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.removeRuntimeProject", [stepid], False)
 
@@ -5085,11 +5083,11 @@ rownum <=%d ) WHERE r >%d"
         :param str configVersion: configuration version
         :param str conddescription: data taking condition
         :param str processing: processing pass
-        :param long evt: event type
+        :param int evt: event type
         :param int production: production number
         :param str filetype: file type
         :param str quality: data quality
-        :param long runnb: run number
+        :param int runnb: run number
         :return: the TCKs for a given dataset
         """
 
@@ -5128,10 +5126,10 @@ rownum <=%d ) WHERE r >%d"
         :param str configName: configuration name
         :param str configVersion: configuration version
         :param str procpass: processing pass
-        :param long evt: event type
+        :param int evt: event type
         :param int production: production number
         :param str filetype: file type
-        :param long runnb: run number
+        :param int runnb: run number
         :param str selection: select state
         :return: sql command
         """
@@ -5206,10 +5204,10 @@ CONNECT BY NOCYCLE PRIOR  id=parentid) v WHERE v.path='%s' \
         :param str configName: configuration name
         :param str configVersion: configuration version
         :param str procpass: processing pass
-        :param long evt: event type
+        :param int evt: event type
         :param int production: production number
         :param str filetype: file type
-        :param long runnb: run number
+        :param int runnb: run number
         :return: the steps with metadata
         """
 
@@ -5463,7 +5461,7 @@ configurations c WHERE j.configurationid=c.configurationid %s AND prod.productio
     def getRunsForFill(self, fillid):
         """It returns a list of runs for a given FILL.
 
-        :param long fillid: fill number
+        :param int fillid: fill number
         :return: runs
         """
 
@@ -5489,7 +5487,7 @@ configurations c WHERE j.configurationid=c.configurationid %s AND prod.productio
         :param str configVersion: configuration version
         :param str conddescription: simulation or data taking condition
         :param str processing: processing pass
-        :param long evt: event type
+        :param int evt: event type
         :param str quality: data quality
         :return: runs
         """
@@ -5621,7 +5619,7 @@ sim.g4settings sim_g4settings, sim.visible sim_visible FROM %s WHERE sim.simid=s
     def deleteSimulationConditions(self, simid):
         """it deletes a given simulation condition.
 
-        :param long simid: simulation condition id
+        :param int simid: simulation condition id
         """
         return self.dbW_.query("DELETE simulationconditions WHERE simid=%d" % simid)
 
@@ -5718,8 +5716,8 @@ diracjobid=%d ORDER BY j.jobid, f.filename"
     def insertRunStatus(self, runnumber, jobId, isFinished="N"):
         """inserts the run status of a give run.
 
-        :param long runnumber: run number
-        :param long jobId: internal bookkeeping job id
+        :param int runnumber: run number
+        :param int jobId: internal bookkeeping job id
         :param str isFinished: the run is not finished by default
         """
         return self.dbW_.executeStoredProcedure(
@@ -5730,7 +5728,7 @@ diracjobid=%d ORDER BY j.jobid, f.filename"
     def setRunStatusFinished(self, runnumber, isFinished):
         """Set the run status.
 
-        :param long runnumber: run number
+        :param int runnumber: run number
         :param str isFinished: 'Y' if it is finished otherwise 'N'
         """
         result = self.dbW_.executeStoredProcedure("BOOKKEEPINGORACLEDB.setRunFinished", [runnumber, isFinished], False)
@@ -5782,7 +5780,7 @@ diracjobid=%d ORDER BY j.jobid, f.filename"
     def getProductionProducedEvents(self, prodid):
         """the produced event by a production taking into account the step.
 
-        :param long prodid: production number
+        :param int prodid: production number
         :return: produced events
         """
         return self.dbR_.executeStoredFunctions("BOOKKEEPINGORACLEDB.getProducedEvents", int, [prodid])
