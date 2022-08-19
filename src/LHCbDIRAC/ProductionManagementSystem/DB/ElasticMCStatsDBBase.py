@@ -19,19 +19,17 @@ from DIRAC.Core.Base.ElasticDB import ElasticDB
 
 
 class ElasticMCStatsDBBase(ElasticDB):
-    def set(self, data):
+    def set(self, data: list) -> dict:
         """
-        Inserts data into ElasticJobParametersDB index
+        Inserts data into ElasticDB index
 
-        :param self: self reference
-        :param str value: data to be inserted
+        :param data: data to be inserted
 
         :returns: S_OK/S_ERROR as result of indexing
         """
-
         self.log.debug(
             self.__class__.__name__,
-            ".set(): inserting data in %s:%s" % (self.indexName, data),  # pylint: disable=no-member
+            f".set(): inserting data in {self.indexName}:{data}",  # pylint: disable=no-member
         )
 
         result = self.index(
@@ -43,16 +41,15 @@ class ElasticMCStatsDBBase(ElasticDB):
             self.log.error("ERROR: Couldn't insert data", result["Message"])
         return result
 
-    def get(self, productionID):
+    def get(self, productionID: int) -> dict:
         """Get docs per productionID. Basically here only for tests, right now
 
         :param self: self reference
-        :param int productionID: production ID
+        :param productionID: production ID
 
         :return: dict with all docs
         """
-
-        self.log.debug(self.__class__.__name__ + ".get(): Getting for production %s" % str(productionID))
+        self.log.debug(self.__class__.__name__ + f".get(): Getting for production {productionID}")
 
         resultList = []
 
@@ -77,10 +74,9 @@ class ElasticMCStatsDBBase(ElasticDB):
             for name in hit:
                 hitDict[name] = getattr(hit, name)
             resultList.append(hitDict)
-
         return S_OK(resultList)
 
-    def remove(self, productionID):
+    def remove(self, productionID: str) -> dict:
         """Remove docs per productionID. Basically here only for tests, right now
 
         :param self: self reference
@@ -89,7 +85,7 @@ class ElasticMCStatsDBBase(ElasticDB):
         :return: S_OK/S_ERROR
         """
 
-        self.log.debug(self.__class__.__name__ + ".remove(): Removing documents of production %s" % str(productionID))
+        self.log.debug(self.__class__.__name__ + f".remove(): Removing documents of production {productionID}")
 
         """ the following should be equivalent to
     {

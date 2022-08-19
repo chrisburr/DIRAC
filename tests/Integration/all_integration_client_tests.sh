@@ -16,10 +16,14 @@
 set -x
 
 echo -e '****************************************'
-echo -e '******' "LHCb client -> server tests" '******\n'
+echo -e '******' "LHCb client (-> server) tests" '******\n'
 
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 echo -e "THIS_DIR=${THIS_DIR}" |& tee -a clientTestOutputs.txt
+
+#-------------------------------------------------------------------------------#
+echo -e "*** $(date -u) **** LHCb Core TESTS ****\n"
+pytest "${THIS_DIR}/Core/Test_LogErr.py" |& tee -a clientTestOutputs.txt; (( ERR |= "${?}" ))
 
 #-------------------------------------------------------------------------------#
 echo -e "*** $(date -u) **** LHCb PMS TESTS ****\n"

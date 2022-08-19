@@ -14,61 +14,123 @@ Tests set(), get() and remove() from ElasticMCGaussLogErrorsDB
 import time
 
 from DIRAC.Core.Base.Script import parseCommandLine
+from DIRAC import gLogger
 
 parseCommandLine()
+gLogger.setLevel("DEBUG")
 
-from .MCStatsSampleData import gauss_errors_1
-
-# sut
+from .MCStatsSampleData import gauss_errors_1, gauss_errors_2
 from LHCbDIRAC.ProductionManagementSystem.DB.ElasticMCGaussLogErrorsDB import ElasticMCGaussLogErrorsDB
 
+firstExpectedRes = [
+    {
+        "JobID": "001",
+        "ProductionID": "002",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "ERROR Gap not found! ",
+    },
+    {
+        "JobID": "001",
+        "ProductionID": "002",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "ERROR EvtGenDecay:: EvtGen particle not decayed [Generation] StatusCode=FAILURE",
+    },
+    {
+        "JobID": "001",
+        "ProductionID": "002",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "ERROR No particle with barcode equal to 1!",
+    },
+    {
+        "JobID": "001",
+        "ProductionID": "002",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "ERROR No particle with barcode equal to 1!",
+    },
+]
+
+secondExpectedRes = [
+    {
+        "JobID": "001",
+        "ProductionID": "004",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "G4Exception : PART102      issued by : G4ParticleDefintion::G4ParticleDefintionStrange PDGEncoding",
+    },
+    {
+        "JobID": "001",
+        "ProductionID": "004",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "G4Exception : PART102      issued by : G4ParticleDefintion::G4ParticleDefintionStrange PDGEncoding",
+    },
+    {
+        "JobID": "001",
+        "ProductionID": "004",
+        "wmsID": "001000",
+        "timestamp": 1657276525579,
+        "Errors": 1,
+        "ErrorType": "G4Exception : PART102      issued by : G4ParticleDefintion::G4ParticleDefintionStrange PDGEncoding",
+    },
+]
 
 db = ElasticMCGaussLogErrorsDB()
 
 
-def test_setandGetandRemove():
-
+def test_Delete():
     # Remove the index
     result = db.deleteIndex(db.indexName)
-    assert result["OK"] is True
+    assert result["OK"]
 
-    # Set
 
+def test_Set():
+    # First set
     result = db.set(gauss_errors_1)
     time.sleep(1)
-    assert result["OK"] is True
-    # Set data2
-    # result = db.set(data2)
-    # time.sleep(1)
-    # assert result['OK'] is True
+    assert result["OK"]
 
-    # # Data insertion is not instantaneous, so sleep is needed
-    # time.sleep(1)
+    # Second set
+    result = db.set(gauss_errors_2)
+    time.sleep(1)
+    assert result["OK"]
 
+
+def test_Get():
     # Get
+    result = db.get(productionID="002")
+    assert result["OK"]
+    assert result["Value"] == firstExpectedRes
 
-    result = db.get(4)
-    assert result["OK"] is True
-    assert result["Value"] == [gauss_errors_1]
-
-    # result = db.get(id2)
-    # assert result['OK'] is True
-    # assert result['Value'] == data2
+    result = db.get(productionID="004")
+    assert result["OK"]
+    assert result["Value"] == secondExpectedRes
 
     # Get empty
-    result = db.get(10)  # non-existing
-    assert result["OK"] is True
+    result = db.get(productionID="10")  # non-existing
+    assert result["OK"]
     assert result["Value"] == []
 
+
+def test_Remove():
     # Remove
-    result = db.remove(4)
-    assert result["OK"] is True
+    result = db.remove(productionID="002")
+    assert result["OK"]
     # Get again
     time.sleep(1)
-    result = db.get(4)  # removed now
-    assert result["OK"] is True
+    result = db.get(productionID="002")  # removed now
+    assert result["OK"]
     assert result["Value"] == []
 
     # Remove the index
     result = db.deleteIndex(db.indexName)
-    assert result["OK"] is True
+    assert result["OK"]
