@@ -120,12 +120,11 @@ def step_to_legacy_dict(step: ProductionStep):
         result["DDDB"] = "fromPreviousStep"
         result["DQTag"] = "fromPreviousStep"
 
-    if isinstance(step.options, dict):
-        # lbexec style options
-        result["OptionFiles"] = json.dumps(step.options)
-    else:
+    if isinstance(step.options, list):
         # Legacy style options
         result["OptionFiles"] = ";".join(step.options)
+    else:
+        result["OptionFiles"] = step.options.json()
 
     if step.options_format:
         result["OptionsFormat"] = step.options_format

@@ -36,7 +36,20 @@ class ProductionStep(BaseModel):
     id: Optional[PositiveInt]
     name: str
     processing_pass: str
-    options: Union[list[str], dict]  # TODO the list of str is for legacy compatibility
+
+    class GaudirunOptions(BaseModel):
+        command: Optional[conlist(str, min_items=1)]
+        files: list[str]
+        format: Optional[str]
+        gaudi_extra_options: Optional[str]
+        processing_pass: Optional[str]
+
+    class LbExecOptions(BaseModel):
+        entrypoint: str
+        extra_options: dict[str, Any]
+        extra_args: list[str] = []
+
+    options: Union[list[str], GaudirunOptions, LbExecOptions]  # TODO the list of str is for legacy compatibility
     options_format: Optional[str]  # TODO This should be merged into options
     visible: bool
     multicore: bool = False
