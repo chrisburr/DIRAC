@@ -88,6 +88,7 @@ class ProductionStep(BaseModel):
 
 
 class ProductionBase(BaseModel):
+    type: str
     id: Optional[PositiveInt]
     author: str
     priority: constr(regex=r"^[12][ab]$")

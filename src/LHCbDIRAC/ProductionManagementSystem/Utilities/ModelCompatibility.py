@@ -272,7 +272,7 @@ def production_to_legacy_dict(prod: ProductionBase):
             request["ProDetail"]["pDsc"].append(p_dsc)
 
     request["ProDetail"]["pAll"] = ",".join(request["ProDetail"]["pAll"])
-    if prod.override_processing_pass is None:
+    if not isinstance(prod, SimulationProduction) or prod.override_processing_pass is None:
         request["ProDetail"]["pDsc"] = "/".join(request["ProDetail"]["pDsc"])
     else:
         request["ProDetail"]["pDsc"] = prod.override_processing_pass
