@@ -266,7 +266,7 @@ def production_to_legacy_dict(prod: ProductionBase):
     request["ProDetail"] = {"pAll": [], "pDsc": []}
     for i, step in enumerate(prod.steps, start=1):
         detail, p_all, p_dsc = _step_to_production_manager_dict(i, step)
-        request["ProDetail"].update(detail)
+        request["ProDetail"].update({k: v for k, v in detail.items() if v != ""})
         request["ProDetail"]["pAll"].append(p_all)
         if p_dsc is not None:
             request["ProDetail"]["pDsc"].append(p_dsc)

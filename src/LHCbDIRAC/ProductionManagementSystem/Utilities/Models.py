@@ -102,7 +102,7 @@ class ProductionBase(BaseModel):
 
 class SimulationProduction(ProductionBase):
     type: Literal["Simulation"]
-    mc_config_version: PositiveInt
+    mc_config_version: str
     sim_condition: str
     fast_simulation_type: constr(strip_whitespace=True, min_length=4, max_length=32) = "None"
     # TODO This should move to EventType
