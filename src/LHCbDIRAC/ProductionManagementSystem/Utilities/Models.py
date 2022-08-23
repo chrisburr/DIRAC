@@ -97,6 +97,8 @@ class ProductionStep(BaseModel):
             if isinstance(data_pkg, str):
                 name, version = data_pkg.rsplit(".", 2)
                 cleaned_data_pkgs.append({"name": name, "version": version})
+            else:
+                cleaned_data_pkgs.append(data_pkg)
         return cleaned_data_pkgs
 
 
