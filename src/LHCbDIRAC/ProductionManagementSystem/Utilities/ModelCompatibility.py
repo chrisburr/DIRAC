@@ -91,8 +91,12 @@ def make_subprod_legacy_dict(sub_production, parent_id):
     return data
 
 
-def step_to_legacy_dict(step: ProductionStep):
-    """Make a webapp-like dictionary that can be used to search for a step in the bookkeeping"""
+def step_to_legacy_dict(i: int, step: ProductionStep):
+    """Make a webapp-like dictionary that can be used to search for a step in the bookkeeping
+
+    :param i: The index of the step in the production
+    :param step: The step to convert into a dictionary
+    """
     result = {
         "ApplicationName": step.application.name,
         "ApplicationVersion": step.application.version,
@@ -115,17 +119,21 @@ def step_to_legacy_dict(step: ProductionStep):
         result["CONDDB"] = step.dbtags.CondDB or ""
         result["DDDB"] = step.dbtags.DDDB or ""
         result["DQTag"] = step.dbtags.DQTag or ""
-    else:
+    elif i > 1:
         result["CONDDB"] = "fromPreviousStep"
         result["DDDB"] = "fromPreviousStep"
         result["DQTag"] = "fromPreviousStep"
-
-    if isinstance(step.options, dict):
-        # lbexec style options
-        result["OptionFiles"] = json.dumps(step.options)
     else:
+        assert i > 0, "Step index should be 1-based"
+        result["CONDDB"] = ""
+        result["DDDB"] = ""
+        result["DQTag"] = ""
+
+    if isinstance(step.options, list):
         # Legacy style options
         result["OptionFiles"] = ";".join(step.options)
+    else:
+        result["OptionFiles"] = step.options.json()
 
     if step.options_format:
         result["OptionsFormat"] = step.options_format
@@ -135,9 +143,13 @@ def step_to_legacy_dict(step: ProductionStep):
     return result
 
 
-def step_to_step_manager_dict(step: ProductionStep):
-    """Make a webapp-like dictionary for creating a step in the bookkeeping"""
-    result = {"Step": step_to_legacy_dict(step)}
+def step_to_step_manager_dict(i: int, step: ProductionStep):
+    """Make a webapp-like dictionary for creating a step in the bookkeeping
+
+    :param i: The index of the step in the production
+    :param step: The step to convert into a dictionary
+    """
+    result = {"Step": step_to_legacy_dict(i, step)}
 
     if step.input:
         result["InputFileTypes"] = [{"FileType": x.type, "Visible": "Y" if x.visible else "N"} for x in step.input]
@@ -146,8 +158,12 @@ def step_to_step_manager_dict(step: ProductionStep):
 
 
 def _step_to_production_manager_dict(i: int, step: ProductionStep):
-    """Make a webapp-like dictionary for defining a step in the metadata of a production request"""
-    legacy_dict = step_to_legacy_dict(step)
+    """Make a webapp-like dictionary for defining a step in the metadata of a production request
+
+    :param i: The index of the step in the production
+    :param step: The step to convert into a dictionary
+    """
+    legacy_dict = step_to_legacy_dict(i, step)
 
     detail = {}
     if step.input:
@@ -272,7 +288,7 @@ def production_to_legacy_dict(prod: ProductionBase):
             request["ProDetail"]["pDsc"].append(p_dsc)
 
     request["ProDetail"]["pAll"] = ",".join(request["ProDetail"]["pAll"])
-    if prod.override_processing_pass is None:
+    if not isinstance(prod, SimulationProduction) or prod.override_processing_pass is None:
         request["ProDetail"]["pDsc"] = "/".join(request["ProDetail"]["pDsc"])
     else:
         request["ProDetail"]["pDsc"] = prod.override_processing_pass
@@ -317,9 +333,9 @@ def _lookup_simulation_condition(sim_condition: str):
     }
 
 
-def find_step_id(step: ProductionStep) -> Optional[int]:
+def find_step_id(i: int, step: ProductionStep) -> Optional[int]:
     """Query the bookkeeping for a already defined step, returning its ID or None"""
-    legacy_dict = step_to_legacy_dict(step)
+    legacy_dict = step_to_legacy_dict(i, step)
     # Don't query on NULL keys as the bookkeeping gets confused
     query = {k: v for k, v in legacy_dict.items() if v}
     query.pop("Usable", None)
