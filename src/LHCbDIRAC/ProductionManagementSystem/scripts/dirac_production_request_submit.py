@@ -102,12 +102,12 @@ def _submitProductionRequests(prod: ProductionBase, *, dryRun=True) -> dict[int,
     prc = ProductionRequestClient()
 
     for j, step in enumerate(prod.steps, start=1):
-        step.id = find_step_id(step)
+        step.id = find_step_id(j, step)
         if step.id is not None:
             gLogger.info(f"Step {j} of {len(prod.steps)}: Found existing step with ID {step.id=}")
             continue
 
-        step_info = step_to_step_manager_dict(step)
+        step_info = step_to_step_manager_dict(j, step)
         gLogger.verbose("Running insertStep with", step_info)
         if not dryRun:
             step.id = returnValueOrRaise(BookkeepingClient().insertStep(step_info))
