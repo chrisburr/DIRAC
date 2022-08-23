@@ -198,7 +198,7 @@ def _steps_to_production_dict(steps: list[ProductionStep]) -> list[dict]:
 
     stepsInProd = []
     for i, dirac_step in enumerate(steps):
-        result = step_to_step_manager_dict(dirac_step)
+        result = step_to_step_manager_dict(i + 1, dirac_step)
         step_dict = result["Step"]
         step_dict["StepId"] = step_dict.get("StepId", 12345)
         step_dict["fileTypesIn"] = [f.type for f in dirac_step.input]

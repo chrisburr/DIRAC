@@ -10,7 +10,9 @@
 # or submit itself to any jurisdiction.                                       #
 ###############################################################################
 """Create production requests from a YAML document"""
+import json
 from pathlib import Path
+from typing import Optional
 
 import yaml
 
@@ -23,33 +25,42 @@ from LHCbDIRAC.ProductionManagementSystem.Utilities.Models import parse_obj, Pro
 
 def parseArgs():
     doSubmit = False
+    outputFilename: Optional[Path] = None
 
     @convertToReturnValue
     def enableSubmit(_):
         nonlocal doSubmit
         doSubmit = True
 
+    @convertToReturnValue
+    def setOutputFilename(filename):
+        nonlocal outputFilename
+        outputFilename = Path(filename)
+
     switches = [
         ("", "submit", "Actually create steps and submit productions", enableSubmit),
+        ("", "output-json=", "Write the production IDs to a JSON file", setOutputFilename),
     ]
     Script.registerSwitches(switches)
     Script.registerArgument("yaml_path: Path to the YAML file containing productions to submit")
     Script.parseCommandLine(ignoreErrors=False)
     (yaml_path,) = Script.getPositionalArgs()
-    return Path(yaml_path), doSubmit
+    return Path(yaml_path), doSubmit, outputFilename
 
 
 @Script()
 def main():
-    yamlPath, doSubmit = parseArgs()
+    yamlPath, doSubmit, outputFilename = parseArgs()
 
     productionRequests = [parse_obj(spec) for spec in yaml.safe_load(yamlPath.read_text())]
-    submitProductionRequests(productionRequests, dryRun=not doSubmit)
+    productionIDs = submitProductionRequests(productionRequests, dryRun=not doSubmit)
+    if productionIDs and outputFilename:
+        outputFilename.write_text(json.dumps(productionIDs))
     if not doSubmit:
         gLogger.always(f'This was a dry run! Pass "--submit" to actually submit production requests.')
 
 
-def submitProductionRequests(productionRequests: list[ProductionBase], *, dryRun=True):
+def submitProductionRequests(productionRequests: list[ProductionBase], *, dryRun=True) -> dict[int, list[int]]:
     """Submit a collection of production requests
 
     :param productionRequests: List of production requests to submit
@@ -70,12 +81,14 @@ def submitProductionRequests(productionRequests: list[ProductionBase], *, dryRun
         raise NotImplementedError(f"Unknown file types that need to be registered: {missingFileTypes!r}")
 
     # Create steps and submit production requests
+    productionIDs = {}
     for i, prod in enumerate(productionRequests, start=1):
         gLogger.always("Considering production", f"{i} of {len(productionRequests)}: {prod.name}")
-        _submitProductionRequests(prod, dryRun=dryRun)
+        productionIDs.update(_submitProductionRequests(prod, dryRun=dryRun))
+    return productionIDs
 
 
-def _submitProductionRequests(prod: ProductionBase, *, dryRun=True):
+def _submitProductionRequests(prod: ProductionBase, *, dryRun=True) -> dict[int, list[int]]:
     from LHCbDIRAC.BookkeepingSystem.Client.BookkeepingClient import BookkeepingClient
     from LHCbDIRAC.ProductionManagementSystem.Client.ProductionRequestClient import ProductionRequestClient
     from LHCbDIRAC.ProductionManagementSystem.Utilities.Models import ProductionStates
@@ -89,12 +102,12 @@ def _submitProductionRequests(prod: ProductionBase, *, dryRun=True):
     prc = ProductionRequestClient()
 
     for j, step in enumerate(prod.steps, start=1):
-        step.id = find_step_id(step)
+        step.id = find_step_id(j, step)
         if step.id is not None:
             gLogger.info(f"Step {j} of {len(prod.steps)}: Found existing step with ID {step.id=}")
             continue
 
-        step_info = step_to_step_manager_dict(step)
+        step_info = step_to_step_manager_dict(j, step)
         gLogger.verbose("Running insertStep with", step_info)
         if not dryRun:
             step.id = returnValueOrRaise(BookkeepingClient().insertStep(step_info))
@@ -118,9 +131,12 @@ def _submitProductionRequests(prod: ProductionBase, *, dryRun=True):
             sub_prod_ids.append(sub_prod_id)
 
     prod.state = ProductionStates.SUBMITTED
+    productionIDs = {}
     if not dryRun:
         returnValueOrRaise(prc.updateProductionRequest(prod.id, {"RequestState": prod.state.value}))
         gLogger.always(f"Submitted production {prod.id} with sub productions {sub_prod_ids}")
+        productionIDs[prod.id] = sub_prod_ids
+    return productionIDs
 
 
 if __name__ == "__main__":
