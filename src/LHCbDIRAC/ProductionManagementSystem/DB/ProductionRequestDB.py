@@ -130,7 +130,7 @@ class ProductionRequestDB(DB):
         """
         inFields = ["RequestState", "ParentID", "MasterID", "RequestAuthor", "Inform", "IsModel"]
         result = self._query(
-            "SELECT %s " % ",".join(inFields) + "FROM ProductionRequests " + "WHERE RequestID=%s;" % iD, connection
+            "SELECT %s " % ",".join(inFields) + "FROM ProductionRequests " + "WHERE RequestID=%s;" % iD, conn=connection
         )
         if not result["OK"]:
             self.lock.release()
@@ -283,12 +283,12 @@ class ProductionRequestDB(DB):
 
         req = "INSERT INTO ProductionRequests ( " + ",".join(self.requestFields[1:-7])
         req += " ) VALUES ( %s );" % ",".join(recls)
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
         req = "SELECT LAST_INSERT_ID();"
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -300,7 +300,7 @@ class ProductionRequestDB(DB):
                 "INSERT INTO RequestHistory ("
                 + ",".join(self.historyFields[:-1])
                 + ") VALUES ( %s,'%s','%s')" % (requestID, str(rec["RequestState"]), str(rec["RequestAuthor"])),
-                connection,
+                conn=connection,
             )
             if not result["OK"]:
                 gLogger.error(result["Message"])
@@ -484,7 +484,7 @@ class ProductionRequestDB(DB):
         hasSubreq = False
         if not old["MasterID"]:
             result = self._query(
-                "SELECT RequestID " + "FROM ProductionRequests " + "WHERE MasterID=%s" % requestID, connection
+                "SELECT RequestID " + "FROM ProductionRequests " + "WHERE MasterID=%s" % requestID, conn=connection
             )
             if not result["OK"]:
                 self.lock.release()
@@ -751,7 +751,7 @@ class ProductionRequestDB(DB):
         req = "SELECT %s " % fields
         req += "FROM ProductionRequests as t "
         req += "WHERE t.RequestID=%s" % requestID
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -832,7 +832,7 @@ class ProductionRequestDB(DB):
         req = "UPDATE ProductionRequests "
         req += "SET %s " % updates
         req += "WHERE RequestID=%s" % requestID
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -842,7 +842,7 @@ class ProductionRequestDB(DB):
                 "INSERT INTO RequestHistory ("
                 + ",".join(self.historyFields[:-1])
                 + ") VALUES ( %s,'%s','%s')" % (requestID, str(update["RequestState"]), str(creds["User"])),
-                connection,
+                conn=connection,
             )
             if not result["OK"]:
                 gLogger.error(result["Message"])
@@ -862,7 +862,7 @@ class ProductionRequestDB(DB):
         """
         result = self._query(
             "SELECT RequestID " + "FROM ProductionRequests " + "WHERE ParentID=%s and MasterID=%s" % (iD, master),
-            connection,
+            conn=connection,
         )
         if not result["OK"]:
             self.lock.release()
@@ -932,7 +932,7 @@ class ProductionRequestDB(DB):
                 + "(SELECT RequestID FROM ProductionRequests "
                 + "WHERE RequestID=%s OR MasterID=%s" % (requestID, requestID)
                 + ")",
-                connection,
+                conn=connection,
             )
             if not result["OK"]:
                 self.lock.release()
@@ -956,7 +956,7 @@ class ProductionRequestDB(DB):
                 req = "DELETE FROM ProductionRequests "
                 req += "WHERE RequestID in (%s)" % ",".join([str(x) for x in rlist])
         if req:
-            result = self._update(req, connection)
+            result = self._update(req, conn=connection)
             if not result["OK"]:
                 self.lock.release()
                 return result
@@ -964,7 +964,7 @@ class ProductionRequestDB(DB):
         # move substructure
         req = "UPDATE ProductionRequests SET ParentID=%s " % upperID
         req += "WHERE ParentID=%s" % requestID
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -972,7 +972,7 @@ class ProductionRequestDB(DB):
         # finally delete us
         req = "DELETE FROM ProductionRequests "
         req += "WHERE RequestID=%s" % requestID
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
 
         self.lock.release()
 
@@ -989,7 +989,7 @@ class ProductionRequestDB(DB):
         req = "SELECT %s " % fields
         req += "FROM ProductionRequests as t "
         req += "WHERE t.RequestID=%s" % requestID
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -1055,12 +1055,12 @@ class ProductionRequestDB(DB):
 
         req = "INSERT INTO ProductionRequests ( " + ",".join(self.requestFields[1:-7])
         req += " ) VALUES ( %s );" % ",".join(recls)
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
         req = "SELECT LAST_INSERT_ID();"
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -1072,7 +1072,7 @@ class ProductionRequestDB(DB):
                 "INSERT INTO RequestHistory ("
                 + ",".join(self.historyFields[:-1])
                 + ") VALUES ( %s,'%s','%s')" % (newRequestID, str(rec["RequestState"]), str(rec["RequestAuthor"])),
-                connection,
+                conn=connection,
             )
             if not result["OK"]:
                 gLogger.error(result["Message"])
@@ -1085,7 +1085,7 @@ class ProductionRequestDB(DB):
         req = "SELECT RequestID "
         req += "FROM ProductionRequests as t "
         req += "WHERE t.ParentID=%s" % requestID
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -1158,13 +1158,13 @@ class ProductionRequestDB(DB):
         req = "UPDATE ProductionRequests "
         req += "SET %s " % updates
         req += "WHERE RequestID=%s" % requestID
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         if not result["OK"]:
             return result
         req = "SELECT RequestID,MasterID "
         req += "FROM ProductionRequests as t "
         req += "WHERE t.ParentID=%s" % requestID
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             return result
         for ch in result["Value"]:
@@ -1220,7 +1220,7 @@ class ProductionRequestDB(DB):
         req = "SELECT RequestID,MasterID "
         req += "FROM ProductionRequests as t "
         req += "WHERE t.ParentID=%s" % requestID
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -1247,12 +1247,12 @@ class ProductionRequestDB(DB):
         recls = result["Value"]
         req = "INSERT INTO ProductionRequests ( " + ",".join(self.requestFields[1:-7])
         req += " ) VALUES ( %s );" % ",".join(recls)
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
         req = "SELECT LAST_INSERT_ID();"
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             self.lock.release()
             return result
@@ -1267,7 +1267,7 @@ class ProductionRequestDB(DB):
         if not rsplitlist:
             req = "DELETE FROM ProductionRequests "
             req += "WHERE RequestID=%s" % str(newRequestID)
-            result = self._update(req, connection)
+            result = self._update(req, conn=connection)
             self.lock.release()
             return S_ERROR("Could not move subrequests")
 
@@ -1275,7 +1275,7 @@ class ProductionRequestDB(DB):
         # it is hard to revert the previous changes...)
         req = "SELECT " + ",".join(self.historyFields) + " FROM RequestHistory WHERE RequestID=%s " % requestID
         req += "ORDER BY TimeStamp"
-        result = self._query(req, connection)
+        result = self._query(req, conn=connection)
         if not result["OK"]:
             gLogger.error(
                 "SplitProductionRequest: can not get history for %s: %s" % (str(requestID), result["Message"])
@@ -1288,7 +1288,7 @@ class ProductionRequestDB(DB):
                     "INSERT INTO RequestHistory ("
                     + ",".join(self.historyFields)
                     + ") VALUES ( %s,'%s','%s','%s')" % tuple([str(y) for y in x]),
-                    connection,
+                    conn=connection,
                 )
             if not ret["OK"]:
                 gLogger.error("SplitProductionRequest: add history fail: %s", ["Message"])
@@ -1340,7 +1340,7 @@ class ProductionRequestDB(DB):
         req += " ) VALUES ( "
         req += ",".join([str(pdict[x]) for x in self.progressFields])
         req += " )"
-        result = self._update(req, connection)
+        result = self._update(req, conn=connection)
         self.lock.release()
         if not result["OK"]:
             return result
