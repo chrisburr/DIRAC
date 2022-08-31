@@ -145,7 +145,7 @@ class TransformationDB(DIRACTransformationDB):
         """Simply set the hot flag."""
         connection = self.__getConnection(connection)
         return self._update(
-            "UPDATE Transformations SET Hot = %s WHERE TransformationID = %d" % (flag, int(transID)), connection
+            "UPDATE Transformations SET Hot = %s WHERE TransformationID = %d" % (flag, int(transID)), conn=connection
         )
 
     #############################################################################
@@ -155,7 +155,7 @@ class TransformationDB(DIRACTransformationDB):
     def deleteBookkeepingQuery(self, transID, connection=False):
         """Delete the specified query from the database."""
         connection = self.__getConnection(connection)
-        return self._update("DELETE FROM BkQueriesNew WHERE TransformationID=%d" % int(transID), connection)
+        return self._update("DELETE FROM BkQueriesNew WHERE TransformationID=%d" % int(transID), conn=connection)
 
     def setBookkeepingQueryEndRun(self, transID, runNumber, connection=False):
         """Set the EndRun for the supplied transformation."""
@@ -177,7 +177,7 @@ class TransformationDB(DIRACTransformationDB):
     ON DUPLICATE KEY UPDATE ParameterValue = %d"
             % (transID, runNumber, runNumber)
         )
-        return self._update(req, connection)
+        return self._update(req, conn=connection)
 
     def setBookkeepingQueryStartRun(self, transID, runNumber, connection=False):
         """Set the StartRun for the supplied transformation."""
@@ -199,7 +199,7 @@ class TransformationDB(DIRACTransformationDB):
     ON DUPLICATE KEY UPDATE ParameterValue = %d"
             % (transID, runNumber, runNumber)
         )
-        return self._update(req, connection)
+        return self._update(req, conn=connection)
 
     def addBookkeepingQueryRunList(self, transID, runList, connection=False):
         """Adds the list of runs."""
@@ -231,7 +231,7 @@ class TransformationDB(DIRACTransformationDB):
             "UPDATE BkQueriesNew SET ParameterValue='%s' WHERE TransformationID = %d AND ParameterName='RunNumbers'"
             % (value, transID)
         )
-        self._update(req, connection)
+        self._update(req, conn=connection)
         return S_OK()
 
     def addBookkeepingQuery(self, transID, queryDict, connection=False):
@@ -259,7 +259,7 @@ class TransformationDB(DIRACTransformationDB):
             req += "(%d,'%s','%s'), " % (transID, field, value)
         req = req.strip().rstrip(",")
 
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             return res
         return S_OK(transID)
@@ -270,7 +270,7 @@ class TransformationDB(DIRACTransformationDB):
         req = "SELECT DISTINCT TransformationID FROM BkQueriesNew"
         if transIDs:
             req = req + " WHERE TransformationID IN (%s)" % (", ".join(str(t) for t in transIDs))
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if res["OK"]:
             res = S_OK([tID[0] for tID in res["Value"]])
         return res
@@ -279,7 +279,7 @@ class TransformationDB(DIRACTransformationDB):
         """Get the bookkeeping query parameters."""
         connection = self.__getConnection(connection)
         req = "SELECT * FROM BkQueriesNew WHERE TransformationID=%d" % (int(transID))
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             return res
         if not res["Value"]:
@@ -353,7 +353,7 @@ class TransformationDB(DIRACTransformationDB):
             if not candidates:
                 continue
             req = req.rstrip(",")
-            res = self._update(req, connection)
+            res = self._update(req, conn=connection)
             if not res["OK"]:
                 return res
 
@@ -418,7 +418,7 @@ class TransformationDB(DIRACTransformationDB):
      (%d,'%s','%d','%s', UTC_TIMESTAMP(), UTC_TIMESTAMP(),%d);"
             % (transID, "Created", 0, se, runID)
         )
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             self.lock.release()
             gLogger.error("Failed to publish task for transformation", res["Message"])
@@ -427,7 +427,7 @@ class TransformationDB(DIRACTransformationDB):
         # TaskID is computed by a trigger, which sets the local variable @last (per connection)
         # @last is the last insert TaskID. With multi-row inserts, will be the first new TaskID inserted.
         # The trigger TaskID_Generator must be present with the InnoDB schema (defined in TransformationDB.sql)
-        res = self._query("SELECT @last;", connection)
+        res = self._query("SELECT @last;", conn=connection)
 
         self.lock.release()
         if not res["OK"]:
@@ -475,7 +475,7 @@ class TransformationDB(DIRACTransformationDB):
                 selectDict, older=older, newer=newer, timeStamp=timeStamp, orderAttribute=orderAttribute, limit=limit
             ),
         )
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             return res
         webList = []
@@ -533,7 +533,7 @@ class TransformationDB(DIRACTransformationDB):
     WHERE TransformationID = %d and RunNumber = %d"
             % (transID, runID)
         )
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failed to update TransformationRuns table with LastUpdate", res["Message"])
         elif not res["Value"]:
@@ -556,7 +556,7 @@ class TransformationDB(DIRACTransformationDB):
             values = ",".join("`%s` = NULL" % k if v is None else "`%s` = '%s'" % (k, v) for k, v in param.items())
             query = "UPDATE TransformationFiles SET %s WHERE TransformationID = %d AND FileID = %d"
             query %= (values, transID, fID)
-            res = self._update(query, connection)
+            res = self._update(query, conn=connection)
             if not res["OK"]:
                 gLogger.error("Failed to update TransformationFiles table", res["Message"])
                 return res
@@ -577,7 +577,7 @@ class TransformationDB(DIRACTransformationDB):
     WHERE TransformationID = %d and RunNumber in (%s)"
             % (status, transID, intListToString(runIDs))
         )
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failed to update TransformationRuns table with Status", res["Message"])
         return res
@@ -593,7 +593,7 @@ class TransformationDB(DIRACTransformationDB):
     WHERE TransformationID = %d and RunNumber = %d"
             % (selectedSite, transID, runID)
         )
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failed to update TransformationRuns table with SelectedSite", res["Message"])
         elif not res["Value"]:
@@ -616,14 +616,14 @@ class TransformationDB(DIRACTransformationDB):
       VALUES (%d,%d,'%s',UTC_TIMESTAMP())"
                 % (transID, runID, status)
             )
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failed to insert to TransformationRuns table", res["Message"])
         return res
 
     def __cleanTransformationRuns(self, transID, connection=False):
         req = "DELETE  FROM TransformationRuns WHERE TransformationID = %s" % transID
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
         return res
@@ -655,7 +655,7 @@ class TransformationDB(DIRACTransformationDB):
         if isinstance(runID, str):
             runID = int(runID)
         req = "INSERT INTO RunsMetadata (RunNumber, Name, Value) VALUES(%d, '%s', '%s')" % (runID, name, value)
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             if "1062: Duplicate entry" in res["Message"]:
                 gLogger.debug("Failed to insert to RunsMetadata table: %s" % res["Message"])
@@ -670,7 +670,7 @@ class TransformationDB(DIRACTransformationDB):
         if isinstance(runID, str):
             runID = int(runID)
         req = "UPDATE RunsMetadata SET Value = %s WHERE RunNumber = %d AND Name = '%s'" % (value, runID, name)
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failed to update RunsMetadata table", res["Message"])
             return res
@@ -692,7 +692,7 @@ class TransformationDB(DIRACTransformationDB):
             gLogger.exception("Invalid run number", lException=e)
             return S_ERROR("Invalid run number")
         req = "SELECT RunNumber, Name, Value FROM RunsMetadata WHERE RunNumber IN (%s)" % runIDs
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -709,7 +709,7 @@ class TransformationDB(DIRACTransformationDB):
         """
         connection = self.__getConnection(connection)
         req = "DELETE FROM RunsMetadata %s" % self.buildCondition(condDict)
-        res = self._update(req, connection)
+        res = self._update(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -719,7 +719,7 @@ class TransformationDB(DIRACTransformationDB):
         """get which runNumnber are cached."""
         connection = self.__getConnection(connection)
         req = "SELECT DISTINCT RunNumber FROM RunsMetadata %s" % self.buildCondition(condDict)
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -735,7 +735,7 @@ class TransformationDB(DIRACTransformationDB):
         """get destination of a run or a list of runs."""
         connection = self.__getConnection(connection)
         req = "SELECT * FROM RunDestination WHERE RunNumber IN (%s)" % (", ".join(str(runID) for runID in runIDs))
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -745,7 +745,7 @@ class TransformationDB(DIRACTransformationDB):
         """set destination of a run."""
         connection = self.__getConnection(connection)
         req = "INSERT INTO RunDestination (RunNumber, Destination) VALUES (%d, '%s')" % (runID, destination)
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
         return res
@@ -766,7 +766,7 @@ class TransformationDB(DIRACTransformationDB):
             transformationID,
             jobDescription,
         )
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -777,7 +777,7 @@ class TransformationDB(DIRACTransformationDB):
         """get the job description for transformationID."""
         connection = self.__getConnection(connection)
         req = "SELECT * FROM StoredJobDescription WHERE TransformationID = %d" % transformationID
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -788,7 +788,7 @@ class TransformationDB(DIRACTransformationDB):
         """remove the job description for transformationID."""
         connection = self.__getConnection(connection)
         req = "DELETE FROM StoredJobDescription WHERE TransformationID = %d" % transformationID
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
@@ -799,7 +799,7 @@ class TransformationDB(DIRACTransformationDB):
         """gets a list of all the stored job description transformationIDs."""
         connection = self.__getConnection(connection)
         req = "SELECT TransformationID FROM StoredJobDescription"
-        res = self._query(req, connection)
+        res = self._query(req, conn=connection)
         if not res["OK"]:
             gLogger.error("Failure executing %s" % str(req))
             return res
