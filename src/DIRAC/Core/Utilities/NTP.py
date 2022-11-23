@@ -15,7 +15,7 @@ gDefaultNTPServers = ["pool.ntp.org"]
 
 
 def getNTPUTCTime(serverList=None, retries=2):
-    data = "\x1b" + 47 * "\0"
+    data = b"\x1b" + 47 * b"\0"
     if not serverList:
         serverList = gDefaultNTPServers
     for server in serverList:
