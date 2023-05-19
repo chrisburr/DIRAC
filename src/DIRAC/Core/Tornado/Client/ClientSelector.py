@@ -77,6 +77,7 @@ def ClientSelector(disetClient, *args, **kwargs):  # We use same interface as RP
     except Exception as e:  # pylint: disable=broad-except
         # If anything went wrong in the resolution, we return default RPCClient
         # So the behaviour is exactly the same as before implementation of Tornado
+        # breakpoint()
         sLog.warn("Could not select DISET or Tornado client", f"{repr(e)}")
         rpc = disetClient(*args, **kwargs)
     return rpc

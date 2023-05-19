@@ -4,12 +4,18 @@ from DIRAC.Core.Base.Client import Client, createClient
 from DIRAC.Core.Utilities.DEncode import ignoreEncodeWarning
 from DIRAC.Core.Utilities.JEncode import strToIntDict
 
+from DIRAC.WorkloadManagementSystem.FutureClient.JobMonitoringClient import (
+    JobMonitoringClient as futureJobMonitoringClient,
+)
+
 
 @createClient("WorkloadManagement/JobMonitoring")
 class JobMonitoringClient(Client):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.setServer("WorkloadManagement/JobMonitoring")
+
+    httpsClient = futureJobMonitoringClient
 
     @ignoreEncodeWarning
     def getJobsStatus(self, jobIDs):
