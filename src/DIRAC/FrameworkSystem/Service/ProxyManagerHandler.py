@@ -6,6 +6,7 @@
       :dedent: 2
       :caption: ProxyManager options
 """
+
 from DIRAC import gLogger, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler, getServiceOption
 from DIRAC.Core.Security import Properties
@@ -294,10 +295,10 @@ class ProxyManagerHandlerMixin:
     def export_deleteProxy(self, userDN, userGroup):
         """Delete a proxy from the DB
 
-        :param str userDN: user DN
+            :param str userDN: user DN
         :param str userGroup: DIRAC group
 
-        :return: S_OK()/S_ERROR()
+            :return: S_OK()/S_ERROR()
         """
         credDict = self.getRemoteCredentials()
         if Properties.PROXY_MANAGEMENT not in credDict["properties"]:
@@ -411,6 +412,61 @@ class ProxyManagerHandlerMixin:
             return result
         self.__proxyDB.logAction("download voms proxy with token", credDict["DN"], credDict["group"], userDN, userGroup)
         return self.__getVOMSProxy(userDN, userGroup, requestPem, requiredLifetime, vomsAttribute, True)
+
+    types_exchangeProxyForToken = []
+
+    def export_exchangeProxyForToken(self):
+        # Importing from diracx will only work when DIRAC use python >= 3.10
+        from uuid import UUID, uuid4
+        from datetime import datetime, timedelta
+        from typing import Optional
+        from authlib.jose import JoseError, JsonWebKey, JsonWebToken
+        from pydantic import BaseModel
+
+        SECRET_KEY = "21e98a30bb41420dc601dea1dc1f85ecee3b4d702547bea355c07ab44fd7f3c3"
+        ALGORITHM = "HS256"
+        ISSUER = "http://lhcbdirac.cern.ch/"
+        AUDIENCE = "dirac"
+        ACCESS_TOKEN_EXPIRE_MINUTES = 3000
+
+        def create_access_token(payload: dict, expires_delta: Optional[timedelta] = None) -> str:
+            to_encode = payload.copy()
+            if expires_delta:
+                expire = datetime.utcnow() + expires_delta
+            else:
+                expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            to_encode.update({"exp": expire})
+
+            jwt = JsonWebToken(ALGORITHM)
+            encoded_jwt = jwt.encode({"alg": ALGORITHM}, to_encode, SECRET_KEY).decode("ascii")
+            return encoded_jwt
+
+        class TokenResponse(BaseModel):
+            # Base on RFC 6749
+            access_token: str
+            # refresh_token: str
+            expires_in: int
+            state: str
+
+        credDict = self.getRemoteCredentials()
+        vo = Registry.getVOForGroup(credDict["group"])
+        payload = {
+            "sub": f"{vo}:{credDict['username']}",
+            "vo": vo,
+            "aud": AUDIENCE,
+            "iss": ISSUER,
+            "dirac_properties": list(set(credDict.get("groupProperties", [])) + set(credDict.get("properties", []))),
+            "jti": str(uuid4()),
+            "preferred_username": credDict["username"],
+            "dirac_group": credDict["group"],
+        }
+        return S_OK(
+            TokenResponse(
+                access_token=create_access_token(payload),
+                expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+                state="None",
+            ).dict()
+        )
 
 
 class ProxyManagerHandler(ProxyManagerHandlerMixin, RequestHandler):
