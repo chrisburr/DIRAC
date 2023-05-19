@@ -17,7 +17,7 @@ jobs:
   # running dirac-distribution in the proper image
   dirac-distribute:
     runs-on: ubuntu-latest
-    if: github.repository == 'DIRACGrid/DIRAC'
+    if: github.repository == 'chaen/DIRAC'
 
     strategy:
       fail-fast: False

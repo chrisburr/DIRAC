@@ -50,7 +50,7 @@ def make_release(version, commit_hash, release_notes=""):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--token", required=True)
-    parser.add_argument("--repo", default="DIRACGrid/DIRAC")
+    parser.add_argument("--repo", default="chaen/DIRAC")
     parser.add_argument("--version", required=True)
     parser.add_argument("--rev", required=True)
     parser.add_argument("--release-notes-fn", required=True)

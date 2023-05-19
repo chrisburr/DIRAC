@@ -16,7 +16,7 @@ jobs:
   deploy-pypi:
     name: PyPI deployment
     runs-on: "ubuntu-latest"
-    if: github.event_name != 'push' || github.repository == 'DIRACGrid/DIRAC'
+    if: github.event_name != 'push' || github.repository == 'chaen/DIRAC'
     defaults:
       run:
         shell: bash -l {0}
@@ -62,8 +62,8 @@ jobs:
         run: |
           set -xeuo pipefail
           IFS=$'\n\t'
-          # Only do a real release for workflow_dispatch events from DIRACGrid/DIRAC for integration for Python 3 compatible branches
-          if [[ "${{ github.repository }}" == "DIRACGrid/DIRAC" ]]; then
+          # Only do a real release for workflow_dispatch events from chaen/DIRAC for integration for Python 3 compatible branches
+          if [[ "${{ github.repository }}" == "chaen/DIRAC" ]]; then
             if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
               if [[ "${{ github.event.ref }}" =~ ^refs/heads/(integration|rel-v([8-9]|[1-9][0-9]+)r[0-9]+)$ ]]; then
                 echo "Will create a real release"
