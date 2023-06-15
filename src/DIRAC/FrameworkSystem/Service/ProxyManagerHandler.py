@@ -422,9 +422,10 @@ class ProxyManagerHandlerMixin:
         from typing import Optional
         from authlib.jose import JoseError, JsonWebKey, JsonWebToken
         from pydantic import BaseModel
+        from pathlib import Path
 
-        SECRET_KEY = "21e98a30bb41420dc601dea1dc1f85ecee3b4d702547bea355c07ab44fd7f3c3"
-        ALGORITHM = "HS256"
+        SECRET_KEY = JsonWebKey.import_key(Path("/opt/dirac/tmp.pem").read_text())
+        ALGORITHM = "RS256"
         ISSUER = "http://lhcbdirac.cern.ch/"
         AUDIENCE = "dirac"
         ACCESS_TOKEN_EXPIRE_MINUTES = 3000
@@ -455,7 +456,7 @@ class ProxyManagerHandlerMixin:
             "vo": vo,
             "aud": AUDIENCE,
             "iss": ISSUER,
-            "dirac_properties": list(set(credDict.get("groupProperties", [])) + set(credDict.get("properties", []))),
+            "dirac_properties": list(set(credDict.get("groupProperties", []) + credDict.get("properties", []))),
             "jti": str(uuid4()),
             "preferred_username": credDict["username"],
             "dirac_group": credDict["group"],
