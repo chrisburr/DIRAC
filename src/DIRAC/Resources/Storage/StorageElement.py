@@ -242,7 +242,22 @@ class StorageElementItem:
             self.log.debug(f"localAccessProtocolList {self.localAccessProtocolList}")
 
             writeProto = self.options.get("WriteProtocols")
+
             self.localWriteProtocolList = writeProto if writeProto else self.__dmsHelper.getWriteProtocols()
+
+            #### HACK CHRIS RAL TEST
+            try:
+                import socket
+                import re
+
+                hostname = socket.getfqdn()
+                if re.match(r"^t?lhcb[0-9\-.]+-lcg2345.gridpp.rl.ac.uk$", hostname) and "RAL" in name:
+                    print(f"CHRIS {hostname=} match regex, changing write protocol list ")
+                    self.localWriteProtocolList = ["root", "https"]
+            except Exception as e:
+                print(f"CHRIS EXCEPTION {e!r}")
+
+            ####
             self.log.debug(f"localWriteProtocolList {self.localWriteProtocolList}")
 
             # For the staging protocols, we take in order:
