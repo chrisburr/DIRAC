@@ -251,7 +251,10 @@ class StorageElementItem:
                 import re
 
                 hostname = socket.getfqdn()
-                if re.match(r"^t?lhcb[0-9\-.]+-lcg2345.gridpp.rl.ac.uk$", hostname) and "RAL" in name:
+                if (
+                    re.match(r"^t?lhcb[0-9\-.]+-lcg(234[3-6]|2387|2483|2595|2643|2692).gridpp.rl.ac.uk$", hostname)
+                    and "RAL" in name
+                ):
                     print(f"CHRIS {hostname=} match regex, changing write protocol list ")
                     self.localWriteProtocolList = ["root", "https"]
             except Exception as e:
