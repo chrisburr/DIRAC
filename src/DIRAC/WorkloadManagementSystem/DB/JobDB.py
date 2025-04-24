@@ -20,6 +20,7 @@ from DIRAC.Core.Base.DB import DB
 from DIRAC.Core.Utilities.ClassAd.ClassAdLight import ClassAd
 from DIRAC.Core.Utilities.Decorators import deprecated
 from DIRAC.Core.Utilities.DErrno import EWMSJMAN, EWMSSUBM, cmpError
+from DIRAC.Core.Utilities.List import getChunk
 from DIRAC.Core.Utilities.ReturnValues import S_ERROR, S_OK, convertToReturnValue, returnValueOrRaise, SErrorException
 from DIRAC.FrameworkSystem.Client.Logger import contextLogger
 from DIRAC.ResourceStatusSystem.Client.SiteStatus import SiteStatus
@@ -984,33 +985,33 @@ class JobDB(DB):
             return None
         jobIDList = jobIDs if isinstance(jobIDs, list) else [jobIDs]
 
-        failedTablesList = []
-
-        sqlCmd = "CREATE TEMPORARY TABLE to_delete_Jobs (JobID INT(11) UNSIGNED NOT NULL, PRIMARY KEY (JobID)) ENGINE=MEMORY;"
-        returnValueOrRaise(self._update(sqlCmd))
-        try:
-            sqlCmd = "INSERT INTO to_delete_Jobs (JobID) VALUES ( %s )"
-            returnValueOrRaise(self._updatemany(sqlCmd, [(j,) for j in jobIDList]))
-
-            for table in [
-                "InputData",
-                "JobParameters",
-                "AtticJobParameters",
-                "HeartBeatLoggingInfo",
-                "OptimizerParameters",
-                "JobCommands",
-                "Jobs",
-                "JobJDLs",
-            ]:
-                sqlCmd = f"DELETE m from `{table}` m JOIN to_delete_Jobs t USING (JobID)"
-                if not self._update(sqlCmd)["OK"]:
-                    failedTablesList.append(table)
-        finally:
-            sqlCmd = "DROP TEMPORARY TABLE to_delete_Jobs"
+        failedTables = set()
+        for chunk in getChunk(jobIDList, 500):
+            sqlCmd = "CREATE TEMPORARY TABLE to_delete_Jobs (JobID INT(11) UNSIGNED NOT NULL, PRIMARY KEY (JobID)) ENGINE=MEMORY;"
             returnValueOrRaise(self._update(sqlCmd))
+            try:
+                sqlCmd = "INSERT INTO to_delete_Jobs (JobID) VALUES ( %s )"
+                returnValueOrRaise(self._updatemany(sqlCmd, [(j,) for j in jobIDList]))
 
-        if failedTablesList:
-            raise SErrorException(f"Errors while job removal (tables {','.join(failedTablesList)})")
+                for table in [
+                    "InputData",
+                    "JobParameters",
+                    "AtticJobParameters",
+                    "HeartBeatLoggingInfo",
+                    "OptimizerParameters",
+                    "JobCommands",
+                    "Jobs",
+                    "JobJDLs",
+                ]:
+                    sqlCmd = f"DELETE m from `{table}` m JOIN to_delete_Jobs t USING (JobID)"
+                    if not self._update(sqlCmd)["OK"]:
+                        failedTables.add(table)
+            finally:
+                sqlCmd = "DROP TEMPORARY TABLE to_delete_Jobs"
+                returnValueOrRaise(self._update(sqlCmd))
+
+        if failedTables:
+            raise SErrorException(f"Errors while job removal (tables {','.join(failedTables)})")
 
     #############################################################################
     def rescheduleJob(self, jobID):
