@@ -263,7 +263,7 @@ class SSLTransport(BaseTransport):
             # to work. it does not appear in any M2Crypto doc, but comparing
             # some internals of M2Crypto and official python SSL library,
             # it seems to make sense
-            self.oSocket.shutdown(socket.SHUT_RDWR)
+            # self.oSocket.shutdown(socket.SHUT_RDWR)
 
             # Update 16.07.20
             # With freeBio=True, we force the
