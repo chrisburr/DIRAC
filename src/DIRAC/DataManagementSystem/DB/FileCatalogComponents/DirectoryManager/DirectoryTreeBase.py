@@ -1112,6 +1112,11 @@ class DirectoryTreeBase:
             return S_ERROR("Directory / not found")
         dirID = result["Value"]
         result = self.__rebuildDirectoryUsage(dirID)
+        # FC_DirectoryUsage has just been recomputed from the authoritative FC_Files /
+        # FC_Replicas tables, so any pending deltas in FC_DirectoryUsageJournal are already
+        # reflected and must be dropped to avoid double counting. Best effort: the journal
+        # table only exists in the stored-procedure schema, so ignore failures elsewhere.
+        self.db._update("DELETE FROM FC_DirectoryUsageJournal")
         gLogger.verbose("Finished rebuilding Directory Usage")
         return result
 

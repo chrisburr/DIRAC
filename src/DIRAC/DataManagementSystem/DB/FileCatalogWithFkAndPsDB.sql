@@ -220,6 +220,33 @@ CREATE TABLE FC_DirectoryUsage(
 
 -- ------------------------------------------------------------------------------
 
+-- FC_DirectoryUsageJournal : append-only journal of directory usage deltas.
+-- Registration/deletion procedures write one row per mutation here instead of
+-- updating the shared FC_DirectoryUsage counter row (which serialised concurrent
+-- writers on a single hot row per directory). A background aggregator
+-- (ps_aggregate_directory_usage_journal) folds these deltas into FC_DirectoryUsage,
+-- and the size read procedures add the not-yet-aggregated deltas so reported
+-- values stay exact. There is intentionally NO unique key on (DirID, SEID): every
+-- mutation inserts a fresh row, so there is no shared row to lock (contention is
+-- limited to the AUTO_INCREMENT counter, whose lock is released at end of
+-- statement rather than being held through the commit's disk flush).
+CREATE TABLE FC_DirectoryUsageJournal(
+   JournalID BIGINT NOT NULL AUTO_INCREMENT,
+   DirID INTEGER NOT NULL,
+   SEID INTEGER NOT NULL,
+   SESizeDelta BIGINT NOT NULL,
+   SEFilesDelta BIGINT NOT NULL,
+   BatchTag VARCHAR(36) DEFAULT NULL,
+   InsertTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+   PRIMARY KEY (JournalID),
+   KEY idx_dir_se (DirID, SEID),
+   KEY idx_batch (BatchTag)
+
+) ENGINE = INNODB;
+
+-- ------------------------------------------------------------------------------
+
 
 CREATE TABLE FC_DirMeta (
     DirID INTEGER NOT NULL,
@@ -589,9 +616,8 @@ CREATE PROCEDURE update_directory_usage
 (IN dir_id INT, IN se_id INT, IN size_diff BIGINT, IN file_diff INT)
 BEGIN
 
-    -- alternative
-    -- If it is the first replica inserted for the given SE, then we insert the new row, otherwise we do an update
-    INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles) VALUES (dir_id, se_id, size_diff, file_diff) ON DUPLICATE KEY UPDATE  SESize = SESize + size_diff, SEFiles = SEFiles + file_diff;
+    -- Record the delta in the journal; the aggregator folds it into FC_DirectoryUsage.
+    INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) VALUES (dir_id, se_id, size_diff, file_diff);
 
 END //
 DELIMITER ;
@@ -791,7 +817,7 @@ BEGIN
   VALUES (dir_id, size, UID, GID, status_id, filename, GUID, checksum, checksumtype, UTC_TIMESTAMP(), UTC_TIMESTAMP(), mode);
   SELECT LAST_INSERT_ID() INTO file_id;
 
-  INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles) VALUES (dir_id, 1, size, 1) ON DUPLICATE KEY UPDATE  SESize = SESize + size, SEFiles = SEFiles + 1;
+  INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) VALUES (dir_id, 1, size, 1);
 
   COMMIT;
 
@@ -828,8 +854,7 @@ BEGIN
   DEALLOCATE PREPARE stmt;
 
 
-  SET @sql = CONCAT('INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles) SELECT SQL_NO_CACHE f.DirID, 1, f.Size, 1 FROM FC_Files f WHERE ', fileDesc);
-  SET @sql = CONCAT(@sql, ' ON DUPLICATE KEY UPDATE SESize = SESize + f.Size, SEFiles = SEFiles + 1');
+  SET @sql = CONCAT('INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) SELECT SQL_NO_CACHE f.DirID, 1, f.Size, 1 FROM FC_Files f WHERE ', fileDesc);
 
   PREPARE stmt FROM @sql;
   EXECUTE stmt;
@@ -906,18 +931,12 @@ BEGIN
     START TRANSACTION;
 
 
-  SET @sql = CONCAT('UPDATE FC_DirectoryUsage d,
-                      (SELECT d1.DirID, d1.SEID, SUM(f.Size) as t_size, count(*) as t_file
-                        FROM FC_DirectoryUsage d1, FC_Files f, FC_Replicas r
+  SET @sql = CONCAT('INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta)
+                        SELECT f.DirID, r.SEID, -SUM(f.Size), -count(*)
+                        FROM FC_Files f, FC_Replicas r
                         WHERE r.FileID = f.FileID
-                        AND f.DirID = d1.DirID
-                        AND r.SEID = d1.SEID
                         AND f.FileID IN (', file_ids, ')
-                        GROUP BY d1.DirID, d1.SEID ) t
-                     SET d.SESize = d.SESize - t.t_size,
-                         d.SEFiles = d.SEFiles - t.t_file
-                     WHERE d.DirID = t.DirID
-                     AND d.SEID = t.SEID');
+                        GROUP BY f.DirID, r.SEID');
 
   -- This is buggy in case we remove two files that have a replica on the same SE
   --
@@ -966,16 +985,11 @@ BEGIN
 
   START TRANSACTION;
 
-  SET @sql = CONCAT('UPDATE FC_DirectoryUsage d,
-                                  (SELECT d1.DirID, SUM(f.Size) as t_size, count(*) as t_file
-                                  FROM FC_DirectoryList d1, FC_Files f
-                                  where f.DirID = d1.DirID
-                                  AND f.FileID IN (', file_ids, ')
-                                  GROUP BY d1.DirID ) t
-                     SET d.SESize = d.SESize - t.t_size,
-                         d.SEFiles = d.SEFiles - t.t_file
-                     WHERE d.DirID = t.DirID
-                     AND d.SEID = 1' );
+  SET @sql = CONCAT('INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta)
+                                  SELECT f.DirID, 1, -SUM(f.Size), -count(*)
+                                  FROM FC_Files f
+                                  WHERE f.FileID IN (', file_ids, ')
+                                  GROUP BY f.DirID' );
 
   PREPARE stmt FROM @sql;
   EXECUTE stmt;
@@ -1031,7 +1045,7 @@ BEGIN
   INSERT INTO FC_Replicas (FileID, SEID, Status, RepType, CreationDate, ModificationDate, PFN)
   VALUES (file_id, se_id, status_id, rep_type, UTC_TIMESTAMP(), UTC_TIMESTAMP(), pfn);
   SELECT LAST_INSERT_ID() INTO replica_id;
-  INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)  SELECT DirID, se_id, Size, 1 from FC_Files f where f.FileID = file_id ON DUPLICATE KEY UPDATE  SESize = SESize + Size, SEFiles = SEFiles + 1;
+  INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta)  SELECT DirID, se_id, Size, 1 from FC_Files f where f.FileID = file_id;
 
   COMMIT;
 
@@ -1068,8 +1082,8 @@ BEGIN
   DEALLOCATE PREPARE stmt;
 
 
-  SET @sql = CONCAT('INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles) SELECT SQL_NO_CACHE f.DirID, SEID, f.Size, 1 FROM FC_Files f, FC_Replicas r WHERE f.FileID = r.FileID AND (', replicaDesc);
-  SET @sql = CONCAT(@sql, ') ON DUPLICATE KEY UPDATE SESize = SESize + f.Size, SEFiles = SEFiles + 1');
+  SET @sql = CONCAT('INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) SELECT SQL_NO_CACHE f.DirID, SEID, f.Size, 1 FROM FC_Files f, FC_Replicas r WHERE f.FileID = r.FileID AND (', replicaDesc);
+  SET @sql = CONCAT(@sql, ')');
   -- insert into FC_DirectoryUsage (DirID, SEID, SESize, SEFiles) select f.DirID, 1, f.Size as size_diff, 1 as file_diff from FC_Files f where (DirID = 1 and FileName = 'a.txt') OR (DirID = 1 and FileName = '1.txt') on duplicate key update SESize = SESize + f.Size, SEFiles = SEFiles + 1;
   PREPARE stmt FROM @sql;
   EXECUTE stmt;
@@ -1135,7 +1149,7 @@ BEGIN
   SELECT Size, DirID INTO file_size, dir_id from FC_Files f JOIN FC_Replicas r on f.FileID = r.FileID where f.FileID = file_id and r.SEID = se_id;
 
   START TRANSACTION;
-    UPDATE FC_DirectoryUsage SET SESize = SESize - file_size, SEFiles = SEFiles - 1 WHERE DirID = dir_id and SEID = se_id;
+    INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) VALUES (dir_id, se_id, -file_size, -1);
     DELETE FROM FC_Replicas WHERE FileID = file_id AND SEID = se_id;
   COMMIT;
 
@@ -1192,8 +1206,8 @@ BEGIN
   SELECT Size, DirID INTO file_size, dir_id from FC_Files WHERE FileID = file_id;
 
   START TRANSACTION;
-    UPDATE FC_DirectoryUsage SET SESize = SESize - file_size, SEFiles = SEFiles - 1 WHERE DirID = dir_id and SEID = old_se_id;
-    INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)  VALUES (dir_id, new_se_id, file_size, 1) ON DUPLICATE KEY UPDATE  SESize = SESize + file_size, SEFiles = SEFiles + 1;
+    INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) VALUES (dir_id, old_se_id, -file_size, -1);
+    INSERT INTO FC_DirectoryUsageJournal (DirID, SEID, SESizeDelta, SEFilesDelta) VALUES (dir_id, new_se_id, file_size, 1);
     UPDATE FC_Replicas SET SEID = new_se_id WHERE FileID = file_id AND SEID = old_se_id;
   COMMIT;
 
@@ -1664,11 +1678,22 @@ DELIMITER //
 CREATE PROCEDURE ps_get_dir_logical_size
 (IN dir_id INT, IN recursiveSum BOOLEAN)
 BEGIN
-    DECLARE log_size, log_files BIGINT DEFAULT 0;
 
+    -- The logical usage (FakeSE, SEID=1) is read as the aggregated counter plus the
+    -- not-yet-aggregated deltas still sitting in FC_DirectoryUsageJournal, computed in a
+    -- single statement so that both are read from one consistent snapshot.
     IF recursiveSum THEN
 
-      SELECT SQL_NO_CACHE COALESCE(SUM(SESize), 0), COALESCE(SUM(SEFiles),0) FROM FC_DirectoryUsage u
+      SELECT SQL_NO_CACHE
+        COALESCE(SUM(u.SESize), 0)
+          + COALESCE((SELECT SUM(j.SESizeDelta) FROM FC_DirectoryUsageJournal j
+                      JOIN FC_DirectoryClosure jc ON jc.ChildID = j.DirID
+                      WHERE jc.ParentID = dir_id AND j.SEID = 1), 0),
+        COALESCE(SUM(u.SEFiles), 0)
+          + COALESCE((SELECT SUM(j.SEFilesDelta) FROM FC_DirectoryUsageJournal j
+                      JOIN FC_DirectoryClosure jc ON jc.ChildID = j.DirID
+                      WHERE jc.ParentID = dir_id AND j.SEID = 1), 0)
+      FROM FC_DirectoryUsage u
       JOIN FC_DirectoryClosure c on c.ChildID = u.DirID
       JOIN FC_StorageElements s ON s.SEID = u.SEID
       WHERE s.SEName = 'FakeSE'
@@ -1676,12 +1701,17 @@ BEGIN
 
     ELSE
 
-      SELECT SQL_NO_CACHE SESize, SEFiles INTO log_size, log_files FROM FC_DirectoryUsage u
-      JOIN FC_StorageElements s ON s.SEID = u.SEID
-      WHERE s.SEName = 'FakeSE'
-      AND u.DirID = dir_id;
-
-      SELECT COALESCE(log_size, 0), COALESCE(log_files,0);
+      SELECT SQL_NO_CACHE
+        COALESCE((SELECT u.SESize FROM FC_DirectoryUsage u
+                  JOIN FC_StorageElements s ON s.SEID = u.SEID
+                  WHERE s.SEName = 'FakeSE' AND u.DirID = dir_id), 0)
+          + COALESCE((SELECT SUM(j.SESizeDelta) FROM FC_DirectoryUsageJournal j
+                      WHERE j.DirID = dir_id AND j.SEID = 1), 0),
+        COALESCE((SELECT u.SEFiles FROM FC_DirectoryUsage u
+                  JOIN FC_StorageElements s ON s.SEID = u.SEID
+                  WHERE s.SEName = 'FakeSE' AND u.DirID = dir_id), 0)
+          + COALESCE((SELECT SUM(j.SEFilesDelta) FROM FC_DirectoryUsageJournal j
+                      WHERE j.DirID = dir_id AND j.SEID = 1), 0);
 
     END IF;
 
@@ -1747,26 +1777,45 @@ CREATE PROCEDURE ps_get_dir_physical_size
 (IN dir_id INT, IN recursiveSum BOOLEAN)
 BEGIN
 
+  -- Physical usage per SE is the aggregated counter combined with the not-yet-aggregated
+  -- deltas from FC_DirectoryUsageJournal (UNION ALL, then grouped per SE), so a directory
+  -- whose pending writes have not been folded yet still reports the correct size. The
+  -- non-zero filter is applied to the combined total via HAVING.
   IF recursiveSum THEN
-    SELECT SQL_NO_CACHE SEName, COALESCE(SUM(SESize), 0), COALESCE(SUM(SEFiles), 0)
-    FROM FC_DirectoryUsage u
-    JOIN FC_DirectoryClosure c on u.DirID = c.ChildID
-    JOIN FC_StorageElements se ON se.SEID = u.SEID
-    WHERE c.ParentID = dir_id
-    AND SEName != 'FakeSE'
-    AND (SESize != 0 OR SEFiles != 0)
-    GROUP BY se.SEName
+    SELECT SQL_NO_CACHE t.SEName, COALESCE(SUM(t.sz), 0), COALESCE(SUM(t.fl), 0)
+    FROM (
+      SELECT se.SEName AS SEName, u.SESize AS sz, u.SEFiles AS fl
+      FROM FC_DirectoryUsage u
+      JOIN FC_DirectoryClosure c on u.DirID = c.ChildID
+      JOIN FC_StorageElements se ON se.SEID = u.SEID
+      WHERE c.ParentID = dir_id AND se.SEName != 'FakeSE'
+      UNION ALL
+      SELECT se.SEName AS SEName, j.SESizeDelta AS sz, j.SEFilesDelta AS fl
+      FROM FC_DirectoryUsageJournal j
+      JOIN FC_DirectoryClosure c on j.DirID = c.ChildID
+      JOIN FC_StorageElements se ON se.SEID = j.SEID
+      WHERE c.ParentID = dir_id AND se.SEName != 'FakeSE'
+    ) t
+    GROUP BY t.SEName
+    HAVING (SUM(t.sz) != 0 OR SUM(t.fl) != 0)
     ORDER BY NULL;
 
   ELSE
 
-    SELECT SQL_NO_CACHE SEName, COALESCE(SUM(SESize), 0), COALESCE(SUM(SEFiles), 0)
-    FROM FC_DirectoryUsage u
-    JOIN FC_StorageElements se ON se.SEID = u.SEID
-    WHERE u.DirID = dir_id
-    AND SEName != 'FakeSE'
-    AND (SESize != 0 OR SEFiles != 0)
-    GROUP BY se.SEName
+    SELECT SQL_NO_CACHE t.SEName, COALESCE(SUM(t.sz), 0), COALESCE(SUM(t.fl), 0)
+    FROM (
+      SELECT se.SEName AS SEName, u.SESize AS sz, u.SEFiles AS fl
+      FROM FC_DirectoryUsage u
+      JOIN FC_StorageElements se ON se.SEID = u.SEID
+      WHERE u.DirID = dir_id AND se.SEName != 'FakeSE'
+      UNION ALL
+      SELECT se.SEName AS SEName, j.SESizeDelta AS sz, j.SEFilesDelta AS fl
+      FROM FC_DirectoryUsageJournal j
+      JOIN FC_StorageElements se ON se.SEID = j.SEID
+      WHERE j.DirID = dir_id AND se.SEName != 'FakeSE'
+    ) t
+    GROUP BY t.SEName
+    HAVING (SUM(t.sz) != 0 OR SUM(t.fl) != 0)
     ORDER BY NULL;
 
   END IF;
@@ -1833,6 +1882,8 @@ BEGIN
   START TRANSACTION;
 
   DELETE FROM FC_DirectoryUsage;
+  -- Recomputing from FC_Files/FC_Replicas makes any pending journal deltas redundant
+  DELETE FROM FC_DirectoryUsageJournal;
 
   INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
     SELECT SQL_NO_CACHE DirID, 1 as SEID, sum(Size) as SESize, count(*) as SEFiles
@@ -1868,6 +1919,8 @@ BEGIN
   START TRANSACTION;
 
   DELETE FROM FC_DirectoryUsage where DirID = dir_id;
+  -- Recomputing from FC_Files/FC_Replicas makes any pending journal deltas redundant
+  DELETE FROM FC_DirectoryUsageJournal where DirID = dir_id;
 
   INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
     SELECT SQL_NO_CACHE DirID, 1 as SEID, sum(Size) as SESize, count(*) as SEFiles
@@ -1885,6 +1938,51 @@ BEGIN
     ORDER BY NULL;
 
   COMMIT;
+END //
+DELIMITER ;
+
+
+-- ps_aggregate_directory_usage_journal : fold pending FC_DirectoryUsageJournal deltas
+--   into FC_DirectoryUsage. Safe under concurrent writers: a claim marker (BatchTag)
+--   is stamped only on the currently-committed, unclaimed rows, then those exact rows
+--   are aggregated and deleted within the same transaction. Rows that were still
+--   uncommitted at claim time keep BatchTag=NULL and are picked up on a later cycle,
+--   so no delta is ever lost or double counted.
+DROP PROCEDURE IF EXISTS ps_aggregate_directory_usage_journal;
+DELIMITER //
+CREATE PROCEDURE ps_aggregate_directory_usage_journal()
+BEGIN
+
+  DECLARE tag VARCHAR(36);
+
+  DECLARE exit handler for sqlexception
+    BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  SET tag = UUID();
+
+  START TRANSACTION;
+
+  -- Claim only rows that are committed and not already claimed
+  UPDATE FC_DirectoryUsageJournal SET BatchTag = tag WHERE BatchTag IS NULL;
+
+  -- Fold the claimed deltas into the counter table
+  INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
+    SELECT SQL_NO_CACHE DirID, SEID, SUM(SESizeDelta), SUM(SEFilesDelta)
+    FROM FC_DirectoryUsageJournal
+    WHERE BatchTag = tag
+    GROUP BY DirID, SEID
+    ON DUPLICATE KEY UPDATE SESize = SESize + VALUES(SESize), SEFiles = SEFiles + VALUES(SEFiles);
+
+  -- Drop exactly the rows we aggregated
+  DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
+
+  COMMIT;
+
+  SELECT 0, 'OK';
+
 END //
 DELIMITER ;
 

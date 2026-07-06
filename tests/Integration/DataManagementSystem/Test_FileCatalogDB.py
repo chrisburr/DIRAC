@@ -1100,6 +1100,87 @@ class DirectoryUsageCase(FileCatalogDBTestCase):
         # self.assertEqual(recSts1, tuple(sum(x) for x in zip(nonRecD1s1, nonRecD2s1)))
         # self.assertEqual(recSts2, tuple(sum(x) for x in zip(nonRecD1s2, nonRecD2s2)))
 
+    def _journalRowCount(self, dirID):
+        """Number of not-yet-aggregated FC_DirectoryUsageJournal rows for a directory"""
+        ret = self.db._query("SELECT COUNT(*) FROM FC_DirectoryUsageJournal WHERE DirID=%d" % dirID)
+        self.assertTrue(ret["OK"], f"journal count query failed: {ret}")
+        return ret["Value"][0][0]
+
+    def _baseUsageRowCount(self, dirID):
+        """Number of aggregated FC_DirectoryUsage counter rows for a directory"""
+        ret = self.db._query("SELECT COUNT(*) FROM FC_DirectoryUsage WHERE DirID=%d" % dirID)
+        self.assertTrue(ret["OK"], f"usage count query failed: {ret}")
+        return ret["Value"][0][0]
+
+    def test_directoryUsageJournalAggregation(self):
+        """With the stored-procedure backend, usage deltas are recorded in
+        FC_DirectoryUsageJournal and folded into FC_DirectoryUsage only when the
+        aggregator runs. Verify that (a) reads are exact while deltas are still pending in
+        the journal, (b) the aggregator drains the journal into the counter table, and
+        (c) reads stay exact across the boundary and across a deletion.
+        """
+        # These operations (addSE, addFile, removeFile) require admin privileges
+        if not isAdmin:
+            return
+
+        # Only the stored-procedure backend uses the journal
+        if self.db.fileManager.__class__.__name__ != "FileManagerPs":
+            self.skipTest("FC_DirectoryUsageJournal is only used by the FileManagerPs backend")
+
+        for sen in ["jse1", "jse2"]:
+            self.db.addSE(sen, credDict)
+
+        testJDir = "/journalTest/d1"
+        self.db.createDirectory(testJDir, credDict)
+
+        f1 = testJDir + "/f1"
+        f2 = testJDir + "/f2"
+        f1Size = 1500
+        f2Size = 3700
+
+        ret = self.db.addFile(
+            {
+                f1: {"PFN": "f1jse1", "SE": "jse1", "Size": f1Size, "GUID": "9001", "Checksum": "1"},
+                f2: {"PFN": "f2jse2", "SE": "jse2", "Size": f2Size, "GUID": "9002", "Checksum": "2"},
+            },
+            credDict,
+        )
+        self.assertTrue(ret["OK"], f"addFile failed: {ret}")
+
+        ret = self.db._query(f"SELECT DirID FROM FC_DirectoryList WHERE Name='{testJDir}'")
+        self.assertTrue(ret["OK"] and ret["Value"], f"could not resolve DirID for {testJDir}: {ret}")
+        dirID = ret["Value"][0][0]
+
+        # Before aggregation the deltas live only in the journal
+        self.assertGreater(self._journalRowCount(dirID), 0, "expected pending journal rows after addFile")
+
+        # Reads must already be exact: cached (base+journal) == calculated (from files)
+        self.getAndCompareDirectorySize(testJDir, recursiveSum=True)
+        self.getAndCompareDirectorySize(testJDir, recursiveSum=False)
+
+        # Aggregate: the journal is drained into FC_DirectoryUsage
+        ret = self.db.aggregateDirectoryUsageJournal()
+        self.assertTrue(ret["OK"], f"aggregateDirectoryUsageJournal failed: {ret}")
+        self.assertEqual(self._journalRowCount(dirID), 0, "journal should be empty after aggregation")
+        self.assertGreater(self._baseUsageRowCount(dirID), 0, "counter table should be populated after aggregation")
+
+        # Reads still exact, now served from the counter table
+        self.getAndCompareDirectorySize(testJDir, recursiveSum=True)
+
+        # A deletion records negative deltas; reads stay exact across the boundary
+        ret = self.db.removeFile([f1], credDict)
+        self.assertTrue(ret["OK"], f"removeFile failed: {ret}")
+        self.getAndCompareDirectorySize(testJDir, recursiveSum=True)
+
+        ret = self.db.aggregateDirectoryUsageJournal()
+        self.assertTrue(ret["OK"], f"aggregateDirectoryUsageJournal failed: {ret}")
+        self.assertEqual(self._journalRowCount(dirID), 0, "journal should be empty after second aggregation")
+        self.getAndCompareDirectorySize(testJDir, recursiveSum=True)
+
+        # Cleanup so the directory does not leak into other tests
+        self.db.removeFile([f2], credDict)
+        self.db.aggregateDirectoryUsageJournal()
+
     def test_directoryUsage(self):
         """Testing DirectoryUsage related operation"""
         # create SE

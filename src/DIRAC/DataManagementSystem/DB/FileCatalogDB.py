@@ -1063,6 +1063,18 @@ class FileCatalogDB(DB):
         result = self.dtree._rebuildDirectoryUsage()
         return result
 
+    def aggregateDirectoryUsageJournal(self):
+        """Fold pending FC_DirectoryUsageJournal deltas into FC_DirectoryUsage.
+
+        Called periodically by the DirectoryUsageAggregatorAgent. Deferring the usage
+        accounting to this background step is what keeps concurrent single-file
+        registrations from serialising on a single hot FC_DirectoryUsage row.
+        """
+        result = self.executeStoredProcedureWithCursor("ps_aggregate_directory_usage_journal", ())
+        if not result["OK"]:
+            return result
+        return S_OK()
+
     def repairCatalog(self, credDict={}):
         """Repair catalog inconsistencies"""
 
