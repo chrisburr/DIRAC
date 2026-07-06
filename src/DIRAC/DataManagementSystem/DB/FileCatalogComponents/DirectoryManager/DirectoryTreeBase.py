@@ -1099,6 +1099,25 @@ class DirectoryTreeBase:
         i.e. a transient over-count that the next rebuild corrects. No delta is ever lost.
         """
 
+        # Exclude the journal aggregator for the whole rebuild: it also writes FC_DirectoryUsage,
+        # and here that table is dropped and recomputed, so a concurrent fold would fail (the table
+        # briefly does not exist) or be discarded. We take a MySQL advisory lock; DIRAC keeps one
+        # connection per thread, so the lock spans every statement of the rebuild, and it is
+        # auto-released if the process dies (it cannot get stuck). File registration is unaffected
+        # -- it only writes the journal.
+        lockRes = self.db._query("SELECT GET_LOCK('FC_DirectoryUsageRebuild', 60)")
+        if not lockRes["OK"]:
+            return lockRes
+        if not lockRes["Value"] or lockRes["Value"][0][0] != 1:
+            return S_ERROR("Could not acquire the directory usage rebuild lock (aggregation in progress?)")
+        try:
+            return self._rebuildDirectoryUsageLocked()
+        finally:
+            self.db._query("SELECT RELEASE_LOCK('FC_DirectoryUsageRebuild')")
+
+    def _rebuildDirectoryUsageLocked(self):
+        """Body of _rebuildDirectoryUsage, run while holding the FC_DirectoryUsageRebuild lock."""
+
         # Claim the journal rows that are already committed *before* recomputing. Because a
         # registration writes its FC_Files row and its journal delta in the same transaction,
         # every claimed row's file is guaranteed to be reflected in the recomputed totals, so

@@ -1877,9 +1877,15 @@ BEGIN
 
   DECLARE exit handler for sqlexception
     BEGIN
+    DO RELEASE_LOCK('FC_DirectoryUsageRebuild');
     ROLLBACK;
     RESIGNAL;
   END;
+
+  -- Exclude the aggregator while we tear down and recompute FC_DirectoryUsage
+  IF COALESCE(GET_LOCK('FC_DirectoryUsageRebuild', 60), 0) <> 1 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Could not acquire the FC_DirectoryUsageRebuild lock';
+  END IF;
 
   SET tag = UUID();
 
@@ -1909,6 +1915,8 @@ BEGIN
   DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
 
   COMMIT;
+
+  DO RELEASE_LOCK('FC_DirectoryUsageRebuild');
 END //
 DELIMITER ;
 
@@ -1924,9 +1932,15 @@ BEGIN
 
   DECLARE exit handler for sqlexception
     BEGIN
+    DO RELEASE_LOCK('FC_DirectoryUsageRebuild');
     ROLLBACK;
     RESIGNAL;
   END;
+
+  -- Exclude the aggregator while we tear down and recompute this directory's usage
+  IF COALESCE(GET_LOCK('FC_DirectoryUsageRebuild', 60), 0) <> 1 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Could not acquire the FC_DirectoryUsageRebuild lock';
+  END IF;
 
   SET tag = UUID();
 
@@ -1958,6 +1972,8 @@ BEGIN
   DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
 
   COMMIT;
+
+  DO RELEASE_LOCK('FC_DirectoryUsageRebuild');
 END //
 DELIMITER ;
 
@@ -1968,6 +1984,10 @@ DELIMITER ;
 --   are aggregated and deleted within the same transaction. Rows that were still
 --   uncommitted at claim time keep BatchTag=NULL and are picked up on a later cycle,
 --   so no delta is ever lost or double counted.
+--   Skips the fold entirely while a directory-usage rebuild holds the advisory lock
+--   'FC_DirectoryUsageRebuild', since the rebuild tears down and recomputes
+--   FC_DirectoryUsage; the deltas simply wait in the journal (reads add them on the fly)
+--   and are folded on a later cycle.
 DROP PROCEDURE IF EXISTS ps_aggregate_directory_usage_journal;
 DELIMITER //
 CREATE PROCEDURE ps_aggregate_directory_usage_journal()
@@ -1977,31 +1997,41 @@ BEGIN
 
   DECLARE exit handler for sqlexception
     BEGIN
+    DO RELEASE_LOCK('FC_DirectoryUsageRebuild');
     ROLLBACK;
     RESIGNAL;
   END;
 
-  SET tag = UUID();
+  -- Do not fold while a rebuild is in progress (try once, skip if we cannot get the lock)
+  IF COALESCE(GET_LOCK('FC_DirectoryUsageRebuild', 0), 0) <> 1 THEN
+    SELECT 0, 'OK';
+  ELSE
 
-  START TRANSACTION;
+    SET tag = UUID();
 
-  -- Claim only rows that are committed and not already claimed
-  UPDATE FC_DirectoryUsageJournal SET BatchTag = tag WHERE BatchTag IS NULL;
+    START TRANSACTION;
 
-  -- Fold the claimed deltas into the counter table
-  INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
-    SELECT SQL_NO_CACHE DirID, SEID, SUM(SESizeDelta), SUM(SEFilesDelta)
-    FROM FC_DirectoryUsageJournal
-    WHERE BatchTag = tag
-    GROUP BY DirID, SEID
-    ON DUPLICATE KEY UPDATE SESize = SESize + VALUES(SESize), SEFiles = SEFiles + VALUES(SEFiles);
+    -- Claim only rows that are committed and not already claimed
+    UPDATE FC_DirectoryUsageJournal SET BatchTag = tag WHERE BatchTag IS NULL;
 
-  -- Drop exactly the rows we aggregated
-  DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
+    -- Fold the claimed deltas into the counter table
+    INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
+      SELECT SQL_NO_CACHE DirID, SEID, SUM(SESizeDelta), SUM(SEFilesDelta)
+      FROM FC_DirectoryUsageJournal
+      WHERE BatchTag = tag
+      GROUP BY DirID, SEID
+      ON DUPLICATE KEY UPDATE SESize = SESize + VALUES(SESize), SEFiles = SEFiles + VALUES(SEFiles);
 
-  COMMIT;
+    -- Drop exactly the rows we aggregated
+    DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
 
-  SELECT 0, 'OK';
+    COMMIT;
+
+    DO RELEASE_LOCK('FC_DirectoryUsageRebuild');
+
+    SELECT 0, 'OK';
+
+  END IF;
 
 END //
 DELIMITER ;
