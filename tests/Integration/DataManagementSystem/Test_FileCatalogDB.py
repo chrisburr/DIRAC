@@ -1177,8 +1177,23 @@ class DirectoryUsageCase(FileCatalogDBTestCase):
         self.assertEqual(self._journalRowCount(dirID), 0, "journal should be empty after second aggregation")
         self.getAndCompareDirectorySize(testJDir, recursiveSum=True)
 
+        # A per-directory rebuild must also reconcile the journal without losing deltas:
+        # re-add a file so its delta is pending in the journal, rebuild the directory from the
+        # authoritative tables, and confirm the journal is drained and reads still match.
+        ret = self.db.addFile(
+            {f1: {"PFN": "f1jse1b", "SE": "jse1", "Size": f1Size, "GUID": "9003", "Checksum": "1"}},
+            credDict,
+        )
+        self.assertTrue(ret["OK"], f"addFile failed: {ret}")
+        self.assertGreater(self._journalRowCount(dirID), 0, "expected pending journal rows after re-add")
+
+        ret = self.db.executeStoredProcedureWithCursor("ps_rebuild_directory_usage_for_dir", (dirID,))
+        self.assertTrue(ret["OK"], f"ps_rebuild_directory_usage_for_dir failed: {ret}")
+        self.assertEqual(self._journalRowCount(dirID), 0, "journal should be empty after per-dir rebuild")
+        self.getAndCompareDirectorySize(testJDir, recursiveSum=True)
+
         # Cleanup so the directory does not leak into other tests
-        self.db.removeFile([f2], credDict)
+        self.db.removeFile([f1, f2], credDict)
         self.db.aggregateDirectoryUsageJournal()
 
     def test_directoryUsage(self):

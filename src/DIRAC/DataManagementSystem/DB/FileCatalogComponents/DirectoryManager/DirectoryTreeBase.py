@@ -4,6 +4,7 @@ import time
 import threading
 import os
 import stat
+import uuid
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.DataManagementSystem.DB.FileCatalogComponents.Utilities import getIDSelectString
@@ -1090,7 +1091,24 @@ class DirectoryTreeBase:
         return S_OK({"Successful": successful, "Failed": failed})
 
     def _rebuildDirectoryUsage(self):
-        """Recreate and replenish the Storage Usage tables"""
+        """Recreate and replenish the Storage Usage tables
+
+        Best run while file registration is quiescent. The usage counters are recomputed from
+        the authoritative FC_Files / FC_Replicas tables; a file registered while the rebuild
+        runs may be counted both in the recomputed totals and in its (unclaimed) journal row,
+        i.e. a transient over-count that the next rebuild corrects. No delta is ever lost.
+        """
+
+        # Claim the journal rows that are already committed *before* recomputing. Because a
+        # registration writes its FC_Files row and its journal delta in the same transaction,
+        # every claimed row's file is guaranteed to be reflected in the recomputed totals, so
+        # the claimed rows can be dropped afterwards without losing a delta. Rows written while
+        # the rebuild runs stay unclaimed (BatchTag NULL) and are folded in later by the
+        # aggregator. The claim overwrites any tag left by a previously interrupted rebuild (the
+        # aggregator never leaves a BatchTag committed). Best effort: the journal table only
+        # exists in the stored-procedure schema, so ignore failures elsewhere.
+        journalTag = uuid.uuid4().hex
+        self.db._update(f"UPDATE FC_DirectoryUsageJournal SET BatchTag='{journalTag}'")
 
         req = "DROP TABLE IF EXISTS FC_DirectoryUsage_backup"
         result = self.db._update(req)
@@ -1112,11 +1130,9 @@ class DirectoryTreeBase:
             return S_ERROR("Directory / not found")
         dirID = result["Value"]
         result = self.__rebuildDirectoryUsage(dirID)
-        # FC_DirectoryUsage has just been recomputed from the authoritative FC_Files /
-        # FC_Replicas tables, so any pending deltas in FC_DirectoryUsageJournal are already
-        # reflected and must be dropped to avoid double counting. Best effort: the journal
-        # table only exists in the stored-procedure schema, so ignore failures elsewhere.
-        self.db._update("DELETE FROM FC_DirectoryUsageJournal")
+        # Drop only the rows we claimed before recomputing: their files are guaranteed to be in
+        # the totals just rebuilt, so this cannot lose a delta registered during the rebuild.
+        self.db._update(f"DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag='{journalTag}'")
         gLogger.verbose("Finished rebuilding Directory Usage")
         return result
 

@@ -1873,17 +1873,24 @@ DELIMITER //
 CREATE PROCEDURE ps_rebuild_directory_usage()
 BEGIN
 
+  DECLARE tag VARCHAR(36);
+
   DECLARE exit handler for sqlexception
     BEGIN
     ROLLBACK;
     RESIGNAL;
   END;
 
+  SET tag = UUID();
+
   START TRANSACTION;
 
+  -- Claim the journal rows that exist now: their files are about to be folded into the
+  -- recomputed totals below, so they can be dropped afterwards. Rows written while the rebuild
+  -- runs stay unclaimed and are folded in later by the aggregator, so no delta is lost.
+  UPDATE FC_DirectoryUsageJournal SET BatchTag = tag;
+
   DELETE FROM FC_DirectoryUsage;
-  -- Recomputing from FC_Files/FC_Replicas makes any pending journal deltas redundant
-  DELETE FROM FC_DirectoryUsageJournal;
 
   INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
     SELECT SQL_NO_CACHE DirID, 1 as SEID, sum(Size) as SESize, count(*) as SEFiles
@@ -1898,6 +1905,9 @@ BEGIN
     GROUP BY DirID, SEID
     ORDER BY NULL;
 
+  -- Drop only the rows we claimed before recomputing (their files are in the new totals)
+  DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
+
   COMMIT;
 END //
 DELIMITER ;
@@ -1910,17 +1920,24 @@ CREATE PROCEDURE ps_rebuild_directory_usage_for_dir
 (IN dir_id INT)
 BEGIN
 
+  DECLARE tag VARCHAR(36);
+
   DECLARE exit handler for sqlexception
     BEGIN
     ROLLBACK;
     RESIGNAL;
   END;
 
+  SET tag = UUID();
+
   START TRANSACTION;
 
+  -- Claim this directory's current journal rows: their files are about to be folded into the
+  -- recomputed totals below, so they can be dropped afterwards. Rows written while the rebuild
+  -- runs stay unclaimed and are folded in later by the aggregator, so no delta is lost.
+  UPDATE FC_DirectoryUsageJournal SET BatchTag = tag WHERE DirID = dir_id;
+
   DELETE FROM FC_DirectoryUsage where DirID = dir_id;
-  -- Recomputing from FC_Files/FC_Replicas makes any pending journal deltas redundant
-  DELETE FROM FC_DirectoryUsageJournal where DirID = dir_id;
 
   INSERT INTO FC_DirectoryUsage (DirID, SEID, SESize, SEFiles)
     SELECT SQL_NO_CACHE DirID, 1 as SEID, sum(Size) as SESize, count(*) as SEFiles
@@ -1936,6 +1953,9 @@ BEGIN
     WHERE f.DirID = dir_id
     GROUP BY DirID, SEID
     ORDER BY NULL;
+
+  -- Drop only the rows we claimed before recomputing (their files are in the new totals)
+  DELETE FROM FC_DirectoryUsageJournal WHERE BatchTag = tag;
 
   COMMIT;
 END //
