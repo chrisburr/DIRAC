@@ -186,24 +186,22 @@ class PluginUtilities:
             self.maxFiles = self.getPluginParam("MaxFilesPerTask", self.getPluginParam("MaxFiles", 100))
         lfns = sorted(lfns, key=fileSizes.get)
         for lfn in lfns:
+            # A zero or unknown size must still get a task, or it is never processed
             size = fileSizes.get(lfn, 0)
-            if size:
-                if size > self.groupSize:
-                    tasks.append((replicaSE, [lfn]))
-                else:
-                    # Close the current task before adding a file that would take it past
-                    # groupSize, so that groupSize bounds the task from above. A task with
-                    # a single oversized file is still emitted by the branch above.
-                    if taskLfns and (taskSize + size > self.groupSize):
-                        tasks.append((replicaSE, taskLfns))
-                        taskLfns = []
-                        taskSize = 0
-                    taskSize += size
-                    taskLfns.append(lfn)
-                    if len(taskLfns) >= self.maxFiles:
-                        tasks.append((replicaSE, taskLfns))
-                        taskLfns = []
-                        taskSize = 0
+            if size > self.groupSize:
+                tasks.append((replicaSE, [lfn]))
+            else:
+                # Close the task before it would exceed groupSize, not after
+                if taskLfns and (taskSize + size > self.groupSize):
+                    tasks.append((replicaSE, taskLfns))
+                    taskLfns = []
+                    taskSize = 0
+                taskSize += size
+                taskLfns.append(lfn)
+                if len(taskLfns) >= self.maxFiles:
+                    tasks.append((replicaSE, taskLfns))
+                    taskLfns = []
+                    taskSize = 0
         if flush and taskLfns:
             tasks.append((replicaSE, taskLfns))
         if not tasks and not flush and taskLfns:

@@ -104,6 +104,46 @@ class PluginUtilitiesSuccess(ClientsTestCase):
             ],
         )
 
+    def test_createTasksBySize_staysBelowGroupSize(self):
+        """A task must not grow past groupSize by taking one file too many"""
+        self.pu.groupSize = 6 * 1000**3
+        self.pu.maxFiles = 100
+        fileSizes = {f"/f{i}": 5.6 * 1000**3 for i in range(1, 4)}
+
+        tasks = self.pu.createTasksBySize(list(fileSizes), "SE1", fileSizes=fileSizes, flush=True)
+
+        self.assertEqual(tasks, [("SE1", ["/f1"]), ("SE1", ["/f2"]), ("SE1", ["/f3"])])
+
+    def test_createTasksBySize_fillsUpToGroupSize(self):
+        """Files that do fit together must still share a task"""
+        self.pu.groupSize = 6 * 1000**3
+        self.pu.maxFiles = 100
+        fileSizes = {f"/f{i}": 2 * 1000**3 for i in range(1, 5)}
+
+        tasks = self.pu.createTasksBySize(list(fileSizes), "SE1", fileSizes=fileSizes, flush=True)
+
+        self.assertEqual(tasks, [("SE1", ["/f1", "/f2", "/f3"]), ("SE1", ["/f4"])])
+
+    def test_createTasksBySize_oversizedFileGetsOwnTask(self):
+        """A single file bigger than groupSize is still schedulable"""
+        self.pu.groupSize = 6 * 1000**3
+        self.pu.maxFiles = 100
+        fileSizes = {"/big": 100 * 1000**3, "/small": 1000**3}
+
+        tasks = self.pu.createTasksBySize(list(fileSizes), "SE1", fileSizes=fileSizes, flush=True)
+
+        self.assertEqual(tasks, [("SE1", ["/big"]), ("SE1", ["/small"])])
+
+    def test_createTasksBySize_zeroSizedFileIsNotDropped(self):
+        """A file of zero or unknown size must be assigned to a task, not stranded"""
+        self.pu.groupSize = 6 * 1000**3
+        self.pu.maxFiles = 100
+        fileSizes = {"/empty": 0, "/normal": 1000**3}
+
+        tasks = self.pu.createTasksBySize(list(fileSizes), "SE1", fileSizes=fileSizes, flush=True)
+
+        self.assertEqual(tasks, [("SE1", ["/empty", "/normal"])])
+
 
 class RequestTasksSuccess(ClientsTestCase):
     def test_prepareTranformationTasks(self):
