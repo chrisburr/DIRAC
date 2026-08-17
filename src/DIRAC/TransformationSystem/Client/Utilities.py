@@ -221,7 +221,7 @@ class PluginUtilities:
         # Parameters
         if not self.groupSize:
             # input size in GB converted to bytes
-            self.groupSize = float(self.getPluginParam("GroupSize", 1)) * 1000 * 1000 * 1000
+            self.groupSize = float(self.getPluginParam("GroupSize", 1.0)) * 1000 * 1000 * 1000
         flush = status == "Flush"
         self.logVerbose("groupBySize: %d files, groupSize: %d, flush: %s" % (len(files), self.groupSize, flush))
 
