@@ -191,9 +191,16 @@ class PluginUtilities:
                 if size > self.groupSize:
                     tasks.append((replicaSE, [lfn]))
                 else:
+                    # Close the current task before adding a file that would take it past
+                    # groupSize, so that groupSize bounds the task from above. A task with
+                    # a single oversized file is still emitted by the branch above.
+                    if taskLfns and (taskSize + size > self.groupSize):
+                        tasks.append((replicaSE, taskLfns))
+                        taskLfns = []
+                        taskSize = 0
                     taskSize += size
                     taskLfns.append(lfn)
-                    if (taskSize > self.groupSize) or (len(taskLfns) >= self.maxFiles):
+                    if len(taskLfns) >= self.maxFiles:
                         tasks.append((replicaSE, taskLfns))
                         taskLfns = []
                         taskSize = 0
