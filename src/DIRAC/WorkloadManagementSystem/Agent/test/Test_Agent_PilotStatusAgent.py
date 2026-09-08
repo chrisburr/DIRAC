@@ -1,5 +1,5 @@
-""" Test class for Pilot Status Agent
-"""
+"""Test class for Pilot Status Agent"""
+
 from unittest.mock import MagicMock
 
 import pytest
@@ -15,8 +15,6 @@ mockReply.return_value = {"OK": True, "Value": []}
 mockAM = MagicMock()
 mockNone = MagicMock()
 mockNone.return_value = None
-mockOK = MagicMock()
-mockOK.return_value = {"OK": False}
 
 gLogger.setLevel("DEBUG")
 
@@ -35,19 +33,11 @@ def psa(mocker):
     mocker.patch("DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.JobDB.__init__", side_effect=mockNone)
     module_str = "DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.PilotAgentsDB.buildCondition"
     mocker.patch(module_str, side_effect=mockNone)
-    mocker.patch("DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.PilotAgentsDB._query", side_effect=mockOK)
+    mocker.patch("DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.PilotAgentsDB._query", return_value=S_OK(()))
     mocker.patch(
         "DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.PilotAgentsDB._escapeString",
         lambda s, c: S_OK(f'"{s}"'),
     )  # To bypass "connection.escape_string"
-    mocker.patch(
-        "DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.PilotAgentsDB._update",
-        return_value=S_OK(),
-    )
-    mocker.patch(
-        "DIRAC.WorkloadManagementSystem.Agent.PilotStatusAgent.PilotAgentsDB._updatemany",
-        return_value=S_OK(),
-    )
 
     psa = PilotStatusAgent()
     psa._AgentModule__configDefaults = mockAM
@@ -68,7 +58,7 @@ def psa(mocker):
             {"OK": True, "Value": ["Test"]},
             {
                 "OK": False,
-                "Message": "No pilots found for PilotJobReference(s): ['Test']",
+                "Message": "No pilots found ( 1550 : No pilots found for PilotJobReference(s): ['Test'])",
             },
         ),
         ({"OK": False, "Message": "Test"}, {"OK": False, "Message": "Test"}),

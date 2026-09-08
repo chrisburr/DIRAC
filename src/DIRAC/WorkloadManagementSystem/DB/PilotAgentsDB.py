@@ -4,6 +4,7 @@ It also registers the mapping of the DIRAC jobs to the pilot agents.
 """
 
 import decimal
+import itertools
 import threading
 
 import DIRAC.Core.Utilities.TimeUtilities as TimeUtilities
@@ -13,7 +14,7 @@ from DIRAC.ConfigurationSystem.Client.Helpers.Resources import getCESiteMapping
 from DIRAC.Core.Base.DB import DB
 from DIRAC.Core.Utilities import DErrno
 from DIRAC.Core.Utilities.MySQL import _quotedList
-from DIRAC.Core.Utilities.ReturnValues import returnValueOrRaise
+from DIRAC.Core.Utilities.ReturnValues import convertToReturnValue, returnValueOrRaise
 from DIRAC.Core.Utilities.TimeUtilities import DiracTime
 from DIRAC.FrameworkSystem.Client.Logger import contextLogger
 from DIRAC.ResourceStatusSystem.Client.SiteStatus import SiteStatus
@@ -41,10 +42,13 @@ class PilotAgentsDB(DB):
         "VO",
     }
 
-    # Number of values inserted into the in-memory temp tables per batch in
-    # getPilotInfo. Keeping batches bounded avoids overflowing MEMORY tables
-    # (ERROR 1114: The table is full) when querying large pilot reference lists.
-    PILOT_INFO_BATCH_SIZE = 10000
+    # Maximum number of key values sent to the database at once when selecting
+    # by lists of pilot references or IDs. Lists up to this size are passed as a
+    # parameterised ``IN (...)`` clause; longer lists are loaded into an in-memory
+    # temporary table (joined against) in batches of this size, so that neither
+    # the query string nor the MEMORY table (ERROR 1114: The table is full,
+    # ~1 KB per utf8mb4 VARCHAR(255) row) grows without bound.
+    SELECT_BATCH_SIZE = 1000
 
     def __init__(self, parentLogger=None):
         super().__init__("PilotAgentsDB", "WorkloadManagement/PilotAgentsDB", parentLogger=parentLogger)
@@ -290,71 +294,23 @@ AND SubmissionTime < DATE_SUB(UTC_TIMESTAMP(),INTERVAL %s DAY)",
             if not col in self.ALLOWED_COLUMNS:
                 return S_ERROR(f"Unknown column: {col}")
 
-        cmd = f"SELECT {', '.join(parameters)} FROM PilotAgents"  # nosec
-        tempTables = []
-        activeKeys = []
-        result = None
-        try:
-            for key, value in [("PilotJobReference", pilotRef), ("PilotID", pilotID)]:
-                values = []
-                for v in value if isinstance(value, list) else [value] if value else []:
-                    values.append(v)
-                if not values:
-                    continue
-                tableName = f"to_select_PilotAgents_{key}"
-                if key == "PilotID":
-                    sqlCmd = (
-                        f"CREATE TEMPORARY TABLE {tableName}"
-                        f" (PilotID INT UNSIGNED NOT NULL, PRIMARY KEY (PilotID)) ENGINE=MEMORY;"
-                    )
-                    insertValues = [(int(v),) for v in values]
-                else:
-                    sqlCmd = (
-                        f"CREATE TEMPORARY TABLE {tableName}"
-                        f" (PilotJobReference VARCHAR(255) NOT NULL, PRIMARY KEY (PilotJobReference)) ENGINE=MEMORY;"
-                    )
-                    insertValues = [(v,) for v in values]
-                returnValueOrRaise(self._update(sqlCmd, conn=conn))
-                tempTables.append(tableName)
-                activeKeys.append((key, tableName, insertValues))
+        keys = []
+        for column, columnType, value in [
+            ("PilotJobReference", "VARCHAR(255)", pilotRef),
+            ("PilotID", "INT UNSIGNED", pilotID),
+        ]:
+            values = value if isinstance(value, list) else [value] if value else []
+            if not values:
+                # No restriction on this column
+                continue
+            if column == "PilotID":
+                try:
+                    values = [int(v) for v in values]
+                except (TypeError, ValueError) as e:
+                    return S_ERROR(f"Invalid PilotID: {e}")
+            keys.append((column, columnType, values))
 
-            joinSQL = [f"JOIN {tn} USING ({k})" for k, tn, _ in activeKeys]
-            selectCmd = f"{cmd} {' '.join(joinSQL)}" if joinSQL else cmd
-
-            if not activeKeys:
-                # No conditions: plain SELECT over the whole table.
-                result = self._query(selectCmd, conn=conn)
-            else:
-                # Load every condition key fully except the last one, which is
-                # processed batch by batch (truncating between batches) so the
-                # in-memory temp table never holds all the rows at once. This
-                # preserves the AND semantics: the union of the per-batch
-                # results equals the full JOIN result.
-                for key, tableName, insertValues in activeKeys[:-1]:
-                    insertCmd = f"INSERT INTO {tableName} ({key}) VALUES ( %s )"  # nosec: B608
-                    for i in range(0, len(insertValues), self.PILOT_INFO_BATCH_SIZE):
-                        returnValueOrRaise(
-                            self._updatemany(insertCmd, insertValues[i : i + self.PILOT_INFO_BATCH_SIZE], conn=conn)
-                        )
-                batchKey, batchTable, batchValues = activeKeys[-1]
-                insertCmd = f"INSERT INTO {batchTable} ({batchKey}) VALUES ( %s )"  # nosec: B608
-                resultRows = []
-                for i in range(0, len(batchValues), self.PILOT_INFO_BATCH_SIZE):
-                    returnValueOrRaise(self._update(f"TRUNCATE TABLE {batchTable}", conn=conn))
-                    returnValueOrRaise(
-                        self._updatemany(insertCmd, batchValues[i : i + self.PILOT_INFO_BATCH_SIZE], conn=conn)
-                    )
-                    batchResult = self._query(selectCmd, conn=conn)
-                    if not batchResult["OK"]:
-                        result = batchResult
-                        break
-                    resultRows.extend(batchResult["Value"])
-                else:
-                    result = S_OK(resultRows)
-        finally:
-            for tableName in tempTables:
-                sqlCmd = f"DROP TEMPORARY TABLE {tableName}"
-                returnValueOrRaise(self._update(sqlCmd, conn=conn))
+        result = self.__selectByKeys(f"SELECT {', '.join(parameters)} FROM PilotAgents", keys, conn=conn)  # nosec
         if not result["OK"]:
             return result
         if not result["Value"]:
@@ -373,7 +329,7 @@ AND SubmissionTime < DATE_SUB(UTC_TIMESTAMP(),INTERVAL %s DAY)",
                     pilotIDs.append(row[i])
             resDict[row[0]] = pilotDict
 
-        result = self.getJobsForPilot(pilotIDs)
+        result = self.getJobsForPilot(pilotIDs, conn=conn)
         if not result["OK"]:
             return S_OK(resDict)
 
@@ -447,22 +403,12 @@ AND SubmissionTime < DATE_SUB(UTC_TIMESTAMP(),INTERVAL %s DAY)",
                 return int(result["Value"][0][0])
             return 0
 
-        sqlCmd = "CREATE TEMPORARY TABLE to_select_PilotAgents (PilotID VARCHAR(255) NOT NULL, PRIMARY KEY (PilotID)) ENGINE=MEMORY;"
-        returnValueOrRaise(self._update(sqlCmd))
-        try:
-            sqlCmd = "INSERT INTO to_select_PilotAgents (PilotID) VALUES ( %s )"
-            returnValueOrRaise(self._updatemany(sqlCmd, [(p,) for p in pilotRef]))
-            sqlCmd = "SELECT PilotID FROM PilotAgents JOIN to_select_PilotAgents USING (PilotID)"
-            result = self._query(sqlCmd)
-        finally:
-            sqlCmd = "DROP TEMPORARY TABLE to_select_PilotAgents"
-            returnValueOrRaise(self._update(sqlCmd))
-
+        result = self.__selectByKeys(
+            "SELECT PilotID FROM PilotAgents", [("PilotJobReference", "VARCHAR(255)", list(pilotRef))]
+        )
         if not result["OK"]:
             return []
-        if result["Value"]:
-            return [x[0] for x in result["Value"]]
-        return []
+        return [x[0] for x in result["Value"]]
 
     ##########################################################################################
     def setJobForPilot(self, jobID, pilotRef, site=None, updateStatus=True):
@@ -495,34 +441,103 @@ AND SubmissionTime < DATE_SUB(UTC_TIMESTAMP(),INTERVAL %s DAY)",
         return self._update(req, args=args)
 
     ##########################################################################################
-    def getJobsForPilot(self, pilotID):
+    def getJobsForPilot(self, pilotID, conn=False):
         """Get IDs of Jobs that were executed by a pilot"""
-        if isinstance(pilotID, list):
-            sqlCmd = "CREATE TEMPORARY TABLE to_select_JobToPilotMapping (PilotID INT UNSIGNED NOT NULL, PRIMARY KEY (PilotID)) ENGINE=MEMORY;"
-            returnValueOrRaise(self._update(sqlCmd))
-            try:
-                sqlCmd = "INSERT INTO to_select_JobToPilotMapping (PilotID) VALUES ( %s )"
-                returnValueOrRaise(self._updatemany(sqlCmd, [(int(p),) for p in pilotID]))
-                sqlCmd = "SELECT pilotID, JobID FROM JobToPilotMapping JOIN to_select_JobToPilotMapping USING (PilotID)"
-                result = self._query(sqlCmd)
-            finally:
-                sqlCmd = "DROP TEMPORARY TABLE to_select_JobToPilotMapping"
-                returnValueOrRaise(self._update(sqlCmd))
-            if not result["OK"]:
-                return result
-        else:
-            cmd = "SELECT pilotID,JobID FROM JobToPilotMapping WHERE pilotID = %s"
-            args = [str(pilotID)]
-            result = self._query(cmd, args=args)
-            if not result["OK"]:
-                return result
+        try:
+            pilotIDs = [int(p) for p in (pilotID if isinstance(pilotID, list) else [pilotID])]
+        except (TypeError, ValueError) as e:
+            return S_ERROR(f"Invalid PilotID: {e}")
+
+        result = self.__selectByKeys(
+            "SELECT PilotID, JobID FROM JobToPilotMapping", [("PilotID", "INT UNSIGNED", pilotIDs)], conn=conn
+        )
+        if not result["OK"]:
+            return result
 
         resDict = {}
-        for row in result["Value"]:
-            if row[0] not in resDict:
-                resDict[row[0]] = []
-            resDict[row[0]].append(row[1])
+        for pilotID, jobID in result["Value"]:
+            resDict.setdefault(pilotID, []).append(jobID)
         return S_OK(resDict)
+
+    ##########################################################################################
+    @convertToReturnValue
+    def __selectByKeys(self, selectCmd, keys, conn=False):
+        """Run a SELECT restricted to rows whose key columns are in the given lists of values
+
+        Lists of at most ``SELECT_BATCH_SIZE`` values are passed as a parameterised
+        ``IN (...)`` clause. Longer lists are loaded into a temporary table which is
+        joined against, ``SELECT_BATCH_SIZE`` values at a time. Every statement runs
+        on the same connection, as temporary tables are connection-local.
+
+        :param str selectCmd: ``SELECT ... FROM <table>`` without a WHERE clause
+        :param list keys: ``(column, columnType, values)`` tuples; ``columnType`` is the
+                          SQL type used for the temporary table column. Rows must match
+                          all keys (AND semantics). An empty ``values`` list matches nothing.
+        :returns: S_OK(list of rows) / S_ERROR
+        """
+        batchSize = self.SELECT_BATCH_SIZE
+        # Remove duplicates (the temporary tables have a primary key) while preserving order
+        keys = [(column, columnType, list(dict.fromkeys(values))) for column, columnType, values in keys]
+        if any(not values for _, _, values in keys):
+            return []
+
+        small = [(column, values) for column, _, values in keys if len(values) <= batchSize]
+        large = [(column, columnType, values) for column, columnType, values in keys if len(values) > batchSize]
+
+        conditions = [f"{column} IN ({', '.join(['%s'] * len(values))})" for column, values in small]  # nosec
+        args = [v for _, values in small for v in values]
+        whereSQL = f" WHERE {' AND '.join(conditions)}" if conditions else ""
+
+        if not large:
+            return returnValueOrRaise(self._query(f"{selectCmd}{whereSQL}", args=args, conn=conn))
+
+        if not conn:
+            conn = returnValueOrRaise(self._getConnection())
+
+        tables = []
+        try:
+            for column, columnType, _ in large:
+                table = f"to_select_{column}"
+                # Make sure a table left behind by a previous failed cleanup does not get in the way
+                returnValueOrRaise(self._update(f"DROP TEMPORARY TABLE IF EXISTS {table}", conn=conn))
+                returnValueOrRaise(
+                    self._update(
+                        f"CREATE TEMPORARY TABLE {table} ({column} {columnType} NOT NULL, PRIMARY KEY ({column}))"
+                        " ENGINE=MEMORY",
+                        conn=conn,
+                    )
+                )
+                tables.append(table)
+
+            joinSQL = " ".join(f"JOIN {table} USING ({column})" for table, (column, _, _) in zip(tables, large))
+            cmd = f"{selectCmd} {joinSQL}{whereSQL}"
+
+            # Iterate over every combination of batches of the large keys. Each matching row
+            # falls in exactly one combination, so the union of the results is the full result.
+            # A table is only reloaded when its batch changes.
+            rows = []
+            loaded = [None] * len(large)
+            for starts in itertools.product(*(range(0, len(values), batchSize) for _, _, values in large)):
+                for i, ((column, _, values), start) in enumerate(zip(large, starts)):
+                    if loaded[i] == start:
+                        continue
+                    # Not TRUNCATE, which would implicitly commit an ongoing transaction
+                    returnValueOrRaise(self._update(f"DELETE FROM {tables[i]}", conn=conn))  # nosec
+                    returnValueOrRaise(
+                        self._updatemany(
+                            f"INSERT INTO {tables[i]} ({column}) VALUES (%s)",  # nosec
+                            [(v,) for v in values[start : start + batchSize]],
+                            conn=conn,
+                        )
+                    )
+                    loaded[i] = start
+                rows.extend(returnValueOrRaise(self._query(cmd, args=args, conn=conn)))
+        finally:
+            for table in tables:
+                result = self._update(f"DROP TEMPORARY TABLE IF EXISTS {table}", conn=conn)
+                if not result["OK"]:
+                    self.log.error("Failed to drop temporary table", f"{table}: {result['Message']}")
+        return rows
 
     ##########################################################################################
     def getPilotsForJobID(self, jobID):

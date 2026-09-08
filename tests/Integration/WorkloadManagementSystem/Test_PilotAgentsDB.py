@@ -1,8 +1,9 @@
-""" This tests only need the PilotAgentsDB, and connects directly to it
+"""This tests only need the PilotAgentsDB, and connects directly to it
 
-    Suggestion: for local testing, run this with::
-        python -m pytest -c ../pytest.ini  -vv tests/Integration/WorkloadManagementSystem/Test_PilotAgentsDB.py
+Suggestion: for local testing, run this with::
+    python -m pytest -c ../pytest.ini  -vv tests/Integration/WorkloadManagementSystem/Test_PilotAgentsDB.py
 """
+
 # pylint: disable=wrong-import-position
 
 from unittest.mock import patch
@@ -186,3 +187,59 @@ def test_PivotedPilotSummaryTable():
     assert "Total" in columns
 
     cleanUpPilots(pilotRef)
+
+
+def test_getPilotInfo_largeLists(monkeypatch):
+    """getPilotInfo / getJobsForPilot with lists longer than SELECT_BATCH_SIZE and with duplicates"""
+    monkeypatch.setattr(PilotAgentsDB, "SELECT_BATCH_SIZE", 3)
+
+    pilotRefs = [f"batchRef_{i}" for i in range(10)]
+    res = paDB.addPilotReferences(pilotRefs, "VO")
+    assert res["OK"], res["Message"]
+    try:
+        # Large list with duplicates
+        res = paDB.getPilotInfo(pilotRefs + pilotRefs[:5], paramNames=["PilotJobReference", "PilotID"])
+        assert res["OK"], res["Message"]
+        assert set(res["Value"]) == set(pilotRefs)
+        pilotIDs = {ref: res["Value"][ref]["PilotID"] for ref in pilotRefs}
+
+        # Small list
+        res = paDB.getPilotInfo(pilotRefs[:2], paramNames=["PilotJobReference", "PilotID"])
+        assert res["OK"], res["Message"]
+        assert set(res["Value"]) == set(pilotRefs[:2])
+
+        # Large list of IDs
+        res = paDB.getPilotInfo(pilotID=list(pilotIDs.values()), paramNames=["PilotJobReference", "PilotID"])
+        assert res["OK"], res["Message"]
+        assert set(res["Value"]) == set(pilotRefs)
+
+        # Both keys large: rows must match both
+        res = paDB.getPilotInfo(
+            pilotRef=pilotRefs[:7],
+            pilotID=[pilotIDs[ref] for ref in pilotRefs[3:]],
+            paramNames=["PilotJobReference", "PilotID"],
+        )
+        assert res["OK"], res["Message"]
+        assert set(res["Value"]) == set(pilotRefs[3:7])
+
+        # Unknown references
+        res = paDB.getPilotInfo([f"unknownRef_{i}" for i in range(10)])
+        assert not res["OK"]
+        assert "No pilots found" in res["Message"]
+
+        # Jobs for a large list of pilots
+        for i, ref in enumerate(pilotRefs):
+            res = paDB.setJobForPilot(1000 + i, ref, updateStatus=False)
+            assert res["OK"], res["Message"]
+        res = paDB.getJobsForPilot(list(pilotIDs.values()) * 2)
+        assert res["OK"], res["Message"]
+        assert res["Value"] == {pilotIDs[ref]: [1000 + i] for i, ref in enumerate(pilotRefs)}
+        res = paDB.getJobsForPilot([])
+        assert res["OK"], res["Message"]
+        assert res["Value"] == {}
+
+        res = paDB.getPilotInfo(pilotRefs, paramNames=["PilotJobReference", "PilotID"])
+        assert res["OK"], res["Message"]
+        assert res["Value"][pilotRefs[4]]["Jobs"] == [1004]
+    finally:
+        cleanUpPilots(pilotRefs)
